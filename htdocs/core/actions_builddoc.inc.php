@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,30 +29,20 @@
 // $permissiontoadd must be defined
 // $upload_dir must be defined (example $conf->project->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
-
 /**
  * @var Conf $conf
  * @var Translate $langs
  * @var User $user
- * @var CommonObject|Societe $object
- *
  * @var string $action
  * @var int $id
- * @var ?int $permissioncreate
- * @var ?int $usercangeneratedoc
+ * @var CommonObject $object
+ * @var ?int $permissiontocreate
  * @var int $permissiontoadd
  * @var string $upload_dir
- *
  * @var ?int $hidedetails
  * @var ?int $hidedesc
  * @var ?int $hideref
- * @var ?array<string,mixed> $moreparams
  */
-'
-@phan-var-force ?array<string,mixed> $moreparams
-@phan-var-force CommonObject|Societe $object
-';
-
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissioncreate; // For backward compatibility
 }
@@ -65,6 +55,11 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		// Reload to get all modified line records and be ready for hooks
 		$ret = $object->fetch($id);
 		$ret = $object->fetch_thirdparty();
+		/*if (empty($object->id) || ! $object->id > 0)
+		{
+			dol_print_error(null, 'Object must have been loaded by a fetch');
+			exit;
+		}*/
 
 		// Save last template used to generate document
 		if (GETPOST('model', 'alpha')) {
@@ -82,13 +77,14 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->thirdparty->default_lang)) {
 			$newlang = $object->thirdparty->default_lang; // for proposal, order, invoice, ...
 		}
-		if (getDolGlobalInt('MAIN_MULTILANGS') && property_exists($object, 'default_lang') && empty($newlang) && isset($object->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->default_lang)) {
 			$newlang = $object->default_lang; // for thirdparty
 		}
 		if (!empty($newlang)) {
@@ -97,10 +93,18 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		}
 
 		// To be sure vars is defined
-		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
-		$moreparams = isset($moreparams) ? $moreparams : null;
+		if (empty($hidedetails)) {
+			$hidedetails = 0;
+		}
+		if (empty($hidedesc)) {
+			$hidedesc = 0;
+		}
+		if (empty($hideref)) {
+			$hideref = 0;
+		}
+		if (empty($moreparams)) {
+			$moreparams = null;
+		}
 
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		if ($result <= 0) {

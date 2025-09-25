@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - exports
-ImportExportArea=Imports / Exports
 ExportsArea=Exports
 ImportArea=Ingiza
 NewExport=Usafirishaji Mpya
@@ -32,10 +31,10 @@ ExportCsvSeparator=Csv character separator
 ImportCsvSeparator=Csv character separator
 Step=Hatua
 FormatedImport=Ingiza Mratibu
-FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
+FormatedImportDesc1=Moduli hii hukuruhusu kusasisha data iliyopo au kuongeza vitu vipya kwenye hifadhidata kutoka kwa faili bila maarifa ya kiufundi, kwa kutumia msaidizi.
 FormatedImportDesc2=Hatua ya kwanza ni kuchagua aina ya data unayotaka kuagiza, kisha umbizo la faili chanzo, kisha sehemu unazotaka kuagiza.
 FormatedExport=Hamisha Msaidizi
-FormatedExportDesc1=Click here to use the assistant to export data in a supported format
+FormatedExportDesc1=Zana hizi huruhusu usafirishaji wa data iliyobinafsishwa kwa kutumia mratibu, ili kukusaidia katika mchakato bila kuhitaji maarifa ya kiufundi.
 FormatedExportDesc2=Hatua ya kwanza ni kuchagua seti ya data iliyoainishwa awali, kisha ni sehemu gani ungependa kusafirisha, na kwa mpangilio upi.
 FormatedExportDesc3=Wakati data ya kuuza nje imechaguliwa, unaweza kuchagua umbizo la faili towe.
 Sheet=Laha

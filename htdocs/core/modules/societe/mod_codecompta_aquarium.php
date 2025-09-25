@@ -1,9 +1,8 @@
 <?php
-
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,19 +49,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * @var string Prefix customer accountancy code
-	 */
 	public $prefixcustomeraccountancycode;
 
-	/**
-	 * @var string Prefix supplier accountancy code
-	 */
 	public $prefixsupplieraccountancycode;
 
-	/**
-	 * @var int
-	 */
 	public $position = 20;
 
 
@@ -158,8 +148,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *  Set accountancy account code for a third party into this->code
 	 *
 	 *  @param	DoliDB		$db             Database handler
-	 *  @param  ?Societe	$societe		Third party object
-	 *  @param  'customer'|'supplier'|''	$type	'customer' or 'supplier'
+	 *  @param  Societe		$societe        Third party object
+	 *  @param  string		$type			'customer' or 'supplier'
 	 *  @return	int							>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')
@@ -188,18 +178,18 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 		// Remove special char if COMPANY_AQUARIUM_REMOVE_SPECIAL is set to 1 or not set (default)
 		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_AQUARIUM_REMOVE_SPECIAL')) {
-			$codetouse = preg_replace('/([^a-z0-9])/i', '', (string) $codetouse);
+			$codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
 		}
 		// Remove special alpha if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
 		if (getDolGlobalString('COMPANY_AQUARIUM_REMOVE_ALPHA')) {
-			$codetouse = preg_replace('/([a-z])/i', '', (string) $codetouse);
+			$codetouse = preg_replace('/([a-z])/i', '', $codetouse);
 		}
 		// Apply a regex replacement pattern on code if COMPANY_AQUARIUM_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 		if (getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX')) {	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
-			$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX').'/', '\1\2\3', (string) $codetouse);
+			$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
 		}
 
-		$codetouse = $prefix.strtoupper((string) $codetouse);
+		$codetouse = $prefix.strtoupper($codetouse);
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
 		$this->code = $codetouse;
@@ -213,7 +203,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *
 	 *	@param	DoliDB		$db			Database handler
 	 * 	@param	string		$code		Code of third party
-	 * 	@param	?Societe	$societe	Object third party
+	 * 	@param	Societe		$societe	Object third party
 	 * 	@param	string		$type		'supplier' or 'customer'
 	 *	@return	int						0 if OK but not available, >0 if OK and available, <0 if KO
 	 */

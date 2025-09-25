@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Pengiriman
+DeliveryRef=Pengiriman Ref
+DeliveryCard=Resi pengiriman
+DeliveryOrder=Kwitansi pengiriman
+DeliveryDate=Tanggal pengiriman
+CreateDeliveryOrder=Hasilkan tanda terima pengiriman
+DeliveryStateSaved=Status pengiriman disimpan
+SetDeliveryDate=Tetapkan tanggal pengiriman
+ValidateDeliveryReceipt=Validasi tanda terima pengiriman
+ValidateDeliveryReceiptConfirm=Anda yakin ingin memvalidasi tanda terima pengiriman ini?
+DeleteDeliveryReceipt=Hapus tanda terima pengiriman
+DeleteDeliveryReceiptConfirm=Anda yakin ingin menghapus tanda terima pengiriman<b>%s </b>?
+DeliveryMethod=Metode Pengiriman
+TrackingNumber=Melacak nomor
+DeliveryNotValidated=Pengiriman tidak divalidasi
+StatusDeliveryCanceled=Dibatalkan
+StatusDeliveryDraft=Konsep
+StatusDeliveryValidated=Diterima
+# merou PDF model
+NameAndSignature=Nama dan tanda tangan:
+ToAndDate=To___________________________________ pada ____ / _____ / __________
+GoodStatusDeclaration=Telah menerima barang di atas dalam kondisi baik,
+Deliverer=Pengirim:
+Sender=Pengirim
+Recipient=Penerima
+ErrorStockIsNotEnough=Tidak ada stok yang cukup
+Shippable=Dapat dikirim
+NonShippable=Tidak Dapat Dikirim
+ShowShippableStatus=Tampilkan status yang dapat dikirim
+ShowReceiving=Tampilkan tanda terima pengiriman
+NonExistentOrder=Pesanan tidak ada
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Jumlah stok sudah dialokasikan pada baris sebelumnya

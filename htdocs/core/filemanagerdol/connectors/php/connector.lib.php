@@ -323,8 +323,6 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		//$sFileName = SanitizeFileName($sFileName);
 		$sFileName = dol_sanitizeFileName($sFileName);
 
-		dol_syslog("FileUpload sFileName=".$sFileName);
-
 		$sOriginalFileName = $sFileName;
 
 		// Get the extension.
@@ -341,7 +339,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		}*/
 		if (!$permissiontouploadmediaisok) {
 			dol_syslog("connector.lib.php Try to upload a file with no permission");
-			$sErrorNumber = '204';
+			$sErrorNumber = '202';
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -399,9 +397,9 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 						$detectHtml = DetectHtml($sFilePath);
 						if ($detectHtml === true || $detectHtml == -1) {
 							// Note that is is a simple test and not reliable. Security does not rely on this.
-							dol_syslog("connector.lib.php DetectHtml is ko detectHtml=".$detectHtml.", we delete the file.");
+							dol_syslog("connector.lib.php DetectHtml is ko");
 							@unlink($sFilePath);
-							$sErrorNumber = '205';
+							$sErrorNumber = '202';
 						}
 					}
 				}
@@ -966,11 +964,13 @@ function DetectHtml($filePath)
 {
 	$fp = @fopen($filePath, 'rb');
 
-	if ($fp === false) {
+	//open_basedir restriction, see #1906
+	if ($fp === false || !flock($fp, LOCK_SH)) {
 		return -1;
 	}
 
 	$chunk = fread($fp, 1024);
+	flock($fp, LOCK_UN);
 	fclose($fp);
 
 	$chunk = strtolower($chunk);

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=gestión de recursos humanos
-Holidays=Hojas
 Holiday=Dejar
 CPTitreMenu=Dejar
 MenuAddCP=Nueva solicitud de vacaciones

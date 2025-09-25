@@ -38,16 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 class mod_facture_mercure extends ModeleNumRefFactures
 {
 	/**
-	 * @var string Sub-module name
-	 */
-	public $name = 'Mercure';
-
-	/**
-	 * @var int		Position
-	 */
-	public $position = 50;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
@@ -81,13 +71,9 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$texte .= '<input type="hidden" name="maskconstreplacement" value="FACTURE_MERCURE_MASK_REPLACEMENT">';
 		$texte .= '<input type="hidden" name="maskconstcredit" value="FACTURE_MERCURE_MASK_CREDIT">';
 		$texte .= '<input type="hidden" name="maskconstdeposit" value="FACTURE_MERCURE_MASK_DEPOSIT">';
-		$texte .= '<input type="hidden" name="page_y" value="">';
-
-		$texte .= '<table class="nobordernopadding centpercent">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
-		$tooltip .= $langs->trans("GenericMaskCodes1");
-		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
 		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
@@ -100,7 +86,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</span></td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_INVOICE").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipstandardmercure').'</td>';
 
-		$texte .= '<td class="left" rowspan="3">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
+		$texte .= '<td class="left" rowspan="3">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 

@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum / wiki pre podporu
+EMailSupport=E-mailová podpora
+RemoteControlSupport=Online / vzdialená podpora v reálnom čase
+OtherSupport=Ďalšia podpora
+ToSeeListOfAvailableRessources=Ak chcete kontaktovať / zobrazenie dostupných zdrojov:
+HelpCenter=Nápoveda centrum
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+TypeSupportCommunauty=Spoločenstva (zadarmo)
+TypeSupportCommercial=Obchodné
+TypeOfHelp=Typ
+NeedHelpCenter=Need help or support?
+Efficiency=Účinnosť
+TypeHelpOnly=Nápoveda iba
+TypeHelpDev=Nápoveda + Development
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=Podporované jazyky
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=Oficiálna podpora Dolibarr vo Vašom jayzku: 

@@ -38,7 +38,7 @@ class modEmailCollector extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
+		global $langs, $conf;
 
 		$this->db = $db;
 

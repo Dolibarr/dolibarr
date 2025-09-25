@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,15 +70,6 @@ class Link extends CommonObject
 	 */
 	public $objectid;
 
-	/**
-	 * @var string share hash
-	 */
-	public $share;
-
-	/**
-	 * @var string share pass hash
-	 */
-	public $share_pass;
 
 	/**
 	 *    Constructor
@@ -122,14 +113,12 @@ class Link extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid, share,share_pass)";
+		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid)";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
 		$sql .= ", '".$this->db->escape($this->url)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->objecttype)."'";
-		$sql .= ", ".((int) $this->objectid);
-		$sql .= ', '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null");
-		$sql .= ', '.(!empty($this->share_pass) ? "'".$this->db->escape($this->share_pass)."'" : "null").")";
+		$sql .= ", ".((int) $this->objectid).")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -158,7 +147,7 @@ class Link extends CommonObject
 			}
 		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", (string) $this->name);
+				$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
 				$result = -1;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -209,8 +198,6 @@ class Link extends CommonObject
 		$sql .= ", label = '".$this->db->escape($this->label)."'";
 		$sql .= ", objecttype = '".$this->db->escape($this->objecttype)."'";
 		$sql .= ", objectid = ".$this->objectid;
-		$sql .= ', share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null");
-		$sql .= ', share_pass = '.(!empty($this->share_pass) ? "'".$this->db->escape($this->share_pass)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql = ".$sql);
@@ -262,7 +249,7 @@ class Link extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid, share,share_pass  FROM ".$this->db->prefix()."links";
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".((int) $conf->entity);
@@ -289,8 +276,6 @@ class Link extends CommonObject
 					$link->label = $obj->label;
 					$link->objecttype = $obj->objecttype;
 					$link->objectid = $obj->objectid;
-					$link->share = $obj->share;
-					$link->share_pass = $obj->share_pass;
 					$links[] = $link;
 				}
 				return 1;
@@ -334,10 +319,9 @@ class Link extends CommonObject
 	 *  Loads a link from database
 	 *
 	 *  @param 	int		$rowid 		Id of link to load
-	 *  @param string $hashforshare Hash of file sharing, or 'shared'
 	 *  @return int 				1 if ok, 0 if no record found, -1 if error
 	 **/
-	public function fetch($rowid = null, $hashforshare = '')
+	public function fetch($rowid = null)
 	{
 		global $conf;
 
@@ -345,21 +329,10 @@ class Link extends CommonObject
 			$rowid = $this->id;
 		}
 
-		$sqlwhere=[];
-
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid, share, share_pass FROM ".$this->db->prefix()."links";
-		if (!empty((int) $rowid)) {
-			$sqlwhere[] = " rowid = ".((int) $rowid);
-		}
-		if (!empty($hashforshare)) {
-			$sqlwhere[] = " share = '".$this->db->escape($hashforshare)."'";
-		}
-
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
+		$sql .= " WHERE rowid = ".((int) $rowid);
 		if ($conf->entity != 0) {
-			$sqlwhere[] = " entity = ".$conf->entity;
-		}
-		if (count($sqlwhere)>0) {
-			$sql .=' WHERE '.implode(' AND ', $sqlwhere);
+			$sql .= " AND entity = ".$conf->entity;
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -375,8 +348,6 @@ class Link extends CommonObject
 				$this->label = $obj->label;
 				$this->objecttype = $obj->objecttype;
 				$this->objectid = $obj->objectid;
-				$this->share = $obj->share;
-				$this->share_pass = $obj->share_pass;
 				return 1;
 			} else {
 				return 0;

@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +49,7 @@ abstract class CommonDict
 	public $id;
 
 	/**
-	 * @var ?int 		The environment ID when using a multicompany module
+	 * @var int 		The environment ID when using a multicompany module
 	 */
 	public $entity;
 
@@ -65,7 +64,7 @@ abstract class CommonDict
 	public $label;
 
 	/**
-	 * @var ?int<0,1>	1 if the entry is active, 0 if not
+	 * @var int<0,1>	1 if the entry is active, 0 if not
 	 */
 	public $active;
 }

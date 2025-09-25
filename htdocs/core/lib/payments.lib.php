@@ -156,10 +156,9 @@ function payment_supplier_prepare_head(Paiement $object)
  * Return array of valid payment mode
  *
  * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', 'stripe', ...)
- * @param	int		$mode				0=Return array with key, 1=Return array with more information like label
  * @return	array<string,string>		Array of valid payment method
  */
-function getValidOnlinePaymentMethods($paymentmethod = '', $mode = 0)
+function getValidOnlinePaymentMethods($paymentmethod = '')
 {
 	global $langs, $hookmanager, $action;
 
@@ -167,34 +166,21 @@ function getValidOnlinePaymentMethods($paymentmethod = '', $mode = 0)
 
 	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
 		$langs->load("paypal");
-		if ($mode) {
-			$validpaymentmethod['paypal'] = array('label' => 'PayPal', 'status' => 'valid');
-		} else {
-			$validpaymentmethod['paypal'] = 'valid';
-		}
+		$validpaymentmethod['paypal'] = 'valid';
 	}
 	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-		$langs->load("stripe");
-		if ($mode) {
-			$validpaymentmethod['paybox'] = array('label' => 'PayBox', 'status' => 'valid');
-		} else {
-			$validpaymentmethod['paybox'] = 'valid';
-		}
+		$langs->loadLangs(array("paybox", "stripe"));
+		$validpaymentmethod['paybox'] = 'valid';
 	}
 	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 		$langs->load("stripe");
-		if ($mode) {
-			$validpaymentmethod['stripe'] = array('label' => 'Stripe', 'status' => 'valid');
-		} else {
-			$validpaymentmethod['stripe'] = 'valid';
-		}
+		$validpaymentmethod['stripe'] = 'valid';
 	}
 
 	// This hook is used to complete the $validpaymentmethod array so an external payment modules
 	// can add its own key (ie 'payzen' for Payzen, 'helloasso' for HelloAsso...)
 	$parameters = [
 		'paymentmethod' => $paymentmethod,
-		'mode' => $mode,
 		'validpaymentmethod' => &$validpaymentmethod
 	];
 	$tmpobject = new stdClass();

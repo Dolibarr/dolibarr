@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -113,20 +113,18 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 		$form = new Form($this->db);
 
-		$odtPath = trim(getDolGlobalString('EXPEDITION_ADDON_PDF_ODT_PATH'));
-
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="EXPEDITION_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding centpercent">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', $odtPath));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->EXPEDITION_ADDON_PDF_ODT_PATH)));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -150,37 +148,34 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat" cols="60" name="value1">';
+		$texte .= getDolGlobalString('EXPEDITION_ADDON_PDF_ODT_PATH');
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<br></div></div>';
+
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($odtPath)) {
+		if (getDolGlobalString('EXPEDITION_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b><br>';
+			$texte .= '</b>';
 		}
 		if ($nbofiles) {
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'];
-				$texte .= ' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=shipments/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=shipments/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
 				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=EXPEDITION_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
 				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}
-
-		$texte .= '<br>';
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-		$texte .= $odtPath;
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
-
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
 		$maxfilesizearray = getMaxFileSizeArray();
@@ -204,7 +199,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build a document on disk using the generic odt module.
+	 *  Function to build pdf onto disk
 	 *
 	 *	@param		Expedition	$object				Object source to build document
 	 *  @param		Translate	$outputlangs		Lang output object
@@ -241,7 +236,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->expedition->multidir_output[$object->entity ?? $conf->entity]."/sending") {
+		if ($conf->expedition->multidir_output[$object->entity]."/sending") {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -255,7 +250,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->expedition->multidir_output[$object->entity ?? $conf->entity]."/sending";
+			$dir = $conf->expedition->multidir_output[$object->entity]."/sending";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -377,13 +372,6 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
-				// retrieve the constant to apply a ratio for image size or set the ratio to 1
-				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
-				} else {
-					$ratio = 1;
-				}
-
 				// Make substitutions into odt of user info
 				$tmparray = $this->get_substitutionarray_user($user, $outputlangs);
 				foreach ($tmparray as $key => $value) {
@@ -391,7 +379,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						if (preg_match('/logo$/', $key)) { // Image
 							//var_dump($value);exit;
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value, $ratio);
+								$odfHandler->setImage($key, $value);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -409,7 +397,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						if (preg_match('/logo$/', $key)) {	// Image
 							//var_dump($value);exit;
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value, $ratio);
+								$odfHandler->setImage($key, $value);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -431,7 +419,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					try {
 						if (preg_match('/logo$/', $key)) {	// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value, $ratio);
+								$odfHandler->setImage($key, $value);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -449,7 +437,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						try {
 							if (preg_match('/logo$/', $key)) {	// Image
 								if (file_exists($value)) {
-									$odfHandler->setImage($key, $value, $ratio);
+									$odfHandler->setImage($key, $value);
 								} else {
 									$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 								}
@@ -476,7 +464,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						if (preg_match('/logo$/', $key)) {
 							// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value, $ratio);
+								$odfHandler->setImage($key, $value);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}

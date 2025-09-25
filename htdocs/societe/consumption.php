@@ -5,7 +5,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
-$action = GETPOST('action', 'aZ09');
+
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
-$optioncss 	= GETPOST('optioncss', 'alpha');
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -57,7 +56,7 @@ if ($user->socid) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('thirdpartyconsumption', 'consumptionthirdparty', 'globalcard'));
+$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 $object = new Societe($db);
@@ -70,10 +69,11 @@ $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield 	= GETPOST('sortfield', 'aZ09comma');
 $sortorder 	= GETPOST('sortorder', 'aZ09comma');
 $page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
 if (empty($page) || $page == -1) {
 	$page = 0;
-}
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -244,9 +244,6 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $sql_select = '';
 $documentstaticline = '';
-$tables_from = '';
-$dateprint = '';
-$doc_number = '';
 /*if ($type_element == 'action')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -257,7 +254,6 @@ $doc_number = '';
 	$dateprint = 'f.datep';
 	$doc_number='f.id';
 }*/
-$documentstatic = null;
 if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic = new Fichinter($db);
@@ -385,13 +381,11 @@ if ($type_element == 'contract') { 	// Order
 	$thirdTypeSelect = 'customer';
 }
 
-$totalnboflines = 0;
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 
 if (!empty($sql_select)) {
 	$sql = $sql_select;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
 	$sql .= ' d.description as description,';
 	if ($type_element != 'fichinter' && $type_element != 'contract' && $type_element != 'supplier_proposal' && $type_element != 'shipment' && $type_element != 'reception') {
 		$sql .= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
@@ -419,13 +413,10 @@ if (!empty($sql_select)) {
 	if ($type_element != 'fichinter') {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	}
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
 	$sql .= $where;
 	$sql .= dolSqlDateFilter($dateprint, 0, $month, $year);
 	if ($sref) {
-		$sql .= " AND ".$db->sanitize((string) $doc_number)." LIKE '%".$db->escape($sref)."%'";
+		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
 		// We test both case description is correctly saved of was save after dol_escape_htmltag().
@@ -438,15 +429,6 @@ if (!empty($sql_select)) {
 		}
 		$sql .= ")";
 	}
-
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
-
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
-
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$resql = $db->query($sql);
@@ -471,7 +453,6 @@ $total_qty = 0;
 $total_ht = 0;
 
 $param = '';
-$num = 0;
 
 if ($sql_select) {
 	$resql = $db->query($sql);
@@ -515,8 +496,8 @@ if ($sql_select) {
 	print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
 	print '</th>';
 	print '<th class="liste_titre nowrap center valignmiddle">'; // date
-	print $formother->select_month($month ? (string) $month : '-1', 'month', 1, 0, 'valignmiddle');
-	print $formother->selectyear($year ? (string) $year : '-1', 'year', 1, 20, 1, 0, 0, '', 'valignmiddle maxwidth75imp marginleftonly');
+	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
+	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 1, 0, 0, '', 'valignmiddle maxwidth75imp marginleftonly');
 	print '</th>';
 	// delivery planned date
 	if ($type_element == 'order' || $type_element == 'supplier_order' || $type_element == 'shipment') {
@@ -531,9 +512,6 @@ if ($sql_select) {
 	print '</th>';
 	print '<th class="liste_titre center">';
 	print '</th>';
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '<th class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
@@ -553,9 +531,6 @@ if ($sql_select) {
 	print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('TotalHT', $_SERVER['PHP_SELF'], 'total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('UnitPrice', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
-	$parameters = array('param'=>$param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print "</tr>\n";
 
 	$i = 0;
@@ -590,8 +565,6 @@ if ($sql_select) {
 		print '<td class="center">';
 		if ($type_element == 'contract') {
 			print $documentstaticline->getLibStatut(5);
-		} elseif ($documentstatic == null) {
-			// Do noting - for static analysis
 		} elseif ($type_element == 'invoice') {
 			// @phan-suppress-next-line PhanParamTooMany
 			print $documentstatic->getLibStatut(5, $objp->paid);
@@ -697,7 +670,7 @@ if ($sql_select) {
 			}
 		} else {
 			if ($objp->fk_product > 0) {
-				echo $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, '');
+				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 
 				// Show range
 				echo get_date_range($objp->date_start, $objp->date_end);
@@ -716,7 +689,7 @@ if ($sql_select) {
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						echo $form->textwithtooltip($text, dol_htmlentitiesbr($objp->description), 3, 0, '', (string) $i, 0, '');
+						echo $form->textwithtooltip($text, dol_htmlentitiesbr($objp->description), 3, '', '', $i, 0, '');
 					} else {
 						echo $text.' '.dol_htmlentitiesbr($objp->description);
 					}
@@ -759,9 +732,7 @@ if ($sql_select) {
 		$total_ht += (float) $objp->total_ht;
 
 		print '<td class="right">'.price($objp->total_ht / (empty($objp->prod_qty) ? 1 : $objp->prod_qty)).'</td>';
-		$parameters = array('obj' => $objp);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
+
 		print "</tr>\n";
 		$i++;
 	}
@@ -776,9 +747,6 @@ if ($sql_select) {
 	print '<td class="right">'.$total_qty.'</td>';
 	print '<td class="right">'.price($total_ht).'</td>';
 	print '<td class="right">'.price(price2num($total_ht / (empty($total_qty) ? 1 : $total_qty), 'MU')).'</td>';
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print "</table>";
 	print '</div>';
 
@@ -787,7 +755,7 @@ if ($sql_select) {
 	}
 	$db->free($resql);
 } elseif (empty($type_element) || $type_element == -1) {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', (!empty($num) ? $num : 0), '', '');
 
 	print '<table class="liste centpercent noborder">'."\n";
 	// Titles with sort buttons

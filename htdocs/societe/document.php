@@ -6,7 +6,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,8 +85,8 @@ $object = new Societe($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
+	$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
+	$courrier_dir = $conf->societe->multidir_output[$object->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -192,11 +192,10 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-$modulepart = 'company';
+$modulepart = 'societe';
 $permissiontoadd = $user->hasRight('societe', 'creer');
 $permtoedit = $user->hasRight('societe', 'creer');
 $param = '&id='.$object->id;
-$relativepathwithnofile = $object->id . '/';
 include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 
 // End of page

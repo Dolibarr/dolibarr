@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum / Wiki stuðning
+EMailSupport=Tölvupóst stuðning
+RemoteControlSupport=Online rauntíma / fjarlægur styðja
+OtherSupport=Annar stuðningur
+ToSeeListOfAvailableRessources=Til að hafa samband / sjá lista yfir auðlindir:
+HelpCenter=Hjálparmiðstöð AdWords
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+TypeSupportCommunauty=Samfélag (frítt)
+TypeSupportCommercial=Auglýsing
+TypeOfHelp=Tegund
+NeedHelpCenter=Need help or support?
+Efficiency=Nýtni
+TypeHelpOnly=Hjálp aðeins
+TypeHelpDev=Hjálp + Development
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=Styður tungumálum
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

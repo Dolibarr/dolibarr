@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
@@ -233,8 +233,7 @@ function displayBox($selectedDate, $month, $year)
 	//print "x ".$thedate." y";			// $thedate = first day of month
 	$firstdate = dol_getdate($thedate);
 	//var_dump($firstdateofweek);
-	$mydate_tmp = dol_get_first_day_week(1, $month, $year, true); // mydate = cursor date
-	$mydate = dol_getdate(dol_mktime(12, 0, 0, $mydate_tmp['first_month'], $mydate_tmp['first_day'], $mydate_tmp['first_year']));
+	$mydate = dol_get_first_day_week(1, $month, $year, true); // mydate = cursor date
 
 	// Loop on each day of month
 	$stoploop = 0;
@@ -242,7 +241,7 @@ function displayBox($selectedDate, $month, $year)
 	$cols = 0;
 	while (!$stoploop) {
 		//print_r($mydate);
-		if ($mydate[0] < $firstdate[0]) {	// At first run
+		if ($mydate < $firstdate) {	// At first run
 			echo "<tr class=\"dpWeek\">";
 			//echo $conf->global->MAIN_START_WEEK.' '.$firstdate["wday"].' '.$startday;
 			$cols = 0;
@@ -292,7 +291,7 @@ function displayBox($selectedDate, $month, $year)
 			$stoploop = 1;
 		} else {
 			$mydate = dol_getdate($thedate);
-			if ($firstdate["mon"] != $mydate["mon"]) {
+			if ($firstdate["month"] != $mydate["month"]) {
 				$stoploop = 1;
 			}
 		}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,10 +147,7 @@ class FormWebsite
 					}*/
 					if ($obj->typecontainer != $lasttypecontainer) {
 						$out .= '<option value="0" disabled>--- ';
-						$transcodecontainer = ucfirst($obj->typecontainer);	// Label of group of page type
-						if ($transcodecontainer == 'Library') {
-							$transcodecontainer = 'System';
-						}
+						$transcodecontainer = ucfirst($obj->typecontainer);
 						if ($obj->typecontainer == 'page') {
 							$transcodecontainer = 'CompletePage';
 						} elseif ($obj->typecontainer == 'container') {
@@ -261,7 +258,7 @@ class FormWebsite
 	 *  @param	int<0,1>	$showempty		Show empty record
 	 *  @param	string		$action			Action on page that use this select list
 	 *  @param	string		$morecss		More CSS
-	 *  @param	?array<int|string>	$excludeids	Exclude some ID in list
+	 *  @param	null|string[]	$excludeids	Exclude some ID in list
 	 * 	@return	string						HTML select component with list of block containers
 	 */
 	public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)
@@ -372,7 +369,7 @@ class FormWebsite
 				$arrayofsamples[$key] = $labelkey;
 			}
 		}
-		$out = '<div id="template-selector" class="template-selector template-container hidden">';
+		$out = '<div id="template-selector" class="template-container hidden">';
 
 		// We disable some not ready templates
 		unset($arrayofsamples['dynamiccontent']);
@@ -398,7 +395,6 @@ class FormWebsite
 		$out .= '<input type="hidden" name="sample" value="" />';
 		$out .= '</div>';
 
-		$out .= '<!-- Js code to manage choice of a page layout for website -->'."\n";
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {

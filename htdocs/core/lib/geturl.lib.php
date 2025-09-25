@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2008-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,34 +24,30 @@
 
 /**
  * Function to get a content from an URL (use proxy if proxy defined).
- * Support Dolibarr setup for timeout (MAIN_USE_*_TIMEOUT) and proxy (MAIN_PROXY_*)
+ * Support Dolibarr setup for timeout and proxy.
  * Enhancement of CURL to add an anti SSRF protection:
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
- * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.logfile.
- *
- * @param	string	  	$url 			    URL to call.
- * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
- * @param	string    	$param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
- * @param	int<0,1>  	$followlocation		0=Do not follow, 1=Follow location.
- * @param	string[]  	$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
- * @param	string[]  	$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
- * @param	int<0,2>  	$localurl			0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
- * @param	int<-1,1>  	$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
- * @param	int			$timeoutconnect		Timeout connect
- * @param	int			$timeoutresponse	Timeout response
- * @param	array<int, mixed>	$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
+ * @param	string	  $url 				    URL to call.
+ * @param	'POST'|'GET'|'HEAD'|'PUT'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
+ * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
+ * @param	int<0,1>  $followlocation		0=Do not follow, 1=Follow location.
+ * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
+ * @param	int<0,2>  $localurl				0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
+ * @param	int<-1,1>  $ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array())
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1)
 {
-	// Get global variables for proxy use
-	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
-	$PROXY_HOST = getDolGlobalString('MAIN_PROXY_HOST');
-	$PROXY_PORT = getDolGlobalInt('MAIN_PROXY_PORT');
-	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
-	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
+	//declaring of global variables
+	global $conf;
+	$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? 0 : $conf->global->MAIN_PROXY_USE;
+	$PROXY_HOST = !getDolGlobalString('MAIN_PROXY_HOST') ? 0 : $conf->global->MAIN_PROXY_HOST;
+	$PROXY_PORT = !getDolGlobalString('MAIN_PROXY_PORT') ? 0 : $conf->global->MAIN_PROXY_PORT;
+	$PROXY_USER = !getDolGlobalString('MAIN_PROXY_USER') ? 0 : $conf->global->MAIN_PROXY_USER;
+	$PROXY_PASS = !getDolGlobalString('MAIN_PROXY_PASS') ? 0 : $conf->global->MAIN_PROXY_PASS;
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
@@ -68,7 +63,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	 print $nvpStr;
 	 exit;*/
 	curl_setopt($ch, CURLOPT_VERBOSE, 1);
-	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');	// set the Dolibarr user agent name
+	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
 
 	// We use @ here because this may return warning if safe mode is on or open_basedir is on (following location is forbidden when safe mode is on).
 	// We force value to false so we will manage redirection ourself later.
@@ -79,15 +74,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
 
-	if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) {
-		curl_setopt($ch, CURLOPT_HEADER, true); // To be able to retrieve response header
-	}
-
 	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
-		$sslversion = is_numeric(getDolGlobalString('MAIN_CURL_SSLVERSION')) ? getDolGlobalInt('MAIN_CURL_SSLVERSION') : constant(getDolGlobalString('MAIN_CURL_SSLVERSION'));
-		curl_setopt($ch, CURLOPT_SSLVERSION, (int) $sslversion);
+		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 
@@ -125,21 +115,16 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		}
 	}
 
-	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
-	$newtimeoutresponse = ($timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
-
-	dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse);
-
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
-	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
 	if ($maxsize && defined('CURLOPT_MAXFILESIZE_LARGE')) {
-		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize * 1024);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal
+		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal
 	}
 	if ($maxsize && defined('CURLOPT_MAXFILESIZE')) {
-		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize * 1024);
+		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize);
 	}
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
@@ -151,10 +136,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); // HTTP request is 'POST' but param string is taken as it is
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
 	} elseif ($postorget == 'PUT') {
-		$array_param = array();
+		$array_param = null;
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
 		if (!is_array($param)) {
-			parse_str($param, $array_param);
+			parse_str($param, $array_param);  // @phan-suppress-current-line PhanPluginConstantVariableNull
 		} else {
 			dol_syslog("parameter param must be a string", LOG_WARNING);
 			$array_param = $param;
@@ -163,19 +148,6 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'PUTALREADYFORMATED') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
-	} elseif ($postorget == 'PATCH') {
-		$array_param = array();
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH'); // RFC 5789
-		if (!is_array($param)) {
-			parse_str($param, $array_param);
-		} else {
-			dol_syslog("parameter param must be a string", LOG_WARNING);
-			$array_param = $param;
-		}
-		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));
-	} elseif ($postorget == 'PATCHALREADYFORMATED') {
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH'); // RFC 5789
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $param);
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);
@@ -195,12 +167,6 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		}
 	}
 
-	if (is_array($otherCurlOptions)) {
-		foreach ($otherCurlOptions as $option => $value) {
-			curl_setopt($ch, $option, $value);
-		}
-	}
-
 	$newUrl = $url;
 	$maxRedirection = 5;
 	$info = array();
@@ -208,7 +174,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	do {
 		if ($maxRedirection < 1) {
-			return array('http_code' => 400, 'content' => 'Maximum number of redirections reached', 'curl_error_no' => 1, 'curl_error_msg' => 'Maximum number of redirections reached');
+			break;
 		}
 
 		curl_setopt($ch, CURLOPT_URL, $newUrl);
@@ -222,7 +188,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		if (in_array($hosttocheck, array('metadata.google.internal'))) {
 			$info['http_code'] = 400;
 			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
-			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
+			break;
 		}
 
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
@@ -250,7 +216,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			if ($tmpresult) {
 				$info['http_code'] = 400;
 				$info['content'] = $tmpresult;
-				return array('http_code' => 400, 'content' => $tmpresult, 'curl_error_no' => 1, 'curl_error_msg' => $tmpresult);
+				break;
 			}
 		}
 
@@ -275,7 +241,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		*/
 
 		// Getting response from server
-		$response = curl_exec($ch);		// return false on error, result on success
+		$response = curl_exec($ch);
 
 		$info = curl_getinfo($ch); // Reading of request must be done after sending request
 		$http_code = $info['http_code'];
@@ -303,13 +269,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$rep = array();
 	if (curl_errno($ch)) {
 		// Add keys to $rep
-		if ($response) {
-			$rep['content'] = (string) $response;
-		} else {
-			$rep['content'] = '';
-		}
+		$rep['content'] = $response;
 
-		$rep['http_code'] = 0;
+		// moving to display page to display curl errors
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
 
@@ -317,34 +279,23 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} else {
 		//$info = curl_getinfo($ch);
 
-		// Return all fields found into $info.
+		// Add keys to $rep
 		$rep = $info;
-		//$rep['header_size'] = $info['header_size'];
-		//$rep['http_code'] = $info['http_code'];
-		//$rep['content_type'] = $info['http_code'];
-
+		//$rep['header_size']=$info['header_size'];
+		//$rep['http_code']=$info['http_code'];
 		dol_syslog("getURLContent http_code=".$rep['http_code']);
 
 		// Add more keys to $rep
 		if ($response) {
-			$rep['content'] = (string) $response;
-			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
-				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
-				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
-			}
-		} else {
-			$rep['content'] = '';
+			$rep['content'] = $response;
 		}
-
-		$rep['curl_error_no'] = 0;
+		$rep['curl_error_no'] = '';
 		$rep['curl_error_msg'] = '';
 	}
 
 	//closing the curl
 	curl_close($ch);
 
-	// We must exclude phpstant wwarning, because all fields found in result of curl_getinfo may not be all defined into description of this method.
-	// @phpstan-ignore-next-line
 	return $rep;
 }
 
@@ -405,10 +356,9 @@ function isIPAllowed($iptocheck, $localurl)
 
 /**
  * Function get second level domain name.
- * For example: https://www.abc.mydomain.com/dir/page.html returns 'mydomain' with mode 0, 'mydomain.om' with mode 1, 'abc.mydomain.com' with mode 2.
- * For example: part1@mydomain.com returns 'mydomain.com' with mode 1
+ * For example: https://www.abc.mydomain.com/dir/page.html return 'mydomain'
  *
- * @param	string	  $url 				    Full URL or Email.
+ * @param	string	  $url 				    Full URL.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
  */
@@ -433,10 +383,8 @@ function getDomainFromURL($url, $mode = 0)
 		$mode++;
 	}
 
-	$tmpdomain = preg_replace('/^https?:\/\/[^:]+:[^@]+@/i', '', $url); 	// Remove http(s)://login@pass in https://login@pass:mydomain.com/path, so we now got mydomain.com/path
-	$tmpdomain = preg_replace('/^https?:\/\//i', '', $tmpdomain); 			// Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); 					// Remove part after /
-	$tmpdomain = preg_replace('/^[^@]+@/i', '', $tmpdomain); 				// Remove part1@ in part1@part2 (for emails)
+	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after /
 	if ($mode == 3) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
 	} elseif ($mode == 2) {

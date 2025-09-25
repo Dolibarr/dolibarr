@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014 		Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -76,9 +76,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 
 			//see #21072: Update a public note with a "document model not found" is not really a problem : the PDF is not created/updated
 			//but the note is saved, so just add a notification will be enough
-
 			$resultGenDoc = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
 			if ($resultGenDoc < 0) {
 				setEventMessages($object->error, $object->errors, 'warnings');
 			}

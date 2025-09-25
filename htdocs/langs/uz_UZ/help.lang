@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum / Wiki-ni qo'llab-quvvatlash
+EMailSupport=Elektron pochta xabarlarini qo'llab-quvvatlash
+RemoteControlSupport=Onlayn real vaqtda / masofadan qo'llab-quvvatlash
+OtherSupport=Boshqa yordam
+ToSeeListOfAvailableRessources=Mavjud manbalarga murojaat qilish / ko'rish uchun:
+HelpCenter=Yordam markazi
+DolibarrHelpCenter=Dolibarr yordam va qo'llab-quvvatlash markazi
+ToGoBackToDolibarr=Aks holda, Dolibarr </a> dan foydalanishda davom etish uchun <a href="%s"> bu erni bosing.
+TypeOfSupport=Qo'llab-quvvatlash turi
+TypeSupportCommunauty=Hamjamiyat (bepul)
+TypeSupportCommercial=Tijorat
+TypeOfHelp=Turi
+NeedHelpCenter=Yordam kerakmi?
+Efficiency=Samaradorlik
+TypeHelpOnly=Faqat yordam bering
+TypeHelpDev=Yordam + taraqqiyot
+TypeHelpDevForm=Yordam + taraqqiyot + trening
+BackToHelpCenter=Aks holda, <a href="%s"> yordam markazining asosiy sahifasi </a>-ga qaytadi.
+LinkToGoldMember=O'zingizning tilingiz uchun Dolibarr tomonidan tanlangan murabbiylardan biriga (%s) ularning vidjetini bosish orqali qo'ng'iroq qilishingiz mumkin (holat va maksimal narx avtomatik ravishda yangilanadi):
+PossibleLanguages=Qo'llab-quvvatlanadigan tillar
+SubscribeToFoundation=Dolibarr loyihasiga yordam bering, fondga obuna bo'ling
+SeeOfficalSupport=Sizning tilingizda rasmiy Dolibarr yordami uchun: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> a09a4b739f170

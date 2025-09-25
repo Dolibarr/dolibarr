@@ -2,7 +2,6 @@
 IdAgenda=Ҳодисаи ID
 Actions=Чорабиниҳо
 Agenda=Рузнома
-AgendaEvents=Чорабиниҳои рӯзнома
 TMenuAgenda=Рузнома
 Agendas=Рузнома
 LocalAgenda=Тақвими муқаррарӣ
@@ -45,7 +44,6 @@ PropalClosedRefusedInDolibarr=Пешниҳоди %s рад карда шуд
 PropalValidatedInDolibarr=Пешниҳоди %s тасдиқ карда шуд
 PropalBackToDraftInDolibarr=Пешниҳод %s ба ҳолати лоиҳа бармегардад
 PropalClassifiedBilledInDolibarr=Пешниҳоди %s таснифшуда ҳисоб карда мешавад
-InvoiceCreatedInDolibarr=Ҳисобнома-фактураи %s сохта шудааст
 InvoiceValidatedInDolibarr=Ҳисобнома -фактура %s тасдиқ карда шудааст
 InvoiceValidatedInDolibarrFromPos=Ҳисобнома -фактура %s аз POS тасдиқ карда шудааст
 InvoiceBackToDraftInDolibarr=Ҳисобнома -фактура %s ба ҳолати лоиҳа бармегардад
@@ -139,10 +137,10 @@ AgendaUrlOptions1=Шумо инчунин метавонед параметрҳ�
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint = %s </b> барои маҳдуд кардани натиҷа ба амалҳои ба корбар таъиншуда <b> %s </b> (соҳиб ва дигарон).
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b> барои маҳдуд кардани натиҷа ба амалҳои марбут ба лоиҳаи <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsType=<b>actiontype=%s>TXPROTECT-9a4b739fEND7 ё дастӣ ба таври худкор дастрас кунед.
-AgendaUrlOptionsCode=<b>actioncode=%s>TXPROTECT-9a4b739f-END7 танҳо бо код дода шудааст.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> inkludeholidays = 1 </b> барои дохил кардани рӯйдодҳои ид.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%sTXPROTECT-9a4b739fEND7 то охир дар <span>>%s рӯз (пешфарз %s аст).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
 AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Зодрӯзи тамосҳо
 AgendaHideBirthdayEvents=Зодрӯзи тамосҳоро пинҳон кунед
@@ -205,8 +203,5 @@ BookingSuccessfullyBooked=Бронкунии шумо захира карда ш
 BookingReservationHourAfter=Мо фармоиши вохӯрии худро дар санаи %s тасдиқ мекунем
 BookcalBookingTitle=Таъиноти онлайн
 Transparency = Шаффофият
-ReadMore = Бештар
-ReadLess = Камтар хонед
-RecurringEvent=Ҳодисаи такрорӣ
-EventPartOfARecurringSerie=Чорабинӣ як қисми силсилаи такроршаванда бо ID %s мебошад
-BookCalSystem=Бронкунии онлайн
+ReadMore = Read more
+ReadLess = Read less

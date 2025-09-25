@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,69 +42,21 @@ use Sprain\SwissQrBill;
  */
 abstract class ModelePDFFactures extends CommonDocGenerator
 {
-	/**
-	 * @var float
-	 */
 	public $posxpicture;
-	/**
-	 * @var float
-	 */
 	public $posxtva;
-	/**
-	 * @var float
-	 */
 	public $posxup;
-	/**
-	 * @var float
-	 */
 	public $posxqty;
-	/**
-	 * @var float
-	 */
 	public $posxunit;
-	/**
-	 * @var float
-	 */
 	public $posxdesc;
-	/**
-	 * @var float
-	 */
 	public $posxdiscount;
-	/**
-	 * @var float
-	 */
 	public $postotalht;
 
-
-	/**
-	 * @var array<string,float>
-	 */
 	public $tva;
-	/**
-	 * @var array<string,array{amount:float}>
-	 */
 	public $tva_array;
-	/**
-	 * Local tax rates Array[tax_type][tax_rate]
-	 *
-	 * @var array<int,array<string,float>>
-	 */
 	public $localtax1;
-
-	/**
-	 * Local tax rates Array[tax_type][tax_rate]
-	 *
-	 * @var array<int,array<string,float>>
-	 */
 	public $localtax2;
 
-	/**
-	 * @var int<0,1>
-	 */
 	public $atleastonediscount = 0;
-	/**
-	 * @var int<0,1>
-	 */
 	public $atleastoneratenotnull = 0;
 
 
@@ -225,7 +177,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		// Add payment amount, with currency
 		$pai = SwissQrBill\DataGroup\Element\PaymentAmountInformation::create($currencyinvoicecode, $object->total_ttc);
 		if (!$pai->isValid()) {
-			$this->error = $langs->transnoentities("SwissQrPaymentInformationInvalid", (string) $object->total_ttc, (string) $pai->getViolations());
+			$this->error = $langs->transnoentities("SwissQrPaymentInformationInvalid", $object->total_ttc, (string) $pai->getViolations());
 			return false;
 		}
 		$qrBill->setPaymentAmountInformation($pai);

@@ -20,6 +20,11 @@
  * or see https://www.gnu.org/
  */
 
+// Variable $upload_dir must be defined when entering here.
+// Variable $upload_dirold may also exists.
+// Variable $confirm must be defined.
+// If variable $permissiontoadd is defined, we check it is true. Note: A test on permission should already have been done into the restrictedArea() method called by parent page.
+
 /**
  * @var CommonObject $object
  * @var Conf $conf
@@ -28,11 +33,9 @@
  * @var Translate $langs
  * @var User $user
  *
- * @var string $action
  * @var string $upload_dir
  * @var string $upload_dirold
  * @var string $confirm
- * @var int	$permissiontoadd	If variable $permissiontoadd is defined, we check it is true. Note: A test on permission should already have been done into the restrictedArea() method called by parent page.
  * @var	string $forceFullTextIndexation
  */
 '
@@ -94,12 +97,11 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 				$generatethumbs = 0;
 			}
 			$allowoverwrite = (GETPOSTINT('overwritefile') ? 1 : 0);
-			$forceFullTextIndexation = (!empty($forceFullTextIndexation) ? $forceFullTextIndexation : '');
 
 			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
-				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, empty($forceFullTextIndexation) ? 0 : $forceFullTextIndexation);
+				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, $forceFullTextIndexation);
 			} elseif (!empty($upload_dir)) {
-				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, empty($forceFullTextIndexation) ? 0 : $forceFullTextIndexation);
+				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, $forceFullTextIndexation);
 			}
 		}
 	}
@@ -215,14 +217,6 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$link->url = 'http://'.$link->url;
 		}
 		$link->label = GETPOST('label', 'alphanohtml');
-
-		$shareenabled = GETPOST('shareenabled', 'alpha');
-		if ($shareenabled) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$link->share = getRandomPassword(true);
-		} else {
-			$link->share = '';
-		}
 		$res = $link->update($user);
 		if (!$res) {
 			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');
@@ -295,7 +289,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 						$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 						setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
 					} elseif (!file_exists($destpath)) {
-						$result = dol_move($srcpath, $destpath, '0', 1, 0, 1, [], $object->entity ?? 0);
+						$result = dol_move($srcpath, $destpath);
 						if ($result) {
 							// Define if we have to generate thumbs or not
 							$generatethumbs = 1;

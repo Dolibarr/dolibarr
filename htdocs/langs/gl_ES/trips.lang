@@ -159,4 +159,3 @@ TF_TRAIN=Trén
 TF_TRIP=Transporte
 FailedToSetPaid=Non se puido clasificar como pagamento
 FailedToSetToCancel=Produciuse un erro ao cancelar
-NobodyHasPermissionToValidateExpenseReport=Ninguén ten permiso para validar o informe de gastos

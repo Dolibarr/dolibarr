@@ -1,38 +1,40 @@
-IntraCommReport=Sisekommunikatsiooni aruanne
-IntraCommReports=Sisekommunikatsiooni aruanded
-
-Module68000Name = Sisekommunikatsiooni aruanne
-Module68000Desc = Intracomm aruannete haldus (Prantsuse DEB/DES-vormingu tugi)
-IntracommReportSetup = Sisemise kommunikatsiooni mooduli seadistamine
-IntracommReportAbout = Teave intracommreporti kohta
+Module68000Name = Intracomm report
+Module68000Desc = Intracomm report management (Support for French DEB/DES format)
+IntracommReportSetup = Intracommreport module setup
+IntracommReportAbout = About intracommreport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (delivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Tegevjuht
-INTRACOMMREPORT_ROLE_ACTEUR=Näitleja roll
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les tutvustused
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Teenuste kategooria "Frais de port"
-INTRACOMMREPORT_NUM_DECLARATION=Deklarandi number
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+
 # Menu
-MenuIntracommReport=Sisekommunikatsiooni aruanne
-MenuIntracommReportNew=Uus deklaratsioon
+MenuIntracommReport=Intracomm report
+MenuIntracommReportNew=New declaration
 MenuIntracommReportList=Loend
+
 # View
-NewDeclaration=Uus deklaratsioon
-Declaration=Deklaratsioon
-AnalysisPeriod=Analüüsiperiood
-TypeOfDeclaration=Deklaratsiooni tüüp
-DEB=Kaubavahetusdeklaratsioon (DEB)
-DES=Teenusevahetuse deklaratsioon (DES)
+NewDeclaration=New declaration
+Declaration=Declaration
+AnalysisPeriod=Analysis period
+TypeOfDeclaration=Type of declaration
+DEB=Goods exchange declaration (DEB)
+DES=Services exchange declaration (DES)
+
 # Export page
-IntracommReportTitle=XML-faili ettevalmistamine ProDouane'i vormingus
+IntracommReportTitle=Preparation of an XML file in ProDouane format
+
 # List
-IntracommReportList=Genereeritud deklaratsioonide loend
-IntracommReportNumber=Deklaratsiooni number
-IntracommReportPeriod=Analüüsiperiood
-IntracommReportTypeDeclaration=Deklaratsiooni tüüp
-IntracommReportDownload=Laadige alla XML-fail
+IntracommReportList=List of generated declarations
+IntracommReportNumber=Numero of declaration
+IntracommReportPeriod=Period of nalysis
+IntracommReportTypeDeclaration=Type of declaration
+IntracommReportDownload=download XML file
+
 # Invoice
-IntracommReportTransportMode=Transpordiliik
-DeleteIntraCommReport=Kustuta IntraCommi aruanne
+IntracommReportTransportMode=Transport mode

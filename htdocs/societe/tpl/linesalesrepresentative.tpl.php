@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,14 +55,14 @@ if ($action == 'editsalesrepresentatives') {
 	if (empty($arrayselected)) {
 		$arrayselected = $object->getSalesRepresentatives($user, 1);
 	}
-	print $form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, '', 0, "90%");
+	print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
 	print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'" />';
 	print '</form>';
 } else {
 	$listsalesrepresentatives = $object->getSalesRepresentatives($user);
 
-	$nbofsalesrepresentative = is_array($listsalesrepresentatives) ? count($listsalesrepresentatives) : 0;
-	if ($nbofsalesrepresentative > 0) {
+	$nbofsalesrepresentative = count($listsalesrepresentatives);
+	if ($nbofsalesrepresentative > 0 && is_array($listsalesrepresentatives)) {
 		$userstatic = new User($db);
 		foreach ($listsalesrepresentatives as $val) {
 			$userstatic->id = $val['id'];

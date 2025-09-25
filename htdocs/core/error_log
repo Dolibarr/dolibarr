@@ -1,0 +1,618 @@
+[18-May-2025 02:35:20 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[18-May-2025 02:35:20 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[18-May-2025 02:35:45 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[18-May-2025 02:35:45 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[18-May-2025 02:35:49 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[18-May-2025 02:35:49 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:03:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:04:41 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:05:16 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:06:09 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:02 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[26-May-2025 01:07:28 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:34:28 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:35:26 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:36:01 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key "t__fk_soc.code_client" in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Trying to access array offset on value of type null in /home/sa419684/cloudorder.gr/dolibarr/core/customreports.php on line 501
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:36:53 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:37:33 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:38:00 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:38:27 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:38:47 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:39:03 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[27-Jun-2025 14:39:08 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:05:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:06:49 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:07:07 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:08:05 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:09:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:10:14 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:11:23 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[28-Jun-2025 12:13:09 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:04:37 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[06-Sep-2025 15:04:37 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:04:50 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[06-Sep-2025 15:04:50 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:04:54 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[06-Sep-2025 15:04:54 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[06-Sep-2025 15:04:54 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:04:54 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:05:01 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[06-Sep-2025 15:05:01 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[06-Sep-2025 15:05:01 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[06-Sep-2025 15:05:01 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 765
+[06-Sep-2025 15:05:01 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:05:01 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:05:01 Europe/Athens] PHP Warning:  Undefined array key 1 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:05:01 Europe/Athens] PHP Warning:  Undefined array key 2 in /home/sa419684/cloudorder.gr/dolibarr/core/class/dolgraph.class.php on line 735
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 544
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 608
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 69
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 154
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 219
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 323
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 384
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  Undefined property: CLeadStatus::$fields in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488
+[06-Sep-2025 15:05:23 Europe/Athens] PHP Warning:  foreach() argument must be of type array|object, null given in /home/sa419684/cloudorder.gr/dolibarr/core/lib/customreports.lib.php on line 488

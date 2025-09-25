@@ -147,6 +147,7 @@ NoUserAssignedToTheProject=No hay usuarios asignados a este proyecto
 TimeSpentBy=Tiempo empleado por
 AssignTaskToMe=Asignarme tarea a mi mismo
 AssignTaskToUser=Asignar tarea a %s
+SelectTaskToAssign=Seleccionar tarea para asignar...
 ProjectOverview=Descripción general
 ManageTasks=Use proyectos para seguir tareas y/o informar el tiempo dedicado (hojas de tiempo)
 ManageOpportunitiesStatus=Utilice proyectos para seguir clientes potenciales/oportunidades

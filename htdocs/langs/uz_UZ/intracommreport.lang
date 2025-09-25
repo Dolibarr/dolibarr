@@ -1,6 +1,3 @@
-IntraCommReport=Intracomm hisoboti
-IntraCommReports=Intracomm xabar beradi
-
 Module68000Name = Ichki hisobot
 Module68000Desc = Ichki hisobotlarni boshqarish (Frantsiyaning DEB / DES formatini qo'llab-quvvatlash)
 IntracommReportSetup = Hisobot ichidagi modulni sozlash
@@ -35,4 +32,3 @@ IntracommReportTypeDeclaration=Deklaratsiya turi
 IntracommReportDownload=XML faylini yuklab oling
 # Invoice
 IntracommReportTransportMode=Transport rejimi
-DeleteIntraCommReport=IntraComm hisobotini o'chirish

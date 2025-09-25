@@ -139,7 +139,6 @@ if (empty($conf->dol_no_mouse_hover)) {
 
 print '
 	jQuery(".classfortooltiponclicktext").dialog({
-		/* title: \'No title\', */
 		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
 		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700).',
 		modal: true,
@@ -166,6 +165,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   // Click onto the link "link to" or "hamburger", toggle dropdown
 				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
+                  	  setTimeout(() => { $(\'.inputsearch_dropdownselectedfields\').focus(); }, 200);
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
                       $(".ulselectedfields").removeClass("open");
@@ -233,11 +233,7 @@ if ($conf->browser->layout != 'phone') {
 					// Click on the preview picto
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-						var titledocpreview = $(this).attr(\'data-title\');
-						if (titledocpreview == undefined || titledocpreview == "") {
-							titledocpreview = \''.dol_escape_js($langs->transnoentities("Preview")).'\'
-						}
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), titledocpreview);
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
                 		return false;
         			});
 		});'."\n";
@@ -420,7 +416,3 @@ print '
 		});
 	});
 '."\n";
-
-
-// JS CODE USED by form::getSearchFilterToolInput
-include __DIR__ . '/lib_foot_search_tool.js';

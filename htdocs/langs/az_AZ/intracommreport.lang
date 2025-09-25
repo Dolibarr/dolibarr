@@ -1,38 +1,40 @@
-IntraCommReport=İntracomm hesabatı
-IntraCommReports=Bu barədə “Intracomm” məlumat yayıb
-
-Module68000Name = İntracomm hesabatı
-Module68000Desc = İntracomm hesabat idarəetməsi (Fransız DEB/DES formatı üçün dəstək)
-IntracommReportSetup = Intracommreport modulunun qurulması
-IntracommReportAbout = İntracommreport haqqında
+Module68000Name = Intracomm report
+Module68000Desc = Intracomm report management (Support for French DEB/DES format)
+IntracommReportSetup = Intracommreport module setup
+IntracommReportAbout = About intracommreport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (CISD de rattachement üçün delivré par le CISD)
-INTRACOMMREPORT_TYPE_ACTEUR=Aktyor növü
-INTRACOMMREPORT_ROLE_ACTEUR=Rol joué par l'akteur
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expeditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT="Frais de port" tipli xidmətlər kateqoriyası
-INTRACOMMREPORT_NUM_DECLARATION=Nömrə deklarant
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+
 # Menu
-MenuIntracommReport=İntracomm hesabatı
-MenuIntracommReportNew=Yeni bəyannamə
-MenuIntracommReportList=Siyahı
+MenuIntracommReport=Intracomm report
+MenuIntracommReportNew=New declaration
+MenuIntracommReportList=List
+
 # View
-NewDeclaration=Yeni bəyannamə
-Declaration=Bəyannamə
-AnalysisPeriod=Analiz dövrü
-TypeOfDeclaration=Bəyannamənin növü
-DEB=Mal mübadiləsi bəyannaməsi (DEB)
-DES=Xidmətlərin Mübadilə Bəyannaməsi (DES)
+NewDeclaration=New declaration
+Declaration=Declaration
+AnalysisPeriod=Analysis period
+TypeOfDeclaration=Type of declaration
+DEB=Goods exchange declaration (DEB)
+DES=Services exchange declaration (DES)
+
 # Export page
-IntracommReportTitle=ProDouane formatında XML faylının hazırlanması
+IntracommReportTitle=Preparation of an XML file in ProDouane format
+
 # List
-IntracommReportList=Yaradılmış bəyannamələrin siyahısı
-IntracommReportNumber=Bəyannamənin sayı
-IntracommReportPeriod=Təhlil müddəti
-IntracommReportTypeDeclaration=Bəyannamənin növü
-IntracommReportDownload=XML faylını yükləyin
+IntracommReportList=List of generated declarations
+IntracommReportNumber=Numero of declaration
+IntracommReportPeriod=Period of nalysis
+IntracommReportTypeDeclaration=Type of declaration
+IntracommReportDownload=download XML file
+
 # Invoice
-IntracommReportTransportMode=Nəqliyyat rejimi
-DeleteIntraCommReport=IntraComm hesabatını silin
+IntracommReportTransportMode=Transport mode

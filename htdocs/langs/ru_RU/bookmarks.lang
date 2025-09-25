@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Добавить текущую страницу в закладки
+Bookmark=Закладка
+Bookmarks=Закладки
+ListOfBookmarks=Список закладок
+EditBookmarks=Список/редактирование закладок
+NewBookmark=Новая закладка
+ShowBookmark=Показать закладку
+OpenANewWindow=Открыть новую вкладку
+ReplaceWindow=Заменить текущую вкладку
+BookmarkTargetNewWindowShort=Новая вкладка
+BookmarkTargetReplaceWindowShort=Текущая вкладка
+BookmarkTitle=Имя закладки
+UrlOrLink=URL
+BehaviourOnClick=Поведение когда выбран URL закладки
+CreateBookmark=Создать закладку
+SetHereATitleForLink=Задать имя закладки
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Выберите, должна ли связанная страница открываться в текущей вкладке или в новой вкладке
+BookmarksManagement=Управление закладками
+BookmarksMenuShortCut=Ctrl + Shift + M
+NoBookmarks=Закладки не определены

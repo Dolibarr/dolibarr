@@ -64,7 +64,3 @@ NoPositionOpen=এই মুহূর্তে কোনো পজিশন খ�
 ConfirmClose=বাতিল নিশ্চিত করুন
 ConfirmCloseAsk=আপনি কি নিশ্চিত যে আপনি এই নিয়োগের প্রার্থীতা বাতিল করতে চান?
 Recruitment=নিয়োগ
-ApplyJobCandidature=এই চাকরির জন্য আবেদন করুন
-ErrorRecruitmmentCandidatureAlreadyExists= নিয়োগের জন্য প্রার্থীতা ইতিমধ্যেই ইমেলের মাধ্যমে বিদ্যমান %s
-RecruitmentCandidatureSaved=নিয়োগের প্রার্থীতা সফলভাবে সংরক্ষিত হয়েছে
-NoOpenJobOffer=এই মুহূর্তে কোনও চাকরির অফার নেই

@@ -2,7 +2,6 @@
 IdAgenda=รหัสเหตุการณ์
 Actions=เหตุการณ์ที่เกิดขึ้น
 Agenda=ระเบียบวาระการประชุม
-AgendaEvents=กิจกรรมวาระ
 TMenuAgenda=ระเบียบวาระการประชุม
 Agendas=วาระ
 LocalAgenda=ปฏิทินเริ่มต้น
@@ -45,7 +44,6 @@ PropalClosedRefusedInDolibarr=ข้อเสนอ %s ที่ปฏิเส�
 PropalValidatedInDolibarr=ข้อเสนอ %sที่ตรวจสอบแล้ว
 PropalBackToDraftInDolibarr=ข้อเสนอ %s กลับไปเป็นสถานะแบบร่าง
 PropalClassifiedBilledInDolibarr=ข้อเสนอ %s จัดประเภทเรียกเก็บเงิน
-InvoiceCreatedInDolibarr=สร้างใบแจ้งหนี้ %s แล้ว
 InvoiceValidatedInDolibarr=ใบแจ้งหนี้ %s ตรวจสอบแล้ว
 InvoiceValidatedInDolibarrFromPos=ใบแจ้งหนี้ %s ตรวจสอบจาก POS
 InvoiceBackToDraftInDolibarr=ใบแจ้งหนี้ %s กลับสถานะไปเป็นแบบร่าง
@@ -88,8 +86,8 @@ ShippingSentByEMail=การจัดส่ง %s ส่งทางอีเ�
 ShippingValidated= การจัดส่ง %s ตรวจสอบแล้ว
 InterventionSentByEMail=การแทรกแซง %s ส่งทางอีเมล
 ProjectSentByEMail=โครงการ %s ส่งทางอีเมล
-ProjectDeletedInDolibarr=โครงการ %s ถูกลบแล้ว
-ProjectClosedInDolibarr=โครงการ %s ปิดแล้ว
+ProjectDeletedInDolibarr=Project %s deleted
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=ลบข้อเสนอแล้ว
 OrderDeleted=ลบคำสั่งซื้อแล้ว
 InvoiceDeleted=ลบใบแจ้งหนี้แล้ว
@@ -136,14 +134,14 @@ AgendaModelModule=แม่แบบเอกสารสำหรับกิ�
 DateActionStart=วันที่เริ่มต้น
 DateActionEnd=วันที่สิ้นสุด
 AgendaUrlOptions1=นอกจากนี้คุณยังสามารถเพิ่มพารามิเตอร์ต่อไปนี้เพื่อกรองเอาท์พุท:
-AgendaUrlOptions3=<b>logina=%s</b> เพื่อจำกัดผลลัพธ์ให้เป็นการกระทำที่เป็นของผู้ใช้ <b>%s</b> (ใช้ <b>logina=!%s</b> สำหรับเหตุการณ์ที่ไม่ได้เป็นเจ้าของโดยผู้ใช้)
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> เพื่อจำกัดเอาต์พุตเป็นการดำเนินการที่กำหนดให้กับผู้ใช้ <b>%s</b> (เจ้าของและคนอื่นๆ)
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> เพื่อจำกัดเอาต์พุตสำหรับการดำเนินการที่เชื่อมโยงกับโปรเจ็กต์ <b> __PROJECT_ID__</b>
-AgendaUrlOptionsType=<b>actiontype=%s</b> เพื่อรับเหตุการณ์อัตโนมัติหรือด้วยตนเอง
-AgendaUrlOptionsCode=<b>actioncode=%s</b> เพื่อรับเฉพาะเหตุการณ์ที่มีรหัสที่กำหนดเท่านั้น
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> เพื่อรวมกิจกรรมในวันหยุด
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> เพื่อจำกัดเฉพาะเหตุการณ์ในช่วง %s วันล่าสุด (ค่าเริ่มต้นคือ %s)
-AgendaUrlOptionsLimit=<b>limit=50</b> จำกัดให้มีเพียง 50 เหตุการณ์ล่าสุด (ค่าเริ่มต้นและค่าสูงสุดคือ %s)
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=วันเกิดของผู้ติดต่อ
 AgendaHideBirthdayEvents=ซ่อนวันเกิดของผู้ติดต่อ
 Busy=ไม่ว่าง
@@ -204,9 +202,6 @@ AppointmentDuration = ระยะเวลาการนัดหมาย : %
 BookingSuccessfullyBooked=บันทึกการจองของคุณแล้ว
 BookingReservationHourAfter=เรายืนยันการจองการประชุมของเราในวันที่ %s
 BookcalBookingTitle=การนัดหมายออนไลน์
-Transparency = ความโปร่งใส
-ReadMore = อ่านเพิ่มเติม
-ReadLess = อ่านน้อยลง
-RecurringEvent=กิจกรรมที่เกิดขึ้นซ้ำ
-EventPartOfARecurringSerie=กิจกรรมนี้เป็นส่วนหนึ่งของซีรีย์ที่เกิดขึ้นซ้ำโดยมี ID %s
-BookCalSystem=จองออนไลน์
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

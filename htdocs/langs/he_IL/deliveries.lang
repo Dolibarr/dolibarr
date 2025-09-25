@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=מְסִירָה
+DeliveryRef=Ref משלוח
+DeliveryCard=Delivery receipt
+DeliveryOrder=קבלת משלוח
+DeliveryDate=תאריך משלוח
+CreateDeliveryOrder=צור קבלה על משלוח
+DeliveryStateSaved=מצב המסירה נשמר
+SetDeliveryDate=קבע תאריך משלוח
+ValidateDeliveryReceipt=אימות קבלה על משלוח
+ValidateDeliveryReceiptConfirm=האם אתה בטוח שברצונך לאמת את קבלת המשלוח הזו?
+DeleteDeliveryReceipt=מחק קבלה על משלוח
+DeleteDeliveryReceiptConfirm=האם אתה בטוח שברצונך למחוק את קבלת המסירה <b>%s</b>?
+DeliveryMethod=שיטת אספקה
+TrackingNumber=מספר מעקב
+DeliveryNotValidated=משלוח לא אושר
+StatusDeliveryCanceled=מבוטל
+StatusDeliveryDraft=טְיוּטָה
+StatusDeliveryValidated=קיבלו
+# merou PDF model
+NameAndSignature=שם וחתימה:
+ToAndDate=ל_________________________________ בתאריך ____/_____/__________
+GoodStatusDeclaration=קיבלתי את הסחורה למעלה במצב טוב,
+Deliverer=מוֹשִׁיעַ:
+Sender=שׁוֹלֵחַ
+Recipient=מקבל
+ErrorStockIsNotEnough=אין מספיק מלאי
+Shippable=ניתן למשלוח
+NonShippable=לא ניתן למשלוח
+ShowShippableStatus=הצג סטטוס ניתן למשלוח
+ShowReceiving=הצג קבלה על משלוח
+NonExistentOrder=סדר לא קיים
+StockQuantitiesAlreadyAllocatedOnPreviousLines = כמויות מלאי שכבר הוקצו בקווים קודמים

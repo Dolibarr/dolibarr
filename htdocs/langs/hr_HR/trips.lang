@@ -157,5 +157,5 @@ TF_PEAGE=Cestarina
 TF_TAXI=Taxi
 TF_TRAIN=Vlak
 TF_TRIP=Prijevoz
-FailedToSetPaid=Postavljanje kao plaćeno nije uspjelo
-FailedToSetToCancel=Otkazivanje nije uspjelo
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel

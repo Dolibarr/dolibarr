@@ -72,15 +72,10 @@ class mod_workstation_advanced extends ModeleNumRefWorkstation
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstWorkstation" value="WORKSTATION_WORKSTATION_ADVANCED_MASK">';
-		$texte .= '<input type="hidden" name="page_y" value="">';
-
-		$texte .= '<table class="nobordernopadding centpercent">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Workstation"), $langs->transnoentities("Workstation"));
-		$tooltip .= $langs->trans("GenericMaskCodes1");
-		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
-		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Workstation"), $langs->transnoentities("Workstation"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
@@ -90,7 +85,7 @@ class mod_workstation_advanced extends ModeleNumRefWorkstation
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskWorkstation" value="'.getDolGlobalString('WORKSTATION_WORKSTATION_ADVANCED_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 

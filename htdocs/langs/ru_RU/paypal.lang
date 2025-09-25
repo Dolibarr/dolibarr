@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
-PaypalSetup=Настройка модуля PayPal
-PaypalDesc=Этот модуль позволяет клиентам осуществлять платежи через <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Это можно использовать для специального платежа или для платежа, связанного с объектом Dolibarr (счет, заказ, ...)
+PaypalSetup=Настройка модуля PayPal 
+PaypalDesc=Этот модуль позволяет клиентам производить оплату через <a href="http://www.paypal.com" target="_blank">PayPal</a>. Его можно использовать для специального платежа или для платежа, связанного с объектом Dolibarr (счет, заказ, ...)
 PaypalOrCBDoPayment=Оплата через PayPal (карта или PayPal)
 PaypalDoPayment=Оплата с PayPal
 PAYPAL_API_SANDBOX=Режим тестирования / песочницы
@@ -34,4 +34,3 @@ ARollbackWasPerformedOnPostActions=Откат был выполнен для в�
 ValidationOfPaymentFailed=Проверка платежа не удалась
 CardOwner=Держатель карты
 PayPalBalance=Paypal кредит
-OnlineSubscriptionPaymentLine=Онлайн подписание, записано %s<br>Оплачено через %s<br>Исходный IP-адрес: %s<br> Транзакция ID: %s

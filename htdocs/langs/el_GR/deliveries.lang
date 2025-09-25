@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Παράδοση
+DeliveryRef=Αναφορά Παράδοσης
+DeliveryCard=Αποδεικτικό παράδοσης
+DeliveryOrder=Αποδεικτικό παράδοσης
+DeliveryDate=Ημερομηνία παράδοσης
+CreateDeliveryOrder=Δημιουργία αποδεικτικού παράδοσης
+DeliveryStateSaved=Αποθηκεύτηκε η κατάσταση παράδοσης
+SetDeliveryDate=Ορισμός ημερομηνίας εκτιμώμενης παράδοσης
+SetShippingDate=Ορίστε ημερομηνία αποστολής
+ValidateDeliveryReceipt=Επικύρωση παράδοσης παραλαβής
+ValidateDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να επικυρώσετε αυτήν την απόδειξη παράδοσης;
+DeleteDeliveryReceipt=Διαγραφή αποδεικτικού παράδοσης
+DeleteDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να διαγράψετε την απόδειξη παράδοσης <b>%s</b>;
+DeliveryMethod=Μέθοδος παράδοσης
+TrackingNumber=Αριθμός παρακολούθησης
+DeliveryNotValidated=Η παράδοση δεν επικυρώνονται
+StatusDeliveryCanceled=Ακυρώθηκε
+StatusDeliveryDraft=Πρόχειρο
+StatusDeliveryValidated=Παρελήφθη
+# merou PDF model
+NameAndSignature=Όνομα και Υπογραφή:
+ToAndDate=Σε ___________________________________ στις ____/_____/__________
+GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή κατάσταση
+Deliverer=Διανομέας:
+Sender=Αποστολέας
+Recipient=Παραλήπτης
+ErrorStockIsNotEnough=Δεν υπάρχει αρκετό απόθεμα
+Shippable=Για Αποστολή
+NonShippable=Δεν αποστέλλονται
+ShowShippableStatus=Εμφάνιση κατάστασης προς αποστολή
+ShowReceiving=Εμφάνιση αποδεικτικού παράδοσης
+NonExistentOrder=Ανύπαρκτη παραγγελία
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Οι ποσότητες του αποθέματος έχουν ήδη επιμεριστεί σε προηγούμενες γραμμές

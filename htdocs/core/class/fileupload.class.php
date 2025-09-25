@@ -1,9 +1,8 @@
 <?php
-
 /* Copyright (C) 2011-2022	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +161,7 @@ class FileUpload
 				'options' => &$options,
 				'element' => $element
 			),
-			$object,  // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
+			$object,
 			$action
 		);
 
@@ -420,7 +419,6 @@ class FileUpload
 	 * @param 	string		$error				Error
 	 * @param	string		$index				Index
 	 * @return stdClass|null
-	 * @see dol_add_file_process()
 	 */
 	protected function handleFileUpload($uploaded_file, $name, $size, $type, $error, $index)
 	{
@@ -432,7 +430,7 @@ class FileUpload
 
 		// Sanitize to avoid stream execution when calling file_size(). Not that this is a second security because
 		// most streams are already disabled by stream_wrapper_unregister() in filefunc.inc.php
-		$uploaded_file = preg_replace('/\s*(http|ftp|sftp|)s?:/i', '', $uploaded_file);
+		$uploaded_file = preg_replace('/\s*(http|ftp)s?:/i', '', $uploaded_file);
 		$uploaded_file = realpath($uploaded_file);	// A hack to be sure the file point to an existing file on disk (and is not a SSRF attack)
 
 		$validate = $this->validate($uploaded_file, $file, $error, $index);
@@ -449,7 +447,6 @@ class FileUpload
 					if ($append_file) {
 						file_put_contents($file_path, fopen($uploaded_file, 'r'), FILE_APPEND);
 					} else {
-						// TODO Replace this with a call of dol_add_file_process(... $mode=1)
 						$result = dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 0, 'userfile');
 					}
 				} else {
@@ -525,7 +522,7 @@ class FileUpload
 					isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'][$index],
 					isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'][$index],
 					$upload['error'][$index],
-					(string) $index
+					$index
 				);
 				if (!empty($tmpres->error)) {
 					$error++;

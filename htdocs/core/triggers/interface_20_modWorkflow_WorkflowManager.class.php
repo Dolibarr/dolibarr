@@ -4,7 +4,7 @@
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2022-2024 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		$this->description = "Triggers of this module allows to manage workflows";
 		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
-		$this->errors = [];
 	}
 
 	/**
@@ -107,7 +106,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (isModEnabled('invoice') && getDolGlobalString('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-				'@phan-var-force Commande $object';
+				'@phan-var-force Facture $object';
 				$newobject = new Facture($this->db);
 
 				$newobject->context['createfromorder'] = 'createfromorder';
@@ -119,7 +118,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->setErrorsFromObject($newobject);
 				} else {
 					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
-						$res = $newobject->setBankAccount($object->thirdparty->fk_account, 1, $user);
+						$res = $newobject->setBankAccount($object->thirdparty->fk_account, true, $user);
 						if ($ret < 0) {
 							$this->setErrorsFromObject($newobject);
 						}
@@ -208,7 +207,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if (price2num($totalonlinkedelements, 'MT') == price2num($object->total_ht, 'MT')) {
+					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
@@ -229,7 +228,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if (price2num($totalonlinkedelements, 'MT') == price2num($object->total_ht, 'MT')) {
+					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {
@@ -245,7 +244,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$object->fetchObjectLinked(0, 'commande', $object->id, $object->element);
 				if (!empty($object->linkedObjects['commande']) && count($object->linkedObjects['commande']) == 1) {	// If the invoice has only 1 source order
 					$orderLinked = reset($object->linkedObjects['commande']);
-					$orderLinked->fetchObjectLinked($orderLinked->id, $orderLinked->element);
+					$orderLinked->fetchObjectLinked($orderLinked->id, '', $orderLinked->element);
 					if (count($orderLinked->linkedObjects['facture']) >= 1) {
 						$totalHTInvoices = 0;
 						$areAllInvoicesValidated = true;
@@ -454,7 +453,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
 								continue;
 							}
-							if (isset($qtyordred[$orderline->fk_product])) {
+							if (isset($qtyordred[$shippingline->fk_product])) {
 								$qtyordred[$orderline->fk_product] += $orderline->qty;
 							} else {
 								$qtyordred[$orderline->fk_product] = $orderline->qty;

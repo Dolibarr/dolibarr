@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=ສະ ໜັບ ສະ ໜູນ Forum/Wiki
+EMailSupport=ສະຫນັບສະຫນູນອີເມລ
+RemoteControlSupport=ອອນໄລນທີ່ໃຊ້ເວລາທີ່ແທ້ຈິງ / ສະຫນັບສະຫນູນຫ່າງໄກສອກຫຼີກ
+OtherSupport=ສະຫນັບສະຫນູນອື່ນ
+ToSeeListOfAvailableRessources=ເພື່ອຕິດຕໍ່/ເບິ່ງຊັບພະຍາກອນທີ່ມີຢູ່:
+HelpCenter=ສູນຊ່ວຍເຫຼືອ
+DolibarrHelpCenter=ສູນຊ່ວຍເຫຼືອແລະສະ ໜັບ ສະ ໜູນ Dolibarr
+ToGoBackToDolibarr=ຖ້າບໍ່ດັ່ງນັ້ນ, <a href="%s"> ຄລິກທີ່ນີ້ເພື່ອສືບຕໍ່ໃຊ້ Dolibarr </a>.
+TypeOfSupport=ປະເພດຂອງການສະຫນັບສະຫນູນ
+TypeSupportCommunauty=ຊຸມຊົນ (ບໍ່ເສຍຄ່າ)
+TypeSupportCommercial=ການ​ຄ້າ
+TypeOfHelp=ປະເພດ
+NeedHelpCenter=ຕ້ອງການການສະຫນັບສະຫນູນ?
+Efficiency=ປະສິດທິພາບ
+TypeHelpOnly=ຊ່ວຍເຫຼືອເທົ່ານັ້ນ
+TypeHelpDev=ຊ່ວຍເຫຼືອ+ການພັດທະນາ
+TypeHelpDevForm=ຊ່ວຍເຫຼືອ+ການພັດທະນາ+ການຶກອົບຮົມ
+BackToHelpCenter=ຖ້າບໍ່ດັ່ງນັ້ນ, <a href="%s"> ກັບຄືນໄປຫາ ໜ້າ ຫຼັກຂອງສູນຊ່ວຍເຫຼືອ </a>.
+LinkToGoldMember=ເຈົ້າສາມາດໂທຫາຄູoneຶກຄົນນຶ່ງທີ່ Dolibarr ເລືອກໄວ້ສໍາລັບພາສາຂອງເຈົ້າ (%s) ໂດຍການຄລິກໃສ່ Widget ຂອງເຂົາເຈົ້າ (ສະຖານະພາບແລະລາຄາສູງສຸດແມ່ນໄດ້ອັບເດດໂດຍອັດຕະໂນມັດ):
+PossibleLanguages=ພາສາທີ່ຮອງຮັບ
+SubscribeToFoundation=ຊ່ວຍເຫຼືອໂຄງການ Dolibarr, ສະtoັກໃຊ້ພື້ນຖານ
+SeeOfficalSupport=ສໍາລັບການສະຫນັບສະຫນູນ Dolibarr ຢ່າງເປັນທາງການໃນພາສາຂອງທ່ານ: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

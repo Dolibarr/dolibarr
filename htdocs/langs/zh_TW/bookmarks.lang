@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=新增目前頁面到書籤
+Bookmark=書籤
+Bookmarks=書籤
+ListOfBookmarks=書籤清單
+EditBookmarks=列出/編輯書籤
+NewBookmark=新書籤
+ShowBookmark=顯示書籤
+OpenANewWindow=開啟新分頁
+ReplaceWindow=替換目前標籤
+BookmarkTargetNewWindowShort=新分頁
+BookmarkTargetReplaceWindowShort=目前分頁
+BookmarkTitle=書籤名稱
+UrlOrLink=網址
+BehaviourOnClick=已選擇書籤網址後的行為
+CreateBookmark=建立書籤
+SetHereATitleForLink=為書籤設定名稱
+UseAnExternalHttpLinkOrRelativeDolibarrLink=使用外部/絕對連結（(https://externalurl.com）或內部/相對連結（/mypage.php）.您也可使用電話號碼如tel:0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=選擇已連結頁面開啟在目前分頁或是在新分頁
+BookmarksManagement=書籤管理
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=未定義書籤
+NoBookmarkFound=找不到書籤

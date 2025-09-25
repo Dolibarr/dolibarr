@@ -295,8 +295,8 @@ CurrencyXPF=সিএফপি ফ্রাঙ্ক
 CurrencySingXPF=CFP ফ্রাঙ্ক
 CurrencyCentEUR=সেন্ট
 CurrencyCentSingEUR=শতক
-CurrencyCentINR=পয়সা
-CurrencyCentSingINR=পয়সা
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=হাজারতম
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=ইন্টারনেট

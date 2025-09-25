@@ -140,7 +140,6 @@ Modelcsv_cogilog=Exportar a Cogilog
 Modelcsv_LDCompta=Exportar para LD Compta (v9) (Prueba)
 Modelcsv_configurable=Exportar CSV Configurable
 ChartofaccountsId=ID plan contable
-AccountancyGroupTHIRDPARTY =Clientes / Proveedores
 InitAccountancy=Contabilidad inicial
 InitAccountancyDesc=Esta página se puede utilizar para inicializar una cuenta de contabilidad en productos y servicios que no tiene definida una cuenta de contabilidad para ventas y compras.
 OptionModeProductSell=Modo de venta

@@ -6,9 +6,9 @@ ProductStatusNotOnBatch=Нет (серийный номер/номер парт�
 ProductStatusOnBatchShort=Партия
 ProductStatusOnSerialShort=Серия
 ProductStatusNotOnBatchShort=Нет
-BatchSellOrEatByMandatoryList=%s или %s является обязательным
+BatchSellOrEatByMandatoryList=Make %s or %s mandatory
 BatchSellOrEatByMandatoryNone=Нет
-BatchSellOrEatByMandatoryAll=%s и %s
+BatchSellOrEatByMandatoryAll=%s and %s
 Batch=Партии/серии
 atleast1batchfield=Дата уплаты или дата продажи или Партия/Серия
 batch_number=номер партии/серии
@@ -50,5 +50,3 @@ ToReplace=Заменять
 CantMoveNonExistantSerial=Ошибка. Вы просите сделать запись о сериале, которого больше не существует. Возможно, вы берете один и тот же серийный номер на одном и том же складе несколько раз в одной партии или он использовался другой партией. Удалите эту партию и подготовьте другую.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=партия восстановление неполного прогона таблицы с параметром '...repair.php?стандартный=confirmed'
 IlligalQtyForSerialNumbers= остаток требуется исправление, поскольку Серийный номер является уникальным.
-ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
-ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

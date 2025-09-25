@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C)            Richard Rondu           <rondu.richard@lainwir3d.net>
- * Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) Richard Rondu  <rondu.richard@lainwir3d.net>
+ * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,22 +36,22 @@ class Cregion extends CommonDict
 	//public $table_element = 'c_regions'; //!< Name of table without prefix where object is stored
 
 	/**
-	 * @var ?int         The code of the region
+	 * @var int         The code of the region
 	 */
 	public $code_region;
 
 	/**
-	 * @var ?int         The ID of the country of the region
+	 * @var int         The ID of the country of the region
 	 */
 	public $fk_pays;
 
 	/**
-	 * @var ?string      The name of the region
+	 * @var string      The name of the region
 	 */
 	public $name;
 
 	/**
-	 * @var ?string      The reference of the "chef-lieu" of the region
+	 * @var string      The reference of the "chef-lieu" of the region
 	 *                  A.k.a. the administrative headquarter of the region
 	 *                  (examples: HU33, PT9, 97601)
 	 */
@@ -90,10 +89,10 @@ class Cregion extends CommonDict
 			$this->fk_pays = (int) $this->fk_pays;
 		}
 		if (isset($this->name)) {
-			$this->name = trim((string) $this->name);
+			$this->name = trim($this->name);
 		}
 		if (isset($this->cheflieu)) {
-			$this->cheflieu = trim((string) $this->cheflieu);
+			$this->cheflieu = trim($this->cheflieu);
 		}
 		if (isset($this->active)) {
 			$this->active = (int) $this->active;
@@ -111,12 +110,12 @@ class Cregion extends CommonDict
 		$sql .= "cheflieu,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= (int) $this->id;
-		$sql .= ", " . (!isset($this->code_region) ? 'NULL' : (int) $this->code_region);
-		$sql .= ", " . (int) $this->fk_pays;
-		$sql .= ", " . (!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name) . "'");
-		$sql .= ", " . (!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu) . "'");
-		$sql .= ", " . (int) $this->active;
+		$sql .= " ".(!isset($this->id) ? 'NULL' : (int) $this->id).",";
+		$sql .= " ".(!isset($this->code_region) ? 'NULL' : (int) $this->code_region).",";
+		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : (int) $this->fk_pays).",";
+		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
+		$sql .= " ".(!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu)."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -161,7 +160,7 @@ class Cregion extends CommonDict
 		$sql .= " t.rowid,";
 		$sql .= " t.code_region,";
 		$sql .= " t.fk_pays,";
-		$sql .= " t.nom as name,";
+		$sql .= " t.nom,";
 		$sql .= " t.cheflieu,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix()."c_regions as t";
@@ -183,9 +182,9 @@ class Cregion extends CommonDict
 					$this->id = $obj->rowid;
 					$this->code_region = (int) $obj->code_region;
 					$this->fk_pays = (int) $obj->fk_pays;
-					$this->name = $obj->name;
+					$this->name = $obj->nom;
 					$this->cheflieu = $obj->cheflieu;
-					$this->active = (int) $obj->active;
+					$this->active = $obj->active;
 				}
 
 				$this->db->free($resql);

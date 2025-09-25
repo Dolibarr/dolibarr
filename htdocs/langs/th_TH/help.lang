@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=ฟอรั่มการสนับสนุน / วิกิพีเดีย
+EMailSupport=สนับสนุนอีเมล์
+RemoteControlSupport=ออนไลน์เรียลไทม์ / สนับสนุนระยะไกล
+OtherSupport=การสนับสนุนอื่น ๆ
+ToSeeListOfAvailableRessources=หากต้องการติดต่อ / ดูทรัพยากรที่มีอยู่:
+HelpCenter=ศูนย์ช่วยเหลือ
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+TypeSupportCommunauty=ชุมชน (ฟรี)
+TypeSupportCommercial=เชิงพาณิชย์
+TypeOfHelp=ชนิด
+NeedHelpCenter=Need help or support?
+Efficiency=ประสิทธิภาพ
+TypeHelpOnly=ช่วยเหลือเท่านั้น
+TypeHelpDev=ความช่วยเหลือ + พัฒนา
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=ภาษาที่รองรับ
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=สำหรับการสนับสนุนอย่างเป็นทางการ Dolibarr ในภาษาของคุณ: <br> <a href="%s" target="_blank"><b>% s</b></a>

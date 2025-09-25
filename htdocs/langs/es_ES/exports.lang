@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - exports
-ImportExportArea=Importaciones / Exportaciones
 ExportsArea=Exportaciones
 ImportArea=Importar
 NewExport=Nueva exportación
@@ -32,10 +31,10 @@ ExportCsvSeparator=Separador de caracteres csv
 ImportCsvSeparator=Separador de caracteres csv
 Step=Paso
 FormatedImport=Asistente de importación
-FormatedImportDesc1=Haga clic aquí para utilizar el asistente para actualizar datos existentes o agregar nuevos objetos a la base de datos desde un archivo.
+FormatedImportDesc1=Este módulo le permite actualizar los datos existentes o agregar nuevos objetos a la base de datos desde un archivo sin conocimientos técnicos, utilizando un asistente.
 FormatedImportDesc2=El primer paso consiste en elegir el tipo de dato que desea importar, luego el formato del archivo origen y a continuación los campos que desea importar.
 FormatedExport=Asistente de exportación
-FormatedExportDesc1=Haga clic aquí para utilizar el asistente para exportar datos en un formato compatible
+FormatedExportDesc1=Estas herramientas permiten la exportación de datos personalizados mediante un asistente, para ayudarlo en el proceso sin necesidad de conocimientos técnicos.
 FormatedExportDesc2=El primer paso consiste en elegir uno de los conjuntos de datos predefinidos, a continuación elegir los campos que quiere exportar al archivo y en que orden.
 FormatedExportDesc3=Una vez seleccionados los datos, es posible elegir el formato del archivo de exportación generado.
 Sheet=Hoja
@@ -84,7 +83,7 @@ RunSimulateImportFile=Ejecutar la simulación de importación
 FieldNeedSource=Este campo requiere datos desde el archivo origen
 SomeMandatoryFieldHaveNoSource=Algunos campos obligatorios no tienen campo fuente en el archivo de origen
 InformationOnSourceFile=Archivo origen
-InformationOnTargetTables=Campos objetivo
+InformationOnTargetTables=Target fields
 SelectAtLeastOneField=Bascular al menos un campo origen en la columna de campos a exportar
 SelectFormat=Seleccione este formato de archivo de importación
 RunImportFile=Importación de datos

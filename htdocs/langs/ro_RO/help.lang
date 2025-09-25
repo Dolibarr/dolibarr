@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Suport Forum/Wiki
+EMailSupport=Email-uri suport
+RemoteControlSupport=Suport online în timp real / la distanță
+OtherSupport=Alte tipuri de suport
+ToSeeListOfAvailableRessources=Pentru contacta/vezi resursele disponibile:
+HelpCenter=Centru de ajutor 
+DolibarrHelpCenter=Centrul de ajutor și asistență Dolibarr
+ToGoBackToDolibarr=Altfel, <a href="%s"> dați clic aici pentru a continua să utilizați Dolibarr </a>.
+TypeOfSupport=Tip de suport
+TypeSupportCommunauty=Comunitate (gratuit)
+TypeSupportCommercial=Comercial
+TypeOfHelp=Tip
+NeedHelpCenter=Ai nevoie de suport?
+Efficiency=Eficienţă
+TypeHelpOnly=Doar ajutor
+TypeHelpDev=Ajutor+Dezvoltare
+TypeHelpDevForm=Ajutor+Dezvoltare+Training
+BackToHelpCenter=În caz contrar, <a href="%s"> mergeti înapoi la pagina centrului de ajutor </a>.
+LinkToGoldMember=Puteți apela unul dintre instructorii preselectați de Dolibarr pentru limba dvs. (%s) făcând clic pe Widget (statusul și prețul maxim sunt actualizate automat):
+PossibleLanguages=Limbi suportate
+SubscribeToFoundation=Ajutați proiectul Dolibarr, abonați-vă la fundație
+SeeOfficalSupport=Pentru suport oficial în limba ta : <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

@@ -3,7 +3,6 @@
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,7 +99,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'contracts',
 				'interventions',
 				'ticket',
-				'knowledgebase',
 				'dolresource'
 			);
 			$conditions = array(
@@ -130,7 +128,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'expensereports' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
 				'holidays' => isModEnabled('holiday') && $user->hasRight('holiday', 'read'),
 				'ticket' => isModEnabled('ticket') && $user->hasRight('ticket', 'read'),
-				'knowledgebase' => isModEnabled('knowledgemanagement') && $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read'),
 				'dolresource' => isModEnabled('resource') && $user->hasRight('resource', 'read')
 			);
 			$classes = array(
@@ -155,7 +152,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'expensereports' => 'ExpenseReport',
 				'holidays' => 'Holiday',
 				'ticket' => 'Ticket',
-				'knowledgebase' => 'KnowledgeRecord',
 				'dolresource' => 'Dolresource'
 			);
 			$includes = array(
@@ -180,7 +176,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'expensereports' => DOL_DOCUMENT_ROOT . "/expensereport/class/expensereport.class.php",
 				'holidays' => DOL_DOCUMENT_ROOT . "/holiday/class/holiday.class.php",
 				'ticket' => DOL_DOCUMENT_ROOT . "/ticket/class/ticket.class.php",
-				'knowledgebase' => DOL_DOCUMENT_ROOT . "/knowledgemanagement/class/knowledgerecord.class.php",
 				'dolresource' => DOL_DOCUMENT_ROOT . "/resource/class/dolresource.class.php"
 			);
 			$links = array(
@@ -205,7 +200,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'expensereports' => DOL_URL_ROOT . '/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
 				'holidays' => DOL_URL_ROOT . '/holiday/list.php?mainmenu=hrm&leftmenu=holiday',
 				'ticket' => DOL_URL_ROOT . '/ticket/list.php?leftmenu=ticket',
-				'knowledgebase' => DOL_URL_ROOT . '/knowledgemanagement/knowledgerecord_list.php?leftmenu=knowledgebase',
 				'dolresource' => DOL_URL_ROOT . '/resource/list.php?mainmenu=agenda',
 			);
 			$titres = array(
@@ -230,7 +224,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'expensereports' => "ExpenseReports",
 				'holidays' => "Holidays",
 				'ticket' => "Ticket",
-				'knowledgebase' => "KnowledgeRecord",
 				'dolresource' => "Resources",
 			);
 			$langfile = array(
@@ -264,7 +257,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 						if (method_exists($board, 'load_state_board')) {
 							// @phan-suppress-next-line PhanUndeclaredMethod  (Legacy, not present in core).
 							$board->load_state_board();
-						} elseif (method_exists($board, 'loadStateBoard')) {	// @phpstan-ignore-line
+						} elseif (method_exists($board, 'loadStateBoard')) {
 							$board->loadStateBoard();
 						} else {
 							$board = -1;
@@ -291,7 +284,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 			if (!empty($boxstatFromHook) || !empty($boxstatItems)) {
 				$boxstat .= $boxstatFromHook;
 
-				if (!empty($boxstatItems)) {
+				if (is_array($boxstatItems) && count($boxstatItems) > 0) {
 					$boxstat .= implode('', $boxstatItems);
 				}
 

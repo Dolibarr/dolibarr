@@ -32,7 +32,6 @@ PRINTIPP_HOST=የህትመት አገልጋይ
 PRINTIPP_PORT=ወደብ
 PRINTIPP_USER=ግባ
 PRINTIPP_PASSWORD=የይለፍ ቃል
-PRINTIPP_SSL=Use SSL
 NoDefaultPrinterDefined=ምንም ነባሪ አታሚ አልተገለጸም።
 DefaultPrinter=ነባሪ አታሚ
 Printer=አታሚ
@@ -53,4 +52,3 @@ PrintingDriverDescprintgcp=የጎግል ክላውድ ህትመት ነጂዎች�
 PrintingDriverDescprintipp=የአሽከርካሪ ኩባያዎችን ለማተም የማዋቀር ተለዋዋጮች።
 PrintTestDescprintgcp=ለGoogle ደመና ህትመት የአታሚዎች ዝርዝር።
 PrintTestDescprintipp=ለ ኩባያዎች የአታሚዎች ዝርዝር.
-Testbbbb

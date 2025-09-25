@@ -186,8 +186,8 @@ abstract class DoliDB implements Database
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? '\p{L}' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/ui', '', $stringtosanitize);
-		//$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+		//$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? '\p{L}' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/ui', '', $stringtosanitize);
+		$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
 
 		if ($allowsimplequote == 1) {
 			// Remove all quotes that are inside a string and not around
@@ -456,21 +456,6 @@ abstract class DoliDB implements Database
 			$this->free($resql);
 			return $results;
 		}
-
-		return false;
-	}
-
-	/**
-	 * Prepare a SQL statement for execution
-	 *
-	 * This method must be implemented by subclasses.
-	 *
-	 * @param string $sql SQL query to prepare
-	 * @return mixed Driver-specific prepared statement object or false on failure
-	 */
-	public function prepare($sql)
-	{
-		$this->lasterror = 'prepare() not implemented for this driver. Failed to prepare '.$sql;
 
 		return false;
 	}

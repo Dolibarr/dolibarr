@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2020	Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ function loan_prepare_head($object)
  * @param   float   $rate				Loan rate
  * @param   int     $numactualloadterm	Actual loan term
  * @param   int   	$nbterm  			Total number of term for this loan
- * @return array<array{cap_rest:float,cap_rest_str:string,interet:float,interet_str:string,mens:string}>		Array with remaining capital, interest, and mensuality for each remaining terms
+ * @return array<array{cap_rest:float,cap_rest_str:string,interet:float,interet_str:string,mens:float}>		Array with remaining capital, interest, and mensuality for each remaining terms
  */
 function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm)
 {
@@ -123,18 +123,12 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 		$int = round($int, 2, PHP_ROUND_HALF_UP);
 		$cap_rest = round((float) $capital - ((float) $mens - $int), 2, PHP_ROUND_HALF_UP);
 	}
-	$output[$numactualloadterm] = array(
-		'cap_rest' => $cap_rest,
-		'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency),
-		'interet' => $int,
-		'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency),
-		'mens' => price($mens),
-	);
+	$output[$numactualloadterm] = array('cap_rest' => $cap_rest, 'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet' => $int, 'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency), 'mens' => $mens);
 
 	$numactualloadterm++;
 	$capital = $cap_rest;
 	while ($numactualloadterm <= $nbterm) {
-		$mens = round($object->calcMonthlyPayments($capital, (float) $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
+		$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
 
 		$int = ($capital * ((float) $rate / 12));
 		$int = round($int, 2, PHP_ROUND_HALF_UP);
@@ -145,7 +139,7 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 			'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency),
 			'interet' => $int,
 			'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency),
-			'mens' => price($mens),
+			'mens' => $mens,
 		);
 		$capital = $cap_rest;
 		$numactualloadterm++;

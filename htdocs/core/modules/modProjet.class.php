@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2003-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
- * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013	    Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2014	    Charles-Fr BENKE		<charles.fr@benke.fr>
- * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014	   Charles-Fr BENKE		<charles.fr@benke.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,57 +74,57 @@ class modProjet extends DolibarrModules
 		$this->langfiles = array('projects');
 
 		// Constants
-		$this->const = [
-			[
-				"PROJECT_ADDON_PDF",
-				"chaine",
-				"baleine",
-				"Name of PDF/ODT project manager class",
-				0,
-			],
-			[
-				"PROJECT_ADDON",
-				"chaine",
-				"mod_project_simple",
-				"Name of Numbering Rule project manager class",
-				0,
-			],
-			[
-				"PROJECT_ADDON_PDF_ODT_PATH",
-				"chaine",
-				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/projects",
-				"",
-				0,
-			],
-			[
-				"PROJECT_TASK_ADDON_PDF",
-				"chaine",
-				"",
-				"Name of PDF/ODT tasks manager class",
-				0,
-			],
-			[
-				"PROJECT_TASK_ADDON",
-				"chaine",
-				"mod_task_simple",
-				"Name of Numbering Rule task manager class",
-				0,
-			],
-			[
-				"PROJECT_TASK_ADDON_PDF_ODT_PATH",
-				"chaine",
-				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/tasks",
-				"",
-				0,
-			],
-			[
-				"PROJECT_USE_OPPORTUNITIES",
-				"chaine",
-				"1",
-				"",
-				0,
-			],
-		];
+		$this->const = array();
+		$r = 0;
+
+		$this->const[$r][0] = "PROJECT_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "baleine";
+		$this->const[$r][3] = 'Name of PDF/ODT project manager class';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PROJECT_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_project_simple";
+		$this->const[$r][3] = 'Name of Numbering Rule project manager class';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PROJECT_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/projects";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "";
+		$this->const[$r][3] = 'Name of PDF/ODT tasks manager class';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PROJECT_TASK_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_task_simple";
+		$this->const[$r][3] = 'Name of Numbering Rule task manager class';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/tasks";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PROJECT_USE_OPPORTUNITIES";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Boxes
 		$this->boxes = array(
@@ -146,7 +146,7 @@ class modProjet extends DolibarrModules
 			'frequency' => 1,
 			'unitfrequency' => 86400 * 7,
 			'status' => 0,
-			'test' => 'isModEnabled("project")',
+			'test' => '$conf->projet->enabled',
 		);
 		// Permissions
 		$this->rights = array();
@@ -304,7 +304,7 @@ class modProjet extends DolibarrModules
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('t'=>MAIN_DB_PREFIX.'projet', 'extra'=>MAIN_DB_PREFIX.'projet_extrafields'); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array('t.ref'=>'ProjectRef*', 't.title'=>'Label*', 't.description'=>"Description", 't.fk_soc' => 'ThirdPartyName', 't.public'=>"Public", 't.fk_statut'=>"Status");
-		$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('t.fk_opp_status'=>"OpportunityStatus", 't.opp_percent'=>"OpportunityProbability", 't.opp_amount'=>"OpportunityAmount", 't.note_public'=>"NotePublic", 't.note_private'=>"NotePrivate", 't.budget_amount'=>"Budget", 't.dateo'=>"DateStart", 't.datee'=>"DateEnd", 't.usage_opportunity' => "UsageOpportunity", 't.usage_task' => 'UsageTasks', 't.usage_bill_time' => 'UsageBillTimeShort'));
+		$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('t.fk_opp_status'=>"OpportunityStatus", 't.opp_percent'=>"OpportunityProbability", 't.opp_amount'=>"OpportunityAmount", 't.note_public'=>"NotePublic", 't.note_private'=>"NotePrivate", 't.budget_amount'=>"Budget", 't.dateo'=>"DateStart", 't.datee'=>"DateEnd"));
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -329,7 +329,7 @@ class modProjet extends DolibarrModules
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array('t.dateo'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datee'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
-		$this->import_examplevalues_array[$r] = array('t.fk_soc'=>'ThirdParty', 't.ref'=>"auto or PJ2010-1234", 't.title'=>"My project", 't.fk_statut'=>'0,1 or 2', 't.datec'=>'1972-10-10', 't.note_private'=>"My private note", 't.note_public'=>"My public note", 't.usage_opportunity' => '0/1', 't.usage_task' => '0/1', 't.usage_bill_time' => '0/1');
+		$this->import_examplevalues_array[$r] = array('t.fk_soc'=>'ThirdParty', 't.ref'=>"auto or PJ2010-1234", 't.title'=>"My project", 't.fk_statut'=>'0,1 or 2', 't.datec'=>'1972-10-10', 't.note_private'=>"My private note", 't.note_public'=>"My public note");
 
 		// Import list of tasks
 		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2012  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,6 @@ class DolGeoIP
 	{
 		global $conf;
 
-		$datfile = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $datfile);
 		$geoipversion = '2'; // 'php', or geoip version '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = getDolGlobalString('GEOIP_VERSION');
@@ -72,7 +71,7 @@ class DolGeoIP
 				if (function_exists('stream_wrapper_restore')) {
 					stream_wrapper_restore('phar');
 				}
-				include_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 			}
 		} elseif ($type == 'city') {
 			// geoip may have been already included with PEAR
@@ -80,7 +79,7 @@ class DolGeoIP
 				if (function_exists('stream_wrapper_restore')) {
 					stream_wrapper_restore('phar');
 				}
-				include_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 			}
 		} else {
 			print 'ErrorBadParameterInConstructor';

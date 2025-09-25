@@ -43,21 +43,16 @@ class mod_payment_ant extends ModeleNumRefPayments
 	public $error = '';
 
 	/**
-	 * @var string Name of sub-module
+	 * @var string Nom du modele
 	 * @deprecated
 	 * @see $name
 	 */
 	public $nom = 'Ant';
 
 	/**
-	 * @var string Sub-module name
+	 * @var string model name
 	 */
 	public $name = 'Ant';
-
-	/**
-	 * @var int		Position
-	 */
-	public $position = 50;
 
 
 	/**
@@ -79,15 +74,10 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstpayment" value="PAYMENT_ANT_MASK">';
-		$texte .= '<input type="hidden" name="page_y" value="">';
-
-		$texte .= '<table class="nobordernopadding centpercent">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
-		$tooltip .= $langs->trans("GenericMaskCodes1");
-		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
-		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
@@ -97,7 +87,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpayment" value="'.getDolGlobalString('PAYMENT_ANT_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -114,7 +104,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 */
 	public function getExample()
 	{
-		global $mysoc;
+		global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -122,7 +112,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
-			$numExample = 'NotConfigured';
+			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
 	}
@@ -136,7 +126,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db;
+		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

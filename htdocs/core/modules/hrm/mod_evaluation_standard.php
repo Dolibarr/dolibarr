@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,6 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * @var string prefix
-	 */
 	public $prefix = 'EVAL';
 
 	/**
@@ -98,7 +95,7 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		} elseif (!is_numeric($object->ismultientitymanaged)) {
+		} elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
@@ -122,7 +119,7 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Evaluation|EvaluationLine|Job|Position|Skill|Skilldet|SkillRank	$object		Object	$object		Object we need next value for
+	 *  @param  Evaluation		$object		Object we need next value for
 	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($object)
@@ -136,7 +133,7 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		} elseif (!is_numeric($object->ismultientitymanaged)) {
+		} elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 

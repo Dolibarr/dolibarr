@@ -2,7 +2,6 @@
 IdAgenda=আইডি ইভেন্ট
 Actions=ঘটনা
 Agenda=আলোচ্যসূচি
-AgendaEvents=এজেন্ডা ইভেন্ট
 TMenuAgenda=আলোচ্যসূচি
 Agendas=এজেন্ডা
 LocalAgenda=ডিফল্ট ক্যালেন্ডার
@@ -45,7 +44,6 @@ PropalClosedRefusedInDolibarr=প্রস্তাব %s প্রত্যা�
 PropalValidatedInDolibarr=প্রস্তাব %s যাচাই করা হয়েছে
 PropalBackToDraftInDolibarr=প্রস্তাব %s খসড়া স্ট্যাটাসে ফিরে যান
 PropalClassifiedBilledInDolibarr=প্রস্তাব %s শ্রেণীবদ্ধ বিল
-InvoiceCreatedInDolibarr=ইনভয়েস %s তৈরি করা হয়েছে
 InvoiceValidatedInDolibarr=চালান %s যাচাই করা হয়েছে
 InvoiceValidatedInDolibarrFromPos=চালান %s POS থেকে যাচাই করা হয়েছে
 InvoiceBackToDraftInDolibarr=চালান %s খসড়া স্ট্যাটাসে ফিরে যান
@@ -139,11 +137,11 @@ AgendaUrlOptions1=আপনি ফিল্টার আউটপুট নি�
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=স্বয়ংক্রিয় বা ম্যানুয়াল ইভেন্ট পেতে <b>actiontype=%s</b>
-AgendaUrlOptionsCode=<b>actioncode=%s</b> শুধুমাত্র একটি নির্দিষ্ট কোড সহ ইভেন্ট পেতে
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=ছুটির ইভেন্টগুলি অন্তর্ভুক্ত করতে <b>includeholidays=1</b>।
-AgendaUrlOptionsLimitDays=<b>notalderthan=%s</b> গত %s দিনের ইভেন্টগুলিতে সীমাবদ্ধ করার জন্য (ডিফল্ট %s)।
-AgendaUrlOptionsLimit=<b>limit=50</b> সর্বশেষ ৫০টি ইভেন্টের মধ্যে সীমাবদ্ধ করতে (ডিফল্ট এবং সর্বোচ্চ %s)।
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=পরিচিতির জন্মদিন
 AgendaHideBirthdayEvents=পরিচিতির জন্মদিন লুকান
 Busy=ব্যস্ত
@@ -204,9 +202,6 @@ AppointmentDuration = অ্যাপয়েন্টমেন্টের স
 BookingSuccessfullyBooked=আপনার বুকিং সংরক্ষণ করা হয়েছে
 BookingReservationHourAfter=আমরা %s তারিখে আমাদের সভার রিজার্ভেশন নিশ্চিত করি
 BookcalBookingTitle=অনলাইন অ্যাপয়েন্টমেন্ট
-Transparency = স্বচ্ছতা
-ReadMore = আরও পড়ুন
-ReadLess = কম পড়ুন
-RecurringEvent=পুনরাবৃত্ত ইভেন্ট
-EventPartOfARecurringSerie=ইভেন্টটি %s আইডি সহ একটি পুনরাবৃত্ত সিরিজের অংশ।
-BookCalSystem=অনলাইন বুকিং
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

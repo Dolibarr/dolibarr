@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +27,6 @@
 /**
  * @var CommonObject $object
  * @var Conf $conf
- * @var DoliDB $db
  * @var Form $form
  * @var FormAdmin $formadmin
  * @var Translate $langs
@@ -41,10 +39,6 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
-'
-@phan-var-force ?string $keyforbreak
-';
 if (!is_object($form)) {
 	$form = new Form($db);
 }
@@ -56,7 +50,7 @@ if (!is_object($form)) {
 $object->fields = dol_sort_array($object->fields, 'position');
 
 foreach ($object->fields as $key => $val) {
-	if (isset($keyforbreak) && !empty($keyforbreak) && $key == $keyforbreak) {
+	if (!empty($keyforbreak) && $key == $keyforbreak) {
 		break; // key used for break on second column
 	}
 
@@ -145,7 +139,7 @@ $rightpart = '';
 $alreadyoutput = 1;
 foreach ($object->fields as $key => $val) {
 	if ($alreadyoutput) {
-		if (isset($keyforbreak) && !empty($keyforbreak) && $key == $keyforbreak) {
+		if (!empty($keyforbreak) && $key == $keyforbreak) {
 			$alreadyoutput = 0; // key used for break on second column
 		} else {
 			continue;
@@ -172,7 +166,7 @@ foreach ($object->fields as $key => $val) {
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
 		$rightpart .= ' tdtop';
 	}
-	$rightpart .= '">';
+	$rightpart.= '">';
 	$labeltoshow = '';
 	if (!empty($val['help'])) {
 		$labeltoshow .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
@@ -212,7 +206,7 @@ foreach ($object->fields as $key => $val) {
 				$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
 				$rightpart .= showValueWithClipboardCPButton($out, 0, $out);
 			} else {
-				$rightpart .= $object->showOutputField($val, $key, $value, '', '', '', 0);
+				$rightpart.= $object->showOutputField($val, $key, $value, '', '', '', 0);
 			}
 		}
 		if (preg_match('/^(text|html)/', $val['type'])) {

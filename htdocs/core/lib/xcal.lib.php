@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,9 +73,9 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 
 		if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE') && getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE') > 60) {
-			$hh = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "hour");
-			$mm = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "min");
-			$ss = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "sec");
+			$hh = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "hour");
+			$mm = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "min");
+			$ss = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "sec");
 
 			fwrite($calfileh, "X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
 		}
@@ -108,8 +108,8 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			// Format
 			$summary     = format_cal($format, $summary);
 			$description = format_cal($format, $description);
-			$category    = format_cal($format, (string) $category);
-			$location    = format_cal($format, (string) $location);
+			$category    = format_cal($format, $category);
+			$location    = format_cal($format, $location);
 
 			// Output the vCard/iCal VEVENT object
 			/*

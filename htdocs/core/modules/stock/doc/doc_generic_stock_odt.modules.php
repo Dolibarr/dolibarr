@@ -146,7 +146,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= '<textarea class="flat" cols="60" name="value1">';
 		$texte .= getDolGlobalString('STOCK_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
@@ -248,6 +248,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 
 			$stockFournisseur = new ProductFournisseur($this->db);
 			$supplierprices = $stockFournisseur->list_stock_fournisseur_price($object->id);
+			$object->supplierprices = $supplierprices;
 
 			$dir = $conf->product->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -387,18 +388,11 @@ class doc_generic_stock_odt extends ModelePDFStock
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				// retrieve the constant to apply a ratio for image size or set the ratio to 1
-				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
-				} else {
-					$ratio = 1;
-				}
-
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) { // Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value, $ratio);
+								$odfHandler->setImage($key, $value);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -418,8 +412,8 @@ class doc_generic_stock_odt extends ModelePDFStock
 					$foundtagforlines = 0;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines && !empty($supplierprices)) {
-					foreach ($supplierprices as $supplierprice) {
+				if ($foundtagforlines && !empty($object->supplierprices)) {
+					foreach ($object->supplierprices as $supplierprice) {
 						$array_lines = $this->get_substitutionarray_each_var_object($supplierprice, $outputlangs);
 						complete_substitutions_array($array_lines, $outputlangs, $object, $supplierprice, "completesubstitutionarray_lines");
 						// Call the ODTSubstitutionLine hook

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ abstract class ActionsCardCommon
 			// Country
 			$this->object->country_id = ($this->object->country_id ? $this->object->country_id : $mysoc->country_id);
 			$this->object->country_code = ($this->object->country_code ? $this->object->country_code : $mysoc->country_code);
-			$this->tpl['select_country'] = $form->select_country((string) $this->object->country_id, 'country_id');
+			$this->tpl['select_country'] = $form->select_country($this->object->country_id, 'country_id');
 			$countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 			if ($user->admin) {
@@ -281,7 +281,7 @@ abstract class ActionsCardCommon
 			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1); // Assujeti par default en creation
 
 			// Select users
-			$this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
+			$this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 
 			// Local Tax
 			// TODO Implement country specific action in country specific class
@@ -310,7 +310,7 @@ abstract class ActionsCardCommon
 			$this->tpl['showhead'] = dol_get_fiche_head($head, 'card', '', 0, 'company');
 			$this->tpl['showend'] = dol_get_fiche_end();
 
-			$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'name');
+			$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
 			$this->tpl['checkcustomercode'] = $this->object->check_codeclient();
 			$this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
@@ -318,7 +318,7 @@ abstract class ActionsCardCommon
 
 			$img = picto_from_langcode($this->object->country_code);
 			if ($this->object->isInEEC()) {
-				$this->tpl['country'] = $form->textwithpicto(($img ? $img.' ' : '').$this->object->country, $langs->trans("CountryIsInEEC"), 1, 'info');
+				$this->tpl['country'] = $form->textwithpicto(($img ? $img.' ' : '').$this->object->country, $langs->trans("CountryIsInEEC"), 1, 0);
 			}
 			$this->tpl['country'] = ($img ? $img.' ' : '').$this->object->country;
 
@@ -357,7 +357,7 @@ abstract class ActionsCardCommon
 				$i = 0;
 				foreach ($listsalesrepresentatives as $val) {
 					$userstatic->id = $val['id'];
-					$userstatic->lastname = $val['lastname'];
+					$userstatic->lastname = $val['name'];
 					$userstatic->firstname = $val['firstname'];
 					$this->tpl['sales_representatives'] .= $userstatic->getNomUrl(1);
 					$i++;
@@ -416,7 +416,7 @@ abstract class ActionsCardCommon
 		global $langs, $mysoc;
 
 		$this->object->id = GETPOSTINT("socid");
-		$this->object->name = GETPOST("name") ? GETPOST("name") : GETPOST("nom");
+		$this->object->name = GETPOST("nom");
 		$this->object->prefix_comm			= GETPOST("prefix_comm");
 		$this->object->client = GETPOSTINT("client");
 		$this->object->code_client			= GETPOST("code_client");

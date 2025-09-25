@@ -6,7 +6,7 @@ ProductStatusNotOnBatch=የለም (ሎት/ተከታታይ ጥቅም ላይ አ�
 ProductStatusOnBatchShort=ሎጥ
 ProductStatusOnSerialShort=ተከታታይ
 ProductStatusNotOnBatchShort=አይ
-BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryList=Make %s or %s mandatory
 BatchSellOrEatByMandatoryNone=None
 BatchSellOrEatByMandatoryAll=%s and %s
 Batch=ሎጥ / ተከታታይ
@@ -50,4 +50,3 @@ ToReplace=ተካ
 CantMoveNonExistantSerial=ስህተት ከአሁን በኋላ ለሌለው ተከታታይ መዝገብ ለመንቀሳቀስ ትጠይቃለህ። ተመሳሳዩን ተከታታይ መጋዘን በተመሳሳይ ጭነት ውስጥ ብዙ ጊዜ ወስደህ ሊሆን ይችላል ወይም በሌላ ጭነት ተጠቅሞ ሊሆን ይችላል። ይህንን ጭነት ያስወግዱ እና ሌላ ያዘጋጁ።
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=የሎጥ ጠረጴዛ ያልተሟላ የሩጫ ጥገና በመለኪያ '...repair.php?standard=የተረጋገጠ'
 IlligalQtyForSerialNumbers= የአክሲዮን እርማት ያስፈልጋል ምክንያቱም ልዩ መለያ ቁጥር።
-ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must be managed in stock.

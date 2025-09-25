@@ -1,11 +1,10 @@
 <?php
-
 /* Copyright (C) 2010-2011  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2010-2014  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,33 +73,12 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * @var float
-	 */
 	public $posxdate;
-	/**
-	 * @var float
-	 */
 	public $posxreffacturefourn;
-	/**
-	 * @var float
-	 */
 	public $posxreffacture;
-	/**
-	 * @var float
-	 */
 	public $posxtype;
-	/**
-	 * @var float
-	 */
 	public $posxtotalht;
-	/**
-	 * @var float
-	 */
 	public $posxtva;
-	/**
-	 * @var float
-	 */
 	public $posxtotalttc;
 
 
@@ -267,7 +245,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
-				$pdf->setAutoPageBreak(true, 0);
+				$pdf->SetAutoPageBreak(1, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -329,7 +307,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					// Description of product line
@@ -344,7 +322,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 						//pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,1);
 						$pdf->writeHTMLCell($this->posxtva - $curX, 4, $curX, $curY, $object->lines[$i]->datef, 0, 1, false, true, 'J', true);
 						$posyafter = $pdf->GetY();
@@ -376,7 +354,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -388,27 +366,27 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 					// ref fourn
 					$pdf->SetXY($this->posxreffacturefourn, $curY);
-					$pdf->MultiCell($this->posxreffacturefourn - 0.8, 3, $object->lines[$i]->ref_supplier, 0, 'L', false);
+					$pdf->MultiCell($this->posxreffacturefourn - 0.8, 3, $object->lines[$i]->ref_supplier, 0, 'L', 0);
 
 					// ref facture fourn
 					$pdf->SetXY($this->posxreffacture, $curY);
-					$pdf->MultiCell($this->posxreffacture - 0.8, 3, $object->lines[$i]->ref, 0, 'L', false);
+					$pdf->MultiCell($this->posxreffacture - 0.8, 3, $object->lines[$i]->ref, 0, 'L', 0);
 
 					// type
 					$pdf->SetXY($this->posxtype, $curY);
-					$pdf->MultiCell($this->posxtype - 0.8, 3, $object->lines[$i]->type, 0, 'L', false);
+					$pdf->MultiCell($this->posxtype - 0.8, 3, $object->lines[$i]->type, 0, 'L', 0);
 
 					// Total ht
 					$pdf->SetXY($this->posxtotalht, $curY);
-					$pdf->MultiCell($this->posxtotalht - 0.8, 3, price($object->lines[$i]->total_ht), 0, 'R', false);
+					$pdf->MultiCell($this->posxtotalht - 0.8, 3, price($object->lines[$i]->total_ht), 0, 'R', 0);
 
 					// Total tva
 					$pdf->SetXY($this->posxtva, $curY);
-					$pdf->MultiCell($this->posxtva - 0.8, 3, price($object->lines[$i]->total_tva), 0, 'R', false);
+					$pdf->MultiCell($this->posxtva - 0.8, 3, price($object->lines[$i]->total_tva), 0, 'R', 0);
 
 					// Total TTC line
 					$pdf->SetXY($this->posxtotalttc, $curY);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalttc, 3, price($object->lines[$i]->total_ttc), 0, 'R', false);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalttc, 3, price($object->lines[$i]->total_ttc), 0, 'R', 0);
 
 
 					// Add line
@@ -433,7 +411,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -493,8 +471,6 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
-					dolChmod($file);
-					return -1;
 				}
 
 				dolChmod($file);
@@ -519,9 +495,9 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 	 *
 	 *	@param	TCPDF			$pdf			Object PDF
 	 *	@param  PaiementFourn	$object         Object PaiementFourn
-	 *	@param	float			$posy			Position depart
+	 *	@param	int				$posy			Position depart
 	 *	@param	Translate		$outputlangs	Object langs
-	 *	@return float							Position pour suite
+	 *	@return int								Position pour suite
 	 */
 	protected function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -535,15 +511,15 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		// N° payment
 		$pdf->SetXY($this->marge_gauche, $posy);
-		$pdf->MultiCell(30, 4, 'N° '.$outputlangs->transnoentities("Payment"), 0, 'L', true);
+		$pdf->MultiCell(30, 4, 'N° '.$outputlangs->transnoentities("Payment"), 0, 'L', 1);
 
 		// Ref payment
 		$pdf->SetXY($this->marge_gauche + 30, $posy);
-		$pdf->MultiCell(50, 4, $object->ref, 0, 'L', true);
+		$pdf->MultiCell(50, 4, $object->ref, 0, 'L', 1);
 
 		// Total payments
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 50, $posy);
-		$pdf->MultiCell(50, 4, price($object->amount), 0, 'R', true);
+		$pdf->MultiCell(50, 4, price($object->amount), 0, 'R', 1);
 		$posy += 20;
 
 		// translate amount
@@ -551,27 +527,27 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		$translateinletter = strtoupper(dol_convertToWord((float) price2num($object->amount, 'MT'), $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->SetFont('', '', $default_font_size - 3);
-		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', true);
+		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$posy += 8;
 
 		// To
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
-		$pdf->MultiCell(150, 4, $object->thirdparty->name, 0, 'L', true);
+		$pdf->MultiCell(150, 4, $object->thirdparty->name, 0, 'L', 1);
 
 		$LENGTHAMOUNT = 35;
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - $LENGTHAMOUNT, $posy);
-		$pdf->MultiCell($LENGTHAMOUNT, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', true);
+		$pdf->MultiCell($LENGTHAMOUNT, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
 		$posy += 10;
 
 		// City
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(150, 4, $mysoc->town, 0, 'L', true);
+		$pdf->MultiCell(150, 4, $mysoc->town, 0, 'L', 1);
 		$posy += 4;
 
 		// Date
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(150, 4, date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y"), 0, 'L', true);
+		$pdf->MultiCell(150, 4, date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y"), 0, 'L', 1);
 		return $posy;
 	}
 
@@ -580,9 +556,9 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		float		$tab_top		Top position of table
-	 *   @param		float		$tab_height		Height of table (rectangle)
-	 *   @param		float		$nexY			Y (not used)
+	 *   @param		integer		$tab_top		Top position of table
+	 *   @param		integer		$tab_height		Height of table (rectangle)
+	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array

@@ -27,25 +27,16 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 
 /**
- *  Class of numbering module Terre for invoices
+ *  \class      mod_facture_terre
+ *  \brief      Class of numbering module Terre for invoices
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
 	/**
-	 * @var string Sub-module name
-	 */
-	public $name = 'Terre';
-
-	/**
-	 * @var int		Position
-	 */
-	public $position = 40;
-
-	/**
 	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
-	public $version = 'dolibarr_deprecated';
+	public $version = 'dolibarr';
 
 	/**
 	 * Prefix for invoices
@@ -82,7 +73,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	public function __construct()
 	{
-		global $mysoc;
+		global $conf, $mysoc;
 
 		if (((float) getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) >= 16.0 && $mysoc->country_code != 'FR') {
 			$this->prefixinvoice = 'IN'; // We use correct standard code "IN = Invoice"

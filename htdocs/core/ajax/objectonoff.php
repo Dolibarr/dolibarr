@@ -18,10 +18,9 @@
  */
 
 /**
- *       \file      htdocs/core/ajax/objectonoff.php
- *       \brief     File to set status for an object. Called when ajax_object_onoff() is used.
- *       			This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
- *       			TODO Rename into updatestatus.php
+ *       \file       htdocs/core/ajax/objectonoff.php
+ *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
+ *       			 This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
  */
 
 if (!defined('NOTOKENRENEWAL')) {

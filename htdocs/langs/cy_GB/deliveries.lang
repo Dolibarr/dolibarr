@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Cyflwyno
+DeliveryRef=Cyf Cludiad
+DeliveryCard=Delivery receipt
+DeliveryOrder=Derbynneb danfon
+DeliveryDate=Dyddiad dosbarthu
+CreateDeliveryOrder=Cynhyrchu derbynneb danfon
+DeliveryStateSaved=Cyflwr dosbarthu wedi'i gadw
+SetDeliveryDate=Gosod dyddiad cludo
+ValidateDeliveryReceipt=Dilysu derbynneb danfon
+ValidateDeliveryReceiptConfirm=A ydych yn siŵr eich bod am ddilysu'r dderbynneb danfon hon?
+DeleteDeliveryReceipt=Dileu derbynneb danfon
+DeleteDeliveryReceiptConfirm=A ydych yn siŵr eich bod am ddileu derbynneb danfon <b> %s </b> ?
+DeliveryMethod=Dull cyflwyno
+TrackingNumber=Rhif tracio
+DeliveryNotValidated=Cyflwyno heb ei ddilysu
+StatusDeliveryCanceled=Wedi'i ganslo
+StatusDeliveryDraft=Drafft
+StatusDeliveryValidated=Derbyniwyd
+# merou PDF model
+NameAndSignature=Enw a Llofnod:
+ToAndDate=I ___________________________________ ar ____/_____/__________
+GoodStatusDeclaration=Wedi derbyn y nwyddau uchod mewn cyflwr da,
+Deliverer=Dosbarthwr:
+Sender=Anfonwr
+Recipient=Derbynnydd
+ErrorStockIsNotEnough=Does dim digon o stoc
+Shippable=Shippable
+NonShippable=Ddim yn Shippable
+ShowShippableStatus=Dangos statws shippable
+ShowReceiving=Dangos derbynneb danfoniad
+NonExistentOrder=Trefn ddim yn bodoli
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Meintiau stoc a ddyrannwyd eisoes ar linellau blaenorol
