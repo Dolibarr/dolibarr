@@ -78,6 +78,9 @@ $form = new Form($db);
 		<div class="documentation-section" >
 			<h2 class="documentation-title" >Select table lines by <kbd>Ctrl</kbd> + <kbd>Click</kbd>  (Experimental)</h2>
 
+			<div class="info">
+				<p><strong>This feature is currently being integrated. </strong></p>
+			</div>
 
 			<h2>Description</h2>
 			<p>
