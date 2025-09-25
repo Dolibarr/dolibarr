@@ -19,28 +19,10 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/categories_list.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 4
-			path: ../../../htdocs/accountancy/admin/fiscalyear_card.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''ACCOUNTING_LABEL…'' and ''ACCOUNTING_LABEL…'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../htdocs/accountancy/admin/index.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/index.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 7
-			path: ../../../htdocs/accountancy/admin/journals_list.php
 
 		-
 			message: '#^Loose comparison using \!\= between 35 and 10 will always evaluate to true\.$#'

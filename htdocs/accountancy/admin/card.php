@@ -132,7 +132,7 @@ if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // al
 			}
 		}
 	}
-} elseif ($action == 'edit'/*  && $user->hasRight('accounting', 'chartofaccount') // already checked */) {
+} elseif ($action == 'edit' /* && $user->hasRight('accounting', 'chartofaccount') // already checked */) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
