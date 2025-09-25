@@ -2658,13 +2658,8 @@ class User extends CommonObject
 
 		$outputlangs = new Translate("", $conf);
 
-		if (isset($this->conf->MAIN_LANG_DEFAULT)
-			&& $this->conf->MAIN_LANG_DEFAULT != 'auto') {	// If user has defined its own language (rare because in most cases, auto is used)
-			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
-		}
-
-		if ($this->conf->MAIN_LANG_DEFAULT) {
-			$outputlangs->setDefaultLang($this->conf->MAIN_LANG_DEFAULT);
+		if (getDolGlobalString('MAIN_LANG_DEFAULT')) {
+			$outputlangs->setDefaultLang(getDolGlobalString('MAIN_LANG_DEFAULT'));
 		} else {	// If user has not defined its own language, we used current language
 			$outputlangs = $langs;
 		}
