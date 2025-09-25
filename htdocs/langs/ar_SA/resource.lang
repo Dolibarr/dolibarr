@@ -14,8 +14,8 @@ AddResource=إنشاء مورد
 ResourceFormLabel_ref=اسم المورد
 ResourceFormLabel_description=وصف المصادر
 ResourceType=نوع المورد
-ResourceTypeID=Resource type ID
-ResourceTypeLabel=Resource type label
+ResourceTypeID=معرف نوع المورد
+ResourceTypeLabel=تسمية نوع المورد
 ResourcesLinkedToElement=موارد مرتبطة عنصر
 
 ShowResource=مشاهدة الموارد

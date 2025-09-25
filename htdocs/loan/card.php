@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,10 +63,11 @@ $cancel = GETPOST('cancel', 'alpha');
 $projectid = GETPOSTINT('projectid');
 
 // Security check
+/*
 $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
-}
+} */
 $hookmanager->initHooks(array('loancard', 'globalcard'));
 $result = restrictedArea($user, 'loan', $id, '', '');
 
@@ -117,8 +118,9 @@ if (empty($reshook)) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = (float) price2num(GETPOST('capital'));
-			$rate = (float) price2num(GETPOST('rate'));
+
+			$capital = GETPOSTFLOAT('capital');
+			$rate = GETPOSTFLOAT('rate');
 
 			if (!$capital) {
 				$error++;
@@ -152,7 +154,7 @@ if (empty($reshook)) {
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_project = GETPOSTINT('projectid');
-				$object->insurance_amount = GETPOSTINT('insurance_amount');
+				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -192,7 +194,8 @@ if (empty($reshook)) {
 
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = (float) price2num(GETPOST('capital'));
+
+			$capital = GETPOSTFLOAT('capital');
 
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
@@ -201,9 +204,10 @@ if (empty($reshook)) {
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
 				$object->capital = $capital;
-				$object->nbterm = (float) price2num(GETPOSTINT("nbterm"));
-				$object->rate = (float) price2num(GETPOST("rate", 'alpha'));
-				$object->insurance_amount = (float) price2num(GETPOSTINT('insurance_amount'));
+
+				$object->nbterm = GETPOSTINT("nbterm");
+				$object->rate = GETPOSTFLOAT("rate");
+				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -271,6 +275,7 @@ $form = new Form($db);
 $formproject = new FormProjets($db);
 $morehtmlstatus = '';
 $outputlangs = $langs;
+$formaccounting = null;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -286,8 +291,6 @@ if ($action == 'create') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print load_fiche_titre($langs->trans("NewLoan"), '', 'money-bill-alt');
-
-	$datec = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 	print '<form name="loan" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -344,7 +347,7 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject = $formproject->select_projects(-1, $projectid, 'projectid', 16, 0, 1, 1);
+		$formproject->select_projects(-1, (string) $projectid, 'projectid', 16, 0, 1, 1);
 
 		print '</td></tr>';
 	}
@@ -368,24 +371,24 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Accountancy
-	if (isModEnabled('accounting')) {
+	if (isModEnabled('accounting') && $formaccounting !== null) {
 		/** @var FormAccounting $formaccounting */
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ? GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ? GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, array(), 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_insurance
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ? GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ? GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, array(), 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_interest
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ? GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ? GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, array(), 1, 1);
 		print '</td></tr>';
 	} else {
 		// For external software
@@ -464,11 +467,11 @@ if ($id > 0) {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects(-1, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -560,9 +563,9 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyCapitalCode");
 			print '</td><td>';
 
-			if (isModEnabled('accounting')) {
+			if (isModEnabled('accounting') && $formaccounting !== null) {
 				/** @var FormAccounting $formaccounting */
-				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 1, 1);
+				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, array(), 1, 1);
 			} else {
 				print '<input name="accountancy_account_capital" size="16" value="'.$object->account_capital.'">';
 			}
@@ -574,7 +577,7 @@ if ($id > 0) {
 
 			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('', $object->account_capital, 1);
+				$accountingaccount->fetch(0, $object->account_capital, 1);
 
 				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 			} else {
@@ -592,9 +595,9 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
 
-			if (isModEnabled('accounting')) {
+			if (isModEnabled('accounting') && $formaccounting !== null) {
 				/** @var FormAccounting $formaccounting */
-				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 1, 1);
+				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, array(), 1, 1);
 			} else {
 				print '<input name="accountancy_account_insurance" size="16" value="'.$object->account_insurance.'">';
 			}
@@ -606,7 +609,7 @@ if ($id > 0) {
 
 			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('', $object->account_insurance, 1);
+				$accountingaccount->fetch(0, $object->account_insurance, 1);
 
 				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 			} else {
@@ -624,9 +627,9 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInterestCode");
 			print '</td><td>';
 
-			if (isModEnabled('accounting')) {
+			if (isModEnabled('accounting') && $formaccounting !== null) {
 				/** @var FormAccounting $formaccounting */
-				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 1, 1);
+				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, array(), 1, 1);
 			} else {
 				print '<input name="accountancy_account_interest" size="16" value="'.$object->account_interest.'">';
 			}
@@ -638,7 +641,7 @@ if ($id > 0) {
 
 			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('', $object->account_interest, 1);
+				$accountingaccount->fetch(0, $object->account_interest, 1);
 
 				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 			} else {
@@ -680,8 +683,6 @@ if ($id > 0) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$total_insurance = 0;
-			$total_interest = 0;
 			$total_capital = 0;
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -775,6 +776,7 @@ if ($id > 0) {
 				}
 
 				// Emit payment
+				// TODO check if loan schedule is created ($echeances->lines > 0)
 				if (($object->paid == 0 || $object->paid == 2) && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->hasRight('loan', 'write')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
 				}

@@ -6,8 +6,8 @@
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2020      John BOTELLA
- * Copyright (C) 2024	   MDW					 <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -128,7 +128,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *  @param      int<0,1>	$hidedetails		Do not show line details
 	 *  @param      int<0,1>	$hidedesc			Do not show desc
 	 *  @param      int<0,1>	$hideref			Do not show ref
-	 *  @return     int<0,1>             			1=OK, 0=KO
+	 *  @return     int<-1,1>             			1=OK, <=0 => KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -144,7 +144,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings"));
 
 		if ($conf->expedition->dir_output) {
 			$object->fetch_thirdparty();
@@ -203,6 +203,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 						}
 
 						$arephoto = false;
+						$realpath = false;
 						foreach ($pdir as $midir) {
 							if (!$arephoto) {
 								$dir = $conf->product->dir_output.'/'.$midir;
@@ -241,7 +242,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -380,7 +381,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					// Description of product line
@@ -428,7 +429,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 							$pdf->rollbackTransaction(true);
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
-							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 4, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
 							$posyafter = $pdf->GetY();
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {    // There is no space left for total+free text
@@ -462,7 +463,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -475,14 +476,14 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 					// Quantity
 					if ($this->getColumnStatus('qty_shipped')) {
-						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', $object->lines[$i]->qty_shipped);
+						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', (string) $object->lines[$i]->qty_shipped);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Remaining to ship
 					if ($this->getColumnStatus('qty_remaining')) {
 						$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
-						$this->printStdColumnContent($pdf, $curY, 'qty_remaining', $qtyRemaining);
+						$this->printStdColumnContent($pdf, $curY, 'qty_remaining', (string) $qtyRemaining);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -521,7 +522,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -583,6 +584,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -607,7 +610,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Delivery	$object			Object to show
-	 *   @param		int			$posy			Y
+	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
@@ -638,7 +641,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		float|int	$tab_top		Top position of table
 	 *   @param		float|int	$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y (not used)
+	 *   @param		float		$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array
@@ -663,7 +666,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		if (empty($hidetop)) {
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -693,7 +696,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -889,7 +892,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(
@@ -984,7 +987,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
 			'width' => 20, // in mm
-			'status' => true,
+			'status' => !getDolGlobalString('DELIVERY_PDF_HIDE_SHIPPED'),
 			'title' => array(
 				'textkey' => 'QtyShippedShort'
 			),
@@ -995,7 +998,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->cols['qty_remaining'] = array(
 			'rank' => $rank,
 			'width' => 20, // in mm
-			'status' => 1,
+			'status' => !getDolGlobalString('DELIVERY_PDF_HIDE_QTYTOSHIP'),
 			'title' => array(
 				'textkey' => 'KeepToShipShort'
 			),

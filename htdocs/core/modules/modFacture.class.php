@@ -95,7 +95,7 @@ class modFacture extends DolibarrModules
 
 		$this->const[$r][0] = "FACTURE_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/invoices";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/invoices";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -120,12 +120,12 @@ class modFacture extends DolibarrModules
 				'objectname' => 'FactureRec',
 				'method' => 'createRecurringInvoices',
 				'parameters' => '',
-				'comment' => 'Generate recurring invoices',
+				'comment' => 'Generate recurring invoices.',
 				'frequency' => 1,
 				'unitfrequency' => 3600 * 24,
 				'priority' => 51,
 				'status' => 1,
-				'test' => '$conf->facture->enabled',
+				'test' => 'isModEnabled("invoice")',
 				'datestart' => $datestart
 			),
 			1 => array(
@@ -140,7 +140,7 @@ class modFacture extends DolibarrModules
 				'unitfrequency' => 3600 * 24,
 				'priority' => 50,
 				'status' => 0,
-				'test' => '$conf->facture->enabled',
+				'test' => 'isModEnabled("invoice")',
 				'datestart' => $datestart
 			),
 		);
@@ -775,12 +775,14 @@ class modFacture extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$this->_load_tables('/install/mysql/', 'facture');
+
 		// Remove permissions and default values
 		$this->remove($options);
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/invoices';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/invoices';
 		$dest = $dirodt.'/template_invoice.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

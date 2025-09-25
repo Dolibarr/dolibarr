@@ -62,6 +62,13 @@ if (!$user->hasRight('takepos', 'run')) {
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 

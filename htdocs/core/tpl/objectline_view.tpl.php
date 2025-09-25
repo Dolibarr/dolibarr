@@ -7,9 +7,10 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France		  <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,7 @@
  *
  * Need to have the following variables defined:
  * $object (invoice, order, ...)
- * $conf
- * $langs
  * $dateSelector
- * $forceall (0 by default, 1 for supplier invoices/orders)
  * $element     (used to test $user->rights->$element->creer)
  * $permtoedit  (used to replace test $user->rights->$element->creer)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
@@ -54,9 +52,9 @@
  *
  * @var string $action
  * @var int $i
- * @var 0|1 $forceall
+ * @var int $forceall
  * @var int $num
- * @var 0|1 $senderissupplier
+ * @var int $senderissupplier
  * @var string $text
  * @var string $description
  */
@@ -69,13 +67,19 @@ if (empty($object) || !is_object($object)) {
 '
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
 @phan-var-force CommonObject $this
-@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force 0|1 $forceall
 @phan-var-force int $num
 @phan-var-force ?Product $product_static
 @phan-var-force string $text
 @phan-var-force string $description
+@phan-var-force Object $objp
 ';
+
+// Handle subtotals line view
+if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+	return require DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_view.tpl.php';
+}
 
 global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
@@ -128,7 +132,7 @@ $coldisplay = 0;
 <?php
 
 
-$parameters = ['line' => $line, 'i' =>& $i, 'coldisplay' =>& $coldisplay];
+$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 $reshook = $hookmanager->executeHooks('objectLineView_BeforeProduct', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -185,7 +189,7 @@ if (($line->info_bits & 2) == 2) {
 				print $form->textwithpicto('', $description);
 			}
 		} else {
-			print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		}
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
@@ -197,7 +201,7 @@ if (($line->info_bits & 2) == 2) {
 
 		if (!empty($line->label)) {
 			$text .= ' <strong>'.$line->label.'</strong>';
-			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
 				print img_picto('', 'rightarrow');
@@ -266,20 +270,18 @@ if (($line->info_bits & 2) == 2) {
 	if ($line->fk_product > 0 && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 		if ($line->element == 'facturedetrec') {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
-		} elseif ($line->element == 'invoice_supplier_det_rec') {
-			print (!empty($line->description) && $line->description != $line->label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		} else {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		}
 	}
 
 
-	$parameters = ['line' => $line, 'i' =>& $i, 'coldisplay' =>& $coldisplay];
+	$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 	$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Line extrafield
 	if (!empty($extrafields) && empty($reshook)) {
-		$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+		$temps = $line->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 		if (!empty($temps)) {
 			print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
 			print $temps;
@@ -288,7 +290,7 @@ if (($line->info_bits & 2) == 2) {
 	}
 }
 
-$parameters = ['line' => $line, 'i' =>& $i, 'coldisplay' =>& $coldisplay];
+$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 $reshook = $hookmanager->executeHooks('objectLineView_ProductSupplier', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (empty($reshook)) {
@@ -391,10 +393,10 @@ $positiverates = '';
 if (price2num($line->tva_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->tva_tx);
 }
-if (price2num($line->total_localtax1)) {
+if (price2num($line->localtax1_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->localtax1_tx);
 }
-if (price2num($line->total_localtax2)) {
+if (price2num($line->localtax2_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->localtax2_tx);
 }
 if (empty($positiverates)) {
@@ -419,8 +421,21 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	}
 	print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
 	?></td>
-<?php } ?>
+<?php }
 
+// Multicurrency TTC
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
+	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
+	$multicurrency_upinctax = isset($line->pu_ttc_devise) ? $line->pu_ttc_devise : null;
+	if (!$multicurrency_upinctax) {
+		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
+	}
+	if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES') && $line->multicurrency_total_ttc) {
+		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
+	}
+	print (isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));
+	?></td>
+<?php } ?>
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
 <?php
 if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
@@ -436,10 +451,8 @@ print '</td>';
 
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
-	$label = $line->getLabelOfUnit('short');
-	if ($label !== '') {
-		print $langs->trans($label);
-	}
+	$label = $line->getLabelOfUnit('short', $langs);
+	print $label;
 	print '</td>';
 }
 if (!empty($line->remise_percent) && $line->special_code != 3) {
@@ -459,7 +472,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	$coldisplay++;
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
-		$current_progress = $previous_progress + floatval($line->situation_percent);
+		$current_progress = $previous_progress + (float) $line->situation_percent;
 		print '<td class="linecolcycleref nowrap right">'.$current_progress.'%</td>';
 		$coldisplay++;
 		print '<td  class="nowrap right">'.$line->situation_percent.'%</td>';
@@ -516,7 +529,7 @@ if ($line->special_code == 3) {
 
 // Price inc tax
 if ($outputalsopricetotalwithtax) {
-	print '<td class="linecolht nowrap right">'.price($sign * $line->total_ttc).'</td>';
+	print '<td class="linecolttc nowrap right">'.price($sign * $line->total_ttc).'</td>';
 	$coldisplay++;
 }
 

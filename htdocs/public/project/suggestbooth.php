@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2021		Dorian Vabre				<dorian.vabre@gmail.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,7 @@ global $dolibarr_main_url_root;
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  */
 
 // Init vars
@@ -86,7 +87,7 @@ $dateend = dol_mktime(23, 59, 59, GETPOSTINT('dateendmonth'), GETPOSTINT('dateen
 $id = GETPOST('id');
 
 $project = new Project($db);
-$resultproject = $project->fetch($id);
+$resultproject = $project->fetch((int) $id);
 if ($resultproject < 0) {
 	$error++;
 	$errmsg .= $project->error;
@@ -94,7 +95,7 @@ if ($resultproject < 0) {
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -117,13 +118,15 @@ if ($arrayofconfboothtype == -1) {
 	$arrayofconfboothtype = [];
 }
 // Security check
-if (empty($conf->eventorganization->enabled)) {
+if (!isModEnabled('eventorganization')) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 
 /**
  * Show header for new member
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
@@ -133,7 +136,7 @@ if (empty($conf->eventorganization->enabled)) {
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -181,9 +184,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</div>';
 
@@ -228,7 +233,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 	if (!GETPOST("societe")) {
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"))."<br>\n";
 	}
 	if (!GETPOST("label")) {
 		$error++;
@@ -245,6 +250,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	$thirdparty = null;
+	$contact = null;
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -287,6 +293,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 			$modCodeClient = new $module($db);
 			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
+			/** @var ModeleThirdPartyCode $modCodeClient */
 
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
@@ -317,6 +324,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				$contact->country_id = GETPOSTINT("country_id");
 				$contact->state_id = GETPOSTINT("state_id");
 				$contact->email = $email;
+				$contact->status = 1; //Default status to Actif
 				$contact->statut = 1; //Default status to Actif
 
 				$resultcreatecontact = $contact->create($user);
@@ -331,7 +339,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			// Adding supplier tag and tag from setup to thirdparty
 			$category = new Categorie($db);
 
-			$resultcategory = $category->fetch(getDolGlobalString('EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'));
+			$resultcategory = $category->fetch(getDolGlobalInt('EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'));
 
 			if ($resultcategory <= 0) {
 				$error++;
@@ -358,6 +366,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					}
 					$modCodeFournisseur = new $module($db);
 					'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
+					/** @var ModeleThirdPartyCode $modCodeFournisseur */
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
 					}
@@ -433,7 +442,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					$facture = null;
 					if (!empty((float) $project->price_booth)) {
 						$productforinvoicerow = new Product($db);
-						$resultprod = $productforinvoicerow->fetch(getDolGlobalString('SERVICE_BOOTH_LOCATION'));
+						$resultprod = $productforinvoicerow->fetch(getDolGlobalInt('SERVICE_BOOTH_LOCATION'));
 						if ($resultprod < 0) {
 							$error++;
 							$errmsg .= $productforinvoicerow->error;
@@ -457,8 +466,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							}
 							$resultfacture = $facture->create($user);
 							if ($resultfacture <= 0) {
-								$contact->error = $facture->error;
-								$contact->errors = $facture->errors;
+								$contact->setErrorsFromObject($facture);
 								$error++;
 							} else {
 								$db->commit();
@@ -471,8 +479,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
 							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, 0, 'HT', 0, 1);
 							if ($result <= 0) {
-								$contact->error = $facture->error;
-								$contact->errors = $facture->errors;
+								$contact->setErrorsFromObject($facture);
 								$error++;
 							}
 							/*if (!$error) {
@@ -516,7 +523,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		// Get email content from template
 		$arraydefaultmessage = null;
 
-		$labeltouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH');
+		$labeltouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH');
 		if (!empty($labeltouse)) {
 			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 		}
@@ -550,7 +557,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 		}
 
-		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
+		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 		header("Location: ".$redirection);
 		exit;
@@ -699,7 +706,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id"), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	} else {
 		print '';
 	}

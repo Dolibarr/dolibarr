@@ -57,12 +57,14 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminihm'; // To manage different context of search
-
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'other'; // 'template', 'dashboard', 'login', 'other'
 
 if (!defined("MAIN_MOTD")) {
 	define("MAIN_MOTD", "");
 }
+
+$object = new stdClass();
+
 
 /*
  * Action
@@ -323,9 +325,12 @@ if ($action == 'update') {
 	}
 
 	if ($mode == 'css') {
-		//file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
-		//dol_chmod(DOL_DATA_ROOT.'/admin/customcss.css');
-		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
+		$csscontent = GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml');	// Will return a sanitized HTML content (so with double spaes that may be replaced with one, ...
+		$csscontent = dol_string_nohtmltag($csscontent, 2, 'UTF-8', 0, 0);
+
+		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", $csscontent, 'chaine', 0, '', $conf->entity);
+
+		setEventMessages($langs->trans("RecordSaved"), null);
 	}
 
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
@@ -395,7 +400,7 @@ if ($mode == 'other') {
 
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
 	print $langs->trans("Language");
-	print '</td><td class="titlefieldmiddle">';
+	print '</td><td>';
 	print '</td></tr>';
 
 	// Default language
@@ -430,7 +435,7 @@ if ($mode == 'other') {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
 	print $langs->trans("Miscellaneous");
 	print '</td>';
-	print '<td class="titlefieldmiddle"></td>';
+	print '<td></td>';
 	print '</tr>';
 
 	if (!empty($conf->use_javascript_ajax)) {
@@ -594,67 +599,67 @@ if ($mode == 'dashboard') {
 	if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 		// Block meteo
 		print '<tr class="oddeven"><td>' . $langs->trans('MAIN_DISABLE_METEO') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block agenda
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockAgenda') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_AGENDA", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_AGENDA", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block agenda
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockProject') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_PROJECT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_PROJECT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block customer
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockCustomer') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CUSTOMER", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CUSTOMER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block supplier
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockSupplier') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_SUPPLIER", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_SUPPLIER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block contract
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockContract') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CONTRACT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CONTRACT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block ticket
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockTicket') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_TICKET", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_TICKET", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block bank
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockBank') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_BANK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_BANK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block adherent
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockAdherent') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_ADHERENT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_ADHERENT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block expense report
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockExpenseReport') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_EXPENSEREPORT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_EXPENSEREPORT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block holiday
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockHoliday') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_HOLIDAY", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_HOLIDAY", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
 	}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -99,7 +99,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 			}
 		}
 
-		if (count($amounts) <= 0) {
+		if (empty($amounts)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
 			$action = 'create';
@@ -129,9 +129,9 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 
 			if (!$error) {
 				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOSTINT('accountid'), '', '');
-				if (!($result > 0)) {
+				if ($result <= 0) {
 					$error++;
-					setEventMessages($paiement->error, null, 'errors');
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
 				}
 			}
@@ -229,7 +229,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opend bank account list
+	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number
@@ -323,7 +323,8 @@ if ($action == 'create') {
 	print '</div>';
 
 	// Save payment button
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib" id="closepaidcontrib" class="marginrightonly">';
+	print '<label for="closepaidcontrib">'.$langs->trans("ClosePaidContributionsAutomatically").'</span>';
 	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';

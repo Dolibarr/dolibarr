@@ -2,7 +2,7 @@
 /* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}> $_Avery_Labels
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
 
 // Load translation files required by the page
@@ -85,20 +85,22 @@ $hookmanager->initHooks(array('printsheettools'));
 
 restrictedArea($user, 'barcode');
 
-$parameters = array();
+$object = new stdClass();
 
-// Note that $action and $object may have been modified by some
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
 
 /*
  * Actions
  */
 
+// Note that $action and $object may have been modified by some
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
 if (empty($reshook)) {
-	if (GETPOST('submitproduct') && GETPOST('submitproduct')) {
+	if (GETPOST('submitproduct')) {
 		$action = ''; // We reset because we don't want to build doc
 		if (GETPOSTINT('productid') > 0) {
 			$result = $producttmp->fetch(GETPOSTINT('productid'));
@@ -117,7 +119,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
+	if (GETPOST('submitthirdparty')) {
 		$action = ''; // We reset because we don't want to build doc
 		if (GETPOSTINT('socid') > 0) {
 			$thirdpartytmp->fetch(GETPOSTINT('socid'));
@@ -296,7 +298,7 @@ if (empty($reshook)) {
 					// This generates and send PDF to output
 					// TODO Move
 					try {
-						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, (string) $diroutput, (string) $template, dol_sanitizeFileName($outfile));
 					} catch (Exception $e) {
 						$mesg = $langs->trans('ErrorGeneratingBarcode');
 					}
@@ -455,7 +457,7 @@ if ($user->hasRight('societe', 'lire')) {
 	print '</div>';
 }
 
-print '<br>';
+print '<br><br>';
 
 if ($producttmp->id > 0) {
 	print $langs->trans("BarCodeDataForProduct", '').' '.$producttmp->getNomUrl(1).'<br>';
@@ -493,7 +495,7 @@ print '<br>';
 
 print '</div>';
 
-print '<br><input type="submit" class="button" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode")) ? '' : 'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
+print '<br><input type="submit" class="button" id="submitformbarcodegen" '.(GETPOST("selectorforbarcode") ? '' : 'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
 
 print '</form>';
 print '<br>';

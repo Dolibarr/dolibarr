@@ -121,6 +121,9 @@ if (isModEnabled('shipping') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_SH
 if (isModEnabled('invoice') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED') && $user->hasRight('facture', 'lire')) {
 	$arrayresult['searchintoinvoice'] = array('position' => 90, 'img' => 'object_bill', 'label' => $langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'text' => img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url' => DOL_URL_ROOT.'/compta/facture/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
+if (isModEnabled('invoice') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_REC_DISABLED') && $user->hasRight('facture', 'lire')) {
+	$arrayresult['searchintoinvoicerec'] = array('position' => 90, 'img' => 'object_bill', 'label' => $langs->trans("SearchIntoCustomerInvoicesRec", $search_boxvalue), 'text' => img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoicesRec", $search_boxvalue), 'url' => DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
+}
 
 if (isModEnabled('supplier_proposal') && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED') && $user->hasRight('supplier_proposal', 'lire')) {
 	$arrayresult['searchintosupplierpropal'] = array('position' => 100, 'img' => 'object_supplier_proposal', 'label' => $langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'text' => img_picto('', 'object_supplier_proposal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url' => DOL_URL_ROOT.'/supplier_proposal/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));

@@ -99,7 +99,7 @@ class FormMargin
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 
-			$pv = $line->total_ht;
+			$pv = (float) $line->total_ht;
 
 			// $line->pa_ht is always positive in database, so we guess the correct sign
 

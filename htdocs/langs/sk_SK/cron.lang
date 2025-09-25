@@ -29,8 +29,8 @@ CronExecute=Spustite teraz
 CronConfirmExecute=Naozaj chcete vykonať tieto naplánované úlohy teraz?
 CronInfo=Modul plánovanej úlohy umožňuje naplánovať úlohy tak, aby sa vykonávali automaticky. Úlohy je možné spustiť aj manuálne.
 CronTask=Práca
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=Ďalšie spustenie naplánovanej úlohy
+CronNotYetRan=Nikdy popravený
 CronDtStart=Nie predtým
 CronDtEnd=Nie potom
 CronDtNextLaunch=Ďalšie prevedenie
@@ -50,7 +50,7 @@ JobFinished=Práca zahájená a dokončená
 Scheduled=Naplánovaný
 #Page card
 CronAdd=Pridať pracovných miest
-CronEvery=Run job every
+CronEvery=Spustiť úlohu každých
 CronObject=Inštancia / objekt vytvoriť
 CronArgs=Parametre
 CronSaveSucess=Uložiť úspešne
@@ -77,6 +77,7 @@ CronType=Typ práce
 CronType_method=Metóda volania triedy PHP
 CronType_command=Shell príkaz
 CronCannotLoadClass=Nie je možné načítať súbor triedy %s (na použitie triedy %s)
+CronModuleNotEnabledInThisEntity=Modul Cron nie je v tejto entite povolený (na použitie metódy %s objektu %s)
 CronCannotLoadObject=Súbor triedy %s bol načítaný, ale nenašiel sa v ňom objekt %s
 UseMenuModuleToolsToAddCronJobs=Ak chcete zobraziť a upraviť naplánované úlohy, prejdite do ponuky "<a href="%s">Domov - Nástroje správcu - Naplánované úlohy</a>".
 JobDisabled=Práca je zakázaná

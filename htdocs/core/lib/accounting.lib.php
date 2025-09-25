@@ -281,7 +281,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
  */
 function getDefaultDatesForTransfer()
 {
-	global $db, $conf;
+	global $db;
 
 	$date_start = '';
 	$date_end = '';
@@ -295,7 +295,7 @@ function getDefaultDatesForTransfer()
 		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
-		if ($res->num_rows > 0) {
+		if ($db->num_rows($res) > 0) {
 			$obj = $db->fetch_object($res);
 
 			$date_start = $db->jdate($obj->date_start);

@@ -4,7 +4,7 @@
  * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-}
-if (isModEnabled('accounting')) {
-	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
 /**
@@ -138,7 +137,7 @@ if (empty($reshook)) {
 
 	// Link to a project
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('fk_project'));
+		$object->setProject(GETPOSTINT('fk_project'));
 	}
 
 	if ($action == 'setfk_user' && $permissiontoadd) {
@@ -216,6 +215,7 @@ if (empty($reshook)) {
 			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 			$object->fk_account = GETPOSTINT('fk_account');
 			$object->fk_project = GETPOSTINT('fk_project');
+			$object->paye = ChargeSociales::STATUS_UNPAID;
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -243,7 +243,7 @@ if (empty($reshook)) {
 		} else {
 			$result = $object->fetch($id);
 
-			$object->oldcopy = dol_clone($object, 2);
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$object->type = $actioncode;
 			$object->date_ech = $dateech;
@@ -351,13 +351,11 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-$now = dol_now();
-
 $title = $langs->trans("SocialContribution").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module_Taxes_et_charges_spéciales|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("", $title, $help_url);
 
-$reseapayer = 0;
+$resteapayer = 0;
 
 
 // Form to create a social contribution
@@ -386,7 +384,7 @@ if ($action == 'create') {
 	print $langs->trans("Type");
 	print '</td>';
 	print '<td>';
-	$formsocialcontrib->select_type_socialcontrib(GETPOST('actioncode', 'alpha') ? GETPOST('actioncode', 'alpha') : '', 'actioncode', 1);
+	$formsocialcontrib->select_type_socialcontrib(GETPOST('actioncode', 'alpha') ? GETPOSTINT('actioncode') : 0, 'actioncode', 1);
 	print '</td>';
 	print '</tr>';
 
@@ -433,14 +431,14 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
+		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, (string) $fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 
 		print '</td></tr>';
 	}
 
 	// Payment Mode
 	print '<tr><td>'.$langs->trans('DefaultPaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements(GETPOSTINT('mode_reglement_id'), 'mode_reglement_id');
+	$form->select_types_paiements((string) GETPOSTINT('mode_reglement_id'), 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
@@ -515,7 +513,7 @@ if ($id > 0) {
 		}
 
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill', 0, '', '', 0, '', 1);
+		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 		// Print form confirm
 		print $formconfirm;
@@ -569,7 +567,7 @@ if ($id > 0) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.((int) $object->id).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -596,13 +594,16 @@ if ($id > 0) {
 		print '<table class="border centpercent tableforfield">';
 
 		// Type
-		print '<tr><td class="titlefieldmiddle">';
+		print '<tr><td class="titlefield">';
 		print $langs->trans("Type")."</td><td>";
 		if ($action == 'edit' && $object->getSommePaiement() == 0) {
 			$actionPostValue = GETPOSTINT('actioncode');
 			$formsocialcontrib->select_type_socialcontrib($actionPostValue ? $actionPostValue : $object->type, 'actioncode', 1);
 		} else {
 			print $object->type_label;
+			if (isModEnabled("accounting")) {
+				print ' &nbsp; <pan class="opacitymedium">('.$langs->trans("AccountancyCode").': '.(empty($object->type_accountancy_code) ? $langs->trans("Unknown") : length_accountg($object->type_accountancy_code)).')</span>';
+			}
 		}
 		print "</td>";
 
@@ -638,7 +639,7 @@ if ($id > 0) {
 
 		// Mode of payment
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('DefaultPaymentMode');
 		print '</td>';
 		if ($action != 'editmode') {
@@ -647,9 +648,9 @@ if ($id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', '', 1, 1);
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', '', 1, 1);
 		} else {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'none');
 		}
 		print '</td></tr>';
 
@@ -665,9 +666,9 @@ if ($id > 0) {
 			print '</tr></table>';
 			print '</td><td>';
 			if ($action == 'editbankaccount') {
-				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 			} else {
-				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 			}
 			print '</td>';
 			print '</tr>';

@@ -105,6 +105,29 @@ class FichinterTest extends CommonClassTest
 	}
 
 	/**
+	 * testFichinterUpdate
+	 *
+	 * Check that a intervention object can be updated.
+	 *
+	 * @param 	Object	$localobject 	An existing intervention object to update.
+	 * @return 							Intervention object with data fetched and description changed
+	 *
+	 * @depends testFichinterFetch
+	 */
+	public function testFichinterUpdate($localobject)
+	{
+		global $user;
+
+		$localobject->description = "foobar";
+
+		$result = $localobject->update($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
+
+		return $localobject;
+	}
+
+	/**
 	 * testFichinterValid
 	 *
 	 * @param	Fichinter		$localobject		Intervention

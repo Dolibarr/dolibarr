@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2019 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2019 		Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->BOM_ADDON_PDF == "$value") {
+		if (getDolGlobalString('BOM_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'BOM_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -144,24 +144,15 @@ if ($action == 'updateMask') {
 	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "BOM_ADDON", $value, 'chaine', 0, '', $conf->entity);
-} elseif ($action == 'set_BOM_DRAFT_WATERMARK') {
+} elseif ($action == 'updateother') {
 	$draft = GETPOST("BOM_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "BOM_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
-
 	if (!($res > 0)) {
 		$error++;
 	}
 
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-} elseif ($action == 'set_BOM_FREE_TEXT') {
 	$freetext = GETPOST("BOM_FREE_TEXT", 'restricthtml'); // No alpha here, we want exact string
-
 	$res = dolibarr_set_const($db, "BOM_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
-
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -184,7 +175,8 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader("", $langs->trans("BOMsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-bom');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("BOMsSetup"), $linkback, 'title_setup');
 
 $head = bomAdminPrepareHead();
@@ -225,6 +217,7 @@ foreach ($dirmodels as $reldir) {
 					$module = new $classname($db);
 
 					'@phan-var-force ModeleNumRefBoms $module';
+					/** @var ModeleNumRefBoms $module */
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -253,7 +246,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->BOM_ADDON == $file) {
+						if (getDolGlobalString('BOM_ADDON') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -265,11 +258,14 @@ foreach ($dirmodels as $reldir) {
 						$bom = new BOM($db);
 						$bom->initAsSpecimen();
 
+						$tmpprod = new Product($db);
+						$tmpprod->initAsSpecimen();
+
 						// Info
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$bom->type = 0;
-						$nextval = $module->getNextValue($mysoc, $bom);
+						$nextval = $module->getNextValue($tmpprod, $bom);
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
@@ -283,7 +279,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -364,6 +360,7 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 							'@phan-var-force ModelePDFBom $module';
+							/** @var ModelePDFBom $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -399,7 +396,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->BOM_ADDON_PDF == $name) {
+								if (getDolGlobalString('BOM_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -420,7 +417,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -452,13 +449,34 @@ print '</div>';
 print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateother">';
+
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
-print "<td>&nbsp;</td>\n";
+print '<td class="center"></td>';
 print "</tr>\n";
+
+if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BOM_SUB_BOM");
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('BOM_SUB_BOM');
+	} else {
+		if (!getDolGlobalString('BOM_SUB_BOM')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BOM_SUB_BOM&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_BOM_SUB_BOM&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+
+	print "</td></tr>\n";
+}
+
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
@@ -468,9 +486,6 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_BOM_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnBOMs"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'BOM_FREE_TEXT';
@@ -481,27 +496,24 @@ if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-print '</form>';
 
-//Use draft Watermark
+// Use draft Watermark
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_BOM_DRAFT_WATERMARK">';
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftBOMs"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('BOM_DRAFT_WATERMARK')).'">';
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-print '</form>';
 
 print '</table>';
+
+print '<center><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></center>';
+
 print '</div>';
+
+print '</form>';
+
 print '<br>';
 
 

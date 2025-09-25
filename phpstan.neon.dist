@@ -21,6 +21,7 @@ parameters:
 		analyseAndScan:
 		- htdocs/custom/*
 		- htdocs/documents/*
+		- htdocs/install/*		# We must exclude this dir to avoid to have DOL_DOCUMENT_ROOT defined to .. by inc.php before the bootstrap*.php file can load it.
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
@@ -68,10 +69,14 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
-	# if you want to exclude something, generate the baseline to do that, adding here give the opportunity to add new errors
+	# if you want to exclude something, generate the baseline to do that, add here give only pattern that does not give the opportunity to introduce new errors
+	# or pattern to avoid false positive of some bugged or allowed phpstan checks
 	ignoreErrors:
 		- '#.*phan-var#'
-		- '#^Expression "''…" on a separate line does not do anything\.$#'
+		- '#^Expression "''…" on a separate line does not do anything#'
+		- '#Empty array passed to foreach#'
+		- '#Unable to resolve the template type T#'
+		- '#in empty\(\) always exists and is always falsy#'
 	internalErrorsCountLimit: 50
 	cache:
 		# nodesByFileCountMax: 512

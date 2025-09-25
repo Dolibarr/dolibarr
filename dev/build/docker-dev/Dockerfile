@@ -23,11 +23,12 @@ RUN apt-get update -y \
         msmtp \
         msmtp-mta \
         mailutils \
+        libpq-dev \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql pgsql gd soap zip \
+    && docker-php-ext-configure ldap \
     && docker-php-ext-install -j$(nproc) ldap && \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 

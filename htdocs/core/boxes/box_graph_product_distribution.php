@@ -100,7 +100,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		if (!isModEnabled('invoice') || !$user->hasRight('facture', 'lire')) {
 			$showinvoicenb = 0;
 		}
-		if (isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
+		if (!isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
 			$showpropalnb = 0;
 		}
 		if (!isModEnabled('order') || !$user->hasRight('commande', 'lire')) {
@@ -222,6 +222,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data3)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
+
 					$data3 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 

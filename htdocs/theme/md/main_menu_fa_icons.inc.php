@@ -1,11 +1,10 @@
 <?php if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-/* <style type="text/css" > */
 
-.mainmenu::before{
-	/* font part */
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+/* IDE Hack <style type="text/css"> */
+
+.mainmenu::before, .mainmenu span::before {
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -15,7 +14,9 @@
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	color: var(--colortextbackhmenu);
+}
+.mainmenu:not(.fab)::before, .mainmenu:not(.fab) span:not(.fab)::before {
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 }
 
 div.mainmenu.menu {
@@ -65,6 +66,9 @@ div.mainmenu.generic4::before {
 }
 .fa-link, .fa-unlink {
 	color: #555;
+}
+.fa-project-diagram:before {
+	font-size: 0.9em;
 }
 
 /* Define square Dolibarr logo in pure CSS */

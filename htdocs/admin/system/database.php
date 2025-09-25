@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio  	<sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier       	<benoit.mortier@opensides.be>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ require '../../main.inc.php';
  * @var User $user
  *
  * @var string $dolibarr_main_db_pass
+ * @var string $dolibarr_main_db_collation
+ * @var string $dolibarr_main_db_character_set
  */
 
 $langs->load("admin");
@@ -51,21 +53,28 @@ if (!$user->admin) {
  * Actions
  */
 
+$logsql = '';
+$resultsql = null;
+
 if ($action == 'convertutf8unicode') {			// Test on permission already done.
 	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
-	$db->query($sql);
+	$logsql .= $sql.'<br>';
+	$resultsql = $db->query($sql);
 }
 if ($action == 'convertutf8mb4unicode') {		// Test on permission already done.
-	$sql = "ALTER DATABASE CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
-	$db->query($sql);
+	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+	$logsql .= $sql.'<br>';
+	$resultsql = $db->query($sql);
 }
 if ($action == 'convertutf8general') {			// Test on permission already done.
 	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8 COLLATE utf8_general_ci";
-	$db->query($sql);
+	$logsql .= $sql.'<br>';
+	$resultsql = $db->query($sql);
 }
 if ($action == 'convertutf8mb4general') {		// Test on permission already done.
 	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
-	$db->query($sql);
+	$logsql .= $sql.'<br>';
+	$resultsql = $db->query($sql);
 }
 
 
@@ -78,6 +87,10 @@ $form = new Form($db);
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_database');
 
 print load_fiche_titre($langs->trans("InfoDatabase"), '', 'title_setup');
+
+if ($logsql) {
+	print info_admin($logsql.' '.(empty($resultsql) ? ' => KO '.$db->lasterror() : ' => OK'));
+}
 
 // Database
 print '<div class="div-table-responsive-no-min">';
@@ -94,7 +107,7 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("Password").'</td><td
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase();
 if ($db->type == 'mysqli') {
 	$tooltipexample = "<br>SHOW VARIABLES LIKE 'character_set_database' (cached)<br>You can avoid cache effect with:<br>SELECT DEFAULT_CHARACTER_SET_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '".$db->escape($conf->db->name)."'";
-	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", $tooltipexample.'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "<br>SHOW CHARSET")));
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", $tooltipexample.'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "<br>SHOW CHARSET")."<br><br>Example to change value: ALTER DATABASE ".$conf->db->name." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"), 1, 'help', 'valignmiddle', 0, 3, 'tooltipcharset');
 	// We can use $db->getDefaultCharacterSetDatabase(),  $db->getListOfCharacterSet(),
 }
 print '</td></tr>'."\n";
@@ -107,7 +120,7 @@ if ($db->type == 'mysqli') {
 		print img_warning('The database default value of collation '.$defaultcollation.' differs from conf setup '.$conf->db->dolibarr_main_db_collation);
 	}
 	$tooltipexample = "<br>SHOW VARIABLES LIKE 'collation_database' (cached)<br>You can avoid cache effect with:<br>SELECT DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '".$db->escape($conf->db->name)."'";
-	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", $tooltipexample.'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "<br>SHOW COLLATION")));
+	print ' '.$form->textwithpicto('', $langs->transnoentitiesnoconv("HelpMariaDBToGetValue", $tooltipexample.'<br>'.$langs->transnoentitiesnoconv("HelpMariaDBToGetPossibleValues", "<br>SHOW COLLATION")."<br><br>Example to change value: ALTER DATABASE ".$conf->db->name." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"), 1, 'help', 'valignmiddle', 0, 3, 'tooltipcollation');
 	// We can use $db->getDefaultCollationDatabase(), $db->getListOfCollation();
 
 	print ' &nbsp; &nbsp; &nbsp; <span class="opacitymedium small">'.$langs->trans("ConvertInto");

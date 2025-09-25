@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Jean Heimburger <http://tiaris.eu>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ $hookmanager->initHooks(array('cli'));
  */
 
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 if (!isset($argv[1]) || $argv[1] != 'user') {
 	print "Usage:  $script_file user\n";
@@ -113,7 +114,7 @@ function migrate_user_filespath($u)
 {
 	global $conf;
 
-	// Les fichiers joints des users sont toujours sur l'entité 1
+	// Les fichiers implodets des users sont toujours sur l'entité 1
 	$dir = $conf->user->dir_output;
 	$origin = $dir.'/'.get_exdir($u->id, 2, 0, 0, $u, 'user');
 	$destin = $dir.'/'.$u->id;

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@
  *  \brief      Tab for notes on productlot
  */
 
-
-
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -38,11 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('other', 'products'));
+$langs->loadLangs(array('other', 'products', 'productbatch'));
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize a technical objects
@@ -89,8 +87,11 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$help_url = '';
-llxHeader('', $langs->trans('productlot'), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_note');
+$shortlabel = dol_trunc($object->batch, 16);
+$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Notes');
+$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_note');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
@@ -101,7 +102,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/stock/productlot_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'batch');
 

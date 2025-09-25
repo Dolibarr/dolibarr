@@ -48,7 +48,7 @@ $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; //
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
-$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -175,10 +175,12 @@ if ($type == 'bank-transfer') {
 }
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
+
 /*
  * View
  */
 
+$form = new Form($db);
 $directdebitorder = new BonPrelevement($db);
 
 $titlekey = "WithdrawalsReceipts";
@@ -222,7 +224,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

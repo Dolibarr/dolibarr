@@ -6,7 +6,8 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'deliveries', 'orders', 'sendings'));
+$langs->loadLangs(array('bills', 'orders', 'sendings'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -100,6 +101,16 @@ $permissiontodelete = $user->hasRight('expedition', 'delivery', 'supprimer') || 
 $permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate')));
 $permissionnote = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+$permissiontoeditextraline = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element_line]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextraline = dol_eval($extrafields->attributes[$object->table_element_line]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -113,6 +124,7 @@ $permissiondellink = $user->hasRight('expedition', 'delivery', 'supprimer'); // 
 include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be 'include', not 'include_once'
 
 if ($action == 'add' && $permissiontoadd) {
+	$array_options = array();
 	$db->begin();
 
 	$object->date_delivery = dol_now();
@@ -134,9 +146,9 @@ if ($action == 'add' && $permissiontoadd) {
 	for ($i = 0; $i < $num; $i++) {
 		$qty = "qtyl".$i;
 		$idl = "idl".$i;
-		$qtytouse = price2num(GETPOST($qty));
+		$qtytouse = price2num(GETPOSTFLOAT($qty));
 		if ($qtytouse > 0) {
-			$object->addline(GETPOST($idl), price2num($qtytouse), $arrayoptions);
+			$object->addline(GETPOSTINT($idl), (float) price2num($qtytouse), $array_options);
 		}
 	}
 
@@ -158,7 +170,7 @@ if ($action == 'add' && $permissiontoadd) {
 	if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -169,9 +181,10 @@ if ($action == 'add' && $permissiontoadd) {
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$model = $object->model_pdf;
-		$ret = $object->fetch($id); // Reload to get new records
+		$ret = $object->fetch($id); // Reload to get new record
 
-		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		// Phan does not use suggested tyhpe for $hide*, ignore: @phan-suppress-next-line PhanTypeMismatchArgument
+		$result = $object->generateDocument($model, $outputlangs, 0, 0, 0);
 		if ($result < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		}
@@ -201,24 +214,25 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 	if ($result < 0) {
 		$mesg = '<div class="error">'.$object->error.'</div>';
 	}
-} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
+} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
 	// Set incoterm
 	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 }
 
 // Update extrafields
-if ($action == 'update_extras' && $permissiontoadd) {
-	$object->oldcopy = dol_clone($object, 2);
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+	$attribute_name = GETPOST('attribute', 'aZ09');
 
 	// Fill array 'array_options' with data from update form
-	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 	if ($ret < 0) {
 		$error++;
 	}
 
 	if (!$error) {
-		// Actions on extra fields
-		$result = $object->insertExtraFields('DELIVERY_MODIFY');
+		$result = $object->updateExtraField($attribute_name, 'DELIVERY_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
@@ -231,14 +245,14 @@ if ($action == 'update_extras' && $permissiontoadd) {
 }
 
 // Extrafields line
-if ($action == 'update_extras_line' && $permissiontoadd) {
+if ($action == 'update_extras_line' && $permissiontoeditextraline) {
 	$array_options = array();
 	$num = count($object->lines);
 
 	for ($i = 0; $i < $num; $i++) {
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
-		$array_options[$i] = $extrafields->getOptionalsFromPost($extralabelsline, $i);
+		$array_options[$i] = $extrafields->getOptionalsFromPost($extralabelsline, (string) $i);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -259,8 +273,23 @@ if ($action == 'update_extras_line' && $permissiontoadd) {
 // Actions to build doc
 $upload_dir = $conf->expedition->dir_output.'/receipt';
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+// Provided by include of ...builddoc...:
+'
+@phan-var-force int<0,1> $hidedetails
+@phan-var-force int<0,1> $hidedesc
+@phan-var-force int<0,1> $hideref
+';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+// Actions to send emails
+
+$triggersendname = 'DELIVERY_SENTBYMAIL';
+$paramname = 'id';
+$autocopy = 'MAIN_MAIL_AUTOCOPY_DELIVERY_TO';
+$mode = 'emailfromdelivery';
+$trackid = 'del' . $object->id;
+include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 
 
 /*
@@ -283,6 +312,7 @@ if ($action == 'create') {
 		// However, origin of shipment in future may differs (commande, proposal, ...)
 		$expedition = new Expedition($db);
 		$result = $expedition->fetch($object->origin_id);
+
 		$typeobject = $expedition->origin; // example: commande
 		if ($object->origin_id > 0) {
 			$object->fetch_origin();
@@ -347,12 +377,12 @@ if ($action == 'create') {
 			if (isModEnabled('project')) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>';
-				if (0) {	// Do not change on shipment
+				if (0) {	// @phpstan-ignore-line  Do not change on shipment
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($objectsrc->fk_project)) {
 						$proj = new Project($db);
@@ -444,7 +474,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_delivery">';
 				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_delivery", 1, 1);
-				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+				print '<input type="submit" class="button smallpaddingimp button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
 				print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
@@ -554,7 +584,7 @@ if ($action == 'create') {
 						if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (empty($newlang)) {
@@ -583,7 +613,7 @@ if ($action == 'create') {
 						$text .= ' - '.$label;
 						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($object->lines[$i]->description));
 						//print $description;
-						print $form->textwithtooltip($text, $description, 3, '', '', $i);
+						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 						//print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
 						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 							print (!empty($object->lines[$i]->description) && $object->lines[$i]->description != $object->lines[$i]->product_label) ? '<br>'.dol_htmlentitiesbr($object->lines[$i]->description) : '';
@@ -598,7 +628,7 @@ if ($action == 'create') {
 
 						if (!empty($object->lines[$i]->label)) {
 							$text .= ' <strong>'.$object->lines[$i]->label.'</strong>';
-							print $form->textwithtooltip($text, $object->lines[$i]->description, 3, '', '', $i);
+							print $form->textwithtooltip($text, $object->lines[$i]->description, 3, 0, '', (string) $i);
 						} else {
 							print $text.' '.nl2br($object->lines[$i]->description);
 						}
@@ -661,8 +691,10 @@ if ($action == 'create') {
 						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
-
-				if ($user->hasRight('expedition', 'delivery', 'supprimer')) {
+				if ($user->hasRight('expedition', 'delivery', 'supprimer') && $action != 'presend') {
+					if ($object->status == Delivery::STATUS_VALIDATED && $action != 'presend' && $expedition->status == Expedition::STATUS_VALIDATED) {
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
+					}
 					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
 					} else {
@@ -679,26 +711,28 @@ if ($action == 'create') {
 			/*
 			  * Documents generated
 			 */
+			if ($action != 'presend') {
+				$objectref = dol_sanitizeFileName($object->ref);
+				$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
+				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$objectref = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+				$genallowed = $user->hasRight('expedition', 'delivery', 'lire');
+				$delallowed = $user->hasRight('expedition', 'delivery', 'creer');
 
-			$genallowed = $user->hasRight('expedition', 'delivery', 'lire');
-			$delallowed = $user->hasRight('expedition', 'delivery', 'creer');
+				print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
-			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+				/*
+				  * Linked object block (of linked shipment)
+				  */
 
-			/*
-			  * Linked object block (of linked shipment)
-			  */
-			if ($object->origin == 'expedition') {
-				$shipment = new Expedition($db);
-				$shipment->fetch($object->origin_id);
+					// Show links to link elements
+					print '</div><div class="fichehalfright">';
 
-				// Show links to link elements
-				//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
-				$somethingshown = $form->showLinkedObjectBlock($object, '');
+					// List of actions on element
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+
+					//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
+					$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 
@@ -715,6 +749,22 @@ if ($action == 'create') {
 		/* Expedition non trouvee */
 		print "Expedition inexistante ou access refuse";
 	}
+
+	/*
+	* Action presend
+	*/
+	//Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
+	// Presend form
+	$modelmail = 'delivery_send';
+	$defaulttopic = 'SendDeliveryRef';
+	$diroutput = $conf->expedition->dir_output . '/receipt';
+	$trackid = 'del' . $object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page
