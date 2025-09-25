@@ -889,6 +889,13 @@ class Societe extends CommonObject
 	 */
 	public $bank_account;
 
+	/**
+	 * @deprecated
+	 * Accounting code for client
+	 * @var ?string
+	 */
+	public $code_compta;
+
 
 	const STATUS_CEASED = 0;
 	const STATUS_INACTIVITY = 1;
