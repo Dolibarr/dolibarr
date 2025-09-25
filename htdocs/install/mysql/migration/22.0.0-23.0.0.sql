@@ -36,7 +36,7 @@
 
 -- V22 migration
 
-ALTER TABLE llx_extrafields ADD module varchar(64) AFTER csslist;
+ALTER TABLE llx_extrafields ADD module varchar(64) AFTER enabled;
 
 ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
