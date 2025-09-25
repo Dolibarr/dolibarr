@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/card.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/admin/card.php
-
-		-
 			message: '#^Variable \$cat_id in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
