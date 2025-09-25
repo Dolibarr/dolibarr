@@ -34,7 +34,7 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- V22 migration
+-- V22 forgotten
 
 ALTER TABLE llx_extrafields ADD module varchar(64) AFTER enabled;
 
