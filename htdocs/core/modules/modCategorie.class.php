@@ -7,6 +7,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Charlene Benke		    <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -937,6 +938,13 @@ class modCategorie extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		if (isModEnabled("invoice")) {
+			$this->_load_tables('/install/mysql/', 'facture');
+		}
+		if (isModEnabled("order")) {
+			$this->_load_tables('/install/mysql/', 'commande');
+		}
+
 		// Permissions
 		$this->remove($options);
 

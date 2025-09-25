@@ -109,6 +109,7 @@ body.dolibarr-doc {
 
 /* Documentation summary */
 .doc-wrapper .doc-content-wrapper .summary-wrapper {margin-bottom: 32px;}
+.doc-wrapper-bis .doc-content-wrapper .summary-wrapper {margin-bottom: 32px;}
 .doc-wrapper .doc-content-wrapper ul.documentation-summary {margin: 0;padding: 0;color: rgba(0, 0, 0, .25);}
 .doc-wrapper .doc-content-wrapper ul.documentation-summary li {list-style: disc;margin-left: 16px;}
 .doc-wrapper .doc-content-wrapper ul.documentation-summary li ul {margin: 0;padding: 0 ;color: rgba(0, 0, 0, .25);}

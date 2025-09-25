@@ -121,7 +121,7 @@ body.login-page {
 .login__icon {
     position: absolute;
     top: 30px;
-    left: -15px;
+    left: 10px;
     color: var(--login-form-icon-color);
 }
 
@@ -130,7 +130,7 @@ input.login__input {
     border: none;
     border-bottom: 2px solid var(--login-form-border-color);
     background: none;
-    padding: 10px 10px 10px 24px;
+    padding: 10px 10px 10px 36px;
     width: 75%;
     transition: .2s;
 }

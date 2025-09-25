@@ -265,7 +265,7 @@ class pdf_cyan extends ModelePDFPropales
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->propal->multidir_output[$object->entity]."/".$objectref;
+				$dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -304,8 +304,8 @@ class pdf_cyan extends ModelePDFPropales
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -347,6 +347,8 @@ class pdf_cyan extends ModelePDFPropales
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 				//print $heightforinfotot + $heightforsignature + $heightforfreetext + $heightforfooter;exit;
+
+				$save_note_public = $object->note_public;	// Because $object->note_public may be modified by _pagehead() that calls pdf_writeLinkedObjects() that calls ... that modify $object->note_private
 
 				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -397,6 +399,8 @@ class pdf_cyan extends ModelePDFPropales
 						}
 					}
 				}
+
+				$object->note_public = $save_note_public;	// Now that we have output the note_public, we can restore it to initial value.
 
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
@@ -662,23 +666,7 @@ class pdf_cyan extends ModelePDFPropales
 							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 						} else {
 							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
-							$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
-							$pdf->SetXY($pdf->GetX() + 1, $curY + 1);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite  - $this->marge_gauche - 2, 5, '', 0, '', true);
-							$previous_align = array();
-							$previous_align['align'] = $this->cols['desc']['content']['align'];
-							if ($object->lines[$i]->qty < 0) {
-								$langs->load("subtotals");
-								$object->lines[$i]->desc = $langs->trans("SubtotalOf", $object->lines[$i]->desc);
-								if ($previous_align['align'] == 'L') {
-									$this->cols['desc']['content']['align'] = 'R';
-								} elseif ($previous_align['align'] == 'R') {
-									$this->cols['desc']['content']['align'] = 'L';
-								}
-							}
-							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
-							$this->cols['desc']['content']['align'] = $previous_align['align']; // Re align if we printed a subtotal ligne
+							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						}
 					}
 
@@ -857,11 +845,11 @@ class pdf_cyan extends ModelePDFPropales
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1) && $afterPosData['y'] < $this->page_hauteur - $heightforfooter - 5) {
 						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
+						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
 						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
-					$nexY += 2; // Add space between lines
+					$nexY += 0; // Add space between lines
 				}
 
 
@@ -956,8 +944,8 @@ class pdf_cyan extends ModelePDFPropales
 				if (getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE');
 					$termsofsale = $conf->propal->dir_output.'/'.$termsofsalefilename;
-					if (!empty($conf->propal->multidir_output[$object->entity])) {
-						$termsofsale = $conf->propal->multidir_output[$object->entity].'/'.$termsofsalefilename;
+					if (!empty($conf->propal->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->propal->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
 					}
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
@@ -1008,15 +996,15 @@ class pdf_cyan extends ModelePDFPropales
 										$filetomerge_dir = null;
 										if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 											if (isModEnabled("product")) {
-												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											} elseif (isModEnabled("service")) {
-												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											}
 										} else {
 											if (isModEnabled("product")) {
-												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											} elseif (isModEnabled("service")) {
-												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											}
 										}
 
@@ -1059,6 +1047,8 @@ class pdf_cyan extends ModelePDFPropales
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1087,7 +1077,8 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	public function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
-		global $conf, $mysoc;
+		global $mysoc;
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -1243,7 +1234,7 @@ class pdf_cyan extends ModelePDFPropales
 						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					}
 					$account = new Account($this->db);
-					$account->fetch($bankid);
+					$account->fetch((int) $bankid);
 
 					$curx = $this->marge_gauche;
 					$cury = $posy;
@@ -1301,31 +1292,41 @@ class pdf_cyan extends ModelePDFPropales
 		// Get Total HT
 		$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 
-		// Total remise
-		$total_line_remise = 0;
+		// Total discount
+		$total_discount_on_lines = 0;
+		$multicurrency_total_discount_on_lines = 0;
 		foreach ($object->lines as $i => $line) {
 			$resdiscount = pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2);
-			$total_line_remise += (is_numeric($resdiscount) ? $resdiscount : 0);
-			// Gestion remise sous forme de ligne négative
+			$multicurrency_resdiscount = pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2, 1);
+
+			$total_discount_on_lines += (is_numeric($resdiscount) ? $resdiscount : 0);
+			$multicurrency_total_discount_on_lines += (is_numeric($multicurrency_resdiscount) ? $multicurrency_resdiscount : 0);
+			// If line was a negative line, we do not count the discount as a discount
 			if ($line->total_ht < 0) {
-				$total_line_remise += -$line->total_ht;
+				$total_discount_on_lines += -$line->total_ht;
+				$multicurrency_total_discount_on_lines += -$line->multicurrency_total_ht;
 			}
 		}
-		if ($total_line_remise > 0) {
-			$pdf->SetFillColor(255, 255, 255);
-			$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', true);
-			$pdf->SetXY($col2x, $tab2_top + $tab2_hl);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise, 0, $outputlangs), 0, 'R', true);
 
-			$index++;
-
+		if ($total_discount_on_lines > 0) {
 			// Show total NET before discount
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->SetXY($col1x, $tab2_top);
 			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', true);
 			$pdf->SetXY($col2x, $tab2_top);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise + $total_ht, 0, $outputlangs), 0, 'R', true);
+
+			$total_before_discount_to_show = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? ($object->multicurrency_total_ht + $multicurrency_total_discount_on_lines) : ($object->total_ht + $total_discount_on_lines));
+			$pdf->MultiCell($largcol2, $tab2_hl, price($total_before_discount_to_show, 0, $outputlangs), 0, 'R', true);
+
+			$index++;
+
+			$pdf->SetFillColor(255, 255, 255);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', true);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl);
+
+			$total_discount_to_show = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $multicurrency_total_discount_on_lines : $total_discount_on_lines);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($total_discount_to_show, 0, $outputlangs), 0, 'R', true);
 
 			$index++;
 		}
@@ -1343,6 +1344,7 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetFillColor(248, 248, 248);
 
 		$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
+		$total_ttc_origin = $object->total_ttc;
 
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
@@ -1523,7 +1525,21 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalTTC") : ''), $useborder, 'L', true);
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc, 0, $outputlangs), $useborder, 'R', true);
+				if (!isModEnabled("multicurrency") || $object->multicurrency_tx == 1 || getDolGlobalInt('MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF') == 0) {
+					$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc, 0, $outputlangs), $useborder, 'R', true);
+				} else {
+					$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc, 0, $outputlangs), $useborder, 'R', true);
+
+					//$pdf->writeHTMLCell($largcol2, $tab2_hl, null, null, '<font size="-2">('.price($sign * $object->total_ttc, 0, $outputlangs, 1, -1, 'MT', $mysoc->currency_code).')</font> &nbsp; '.price($sign * $total_ttc, 0, $outputlangs), $useborder, 1, true, true, 'R');
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->SetTextColor(0, 0, 60);
+					$pdf->SetFillColor(224, 224, 224);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalTTC") : '').' ('.$outputlangs->getCurrencySymbol($mysoc->currency_code).')', $useborder, 'L', true);
+
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc_origin, 0, $outputlangs, 1, -1, -1, $mysoc->currency_code), $useborder, 'L', true);
+				}
 			}
 		}
 
@@ -1695,8 +1711,8 @@ class pdf_cyan extends ModelePDFPropales
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -1826,11 +1842,11 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		$posy += 2;
-
+		$shipp_shift = 0;
 		$top_shift = 0;
 		// Show list of linked objects
 		$current_y = $pdf->getY();
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);	// May modify $object->note_public
 		if ($current_y < $pdf->getY()) {
 			$top_shift = $pdf->getY() - $current_y;
 		}
@@ -1864,6 +1880,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			$hautcadre = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
+
 
 			// Show sender frame
 			if (!getDolGlobalString('MAIN_PDF_NO_SENDER_FRAME')) {
@@ -1945,11 +1962,49 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetXY($posx + 2, $posy);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
+			// Show shipping/delivery addressAdd commentMore actions
+			if (getDolGlobalInt('PROPOSAL_SHOW_SHIPPING_ADDRESS')) {
+				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
+
+				if (!empty($idaddressshipping)) {
+					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
+					$companystatic = new Societe($this->db);
+					$companystatic->fetch($object->contact->fk_soc);
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
+				} else {
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+				}
+				if (!empty($carac_client_shipping)) {
+					$posy += $hautcadre;
+
+					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
+
+					// Show shipping frame
+					$pdf->SetXY($posx + 2, $posy - 5);
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->MultiCell($widthrecbox, 0, $outputlangs->transnoentities('ShippingTo'), 0, 'L', false);
+					$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
+
+					// Show shipping name
+					$pdf->SetXY($posx + 2, $posy + 3);
+					$pdf->SetFont('', 'B', $default_font_size);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name_shipping, '', 'L');
+
+					$posy = $pdf->getY();
+
+					// Show shipping information
+					$pdf->SetXY($posx + 2, $posy);
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, '', 'L');
+
+					$shipp_shift += $hautcadre + 10;
+				}
+			}
 		}
-
 		$pdf->SetTextColor(0, 0, 0);
-
-		return $top_shift;
+		return $shipp_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

@@ -1,9 +1,10 @@
 <?php
 
-/* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@
  *
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
- *	@return  string					encoded string
+ *	@return  string					encoded string with format 'passcrypted'
  *  @see dol_decode(), dolEncrypt()
  */
 function dol_encode($chain, $key = '1')
@@ -120,7 +121,7 @@ define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
- *	@return  string					encoded string
+ *	@return  string					encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
@@ -178,7 +179,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to decode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$key		If '', we use $conf->file->dolcrypt_key else $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @since v17
  *  @see dolEncrypt(), dol_hash()
@@ -193,15 +194,14 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority
+			// If dolcrypt_key is defined, we used it in priority (coming from $dolibarr_main_instance_unique_id)
 			$key = $conf->file->dolcrypt_key;
 		} else {
-			// We fall back on the instance_unique_id
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id)
 			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
-	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
@@ -529,10 +529,22 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// 	$features = substr($features, 0, -4);
 	// }
 
-	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
+	// print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
-	$parameters = array('features' => $features, 'originalfeatures' => $originalfeatures, 'objectid' => $objectid, 'dbt_select' => $dbt_select, 'idtype' => $dbt_select, 'isdraft' => $isdraft);
+	$parameters = array(
+		'features' => $features,
+		'feature2' => $feature2,
+		'originalfeatures' => $originalfeatures,
+		'tableandshare' => $tableandshare,
+		'object' => $object,
+		'objectid' => $objectid,
+		'dbt_keyfield' => $dbt_keyfield,
+		'dbt_select' => $dbt_select,
+		'idtype' => $dbt_select,
+		'isdraft' => $isdraft,
+		'mode' => $mode,
+	);
 	if (!empty($hookmanager)) {
 		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
@@ -624,6 +636,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			}
 		} elseif ($feature == 'payment_sc') {
 			if (!$user->hasRight('tax', 'charges', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'webhook') {
+			if (empty($user->admin)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -725,6 +742,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'modulebuilder') {
 				if (!$user->hasRight('modulebuilder', 'run')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'webhook') {
+				if (empty($user->admin)) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -991,7 +1013,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checktask = array('projet_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
 		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
-		$nocheck = array('barcode', 'stock'); // No test
+		$nocheck = array('barcode', 'stock', 'webhook'); // No test
 
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 
@@ -1253,7 +1275,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message					Force error message
- *	@param	int			$http_response_code			HTTP response code
+ *	@param	int			$http_response_code			HTTP response code (403 for forbidden access, 400 bad parameters or request)
  *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
  *  @return	never
  *  @see accessforbidden()

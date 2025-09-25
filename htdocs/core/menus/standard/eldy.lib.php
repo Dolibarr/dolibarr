@@ -260,7 +260,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$user->hasRight('propal', 'read')
 			|| $user->hasRight('commande', 'lire')
 			|| $user->hasRight('supplier_proposal', 'lire')
-			|| $user->hasRight('fournisseur', 'lire')
 			|| $user->hasRight('fournisseur', 'commande', 'lire')
 			|| $user->hasRight('supplier_order', 'lire')
 			|| $user->hasRight('contrat', 'lire')
@@ -459,7 +458,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'tools', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 0 : 1),
-		'loadLangs' => array("other"),
+		'loadLangs' => array(),
 		'submenus' => array(),
 	);
 
@@ -967,6 +966,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	// Force the typing at this point to get useful analysis below:
 	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $menu_array';
+	/** @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $menu_array */
 
 
 	// Show menu
@@ -1228,6 +1228,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$newmenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
 				$newmenu->add('/admin/triggers.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Triggers'), 2);
 				$newmenu->add('/admin/system/filecheck.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('FileCheck'), 2);
+				$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('ExternalResources'), 2);
 			}
 			$newmenu->add('/admin/system/browser.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoBrowser'), 1);
 			$newmenu->add('/admin/system/os.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoOS'), 1);
@@ -1242,7 +1243,6 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"), 1);
 			$newmenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"), 1);
 			$newmenu->add("/admin/tools/purge.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Purge"), 1);
-			$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('ExternalResources'), 1);
 
 			/* Already into menu Tools
 			if (isModEnabled('blockedlog')) {

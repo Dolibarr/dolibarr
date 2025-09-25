@@ -62,6 +62,10 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -82,7 +86,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
@@ -116,6 +120,7 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
+$search_dispute_status = GETPOST('search_dispute_status', 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
@@ -164,6 +169,13 @@ $search_datem_start = GETPOSTDATE('search_datem_start', 'getpost', 'tzuserrel');
 $search_datem_end = GETPOSTDATE('search_datem_end', 'getpostend', 'tzuserrel');
 
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$searchCategoryInvoiceOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryInvoiceOperator = GETPOSTINT('search_category_invoice_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array:int');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
@@ -281,7 +293,8 @@ $arrayfields = array(
 	'f.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'f.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'f.fk_fac_rec_source' => array('label' => 'GeneratedFromTemplate', 'checked' => '0', 'position' => 530, 'enabled' => '1'),
-	'f.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
+	'f.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 990),
+	'f.dispute_status' => array('label' => "DisputeStatus", 'checked' => '-1', 'position' => 999),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
@@ -368,6 +381,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
+	$searchCategoryInvoiceList = array();
 	$search_ref = '';
 	$search_refcustomer = '';
 	$search_type = '';
@@ -388,6 +402,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_multicurrency_montant_ht = '';
 	$search_multicurrency_montant_vat = '';
 	$search_multicurrency_montant_ttc = '';
+	$search_dispute_status = '';
 	$search_status = '';
 	$search_paymentmode = '';
 	$search_paymentterms = '';
@@ -732,9 +747,10 @@ $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multic
 $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite,';
 $sql .= " f.fk_input_reason,";
 $sql .= " f.module_source, f.pos_source,";
-$sql .= ' f.paye as paye, f.fk_statut, f.import_key, f.close_code,';
+$sql .= ' f.paye as paye, f.fk_statut as status, f.import_key, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_modification, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
+$sql .= ' f.payment_reference, f.dispute_status,';
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
 $sql .= " s2.nom as name2,";
@@ -903,6 +919,13 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_login) {
 	$sql .= natural_search(array('u.login', 'u.firstname', 'u.lastname'), $search_login);
 }
+if ($search_dispute_status != '-1' && $search_dispute_status != '') {
+	if ($search_dispute_status == '0') {
+		$sql .= " AND (f.dispute_status IS NULL OR f.dispute_status = 0)";
+	} else {
+		$sql .= " AND f.dispute_status IN (".$db->sanitize($search_dispute_status).")";
+	}
+}
 if ($search_status != '-1' && $search_status != '') {
 	if (is_numeric($search_status) && $search_status >= 0) {
 		if ($search_status == '0') {
@@ -1000,6 +1023,35 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 
+// Search for tag/category ($searchCategoryInvoiceList is an array of ID)
+if (!empty($searchCategoryInvoiceList)) {
+	$searchCategoryInvoiceSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryInvoiceList as $searchCategoryInvoice) {
+		if (intval($searchCategoryInvoice) == -2) {
+			$searchCategoryInvoiceSqlList[] = "NOT EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice)";
+		} elseif (intval($searchCategoryInvoice) > 0) {
+			if ($searchCategoryInvoiceOperator == 0) {
+				$searchCategoryInvoiceSqlList[] = " EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice AND ck.fk_categorie = ".((int) $searchCategoryInvoice).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryInvoice);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryInvoiceSqlList[] = " EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryInvoiceOperator == 1) {
+		if (!empty($searchCategoryInvoiceSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryInvoiceSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryInvoiceSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryInvoiceSqlList).")";
+		}
+	}
+}
+
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductList = $search_product_category ? array($search_product_category) : array();
 $searchCategoryProductOperator = 0;
@@ -1074,7 +1126,11 @@ if ($search_all) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -1091,7 +1147,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1133,7 +1189,7 @@ if ($search_fk_fac_rec_source) {
 
 	$head = invoice_rec_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, $object->picto); // Add a div
 }
 
 $param = '';
@@ -1263,6 +1319,12 @@ if ($search_user > 0) {
 if ($search_login) {
 	$param .= '&search_login='.urlencode($search_login);
 }
+if ($searchCategoryInvoiceOperator == 1) {
+	$param .= "&search_category_invoice_operator=".urlencode((string) ($searchCategoryInvoiceOperator));
+}
+foreach ($searchCategoryInvoiceList as $searchCategoryInvoice) {
+	$param .= "&search_category_invoice_list[]=".urlencode($searchCategoryInvoice);
+}
 if ($search_product_category > 0) {
 	$param .= '&search_product_category='.urlencode((string) $search_product_category);
 }
@@ -1295,6 +1357,9 @@ if ($search_multicurrency_montant_vat != '') {
 }
 if ($search_multicurrency_montant_ttc != '') {
 	$param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
+}
+if ($search_dispute_status != '') {
+	$param .= '&search_dispute_status='.urlencode($search_dispute_status);
 }
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
@@ -1344,6 +1409,9 @@ $arrayofmassactions = array(
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
+if (isModEnabled('category') && $user->hasRight('facture', 'creer')) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if ($user->hasRight('facture', 'paiement')) {
 	$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 }
@@ -1430,6 +1498,12 @@ if ($search_all) {
 
 // If the user can view prospects other than his'
 $moreforfilter = '';
+
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_INVOICE, $searchCategoryInvoiceList, 'minwidth300', $searchCategoryInvoiceOperator ? $searchCategoryInvoiceOperator : 0);
+}
+
 if ($user->hasRight("user", "user", "lire")) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -1818,6 +1892,14 @@ if (!empty($arrayfields['f.import_key']['checked'])) {
 	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
+// Dispute status
+if (!empty($arrayfields['f.dispute_status']['checked'])) {
+	print '<td class="liste_titre center parentonrightofpage">';
+	$liststatus = array('0' => $langs->trans("None"), '1' => $langs->trans("DisputeOpen"));
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+	print $form->selectarray('search_dispute_status', $liststatus, $search_dispute_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
+	print '</td>';
+}
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -2060,11 +2142,17 @@ if (!empty($arrayfields['f.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['f.import_key']['label'], $_SERVER["PHP_SELF"], "f.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+// Dispute status
+if (!empty($arrayfields['f.dispute_status']['checked'])) {
+	print_liste_field_titre($arrayfields['f.dispute_status']['label'], $_SERVER["PHP_SELF"], "f.dispute_status,f.ref", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+// Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
@@ -2127,8 +2215,7 @@ if ($num > 0) {
 		$facturestatic->multicurrency_total_ht = $obj->multicurrency_total_ht;
 		$facturestatic->multicurrency_total_tva = $obj->multicurrency_total_vat;
 		$facturestatic->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
-		$facturestatic->statut = $obj->fk_statut;	// deprecated
-		$facturestatic->status = $obj->fk_statut;
+		$facturestatic->status = $obj->status;
 		$facturestatic->close_code = $obj->close_code;
 		$facturestatic->total_ttc = $obj->total_ttc;
 		$facturestatic->paye = $obj->paye;
@@ -2149,6 +2236,9 @@ if ($num > 0) {
 			$facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 			$facturestatic->situation_counter = $obj->situation_counter;
 		}
+
+		$facturestatic->payment_reference = $obj->payment_reference;
+		$facturestatic->dispute_status = $obj->dispute_status;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
@@ -2237,7 +2327,7 @@ if ($num > 0) {
 		} else {
 			// Show line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'"';
+			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'"';
 			if ($contextpage == 'poslist') {
 				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
 				if (strpos($obj->ref, 'PROV') !== false) {
@@ -2281,7 +2371,7 @@ if ($num > 0) {
 
 				print '<td class="nobordernopadding nowraponall">';
 				if ($contextpage == 'poslist') {
-					print dol_escape_htmltag($obj->ref);
+					print dolPrintHTML($obj->ref);
 				} else {
 					print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
 				}
@@ -2528,7 +2618,7 @@ if ($num > 0) {
 				}
 			}
 
-			// Channel
+			// Input channel
 			if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
 				print '<td>';
 				$form->formInputReason($_SERVER['PHP_SELF'], (string) $obj->fk_input_reason, 'none');
@@ -2721,12 +2811,15 @@ if ($num > 0) {
 
 			// Currency
 			if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
-				print '<td class="nowraponall tdoverflowmax125" title="'.dol_escape_htmltag($obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code)).'">';
-				if (!getDolGlobalString('MAIN_SHOW_ONLY_CODE_MULTICURRENCY')) {
-					print $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+				if (!getDolGlobalString('MAIN_SHOW_ONLY_CODE_MULTICURRENCY') && !empty($obj->multicurrency_code)) {
+					$title = $obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+					$label = $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
 				} else {
-					print dol_escape_htmltag($obj->multicurrency_code);
+					$title = $obj->multicurrency_code;
+					$label = $obj->multicurrency_code;
 				}
+				print '<td class="nowraponall tdoverflowmax125" title="'.dolPrintHTMLForAttribute($title).'">';
+				print dolPrintHTML($label);
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2864,7 +2957,7 @@ if ($num > 0) {
 			// Note public
 			if (!empty($arrayfields['f.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_public);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2872,8 +2965,8 @@ if ($num > 0) {
 			}
 			// Note private
 			if (!empty($arrayfields['f.note_private']['checked'])) {
-				print '<td class="center">';
-				print dolPrintHTML($obj->note_private);
+				print '<td class="sensiblehtmlcontent center">';
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2900,6 +2993,18 @@ if ($num > 0) {
 			// Import key
 			if (!empty($arrayfields['f.import_key']['checked'])) {
 				print '<td class="nowrap center">'.dol_escape_htmltag($obj->import_key).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Dispute status
+			if (!empty($arrayfields['f.dispute_status']['checked'])) {
+				print '<td class="nowrap center">';
+				if ($facturestatic->dispute_status) {
+					print yn(1);
+				}
+				print "</td>";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

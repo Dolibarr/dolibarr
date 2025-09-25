@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Siz yeni səhifə yarada və ya tam veb sayt ş
 SyntaxHelp=Xüsusi sintaksis məsləhətləri üzrə yardım
 YouCanEditHtmlSourceckeditor=Siz redaktorda "Mənbə" düyməsini istifadə edərək HTML mənbə kodunu redaktə edə bilərsiniz.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Paylaşım linki ilə paylaşılan fayl üçün (faylın paylaşım heş açarından istifadə edərək açıq giriş) sintaksis belədir:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Siz bir səhifəni tərcümə kimi klonlayı
 ParentPageId=Ana səhifə identifikatoru
 WebsiteId=Veb sayt ID
 CreateByFetchingExternalPage=Xarici URL-dən səhifə əldə etməklə səhifə/konteyner yaradın...
-OrEnterPageInfoManually=Və ya sıfırdan və ya səhifə şablonundan səhifə yaradın...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Alın və Yaradın
 ExportSite=Veb saytı ixrac edin
 ImportSite=Veb sayt şablonunu idxal edin
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Üzr istəyirik, bu vebsayt hazırda offlinedır.
 WEBSITE_USE_WEBSITE_ACCOUNTS=Üçüncü tərəflər üçün veb sayt hesabı cədvəlini aktivləşdirin
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Hər üçüncü tərəf üçün veb sayt hesablarını (giriş/keçmə) saxlamaq üçün cədvəli aktivləşdirin
 YouMustDefineTheHomePage=Əvvəlcə standart Əsas səhifəni təyin etməlisiniz
-OnlyEditionOfSourceForGrabbedContentFuture=Xəbərdarlıq: Xarici veb səhifəni idxal etməklə veb səhifə yaratmaq təcrübəli istifadəçilər üçün nəzərdə tutulub. Mənbə səhifəsinin mürəkkəbliyindən asılı olaraq, idxalın nəticəsi orijinaldan fərqli ola bilər. Həmçinin mənbə səhifə ümumi CSS üslublarından və ya ziddiyyətli JavaScript-dən istifadə edirsə, bu səhifədə işləyərkən Vebsayt redaktorunun görünüşünü və ya xüsusiyyətlərini poza bilər. Bu üsul səhifə yaratmağın daha sürətli yoludur, lakin yeni səhifənizi sıfırdan və ya təklif olunan səhifə şablonundan yaratmaq tövsiyə olunur.<br>Həmçinin nəzərə alın ki, tutulan xarici səhifədə daxili redaktor düzgün işləməyə bilər.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Məzmun xarici saytdan götürüldükdə yalnız HTML mənbəyinin dəyişdirilməsi mümkündür
 GrabImagesInto=CSS və səhifədə tapılan şəkilləri də götürün.
 ImagesShouldBeSavedInto=Şəkillər kataloqda saxlanmalıdır
@@ -423,8 +423,8 @@ contactFormPhone = Telefon
 contactFormSubjectEntered = Mövzu daxil edildi
 contactFormMessageLabel = Mesaj
 contactFormSuccessAlert = Mesajınız üçün təşəkkür edirik. Tezliklə sizinlə əlaqə saxlayacağıq.
-socials=Reseau sociaux
-rgpd=RGPD
+socials=Social networks
+rgpd=GDPR
 joinUs=ABŞ-a qoşulun
 home=Ev
 anonymous=Anonim
@@ -455,3 +455,4 @@ SampleGoalOne=Üzvlər arasında əməkdaşlıq və həmrəyliyi təşviq edin.
 SampleGoaltwo=Bütün fəaliyyətlərdə məsuliyyətli və davamlı təcrübələri təşviq edin.
 SampleGoalthree=Bütövlükdə cəmiyyətə fayda verən təsirli layihələri dəstəkləyin.
 SHOW_LANG_SELECTOR=Dil seçimi açılan menyunu göstərin
+ForAdvancedWebmastersOnly=For technical webmasters only

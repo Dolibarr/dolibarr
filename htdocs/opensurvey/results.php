@@ -464,7 +464,7 @@ print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
 
 $head = opensurvey_prepare_head($object);
 
-print dol_get_fiche_head($head, 'preview', $langs->trans("Survey"), -1, 'poll');
+print dol_get_fiche_head($head, 'preview', $langs->trans("Survey"), -1, $object->picto);
 
 $morehtmlref = '';
 

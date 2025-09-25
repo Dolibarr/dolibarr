@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
+$langs->loadLangs(array("bills", "orders", "sendings", "companies", "products", "stocks", "receptions"));
 
 if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
@@ -374,7 +374,7 @@ if ($id > 0 || !empty($ref)) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {    // Do not change on reception
+		if (0) {	// @phpstan-ignore-line  Do not change on reception
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
@@ -647,7 +647,7 @@ if ($id > 0 || !empty($ref)) {
 						if (isModEnabled('productbatch')) {
 							if ($objp->tobatch) {
 								// Product
-								print '<td>';
+								print '<td class="tdoverflowmax200">';
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number"></td>';
@@ -659,11 +659,11 @@ if ($id > 0 || !empty($ref)) {
 								}
 							} else {
 								// Product
-								print '<td>';
+								print '<td class="tdoverflowmax200">';
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number">';
-								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</small>';
+								print '<span class="opacitymedium small">'.$form->textwithpicto($langs->transnoentitiesnoconv("NA"), $langs->transnoentitiesnoconv("ProductDoesNotUseBatchSerial")).'</small>';
 								print '</td>';
 								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 									print '<td class="dispatch_dlc"></td>';
@@ -815,7 +815,7 @@ if ($id > 0 || !empty($ref)) {
 									print '</td>';
 								}
 								// Qty to dispatch
-								print '<td class="right">';
+								print '<td class="right nowraponall">';
 								print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
 								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : $objd->qty).'" data-expected="'.$objd->qty.'">';
 								print '</td>';

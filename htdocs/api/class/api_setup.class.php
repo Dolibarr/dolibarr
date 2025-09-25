@@ -3,7 +3,7 @@
  * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	    Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -389,7 +389,7 @@ class Setup extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$region = new Cregion($this->db);
 				if ($region->fetch($obj->rowid) > 0) {
-					if (empty($filter) || stripos($region->name, $filter) !== false) {
+					if (empty($filter) || stripos((string) $region->name, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($region);
 					}
 				}
@@ -2261,6 +2261,71 @@ class Setup extends DolibarrApi
 	}
 
 	/**
+	 * Get the list of thirdparties types.
+	 *
+	 * @param string    $sortfield  Sort field
+	 * @param string    $sortorder  Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number (starting from zero)
+	 * @param int       $active     Type is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the type must be translated to
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+	 * @return array				List of thirdparties types
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
+	 *
+	 * @url     GET dictionary/thirdparty_types
+	 *
+	 * @throws RestException 400 Bad value for sqlfilters
+	 * @throws RestException 503 Error when retrieving list of thirdparties types
+	 */
+	public function getThirdpartiesTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
+	{
+		$list = array();
+
+		$sql = "SELECT id, code, libelle as label, fk_country, module, position";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_typent as t";
+		$sql .= " WHERE t.active = ".((int) $active);
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			for ($i = 0; $i < $min; $i++) {
+				$type = $this->db->fetch_object($result);
+				$this->translateLabel($type, $lang, '', array('companies'));
+				$list[] = $type;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of thirdparty types : '.$this->db->lasterror());
+		}
+
+		return $list;
+	}
+
+	/**
 	 * Get the list of incoterms.
 	 *
 	 * @param string    $sortfield  Sort field
@@ -2669,7 +2734,7 @@ class Setup extends DolibarrApi
 
 				// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
 				$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-				$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
+				$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 				$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
 				// Fill file_list with files in signature, new files, modified files
@@ -2852,9 +2917,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url	GET /modules
 	 *
-	 * @return  array Data without useless information
-	 * @phan-return array<string,string>
-	 * @phpstan-return array<string,string>
+	 * @return  array<string,string>	Array of modules
 	 *
 	 * @throws RestException 403 Forbidden
 	 */
@@ -2869,6 +2932,7 @@ class Setup extends DolibarrApi
 
 		sort($conf->modules);
 
-		return $this->_cleanObjectDatas($conf->modules);
+		//return $this->_cleanObjectDatas($conf->modules);
+		return $conf->modules;
 	}
 }

@@ -89,7 +89,7 @@ class CdavLib
 					s.phone soc_phone,
 					ac.sourceuid,
 					(SELECT GROUP_CONCAT(u.login) FROM '.MAIN_DB_PREFIX.'actioncomm_resources ar
-						LEFT OUTER JOIN '.MAIN_DB_PREFIX.'user AS u ON (u.rowid=fk_element)
+						LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON (u.rowid=fk_element)
 						WHERE ar.element_type=\'user\' AND fk_actioncomm=a.id) AS other_users
 				FROM '.MAIN_DB_PREFIX.'actioncomm AS a';
 		$sql .= " LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON co.rowid = sp.fk_pays

@@ -4,7 +4,7 @@
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,11 +32,14 @@
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 /**
+ * @var Conf $conf
  * @var CommonObject $object
+ * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  *
+ * @var	string 	$action
  * @var string 	$relativepathwithnofile
  * @var	int		$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
  */

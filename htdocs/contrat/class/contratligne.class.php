@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -294,7 +294,7 @@ class ContratLigne extends CommonObjectLine
 		//'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
 		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
 		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'Product', 'enabled' => 1, 'visible' => -1, 'position' => 75),
-		//'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
+		//'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
 		'note_private' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 105),
 		'note_public' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
@@ -395,7 +395,7 @@ class ContratLigne extends CommonObjectLine
 
 		$datas = [];
 		$datas['label'] = $langs->trans("ShowContractOfService").': '.$this->label;
-		if (empty($datas['label'])) {
+		if (empty($this->label)) {
 			$datas['label'] = $this->description;
 		}
 
@@ -415,7 +415,7 @@ class ContratLigne extends CommonObjectLine
 
 		$result = '';
 		$label = $langs->trans("ShowContractOfService").': '.$this->label;
-		if (empty($label)) {
+		if (empty($this->label)) {
 			$label = $this->description;
 		}
 		$classfortooltip = 'classfortooltip';
@@ -877,12 +877,10 @@ class ContratLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
 
 			// Insert of extrafields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$this->db->rollback();
-					return -1;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
 			}
 
 			if (!$notrigger) {

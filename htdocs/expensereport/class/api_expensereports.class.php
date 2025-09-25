@@ -131,7 +131,7 @@ class ExpenseReports extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $societe param is ignored and replaced by user's socid
-		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
+		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport AS t LEFT JOIN ".MAIN_DB_PREFIX."expensereport_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
@@ -215,7 +215,7 @@ class ExpenseReports extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 
 		// Check mandatory fields
@@ -547,48 +547,141 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Validate an Expense Report
+	 * Validate an expense report
 	 *
-	 * @param   int $id             Expense Report ID
-	 *
-	 * @url POST    {id}/validate
-	 *
-	 * @return  array
-	 * FIXME An error 403 is returned if the request has an empty body.
-	 * Error message: "Forbidden: Content type `text/plain` is not supported."
-	 * Workaround: send this in the body
+	 * If you get a bad value for param notrigger check, provide this in body
 	 * {
-	 *   "idwarehouse": 0
+	 *   "notrigger": 0
 	 * }
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Expense report ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/validate
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
 	 */
-	/*
-	public function validate($id, $idwarehouse=0)
+	public function validate($id, $notrigger = 0)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(403);
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403, "Insufficiant rights");
 		}
-
 		$result = $this->expensereport->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'expensereport not found');
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if( ! $this->expensereport->valid(DolibarrApiAccess::$user, $idwarehouse)) {
-			throw new RestException(500, 'Error when validate expensereport');
+		$result = $this->expensereport->setValidate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->error);
 		}
 
-		return array(
-			'success' => array(
-				'code' => 200,
-				'message' => 'expensereport validated'
-			)
-		);
-	}*/
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
 
+
+	/**
+	 * Approve an expense report
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Expense report ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/approve
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function approve($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->expensereport->setApproved(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already approved');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
+		}
+
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
+
+
+	/**
+	 * Deny an expense report
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Expense report ID
+	 * @param	string	$details		Comments for denial
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/deny
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function deny($id, $details, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->expensereport->setDeny(DolibarrApiAccess::$user, $details, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already denied');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->error);
+		}
+
+
+
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
 
 
 	/**

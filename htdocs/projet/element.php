@@ -1,15 +1,16 @@
 <?php
-/* Copyright (C) 2001-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2016  Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2021  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2023  Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2023-2024 	Frédéric France      <frederic.france@free.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021-2023  Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021       Noé Cendrier            <noe.cendrier@altairis.fr>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -110,6 +111,7 @@ if (isModEnabled('stocktransfer')) {
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -178,15 +180,7 @@ if ($id == '' && $ref == '') {
 	exit();
 }
 
-if ($dates === '') {
-	$dates = null;
-}
-if ($datee === '') {
-	$datee = null;
-}
-
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
@@ -211,11 +205,44 @@ $othermessage = '';
 $tmpprojtime = array();
 $nbAttendees = 0;
 
+$permissiontoadd = $user->hasRight('projet', 'creer');
+$permissiontodelete = $user->hasRight('projet', 'supprimer');
+$permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include of actions_dellink.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
 /*
  * Actions
  */
 
-// None
+// Quick edit for extrafields
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$error = 0;
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+	$attribute_name = GETPOST('attribute', 'aZ09');
+
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+
+	if (!$error) {
+		$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if ($error) {
+		$action = 'edit_extras';
+	}
+}
 
 
 /*
@@ -317,14 +344,13 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opp
 	if ($code) {
 		print $langs->trans("OppStatus".$code);
 	}
-	print '</td></tr>';
 
 	// Opportunity percent
-	print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-	if (!is_null($object->opp_percent) && strcmp($object->opp_percent, '')) {
+	print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
+	if (strcmp($object->opp_percent, '')) {
 		print price($object->opp_percent, 0, $langs, 1, 0).' %';
 	}
-	print '</td></tr>';
+	print '</span></td></tr>';
 
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
@@ -609,7 +635,7 @@ $listofreferent = array(
 		'name' => "Loan",
 		'title' => "ListLoanAssociatedProject",
 		'class' => 'Loan',
-		'margin' => 'add',
+		'margin' => '',
 		'table' => 'loan',
 		'datefieldname' => 'datestart',
 		'disableamount' => 0,
@@ -766,10 +792,10 @@ if (!$showdatefilter) {
 	print '<input type="hidden" name="tablename" value="'.(empty($tablename) ? '' : $tablename).'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<div class="inline-block">';
-	print $form->selectDate((int) $dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="inline-block">';
-	print $form->selectDate((int) $datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '<div class="inline-block">';
 	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button small">';
@@ -804,11 +830,10 @@ foreach ($listofreferent as $key => $value) {
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
 	$margin = empty($value['margin']) ? '' : $value['margin'];
-	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
+	if ($qualified && $margin) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		if ($margin === 'add') {
 			$tooltiponprofitplus .= ' &gt; '.$name." (+)<br>\n";
-		}
-		if ($margin === 'minus') {
+		} elseif ($margin === 'minus') {
 			$tooltiponprofitminus .= ' &gt; '.$name." (-)<br>\n";
 		}
 	}
@@ -853,7 +878,7 @@ foreach ($listofreferent as $key => $value) {
 	$qualified = $value['test'];
 	$margin = empty($value['margin']) ? 0 : $value['margin'];
 	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
-	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
+	if ($qualified) {		// If this element must be included into profit summary table ($margin is '', 'minus' or 'add')
 		$element = new $classname($db);
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
@@ -1314,12 +1339,12 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->close_code) && $element->close_code == 'replaced') {
 						$qualifiedfortotal = false; // Replacement invoice, do not include into total
 					}
-				} elseif ($key == 'order_supplier' && $element->status == 7) {
+				} elseif ($key == 'order_supplier' && ($element->status == 6 || $element->status == 7)) {
 					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				if ($key == "order_supplier" && $element->status == 7) {
-					print '<tr class="oddeven tr_canceled" style=display:none>';
+				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
+					print '<tr class="oddeven tr_canceled">';
 				} else {
 					print '<tr class="oddeven" >';
 				}
@@ -1357,18 +1382,18 @@ foreach ($listofreferent as $key => $value) {
 					$filename = dol_sanitizeFileName($element->ref);
 					if (!empty($conf->$element_doc)) {
 						$confelementdoc = $conf->$element_doc;
-						$filedir = $confelementdoc->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $confelementdoc->multidir_output[$element->entity ?? $conf->entity].'/'.dol_sanitizeFileName($element->ref);
 					} else {
 						$filedir = '';
 					}
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc = 'commande_fournisseur';
-						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity ?? $conf->entity].'/'.dol_sanitizeFileName($element->ref);
 					} elseif ($element_doc === 'invoice_supplier') {
 						$element_doc = 'facture_fournisseur';
 						$filename = get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.$filename;
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity ?? $conf->entity].'/'.$filename;
 					}
 
 					print '<div class="inline-block valignmiddle">';

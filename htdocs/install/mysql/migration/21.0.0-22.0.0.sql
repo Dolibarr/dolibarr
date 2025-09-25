@@ -44,7 +44,7 @@ ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_websit
 -- V22 migration
 
 ALTER TABLE llx_c_country ADD COLUMN sepa tinyint DEFAULT 0 NOT NULL;
-UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK','SM','VA');
+UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AL','AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GG','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MK','MT','NL','NO','PL','PM','PT','RO','RS','SE','SI','SK','SM','VA');
 
 -- fix element
 UPDATE llx_c_type_contact set element='shipping' WHERE element='expedition';
@@ -160,6 +160,35 @@ CREATE TABLE llx_bank_record_link
   fk_bank_import	integer		NOT NULL
 )ENGINE=innodb;
 
+CREATE TABLE llx_bank_import
+(
+  rowid                 integer         AUTO_INCREMENT PRIMARY KEY,
+  id_account			integer			NOT NULL,              	-- bank account ID in Dolibarr
+  record_type 			varchar(64)   	NULL,                  	-- OFX Type of transaction: DIRECTDEBIT, XFER, OTHER or code/type of operation
+  label         		varchar(255)  	NOT NULL,               -- label of operation
+  record_type_origin  	varchar(255)  	NOT NULL,               -- operation code/type origin
+  label_origin  		varchar(255)  	NOT NULL,               -- label of operation origin
+  comment				text			NULL,                   -- Comment/Motif
+  note				    text			NULL,                   -- Notes like "References"
+  bdate					date			NULL,                   -- date operation
+  vdate					date			NULL,                   -- date value
+  date_scraped			datetime		NULL,                  	-- date discarded
+  original_amount		double(24,8)	NULL,                	-- OFX amount
+  original_currency		varchar(255)	NULL,              		-- OFX Currency
+  amount_debit			double(24,8)	NOT NULL,          		-- money spent. For statement using debit/credit. For statement using 1 amount, use original_amount.
+  amount_credit       	double(24,8)  NOT NULL,          		-- money received. For statement using debit/credit. For statement using 1 amount, use original_amount.
+  deleted_date			datetime		NULL,                  	-- to flag this record as deleted
+  fk_duplicate_of		integer			NULL,                  	-- to flag this record as a duplicate of another one
+  status				smallint		NOT NULL,               -- 0=just imported
+  datec					datetime		NOT NULL,		        -- date creation
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,	-- date of last modification
+  fk_user_author	    integer         NOT NULL, 		   		-- user who created the record
+  fk_user_modif		    integer,					            -- user who modified the record
+  import_key			varchar(14),					        -- import key
+  datas					text			NOT NULL                -- full record/line coming from source
+)ENGINE=innodb;
+
+
 ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_record_bank_record FOREIGN KEY (fk_bank_record) REFERENCES llx_bank_record (rowid);
 ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_import_bank_import FOREIGN KEY (fk_bank_import) REFERENCES llx_bank_import (rowid);
 
@@ -212,8 +241,8 @@ ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT 
 UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__,__ENCRYPT('ACCOUNTING_ACCOUNT_EXPENSEREPORT')__));
 
 -- invert constant STOCK_ALLOW_NEGATIVE_TRANSFER because it was automatically set to 1, deleting the user config.
-INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, 1, 'chaine', 0, '' FROM llx_const c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
-UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = 1 WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '0';
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, '1', 'chaine', 0, '' FROM llx_const as c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const as c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
+UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = '1' WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '1';
 
 ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
@@ -290,3 +319,13 @@ ALTER TABLE llx_don ADD COLUMN ip varchar(250);
 ALTER TABLE llx_expeditiondet ADD COLUMN description text AFTER fk_entrepot;
 
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('setup', 'Setup screen', 1, 'system', 500, 'library', __ENTITY__);
+
+ALTER TABLE llx_mrp_mo ADD COLUMN extraparams varchar(255) DEFAULT NULL;
+
+UPDATE llx_actioncomm set code = 'AC_PAYMENT_STRIPE_IPN_SEPA_KO' where code = 'AC_IPN' and label like 'Payment error (SEPA%';
+
+ALTER TABLE llx_blockedlog ADD COLUMN debuginfo mediumtext;
+
+ALTER TABLE llx_webhook_history ADD COLUMN trigger_code text NOT NULL;
+ALTER TABLE llx_webhook_history ADD COLUMN error_message text;
+ALTER TABLE llx_webhook_history MODIFY COLUMN url varchar(255);

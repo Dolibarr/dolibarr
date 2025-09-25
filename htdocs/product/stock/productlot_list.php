@@ -49,7 +49,7 @@ $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'productlotlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -156,7 +156,7 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'productbatch');
+//restrictedArea($user, 'productbatch');
 if (!$permissiontoread) {
 	accessforbidden();
 }
@@ -341,7 +341,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

@@ -113,7 +113,7 @@ if (($action == 'update' || $action == 'edit') && $object->status != $object::ST
 
 
 // Security check
-$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
+restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
 
 
 /*

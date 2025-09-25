@@ -48,6 +48,7 @@ $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -56,7 +57,7 @@ if ($user->socid) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
+$hookmanager->initHooks(array('thirdpartyconsumption', 'consumptionthirdparty', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 $object = new Societe($db);
@@ -69,11 +70,10 @@ $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield 	= GETPOST('sortfield', 'aZ09comma');
 $sortorder 	= GETPOST('sortorder', 'aZ09comma');
 $page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-$optioncss 	= GETPOST('optioncss', 'alpha');
 
 if (empty($page) || $page == -1) {
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;

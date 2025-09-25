@@ -2,6 +2,7 @@
 /* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
+ * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ class Interventions extends DolibarrApi
 	public static $FIELDSLINE = array(
 		'description',
 		'date',
-		'duree',
+		'duration',
 	);
 
 	/**
@@ -132,22 +133,25 @@ class Interventions extends DolibarrApi
 	 * @param	string	$properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of property names
 	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
 	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param	int		$loadlinkedobjects		Load also linked objects
 	 * @return	array							Array of order objects
 	 * @phan-return array<object>
 	 * @phpstan-return array<object>
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
 		}
 
+		global $hookmanager;
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -156,7 +160,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('intervention').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
@@ -169,12 +175,21 @@ class Interventions extends DolibarrApi
 				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
 		}
-		// Add sql filters
+
 		if ($sqlfilters) {
-			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-			if ($errormessage) {
-				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'interventions', 'apimethod' => __METHOD__);
+			$action = 'list';
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this->fichinter, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$sql .= $hookmanager->resPrint;
+			} elseif ($reshook == 0) {
+				$sql .= $hookmanager->resPrint;
+
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+				if ($errormessage) {
+					throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				}
 			}
 		}
 
@@ -205,6 +220,12 @@ class Interventions extends DolibarrApi
 					if ($contact_type) {
 						$fichinter_static->contacts_ids = $fichinter_static->liste_contact(-1, $contact_type, 1);
 					}
+
+					if ($loadlinkedobjects) {
+						// retrieve linked objects
+						$fichinter_static->fetchObjectLinked();
+					}
+
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($fichinter_static), $properties);
 				}
 				$i++;
@@ -248,7 +269,7 @@ class Interventions extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -374,7 +395,7 @@ class Interventions extends DolibarrApi
 	public function postLine($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validateLine($request_data);
@@ -466,7 +487,7 @@ class Interventions extends DolibarrApi
 	public function reopen($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
@@ -509,7 +530,7 @@ class Interventions extends DolibarrApi
 	public function validate($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
@@ -549,7 +570,7 @@ class Interventions extends DolibarrApi
 	public function closeFichinter($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {

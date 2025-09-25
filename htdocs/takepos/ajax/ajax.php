@@ -415,10 +415,15 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	}
 } elseif ($action == "opendrawer" && $term != '' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/html');
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
+
 	// check printer for terminal
 	if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) {
+		// TODO Set the profile into $this->profile (used by initPrinter). Profile not used yet.
+
+		// Init printer
 		$printer->initPrinter(getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 		// open cashdrawer
 		if ($printer->getPrintConnector()) {
