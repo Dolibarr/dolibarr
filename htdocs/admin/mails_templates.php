@@ -73,6 +73,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $backtopage = GETPOST('backtopage');
 $contextpage = GETPOST('contextpage', 'aZ09');
 
+$rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
 $search_label = GETPOST('search_label', 'alphanohtml'); // Must allow value like 'Abc Def' or '(MyTemplateName)'
 $search_type_template = GETPOST('search_type_template', 'alpha');
 $search_lang = GETPOST('search_lang', 'alpha');
