@@ -170,25 +170,25 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/=data:/si', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
 	// More not into the previous list
-	$inj += preg_match('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $val);
 
 	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML. Example: <img on<a>error=alert(1) to bypass test on onerror
 	$tmpval = preg_replace('/<[^<]+>/', '', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $tmpval);
 	// More not into the previous list
-	$inj += preg_match('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
@@ -713,7 +713,7 @@ if (!defined('NOLOGIN')) {
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
 		if (!empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php') {  // We ask index page
 			if (empty($_SERVER['HTTP_REFERER']) || !preg_match('/public/', $_SERVER['HTTP_REFERER'])) {
-				dol_syslog("Call index page from another url than demo page (call is done from page ".$_SERVER['HTTP_REFERER'].")");
+				dol_syslog("Call index page from another url than demo page (call is done from page ".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFER']).")");
 				$url = '';
 				$url .= ($url ? '&' : '').($dol_hide_topmenu ? 'dol_hide_topmenu='.$dol_hide_topmenu : '');
 				$url .= ($url ? '&' : '').($dol_hide_leftmenu ? 'dol_hide_leftmenu='.$dol_hide_leftmenu : '');
@@ -1744,6 +1744,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		// Refresh value of MAIN_IHM_PARAMS_REV before forging the parameter line.
 		if (GETPOST('dol_resetcache')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		}
 
@@ -2158,14 +2159,26 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 		}
 
-		// Link to print main content area
+		// Link to print main content area (optioncss=print)
 		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
 			if (isset($_POST) && is_array($_POST)) {
 				foreach ($_POST as $key => $value) {
-					if ($key !== 'action' && $key !== 'password' && !is_array($value)) {
-						$qs .= '&'.$key.'='.urlencode($value);
+					$key = preg_replace('/[^a-z0-9_\.\-\[\]]/i', '', $key);
+					if (in_array($key, array('action', 'massaction', 'password'))) {
+						continue;
+					}
+					if (!is_array($value)) {
+						if ($value !== '') {
+							$qs .= '&'.urlencode($key).'='.urlencode($value);
+						}
+					} else {
+						foreach ($value as $value2) {
+							if (($value2 !== '') && (!is_array($value2))) {
+								$qs .= '&'.urlencode($key).'[]='.urlencode($value2);
+							}
+						}
 					}
 				}
 			}
@@ -2523,22 +2536,6 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 					closeTopMenuLoginDropdown();
                 }
             });
-
-	        jQuery(".butAction.dropdown-toggle").on("click", function(event) {
-				console.log("Click on .butAction.dropdown-toggle");
-				var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
-            	var offset = parentholder.offset();
-				var widthdocument = $(document).width();
-				var left = offset.left;
-				var right = widthdocument - offset.left - parentholder.width();
-				var widthpopup = parentholder.children(".dropdown-content").width();
-				console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
-				if (widthpopup + right >= widthdocument) {
-					right = 10;
-				}
-	            parentholder.toggleClass("open");
-	            parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
-	        });
 		';
 
 
@@ -2584,12 +2581,16 @@ function top_menu_quickadd()
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
 	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
+	if ($conf->browser->os === 'macintosh') {
 		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
 	}
 
 	$html .= '<!-- div for quick add link -->
@@ -2614,10 +2615,18 @@ function top_menu_quickadd()
 
             // Key map shortcut
             $(document).keydown(function(event){
-                  if ( event.which === 76 && event.ctrlKey && event.shiftKey ){
-                     console.log(\'control + shift + l : trigger open quick add dropdown\');
-                     openQuickAddDropDown(event);
-                  }
+				var ostype = "'.$conf->browser->os.'";
+				if (ostype === "macintosh") {
+					if ( event.which === 65 && event.ctrlKey ) {
+						console.log(\'control + a : trigger open quick add dropdown\');
+						openQuickAddDropDown(event);
+					}
+				} else {
+					if ( event.which === 65 && event.ctrlKey && event.shiftKey ) {
+						console.log(\'control + shift + a : trigger open quick add dropdown\');
+						openQuickAddDropDown(event);
+					}
+				}
             });
 
             var openQuickAddDropDown = function(event) {
@@ -2829,12 +2838,16 @@ function top_menu_bookmark()
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
 	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
+	if ($conf->browser->os === 'macintosh') {
 		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
 	}
 
 	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax)) {	    // This may be set by some pages that use different jquery version to avoid errors
@@ -2872,11 +2885,19 @@ function top_menu_bookmark()
 	            });
 
 	            // Key map shortcut
-	            jQuery(document).keydown(function(event){
-	                  if( event.which === 77 && event.ctrlKey && event.shiftKey ){
-	                     console.log("Click on control + shift + m : trigger open bookmark dropdown");
-	                     openBookMarkDropDown(event);
-	                  }
+	            jQuery(document).keydown(function(event) {
+					var ostype = "'.$conf->browser->os.'";
+					if (ostype === "macintosh") {
+						if ( event.which === 66 && event.ctrlKey ) {
+							console.log("Click on control + b : trigger open bookmark dropdown");
+							openBookMarkDropDown(event);
+						}
+					} else {
+						if ( event.which === 66 && event.ctrlKey && event.shiftKey ) {
+							console.log("Click on control + shift + b : trigger open bookmark dropdown");
+							openBookMarkDropDown(event);
+						}
+					}
 	            });
 
 	            var openBookMarkDropDown = function(event) {

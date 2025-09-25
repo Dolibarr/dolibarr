@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2023	Juanjo Menent			<jmenent@simnandez.es>
  * Copyright (C) 2013-2019	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
@@ -1072,8 +1072,8 @@ class FactureFournisseur extends CommonInvoice
 					$line->id = $obj->rowid;
 					$line->rowid = $obj->rowid;
 					$line->description = $obj->description;
-					$line->date_start = $obj->date_start;
-					$line->date_end = $obj->date_end;
+					$line->date_start = $this->db->jdate($obj->date_start);
+					$line->date_end = $this->db->jdate($obj->date_end);
 
 					$line->product_ref = $obj->product_ref;
 					$line->ref = $obj->product_ref;
@@ -1201,10 +1201,14 @@ class FactureFournisseur extends CommonInvoice
 		if (empty($this->total_tva)) {
 			$this->total_tva = 0;
 		}
-		//	if (isset($this->total_localtax1)) $this->total_localtax1=trim($this->total_localtax1);
-		//	if (isset($this->total_localtax2)) $this->total_localtax2=trim($this->total_localtax2);
+		if (empty($this->total_localtax1)) {
+			$this->total_localtax1 = 0;
+		}
+		if (empty($this->total_localtax2)) {
+			$this->total_localtax2 = 0;
+		}
 		if (isset($this->total_ttc)) {
-			$this->total_ttc = trim($this->total_ttc);
+			$this->total_ttc = (float) $this->total_ttc;
 		}
 		if (isset($this->statut)) {
 			$this->statut = (int) $this->statut;
@@ -1225,8 +1229,11 @@ class FactureFournisseur extends CommonInvoice
 			if (empty($this->fk_project)) $this->fk_project = null;
 			else $this->fk_project = intval($this->fk_project);
 		}
+		if (isset($this->mode_reglement_id)) {
+			$this->mode_reglement_id = (int) $this->mode_reglement_id;
+		}
 		if (isset($this->cond_reglement_id)) {
-			$this->cond_reglement_id = trim($this->cond_reglement_id);
+			$this->cond_reglement_id = (int) $this->cond_reglement_id;
 		}
 		if (isset($this->note_private)) {
 			$this->note = trim($this->note_private);
@@ -1262,8 +1269,8 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " paye=".(isset($this->paye) ? ((int) $this->paye) : "0").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		$sql .= " localtax1=".(isset($this->localtax1) ? ((float) $this->localtax1) : "null").",";
-		$sql .= " localtax2=".(isset($this->localtax2) ? ((float) $this->localtax2) : "null").",";
+		$sql .= " localtax1=".(isset($this->total_localtax1) ? ((float) $this->total_localtax1) : "null").",";
+		$sql .= " localtax2=".(isset($this->total_localtax2) ? ((float) $this->total_localtax2) : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? ((float) $this->total_ht) : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? ((float) $this->total_ttc) : "null").",";
@@ -1273,6 +1280,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
 		$sql .= " vat_reverse_charge = ".($this->vat_reverse_charge != '' ? ((int) $this->db->escape($this->vat_reverse_charge)) : 0).",";
 		$sql .= " fk_projet=".(!empty($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen($this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
@@ -1878,19 +1886,18 @@ class FactureFournisseur extends CommonInvoice
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
-					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$oldref;
-					$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$newref;
+					$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->newref;
 					if (!$error && file_exists($dirsource)) {
 						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest)) {
 							dol_syslog("Rename ok");
-							// Rename docs starting with $oldref with $newref
-							$listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+							// Rename docs starting with $oldref with $this->newref
+							$listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 							foreach ($listoffiles as $fileentry) {
 								$dirsource = $fileentry['name'];
-								$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+								$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $this->newref, $dirsource);
 								$dirsource = $fileentry['path'].'/'.$dirsource;
 								$dirdest = $fileentry['path'].'/'.$dirdest;
 								@rename($dirsource, $dirdest);
@@ -1902,7 +1909,7 @@ class FactureFournisseur extends CommonInvoice
 
 			// Set new ref and define current statut
 			if (!$error) {
-				$this->ref = $num;
+				$this->ref = $this->newref;
 				$this->statut = self::STATUS_VALIDATED;
 				//$this->date_validation=$now; this is stored into log table
 			}
@@ -2436,6 +2443,7 @@ class FactureFournisseur extends CommonInvoice
 
 		if ($res < 1) {
 			$this->errors[] = $line->error;
+			$this->errors = array_merge($this->errors, $line->errors);
 		} else {
 			// Update total price into invoice record
 			$res = $this->update_price('1', 'auto', 0, $this->thirdparty);
@@ -3653,8 +3661,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rowid = $obj->rowid;
 		$this->fk_facture_fourn = $obj->fk_facture_fourn;
 		$this->description		= $obj->description;
-		$this->date_start = $obj->date_start;
-		$this->date_end = $obj->date_end;
+		$this->date_start = $this->db->jdate($obj->date_start);
+		$this->date_end = $this->db->jdate($obj->date_end);
 		$this->product_ref		= $obj->product_ref;
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->product_desc		= $obj->product_desc;
@@ -4090,8 +4098,18 @@ class SupplierInvoiceLine extends CommonObjectLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return $this->id;
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+
+			$this->db->rollback();
+			return -1 * $error;
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();

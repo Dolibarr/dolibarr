@@ -1772,7 +1772,7 @@ div.fiche>form>div.div-table-responsive {
 }
 
 .flexcontainer {
-	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
+	<?php if (in_array($conf->browser->name, array('chrome', 'firefox', 'safari'))) {
 		echo 'display: inline-flex;'."\n";
 	} ?>
 	flex-flow: row wrap;
@@ -2812,7 +2812,7 @@ span.mainmenuaspan.tmenudisabled {
 	cursor: not-allowed;
 }
 
-a.disabled {
+a.disabled, span.tmenu {
 	color: #aaa;
 	text-decoration: none !important;
 	cursor: default;

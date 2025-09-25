@@ -228,7 +228,7 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		if ($this->invoice->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->invoice->error), $this->invoice->errors));
+			throw new RestException(500, "Error creating invoice ", array_merge(array($this->invoice->error), $this->invoice->errors));
 		}
 		return $this->invoice->id;
 	}
@@ -263,10 +263,16 @@ class SupplierInvoices extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+				}
+				continue;
+			}
 			$this->invoice->$field = $value;
 		}
 
-		if ($this->invoice->update($id, DolibarrApiAccess::$user)) {
+		if ($this->invoice->update(DolibarrApiAccess::$user)) {
 			return $this->get($id);
 		}
 
@@ -379,13 +385,13 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(400, 'Invoice ID is mandatory');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
 		$result = $this->invoice->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->getListOfPayments();
@@ -428,6 +434,11 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(400, 'Invoice ID is mandatory');
 		}
 
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Invoice not found');
+		}
+
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -440,12 +451,6 @@ class SupplierInvoices extends DolibarrApi
 
 		if (empty($payment_mode_id)) {
 			throw new RestException(400, 'Payment mode ID is mandatory');
-		}
-
-
-		$result = $this->invoice->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Invoice not found');
 		}
 
 		// Calculate amount to pay

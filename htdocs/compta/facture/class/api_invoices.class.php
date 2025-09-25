@@ -318,7 +318,7 @@ class Invoices extends DolibarrApi
 		if ($this->invoice->create(DolibarrApiAccess::$user, 0, (empty($request_data["date_lim_reglement"]) ? 0 : $request_data["date_lim_reglement"])) < 0) {
 			throw new RestException(500, "Error creating invoice", array_merge(array($this->invoice->error), $this->invoice->errors));
 		}
-		return $this->invoice->id;
+		return ((int) $this->invoice->id);
 	}
 
 	 /**
@@ -622,6 +622,12 @@ class Invoices extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+				}
+				continue;
+			}
 			$this->invoice->$field = $value;
 		}
 
@@ -632,11 +638,11 @@ class Invoices extends DolibarrApi
 			}
 		}
 
-		if ($this->invoice->update(DolibarrApiAccess::$user)) {
+		if ($this->invoice->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->invoice->error);
 		}
-
-		return false;
 	}
 
 	/**
@@ -1562,13 +1568,13 @@ class Invoices extends DolibarrApi
 				$amount = price2num($amountarray["multicurrency_amount"], 'MT');
 			}
 
-			if ($amount > $remainstopay && !$accepthigherpayment) {
+			if (abs($amount) > abs($remainstopay) && !$accepthigherpayment) {
 				$this->db->rollback();
 				throw new RestException(400, 'Payment amount on invoice ID '.$id.' ('.$amount.') is higher than remain to pay ('.$remainstopay.')');
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = -$amount;
+				$amount = - abs($amount);
 			}
 
 			if ($is_multicurrency) {

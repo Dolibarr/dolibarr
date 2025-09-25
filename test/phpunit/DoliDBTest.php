@@ -160,7 +160,7 @@ class DoliDBTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 
 		// TODO Use $savtype and $savnull instead of hard coded
-		$field_desc = array('type'=>'varchar', 'value'=>'16', 'null'=>'NOT NULL');
+		$field_desc = array('type'=>'varchar', 'value'=>'16', 'null'=>'NOT NULL', 'default'=>'aaaabbbbccccdddd');
 
 		$result = $db->DDLUpdateField($db->prefix().'c_paper_format', 'code', $field_desc);
 		$this->assertEquals(1, $result);

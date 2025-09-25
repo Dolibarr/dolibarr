@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -291,7 +291,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['account_number'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
@@ -446,7 +446,7 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 					break;
-				} elseif (isset($object->date_validation) || $object->date_validation != '') {
+				} elseif (isset($object->date_validation) && $object->date_validation != '') {
 					setEventMessages($langs->trans("ValidatedRecordWhereFound"), null, 'errors');
 					$error++;
 					break;
@@ -675,7 +675,7 @@ if ($reshook < 0) {
 $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
 if (empty($reshook)) {
-	$newcardbutton = dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
 	if ($type == 'sub') {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
@@ -932,6 +932,21 @@ $sous_total_credit = 0;
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
 
+$colspan = 0;			// colspan before field 'label of operation'
+$colspanend = 3;		// colspan after debit/credit
+if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
+if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
+if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	$colspan++;
+	$colspanend--;
+}
+
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
 
@@ -944,21 +959,6 @@ while ($i < min($num, $limit)) {
 		$accountg = length_accountg($line->numero_compte);
 	}
 	//if (empty($accountg)) $accountg = '-';
-
-	$colspan = 0;			// colspan before field 'label of operation'
-	$colspanend = 3;		// colspan after debit/credit
-	if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.date_validating']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		$colspan++;
-		$colspanend--;
-	}
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
@@ -1027,8 +1027,6 @@ while ($i < min($num, $limit)) {
 		//if (empty($displayed_account_number)) $displayed_account_number='-';
 		$sous_total_debit = 0;
 		$sous_total_credit = 0;
-
-		$colspan = 0;
 	}
 
 	print '<tr class="oddeven">';
@@ -1207,7 +1205,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	if (!empty($arrayfields['t.import_key']['checked'])) {
-		print '<td class="tdoverflowmax100">'.$line->import_key."</td>\n";
+		print '<td class="center">'.$line->import_key."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

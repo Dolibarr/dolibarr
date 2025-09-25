@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2023  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2024  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
@@ -385,11 +385,12 @@ class AccountancyExport
 				// directory already created when module is enabled
 				$outputDir .= '/export';
 				$outputDir .= '/'.dol_sanitizePathName($formatexportset);
-				if (!dol_is_dir($outputDir)) {
-					if (dol_mkdir($outputDir) < 0) {
-						$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);
-						return -1;
-					}
+			}
+
+			if (!dol_is_dir($outputDir)) {
+				if (dol_mkdir($outputDir) < 0) {
+					$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);
+					return -1;
 				}
 			}
 
@@ -965,7 +966,7 @@ class AccountancyExport
 
 			// We need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
 			// $tab['num_piece3'] = str_pad(self::trunc($line->piece_num, 10), 10);
-			$tab['num_piece3'] = substr(self::trunc($line->doc_ref, 20), -10);
+			$tab['num_piece3'] = str_pad(substr(self::trunc($line->doc_ref, 20), -10), 10);
 			$tab['reserved'] = str_repeat(' ', 10); // position 159
 			$tab['currency_amount'] = str_repeat(' ', 13); // position 169
 			// get document file

@@ -863,7 +863,7 @@ class Asset extends CommonObject
 			// Get fiscal period
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-			$dates = getDefaultDatesForTransfer();
+			$dates = getCurrentPeriodOfFiscalYear($this->db, $conf, $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition);
 			$init_fiscal_period_start = $dates['date_start'];
 			$init_fiscal_period_end = $dates['date_end'];
 			if (empty($init_fiscal_period_start) || empty($init_fiscal_period_end)) {
@@ -999,7 +999,7 @@ class Asset extends CommonObject
 				//-----------------------------------------------------
 				$nb_days_in_year = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
 				$nb_days_in_month = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
-				$period_amount = (double) price2num($depreciation_period_amount / $fields['duration'], 'MT');
+				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
 

@@ -10,6 +10,7 @@
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1113,6 +1114,12 @@ if ($action == 'create') {
 			$numref = $object->ref;
 		}
 		$text = $langs->trans('ConfirmValidateIntervention', $numref);
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('FICHINTER_VALIDATE', $object->socid, $object);
+		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate', '', 1, 1);
 	}
@@ -1724,7 +1731,7 @@ if ($action == 'create') {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
-			print showOnlineSignatureUrl('fichinter', $object->ref).'<br>';
+			print showOnlineSignatureUrl('fichinter', $object->ref, $object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';

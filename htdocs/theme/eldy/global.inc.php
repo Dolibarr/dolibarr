@@ -1546,7 +1546,7 @@ div.fiche {
 }
 
 .flexcontainer {
-	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
+	<?php if (in_array($conf->browser->name, array('chrome', 'firefox', 'safari'))) {
 		echo 'display: inline-flex;'."\n";
 	} ?>
 	flex-flow: row wrap;
@@ -2611,7 +2611,7 @@ span.mainmenuaspan.tmenudisabled {
 	cursor: not-allowed;
 }
 
-a.disabled {
+a.disabled, span.tmenu {
 	color: #aaa;
 	text-decoration: none !important;
 	cursor: default;
@@ -5070,7 +5070,9 @@ div#card-errors {
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
-
+.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
+	z-index:1006 !important; /* To always be over the dialog box */
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -5133,6 +5135,7 @@ div.ui-tooltip.mytooltip {
 	color: var(--tooltipfontcolor);
 	line-height: 1.6em;
 	min-width: 550px;
+	pointer-events: none;
 }
 
 <?php

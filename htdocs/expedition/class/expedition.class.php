@@ -731,12 +731,14 @@ class Expedition extends CommonObject
 		$result = $soc->set_as_client();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef($soc);
-		} else {
+		} elseif (!empty($this->ref)) {
 			$num = $this->ref;
+		} else {
+			$num = "EXP".$this->id;
 		}
-		$this->newref = dol_sanitizeFileName($num);
+    $this->newref = dol_sanitizeFileName($num);
 
 		$now = dol_now();
 
@@ -2293,7 +2295,11 @@ class Expedition extends CommonObject
 			$error ++;
 		}
 
-		return $error;
+		if (!$error) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	/**

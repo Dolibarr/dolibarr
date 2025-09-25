@@ -262,6 +262,8 @@ class Facture extends CommonInvoice
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+	public $multicurrency_total_localtax1;	// not in database
+	public $multicurrency_total_localtax2;	// not in database
 
 	/**
 	 * @var int Situation cycle reference number
@@ -501,8 +503,8 @@ class Facture extends CommonInvoice
 		$this->ref_client = trim($this->ref_client);
 
 		$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
-		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note_private));
-		$this->note_public = trim($this->note_public);
+		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
+		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : '');
 		if (!$this->cond_reglement_id) {
 			$this->cond_reglement_id = 0;
 		}
@@ -548,6 +550,7 @@ class Facture extends CommonInvoice
 		}
 
 		$now = dol_now();
+		$this->date_creation = $now;
 
 		$this->db->begin();
 
@@ -719,14 +722,14 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", ".((int) $socid);
-		$sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", '".$this->db->idate($this->date_creation)."'";
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');	// TODO deprecated
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
-		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
+		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : ($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null"));
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
@@ -1010,13 +1013,13 @@ class Facture extends CommonInvoice
 			 */
 			if (!$error && $this->fac_rec > 0) {
 				foreach ($_facrec->lines as $i => $val) {
+					// For line from template invoice, we use data from template invoice
+					/*
 					if ($_facrec->lines[$i]->fk_product) {
 						$prod = new Product($this->db);
 						$res = $prod->fetch($_facrec->lines[$i]->fk_product);
 					}
 
-					// For line from template invoice, we use data from template invoice
-					/*
 					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
 					$tva_npr = get_default_npr($mysoc,$soc,$prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
@@ -1269,7 +1272,7 @@ class Facture extends CommonInvoice
 				$object->socid = $objsoc->id;
 				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
 				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$object->fk_project = '';
+				$object->fk_project = null;
 				$object->fk_delivery_address = '';
 			}
 
@@ -1287,10 +1290,12 @@ class Facture extends CommonInvoice
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
+		$object->fk_fac_rec_source  = null;
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';
 		$object->ref_client         = '';
+		$object->ref_customer         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
 		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
@@ -2378,8 +2383,6 @@ class Facture extends CommonInvoice
 				$line->fk_product       = $objp->fk_product;
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
-				$line->date_start       = $this->db->jdate($objp->date_start);
-				$line->date_end         = $this->db->jdate($objp->date_end);
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
@@ -2521,6 +2524,9 @@ class Facture extends CommonInvoice
 		if (isset($this->retained_warranty)) {
 			$this->retained_warranty = floatval($this->retained_warranty);
 		}
+		if (!isset($this->fk_user_author) && isset($this->user_author) ) {
+			$this->fk_user_author = $this->user_author;
+		}
 
 
 		// Check parameters
@@ -2550,7 +2556,7 @@ class Facture extends CommonInvoice
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? $this->db->escape($this->revenuestamp) : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->db->escape($this->statut) : "null").",";
-		$sql .= " fk_user_author=".(isset($this->user_author) ? $this->db->escape($this->user_author) : "null").",";
+		$sql .= " fk_user_author=".(isset($this->fk_user_author) ? $this->db->escape($this->fk_user_author) : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->db->escape($this->fk_user_valid) : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? $this->db->escape($this->fk_facture_source) : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->db->escape($this->fk_project) : "null").",";
@@ -3228,6 +3234,12 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this)."::validate ".$this->error.' MAIN_USE_ADVANCED_PERMS='.$conf->global->MAIN_USE_ADVANCED_PERMS, LOG_ERR);
 			return -1;
 		}
+		if ((preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) &&	// empty should not happened, but when it occurs, the test save life
+			!empty($conf->global->FAC_FORCE_DATE_VALIDATION)							// If option enabled, we force invoice date
+		) {
+			$this->date = dol_now();
+			$this->date_lim_reglement = $this->calculate_date_lim_reglement();
+		}
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
 			$last_of_type = $this->willBeLastOfSameType(true);
 			if (!$last_of_type[0]) {
@@ -3340,10 +3352,6 @@ class Facture extends CommonInvoice
 		if ($force_number) {
 			$num = $force_number;
 		} elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-			if (!empty($conf->global->FAC_FORCE_DATE_VALIDATION)) {	// If option enabled, we force invoice date
-				$this->date = dol_now();
-				$this->date_lim_reglement = $this->calculate_date_lim_reglement();
-			}
 			$num = $this->getNextNumRef($this->thirdparty);
 		} else {
 			$num = $this->ref;
@@ -4228,6 +4236,11 @@ class Facture extends CommonInvoice
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
 			}
+			$apply_abs_price_on_credit_note=false;
+			if ($this->type == self::TYPE_CREDIT_NOTE  && !getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
+				$apply_abs_price_on_credit_note = true;
+			}
+
 
 			$this->line->id = $rowid;
 			$this->line->rowid = $rowid;
@@ -4244,14 +4257,14 @@ class Facture extends CommonInvoice
 			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$this->line->remise_percent		= $remise_percent;
-			$this->line->subprice			= ($this->type == self::TYPE_CREDIT_NOTE ?-abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$this->line->subprice			= ($apply_abs_price_on_credit_note?-abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
 			$this->line->date_start = $date_start;
 			$this->line->date_end			= $date_end;
-			$this->line->total_ht			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->total_tva			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva);
+			$this->line->total_ht			= (($apply_abs_price_on_credit_note || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->total_tva			= (($apply_abs_price_on_credit_note || $qty < 0) ?-abs($total_tva) : $total_tva);
 			$this->line->total_localtax1	= $total_localtax1;
 			$this->line->total_localtax2	= $total_localtax2;
-			$this->line->total_ttc			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ttc) : $total_ttc);
+			$this->line->total_ttc			= (($apply_abs_price_on_credit_note || $qty < 0) ?-abs($total_ttc) : $total_ttc);
 			$this->line->info_bits			= $info_bits;
 			$this->line->special_code		= $special_code;
 			$this->line->product_type		= $type;
@@ -5695,7 +5708,7 @@ class Facture extends CommonInvoice
 
 		$tmpinvoice = new Facture($this->db);
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
@@ -5735,199 +5748,212 @@ class Facture extends CommonInvoice
 
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (!$error) {
-					// Load event
-					$res = $tmpinvoice->fetch($obj->id);
-					if ($res > 0) {
-						$tmpinvoice->fetch_thirdparty();
+				// Create a loopError that is reset at each loop, this counter is added to the global counter at the end of loop
+				$loopError = 0;
 
-						$outputlangs = new Translate('', $conf);
-						if ($tmpinvoice->thirdparty->default_lang) {
-							$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
-							$outputlangs->loadLangs(array("main", "bills"));
-						} else {
-							$outputlangs = $langs;
-						}
+				// Load event
+				$res = $tmpinvoice->fetch($obj->id);
+				if ($res > 0) {
+					$tmpinvoice->fetch_thirdparty();
 
-						// Select email template according to language of recipient
-						$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
-						if (is_numeric($arraymessage) && $arraymessage <= 0) {
-							$langs->load("errors");
-							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-							return 0;
-						}
+					$outputlangs = new Translate('', $conf);
+					if ($tmpinvoice->thirdparty->default_lang) {
+						$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
+						$outputlangs->loadLangs(array("main", "bills"));
+					} else {
+						$outputlangs = $langs;
+					}
 
-						// PREPARE EMAIL
-						$errormesg = '';
+					// Select email template according to language of recipient
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+					if (is_numeric($arraymessage) && $arraymessage <= 0) {
+						$langs->load("errors");
+						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+						return 0;
+					}
 
-						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
+					// PREPARE EMAIL
+					$errormesg = '';
 
-						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
+					// Make substitution in email content
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
 
-						// Topic
-						$sendTopic = make_substitutions(empty($arraymessage->topic) ? $outputlangs->transnoentitiesnoconv('InformationMessage') : $arraymessage->topic, $substitutionarray, $outputlangs, 1);
+					complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
 
-						// Content
-						$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
+					// Topic
+					$sendTopic = make_substitutions(empty($arraymessage->topic) ? $outputlangs->transnoentitiesnoconv('InformationMessage') : $arraymessage->topic, $substitutionarray, $outputlangs, 1);
 
-						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
+					// Content
+					$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
 
-						// Recipient
-						$to = array();
-						if ($forcerecipient) {	// If a recipient was forced
-							$to = array($forcerecipient);
-						} else {
-							$res = $tmpinvoice->fetch_thirdparty();
-							$recipient = $tmpinvoice->thirdparty;
-							if ($res > 0) {
-								$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
-								if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
-									foreach ($tmparraycontact as $data_email) {
-										if (!empty($data_email['email'])) {
-											$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
-										}
+					$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
+
+					// Recipient
+					$to = array();
+					if ($forcerecipient) {	// If a recipient was forced
+						$to = array($forcerecipient);
+					} else {
+						$res = $tmpinvoice->fetch_thirdparty();
+						$recipient = $tmpinvoice->thirdparty;
+						if ($res > 0) {
+							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
+							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+								foreach ($tmparraycontact as $data_email) {
+									if (!empty($data_email['email'])) {
+										$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
 									}
 								}
-								if (empty($to) && !empty($recipient->email)) {
-									$to[] = $recipient->email;
-								}
-								if (empty($to)) {
-									$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for invoice or customer.";
-									$error++;
-								}
-							} else {
-								$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
-								$error++;
 							}
-						}
-
-						// Sender
-						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-						if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
-							$from = $arraymessage->email_from;
-						}
-						if (empty($from)) {
-							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
-							$error++;
-						}
-
-						if (!$error && !empty($to)) {
-							$this->db->begin();
-
-							$to = implode(',', $to);
-							if (!empty($arraymessage->email_to)) {	// If a recipient is defined into template, we add it
-								$to = $to.','.$arraymessage->email_to;
+							if (empty($to) && !empty($recipient->email)) {
+								$to[] = $recipient->email;
 							}
-
-							// Errors Recipient
-							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
-
-							$trackid = 'inv'.$tmpinvoice->id;
-							$sendcontext = 'standard';
-
-							$email_tocc = '';
-							if (!empty($arraymessage->email_tocc)) {	// If a CC is defined into template, we use it
-								$email_tocc = $arraymessage->email_tocc;
+							if (empty($to)) {
+								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for invoice or customer.";
+								$loopError++;
 							}
-
-							$email_tobcc = '';
-							if (!empty($arraymessage->email_tobcc)) {	// If a BCC is defined into template, we use it
-								$email_tobcc = $arraymessage->email_tobcc;
-							}
-
-							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
-
-							// Sending Mail
-							if ($cMailFile->sendfile()) {
-								$nbMailSend++;
-
-								// Add a line into event table
-								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
-								// Insert record of emails sent
-								$actioncomm = new ActionComm($this->db);
-
-								$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
-								$actioncomm->socid = $tmpinvoice->thirdparty->id; // To link to a company
-								$actioncomm->contact_id = 0;
-
-								$actioncomm->code = 'AC_EMAIL';
-								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
-								$actioncomm->note_private = $sendContent;
-								$actioncomm->fk_project = $tmpinvoice->fk_project;
-								$actioncomm->datep = dol_now();
-								$actioncomm->datef = $actioncomm->datep;
-								$actioncomm->percentage = -1; // Not applicable
-								$actioncomm->authorid = $user->id; // User saving action
-								$actioncomm->userownerid = $user->id; // Owner of action
-								// Fields when action is an email (content should be added into note)
-								$actioncomm->email_msgid = $cMailFile->msgid;
-								$actioncomm->email_subject = $sendTopic;
-								$actioncomm->email_from = $from;
-								$actioncomm->email_sender = '';
-								$actioncomm->email_to = $to;
-								//$actioncomm->email_tocc = $sendtocc;
-								//$actioncomm->email_tobcc = $sendtobcc;
-								//$actioncomm->email_subject = $subject;
-								$actioncomm->errors_to = $errors_to;
-
-								$actioncomm->elementtype = 'invoice';
-								$actioncomm->fk_element = $tmpinvoice->id;
-
-								//$actioncomm->extraparams = $extraparams;
-
-								$actioncomm->create($user);
-							} else {
-								$errormesg = $cMailFile->error.' : '.$to;
-								$error++;
-
-								// Add a line into event table
-								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
-								// Insert record of emails sent
-								$actioncomm = new ActionComm($this->db);
-
-								$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
-								$actioncomm->socid = $tmpinvoice->thirdparty->id; // To link to a company
-								$actioncomm->contact_id = 0;
-
-								$actioncomm->code = 'AC_EMAIL';
-								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateKO';
-								$actioncomm->note_private = $errormesg;
-								$actioncomm->fk_project = $tmpinvoice->fk_project;
-								$actioncomm->datep = dol_now();
-								$actioncomm->datef = $actioncomm->datep;
-								$actioncomm->percentage = -1; // Not applicable
-								$actioncomm->authorid = $user->id; // User saving action
-								$actioncomm->userownerid = $user->id; // Owner of action
-								// Fields when action is an email (content should be added into note)
-								$actioncomm->email_msgid = $cMailFile->msgid;
-								$actioncomm->email_from = $from;
-								$actioncomm->email_sender = '';
-								$actioncomm->email_to = $to;
-								//$actioncomm->email_tocc = $sendtocc;
-								//$actioncomm->email_tobcc = $sendtobcc;
-								//$actioncomm->email_subject = $subject;
-								$actioncomm->errors_to = $errors_to;
-
-								//$actioncomm->extraparams = $extraparams;
-
-								$actioncomm->create($user);
-							}
-
-							$this->db->commit();	// We always commit
+						} else {
+							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
+							$loopError++;
 						}
-
-						if ($errormesg) {
-							$errorsMsg[] = $errormesg;
-						}
-					} else {
-						$errorsMsg[] = 'Failed to fetch record invoice with ID = '.$obj->id;
-						$error++;
 					}
+
+					// Sender
+					$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+					if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
+						$from = $arraymessage->email_from;
+					}
+					if (empty($from)) {
+						$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+						$loopError++;
+					}
+
+					if (!$loopError && !empty($to)) {
+						$this->db->begin();
+
+						$to = implode(',', $to);
+						if (!empty($arraymessage->email_to)) {	// If a recipient is defined into template, we add it
+							$to = $to.','.$arraymessage->email_to;
+						}
+
+						// Errors Recipient
+						$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');;
+
+						$trackid = 'inv'.$tmpinvoice->id;
+						$sendcontext = 'standard';
+
+						$email_tocc = '';
+						if (!empty($arraymessage->email_tocc)) {	// If a CC is defined into template, we use it
+							$email_tocc = $arraymessage->email_tocc;
+						}
+
+						$email_tobcc = '';
+						if (!empty($arraymessage->email_tobcc)) {	// If a BCC is defined into template, we use it
+							$email_tobcc = $arraymessage->email_tobcc;
+						}
+
+						//join file is asked
+						$joinFile = [];
+						$joinFileName = [];
+						$joinFileMime = [];
+						if ($arraymessage->joinfiles == 1 && !empty($tmpinvoice->last_main_doc)) {
+							$joinFile[] = DOL_DATA_ROOT.'/'.$tmpinvoice->last_main_doc;
+							$joinFileName[] = basename($tmpinvoice->last_main_doc);
+							$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.'/'.$tmpinvoice->last_main_doc);
+						}
+
+						// Mail Creation
+						$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+
+						// Sending Mail
+						if ($cMailFile->sendfile()) {
+							$nbMailSend++;
+
+							// Add a line into event table
+							require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+							// Insert record of emails sent
+							$actioncomm = new ActionComm($this->db);
+
+							$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+							$actioncomm->socid = $tmpinvoice->thirdparty->id; // To link to a company
+							$actioncomm->contact_id = 0;
+
+							$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+							$actioncomm->note_private = $sendContent;
+							$actioncomm->fk_project = $tmpinvoice->fk_project;
+							$actioncomm->datep = dol_now();
+							$actioncomm->datef = $actioncomm->datep;
+							$actioncomm->percentage = -1; // Not applicable
+							$actioncomm->authorid = $user->id; // User saving action
+							$actioncomm->userownerid = $user->id; // Owner of action
+							// Fields when action is an email (content should be added into note)
+							$actioncomm->email_msgid = $cMailFile->msgid;
+							$actioncomm->email_subject = $sendTopic;
+							$actioncomm->email_from = $from;
+							$actioncomm->email_sender = '';
+							$actioncomm->email_to = $to;
+							//$actioncomm->email_tocc = $sendtocc;
+							//$actioncomm->email_tobcc = $sendtobcc;
+							//$actioncomm->email_subject = $subject;
+							$actioncomm->errors_to = $errors_to;
+
+							$actioncomm->elementtype = 'invoice';
+							$actioncomm->fk_element = $tmpinvoice->id;
+
+							//$actioncomm->extraparams = $extraparams;
+
+							$actioncomm->create($user);
+						} else {
+							$errormesg = $cMailFile->error.' : '.$to;
+							$loopError++;
+
+							// Add a line into event table
+							require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+							// Insert record of emails sent
+							$actioncomm = new ActionComm($this->db);
+
+							$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+							$actioncomm->socid = $tmpinvoice->thirdparty->id; // To link to a company
+							$actioncomm->contact_id = 0;
+
+							$actioncomm->code = 'AC_EMAIL';
+							$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateKO';
+							$actioncomm->note_private = $errormesg;
+							$actioncomm->fk_project = $tmpinvoice->fk_project;
+							$actioncomm->datep = dol_now();
+							$actioncomm->datef = $actioncomm->datep;
+							$actioncomm->percentage = -1; // Not applicable
+							$actioncomm->authorid = $user->id; // User saving action
+							$actioncomm->userownerid = $user->id; // Owner of action
+							// Fields when action is an email (content should be added into note)
+							$actioncomm->email_msgid = $cMailFile->msgid;
+							$actioncomm->email_from = $from;
+							$actioncomm->email_sender = '';
+							$actioncomm->email_to = $to;
+							//$actioncomm->email_tocc = $sendtocc;
+							//$actioncomm->email_tobcc = $sendtobcc;
+							//$actioncomm->email_subject = $subject;
+							$actioncomm->errors_to = $errors_to;
+
+							//$actioncomm->extraparams = $extraparams;
+
+							$actioncomm->create($user);
+						}
+
+						$this->db->commit();	// We always commit
+					}
+
+					if ($errormesg) {
+						$errorsMsg[] = $errormesg;
+					}
+				} else {
+					$errorsMsg[] = 'Failed to fetch record invoice with ID = '.$obj->id;
+					$loopError++;
 				}
+
+				$error += $loopError;
 			}
 		} else {
 			$error++;
@@ -5935,9 +5961,15 @@ class Facture extends CommonInvoice
 
 		if (!$error) {
 			$this->output .= 'Nb of emails sent : '.$nbMailSend;
+
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+
 			return 0;
 		} else {
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+
 			return $error;
 		}
 	}
@@ -6382,7 +6414,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			// If fk_remise_except is defined, the discount is linked to the invoice
 			// which flags it as "consumed".
-			if ($this->fk_remise_except) {
+			if ($this->fk_remise_except && empty($error)) {
 				$discount = new DiscountAbsolute($this->db);
 				$result = $discount->fetch($this->fk_remise_except);
 				if ($result >= 0) {
@@ -6419,7 +6451,7 @@ class FactureLigne extends CommonInvoiceLine
 				}
 			}
 
-			if (!$notrigger) {
+			if (!$notrigger && empty($error)) {
 				// Call trigger
 				$result = $this->call_trigger('LINEBILL_INSERT', $user);
 				if ($result < 0) {
@@ -6429,8 +6461,17 @@ class FactureLigne extends CommonInvoiceLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return $this->id;
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
@@ -6601,8 +6642,18 @@ class FactureLigne extends CommonInvoiceLine
 				}
 				// End call triggers
 			}
-			$this->db->commit();
-			return 1;
+
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();

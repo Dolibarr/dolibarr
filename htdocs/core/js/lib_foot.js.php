@@ -110,8 +110,10 @@ if (empty($conf->dol_no_mouse_hover)) {
 					success: function(response){
 						// Setting content option
 						console.log("ajax success");
-						elemfortooltip.tooltip("option","content",response);
-						elemfortooltip.tooltip("open");
+	  					if (elemfortooltip.is(":hover")) {
+							elemfortooltip.tooltip("option","content",response);
+							elemfortooltip.tooltip("open");
+	   					}
 					}
 				});
 			 }, opendelay));

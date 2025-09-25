@@ -71,6 +71,7 @@ function societe_prepare_head(Societe $object)
 				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
+				$sql .= " AND p.entity IN (".getEntity($object->element).")";
 				// Add where from hooks
 				$parameters = array('contacttab' => true);
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -1150,6 +1151,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+	$sql .= " AND t.entity IN (".getEntity($object->element).")";
 	$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
 	if ($search_rowid) {
 		$sql .= natural_search('t.rowid', $search_rowid);
@@ -2191,7 +2193,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	$i = -1;
 
-	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
+	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas, s.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE s.parent = ".((int) $object->id);
 	$sql .= " AND s.entity IN (".getEntity('societe').")";
@@ -2231,6 +2233,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$socstatic->canvas = $obj->canvas;
 			$socstatic->client = $obj->client;
 			$socstatic->fournisseur = $obj->fournisseur;
+			$socstatic->status = $obj->status;
 
 			print '<tr class="oddeven">';
 

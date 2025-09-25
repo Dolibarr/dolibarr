@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2018	Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +98,11 @@ class PaymentLoan extends CommonObject
 
 	public $type_code;
 	public $type_label;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
 
 
 	/**
@@ -380,19 +385,17 @@ class PaymentLoan extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql .= " WHERE type='payment_loan' AND url_id=".((int) $this->id);
-
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		if ($this->bank_line > 0) {
+			$accline = new AccountLine($this->db);
+			$accline->fetch($this->bank_line);
+			$result = $accline->delete($user);
+			if ($result < 0) {
+				$this->errors[] = $accline->error;
+				$error++;
 			}
 		}
 
@@ -421,22 +424,6 @@ class PaymentLoan extends CommonObject
 				}
 			}
 		}
-
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
 
 		// Commit or rollback
 		if ($error) {

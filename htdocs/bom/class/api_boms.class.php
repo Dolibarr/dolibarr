@@ -240,6 +240,12 @@ class Boms extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->bom->array_options[$index] = $this->_checkValForAPI($field, $val, $this->bom);
+				}
+				continue;
+			}
 			$this->bom->$field = $value;
 		}
 
@@ -350,7 +356,8 @@ class Boms extends DolibarrApi
 			$request_data->efficiency,
 			$request_data->position,
 			$request_data->fk_bom_child,
-			$request_data->import_key
+			$request_data->import_key,
+			$request_data->fk_unit
 		);
 
 		if ($updateRes > 0) {
@@ -395,7 +402,8 @@ class Boms extends DolibarrApi
 			$request_data->disable_stock_change,
 			$request_data->efficiency,
 			$request_data->position,
-			$request_data->import_key
+			$request_data->import_key,
+			$request_data->fk_unit
 		);
 
 		if ($updateRes > 0) {
@@ -546,7 +554,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @return void
 	 */
-	private function checkRefNumbering(): void
+	private function checkRefNumbering()
 	{
 		$ref = substr($this->bom->ref, 1, 4);
 		if ($this->bom->status > 0 && $ref == 'PROV') {

@@ -901,14 +901,14 @@ if ($action == 'create') {
 
 					$text = '';
 
-					if (isset($conf->global->MAILING_LIMIT_SENDBYDAY) && $conf->global->MAILING_LIMIT_SENDBYDAY >= 0) {
-						$text .= $langs->trans('WarningLimitSendByDay', $conf->global->MAILING_LIMIT_SENDBYDAY);
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYDAY') > 0) {
+						$text .= $langs->trans('WarningLimitSendByDay', getDolGlobalInt('MAILING_LIMIT_SENDBYDAY'));
 						$text .= '<br><br>';
 					}
 					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
 					$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 
-					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || $conf->global->MAILING_LIMIT_SENDBYCLI >= 0) {
+					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
 						$text .= '<br><br>';
 						$text .= $langs->trans("MailingNeedCommand");
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';

@@ -70,7 +70,10 @@ class Product extends CommonObject
 		'facturedet' => array('name' => 'Invoice', 'parent' => 'facture', 'parentkey' => 'fk_facture'),
 		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
 		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
-		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
+		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande'),
+		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo' ),
+		'bom_bom' => array('name' => 'BOM'),
+		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom'),
 	);
 
 	/**
@@ -493,7 +496,7 @@ class Product extends CommonObject
 	 *
 	 * @var array
 	 */
-	public $sousprods;
+	public $sousprods = array();
 
 	/**
 	 * Path of subproducts. Build from ->sousprods with get_arbo_each_prod()
@@ -1272,7 +1275,6 @@ class Product extends CommonObject
 				// Multilangs
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if ($this->setMultiLangs($user) < 0) {
-						$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 						return -2;
 					}
 				}
@@ -2538,7 +2540,7 @@ class Product extends CommonObject
 				$this->fk_default_bom = $obj->fk_default_bom;
 
 				$this->duration = $obj->duration;
-				$this->duration_value = $obj->duration ? substr($obj->duration, 0, dol_strlen($obj->duration) - 1) : null;
+				$this->duration_value = $obj->duration ? (int) (substr($obj->duration, 0, dol_strlen($obj->duration) - 1)) : 0;
 				$this->duration_unit = $obj->duration ? substr($obj->duration, -1) : null;
 				$this->canvas = $obj->canvas;
 				$this->net_measure = $obj->net_measure;
@@ -4723,8 +4725,8 @@ class Product extends CommonObject
 
 		// les prix de fournisseurs.
 		$sql = "INSERT ".$this->db->prefix()."product_fournisseur_price (";
-		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user)";
-		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user";
+		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user, tva_tx)";
+		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user, tva_tx";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
 
@@ -4964,8 +4966,6 @@ class Product extends CommonObject
 	 */
 	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1, $parents = array())
 	{
-		global $alreadyfound;
-
 		if (empty($id)) {
 			return array();
 		}
@@ -4982,9 +4982,6 @@ class Product extends CommonObject
 
 		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.(is_array($parents)?implode(',', $parents):$parents), LOG_DEBUG);
 
-		if ($level == 1) {
-			$alreadyfound = array($id=>1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
-		}
 		// Protection against infinite loop
 		if ($level > 30) {
 			return array();
@@ -4993,14 +4990,16 @@ class Product extends CommonObject
 		$res = $this->db->query($sql);
 		if ($res) {
 			$prods = array();
+			if ($this->db->num_rows($res) > 0) {
+				$parents[] = $id;
+			}
+
 			while ($rec = $this->db->fetch_array($res)) {
-				if (!empty($alreadyfound[$rec['rowid']])) {
+				if (in_array($rec['id'], $parents)) {
 					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
-					if (in_array($rec['id'], $parents)) {
-						continue; // We discard this child if it is already found at a higher level in tree in the same branch.
-					}
+					continue; // We discard this child if it is already found at a higher level in tree in the same branch.
 				}
-				$alreadyfound[$rec['rowid']] = 1;
+
 				$prods[$rec['rowid']] = array(
 					0=>$rec['rowid'],
 					1=>$rec['qty'],
@@ -5014,7 +5013,7 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly)) {
-					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1, array_push($parents, $rec['rowid']));
+					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1, $parents);
 					foreach ($listofchilds as $keyChild => $valueChild) {
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
 					}
@@ -5189,7 +5188,7 @@ class Product extends CommonObject
 		}
 		$params = [
 			'id' => $this->id,
-			'objecttype' => $this->element,
+			'objecttype' => (isset($this->type) ? ($this->type == 1 ? 'service' : 'product') : $this->element),
 			'option' => $option,
 			'nofetch' => 1,
 		];

@@ -85,7 +85,7 @@ $error = 0;
 if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
 		if (GETPOST('remonth', 'int')) {
-			$daterej = mktime(2, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+			$daterej = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		}
 
 		if (empty($daterej)) {
@@ -166,7 +166,12 @@ if ($id) {
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 		print $id.'</td></tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		if ($type == 'bank-transfer') {
+			print '<tr><td class="titlefield">'.$langs->trans("BankTransfers").'</td><td>';
+		} else {
+			print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		}
+
 		print $bon->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec, 'day').'</td></tr>';

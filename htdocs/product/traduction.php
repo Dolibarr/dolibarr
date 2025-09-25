@@ -88,7 +88,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		$action = '';
+		header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+		exit;
 	}
 
 	// Add translation
@@ -119,7 +120,8 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'add';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -148,7 +150,8 @@ if (empty($reshook)) {
 
 		$result = $object->setMultiLangs($user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -163,7 +166,8 @@ if (empty($reshook)) {
 
 		$result = $object->delMultiLangs($langtodelete, $user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -212,7 +216,7 @@ if (!empty($object->multilangs)) {
 
 print dol_get_fiche_head($head, 'translation', $titre, 0, $picto);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 $shownav = 1;
 if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {

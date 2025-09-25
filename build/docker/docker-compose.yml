@@ -55,8 +55,8 @@ services:
     mail:
         image: maildev/maildev
         ports:
-            - "8081:80"
-            - "25:25"
+            - "8081:1080"
+            - "25:1025"
         networks:
             - internal-pod
             - external-pod

@@ -102,23 +102,23 @@ class Utils
 			}
 
 			if ($choice == 'allfiles') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'allfilesold') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'logfile' || $choice == 'logfiles') {
 				// Define files log
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
 				if (isModEnabled('syslog')) {
@@ -146,7 +146,13 @@ class Utils
 
 						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
 
-						if (!in_array($filesarray[$key]['fullname'], array($conf->api->dir_temp, $conf->user->dir_temp))) {		// The 2 directories $conf->api->dir_temp and $conf->user->dir_temp are recreated at end, so we do not count them
+						$recreatedDirs = array($conf->user->dir_temp);
+
+						if (isModEnabled('api')) {
+							$recreatedDirs[] = $conf->api->dir_temp;
+						}
+
+						if (!in_array($filesarray[$key]['fullname'], $recreatedDirs)) {		// The 2 directories $conf->api->dir_temp and $conf->user->dir_temp are recreated at end, so we do not count them
 							$count += $result;
 							$countdeleted += $tmpcountdeleted;
 						}
@@ -526,13 +532,13 @@ class Utils
 				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
-				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
+				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg) || preg_match('/^\/\*M?!999999/', $errormsg)) {	// Start of file is ok, NOT an error
 					$errormsg = '';
 				} else {
-					// Renommer fichier sortie en fichier erreur
+					// Rename file out into a file error
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
-					@rename($outputfile, $outputerror);
+					@dol_move($outputfile, $outputerror, '0', 1, 0, 0);
 					// Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
 					if (!$errormsg) {
 						$langs->load("errors");

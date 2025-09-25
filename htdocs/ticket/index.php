@@ -57,7 +57,7 @@ $userid = $user->id;
 $nowarray = dol_getdate(dol_now(), true);
 $nowyear = $nowarray['year'];
 $year = GETPOST('year', 'int') > 0 ? GETPOST('year', 'int') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Initialize objects
@@ -171,7 +171,7 @@ if ($user->socid > 0) {
 	$sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
 	// For internals users,
-	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
+	if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$user->rights->ticket->manage) {
 		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
@@ -346,7 +346,7 @@ if (!empty($user->rights->ticket->read)) {
 		$sql .= " AND t.fk_soc= ".((int) $user->socid);
 	} else {
 		// Restricted to assigned user only
-		if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
+		if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$user->rights->ticket->manage) {
 			$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 		}
 	}

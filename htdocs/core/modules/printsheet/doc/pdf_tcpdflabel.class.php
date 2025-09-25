@@ -135,7 +135,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		// Top
 		if ($header != '') {
 			$pdf->SetXY($_PosX + $xleft, $_PosY + 1); // Only 1 mm and not ytop for top text
-			$pdf->Cell($this->_Width - 2 * $xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header), 0, 1, 'C');
+			$pdf->Cell(2 * strlen($header), $this->_Line_Height, $outputlangs->convToOutputCharset($header), 0, 1, 'C');
 		}
 
 		$ytop += (empty($header) ? 0 : (1 + $this->_Line_Height));

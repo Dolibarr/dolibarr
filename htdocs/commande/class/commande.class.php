@@ -13,6 +13,7 @@
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,6 +276,8 @@ class Commande extends CommonOrder
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+	public $multicurrency_total_localtax1;	// not in database
+	public $multicurrency_total_localtax2;	// not in database
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
@@ -3278,7 +3281,7 @@ class Commande extends CommonOrder
 			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
-			$this->line->subprice       = $subprice;
+			$this->line->subprice       = (float) $pu_ht;
 			$this->line->info_bits      = $info_bits;
 			$this->line->special_code   = $special_code;
 			$this->line->total_ht       = $total_ht;
@@ -3612,6 +3615,7 @@ class Commande extends CommonOrder
 			$response->label = $langs->trans("OrdersToProcess");
 			$response->labelShort = $langs->trans("Opened");
 			$response->url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&mainmenu=commercial&leftmenu=orders';
+			$response->url_late = DOL_URL_ROOT.'/commande/list.php?search_option=late&mainmenu=commercial&leftmenu=orders';
 			$response->img = img_object('', "order");
 
 			$generic_commande = new Commande($this->db);
@@ -4374,6 +4378,8 @@ class OrderLine extends CommonOrderLine
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
 
+			$this->fetch_optionals();
+
 			$this->db->free($result);
 
 			return 1;
@@ -4396,20 +4402,20 @@ class OrderLine extends CommonOrderLine
 
 		$error = 0;
 
-		if (empty($this->id) && !empty($this->rowid)) {		// For backward compatibility
+		if (empty($this->id) && !empty($this->rowid)) {        // For backward compatibility
 			$this->id = $this->rowid;
 		}
 
 		// check if order line is not in a shipment line before deleting
-		$sqlCheckShipmentLine  = "SELECT";
+		$sqlCheckShipmentLine = "SELECT";
 		$sqlCheckShipmentLine .= " ed.rowid";
-		$sqlCheckShipmentLine .= " FROM ".MAIN_DB_PREFIX."expeditiondet ed";
-		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = ".((int) $this->id);
+		$sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
+		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . ((int) $this->id);
 
 		$resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
 		if (!$resqlCheckShipmentLine) {
 			$error++;
-			$this->error    = $this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$this->errors[] = $this->error;
 		} else {
 			$langs->load('errors');
@@ -4417,56 +4423,58 @@ class OrderLine extends CommonOrderLine
 			if ($num > 0) {
 				$error++;
 				$objCheckShipmentLine = $this->db->fetch_object($resqlCheckShipmentLine);
-				$this->error = $langs->trans('ErrorRecordAlreadyExists').' : '.$langs->trans('ShipmentLine').' '.$objCheckShipmentLine->rowid;
+				$this->error = $langs->trans('ErrorRecordAlreadyExists') . ' : ' . $langs->trans('ShipmentLine') . ' ' . $objCheckShipmentLine->rowid;
 				$this->errors[] = $this->error;
 			}
 			$this->db->free($resqlCheckShipmentLine);
 		}
 		if ($error) {
-			dol_syslog(__METHOD__.'Error ; '.$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . 'Error ; ' . $this->error, LOG_ERR);
 			return -1;
 		}
 
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid = ".((int) $this->id);
-
-		dol_syslog("OrderLine::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('LINEORDER_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LINEORDER_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
-
-			// Remove extrafields
-			if (!$error) {
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			}
-
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		} else {
-			$this->error = $this->db->lasterror();
-			return -1;
+			// End call triggers
 		}
+
+		if (!$error) {
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . "commandedet WHERE rowid = " . ((int) $this->id);
+
+			dol_syslog("OrderLine::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		// Remove extrafields
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+				dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		}
+
+		foreach ($this->errors as $errmsg) {
+			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+			$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+		}
+		$this->db->rollback();
+		return -1 * $error;
 	}
 
 	/**

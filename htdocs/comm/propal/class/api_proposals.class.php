@@ -278,7 +278,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
 		}
 
-		return $this->propal->id;
+		return ((int) $this->propal->id);
 	}
 
 	/**
@@ -693,6 +693,12 @@ class Proposals extends DolibarrApi
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+				}
 				continue;
 			}
 			$this->propal->$field = $value;

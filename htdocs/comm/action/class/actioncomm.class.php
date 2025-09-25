@@ -619,7 +619,7 @@ class ActionComm extends CommonObject
 				foreach ($this->userassigned as $key => $val) {
 					// Common value with new behavior is to have $val = array('id'=>iduser, 'transparency'=>0|1) and $this->userassigned is an array of iduser => $val.
 					if (!is_array($val)) {	// For backward compatibility when $val='id'.
-						$val = array('id'=>$val);
+						$val = array('id' => $val);
 					}
 
 					if ($val['id'] > 0) {
@@ -841,9 +841,6 @@ class ActionComm extends CommonObject
 				$this->type_color = $obj->type_color;
 				$this->type_picto = $obj->type_picto;
 				$this->type       = $obj->type_type;
-				/*$transcode = $langs->trans("Action".$obj->type_code);
-				$this->type       = (($transcode != "Action".$obj->type_code) ? $transcode : $obj->type_label); */
-				$transcode = $langs->trans("Action".$obj->type_code.'Short');
 
 				$this->code = $obj->code;
 				$this->label = $obj->label;
@@ -1261,9 +1258,11 @@ class ActionComm extends CommonObject
 					$already_inserted = array();
 					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
 						if (!is_array($val)) {	// For backward compatibility when val=id
-							$val = array('id'=>$val);
+							$val = array('id' => $val);
 						}
-						if (!empty($already_inserted[$val['id']])) continue;
+						if (!empty($already_inserted[$val['id']])) {
+							continue;
+						}
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $val['id']).", 0, 0, 0)";
@@ -2414,23 +2413,23 @@ class ActionComm extends CommonObject
 		$this->reminders = array();
 
 		//Select all action comm reminders for event
-		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user, fk_email_template, lasterror";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
 			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
 		}
 		if ($type) {
-			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
+			$sql .= " AND typeremind = '".$this->db->escape($type)."'";
 		}
 		if ($fk_user > 0) {
 			$sql .= " AND fk_user = ".((int) $fk_user);
 		}
 		if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
-			$sql .= " AND typeremind != 'email'";
+			$sql .= " AND typeremind <> 'email'";
 		}
 		if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
-			$sql .= " AND typeremind != 'browser'";
+			$sql .= " AND typeremind <> 'browser'";
 		}
 
 		$sql .= $this->db->order("dateremind", "ASC");
@@ -2446,6 +2445,8 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
+				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
+				$tmpactioncommreminder->lasterror = $obj->lasterror;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
@@ -2488,13 +2489,14 @@ class ActionComm extends CommonObject
 		$now = dol_now();
 		$actionCommReminder = new ActionCommReminder($this->db);
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		$this->db->begin();
 
 		//Select all action comm reminders
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-		$sql .= " WHERE typeremind = 'email' AND status = 0";
+		$sql .= " WHERE typeremind = 'email'";
+		$sql .= " AND status = 0";	// 0=No yet sent, -1=Error. TODO Include reminder in error once we can count number of error, so we can try 5 times and not more on errors.
 		$sql .= " AND dateremind <= '".$this->db->idate($now)."'";
 		$sql .= " AND entity IN (".getEntity('actioncomm').")";
 		$sql .= $this->db->order("dateremind", "ASC");
@@ -2518,79 +2520,85 @@ class ActionComm extends CommonObject
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
 					if ($res > 0) {
-						// PREPARE EMAIL
-						$errormesg = '';
+						$res2 = $this->fetch_thirdparty();
+						if ($res2 >= 0) {
+							// PREPARE EMAIL
+							$errormesg = '';
 
-						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+							// Make substitution in email content
+							$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
-						complete_substitutions_array($substitutionarray, $langs, $this);
+							complete_substitutions_array($substitutionarray, $langs, $this);
 
-						// Content
-						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+							// Content
+							$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+							//Topic
+							$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
-						// Recipient
-						$recipient = new User($this->db);
-						$res = $recipient->fetch($actionCommReminder->fk_user);
-						if ($res > 0) {
-							if (!empty($recipient->email)) {
-								$to = $recipient->email;
+							// Recipient
+							$recipient = new User($this->db);
+							$res = $recipient->fetch($actionCommReminder->fk_user);
+							if ($res > 0) {
+								if (!empty($recipient->email)) {
+									$to = $recipient->email;
+								} else {
+									$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
+									$error++;
+								}
 							} else {
-								$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
+								$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
 								$error++;
+							}
+
+							// Sender
+							$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+							if (empty($from)) {
+								$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+								$error++;
+							}
+
+							if (!$error) {
+								// Errors Recipient
+								$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+
+								// Mail Creation
+								$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+
+								// Sending Mail
+								if ($cMailFile->sendfile()) {
+									$nbMailSend++;
+								} else {
+									$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
+									$error++;
+								}
+							}
+
+							if (!$error) {
+								$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
+								$res = $actionCommReminder->update($user);
+								if ($res < 0) {
+									$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+									$error++;
+									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+								}
+							} else {
+								$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+								$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+								$res = $actionCommReminder->update($user);
+								if ($res < 0) {
+									$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
+									$error++;
+									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+								} else {
+									$errorsMsg[] = $errormesg;
+								}
 							}
 						} else {
-							$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
+							$errorsMsg[] = 'Failed to fetch record thirdparty on actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 							$error++;
-						}
-
-						// Sender
-						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-						if (empty($from)) {
-							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
-							$error++;
-						}
-
-						if (!$error) {
-							// Errors Recipient
-							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
-
-							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
-
-							// Sending Mail
-							if ($cMailFile->sendfile()) {
-								$nbMailSend++;
-							} else {
-								$errormesg = $cMailFile->error.' : '.$to;
-								$error++;
-							}
-						}
-
-						if (!$error) {
-							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
-
-							$res = $actionCommReminder->update($user);
-							if ($res < 0) {
-								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
-								$error++;
-								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-							}
-						} else {
-							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
-							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
-
-							$res = $actionCommReminder->update($user);
-							if ($res < 0) {
-								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
-								$error++;
-								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-							} else {
-								$errorsMsg[] = $errormesg;
-							}
 						}
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
@@ -2618,10 +2626,16 @@ class ActionComm extends CommonObject
 		if (!$error) {
 			$this->output = 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
+
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+
 			return 0;
 		} else {
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+
 			return $error;
 		}
 	}

@@ -308,6 +308,7 @@ class Loan extends CommonObject
 				$accountline->fetch($line_url['fk_bank']);
 				$result = $accountline->delete_urls($user);
 				if ($result < 0) {
+					$this->errors = array_merge($this->errors, [$accountline->error], $accountline->errors);
 					$error++;
 				}
 			}
@@ -510,7 +511,7 @@ class Loan extends CommonObject
 				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
 			$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			if ($status == 0 && $alreadypaid > 0) {
 				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");

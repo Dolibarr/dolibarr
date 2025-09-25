@@ -275,7 +275,7 @@ class Paiement extends CommonObject
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
-				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
@@ -324,7 +324,7 @@ class Paiement extends CommonObject
 		// Check parameters
 		if (empty($totalamount) && empty($atleastonepaymentnotnull)) {	 // We accept negative amounts for withdraw reject but not empty arrays
 			$this->errors[] = 'TotalAmountEmpty';
-			$this->error = 'TotalAmountEmpty';
+			$this->error = $langs->trans('TotalAmountEmpty');
 			return -1;
 		}
 
@@ -1269,7 +1269,7 @@ class Paiement extends CommonObject
 				$facturestatic = new Facture($this->db);
 				foreach ($arraybill as $billid) {
 					$facturestatic->fetch($billid);
-					$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, 1);
+					$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, -1);
 				}
 			}
 		}

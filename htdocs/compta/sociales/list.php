@@ -102,7 +102,7 @@ $arrayfields = array(
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
 	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled('project'))),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled('project'))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
 	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),

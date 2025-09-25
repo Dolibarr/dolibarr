@@ -1045,8 +1045,9 @@ if ($resql) {
 		// Expected quantity = Quantity in stock when we start inventory
 		print '<td class="right expectedqty" id="id_'.$obj->rowid.'" title="Stock viewed at last update: '.$obj->qty_stock.'">';
 		$valuetoshow = $obj->qty_stock;
+
 		// For inventory not yet close, we overwrite with the real value in stock now
-		if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
+		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && !getDolGlobalString('DISABLE_QTY_OVERWRITE')) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 			} else {
@@ -1088,10 +1089,11 @@ if ($resql) {
 
 				//PMP Real
 				print '<td class="right">';
-
-
-				if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
-				else $pmp_real = $product_static->pmp;
+				if (!empty($obj->pmp_real) || (string) $obj->pmp_real === '0') {
+					$pmp_real = $obj->pmp_real;
+				} else {
+					$pmp_real = $product_static->pmp;
+				}
 				$pmp_valuation_real = $pmp_real * $qty_view;
 				print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
 				print '</td>';
@@ -1305,6 +1307,7 @@ function updateTotalValuation() {
 		maximumFractionDigits: currencyFractionDigits
 	}));
 }
+
 
 </script>
 	<?php

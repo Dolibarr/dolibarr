@@ -2349,29 +2349,29 @@ class Form
 	/**
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
-	 * @param int $selected Preselected products
-	 * @param string $htmlname Name of HTML select field (must be unique in page).
-	 * @param int|string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $price_level Level of price to show
-	 * @param int $status Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
-	 * @param int $finished 2=all, 1=finished, 0=raw material
-	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param int $hidelabel Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array $ajaxoptions Options for ajax_autocompleter
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param int $hidepriceinlabel 1=Hide prices in label
-	 * @param string $warehouseStatus Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
-	 *                                'warehouseopen' = count products from open warehouses,
-	 *                                'warehouseclosed' = count products from closed warehouses,
-	 *                                'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param string $nooutput No print, return the output into a string
-	 * @param int $status_purchase Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
-	 * @return        void|string
+	 *  @param		int			$selected				Preselected products
+	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
+	 *  @param		int|string	$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+	 *  @param		int			$limit					Limit on number of returned lines
+	 *  @param		int			$price_level			Level of price to show
+	 *  @param		int			$status					Sell status: -1=No filter on sell status, 0=Products not on sell, 1=Products on sell
+	 *  @param		int			$finished				2=all, 1=finished, 0=raw material
+	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
+	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
+	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
+	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * 	@param		int			$forcecombo				Force to use combo box
+	 *  @param      string      $morecss                Add more css on select
+	 *  @param      int         $hidepriceinlabel       1=Hide prices in label
+	 *  @param      string      $warehouseStatus        Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
+	 *										            'warehouseopen' = count products from open warehouses,
+	 *										            'warehouseclosed' = count products from closed warehouses,
+	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param		string		$nooutput				No print, return the output into a string
+	 *  @param		int			$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
+	 *  @return		void|string
 	 */
 	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
 	{
@@ -2756,12 +2756,10 @@ class Form
 		if ($finished == 0) {
 			$sql .= " AND p.finished = " . ((int) $finished);
 		} elseif ($finished == 1) {
-			$sql .= " AND p.finished = " . ((int) $finished);
-			if ($status >= 0) {
-				$sql .= " AND p.tosell = " . ((int) $status);
-			}
-		} elseif ($status >= 0) {
-			$sql .= " AND p.tosell = " . ((int) $status);
+			$sql .= " AND p.finished = ".((int) $finished);
+		}
+		if ($status >= 0) {
+			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		if ($status_purchase >= 0) {
 			$sql .= " AND p.tobuy = " . ((int) $status_purchase);
@@ -3383,9 +3381,10 @@ class Form
 		}
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock, p.tva_tx as tva_tx_sale, p.default_vat_code as default_vat_code_sale,";
-		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
-		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name,";
-		$sql .= " pfp.supplier_reputation";
+		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice";
+		$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
+		$sql .= ", pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name";
+		$sql .= ", pfp.supplier_reputation";
 		// if we use supplier description of the products
 		if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
 			$sql .= ", pfp.desc_fourn as description";
@@ -3690,6 +3689,11 @@ class Form
 					$optstart .= ' data-tvatx="' . dol_escape_htmltag(price2num($objp->tva_tx)) . '"';
 					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';
 					$optstart .= ' data-default-vat-code="' . dol_escape_htmltag($objp->default_vat_code) . '"';
+					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
+					if (isModEnabled('multicurrency')) {
+						$optstart .= ' data-multicurrency-code="' . dol_escape_htmltag($objp->multicurrency_code) . '"';
+						$optstart .= ' data-multicurrency-up="' . dol_escape_htmltag($objp->multicurrency_unitprice) . '"';
+					}
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
 
@@ -3711,6 +3715,10 @@ class Form
 					'disabled' => (empty($objp->idprodfournprice) ? true : false),
 					'description' => $objp->description
 				);
+				if (isModEnabled('multicurrency')) {
+					$outarrayentry['multicurrency_code'] = $objp->multicurrency_code;
+					$outarrayentry['multicurrency_unitprice'] = price2num($objp->multicurrency_unitprice, 'MU');
+				}
 
 				$parameters = array(
 					'objp' => &$objp,
@@ -3726,29 +3734,33 @@ class Form
 				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $optstart . ' data-html="' . dol_escape_htmltag($optlabel) . '">' . $optlabel . "</option>\n";
-				array_push(
-					$outarray,
-					array('key' => $outkey,
-						'value' => $outref,
-						'label' => $outvallabel,
-						'qty' => $outqty,
-						'price_qty_ht' => price2num($objp->fprice, 'MU'),        // Keep higher resolution for price for the min qty
-						'price_qty_ht_locale' => price($objp->fprice),
-						'price_unit_ht' => price2num($objp->unitprice, 'MU'),    // This is used to fill the Unit Price
-						'price_unit_ht_locale' => price($objp->unitprice),
-						'price_ht' => price2num($objp->unitprice, 'MU'),        // This is used to fill the Unit Price (for compatibility)
-						'tva_tx_formated' => price($objp->tva_tx),
-						'tva_tx' => price2num($objp->tva_tx),
-						'default_vat_code' => $objp->default_vat_code,
-						'discount' => $outdiscount,
-						'type' => $outtype,
-						'duration_value' => $outdurationvalue,
-						'duration_unit' => $outdurationunit,
-						'disabled' => (empty($objp->idprodfournprice) ? true : false),
-						'description' => $objp->description
-					)
+				$outarraypush = array(
+					'key' => $outkey,
+					'value' => $outref,
+					'label' => $outvallabel,
+					'qty' => $outqty,
+					'price_qty_ht' => price2num($objp->fprice, 'MU'),        // Keep higher resolution for price for the min qty
+					'price_qty_ht_locale' => price($objp->fprice),
+					'price_unit_ht' => price2num($objp->unitprice, 'MU'),    // This is used to fill the Unit Price
+					'price_unit_ht_locale' => price($objp->unitprice),
+					'price_ht' => price2num($objp->unitprice, 'MU'),        // This is used to fill the Unit Price (for compatibility)
+					'tva_tx_formated' => price($objp->tva_tx),
+					'tva_tx' => price2num($objp->tva_tx),
+					'default_vat_code' => $objp->default_vat_code,
+					'discount' => $outdiscount,
+					'type' => $outtype,
+					'duration_value' => $outdurationvalue,
+					'duration_unit' => $outdurationunit,
+					'disabled' => (empty($objp->idprodfournprice) ? true : false),
+					'description' => $objp->description
 				);
-				// Exemple of var_dump $outarray
+				if (isModEnabled('multicurrency')) {
+					$outarraypush['multicurrency_code'] = $objp->multicurrency_code;
+					$outarraypush['multicurrency_unitprice'] = price2num($objp->multicurrency_unitprice, 'MU');
+				}
+				array_push($outarray, $outarraypush);
+
+				// Example of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
 				//      	 ["qty"]=>string(1) "1" ["discount"]=>string(1) "0" ["disabled"]=>bool(false)
@@ -4320,7 +4332,7 @@ class Form
 							if (depositPercent.length > 0) {
 								$("#' . $htmlname . '_deposit_percent_container").show().find("#' . $htmlname . '_deposit_percent").val(depositPercent);
 							} else {
-								$("#' . $htmlname . '_deposit_percent_container").hide();
+								$("#' . $htmlname . '_deposit_percent_container").hide().find("#' . $htmlname . '_deposit_percent").val(0);
 							}
 
 							return true;
@@ -5939,9 +5951,9 @@ class Form
 			print '</form>';
 		} else {
 			if (!empty($rate)) {
-				print price($rate, 1, $langs, 1, 0);
+				print price($rate, 1, $langs, 0, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; (' . price($rate, 1, $langs, 1, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
+					print ' &nbsp; (' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
 				}
 			} else {
 				print 1;
@@ -6236,7 +6248,7 @@ class Form
 		$TCurrency = array();
 
 		$sql = "SELECT code FROM " . $this->db->prefix() . "multicurrency";
-		$sql .= " WHERE entity IN ('" . getEntity('mutlicurrency') . "')";
+		$sql .= " WHERE entity IN ('" . getEntity('multicurrency') . "')";
 		if ($filter) {
 			$sql .= " AND " . $filter;
 		}
@@ -6349,7 +6361,7 @@ class Form
 				if (!empty($user) && $user->admin && preg_match('/\'(..)\'/', $country_code, $reg)) {
 					$langs->load("errors");
 					$new_country_code = $reg[1];
-					$country_id = dol_getIdFromCode($this->db, $new_country_code, 'c_pays', 'code', 'rowid');
+					$country_id = dol_getIdFromCode($this->db, $new_country_code, 'c_country', 'code', 'rowid');
 					$this->error .= '<br>'.$langs->trans("ErrorFixThisHere", DOL_URL_ROOT.'/admin/dict.php?id=10'.($country_id > 0 ? '&countryidforinsert='.$country_id : ''));
 				}
 				$this->error .= '</span>';
@@ -6428,7 +6440,7 @@ class Form
 		}
 		if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-			if (!isInEEC($societe_vendeuse) && (!is_object($societe_acheteuse) || (isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()))) {
+			if (is_object($societe_vendeuse) && is_object($societe_acheteuse) && isInEEC($societe_vendeuse) && isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()) {
 				// We also add the buyer country code
 				if (is_numeric($type)) {
 					if ($type == 1) { // We know product is a service
@@ -8390,7 +8402,7 @@ class Form
 				    		},
 				    		cache: true
 				    	},
-		 				language: select2arrayoflanguage,
+		 				language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					    placeholder: "' . dol_escape_js($placeholder) . '",
 				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
@@ -8480,7 +8492,7 @@ class Form
 
 					$(".' . $htmlname . '").select2({
 						data: data,
-						language: select2arrayoflanguage,
+						language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 						placeholder: "' . dol_escape_js($placeholder) . '",
 						escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
@@ -9895,6 +9907,13 @@ class Form
 						$disableline = 1;
 					}
 
+					$label = $obj->name;
+					$labelhtml = $obj->name;
+					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+						$label .= " (" . $obj->label . ")";
+						$labelhtml .= ' <span class="opacitymedium">(' . $obj->label . ')</span>';
+					}
+
 					$out .= '<option value="' . $obj->rowid . '"';
 					if ($disableline) {
 						$out .= ' disabled';
@@ -9902,12 +9921,10 @@ class Form
 					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
+					$out .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
 					$out .= '>';
 
-					$out .= $obj->name;
-					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
-						$out .= " (" . $obj->label . ")";
-					}
+					$out .= $label;
 
 					$out .= '</option>';
 					$i++;

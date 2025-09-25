@@ -537,8 +537,8 @@ if (empty($reshook)) {
 				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
 				// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
-				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+				$tva_tx = get_default_tva($object->thirdparty, $mysoc, $prod->id);
+				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $prod->id);
 				if (empty($tva_tx)) {
 					$tva_npr = 0;
 				}
@@ -546,7 +546,7 @@ if (empty($reshook)) {
 				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
 				$pqp = (GETPOST('pbq', 'int') ? GETPOST('pbq', 'int') : 0);
 
-				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
+				$datapriceofproduct = $prod->getSellPrice($object->thirdparty, $mysoc, $pqp);
 
 				$pu_ht = $datapriceofproduct['pu_ht'];
 				$pu_ttc = $datapriceofproduct['pu_ttc'];
@@ -661,8 +661,8 @@ if (empty($reshook)) {
 			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
+			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 			$info_bits = 0;
 			if ($tva_npr) {
 				$info_bits |= 0x01;
@@ -717,6 +717,7 @@ if (empty($reshook)) {
 					unset($_POST['date_end_fill']);
 					unset($_POST['situations']);
 					unset($_POST['progress']);
+					unset($_POST['fourn_ref']);
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -780,7 +781,7 @@ if (empty($reshook)) {
 			$special_code = 3;
 		}
 
-		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+		$remise_percent = price2num(GETPOST('remise_percent'), '', 2) ?: 0;
 
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
@@ -859,6 +860,7 @@ if (empty($reshook)) {
 				unset($_POST['date_endyear']);
 				unset($_POST['situations']);
 				unset($_POST['progress']);
+				unset($_POST['fourn_ref']);
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1082,7 +1084,7 @@ if ($action == 'create') {
 			$disableedit = 1;
 			$disablemove = 1;
 			$disableremove = 1;
-			$object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
+			$object->printObjectLines('', $object->thirdparty, $mysoc, $lineid, 0); // No date selector for template invoice
 		}
 
 		print "</table>\n";
@@ -1156,7 +1158,7 @@ if ($action == 'create') {
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -1571,7 +1573,7 @@ if ($action == 'create') {
 			$canchangeproduct = 0;
 
 			$object->statut = $object->suspended;
-			$object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
+			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 0); // No date selector for template invoice
 		}
 
 		// Form to add new line

@@ -134,7 +134,6 @@ $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
-$dirmod = array();
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 
@@ -174,7 +173,6 @@ foreach ($modulesdir as $dir) {
 							$filename[$i] = $modName;
 							$orders[$i]  = $objMod->family."_".$j; // Tri par famille puis numero module
 							//print "x".$modName." ".$orders[$i]."\n<br>";
-							$dirmod[$i] = $dirroot;
 							$j++;
 							$i++;
 						}

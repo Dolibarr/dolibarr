@@ -330,7 +330,7 @@ if ($action == 'valid') {
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("CreateMvts");
@@ -339,7 +339,7 @@ llxHeader('', $title);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
-	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 
@@ -374,7 +374,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Docdate").'</td>';
 	print '<td>';
-	print $html->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print $form->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 

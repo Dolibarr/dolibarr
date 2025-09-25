@@ -82,7 +82,6 @@ if (GETPOST("id", 'int') || GETPOST("ref")) {
 
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
-
 /*
  * Actions
  */
@@ -236,6 +235,7 @@ if (empty($reshook)) {
 		$object = new Account($db);
 		$object->fetch(GETPOST("id", 'int'));
 
+		$object->oldref = $object->ref;
 		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 		$object->label = trim(GETPOST("label", 'alphanohtml'));
 		$object->courant = GETPOST("type");

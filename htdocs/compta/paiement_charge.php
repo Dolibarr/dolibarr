@@ -51,7 +51,7 @@ $charge = new ChargeSociales($db);
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+if ($action == 'add_payment') {
 	$error = 0;
 
 	if ($cancel) {
@@ -89,7 +89,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			}
 		}
 
-		if (count($amounts) <= 0) {
+		if (empty($amounts)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
 			$action = 'create';
@@ -119,9 +119,9 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
 			if (!$error) {
 				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
-				if (!($result > 0)) {
+				if ($result <= 0) {
 					$error++;
-					setEventMessages($paiement->error, null, 'errors');
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
 				}
 			}

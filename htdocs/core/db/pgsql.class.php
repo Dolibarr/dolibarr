@@ -718,7 +718,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return pg_escape_string($stringtoencode);
+		return pg_escape_string($this->db, $stringtoencode);
 	}
 
 	/**
@@ -1273,9 +1273,9 @@ class DoliDBPgsql extends DoliDB
 
 		if (isset($field_desc['default']) && $field_desc['default'] != '') {
 			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
-				$sql .= " DEFAULT ".$this->escape($field_desc['default']);
+				$sql .= ", ALTER COLUMN ".$this->escape($field_name)." SET DEFAULT ".((float) $field_desc['default']);
 			} elseif ($field_desc['type'] != 'text') {
-				$sql .= " DEFAULT '".$this->escape($field_desc['default'])."'"; // Default not supported on text fields
+				$sql .= ", ALTER COLUMN ".$this->escape($field_name)." SET DEFAULT '".$this->escape($field_desc['default'])."'"; // Default not supported on text fields
 			}
 		}
 

@@ -909,12 +909,18 @@ foreach ($listofreferent as $key => $value) {
 					$total_ttc_by_line = $element->total_ttc;
 				}
 
-				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for various payments
 				if ($tablename == 'payment_various') {
 					if ($element->sens == 1) {
 						$total_ht_by_line = -$total_ht_by_line;
 						$total_ttc_by_line = -$total_ttc_by_line;
 					}
+				}
+
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order
+				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') {
+					$total_ht_by_line = -$total_ht_by_line;
+					$total_ttc_by_line = -$total_ttc_by_line;
 				}
 
 				// Add total if we have to
@@ -1187,6 +1193,7 @@ foreach ($listofreferent as $key => $value) {
 			}
 
 			$num = count($elementarray);
+			$total_time = 0;
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
@@ -1278,8 +1285,8 @@ foreach ($listofreferent as $key => $value) {
 						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
 					} elseif ($element_doc === 'invoice_supplier') {
 						$element_doc = 'facture_fournisseur';
-						$filename = get_exdir($element->id, 2, 0, 0, $element, 'product').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filename = get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.$filename;
 					}
 
 					print '<div class="inline-block valignmiddle">';
@@ -1304,7 +1311,7 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Date or TimeSpent
-				$date = ''; $total_time_by_line = null; $total_time = 0;
+				$date = ''; $total_time_by_line = null;
 				if ($tablename == 'expensereport_det') {
 					$date = $element->date; // No draft status on lines
 				} elseif ($tablename == 'stock_mouvement') {

@@ -70,3 +70,8 @@ FichinterNoContractLinked=Intervention %s has been created without a linked cont
 ErrorFicheinterCompanyDoesNotExist=Company does not exist. Intervention has not been created.
 NextDateToIntervention=Date for next intervention generation
 NoIntervention=No intervention
+##### Contact types #####
+TypeContact_fichinter_internal_INTERREPFOLL=Responsible for intervention follow-up
+TypeContact_fichinter_internal_INTERVENING=Intervenant
+TypeContact_fichinter_external_BILLING=Contact customer of intervention billing
+TypeContact_fichinter_external_CUSTOMER=Customer contact of intervention follow-up

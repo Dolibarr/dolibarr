@@ -278,7 +278,10 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int   $id             Id of thirdparty to update
 	 * @param array $request_data   Datas
-	 * @return array|mixed|boolean
+	 * @return object
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -299,6 +302,12 @@ class Thirdparties extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
+				}
+				continue;
+			}
 			$this->company->$field = $value;
 		}
 
@@ -306,11 +315,11 @@ class Thirdparties extends DolibarrApi
 			$this->company->setNoEmail($this->company->no_email);
 		}
 
-		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update', 1)) {
+		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update', 1) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->company->error);
 		}
-
-		return false;
 	}
 
 	/**
@@ -1861,7 +1870,7 @@ class Thirdparties extends DolibarrApi
 	 * @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 * @param    string	$email   		Email of third party (Warning, this can return several records)
 	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
-	 * @return array|mixed cleaned Societe object
+	 * @return object cleaned Societe object
 	 *
 	 * @throws RestException
 	 */

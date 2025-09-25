@@ -75,7 +75,7 @@ class FichinterStats extends Stats
 		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$this->where .= (!empty($this->where) ? ' AND ' : '')." c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
-		$this->where .= ($this->where ? ' AND ' : '')."c.entity IN (".getEntity('fichinter').')';
+		$this->where .= ($this->where ? ' AND ' : '')."c.entity IN (".getEntity('intervention').')';
 
 		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".((int) $this->socid);

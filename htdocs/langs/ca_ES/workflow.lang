@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classifica la comanda
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classifica com a rebuda l'ordre de compra d'origen enllaçada quan es valida una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per a actualitzar)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classifica com a rebuda l'ordre de compra d'origen enllaçada quan es tanca una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per a actualitzar)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Quan creeu un bitllet, enllaceu els contractes disponibles del tercer coincident
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=En enllaçar contractes, cerqueu entre els de les empreses matrius

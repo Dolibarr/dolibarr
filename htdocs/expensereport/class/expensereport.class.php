@@ -619,6 +619,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
+			$sql .= " AND d.entity IN (".getEntity('expensereport').")";
 		} else {
 			$sql .= " WHERE d.rowid = ".((int) $id);
 		}
@@ -2340,10 +2341,13 @@ class ExpenseReport extends CommonObject
 	 */
 	public function periode_existe($fuser, $date_debut, $date_fin)
 	{
+		global $conf;
+
 		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE fk_user_author = ".((int) $fuser->id);
+		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
+		$sql .= " AND fk_user_author = ".((int) $fuser->id);
 
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2706,7 +2710,7 @@ class ExpenseReport extends CommonObject
 		//Clean
 		$qty = price2num($qty);
 
-		$sql  = " SELECT r.range_ik, t.ikoffset as offset, t.coef";
+		$sql  = " SELECT r.range_ik, t.ikoffset, t.coef";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_ik t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_exp_tax_range r ON r.rowid = t.fk_range";
 		$sql .= " WHERE t.fk_c_exp_tax_cat = ".(int) $fk_cat;
@@ -2733,6 +2737,7 @@ class ExpenseReport extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$cumulYearQty = $obj->cumul;
 				}
+
 				$qty = $cumulYearQty + $qty;
 			}
 
@@ -2750,12 +2755,12 @@ class ExpenseReport extends CommonObject
 					if ($i < ($num - 1)) {
 						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i+1]->range_ik) {
 							$coef = $ranges[$i]->coef;
-							$offset = $ranges[$i]->offset;
+							$offset = $ranges[$i]->ikoffset;
 						}
 					} else {
 						if ($qty > $ranges[$i]->range_ik) {
 							$coef = $ranges[$i]->coef;
-							$offset = $ranges[$i]->offset;
+							$offset = $ranges[$i]->ikoffset;
 						}
 					}
 				}

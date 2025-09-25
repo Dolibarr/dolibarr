@@ -297,7 +297,7 @@ class Orders extends DolibarrApi
 			throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
 		}
 
-		return $this->commande->id;
+		return ((int) $this->commande->id);
 	}
 
 	/**
@@ -651,6 +651,12 @@ class Orders extends DolibarrApi
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->commande->array_options[$index] = $this->_checkValForAPI($field, $val, $this->commande);
+				}
 				continue;
 			}
 			$this->commande->$field = $value;

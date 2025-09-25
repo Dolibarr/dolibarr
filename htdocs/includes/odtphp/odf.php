@@ -46,8 +46,8 @@ class Odf
 	public $userdefined=array();
 
 	const PIXEL_TO_CM = 0.026458333;
-	const FIND_TAGS_REGEX = '/<([A-Za-z0-9]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/s';
-	const FIND_ENCODED_TAGS_REGEX = '/&lt;([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/&gt;)|(?:&gt;(.*)&lt;\/\1&gt;))/';
+	const FIND_TAGS_REGEX = '/<([A-Za-z0-9]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(((?!<\1(\s.*)?>).)*)<\/\1>))/s';
+	const FIND_ENCODED_TAGS_REGEX = '/&lt;([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/&gt;)|(?:&gt;(((?!&lt;\1(\s.*)?&gt;).)*)&lt;\/\1&gt;))/';
 
 
 	/**
@@ -246,23 +246,23 @@ class Odf
 						break;
 					case 'strong':
 					case 'b':
-						$odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'i':
 					case 'em':
-						$odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'u':
-						$odtResult .= '<text:span text:style-name="underlineText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="underlineText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 's':
-						$odtResult .= '<text:span text:style-name="strikethroughText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="strikethroughText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'sub':
-						$odtResult .= '<text:span text:style-name="subText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="subText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'sup':
-						$odtResult .= '<text:span text:style-name="supText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="supText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'span':
 						if (isset($tag['attributes']['style'])) {
@@ -299,12 +299,12 @@ class Odf
 								// Generate a unique id for the style (using microtime and random because some CPUs are really fast...)
 								$key = floatval(str_replace('.', '', microtime(true))) + rand(0, 10);
 								$customStyles[$key] = $odtStyles;
-								$odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+								$odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 							}
 						}
 						break;
 					default:
-						$odtResult .= $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations);
+						$odtResult .= $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode);
 						break;
 				}
 			}
@@ -550,7 +550,7 @@ IMG;
 	private function _parse($type = 'content')
 	{
 		// Search all tags found into condition to complete $this->vars, so we will proceed all tests even if not defined
-		$reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+		$reg='@\[!--\sIF\s([\[\]{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 		$matches = array();
 		preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
 
@@ -572,7 +572,7 @@ IMG;
 				// Remove the IF tag
 				$this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
-				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				$this->contentXml = preg_replace($reg, '', $this->contentXml);
 				/*if ($sav != $this->contentXml)
 				 {
@@ -585,7 +585,7 @@ IMG;
 				//dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
 				//$sav=$this->contentXml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
-				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@\[!--\sIF\s' . preg_quote($key, '@') . '\s--\](.*)(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
 				foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
 					if (!empty($match[3])) $this->contentXml = str_replace($match[0], $match[3], $this->contentXml);

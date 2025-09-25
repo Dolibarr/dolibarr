@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Panga agizo la ununuz
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Bainisha agizo la ununuzi la chanzo kilichounganishwa kama lilivyopokelewa wakati mapokezi yamethibitishwa (na ikiwa kiasi kilichopokelewa na mapokezi yote ni sawa na katika agizo la ununuzi la kusasisha)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Panga agizo la ununuzi la chanzo kilichounganishwa kama lilivyopokelewa wakati upokezi umefungwa (na ikiwa kiasi kilichopokelewa na mapokezi yote ni sawa na katika agizo la ununuzi la kusasishwa)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Panga mapokezi kuwa "yanayotozwa" wakati ankara ya ununuzi iliyounganishwa imethibitishwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha mapokezi yaliyounganishwa)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Panga mapokezi kuwa "yanayotozwa" wakati ankara ya ununuzi iliyounganishwa imethibitishwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha mapokezi yaliyounganishwa)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Wakati wa kuunda tikiti, unganisha mikataba inayopatikana ya watu wengine wanaolingana
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Wakati wa kuunganisha mikataba, tafuta kati ya wale wa makampuni ya wazazi

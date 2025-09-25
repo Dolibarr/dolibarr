@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Класифікув�
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Класифікувати пов’язане джерело замовлення на закупівлю як отримане, коли прийом підтверджено (і якщо кількість, отримана всіма прийомами, така ж, як у замовленні на покупку для оновлення)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Класифікувати замовлення на закупівлю з пов’язаним джерелом як отримане, коли прийом закритий (і якщо кількість, отримана всіма прийомами, така ж, як у замовленні на покупку для оновлення)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=При створенні квитка зв’яжіть доступні контракти відповідної третьої сторони
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Зв’язуючи договори, шукайте серед тих материнських компаній

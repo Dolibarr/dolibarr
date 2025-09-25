@@ -259,7 +259,7 @@ print '<th class="liste_titre"></th>';
 print '<th class="liste_titre right">'.$langs->trans("PreviousPeriod").'</th>';
 print '<th class="liste_titre right">'.$langs->trans("SelectedPeriod").'</th>';
 foreach ($months as $k => $v) {
-	if (($k + 1) >= $date_startmonth) {
+	if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02s", ($k + 1))).'</th>';
 	}
 }
@@ -392,7 +392,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Detail by month
 				foreach ($months as $k => $v) {
-					if (($k + 1) >= $date_startmonth) {
+					if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 						foreach ($sommes as $code => $det) {
 							$vars[$code] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
 						}
@@ -505,33 +505,37 @@ if ($modecompta == 'CREANCES-DETTES') {
 							$yeartoprocess++;
 						}
 
-						//var_dump($monthtoprocess.'_'.$yeartoprocess);
-						if (isset($cpt['account_number'])) {
-							$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
-							if ($return < 0) {
-								setEventMessages(null, $AccCat->errors, 'errors');
-								$resultM = 0;
+						if (($yeartoprocess == $start_year && ($k + 1) >= $date_startmonth && $k < $date_endmonth) ||
+							($yeartoprocess == $start_year + 1 && ($k + 1) < $date_startmonth)
+						) {
+							//var_dump($monthtoprocess.'_'.$yeartoprocess);
+							if (isset($cpt['account_number'])) {
+								$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
+								if ($return < 0) {
+									setEventMessages(null, $AccCat->errors, 'errors');
+									$resultM = 0;
+								} else {
+									$resultM = $AccCat->sdc;
+								}
 							} else {
-								$resultM = $AccCat->sdc;
+								$resultM = 0;
 							}
-						} else {
-							$resultM = 0;
-						}
-						if (empty($totCat['M'][$k])) {
-							$totCat['M'][$k] = $resultM;
-						} else {
-							$totCat['M'][$k] += $resultM;
-						}
-						if (empty($sommes[$code]['M'][$k])) {
-							$sommes[$code]['M'][$k] = $resultM;
-						} else {
-							$sommes[$code]['M'][$k] += $resultM;
-						}
-						if (isset($cpt['account_number'])) {
-							$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
-						}
+							if (empty($totCat['M'][$k])) {
+								$totCat['M'][$k] = $resultM;
+							} else {
+								$totCat['M'][$k] += $resultM;
+							}
+							if (empty($sommes[$code]['M'][$k])) {
+								$sommes[$code]['M'][$k] = $resultM;
+							} else {
+								$sommes[$code]['M'][$k] += $resultM;
+							}
+							if (isset($cpt['account_number'])) {
+								$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
+							}
 
-						$resultN += $resultM;
+							$resultN += $resultM;
+						}
 					}
 
 					if (empty($totCat)) {
@@ -591,7 +595,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
-					if (($k + 1) >= $date_startmonth) {
+					if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
@@ -632,7 +636,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {
-								if (($k + 1) >= $date_startmonth) {
+								if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 									if (isset($cpt['account_number'])) {
 										$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
 									} else {

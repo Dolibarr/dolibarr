@@ -197,6 +197,9 @@ if (empty($reshook)) {
 		$filter['t.reconciled_option'] = $search_not_reconciled;
 		$param .= '&search_not_reconciled='.urlencode($search_not_reconciled);
 	}
+	if (!empty($show_subgroup)) {
+		$param .= '&show_subgroup='.urlencode($show_subgroup);
+	}
 
 	// param with type of list
 	$url_param = substr($param, 1); // remove first "&"
@@ -300,7 +303,7 @@ if ($action != 'export_csv') {
 	$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
 	if (empty($reshook)) {
-		$newcardbutton = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+		$newcardbutton .= '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -538,7 +541,7 @@ if ($action != 'export_csv') {
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="'.($colspan+1).'" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
+				print '<td colspan="'.($colspan+1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_number;
