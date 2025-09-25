@@ -409,6 +409,7 @@ class Projects extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
 		}
+		
 		$result = $this->project->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'project not found');
@@ -421,15 +422,6 @@ class Projects extends DolibarrApi
 		$result = $this->project->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 		if ($result < 0) {
 			throw new RestException(500, 'Error : '.$this->project->error);
-		}
-
-		$result = $this->project->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'project not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->project);
