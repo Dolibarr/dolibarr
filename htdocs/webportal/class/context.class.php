@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- *
+ * Copyright (C) 2025		Schaffhauser sébastien		<sebastien@webmaster67.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -32,14 +32,14 @@ require_once __DIR__ . '/webPortalTheme.class.php';
 class Context
 {
 	/**
-	 * @var Context Singleton
+	 * @var ?Context Singleton
 	 * @access private
 	 * @static
 	 */
 	private static $_instance = null;
 
 	/**
-	 * @var	DoliDb	$db		Database handler
+	 * @var	DoliDB	$db		Database handler
 	 */
 	public $db;
 
@@ -96,7 +96,7 @@ class Context
 	public $error;
 
 	/**
-	 * @var array errors
+	 * @var string[] errors
 	 */
 	public $errors = array();
 
@@ -105,16 +105,39 @@ class Context
 	 */
 	public $action;
 
+	/**
+	 * @var string tpl directory
+	 */
 	public $tplDir;
+
+	/**
+	 * @var string tpl path
+	 */
 	public $tplPath;
+
+	/**
+	 * @var stdClass
+	 */
 	public $topMenu;
 
+	/**
+	 * @var string root url
+	 */
 	public $rootUrl;
 
+	/**
+	 * @var string[]
+	 */
 	public $menu_active = array();
 
+	/**
+	 * @var array{mesgs:string[],warnings:string[],errors:string[]}|array{} event messages
+	 */
 	public $eventMessages = array();
 
+	/**
+	 * @var string token key
+	 */
 	public $tokenKey = 'token';
 
 	/**
@@ -143,7 +166,6 @@ class Context
 	 */
 	public $logged_partnership = null;
 
-
 	/**
 	 * @var WebPortalTheme Theme data
 	 */
@@ -157,7 +179,7 @@ class Context
 	 */
 	private function __construct()
 	{
-		global $conf, $db;
+		global $db;
 
 		$this->db = $db;
 
@@ -182,7 +204,7 @@ class Context
 
 		$this->initController();
 
-		// Init de l'url de base
+		// Init of base URL. Must be the public URL.
 		$this->rootUrl = self::getRootConfigUrl();
 
 
@@ -210,7 +232,7 @@ class Context
 	 */
 	public function initController()
 	{
-		global $db;
+		global $hookmanager;
 
 		$defaultControllersPath = __DIR__ . '/../controllers/';
 
@@ -223,11 +245,15 @@ class Context
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
+		//** below the addition of DocumentListController adding files by third party attached documents
+		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
+		//** Below is the addition to the menu of the DocumentUtileController.class.php controller in order to share via the GED (documents) "Documentscomptes"
+		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
 
-		// call triggers
-		//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		//$interface=new Interfaces($db);
-		//$interface->run_triggers('WebPortalInitController', $this, $logged_user, $langs, $conf);
+		// Hooks for init controller
+		$hookmanager->initHooks(array('webportaldao'));
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('initController', $parameters, $this);
 
 		// search for controller
 		$this->controllerInstance = new Controller();
@@ -284,16 +310,14 @@ class Context
 	 */
 	public static function getRootConfigUrl()
 	{
-		global $conf;
-
-		// Init de l'url de base
+		// Init of base URL
 		if (getDolGlobalString('WEBPORTAL_ROOT_URL')) {
 			$rootUrl = getDolGlobalString('WEBPORTAL_ROOT_URL');
 			if (substr($rootUrl, -1) !== '/') {
 				$rootUrl .= '/';
 			}
 		} else {
-			$rootUrl = dol_buildpath('/public/webportal/', 2);
+			$rootUrl = dol_buildpath('/public/webportal/', 3);	// Return the public URL for external access
 		}
 
 		return $rootUrl;
@@ -303,7 +327,7 @@ class Context
 	 * Get root url
 	 *
 	 * @param	string			$controller		Controller name
-	 * @param	string|array	$moreParams		More parameters
+	 * @param	string|array<string,mixed>	$moreParams		More parameters
 	 * @param	bool			$addToken		Add token hash only if $controller is set
 	 * @return	string
 	 * @deprecated see getControllerUrl()
@@ -317,7 +341,7 @@ class Context
 	 * Get controller url according to context
 	 *
 	 * @param	string			$controller		Controller name
-	 * @param	string|array	$moreParams		More parameters
+	 * @param	string|array<string,mixed>	$moreParams		More parameters
 	 * @param	bool			$addToken		Add token hash only if controller is set
 	 * @return	string
 	 */
@@ -347,9 +371,9 @@ class Context
 	 * Used for external link (like email or web page)
 	 * so remove token and contextual behavior associate with current user
 	 *
-	 * @param 	string			$controller				Controller
-	 * @param 	string|array	$moreParams				More parameters
-	 * @param	array			$Tparams				Parameters
+	 * @param 	string						$controller		Controller
+	 * @param 	string|array<string,mixed>	$moreParams		More parameters
+	 * @param	array<string,mixed>			$Tparams		Parameters
 	 * @return	string
 	 */
 	public static function getPublicControllerUrl($controller = '', $moreParams = '', $Tparams = array())
@@ -434,6 +458,16 @@ class Context
 	 */
 	public function userIsLog()
 	{
+		global $hookmanager;
+
+		// Hooks for security access
+		$hookmanager->initHooks(array('webportaldao'));
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('userIsLog', $parameters, $this);
+		if ($reshook > 0) {
+			return !empty($hookmanager->resArray['userIsLog']);
+		}
+
 		if (!empty($_SESSION["webportal_logged_thirdparty_account_id"])) {
 			return true;
 		} else {
@@ -455,7 +489,7 @@ class Context
 	/**
 	 * Set errors
 	 *
-	 * @param 	array	$errors		Errors
+	 * @param 	string|string[]	$errors		Errors
 	 * @return	void
 	 */
 	public function setError($errors)
@@ -535,9 +569,9 @@ class Context
 	 * Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
 	 * Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
 	 *
-	 * @param	string		$mesg	Message string
-	 * @param	array|null	$mesgs	Message array
-	 * @param	string		$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
+	 * @param	string			$mesg	Message string
+	 * @param	string[]|null	$mesgs	Message array
+	 * @param	string			$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
 	 * @return	void
 	 */
 	public function setEventMessages($mesg, $mesgs, $style = 'mesgs')
@@ -546,7 +580,7 @@ class Context
 			dol_syslog(__METHOD__ . ' Try to add a message in stack, but value to add is empty message', LOG_WARNING);
 		} else {
 			if (!in_array((string) $style, array('mesgs', 'warnings', 'errors'))) {
-				dol_print_error('', 'Bad parameter style=' . $style . ' for setEventMessages');
+				dol_print_error(null, 'Bad parameter style=' . $style . ' for setEventMessages');
 			}
 			if (empty($mesgs)) {
 				$this->setEventMessage($mesg, $style);
@@ -665,7 +699,7 @@ class Context
 
 		$sql = "SELECT sa.rowid as id, sa.pass_crypted";
 		$sql .= " FROM " . $this->db->prefix() . "societe_account as sa";
-		$sql .= " WHERE BINARY sa.login = '" . $this->db->escape($login) . "'"; // case sensitive
+		$sql .= " WHERE sa.login = '" . $this->db->escape($login) . "'";
 		//$sql .= " AND BINARY sa.pass_crypted = '" . $this->db->escape($pass) . "'"; // case sensitive
 		$sql .= " AND sa.site = 'dolibarr_portal'";
 		$sql .= " AND sa.status = 1";

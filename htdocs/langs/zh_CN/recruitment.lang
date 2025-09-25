@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = 招聘
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = 管理和跟踪新工作职位的招聘活动
-
-#
 # Admin page
-#
 RecruitmentSetup = 招聘设置
 RecruitmentSetupPage = 在此输入招聘模块的主要选项设置
 RecruitmentArea=招聘区
 PublicInterfaceRecruitmentDesc=空缺职位公共页面是公开 URLs，用于显示和回答空缺职位。每个空缺职位记录上都有一个针对本职位的不同链接。
 EnablePublicRecruitmentPages=启用空缺职位的公共页面
 
-#
-# About page
-#
-RecruitmentAbout = 关于招聘
-RecruitmentAboutPage = 招聘信息页面
 NbOfEmployeesExpected=预期的雇员人数
 JobLabel=职位标签
 WorkPlace=工作地点
@@ -47,7 +34,6 @@ PositionToBeFilled=工作岗位
 PositionsToBeFilled=工作岗位
 ListOfPositionsToBeFilled=工作岗位清单
 NewPositionToBeFilled=新工作岗位
-
 JobOfferToBeFilled=空缺职位
 ThisIsInformationOnJobPosition=空缺职位信息
 ContactForRecruitment=招聘联系人
@@ -77,4 +63,4 @@ WeAreRecruiting=我们正在招聘。这是一份有待填补的空缺职位清�
 NoPositionOpen=暂时没有职位空缺
 ConfirmClose=Confirm cancellation
 ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
-recruitment=招聘
+Recruitment=招聘

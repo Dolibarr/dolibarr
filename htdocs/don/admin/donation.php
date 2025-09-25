@@ -5,7 +5,8 @@
  * Copyright (C) 2015-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,14 @@
  *  \brief      Page to setup the donation module
  */
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var Societe $mysoc
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -53,6 +62,7 @@ $type = 'donation';
 /*
  * Action
  */
+$error = 0;
 
 if ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
@@ -68,6 +78,8 @@ if ($action == 'specimen') {
 
 		$classname = (string) $modele;
 		$obj = new $classname($db);
+		'@phan-var-force ModeleDon $obj';
+		/** @var ModeleDon $obj */
 
 		if ($obj->write_file($don, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
@@ -99,7 +111,7 @@ if ($action == 'specimen') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->DON_ADDON_MODEL == "$value") {
+		if (getDolGlobalString('DON_ADDON_MODEL') == "$value") {
 			dolibarr_del_const($db, 'DON_ADDON_MODEL', $conf->entity);
 		}
 	}
@@ -177,7 +189,7 @@ if (isModEnabled('accounting')) {
 $help_url = '';
 llxHeader('', $langs->trans("DonationsSetup"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-admin');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
 
 $head = donation_admin_prepare_head();
@@ -231,6 +243,8 @@ if (is_resource($handle)) {
 
 			require_once $dir.'/'.$file;
 			$module = new $classname($db);
+			'@phan-var-force ModeleDon $module';
+			/** @var ModeleDon $module */
 
 			// Show modules according to features level
 			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -250,7 +264,7 @@ if (is_resource($handle)) {
 
 				// Active
 				if (in_array($name, $def)) {
-					if ($conf->global->DON_ADDON_MODEL == $name) {
+					if (getDolGlobalString('DON_ADDON_MODEL') == $name) {
 						print "<td class=\"center\">\n";
 						print img_picto($langs->trans("Enabled"), 'switch_on');
 						print '</td>';
@@ -266,7 +280,7 @@ if (is_resource($handle)) {
 				}
 
 				// Default
-				if ($conf->global->DON_ADDON_MODEL == "$name") {
+				if (getDolGlobalString('DON_ADDON_MODEL') == "$name") {
 					print "<td class=\"center\">";
 					print img_picto($langs->trans("Default"), 'on');
 					print '</td>';
@@ -286,7 +300,7 @@ if (is_resource($handle)) {
 				$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 				$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 				print '<td class="center">';
-				print $form->textwithpicto('', $htmltooltip, -1, 0);
+				print $form->textwithpicto('', $htmltooltip, -1, 'info');
 				print '</td>';
 
 				// Preview
@@ -325,7 +339,7 @@ if (isModEnabled("societe")) {
 		print ajax_constantonoff('DONATION_USE_THIRDPARTIES');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, $conf->global->DONATION_USE_THIRDPARTIES);
+		print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, getDolGlobalString('DONATION_USE_THIRDPARTIES'));
 	}
 	print "</td>\n";
 	print "</tr>\n";
@@ -341,7 +355,8 @@ $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">'.$label.'</label></td>';
 print '<td class="center">';
 if (isModEnabled('accounting')) {
-	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
+	/** @var FormAccounting $formaccounting */
+	print $formaccounting->select_account(getDolGlobalString('DONATION_ACCOUNTINGACCOUNT'), 'DONATION_ACCOUNTINGACCOUNT', 1, array(), 1, 1);
 } else {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . getDolGlobalString('DONATION_ACCOUNTINGACCOUNT').'">';
 }
@@ -365,9 +380,9 @@ print "</table>\n";
 print '</form>';
 
 /*
- *  French params
+ *  French only parameters
  */
-if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+if (preg_match('/fr/i', $mysoc->country_code)) {
 	print '<br>';
 	print load_fiche_titre($langs->trans("FrenchOptions"), '', '');
 
@@ -384,7 +399,7 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 		print ajax_constantonoff('DONATION_ART200');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
+		print $form->selectarray("DONATION_ART200", $arrval, getDolGlobalString('DONATION_ART200'));
 	}
 	print '</td></tr>';
 
@@ -395,7 +410,7 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 		print ajax_constantonoff('DONATION_ART238');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
+		print $form->selectarray("DONATION_ART238", $arrval, getDolGlobalString('DONATION_ART238'));
 	}
 	print '</td></tr>';
 
@@ -406,7 +421,7 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 		print ajax_constantonoff('DONATION_ART978');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("DONATION_ART978", $arrval, $conf->global->DONATION_ART978);
+		print $form->selectarray("DONATION_ART978", $arrval, getDolGlobalString('DONATION_ART978'));
 	}
 	print '</td></tr>';
 	print "</table>\n";

@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = የክስተት ድርጅት
 EventOrganizationDescription = በሞጁል ፕሮጀክት በኩል የክስተት ድርጅት
 EventOrganizationDescriptionLong= የአንድ ክስተት አደረጃጀት (ትዕይንት፣ ኮንፈረንስ፣ ተሰብሳቢዎች ወይም ተናጋሪዎች፣ በአስተያየት፣ ድምጽ ወይም ምዝገባ) በሕዝብ ገፆች አስተዳድር
-#
-# Menu
-#
 EventOrganizationMenuLeft = የተደራጁ ዝግጅቶች
 EventOrganizationConferenceOrBoothMenuLeft = ኮንፈረንስ ወይም ቡዝ
-
 PaymentEvent=የክስተቱ ክፍያ
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=ምዝገባ
 EventOrganizationSetup=የክስተት ድርጅት ማዋቀር
 EventOrganization=የክስተት ድርጅት
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = ኢሜይሎችን ከጅምላ 
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = ከተመልካቾች ዝርዝር ውስጥ "ኢሜይሎችን ላክ" ከሚለው የጅምላ ኢሜይሎችን ሲልኩ ለመጠቀም የኢሜይል አብነት
 EVENTORGANIZATION_FILTERATTENDEES_CAT = ተሳታፊን ለመፍጠር/ለማከል በቅጹ ላይ የሶስተኛ ወገኖችን ዝርዝር በምድብ ውስጥ ላሉ የሶስተኛ ወገኖች ይገድባል
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = ተሳታፊን ለመፍጠር/ለመጨመር በቅጹ የሶስተኛ ወገኖችን ዝርዝር ከተፈጥሮ ጋር ለሶስተኛ ወገኖች ይገድባል
-
-#
 # Object
-#
 OrganizedEvent=የተደራጀ ክስተት
 EventOrganizationConfOrBooth= ኮንፈረንስ ወይም ቡዝ
-EventOrganizationConfOrBoothes=ኮንፈረንስ ወይም ቡዝ
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = የክስተቱን አደረጃጀት አስተዳድር
 ConferenceOrBooth = ኮንፈረንስ ወይም ቡዝ
 ConferenceOrBoothTab = ኮንፈረንስ ወይም ቡዝ
@@ -63,10 +50,7 @@ DateOfRegistration = የምዝገባ ቀን
 ConferenceOrBoothAttendee = የኮንፈረንስ ወይም ቡዝ ታዳሚ
 ApplicantOrVisitor=አመልካች ወይም ጎብኝ
 Speaker=ተናጋሪ
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = የኮንፈረንስ ጥያቄዎ ተቀብሏል።
 YourOrganizationEventBoothRequestWasReceived = የዳስ ጥያቄህ ደረሰ
 EventOrganizationEmailAskConf = የኮንፈረንስ ጥያቄ
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = ለአንድ ክስተት ምዝገ�
 EventOrganizationMassEmailAttendees = ከተሳታፊዎች ጋር መግባባት
 EventOrganizationMassEmailSpeakers = ወደ ተናጋሪዎች መግባባት
 ToSpeakers=ወደ ተናጋሪዎች
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=ሰዎች ጉባኤዎችን እንዲጠቁሙ ፍቀድላቸው
 AllowUnknownPeopleSuggestConfHelp=ያልታወቁ ሰዎች ማድረግ የሚፈልጉትን ጉባኤ እንዲጠቁሙ ፍቀድላቸው
 AllowUnknownPeopleSuggestBooth=ሰዎች ለዳስ እንዲያመለክቱ ፍቀድ
@@ -91,27 +72,26 @@ PriceOfBoothHelp=ዳስ ለመቆም የደንበኝነት ምዝገባ ዋጋ
 EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=ለኮንፈረንስ ICS አገናኝ
 ConferenceOrBoothInformation=የኮንፈረንስ ወይም የቡዝ መረጃ
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=ተሳታፊዎች
-ListOfAttendeesOfEvent=የዝግጅቱ ፕሮጀክት ተሳታፊዎች ዝርዝር
-DownloadICSLink = ICS አገናኝ አውርድ
-EVENTORGANIZATION_SECUREKEY = ኮንፈረንስን ለመጠቆም ለሕዝብ መመዝገቢያ ገጽ ቁልፉን ለመጠበቅ ዘር
-SERVICE_BOOTH_LOCATION = ስለ ዳስ አካባቢ ለክፍያ መጠየቂያ ረድፉ የሚያገለግል አገልግሎት
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = የአንድ ክስተት ተካፋይ ስለመመዝገብ ለክፍያ መጠየቂያው አገልግሎት
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
+DownloadICSLink=Download ICS file
+EVENTORGANIZATION_SECUREKEY=ኮንፈረንስን ለመጠቆም ለሕዝብ መመዝገቢያ ገጽ ቁልፉን ለመጠበቅ ዘር
+SERVICE_BOOTH_LOCATION=ስለ ዳስ አካባቢ ለክፍያ መጠየቂያ ረድፉ የሚያገለግል አገልግሎት
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=የአንድ ክስተት ተካፋይ ስለመመዝገብ ለክፍያ መጠየቂያው አገልግሎት
 NbVotes=የድምፅ ብዛት
-
-#
 # Status
-#
 EvntOrgDraft = ረቂቅ
 EvntOrgSuggested = የተጠቆመ
 EvntOrgConfirmed = ተረጋግጧል
 EvntOrgNotQualified = ብቁ አይደለም
 EvntOrgDone = ተከናውኗል
 EvntOrgCancelled = ተሰርዟል።
-
-#
 # Other
-#
 SuggestForm = የአስተያየት ገፅ
 SuggestOrVoteForConfOrBooth = የአስተያየት ወይም ድምጽ ለማግኘት ገጽ
 EvntOrgRegistrationHelpMessage = እዚህ፣ ለጉባኤ ድምጽ መስጠት ወይም ለዝግጅቱ አዲስ ሀሳብ መስጠት ይችላሉ። በዝግጅቱ ወቅት ዳስ እንዲኖርዎት ማመልከት ይችላሉ.
@@ -134,6 +114,7 @@ EventType = የክስተት አይነት
 LabelOfBooth=የዳስ መለያ
 LabelOfconference=የስብሰባ መለያ
 ConferenceIsNotConfirmed=ምዝገባ የለም፣ ኮንፈረንስ እስካሁን አልተረጋገጠም።
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s ከ%s በፊት መሆን አለበት።
 DateMustBeAfterThan=%s ከ%s በኋላ መሆን አለበት።
 MaxNbOfAttendeesReached=ከፍተኛው የተሳታፊዎች ቁጥር ላይ ደርሷል
@@ -175,6 +156,11 @@ DateEndEvent=የክስተት ማብቂያ ቀን
 ModifyStatus=ሁኔታን ቀይር
 ConfirmModifyStatus=የሁኔታ ማሻሻያ ያረጋግጡ
 ConfirmModifyStatusQuestion=እርግጠኛ ነዎት የ%s የተመረጡ ሪኮርዶችን ማሻሻል ይፈልጋሉ?
-RecordsUpdated = %s መዝገቦች ተዘምነዋል
-RecordUpdated = መዝገብ ተዘምኗል
-NoRecordUpdated = ምንም መዝገብ አልተዘመነም።
+RecordsUpdated=%s መዝገቦች ተዘምነዋል
+RecordUpdated=መዝገብ ተዘምኗል
+NoRecordUpdated=ምንም መዝገብ አልተዘመነም።
+ProfitPerValidatedAttendee=Profit per attendee
+Confirmed=Confirmed
+NotSelected=Not selected
+TheLinkIsAvailableOnTheProjectEventCard=The links to suggest or vote for a conference or apply for a booth is provided into the page of the project/event
+ShowedUp=Showed up

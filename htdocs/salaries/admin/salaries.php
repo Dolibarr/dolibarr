@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2014-2019  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'salaries'));
@@ -88,7 +98,7 @@ if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans('SalariesSetup'), $linkback, 'title_setup');
 
 $head = salaries_admin_prepare_head();
@@ -121,7 +131,7 @@ foreach ($list as $key) {
 	// Value
 	print '<td>';
 	if (isModEnabled('accounting')) {
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, array(), 1, 1);
 	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}

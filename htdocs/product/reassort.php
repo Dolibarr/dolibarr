@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Vincent de Grandpré  	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +35,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
 $action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_toolowstock = GETPOST('search_toolowstock');
@@ -96,7 +105,7 @@ if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productreassortlist'));
 
 if ($user->socid) {
@@ -227,7 +236,7 @@ if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type)) {
+if (dol_strlen((string) $type)) {
 	if ($type == 1) {
 		$sql .= " AND p.fk_product_type = '1'";
 	} else {
@@ -298,18 +307,19 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (!empty($hookmanager->resPrint)) {
-	if (!empty($sql_having)) {
-		$sql_having .= " AND";
-	} else {
-		$sql_having .= " HAVING";
+if (empty($reshook)) {
+	if (empty($sql_having)) {
+		$sql_having .= " HAVING 1=1";
 	}
 	$sql_having .= $hookmanager->resPrint;
+} else {
+	$sql_having = $hookmanager->resPrint;
 }
 
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -317,7 +327,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -389,7 +399,7 @@ if ($resql) {
 		$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 	}
 
-	llxHeader("", $texte, $helpurl);
+	llxHeader("", $texte, $helpurl, '', 0, 0, '', '', '', 'mod-product page-reassort');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -422,14 +432,12 @@ if ($resql) {
 	$moreforfilter .= '<label for="search_toolowstock">'.$langs->trans("StockTooLow").' </label><input type="checkbox" id="search_toolowstock" name="search_toolowstock" value="1"'.($search_toolowstock ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 
-	if (!empty($moreforfilter)) {
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		print '</div>';
-	}
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
@@ -474,12 +482,12 @@ if ($resql) {
 	if ($virtualdiffersfromphysical) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
-	print '<td class="liste_titre"></td>';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
+	print '<td class="liste_titre"></td>';
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -517,13 +525,13 @@ if ($resql) {
 	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print_liste_field_titre("Unit", $_SERVER["PHP_SELF"], "unit_short", '', $param, 'align="right"', $sortfield, $sortorder);
 	}
-	print_liste_field_titre('');
-	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", '', $param, "", $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Hook fields
 	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
+	print_liste_field_titre('');
+	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", '', $param, "", $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('');
@@ -542,14 +550,15 @@ if ($resql) {
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
-		print '<td class="nowrap">';
-		print $product->getNomUrl(1, '', 16);
+		print '<td class="tdoverflowmax250">';
+		print $product->getNomUrl(1);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($product->label).'">'.dol_escape_htmltag($product->label).'</td>';
 
 		if (isModEnabled("service") && $type == 1) {
 			print '<td class="center">';
+			$regs = array();
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 				print $regs[1].' '.$langs->trans("DurationYear");
 			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
@@ -612,16 +621,16 @@ if ($resql) {
 		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			print '<td class="left">'.dol_escape_htmltag($objp->unit_short).'</td>';
 		}
+		// Fields from hook
+		$parameters = array('obj' => $objp);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		print '<td class="center nowraponall">';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 		print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a>';
 		print '</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
-		// Fields from hook
-		$parameters = array('obj' => $objp);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
@@ -629,6 +638,9 @@ if ($resql) {
 
 		print "</tr>\n";
 		$i++;
+	}
+	if ($num == 0) {
+		print '<tr><td colspan="">'.$langs->trans("None").'</td></tr>';
 	}
 
 	print "</table>";

@@ -30,7 +30,13 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-global $conf;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!$user->admin) {
 	accessforbidden();
@@ -47,6 +53,9 @@ $activeModules = array();
 
 if (getDolGlobalString('SYSLOG_HANDLERS')) {
 	$activeModules = json_decode($conf->global->SYSLOG_HANDLERS);
+	if (!is_array($activeModules)) {
+		$activeModules = array();
+	}
 }
 
 $dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
@@ -171,11 +180,12 @@ if ($action == 'setlevel') {
  * View
  */
 
-llxHeader('', $langs->trans("SyslogSetup"));
+llxHeader('', $langs->trans("SyslogSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-syslog');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("SyslogSetup"), $linkback, 'title_setup');
 print '<br>';
 
@@ -208,7 +218,7 @@ print '<div class="div-table-responsive-no-min">'; // You can use div-table-resp
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print '<td class="center width150"><input type="submit" class="button small" '.$optionmc.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
@@ -300,20 +310,20 @@ print '<input type="hidden" name="action" value="setlevel">';
 print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td><td></td>';
 print '<td class="center width150"><input type="submit" class="button small" '.$optionmc.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans("SyslogLevel").'</td>';
 print '<td colspan="2"><select class="flat minwidth400" id="level" name="level" '.$optionmc.'>';
-print '<option value="'.LOG_EMERG.'" '.($conf->global->SYSLOG_LEVEL == LOG_EMERG ? 'SELECTED' : '').'>LOG_EMERG ('.LOG_EMERG.')</option>';
-print '<option value="'.LOG_ALERT.'" '.($conf->global->SYSLOG_LEVEL == LOG_ALERT ? 'SELECTED' : '').'>LOG_ALERT ('.LOG_ALERT.')</option>';
-print '<option value="'.LOG_CRIT.'" '.($conf->global->SYSLOG_LEVEL == LOG_CRIT ? 'SELECTED' : '').'>LOG_CRIT ('.LOG_CRIT.')</option>';
-print '<option value="'.LOG_ERR.'" '.($conf->global->SYSLOG_LEVEL == LOG_ERR ? 'SELECTED' : '').'>LOG_ERR ('.LOG_ERR.')</option>';
-print '<option value="'.LOG_WARNING.'" '.($conf->global->SYSLOG_LEVEL == LOG_WARNING ? 'SELECTED' : '').'">LOG_WARNING ('.LOG_WARNING.')</option>';
-print '<option value="'.LOG_NOTICE.'" '.($conf->global->SYSLOG_LEVEL == LOG_NOTICE ? 'SELECTED' : '').' data-html="'.dol_escape_htmltag('LOG_NOTICE ('.LOG_NOTICE.') - <span class="opacitymedium">'.$langs->trans("RecommendedForProduction").'</span>').'">LOG_NOTICE ('.LOG_NOTICE.')</option>';
-print '<option value="'.LOG_INFO.'" '.($conf->global->SYSLOG_LEVEL == LOG_INFO ? 'SELECTED' : '').'>LOG_INFO ('.LOG_INFO.')</option>';
-print '<option value="'.LOG_DEBUG.'" '.($conf->global->SYSLOG_LEVEL >= LOG_DEBUG ? 'SELECTED' : '').' data-html="'.dol_escape_htmltag('LOG_DEBUG ('.LOG_DEBUG.') - <span class="opacitymedium">'.$langs->trans("RecommendedForDebug").'</span>').'">LOG_DEBUG ('.LOG_DEBUG.')</option>';
+print '<option value="'.LOG_EMERG.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_EMERG ? 'selected' : '').'>LOG_EMERG ('.LOG_EMERG.')</option>';
+print '<option value="'.LOG_ALERT.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_ALERT ? 'selected' : '').'>LOG_ALERT ('.LOG_ALERT.')</option>';
+print '<option value="'.LOG_CRIT.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_CRIT ? 'selected' : '').'>LOG_CRIT ('.LOG_CRIT.')</option>';
+print '<option value="'.LOG_ERR.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_ERR ? 'selected' : '').'>LOG_ERR ('.LOG_ERR.')</option>';
+print '<option value="'.LOG_WARNING.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_WARNING ? 'selected' : '').'>LOG_WARNING ('.LOG_WARNING.')</option>';
+print '<option value="'.LOG_NOTICE.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_NOTICE ? 'selected' : '').' data-html="'.dol_escape_htmltag('LOG_NOTICE ('.LOG_NOTICE.') - <span class="opacitymedium">'.$langs->trans("RecommendedForProduction").'</span>').'">LOG_NOTICE ('.LOG_NOTICE.')</option>';
+print '<option value="'.LOG_INFO.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_INFO ? 'selected' : '').'>LOG_INFO ('.LOG_INFO.')</option>';
+print '<option value="'.LOG_DEBUG.'" '.(getDolGlobalString('SYSLOG_LEVEL') >= LOG_DEBUG ? 'selected' : '').' data-html="'.dol_escape_htmltag('LOG_DEBUG ('.LOG_DEBUG.') - <span class="opacitymedium">'.$langs->trans("RecommendedForDebug").'</span>').'">LOG_DEBUG ('.LOG_DEBUG.')</option>';
 print '</select>';
 
 print ajax_combobox("level");

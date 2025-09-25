@@ -12,6 +12,7 @@ YourEMail=Ödəniş təsdiqini almaq üçün e-poçt göndərin
 STRIPE_PAYONLINE_SENDEMAIL=Ödəniş cəhdindən sonra e-poçt bildirişi (uğurlu və ya uğursuz)
 Creditor=Kreditor
 PaymentCode=Ödəniş kodu
+StripeAutoRecordPayout=Bank köçürməsinin avtomatik qeydini aktivləşdirin (Stripe ödəniş edərkən və webhook-a IPN payout.create/payout.paid zəng etdikdə)
 StripeDoPayment=Stripe ilə ödəyin
 YouWillBeRedirectedOnStripe=Kredit kartı məlumatlarınızı daxil etmək üçün təhlükəsiz Stripe səhifəsinə yönləndiriləcəksiniz
 Continue=Sonrakı
@@ -22,7 +23,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=Müqavilə xətti üçün %s onlayn �
 ToOfferALinkForOnlinePaymentOnFreeAmount=Mövcud obyekti olmayan istənilən məbləğin %s onlayn ödəniş səhifəsini təklif etmək üçün URL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Üzv abunəliyi üçün %s onlayn ödəniş səhifəsi təklif etmək üçün URL
 ToOfferALinkForOnlinePaymentOnDonation=İanənin ödənilməsi üçün %s onlayn ödəniş səhifəsi təklif etmək üçün URL
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Ödəniş avtomatik yaradılan zaman <b>%s</b> URL ilə Stripe-i quraşdırın. Stripe tərəfindən təsdiq edilmişdir.
 AccountParameter=Hesab parametrləri
 UsageParameter=İstifadə parametrləri
@@ -32,6 +34,7 @@ CSSUrlForPaymentForm=Ödəniş forması üçün CSS stil cədvəli url
 NewStripePaymentReceived=Yeni Stripe ödənişi alındı
 NewStripePaymentFailed=Yeni Stripe ödəniş cəhd etdi, lakin alınmadı
 FailedToChargeCard=Kartı doldurmaq alınmadı
+FailedToChargeSEPA=SEPA-nı doldurmaq alınmadı
 STRIPE_TEST_SECRET_KEY=Gizli test açarı
 STRIPE_TEST_PUBLISHABLE_KEY=Nəşr edilə bilən test açarı
 STRIPE_TEST_WEBHOOK_KEY=Webhook test açarı
@@ -74,7 +77,18 @@ ClickHereToTryAgain=<a href="%s">Yenidən cəhd etmək üçün bura klikləyin..
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Güclü Müştəri Doğrulama qaydalarına görə, kartın yaradılması Stripe-in arxa ofisindən həyata keçirilməlidir. Stripe müştəri qeydinə keçmək üçün bura klikləyə bilərsiniz: %s
 STRIPE_CARD_PRESENT=Stripe Terminallar üçün Kart Hədiyyəsi
 TERMINAL_LOCATION=Zolaqlı Terminallar üçün yer (ünvan).
-RequestDirectDebitWithStripe=Stripe ilə birbaşa debit tələb edin
-RequesCreditTransferWithStripe=Stripe ilə kredit köçürməsini tələb edin
-STRIPE_SEPA_DIRECT_DEBIT=Stripe vasitəsilə birbaşa debet ödənişlərini aktivləşdirin
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
+STRIPE_KLARNA=Klarna istifadə edərək ödənişləri aktivləşdirin
+STRIPE_BANCONTACT=BANCONTACT istifadə edərək ödənişləri aktivləşdirin
+STRIPE_IDEAL=İDEAL istifadə edərək ödənişləri aktivləşdirin
+STRIPE_GIROPAY=GIROPAY istifadə edərək ödənişləri aktivləşdirin
+STRIPE_SOFORT=SOFORT istifadə edərək ödənişləri aktivləşdirin
 StripeConnect_Mode=Stripe Connect rejimi
+ExampleOnlyForBECustomers=Yalnız Belçika müştəriləri üçün
+ExampleOnlyForDECustomers=Yalnız alman müştərilər üçün
+ExampleOnlyForNLCustomers=Yalnız hollandiyalı müştərilər üçün
+ExampleOnlyForATBEDEITNLESCustomers=Yalnız Avstriya, Belçika, Almaniya, İtaliya, Hollandiya, İspaniyadan olan müştərilər üçün
+ListOfSupportedHooksToActivate=Aktivləşdirmək üçün dəstəklənən qarmaqların siyahısı

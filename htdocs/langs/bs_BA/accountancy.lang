@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Računovodstvo
 Accounting=Računovodstvo
+AccountingAccount=Računovodstveni račun
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Odvajanje kolona za izvoznu datoteku
 ACCOUNTING_EXPORT_DATE=Format datuma za izvoznu datoteku
 ACCOUNTING_EXPORT_PIECE=Izvoz broja komada
@@ -56,6 +58,8 @@ ExportAccountancy=Izvozno knjigovodstvo
 WarningDataDisappearsWhenDataIsExported=Upozorenje, ova lista sadrži samo računovodstvene unose koji nisu već izvezeni (datum izvoza je prazan). Ako želite da uključite računovodstvene unose koji su već izvezeni, kliknite na dugme iznad.
 VueByAccountAccounting=Pregled po računovodstvenom računu
 VueBySubAccountAccounting=Pregled po računovodstvenom podračunu
+AccountingAccountByDefault=Računovodstveni račun po zadanim postavkama
+AccountingAccountByDefaultShort=Račun prema zadanim postavkama
 
 MainAccountForCustomersNotDefined=Glavni račun (iz Kontnog plana) za kupce koji nisu definisani u podešavanju
 MainAccountForSuppliersNotDefined=Glavni račun (iz kontnog plana) za dobavljače koji nisu definirani u podešavanjima
@@ -64,18 +68,15 @@ MainAccountForVatPaymentNotDefined=Račun (iz kontnog plana) za plaćanje PDV-a 
 MainAccountForSubscriptionPaymentNotDefined=Račun (iz kontnog plana) za uplatu članarine nije definisan u podešavanjima
 MainAccountForRetainedWarrantyNotDefined=Račun (iz kontnog plana) za zadržanu garanciju nije definisan u podešavanju
 UserAccountNotDefined=Računski račun za korisnika nije definiran u postavkama
-
 AccountancyArea=Računovodstvena oblast
 AccountancyAreaDescIntro=Korištenje računovodstvenog modula odvija se u nekoliko koraka:
 AccountancyAreaDescActionOnce=Sljedeće radnje se obično izvode samo jednom ili jednom godišnje...
 AccountancyAreaDescActionOnceBis=Sljedeće korake treba učiniti kako biste uštedjeli vrijeme u budućnosti tako što će vam automatski predložiti ispravan zadani računski račun prilikom prijenosa podataka u računovodstvo
 AccountancyAreaDescActionFreq=Sledeće radnje se obično izvršavaju svakog meseca, nedelje ili dana za veoma velike kompanije...
-
 AccountancyAreaDescJournalSetup=KORAK %s: Provjerite sadržaj svoje liste časopisa iz menija %s
-AccountancyAreaDescChartModel=KORAK %s: Provjerite postoji li model kontnog plana ili ga kreirajte iz menija %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=KORAK %s: Odaberite i|ili dovršite svoj kontni plan iz menija %s
-
-AccountancyAreaDescFiscalPeriod=KORAK %s: Definirajte fiskalnu godinu prema zadanim postavkama u koju ćete integrirati svoje računovodstvene unose. Za ovo koristite unos menija %s.
+AccountancyAreaDescFiscalPeriod=KORAK %s: Definišite fiskalni period koji određuje raspon datuma prihvaćenih za kreiranje računovodstvenih unosa. Za ovo koristite stavku menija %s.
 AccountancyAreaDescVat=KORAK %s: Definirajte računovodstvene račune za svaku stopu PDV-a. Za ovo koristite unos menija %s.
 AccountancyAreaDescDefault=KORAK %s: Definirajte zadane računovodstvene račune. Za ovo koristite unos menija %s.
 AccountancyAreaDescExpenseReport=KORAK %s: Definirajte zadane računovodstvene račune za svaku vrstu izvještaja o troškovima. Za ovo koristite unos menija %s.
@@ -87,12 +88,10 @@ AccountancyAreaDescMisc=KORAK %s: Definirajte obavezne zadane račune i zadane r
 AccountancyAreaDescLoan=KORAK %s: Definirajte zadane računovodstvene račune za kredite. Za ovo koristite unos menija %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=KORAK %s: Definirajte računovodstvene račune na vašim proizvodima/uslugama. Za ovo koristite unos menija %s.
-
 AccountancyAreaDescBind=KORAK %s: Provjerite vezu između postojećih %s redova i račun je račun gotovo, tako da će aplikacija moći da evidentira transakcije u Ledgeru jednim klikom. Kompletne veze koje nedostaju. Za ovo koristite unos menija %s.
 AccountancyAreaDescWriteRecords=KORAK %s: Upišite transakcije u Knjigu. Za ovo idite u meni <strong>%s</strong>, i kliknite na dugme <strong>%sb0z06fdb0z06fdc >.
 AccountancyAreaDescAnalyze=KORAK %s: Pročitajte izvještaje ili generirajte datoteke za izvoz za druge knjigovođe.
 AccountancyAreaDescClosePeriod=KORAK %s: Zatvorite period tako da ne možemo više prenositi podatke u istom periodu u budućnosti.
-
 TheFiscalPeriodIsNotDefined=Obavezni korak u postavljanju nije završen (Fiskalni period nije definiran)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Obavezni korak u postavljanju nije dovršen (dnevnik šifre računa nije definiran za sve bankovne račune)
 Selectchartofaccounts=Odaberi aktivnog pregleda računa
@@ -103,6 +102,7 @@ AccountAccounting=Računovodstveni račun
 AccountAccountingShort=Account
 SubledgerAccount=Podknjižni račun
 SubledgerAccountLabel=Oznaka podknjižnog računa
+LedgerAccount=Račun glavne knjige
 ShowAccountingAccount=Prikaži računovodstveni račun
 ShowAccountingJournal=Prikaži računovodstveni dnevnik
 ShowAccountingAccountInLedger=Prikaži računovodstveni račun u knjizi
@@ -144,8 +144,6 @@ ExpenseReportLines=Redovi izvještaja o troškovima za vezanje
 ExpenseReportLinesDone=Vezani redovi izvještaja o troškovima
 IntoAccount=Vezati red sa računovodstvenim računom
 TotalForAccount=Ukupno računovodstveni račun
-
-
 Ventilate=Bind
 LineId=Id line
 Processing=Processing
@@ -158,22 +156,23 @@ VentilatedinAccount=Uspješno vezano za račun računovodstva
 NotVentilatedinAccount=Nije vezano za računovodstveni račun
 XLineSuccessfullyBinded=%s proizvodi/usluge uspješno vezani za računovodstveni račun
 XLineFailedToBeBinded=%s proizvodi/usluge nisu bili vezani ni za jedan računovodstveni račun
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Maksimalan broj redova na stranici za povezivanje i na listi (preporučeno: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Započnite sortiranje stranice "Obvezuje se za obavljanje" prema najnovijim elementima
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Započnite sortiranje stranice "Vezivanje obavljeno" prema najnovijim elementima
-
 ACCOUNTING_LENGTH_DESCRIPTION=Skratite opis proizvoda i usluga u oglasima nakon x znakova (najbolje = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Skratite obrazac za opis računa proizvoda i usluga u oglasima nakon x znakova (najbolje = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Dužina opštih računovodstvenih računa (ako ovdje postavite vrijednost na 6, račun '706' će se pojaviti kao '706000' na ekranu)
 ACCOUNTING_LENGTH_AACCOUNT=Dužina računovodstvenih računa treće strane (ako ovdje postavite vrijednost na 6, račun '401' će se pojaviti kao '401000' na ekranu)
-ACCOUNTING_MANAGE_ZERO=Omogućite upravljanje različitim brojem nula na kraju računovodstvenog računa. Potreban nekim zemljama (poput Švajcarske). Ako je postavljeno na isključeno (podrazumevano), možete postaviti sljedeća dva parametra kako biste zatražili od aplikacije da doda virtuelne nule.
+ACCOUNTING_MANAGE_ZERO=Omogućava upravljanje različitim brojem nula na kraju računovodstvenog računa umjesto računa fiksne dužine.
+ACCOUNTING_MANAGE_ZERO2=Potrebno u nekim zemljama (kao što je Švicarska). Ako se isključi (zadano), možete postaviti sljedeća dva parametra da biste od aplikacije zatražili dodavanje virtualnih nula.
+ACCOUNTING_BANK_CONCILIATED=Prenesite u računovodstvo samo one redove koji su usklađeni u bankovnim izvodima (podrazumevano, može se odznačiti pri svakom transferu)
 BANK_DISABLE_DIRECT_INPUT=Onemogućite direktno evidentiranje transakcije na bankovnom računu
+ACCOUNTANCY_ER_DATE_RECORD=Koristite datum završetka perioda izvještaja o troškovima kao datum za prenos u računovodstvo, umjesto datuma troška
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Omogućite izvoz nacrta u dnevnik
 ACCOUNTANCY_COMBO_FOR_AUX=Omogući kombinovanu listu za račun podružnice (može biti spor ako imate puno trećih strana, prekinuti mogućnost pretraživanja na dijelu vrijednosti)
 ACCOUNTING_DATE_START_BINDING=Onemogućite vezivanje i prijenos u računovodstvu kada je datum ispod ovog datuma (transakcije prije ovog datuma će biti isključene prema zadanim postavkama)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na stranici za prijenos podataka u računovodstvo, koji je period odabran po defaultu
-
+ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=Kada se generira računovodstvo, podrazumijevana oznaka operacije
 ACCOUNTING_SELL_JOURNAL=Dnevnik prodaje - vraćanje i prodaje
 ACCOUNTING_PURCHASE_JOURNAL=Dnevnik kupovine - kupovina i vraća
 ACCOUNTING_BANK_JOURNAL=Blagajnički dnevnik - potvrde o i isplatama
@@ -182,40 +181,35 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Ima novi časopis
 ACCOUNTING_INVENTORY_JOURNAL=Dnevnik inventara
 ACCOUNTING_SOCIAL_JOURNAL=Dnevnik doprinosa
-
 ACCOUNTING_RESULT_PROFIT=Račun rezultata (Profit)
 ACCOUNTING_RESULT_LOSS=Račun računovodstva rezultata (gubitak)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Dnevnik zatvaranja
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Računovodstvene grupe koje se koriste za bilansni račun (odvojene zarezom)
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Računovodstvene grupe koje se koriste za bilans uspjeha (odvojene zarezom)
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Računovodstvene grupe korištene za obračun bilansa stanja
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp=Ovdje postavite listu računovodstvenih grupa (definiranih u kontnom planu) koje se moraju koristiti za pronalaženje svih računa za izračunavanje bilansa stanja. Koristite zarez za odvajanje svake vrijednosti.<br>Primjer: CAPIT,IMMO,STOCK,FINAN,THIRDPARTY
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Računovodstvene grupe korištene za obračun bilansa uspjeha
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp=Ovdje postavite listu računovodstvenih grupa (definiranih u kontnom planu) koje se moraju koristiti za pronalaženje svih računa za izračunavanje bilansa uspjeha. Koristite zarez za odvajanje svake vrijednosti.<br>Primjer: PRIHOD,RASHODI
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Račun (iz Kontnog plana) koji će se koristiti kao račun za prelazne bankovne transfere
 TransitionalAccount=Prijelazni račun bankovnog transfera
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Račun (iz Kontnog plana) koji se koristi kao račun za neraspoređena sredstva primljena ili plaćena, tj.
 DONATION_ACCOUNTINGACCOUNT=Račun (iz kontnog plana) koji će se koristiti za registraciju donacija (modul za donacije)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Račun (iz kontnog plana) koji će se koristiti za registraciju pretplata na članstvo (modul za članstvo - ako je članstvo evidentirano bez fakture)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Račun (iz plana računa) koji će se koristiti kao zadani račun za registraciju depozita klijenta
 UseAuxiliaryAccountOnCustomerDeposit=Pohranite korisnički račun kao individualni račun u pomoćnoj knjizi za redove avansa (ako je onemogućen, individualni račun za redove kapare će ostati prazan)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Račun (iz kontnog plana) koji će se koristiti kao zadani
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Pohranite račun dobavljača kao individualni račun u pomoćnoj knjizi za redove avansa (ako je onemogućen, pojedinačni račun za redove kapara će ostati prazan)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Računovodstveni račun po defaultu za registraciju zadržane garancije kupca
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za proizvode kupljene u istoj zemlji (koristi se ako nije definirano u tablici proizvoda)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za proizvode kupljene iz EEZ-a u drugu zemlju EEZ (koristi se ako nije definirano u tablici proizvoda)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Račun (iz Kontnog plana) koji će se koristiti kao zadani račun za kupljene proizvode i uvezene iz bilo koje druge strane zemlje (koristi se ako nije definirano u tablici proizvoda)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Račun (iz Kontnog plana) koji će se koristiti kao zadani račun za prodate proizvode (koristi se ako nije definiran u tablici proizvoda)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za proizvode koji se prodaju iz EEZ u drugu zemlju EEZ (koristi se ako nije definirano u tablici proizvoda)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Račun (iz Kontnog plana) koji će se koristiti kao zadani račun za prodate proizvode i izvezene u bilo koju drugu stranu zemlju (koristi se ako nije definirano u tablici proizvoda)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za usluge kupljene u istoj zemlji (koristi se ako nije definisano u servisnom listu)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za usluge kupljene od EEZ-a u drugu zemlju EEZ (koristi se ako nije definirano u servisnom listu)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za kupljene usluge i uvezene iz druge strane zemlje (koristi se ako nije definisano u servisnom listu)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Račun (iz Kontnog plana) koji će se koristiti kao zadani račun za prodate usluge (koristi se ako nije definiran u servisnom listu)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za usluge koje se prodaju iz EEZ u drugu zemlju EEZ (koristi se ako nije definirano u servisnom listu)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Račun (iz kontnog plana) koji će se koristiti kao zadani račun za prodane usluge i izvezene u bilo koju drugu stranu zemlju (koristi se ako nije definirano u servisnom listu)
-
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
@@ -229,15 +223,18 @@ Codejournal=Journal
 JournalLabel=Oznaka časopisa
 NumPiece=Broj komada
 TransactionNumShort=Num. transakcija
+AccountingReport=Prilagođeni izvještaji
 AccountingCategory=Prilagođena grupa računa
 AccountingCategories=Prilagođene grupe računa
 GroupByAccountAccounting=Grupirajte po kontu glavne knjige
 GroupBySubAccountAccounting=Grupirajte po računu podknjige
+AccountingAccountReportsDesc=Ovdje možete definirati neke izvještaje računovodstvenog računa. Oni će se koristiti za personalizirane računovodstvene izvještaje.
 AccountingAccountGroupsDesc=Ovdje možete definirati neke grupe računovodstvenih računa. Oni će se koristiti za personalizirane računovodstvene izvještaje.
 ByAccounts=Po računima
 ByPredefinedAccountGroups=Po unapred definisanim grupama
 ByPersonalizedAccountGroups=Po personalizovanim grupama
-ByYear=Po godini
+Personalized=Personalizirano
+NoReportDefined=Nisu definirani personalizirani izvještaji
 NotMatch=Nije postavljeno
 DeleteMvt=Izbrišite neke redove iz računovodstva
 DelMonth=Mjesec za brisanje
@@ -257,6 +254,7 @@ FeeAccountNotDefined=Račun za naknadu nije definisan
 BankAccountNotDefined=Račun za banku nije definisan
 CustomerInvoicePayment=Payment of invoice customer
 ThirdPartyAccount=Račun treće strane
+AccountNotDefined=Račun nije definiran
 NewAccountingMvt=Nova transakcija
 NumMvts=Broj transakcija
 ListeMvts=Lista pokreta
@@ -269,6 +267,7 @@ UnknownAccountForThirdparty=Nepoznati račun treće strane. Koristit ćemo %s
 UnknownAccountForThirdpartyBlocking=Nepoznati račun treće strane. Greška pri blokiranju
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Podknjiga račun nije definiran ili treće lice ili korisnik nepoznat. Koristit ćemo %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Nepoznata i podknjiga treće strane nije definirana na uplati. Vrijednost računa podknjige ostat ćemo praznom.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2=Podračun nije definiran ili je treća strana ili korisnik nepoznat. Vrijednost podračuna ćemo ostaviti praznom.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Podknjiga račun nije definiran ili treće lice ili korisnik nepoznat. Greška pri blokiranju.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nepoznati račun treće strane i račun na čekanju nije definiran. Greška pri blokiranju
 PaymentsNotLinkedToProduct=Plaćanje nije povezano ni sa jednim proizvodom/uslugom
@@ -276,21 +275,19 @@ OpeningBalance=Početni bilans
 ShowOpeningBalance=Prikaži početno stanje
 HideOpeningBalance=Sakrij početno stanje
 ShowSubtotalByGroup=Prikaži međuzbroj po nivou
-
 Pcgtype=Grupa računa
 PcgtypeDesc=Grupe računa se koriste kao unaprijed definirani 'filter' i kriteriji 'grupiranja' za neke računovodstvene izvještaje. Na primjer, 'INCOME' ili 'EXPENSE' se koriste kao grupe za računovodstvene račune proizvoda za izradu izvještaja o troškovima/prihodima.
-AccountingCategoriesDesc=Prilagođena grupa računa može se koristiti za grupiranje računovodstvenih računa u jedno ime kako bi se olakšalo korištenje filtera ili pravljenje prilagođenih izvještaja.
-
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Pomirljiv
-
+Centralized=Centralizirani račun
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=Ovdje pogledajte listu linija faktura kupaca vezanih (ili ne) za račun proizvoda iz kontnog plana
 DescVentilMore=U većini slučajeva, ako koristite unaprijed definirane proizvode ili usluge i postavite račun (iz kontnog plana) na kartici proizvoda/usluge, aplikacija će moći izvršiti sve povezivanje između redova faktura i računovodstvenog računa vašeg kontnog plana, samo jednim klikom sa dugmetom <strong>"%s"</strong>. Ako račun nije postavljen na karticama proizvoda/usluga ili ako još uvijek imate neke linije koje nisu vezane za račun, morat ćete napraviti ručno uvezivanje iz menija "<strong>%s</strong>".
 DescVentilDoneCustomer=Ovdje pogledajte listu linija faktura kupaca i njihov račun proizvoda iz kontnog plana
 DescVentilTodoCustomer=Vezati fakturne linije koje već nisu vezane za račun proizvoda iz kontnog plana
-ChangeAccount=Promijenite račun proizvoda/usluge (iz kontnog plana) za odabrane linije sa sljedećim računom:
+ChangeAccount=Promijenite računovodstveni račun proizvoda/usluge odabranih redaka sa:
 Vide=-
 DescVentilSupplier=Ovdje pogledajte listu faktura dobavljača vezanih ili još uvijek vezanih za račun proizvoda iz kontnog plana (vidljiv je samo zapis koji nije već prenesen u računovodstvo)
 DescVentilDoneSupplier=Ovdje pogledajte listu linija faktura dobavljača i njihovog računovodstvenog računa
@@ -298,19 +295,16 @@ DescVentilTodoExpenseReport=Povežite redove izvještaja o troškovima koji nisu
 DescVentilExpenseReport=Ovdje pogledajte listu linija izvještaja o troškovima vezanih (ili ne) za račun obračuna naknada
 DescVentilExpenseReportMore=Ako postavite računovodstveni račun na vrstu linija izvještaja o troškovima, aplikacija će moći napraviti sve veze između vaših linija izvještaja o troškovima i računovodstvenog računa vašeg kontnog plana, samo jednim klikom sa dugmetom <strong>"%s"</strong>. Ako račun nije postavljen u rječniku naknada ili ako još uvijek imate neke linije koje nisu vezane ni za jedan račun, morat ćete napraviti ručno uvezivanje iz menija "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Ovdje pogledajte listu linija izvještaja o troškovima i njihov račun računovodstva naknada
-
 Closure=Godišnje zatvaranje
 AccountancyClosureStep1Desc=Ovdje pogledajte broj kretanja po mjesecima koji još nisu potvrđeni i zaključani
-OverviewOfMovementsNotValidated=Pregled kretanja nepotvrđenih i zaključano
+OverviewOfMovementsNotValidated=Pregled kretanja koja još nisu potvrđena i zaključana
 AllMovementsWereRecordedAsValidated=Svi pokreti su zabilježeni kao validirani i zaključani
 NotAllMovementsCouldBeRecordedAsValidated=Nisu svi pokreti mogli biti snimljeni kao validirani i zaključani
 ValidateMovements=Potvrdite i pokrete zaključavanja
 DescValidateMovements=Bilo kakva modifikacija ili brisanje pisanja, slova i brisanja će biti zabranjena. Sve prijave za vježbu moraju biti potvrđene, inače zatvaranje neće biti moguće
-
 ValidateHistory=Vezi automatski
 AutomaticBindingDone=Automatsko povezivanje obavljeno (%s) - Automatsko povezivanje nije moguće za neki zapis (%s)
 DoManualBindingForFailedRecord=Morate napraviti ručnu vezu za %s redove koji nisu automatski povezani.
-
 ErrorAccountancyCodeIsAlreadyUse=Greška, ne možete ukloniti ili onemogućiti ovaj račun kontnog plana jer se koristi
 MvtNotCorrectlyBalanced=Kretanje nije pravilno izbalansirano. Debit = %s & Kredit = %s
 Balancing=Balansiranje
@@ -323,12 +317,15 @@ ChangeBinding=Promijenite vezivanje
 Accounted=Obračun u knjizi
 NotYetAccounted=Još nije preneseno u računovodstvo
 ShowTutorial=Show Tutorial
+ClickOnUseTutorialForHelp=Dobrodošli u odjeljak za generiranje vašeg računovodstva. Kliknite na link "%s" da biste dobili savjet o tome kako ga koristiti.
 NotReconciled=Nije izmireno
 WarningRecordWithoutSubledgerAreExcluded=Upozorenje, svi redovi bez definiranog računa podknjige su filtrirani i isključeni iz ovog prikaza
 AccountRemovedFromCurrentChartOfAccount=Računovodstveni račun koji ne postoji u tekućem kontnom planu
-
+WarningThisPageContainsOnlyEntriesTransferredInAccounting=Upozorenje, ova stranica sadrži samo unose prenesene u računovodstveni sistem.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
+BookkeepingNumberingModules = Modeli numeriranja u knjigovodstvu
 ## Admin
-BindingOptions=Opcije vezivanja
+BindingOptions=Opcije za transfer u računovodstvu
 ApplyMassCategories=Primijenite masovne kategorije
 AddAccountFromBookKeepingWithNoCategories=Dostupni račun još nije u personaliziranoj grupi
 CategoryDeleted=Kategorija za računovodstveni račun je uklonjena
@@ -361,6 +358,8 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Neki računovodstveni softver prihvata samo 
 OptionsAdvanced=Napredne opcije
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivirajte upravljanje povratom PDV-a na nabavke dobavljača
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kada je ova opcija omogućena, možete definirati da se dobavljač ili faktura datog dobavljača moraju drugačije prenijeti u računovodstvo: Dodatno zaduženje i kreditna linija će se generirati u računovodstvu 2. date račune iz kontnog plana definiranog na stranici za podešavanje "%s".
+ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktivirajte karticu na karticama treće strane da biste vidjeli pomoćnu knjigu
+ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Kada je ova opcija omogućena, u karticama treće strane se prikazuje nova kartica za pregled i upravljanja računovodstvom za treću stranu, kao i za usklađivanje, štampanje i još mnogo toga.
 
 ## Export
 NotExportLettering=Nemojte izvoziti slova prilikom generisanja datoteke
@@ -371,7 +370,7 @@ DateValidationAndLock=Datum validacije i zaključavanje
 ConfirmExportFile=Potvrda generiranja datoteke za izvoz računovodstva ?
 ExportDraftJournal=Izvoz nacrt časopisa
 Modelcsv=Model izvoza
-Selectmodelcsv=Odaberi model izvoza
+Selectmodelcsv=Odaberite zadani format za izvoz
 Modelcsv_normal=Klasični izvoz
 Modelcsv_CEGID=Izvoz za CEGID Expert Comptabilité
 Modelcsv_COALA=Izvoz za kadulju koalu
@@ -393,7 +392,31 @@ Modelcsv_Gestinumv3=Izvoz za Gestinum (v3)
 Modelcsv_Gestinumv5=Izvoz za Gestinum (v5)
 Modelcsv_charlemagne=Izvoz za Aplim Karla Velikog
 ChartofaccountsId=Kontni plan Id
-
+ExportToPdf = Izvoz u PDF
+ExportToCsv = Export to CSV
+PdfLedgerTitle = Računi glavne knjige
+PdfBalanceTitle = Stanje glavne knjige
+PdfBookkeepingTitle = Dnevnici
+AccountancyBalance = Računovodstveni bilans
+AccountancyLedger = Računovodstvena knjiga
+AccountancyBookkeeping = Računovodstvo i knjigovodstvo
+PDFAccountancyBalanceDescription = PDF model za računovodstveni bilans
+PDFAccountancyBookkeepingDescription = PDF model za računovodstveno knjigovodstvo
+PDFAccountancyLedgerDescription = PDF model za računovodstvenu knjigu
+PrintDate = Datum ispisa
+PdfTitleAccountNb = Account
+DebitMovement = Debitno kretanje
+CreditMovement = Kretanje kredita
+BalanceAt = Stanje na %s
+AccountancyGroupTHIRDPARTY = Subjekti
+AccountancyGroupFINAN = Financije
+AccountancyGroupSTOCK = Zalihe
+AccountancyGroupCAPIT = Kapital
+AccountancyGroupIMMO = Stalna imovina
+AccountancyGroupEXPENSE = Troškovi
+AccountancyGroupINCOME = Prihodi
+GrandTotals = Ukupni iznosi
+ErrorAccountancyDirectoryNotDefined = Računovodstveni direktorij nije definiran
 ## Tools - Init accounting account on product / service
 InitAccountancy=Početno računovodstvo
 InitAccountancyDesc=Ova stranica se može koristiti za inicijalizaciju računovodstvenog računa na proizvodima i uslugama koji nemaju definiran računovodstveni račun za i kupovine.
@@ -422,18 +445,21 @@ AccountRemovedFromGroup=Račun je uklonjen iz grupe
 SaleLocal=Lokalna prodaja
 SaleExport=Izvozna prodaja
 SaleEEC=Prodaja u EEZ
-SaleEECWithVAT=Prodaja u EEZ-u sa PDV-om koji nije ništavan, tako da pretpostavljamo da ovo NIJE intrakomunalna prodaja i predloženi račun je standardni račun proizvoda.
-SaleEECWithoutVATNumber=Prodaja u EEZ bez PDV-a ali PDV ID treće strane nije definiran. Vraćamo se na račun za standardnu prodaju. Možete popraviti PDV ID treće strane ili promijeniti račun proizvoda predložen za obvezivanje ako je potrebno.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Prodaja se vrši u EEZ-u bez PDV-a, ali PDV ID treće strane nije definisan. Za standardnu prodaju koristimo račun. Možete ispraviti PDV ID treće strane ili promijeniti predloženi račun proizvoda za povezivanje ako je potrebno.
+AnySale=Bilo koja prodaja
 ForbiddenTransactionAlreadyExported=Zabranjeno: Transakcija je potvrđena i/ili izvezena.
 ForbiddenTransactionAlreadyValidated=Zabranjeno: Transakcija je potvrđena.
+DataMustHaveBeenTransferredInAccounting=Prijenos podataka u računovodstvo mora biti izvršen
+IfTransactionHasDueDate=Za transakcije vezane za dokumente koji zahtijevaju plaćanje
 ## Dictionary
 Range=Raspon računovodstvenog računa
 Calculated=Izračunato
 Formula=Formula
-
 ## Reconcile
 LetteringAuto=Pomiri auto
 LetteringManual=Priručnik za usklađivanje
+LetteringPartial=Djelomično usklađivanje
 Unlettering=Unreconcile
 UnletteringAuto=Unreconcile auto
 UnletteringManual=Nepomiriti priručnik
@@ -443,11 +469,10 @@ AccountancyLetteringModifiedSuccessfully=%s pomirenje uspješno izmijenjeno
 AccountancyNoUnletteringModified=Nepomirivanje nije izmijenjeno
 AccountancyOneUnletteringModifiedSuccessfully=Jedno nepomirivanje je uspješno izmijenjeno
 AccountancyUnletteringModifiedSuccessfully=%s poništenje uspješno izmijenjeno
-
 ## Closure
-AccountancyClosureStep1=Korak 1 : Potvrdite i zaključavanje pokreta
-AccountancyClosureStep2=Korak 2: Zatvorite fiskalni period
-AccountancyClosureStep3=Korak 3: Izdvojite unose (opciono)
+AccountancyClosureStep1=Validacija i zaključavanja pokreta
+AccountancyClosureStep2=Zatvorite fiskalni period
+AccountancyClosureStep3=Izdvoji unose (opciono)
 AccountancyClosureClose=Zatvori fiskalni period
 AccountancyClosureAccountingReversal=Izdvojite i unose "Zadržana zarada"
 AccountancyClosureStep3NewFiscalPeriod=Sljedeći fiskalni period
@@ -455,7 +480,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Generirajte unose "Zadržana
 AccountancyClosureSeparateAuxiliaryAccounts=Prilikom generiranja unosa "Zadržana dobit", detaljno opišite račune pod-knjige
 AccountancyClosureCloseSuccessfully=Fiskalni period je uspješno zaključen
 AccountancyClosureInsertAccountingReversalSuccessfully=Knjigovodstveni zapisi za "Zadržana dobit" su uspješno ubačeni
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Masovna potvrda automatskog poništavanja
 ConfirmMassUnletteringManual=Masovna potvrda ručnog poništenja
@@ -464,6 +488,9 @@ ConfirmMassDeleteBookkeepingWriting=Potvrda masovnog brisanja
 ConfirmMassDeleteBookkeepingWritingQuestion=Ovo će izbrisati transakciju iz računovodstva (svi unosi koji se odnose na istu transakciju će biti izbrisani). Jeste li sigurni da želite izbrisati %s odabrane unose?
 AccountancyClosureConfirmClose=Jeste li sigurni da želite zatvoriti trenutni fiskalni period? <span class="warning">Razumijete da je zatvaranje fiskalnog perioda nepovratna radnja i će trajno blokirati bilo kakvu izmjenu ili brisanje unosa tokom ovog perioda</span>.
 AccountancyClosureConfirmAccountingReversal=Jeste li sigurni da želite snimiti unose za "Zadržana dobit"?
+
+## Warning
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Neki obavezni koraci podešavanja nisu obavljeni, molimo dovršite ih
@@ -482,10 +509,12 @@ AccountancyErrorMismatchBalanceAmount=Stanje (%s) nije jednako 0
 AccountancyErrorLetteringBookkeeping=Došlo je do grešaka u vezi sa transakcijama: %s
 ErrorAccountNumberAlreadyExists=Računski broj %s već postoji
 ErrorArchiveAddFile=Ne mogu staviti "%s" fajl u arhivu
-ErrorNoFiscalPeriodActiveFound=Nije pronađen aktivni fiskalni period
+ErrorNoFiscalPeriodActiveFound=Nije pronađen nijedan aktivni fiskalni period (sa definisanim početnim i datumom završetka). Možete ga kreirati iz menija %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Datum knjigovodstvenog dokumenta nije unutar aktivnog fiskalnog perioda
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Datum knjigovodstvene dokumentacije je unutar zatvorenog fiskalnog perioda
-
+Error_BOOKKEEPING_ADDON_NotDefined=Greška, pravilo za numeriranje knjigovodstva nije definirano u općim postavkama modula Računovodstvo
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
+ProductUsage=Korištenje proizvoda ili usluge
 ## Import
 ImportAccountingEntries=Računovodstveni zapisi
 ImportAccountingEntriesFECFormat=Računovodstveni zapisi - FEC format
@@ -507,11 +536,35 @@ FECFormatReconcilableDate=Pomirljiv datum (DateLet)
 FECFormatValidateDate=Datum komada potvrđen (ValidDate)
 FECFormatMulticurrencyAmount=Viševalutni iznos (Montantdevise)
 FECFormatMulticurrencyCode=Multivalutni kod (Idevise)
-
 DateExport=Izvoz datuma
 WarningReportNotReliable=Upozorenje, ovaj izvještaj nije zasnovan na Knjizi, tako da ne sadrži transakcije izmijenjene ručno u Knjizi. Ako je vaše dnevnike ažurirano, knjigovodstveni prikaz je precizniji.
 ExpenseReportJournal=Dnevnik izvještaja o troškovima
 DocsAlreadyExportedAreIncluded=Dokumenti koji su već izvezeni su uključeni
 ClickToShowAlreadyExportedLines=Kliknite da prikažete već izvezene linije
-
 NAccounts=%s računi
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
+PieceDesc=Referenca izvornog dokumenta koji generira ovu bankovnu transakciju (Referenca fakture, Referenca izvještaja o troškovima, ...)
+BankTransactionRef=Referenca za bankovnu transakciju (opciono, automatski ID je već generisan)
+## Mass Actions
+ConfirmMassCloneBookkeepingWritingQuestion=Ovo će klonirati knjigovodstveni unos (svi redovi povezani s ovim knjigovodstvenim unosom bit će klonirani). Jeste li sigurni da želite klonirati odabrane zapise %s?
+ConfirmMassCloneBookkeepingWriting=Potvrdite masovno kloniranje
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
+ConfirmMassAssignAccountBookkeepingWritingQuestion=Ovo će promijeniti račun svih odabranih linija.
+confirmMassAssignAccountBookkeepingWritingConfirm=Potvrdite masovnu promjenu računa
+CloningSuccess=Uspješno kloniranje transakcije: %s
+CloningFailed=Kloniranje nije uspjelo
+CloneOf=Klon klase %s
+AssignAccountsSuccess=ažurirane transakcije
+AssignAccountSuccess=ažurirana transakcija
+AssignAccount=Promijeni račun
+AssignAccountError=Nije promijenjen račun
+NoAccountChangedWithAccountNumber=Transakcija nije ažurirana s brojem računa: %s
+NoAccountsChangedWithAccountNumber=Transakcije nisu ažurirane s brojevima računa: %s
+HasAlreadyBeenReversed=već je poništeno
+ErrorWhileCreating=Greška prilikom kreiranja %s
+ReturnAccount=Return
+Clone=Kloniraj
+AlreadyReturnedAccount=Zapis br. %s je već poništen
+SuccessReturnedAccount=Zapis br. %s je poništen

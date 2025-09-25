@@ -2,7 +2,6 @@
 RefSending=Árbitro. envío
 Receivings=Recibos de entrega
 SendingsArea=Zona de envíos
-ListOfSendings=Lista de envíos
 LastSendings=Últimos envíos %s
 SendingCard=Tarjeta de envío
 QtyShipped=Cantidad enviada

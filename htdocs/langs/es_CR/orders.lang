@@ -57,6 +57,7 @@ LastModifiedOrders=Últimas %s órdenes modificadas
 AllOrders=Todas las órdenes
 NbOfOrders=Numero de órdenes
 OrdersStatistics=Estadísticas de órdenes
+NumberOfOrders=Numero de órdenes
 NumberOfOrdersByMonth=Número de órdenes por mes
 AmountOfOrdersByMonthHT=Cantidad de órdenes por mes (sin impuestos)
 ListOfOrders=Listado de órdenes

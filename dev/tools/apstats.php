@@ -98,7 +98,7 @@ while ($i < $argc) {
 }
 
 // PHPSTAN setup
-$PHPSTANLEVEL = 4;
+$PHPSTANLEVEL = 9;
 
 // PHAN setup. Configuration is required, otherwise phan is disabled.
 $PHAN_CONFIG = "{$path}phan/config_extended.php";
@@ -124,38 +124,47 @@ $urlgit = 'https://github.com/Dolibarr/dolibarr/blob/develop/';
 $output_arrproj = array();
 $output_arrdep = array();
 if ($dirscc != 'disabled') {
-	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
+	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/custom,htdocs/includes,htdocs/public/includes,htdocs/theme/common/fontawesome-5,htdocs/public/theme/common/fontawesome-5';
 	print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
 	$resexecproj = 0;
 	exec($commandcheck, $output_arrproj, $resexecproj);
 
 
 	// Count lines of code of dependencies
-	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/theme/common/fontawesome-5 htdocs/theme/common/octicons';
+	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/public/includes htdocs/theme/common/fontawesome-5 htdocs/public/theme/common/fontawesome-5';
 	print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
 	$resexecdep = 0;
 	exec($commandcheck, $output_arrdep, $resexecdep);
 }
 
 // Get technical debt with PHPStan
-$output_arrtd = array();
+$output_arrver = array();
 if ($dirphpstan != 'disabled') {
 	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --version';
 	print 'Execute PHPStan to get the version: '.$commandcheck."\n";
-	$resexectd = 0;
-	exec($commandcheck, $output_arrtd, $resexectd);
+	$resexecver = 0;
+	exec($commandcheck, $output_arrver, $resexecver);
 }
-$phpstanversion = $output_arrtd[0];
+$phpstanversion = $output_arrver[0];
 
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 8G --error-format=github';
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a dev/build/phpstan/bootstrap.php --memory-limit 5G --error-format=github -c phpstan_apstats.neon';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);
 }
 
 // Get technical debt with Phan
+$output_arrverphan = array();
+if ($dirphpstan != 'disabled') {
+	$commandcheck = ($dir_phan ? $dir_phan.DIRECTORY_SEPARATOR : '') .'phan --version';
+	print 'Execute Phan to get the version: '.$commandcheck."\n";
+	$resexecverphan = 0;
+	exec($commandcheck, $output_arrverphan, $resexecverphan);
+}
+$phpphanversion = $output_arrverphan[0];
+
 $output_phan_json = array();
 $res_exec_phan = 0;
 if ($dir_phan != 'disabled') {
@@ -245,35 +254,36 @@ foreach (array('proj', 'dep') as $source) {
 }
 
 
+// Get stats on nb of commits
+/*
 $nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 
-// Get stats on nb of commits
 $commandcheck = "git log --all --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".dol_print_date(dol_now() - $delay, '%Y-%m-%d'); // --since=  --until=...
 print 'Execute git log to get list of commits: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 //exec($commandcheck, $output_arrglpu, $resexecglpu);
-
+*/
 
 // Get git information for security alerts
-$nbofmonth = 3;
+$nbofmonth = 6;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec )");
+$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec |Sec$)");
 print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 exec($commandcheck, $output_arrglpu, $resexecglpu);
-foreach ($output_arrglpu as $val) {
+foreach ($output_arrglpu as $valgitlog) {		// The most recent lines are first.
 	// Parse the line to split interesting data
-	$tmpval = cleanVal2($val);
+	$tmpval = cleanVal2($valgitlog);
 
-	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
+	if (preg_match('/(#yogosha|CVE[\s\-]*\d|Sec:|Sec\s|Sec$)/i', $tmpval['title'])) {	// Recommended git comment:  "Sec: Fix #..."
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
-		foreach ($arrayofalerts as $val) {
+		foreach ($arrayofalerts as $val) {	// Loop on already found alerts
 			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
 				$alreadyfound = 'yogosha';
 				$alreadyfoundcommitid = $val['commitid'];
@@ -289,7 +299,9 @@ foreach ($output_arrglpu as $val) {
 				$alreadyfoundcommitid = $val['commitid'];
 				break;
 			}
-			if ($val['title'] && $val['title'] == $tmpval['title']) {	// Already in list
+			if ($val['title'] && $tmpval['title'] &&
+				(strpos($val['title'], $tmpval['title']) === 0 || strpos($val['title'], $tmpval['title']) > 0
+				|| strpos($tmpval['title'], $val['title']) === 0 || strpos($tmpval['title'], $val['title']) > 0)) {	// Already in list
 				$alreadyfound = 'title';
 				$alreadyfoundcommitid = $val['commitid'];
 				break;
@@ -337,69 +349,21 @@ foreach ($output_arrglpu as $val) {
 			/*var_dump($tmpval['commitid'].' '.$alreadyfoundcommitid);
 			var_dump($arrayofalerts[$alreadyfoundcommitid]['branch']);
 			var_dump($tmpval);*/
+
+			$arrayofalerts[$alreadyfoundcommitid]['commitidbis'][] = $tmpval['commitid'];	// Concat the new commitid to the list of commitidbis array of the already found case.
+
+			if (empty($arrayofalerts[$alreadyfoundcommitid]['issueid']) && !empty($tmpval['issueid'])) {	// If not Github was defined, we set it.
+				$arrayofalerts[$alreadyfoundcommitid]['issueid'] = $tmpval['issueid'];
+			}
+
+			if ($arrayofalerts[$alreadyfoundcommitid]['title'] != $tmpval['title']) {		// Concat label of the new line to the already found one (if it differs)
+				$arrayofalerts[$alreadyfoundcommitid]['title'] .= ', '.preg_replace('/\.$/', '', $tmpval['title']);
+			}
+
 			$arrayofalerts[$alreadyfoundcommitid]['branch'] = array_merge($arrayofalerts[$alreadyfoundcommitid]['branch'], $tmpval['branch']);
-
-			$arrayofalerts[$alreadyfoundcommitid]['commitidbis'][] = $tmpval['commitid'];
 		}
 	}
 }
-
-
-/*
-//$urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
-$urlgit = 'https://api.github.com/search/commits?q=repo:Dolibarr/dolibarr+yogosha+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
-
-// Count lines of code of application
-$newurl = $urlgit.'+CVE';
-$result = getURLContent($newurl);
-print 'Execute GET on github for '.$newurl."\n";
-if ($result && $result['http_code'] == 200) {
-	$arrayofalerts1 = json_decode($result['content']);
-
-	foreach ($arrayofalerts1->items as $val) {
-		$tmpval = cleanVal($val);
-		if (preg_match('/CVE/i', $tmpval['title'])) {
-			$arrayofalerts[$tmpval['number']] = $tmpval;
-		}
-	}
-} else {
-	print 'Error: failed to get github response';
-	exit(-1);
-}
-
-$newurl = $urlgit.'+yogosha';
-$result = getURLContent($newurl);
-print 'Execute GET on github for '.$newurl."\n";
-if ($result && $result['http_code'] == 200) {
-	$arrayofalerts2 = json_decode($result['content']);
-
-	foreach ($arrayofalerts2->items as $val) {
-		$tmpval = cleanVal($val);
-		if (preg_match('/yogosha:/i', $tmpval['title'])) {
-			$arrayofalerts[$tmpval['number']] = $tmpval;
-		}
-	}
-} else {
-	print 'Error: failed to get github response';
-	exit(-1);
-}
-
-$newurl = $urlgit.'+Sec:';
-$result = getURLContent($newurl);
-print 'Execute GET on github for '.$newurl."\n";
-if ($result && $result['http_code'] == 200) {
-	$arrayofalerts3 = json_decode($result['content']);
-	foreach ($arrayofalerts3->items as $val) {
-		$tmpval = cleanVal($val);
-		if (preg_match('/Sec:/i', $tmpval['title'])) {
-			$arrayofalerts[$tmpval['number']] = $tmpval;
-		}
-	}
-} else {
-	print 'Error: failed to get github response';
-	exit(-1);
-}
-*/
 
 $timeend = time();
 
@@ -607,7 +571,7 @@ $html .= '<th class="right">Lines</th>';
 $html .= '<th></th>';
 $html .= '<th class="right">Blanks</th>';
 $html .= '<th class="right">Comments</th>';
-$html .= '<th class="right">Code</th>';
+$html .= '<th class="right nowrap">Code (SLOC)</th>';
 //$html .= '<td class="right">'.$val['Complexity'].'</td>';
 $html .= '</tr>';
 foreach (array('proj', 'dep') as $source) {
@@ -724,12 +688,6 @@ $html .= <<<END
 END;
 
 
-$html .= '<!-- ';
-foreach ($output_arrglpu as $line) {
-	$html .= $line."\n";
-}
-$html .= ' -->';
-
 $html .= '</div>';
 
 $html .= '</section>'."\n";
@@ -745,7 +703,7 @@ $html .= '<div class="boxallwidth">'."\n";
 $html .= <<<END
 <center><br>Thumbs of most active contributors<br>
 <br>
-<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://camo.githubusercontent.com/a641a400eef38e00a93b572dcfc30d13ceaaeefbca951d09ed9189142d20cf62/68747470733a2f2f6f70656e636f6c6c6563746976652e636f6d2f646f6c69626172722f636f6e7472696275746f72732e7376673f77696474683d38393026627574746f6e3d66616c7365" alt="Dolibarr" data-canonical-src="https://opencollective.com/dolibarr/contributors.svg?width=890&amp;button=false" style="max-width: 100%;"></a>
+<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" alt="Dolibarr" data-canonical-src="https://opencollective.com/dolibarr/contributors.svg?width=890&amp;button=false" style="max-width: 100%;"></a>
 </center>
 <br>
 END;
@@ -877,13 +835,13 @@ if (count($output_phan_json) != 0) {
 $title_security_short = "Last security issues";
 $title_security = ($project ? "[".$project."] " : "").$title_security_short;
 
-$html .= '<section class="chapter" id="linesofcode">'."\n";
+$html .= '<section class="chapter" id="securityalerts">'."\n";
 $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security_short.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap"><a href="https://www.cve.org/CVERecord/SearchResults?query=dolibarr">Reported on<br>CVE</a></td><td>Title</td><td>Branch of fix</td></tr>'."\n";
 foreach ($arrayofalerts as $key => $alert) {
 	$cve = '';
 	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];
@@ -953,7 +911,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	}
 	$html .= '</td>';
 
-	// Description
+	// Title - Description
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
 
 	// Branches
@@ -974,6 +932,7 @@ $html .= '</div>';
 $html .= '</div>';
 
 $html .= '<br>';
+$html .= 'Note:Search is done in git repository on regex string "#yogosha|CVE[\s\-]*\d|Sec:|Sec\s" (not case sensitive)<br>';
 $html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
 
 $html .= '</section>';
@@ -1019,11 +978,13 @@ if ($fh) {
 
 		fwrite($fh, '<item>'."\n");
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
+		// Description of alert, list of links to sources and branches of fixes
 		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
 		$tmpdate = strtotime($alert['created_at']);
 		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
-		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");	// A hidden unique ID
+
 		fwrite($fh, '</item>'."\n");
 	}
 
@@ -1079,7 +1040,7 @@ if ($dir_phan != 'disabled') {
     ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebtphan">'."\n";
-	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHAN '.$phan_nblines.' warnings)</span></h2>'."\n";
+	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">('.$phpphanversion.' -> '.$phan_nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";
@@ -1176,7 +1137,7 @@ function cleanVal2($val)
 	$tmpval['issueid'] = '';
 	$tmpval['issueidyogosha'] = '';
 	$tmpval['issueidcve'] = '';
-	$tmpval['title'] = array_key_exists(5, $tmp) ? $tmp[5] : '';
+	$tmpval['title'] = array_key_exists(5, $tmp) ? preg_replace('/\.$/', '', $tmp[5]) : '';
 	$tmpval['created_at'] = array_key_exists(0, $tmp) ? $tmp[0] : '';
 	$tmpval['updated_at'] = '';
 
@@ -1185,7 +1146,7 @@ function cleanVal2($val)
 		$tmpval['issueid'] = $reg[1];
 	}
 	if (preg_match('/CVE([0-9\-\s]+)/', $tmpval['title'], $reg)) {
-		$tmpval['issueidcve'] = preg_replace('/^\-/', '', trim($reg[1]));
+		$tmpval['issueidcve'] = preg_replace('/^\-/', '', preg_replace('/\s+/', '-', trim($reg[1])));
 	}
 	if (preg_match('/#yogosha(\d+)/i', $tmpval['title'], $reg)) {
 		$tmpval['issueidyogosha'] = $reg[1];

@@ -7,8 +7,8 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand			    <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'interventions', 'other'));
 
@@ -56,12 +65,16 @@ $type = 'ficheinter';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
+
+	$res = 0;
+
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
@@ -116,7 +129,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->FICHEINTER_ADDON_PDF == "$value") {
+		if (getDolGlobalString('FICHEINTER_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'FICHEINTER_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -252,11 +265,12 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-fichinter');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("InterventionsSetup"), $linkback, 'title_setup');
 
 
@@ -295,6 +309,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
+					'@phan-var-force ModeleNumRefFicheinter $module';
+
 					if ($module->isEnabled()) {
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -305,7 +321,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -323,7 +339,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->FICHEINTER_ADDON == $classname) {
+						if (getDolGlobalString('FICHEINTER_ADDON') == $classname) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($classname).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -349,7 +365,7 @@ foreach ($dirmodels as $reldir) {
 							}
 						}
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print '</tr>';
@@ -432,6 +448,8 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.'/'.$file;
 						$module = new $classname($db);
 
+						'@phan-var-force ModelePDFFicheinter $module';
+
 						$modulequalified = 1;
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
@@ -445,7 +463,7 @@ foreach ($dirmodels as $reldir) {
 							print(empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 							if (method_exists($module, 'info')) {
-								print $module->info($langs);
+								print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 							} else {
 								print $module->description;
 							}
@@ -466,7 +484,7 @@ foreach ($dirmodels as $reldir) {
 
 							// Default
 							print "<td align=\"center\">";
-							if ($conf->global->FICHEINTER_ADDON_PDF == "$name") {
+							if (getDolGlobalString('FICHEINTER_ADDON_PDF') == "$name") {
 								print img_picto($langs->trans("Default"), 'on');
 							} else {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -486,7 +504,7 @@ foreach ($dirmodels as $reldir) {
 							$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 							$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, -1, 0);
+							print $form->textwithpicto('', $htmltooltip, -1, 'info');
 							print '</td>';
 
 							// Preview
@@ -494,7 +512,7 @@ foreach ($dirmodels as $reldir) {
 							if ($module->type == 'pdf') {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 							} else {
-								print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+								print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 							}
 							print '</td>';
 
@@ -521,7 +539,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60"></td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 

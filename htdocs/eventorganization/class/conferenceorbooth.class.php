@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017	Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +82,7 @@ class ConferenceOrBooth extends ActionComm
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -101,7 +100,7 @@ class ConferenceOrBooth extends ActionComm
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'csslist' => 'left', 'comment' => "Id"),
@@ -111,28 +110,64 @@ class ConferenceOrBooth extends ActionComm
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => '$conf->societe->enabled', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'csslist' => 'tdoverflowmax100', 'css' => 'maxwidth500'),
 		'note' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3),
 		'fk_action' => array('type' => "sellist:c_actioncomm:libelle:id::(module:LIKE:'%@eventorganization')", 'label' => 'ConferenceOrBoothFormat', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'css' => 'width200', 'csslist' => 'tdoverflowmax100'),
-		'datep' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => '2',),
-		'datep2' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => '3',),
+		'datep' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => 2,),
+		'datep2' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => 3,),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
 		'fk_user_mod' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2, 'csslist' => 'tdoverflowmax100'),
 		'num_vote' => array('type' => 'smallint', 'label' => 'NbVotes', 'enabled' => 1, 'position' => 800, 'notnull' => -1, 'visible' => 5, 'default' => '0', 'index' => 0),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array('0' => 'EvntOrgDraft', '1' => 'EvntOrgSuggested', '2' => 'EvntOrgConfirmed', '3' => 'EvntOrgNotQualified', '4' => 'EvntOrgDone', '9' => 'EvntOrgCancelled'),),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'EvntOrgDraft', 1 => 'EvntOrgSuggested', 2 => 'EvntOrgConfirmed', 3 => 'EvntOrgNotQualified', 4 => 'EvntOrgDone', 9 => 'EvntOrgCancelled'),),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var int
+	 */
 	public $id;
+	/**
+	 * @var string
+	 */
 	public $label;
+	/**
+	 * @var int
+	 */
 	public $fk_soc;
+	/**
+	 * @var int
+	 */
 	public $fk_project;
+	/**
+	 * @var string
+	 */
 	public $note;
+	/**
+	 * @var int
+	 */
 	public $fk_action;
+	/**
+	 * @var int
+	 */
 	public $datec;
 
+	/**
+	 * @var int
+	 */
 	public $fk_user_author;
+	/**
+	 * @var int
+	 */
 	public $fk_user_mod;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
@@ -146,7 +181,7 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -194,17 +229,20 @@ class ConferenceOrBooth extends ActionComm
 	}
 
 	/**
-	 * Set Percentage from status
+	 * Set the percentage of actioncomm from the status of the booth or conference
 	 *
 	 * @return void
 	 */
 	protected function setPercentageFromStatus()
 	{
+		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_SUGGESTED || $this->status == self::STATUS_NOT_QUALIFIED || $this->status == self::STATUS_CANCELED) {
+			$this->percentage = -1;
+		}
+		if ($this->status == self::STATUS_CONFIRMED) {
+			$this->percentage = 0;
+		}
 		if ($this->status == self::STATUS_DONE) {
 			$this->percentage = 100;
-		}
-		if ($this->status == self::STATUS_DRAFT) {
-			$this->percentage = 0;
 		}
 	}
 
@@ -247,19 +285,20 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
-		global $dolibarr_main_url_root, $conf, $langs;
+		global $dolibarr_main_url_root;
 
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
 
 		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode((string) ($id)).'&type=conf';
 
-		$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.$id, 2);
+		$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
 		/*$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
 		$this->pubregister = $link_subscription;*/
 
 		$this->getActionCommFields();
+
 		return $result;
 	}
 
@@ -270,16 +309,13 @@ class ConferenceOrBooth extends ActionComm
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * @param  string|array	$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
 	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		//TODO set percent according status
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -292,6 +328,32 @@ class ConferenceOrBooth extends ActionComm
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
+		}
+
+		// Manage filter
+		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter must be an USF string now.", LOG_WARNING);
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.id' || $key == 't.fk_project' || $key == 't.fk_soc' || $key == 't.fk_action') {
+						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
+					} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+					} elseif ($key == 'customsql') {
+						$sqlwhere[] = $value;	// deprecated
+					} elseif (strpos($value, '%') === false) {
+						$sqlwhere[] = $this->db->sanitize($key).' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
+					}
+				}
+			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			}
+
+			$filter = '';
 		}
 
 		// Manage filter
@@ -345,7 +407,9 @@ class ConferenceOrBooth extends ActionComm
 	public function update(User $user, $notrigger = 0)
 	{
 		$this->setPercentageFromStatus();
+
 		$this->setActionCommFields($user);
+
 		return parent::update($user, $notrigger);
 	}
 
@@ -546,9 +610,9 @@ class ConferenceOrBooth extends ActionComm
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowConferenceOrBooth");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			//$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			//$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -659,9 +723,9 @@ class ConferenceOrBooth extends ActionComm
 	/**
 	 *	Return a thumb for kanban views
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -687,7 +751,7 @@ class ConferenceOrBooth extends ActionComm
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br>';
-			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';  // @phan-suppress-current-line PhanUndeclaredProperty
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
@@ -746,10 +810,10 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Pieteikumi
 Module56000Desc=Biļešu sistēma izsniegšanai vai pieprasījuma pārvaldīšanai
-
 Permission56001=Apskatīt pieteikumus
 Permission56002=Labot pieteikumus
 Permission56003=Dzēst pieteikumus
 Permission56004=Pieteikumu pārvaldīšana
 Permission56005=Skatīt visu trešo pušu biļetes (nav efektīvas ārējiem lietotājiem, vienmēr aprobežojas ar trešajām personām, no kurām tie ir atkarīgi)
 Permission56006=Eksporta biļetes
-
 Tickets=Pieteikumi
 TicketDictType=Pieteikumu veids
 TicketDictCategory=Biļete – Grupas
 TicketDictSeverity=Pieteikuma svarīgums
 TicketDictResolution=Biļete - izšķirtspēja
-
 TicketTypeShortCOM=Tirdzniecības jautājums
 TicketTypeShortHELP=Lūgums pēc funkcionālās palīdzības
 TicketTypeShortISSUE=Izdevums vai kļūda
@@ -41,61 +33,51 @@ TicketTypeShortPROBLEM=Problēma
 TicketTypeShortREQUEST=Mainīt vai uzlabot pieprasījumu
 TicketTypeShortPROJET=Projekts
 TicketTypeShortOTHER=Cits
-
 TicketSeverityShortLOW=Zems
 TicketSeverityShortNORMAL=Normāls
 TicketSeverityShortHIGH=Augsts
 TicketSeverityShortBLOCKING=Kritisks, bloķējošs
-
 TicketCategoryShortOTHER=Cits
-
 ErrorBadEmailAddress=Lauks "%s" ir nepareizs
 MenuTicketMyAssign=Mani pieteikumi
 MenuTicketMyAssignNonClosed=Mani atvērtie pieteikumi
 MenuListNonClosed=Atvērtie pieteikumi
-
 TypeContact_ticket_internal_CONTRIBUTOR=Ieguldītājs
 TypeContact_ticket_internal_SUPPORTTEC=Piešķirtais lietotājs
 TypeContact_ticket_external_SUPPORTCLI=Klientu kontaktu / incidentu izsekošana
 TypeContact_ticket_external_CONTRIBUTOR=Ārējais ieguldītājs
-
 OriginEmail=Reportiera e-pasts
+EmailReplyto=Reply-To in Email
+EmailReferences=Atsauces e-pastos
 Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
-
 ExportDataset_ticket_1=Pieteikumi
-
 # Status
 Read=Lasīt
 Assigned=Piešķirts
 NeedMoreInformation=Gaida reportiera atsauksmes
 NeedMoreInformationShort=Gaida atsauksmes
-TicketAnswered=Atbildēts
 Waiting=Gaida
-SolvedClosed=Atrisināts
+SolvedClosed=Slēgts
 Deleted=Dzēsts
-
 # Dict
-Type=Veids
 Severity=Smagums
 TicketGroupIsPublic=Grupa ir publiska
 TicketGroupIsPublicDesc=Ja biļešu grupa ir publiska, tā būs redzama formā, veidojot biļeti no publiskās saskarnes
-
 # Email templates
 MailToSendTicketMessage=Lai nosūtītu e-pastu no pieteikuma
-
-#
 # Admin page
-#
 TicketSetup=Pieteikumu moduļa iestatīšana
 TicketSettings=Iestatījumi
 TicketPublicAccess=Publiska saskarne, kurai nav nepieciešama identifikācija, ir pieejama šādā URL
 TicketSetupDictionaries=Pieteikumu, svarīgums un analītiskie kodi ir konfigurējami no vārdnīcās
 TicketParamModule=Moduļa mainīgā iestatīšana
 TicketParamMail=E-pasta iestatīšana
-TicketEmailNotificationFrom=Sūtīt e-pastu, lai saņemtu paziņojumu par atbildēm
-TicketEmailNotificationFromHelp=Sūtītāja e-pasts, ko izmantot, lai nosūtītu e-pasta paziņojumu, kad atbilde tiek sniegta aizmugurējā birojā. Piemēram, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Paziņot par biļetes izveidi uz šo e-pasta adresi
-TicketEmailNotificationToHelp=Ja tāda ir, šī e-pasta adrese tiks informēta par biļetes izveidi
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation (in addition to any other default recipients)
 TicketNewEmailBodyLabel=Īsziņa, kas nosūtīta pēc pieteikuma izveides
 TicketNewEmailBodyHelp=Šeit norādītais teksts tiks ievietots e-pastā, apstiprinot jauna biļetes izveidi no publiskā saskarnes. Informācija par biļetes apspriešanu tiek automātiski pievienota.
 TicketParamPublicInterface=Publiskās saskarnes iestatīšana
@@ -116,7 +98,9 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=Šis teksts parādās virs lietot�
 ExtraFieldsTicket=Papildus atribūti
 TicketCkEditorEmailNotActivated=HTML redaktors nav aktivizēts. Lūdzu, ievietojiet FCKEDITOR_ENABLE_MAIL saturu 1, lai to iegūtu.
 TicketsDisableEmail=Nesūtiet e-pastus par biļešu izveidi vai ziņojumu ierakstīšanu
-TicketsDisableEmailHelp=Pēc noklusējuma e-pastus sūta, kad tiek veidotas jaunas biļetes vai ziņojumi. Iespējojiet šo opciju, lai atspējotu * all * e-pasta paziņojumus
+TicketsDisableEmailHelp=By default, notification emails to third parties are sent when new tickets or messages are created for both backoffice and public interface. Enable this option to disable email notifications to thirdparties when creation is done from backoffice.
+TicketsNotifyThirdPartyFromBackOfficeByDefault=Notify third party by default on ticket creation from backoffice
+TicketsNotifyThirdPartyFromBackOfficeByDefaultHelp=When creating a ticket from the backoffice, the option "Notify third party" will be checked by default
 TicketsLogEnableEmail=Iespējot žurnālu pa e-pastu
 TicketsLogEnableEmailHelp=Katrā izmaiņā ** katram kontaktam **, kas saistīts ar biļeti, tiks nosūtīts e-pasts **.
 TicketParams=Parametri
@@ -133,11 +117,13 @@ TicketsLimitViewAssignedOnlyHelp=Tiks redzamas tikai pašreizējam lietotājam p
 TicketsActivatePublicInterface=Aktivizēt publisko saskarni
 TicketsActivatePublicInterfaceHelp=Publiskā saskarne ļauj apmeklētājiem izveidot biļetes.
 TicketsAutoAssignTicket=Automātiski piešķirt lietotāju, kas izveidojis biļeti
-TicketsAutoAssignTicketHelp=Veidojot biļeti, lietotājs var automātiski piešķirt biļeti.
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
+TicketAutoChangeStatusOnAnswer=Automātiski piešķiriet statusu, atbildot uz biļeti
+TicketAutoChangeStatusOnAnswerHelp=Kad lietotājs atbild uz biļeti, biļetei automātiski tiks piemērots statuss
 TicketNumberingModules=Čeku numerācijas modulis
 TicketsModelModule=Biļešu dokumentu veidnes
 TicketNotifyTiersAtCreation=Paziņot trešajai pusei radīšanas laikā
-TicketsDisableCustomerEmail=Vienmēr atspējojiet e-pasta ziņojumus, ja biļete tiek veidota no publiskās saskarnes
+TicketsDisableCustomerEmail=Always disable emails to third parties when a ticket is created from the backoffice
 TicketsPublicNotificationNewMessage=Sūtīt e-pastu (-us), kad biļetei tiek pievienots jauns ziņojums / komentārs
 TicketsPublicNotificationNewMessageHelp=Sūtiet e-pastu (s), kad no publiskās saskarnes tiek pievienots jauns ziņojums (piešķirtajam lietotājam vai paziņojumu e-pastu uz (atjaunināt) un / vai paziņojumu e-pastu uz)
 TicketPublicNotificationNewMessageDefaultEmail=Paziņojumu e-pasts adresātam (atjaunināt)
@@ -152,15 +138,16 @@ TicketsAutoNotifyClose=Automātiski paziņot trešajai pusei, aizverot biļeti
 TicketsAutoNotifyCloseHelp=Aizverot biļeti, jums tiks piedāvāts nosūtīt ziņojumu kādai no trešās puses kontaktpersonām. Masveida slēgšanā vienai ar biļeti saistītās trešās puses kontaktpersonai tiks nosūtīts ziņojums.
 TicketWrongContact=Norādītā kontaktpersona nav daļa no pašreizējām biļešu kontaktpersonām. E-pasts nav nosūtīts.
 TicketChooseProductCategory=Produktu kategorija biļešu atbalstam
-TicketChooseProductCategoryHelp=Atlasiet biļešu atbalsta produktu kategoriju. Tas tiks izmantots, lai automātiski saistītu līgumu ar biļeti.
+TicketChooseProductCategoryHelp=Atlasiet atbalsta produktu kategoriju. Kategorija tiks izmantota, lai atrastu visus līgumus, kuros ir iekļauts produkts šajā kategorijā. Visi atrastie līgumi tiks saistīti ar izveidoto biļeti.
 TicketUseCaptchaCode=Veidojot biļeti, izmantojiet grafisko kodu (CAPTCHA).
 TicketUseCaptchaCodeHelp=Veidojot jaunu biļeti, pievieno CAPTCHA verifikāciju.
 TicketsAllowClassificationModificationIfClosed=Atļaut mainīt slēgto biļešu klasifikāciju
 TicketsAllowClassificationModificationIfClosedHelp=Atļaut mainīt klasifikāciju (tips, biļešu grupa, smaguma pakāpe) pat tad, ja biļetes ir slēgtas.
-
-#
+TicketAutoCheckNotifyThirdParty=Veidojot biļeti, pēc noklusējuma atzīmējiet opciju Paziņot trešajai pusei
+TicketAutoCheckNotifyThirdPartyHelp=Veidojot biļeti, automātiski tiks atzīmēta opcija "Paziņot trešajai pusei".
+TicketAssignContactToMessage=Piešķiriet ziņojumam ārēju kontaktpersonu
+TicketAssignContactToMessageHelp=Kad zināma kontaktpersona atbild uz ziņojumu, viņa vārds tiek parādīts biļešu ziņojumu sarakstā.
 # Index & list page
-#
 TicketsIndex=Biļešu zona
 TicketList=Pieteikumu saraksts
 TicketAssignedToMeInfos=Šī lapa parāda pieteikumu sarakstu, kas izveidots vai piešķirts pašreizējam lietotājam
@@ -171,14 +158,9 @@ TicketViewNonClosedOnly=Skatīt tikai atvērtos pieteikumus
 TicketStatByStatus=Pieteikumi pēc statusa
 OrderByDateAsc=Kārtot pēc augošā datuma
 OrderByDateDesc=Kārtot pēc dilstošā datuma
-ShowAsConversation=Rādīt kā sarunu sarakstu
-MessageListViewType=Rādīt kā tabulu sarakstu
 ConfirmMassTicketClosingSendEmail=Automātiski sūtīt e-pastus, aizverot biļetes
 ConfirmMassTicketClosingSendEmailQuestion=Vai vēlaties informēt trešās puses, slēdzot šīs biļetes?
-
-#
 # Ticket card
-#
 Ticket=Biļete
 TicketCard=Pieteikuma kartiņa
 CreateTicket=Izveidot pieteikumu
@@ -220,8 +202,8 @@ ConfirmAbandonTicket=Vai jūs apstiprināt biļetes slēgšanu līdz statusam �
 ConfirmDeleteTicket=Lūdzu, apstipriniet pieteikuma dzēšanu
 TicketDeletedSuccess=Pieteikums ir dzēsts veiksmīgi
 TicketMarkedAsClosed=Pieteikums ir atzīmēta kā slēgts
-TicketDurationAuto=Aprēķinātais ilgums
-TicketDurationAutoInfos=Ilgums, kas aprēķināts automātiski no intervences
+TicketDurationAuto=Intervenču ilgums
+TicketDurationAutoInfos=Ilgums tiek aprēķināts automātiski no saistītajām iejaukšanās darbībām
 TicketUpdated=Pieteikums atjaunināts
 SendMessageByEmail=Nosūtīt ziņu pa e-pastu
 TicketNewMessage=Jauna ziņa
@@ -278,20 +260,14 @@ TicketsDelayFromLastResponseTooLong=Pārāk daudz laika pagājis kopš pēdējā
 TicketNoContractFoundToLink=Netika atrasts neviens līgums, kas būtu automātiski saistīts ar šo biļeti. Lūdzu, manuāli saistiet līgumu.
 TicketManyContractsLinked=Daudzi līgumi ir automātiski saistīti ar šo biļeti. Noteikti pārbaudiet, kuru izvēlēties.
 TicketRefAlreadyUsed=Atsauce [%s] jau ir izmantota, jūsu jaunā atsauce ir [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Pieteikumu %s apskatīja %s
 NoLogForThisTicket=Vēl nav piereģistrējies par šo biļeti
 TicketLogAssignedTo=Pieteikums %s piešķirts %s
 TicketLogPropertyChanged=Pieteikums %s labots: klasifikācija no %s līdz %s
 TicketLogClosedBy=Pieteikumu %s slēdza %s
 TicketLogReopen=Pieteikums %s atvērts atkārtoti
-
-#
 # Public pages
-#
 TicketSystem=Pieteikumu sistēma
 ShowListTicketWithTrackId=Parādīt biļešu sarakstu no maršruta ID
 ShowTicketWithTrackId=Rādīt biļeti no maršruta ID
@@ -306,13 +282,14 @@ TicketNewEmailBodyCustomer=Šis ir automātiskais e-pasta ziņojums, kas apstipr
 TicketNewEmailBodyInfosTicket=Informācija biļetes uzraudzībai
 TicketNewEmailBodyInfosTrackId=Biļešu izsekošanas numurs: %s
 TicketNewEmailBodyInfosTrackUrl=Biļešu iegādes gaitu varat apskatīt, noklikšķinot uz šīs saites
-TicketNewEmailBodyInfosTrackUrlCustomer=Jūs varat apskatīt pieteikuma statusu konkrētajā saskarnē, noklikšķinot uz šīs saites
+TicketNewEmailBodyInfosTrackUrlCustomer=Biļešu iegādes gaitu varat apskatīt publiskajā biļešu portālā, noklikšķinot uz šīs saites
 TicketCloseEmailBodyInfosTrackUrlCustomer=Ar šīs biļetes vēsturi varat iepazīties, noklikšķinot uz šīs saites
 TicketEmailPleaseDoNotReplyToThisEmail=Lūdzu, neatbildiet tieši uz šo e-pastu! Izmantojiet saiti, lai atbildētu interfeisu.
+TicketEmailPleaseDoNotReplyToThisEmailNoInterface=Please do not reply directly to this email!
 TicketPublicInfoCreateTicket=Šī veidlapa ļauj ierakstīt atbalsta biļeti mūsu vadības sistēmā.
 TicketPublicPleaseBeAccuratelyDescribe=Lūdzu, precīzi aprakstiet savu pieprasījumu. Sniedziet pēc iespējas vairāk informācijas, lai mēs varētu pareizi identificēt jūsu pieprasījumu.
 TicketPublicMsgViewLogIn=Lūdzu, ievadiet biļešu izsekošanas ID
-TicketTrackId=Publiskais izsekošanas ID
+TicketTrackId=Izsekošanas ID
 OneOfTicketTrackId=Viens no jūsu izsekošanas ID
 ErrorTicketNotFound=Biļete ar izsekošanas ID %s nav atrasts!
 Subject=Virsraksts
@@ -330,7 +307,6 @@ NumberOfTicketsByMonth=Pieteikumu skaits mēnesī
 NbOfTickets=Pieteikumu skaits
 ExternalContributors=Ārējie ieguldītāji
 AddContributor=Pievienojiet ārējo līdzautoru
-
 # notifications
 TicketCloseEmailSubjectCustomer=Biļete slēgta
 TicketCloseEmailBodyCustomer=Šis ir automātisks ziņojums, lai informētu, ka biļete %s tikko ir aizvērta.
@@ -342,12 +318,8 @@ TicketNotificationRecipient=Paziņojuma saņēmējs
 TicketNotificationLogMessage=Log ziņojums
 TicketNotificationEmailBodyInfosTrackUrlinternal=Skatīt biļeti interfeisu
 TicketNotificationNumberEmailSent=Paziņojuma e-pasts nosūtīts: %s
-
 ActionsOnTicket=Notikumi biļetē
-
-#
 # Boxes
-#
 BoxLastTicket=Jaunākais izveidotais pieteikums
 BoxLastTicketDescription=Jaunākie %s izveidotie pieteikumi
 BoxLastTicketContent=
@@ -366,4 +338,7 @@ BoxNumberOfTicketByDay=Jauno biļešu skaits dienā
 BoxNewTicketVSClose=Biļešu skaits salīdzinājumā ar slēgtajām biļetēm (šodien)
 TicketCreatedToday=Biļete izveidota šodien
 TicketClosedToday=Biļete šodien ir slēgta
-KMFoundForTicketGroup=Mēs atradām tēmas un bieži uzdotos jautājumus, kas var atbildēt uz jūsu jautājumu, tāpēc pārbaudām tās pirms biļetes iesniegšanas
+KMFoundForTicketGroup=Checkout our FAQ
+SetTitle=Iestatiet virsrakstu
+TicketSendToInternalCC=Force an email as CC recipient to all messages send from ticket page.
+TicketSendToInternalCCHelp=Enter the email you want to use automatically as a Carbon Copy recipient when sending an email from ticket page.

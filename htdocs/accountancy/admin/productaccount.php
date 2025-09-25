@@ -5,7 +5,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "compta", "accountancy", "products"));
@@ -87,10 +96,11 @@ if (empty($accounting_product_mode)) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -189,20 +199,18 @@ if ($action == 'update' && $permissiontobind) {
 	}
 
 	if (!empty($toselect) && $massaction === 'changeaccount') {
-		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
 		$ok = 0;
 		$ko = 0;
 		$msg = '';
 		$sql = '';
-		if (!empty($toselect) && in_array($accounting_product_mode, $accounting_product_modes)) {
+		if (!empty($toselect) && in_array($accounting_product_mode, $accounting_product_modes)) {	// @phpstan-ignore-line Bug phpstan thinking that empty(array()) is always true
 			$accounting = new AccountingAccount($db);
 
-			//$msg .= '<div><span class="accountingprocessing">' . count($toselect) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0;
 			foreach ($toselect as $productid) {
-				$accounting_account_id = GETPOST('codeventil_'.$productid);
+				$accounting_account_id = GETPOSTINT('codeventil_'.$productid);
 
 				$result = 0;
 				if ($accounting_account_id > 0) {
@@ -274,6 +282,7 @@ if ($action == 'update' && $permissiontobind) {
  */
 
 $form = new FormAccounting($db);
+'@phan-var-force string[] $toselect';  // For some reason typing is lost at this point
 
 // Default AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
@@ -413,7 +422,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -474,15 +483,14 @@ if ($resql) {
 	print '<input type="hidden" name="page_y" value="">';
 
 	print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
-	print '<br>';
 
 	print '<span class="opacitymedium">'.$langs->trans("InitAccountancyDesc").'</span><br>';
 	print '<br>';
 
-	// Select mode
+	// Select usage
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Options').'</td><td>'.$langs->trans('Description').'</td>';
+	print '<td>'.$langs->trans('ProductUsage').'</td><td></td>';
 	print "</tr>\n";
 	print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode1" name="accounting_product_mode" value="ACCOUNTANCY_SELL"'.($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '').'> <label for="accounting_product_mode1">'.$langs->trans('OptionModeProductSell').'</label></td>';
 	print '<td>'.$langs->trans('OptionModeProductSellDesc');
@@ -507,8 +515,10 @@ if ($resql) {
 
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Refresh').'" name="changetype"></div>';
 
-	print "<br>\n";
+	print "<br><br>\n";
 
+
+	$object = new Product($db);
 
 	// Filter on categories
 	$moreforfilter = '';
@@ -517,7 +527,7 @@ if ($resql) {
 
 	$massactionbutton = '';
 
-	$nbselected = is_array($toselect) ? count($toselect) : 0;
+	$nbselected = count($toselect);
 	if ($massaction == 'set_default_account') {
 		if ($nbselected <= 0) {
 			$langs->load("errors");
@@ -539,7 +549,7 @@ if ($resql) {
 	//print '<br><div class="center">'.$buttonsave.'</div>';
 
 	$texte = $langs->trans("ListOfProductsServices");
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 	if ($massaction == 'set_default_account') {
 		$formquestion = array();
@@ -566,7 +576,7 @@ if ($resql) {
 	}
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
 	} else {
@@ -726,10 +736,8 @@ if ($resql) {
 		}
 
 		$selected = 0;
-		if (!empty($toselect)) {
-			if (in_array($product_static->id, $toselect)) {
-				$selected = 1;
-			}
+		if (in_array($product_static->id, $toselect)) {
+			$selected = 1;
 		}
 
 		print '<tr class="oddeven">';

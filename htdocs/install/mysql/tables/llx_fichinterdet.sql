@@ -25,5 +25,6 @@ create table llx_fichinterdet
   date              datetime,          -- date de la ligne d'intervention
   description       text,              -- description de la ligne d'intervention
   duree             integer,           -- duree de la ligne d'intervention
-  rang              integer DEFAULT 0  -- ordre affichage sur la fiche
+  rang              integer DEFAULT 0, -- ordre affichage sur la fiche
+  extraparams		varchar(255)	   -- to stock other parameters in json format
 )ENGINE=innodb;

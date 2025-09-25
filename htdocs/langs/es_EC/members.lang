@@ -33,7 +33,6 @@ SubscriptionEndDate=Fecha de finalización de la suscripción
 MembersTypeSetup=Configuración de tipo de miembro
 ConfirmDeleteMemberType=¿Estás seguro de que quieres eliminar este tipo de miembro?
 MemberTypeCanNotBeDeleted=El tipo de miembro no se puede eliminar.
-NewSubscription=Nueva contribución
 NewSubscriptionDesc=Este formulario le permite registrar su suscripción como un nuevo miembro de la fundación. Si desea renovar su suscripción (si ya es miembro), póngase en contacto con la junta de la fundación en su lugar por correo electrónico %s.
 SubscriptionLate=Tarde
 SendCardByMail=Enviar tarjeta por correo electrónico

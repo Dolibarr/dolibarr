@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +17,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var Canvas $this
+ * @var Conf $conf
+ * @var CommonObject $this
+ * @var DoliDB $db
+ * @var FormFile $formfile
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $canvas
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -46,7 +58,7 @@ if (empty($conf) || !is_object($conf)) {
 
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('Name'); ?></span></td>
-	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
+	<td colspan="3"><input type="text" size="40" maxlength="60" name="name" value="<?php echo $this->control->tpl['name']; ?>"></td>
 </tr>
 
 <?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>

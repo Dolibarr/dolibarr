@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2018	   Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +35,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 if (!$user->admin) {
 	accessforbidden();
 }
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("receptions");
-$langs->load("deliveries");
+$langs->loadLangs(array("admin", "other", "receptions", "sendings"));
 
 
 $extrafields = new ExtraFields($db);
@@ -53,10 +59,6 @@ $type2label = ExtraFields::getListOfTypesLabels();
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'reception'; //Must be the $table_element of the class that manage extrafield
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 
 /*
@@ -73,9 +75,10 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Receptions");
 
-llxHeader('', $langs->trans("ReceptionsSetup"));
+llxHeader('', $langs->trans("ReceptionsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-reception_extrafields');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ReceptionsSetup"), $linkback, 'title_setup');
 print "<br>\n";
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ use Luracast\Restler\RestException;
 
 /**
  * Dolibarr API access class
- *
  */
 class DolibarrApiAccess implements iAuthenticate
 {
@@ -56,12 +55,12 @@ class DolibarrApiAccess implements iAuthenticate
 	public $db;
 
 	/**
-	 * @var array $requires	role required by API method		user / external / admin
+	 * @var string[]	role required by API method		user / external / admin
 	 */
 	public static $requires = array('user', 'external', 'admin');
 
 	/**
-	 * @var string $role		user role
+	 * @var string		user role
 	 */
 	public static $role = 'user';
 
@@ -92,7 +91,7 @@ class DolibarrApiAccess implements iAuthenticate
 	public function __isAllowed()
 	{
 		// phpcs:enable
-		global $conf, $db, $user;
+		global $conf, $db, $langs, $user;
 
 		$login = '';
 		$stored_key = '';
@@ -114,11 +113,18 @@ class DolibarrApiAccess implements iAuthenticate
 			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['DOLAPIKEY']; // With GET method
 		}
-		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
-			$api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommended)
-		}
 
-		$api_key = dol_string_nounprintableascii($api_key);
+		// TODO Can filter on user agent.
+		//$api_useragent = $_SERVER['HTTP_USER_AGENT'];
+
+		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {        // HTTP Header entry "DOLAPIKEY: ..." can be read with $_SERVER["HTTP_DOLAPIKEY"]
+			$api_key = $_SERVER['HTTP_DOLAPIKEY']; 		// With header method (recommended)
+		} elseif (empty($api_key)) {
+			$headers = getallheaders();					// HTTP Header entry "Authorization: Bearer ..." can be read with getallheaders
+			$api_key = preg_replace('/^Bearer\s+/i', '', empty($headers['Authorization']) ? '' : $headers['Authorization']);
+		};
+
+		$api_key = dol_string_nounprintableascii($api_key, 1);
 
 		if (preg_match('/^dolcrypt:/i', $api_key)) {
 			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
@@ -146,12 +152,63 @@ class DolibarrApiAccess implements iAuthenticate
 						// We must also reload global conf to get params from the entity
 						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommended for performance purpose), so we switch now on entity of user (".$conf->entity.") and we have to reload configuration.", LOG_WARNING);
 						$conf->setValues($this->db);
+
+						// set global mysoc after setting conf entity (the entity can be changed with the user logged)
+						// see master.inc.php
+						require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+						$fmysoc = new Societe($db);
+						$fmysoc->setMysoc($conf);
+
+						// We set some specific default values according to country
+						if ($fmysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+							// For DE, we need to invert our address with customer address
+							$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
+						}
+						if ($fmysoc->country_code == 'FR' && !isset($conf->global->INVOICE_CATEGORY_OF_OPERATION)) {
+							// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
+							$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
+						}
+						if ($fmysoc->country_code == 'FR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+							// For FR, the replacement invoice type is not allowed.
+							// From an accounting point of view, this creates holes in the numbering of the invoice.
+							// This is very problematic during a fiscal control.
+							$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+						}
+						if ($fmysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+							// The replacement invoice type is not allowed in Greece.
+							$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+						}
+						if ($fmysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_DEPOSIT)) {
+							// The deposit invoice type is not allowed in Greece.
+							$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
+						}
+
+						if (($fmysoc->localtax1_assuj || $fmysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
+							// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
+							// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
+							$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
+						}
+						// Set also the global variable $mysoc
+						global $mysoc;
+						$mysoc = $fmysoc;
+
+						// Reload langs
+						$langcode = (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+						if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
+							$langcode = $user->conf->MAIN_LANG_DEFAULT;
+						}
+						if ($langs->getDefaultLang() != $langcode) {
+							$langs->setDefaultLang($langcode);
+							$langs->tab_translate = array();
+							$langs->loadLangs(array('main'));
+						}
 					}
 				} elseif ($nbrows > 1) {
 					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');
 				}
 			} else {
-				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error_msg);
+				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error);
 			}
 
 			if ($login && $stored_key != $api_key) {		// This should not happen since we did a search on api_key
@@ -168,7 +225,7 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 
 			$fuser = new User($this->db);
-			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
+			$result = $fuser->fetch(0, $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
 			if ($result <= 0) {
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': Failed to fetch on entity", LOG_NOTICE);
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
@@ -176,7 +233,7 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 
 			// Check if user status is enabled
-			if ($fuser->statut != $fuser::STATUS_ENABLED) {
+			if ($fuser->status != $fuser::STATUS_ENABLED) {
 				// Status is disabled
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has been disabled", LOG_NOTICE);
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
@@ -199,8 +256,16 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(401, $genericmessageerroruser);
 			}
 
+			// TODO
+			// Increase counter of API access
+			if (getDolGlobalString('API_COUNTER_ENABLED')) {
+				include DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				dolibarr_set_const($this->db, 'API_COUNTER_COUNT', getDolGlobalInt('API_COUNTER_COUNT') + 1);
+				//var_dump('eeee');exit;
+			}
+
 			// User seems valid
-			$fuser->getrights();
+			$fuser->loadRights();
 
 			// Set the property $user to the $user of API
 			static::$user = $fuser;
@@ -216,7 +281,7 @@ class DolibarrApiAccess implements iAuthenticate
 				static::$role = 'admin';
 			}
 		} else {
-			throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
+			throw new RestException(401, "Failed to login to API. Neither parameter 'HTTP_DOLAPIKEY' nor 'Authentication: Bearer' found on HTTP header (and no parameter DOLAPIKEY in URL).");
 		}
 
 		$userClass::setCacheIdentifier(static::$role);
@@ -241,7 +306,7 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * Verify access
 	 *
-	 * @param   array $m Properties of method
+	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
 	 *
 	 * @access private
 	 * @return bool

@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Ahmad Jamaly Rabib		<rabib@metroworks.co.jp>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ class modPropale extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->config_page_url = array("propal.php");
-		$this->langfiles = array("propal", "bills", "companies", "deliveries", "products");
+		$this->langfiles = array("propal", "bills", "companies", "sendings", "products");
 
 		// Constants
 		$this->const = array();
@@ -99,7 +100,7 @@ class modPropale extends DolibarrModules
 
 		$this->const[$r][0] = "PROPALE_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/proposals";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -180,6 +181,13 @@ class modPropale extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'export';
 
+		$r++;
+		$this->rights[$r][0] = 29; // id de la permission
+		$this->rights[$r][1] = 'Reopen commercial proposals'; // Set proposal to signed or refused
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'propal_advance';
+		$this->rights[$r][5] = 'reopen';
 
 		// Menus
 		//-------
@@ -489,13 +497,13 @@ class modPropale extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/proposals/template_proposal.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/proposals';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/proposals';
 		$dest = $dirodt.'/template_proposal.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

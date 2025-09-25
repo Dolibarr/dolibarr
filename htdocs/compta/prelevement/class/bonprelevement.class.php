@@ -6,8 +6,8 @@
  * Copyright (C) 2014-2016 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2019      JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
- * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,23 +62,68 @@ class BonPrelevement extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var int|string
+	 */
 	public $date_echeance;
+	/**
+	 * @var string
+	 */
 	public $raison_sociale;
+	/**
+	 * @var string
+	 */
 	public $reference_remise;
+	/**
+	 * @var string
+	 */
 	public $emetteur_code_guichet;
+	/**
+	 * @var string
+	 */
 	public $emetteur_numero_compte;
+	/**
+	 * @var string
+	 */
 	public $emetteur_code_banque;
+	/**
+	 * @var string
+	 */
 	public $emetteur_number_key;
+	/**
+	 * @var bool
+	 */
 	public $sepa_xml_pti_in_ctti;
 
+	/**
+	 * @var string
+	 */
 	public $emetteur_iban;
+	/**
+	 * @var string
+	 */
 	public $emetteur_bic;
+	/**
+	 * @var string
+	 */
 	public $emetteur_ics;
 
+	/**
+	 * @var int
+	 */
 	public $user_trans;
+	/**
+	 * @var int
+	 */
 	public $user_credit;
 
+	/**
+	 * @var float|int|string
+	 */
 	public $total;
+	/**
+	 * @var int
+	 */
 	public $fetched;
 	public $labelStatus = array();
 
@@ -129,7 +174,7 @@ class BonPrelevement extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -149,7 +194,7 @@ class BonPrelevement extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 0,),
@@ -167,32 +212,68 @@ class BonPrelevement extends CommonObject
 		'type' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1,),
 		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fkbankaccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int|string
+	 */
 	public $datec;
+	/**
+	 * @var float
+	 */
 	public $amount;
 
 	/**
 	 * @var int	Status
-	 * @deprecated
+	 * @deprecated Use $status
 	 */
 	public $statut;
 	/**
-	 * @var int	Status
+	 * @var int|null	Status
 	 */
 	public $status;
 
+	/**
+	 * @var int
+	 */
 	public $credite;
+	/**
+	 * @var string
+	 */
 	public $note;
+	/**
+	 * @var int|string
+	 */
 	public $date_trans;
 	/**
-	 * @var int Current transport method, index to $methodes_trans
+	 * @var int Current transport method, index to `$methodes_trans`
 	 */
 	public $method_trans;
+	/**
+	 * @var int
+	 */
 	public $fk_user_trans;
+	/**
+	 * @var int|string
+	 */
 	public $date_credit;
+	/**
+	 * @var int
+	 */
 	public $fk_user_credit;
+	/**
+	 * @var string
+	 */
 	public $type;
+	/**
+	 * @var int
+	 */
 	public $fk_bank_account;
 	// END MODULEBUILDER PROPERTIES
 
@@ -244,16 +325,19 @@ class BonPrelevement extends CommonObject
 	 * @param	string	$number_key 	number key of account number
 	 * @param	string	$type			'debit-order' or 'bank-transfer'
 	 * @param   string  $sourcetype     'salary' for salary, '' for invoices
+	 * @param	string	$bic			BIC used
+	 * @param	string	$iban			IBAN used
+	 * @param	string	$rum			RUM
 	 * @return	int						>0 if OK, <0 if KO
 	 */
-	public function AddFacture($invoice_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $type = 'debit-order', $sourcetype = '')
+	public function AddFacture($invoice_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $type = 'debit-order', $sourcetype = '', $bic = '', $iban = '', $rum = '')
 	{
 		// phpcs:enable
 		$result = 0;
 		$line_id = 0;
 
-		// Add lines into prelevement_lignes
-		$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype);
+		// Add lines into prelevement_lignes for tracking. The ID of line inserted is returned into $line_id.
+		$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype, $bic, $iban, $rum);
 
 
 		if ($result == 0) {
@@ -301,14 +385,17 @@ class BonPrelevement extends CommonObject
 	 *	@param	int		$client_id  	ID of thirdparty for invoices, ID of user for salaries
 	 *	@param	string	$client_nom 	customer name
 	 *	@param	int		$amount 		amount of invoice
-	 *	@param	string	$code_banque 	code of bank withdrawal
-	 *	@param	string	$code_guichet 	code of bank's office
-	 *	@param	string	$number 		bank account number
-	 *	@param  string	$number_key 	number key of account number
+	 *	@param	string	$code_banque 	code of bank withdrawal (Deprecated, not used)
+	 *	@param	string	$code_guichet 	code of bank's office (Deprecated, not used)
+	 *	@param	string	$number 		bank account number (Deprecated, not used)
+	 *	@param  string	$number_key 	number key of account number (Deprecated, not used)
 	 *  @param  string  $sourcetype     'salary' for salary, '' for invoices
+	 *  @param	string	$bic			BIC used
+	 *  @param	string	$iban			IBAN used
+	 *  @param	string	$rum			RUM used
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
-	public function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype = '')
+	public function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype = '', $bic = '', $iban = '', $rum = '')
 	{
 		$result = -1;
 		$concat = 0;	// ??? what is this for. Seems not used.
@@ -337,27 +424,25 @@ class BonPrelevement extends CommonObject
 			}
 		} else {
 			/*
-			 * No aggregate
+			 * No aggregate, use 1 line per invoice/salary to pay
 			 */
 			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_lignes (";
 			$sql .= "fk_prelevement_bons";
 			$sql .= ", fk_soc";
 			$sql .= ", client_nom";
 			$sql .= ", amount";
-			$sql .= ", code_banque";
-			$sql .= ", code_guichet";
-			$sql .= ", number";
-			$sql .= ", cle_rib";
+			$sql .= ", bic";
+			$sql .= ", iban";
+			$sql .= ", rum";
 			$sql .= ($sourcetype == 'salary' ? ", fk_user" : "");
 			$sql .= ") VALUES (";
 			$sql .= $this->id;
 			$sql .= ", " . (($sourcetype != 'salary') ? ((int) $client_id) : "0");	// fk_soc can't be null
 			$sql .= ", '" . $this->db->escape($client_nom) . "'";
 			$sql .= ", " . ((float) price2num($amount));
-			$sql .= ", '" . $this->db->escape($code_banque) . "'";
-			$sql .= ", '" . $this->db->escape($code_guichet) . "'";
-			$sql .= ", '" . $this->db->escape($number) . "'";
-			$sql .= ", '" . $this->db->escape($number_key) . "'";
+			$sql .= ", '" . $this->db->escape($bic) . "'";
+			$sql .= ", '" . $this->db->escape($iban) . "'";
+			$sql .= ", '" . $this->db->escape($rum) . "'";
 			$sql .= (($sourcetype == 'salary') ? ", " . ((int) $client_id) : '');
 			$sql .= ")";
 			if ($this->db->query($sql)) {
@@ -395,7 +480,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	int		$rowid		Id of object to load
 	 *  @param	string	$ref		Ref of direct debit
-	 *	@return	int					>0 if OK, <0 if KO
+	 *	@return	int					>0 if OK, 0=Not found, <0 if KO
 	 */
 	public function fetch($rowid, $ref = '')
 	{
@@ -448,11 +533,11 @@ class BonPrelevement extends CommonObject
 
 				return 1;
 			} else {
-				dol_syslog(get_class($this) . "::Fetch Erreur aucune ligne retournee");
-				return -1;
+				dol_syslog(get_class($this) . "::Fetch no record found");
+				return 0;
 			}
 		} else {
-			return -2;
+			return -1;
 		}
 	}
 
@@ -515,7 +600,6 @@ class BonPrelevement extends CommonObject
 					$fk_bank_account = ($this->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 
-				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
 
@@ -634,7 +718,13 @@ class BonPrelevement extends CommonObject
 							$addbankurl = 'direct-debit';	// = 'directdebit'
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+
+						if ($paiement instanceof PaymentSalary) {
+							// Only 6 arguments for PaymentSalary
+							$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '');
+						} else {
+							$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+						}
 
 						if ($result < 0) {
 							$error++;
@@ -744,9 +834,10 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get invoice or salary list (with amount or not)
 	 *
-	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice or salary
-	 *  @param  string  $type       'salary' for type=salary
-	 *	@return	array 				Array(Id of invoices/salary, Amount to pay)
+	 *  @param	int<0,1>	$amounts 		If you want to get the amount of the order for each invoice or salary
+	 *  @param	'bank-transfer'|'salary'|'' $type	'salary' for type=salary (default = supplier invoice
+	 *	@return	array<array{int,float}>|int[]	Array(Id of invoices/salary, Amount to pay)
+	 *	@phpstan-return	($amounts is 0 ? int[] : array<array{int,float}>)
 	 */
 	private function getListInvoices($amounts = 0, $type = '')
 	{
@@ -821,8 +912,8 @@ class BonPrelevement extends CommonObject
 	 *	Returns amount waiting for direct debit payment or credit transfer payment
 	 *
 	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
-	 *  @param  string  $type        for type=salary
-	 *	@return	double	 			Return integer <O if KO, Total amount
+	 *  @param  string  $type      	for type=salary
+	 *	@return	float 	 			Return integer <O if KO, Total amount
 	 */
 	public function SommeAPrelever($mode = 'direct-debit', $type = '')
 	{
@@ -875,7 +966,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get number of invoices waiting for payment
 	 *
-	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
+	 *	@param	'direct-debit'|'bank-transfer'	$mode	'direct-debit' or 'bank-transfer'
 	 *  @param  string  $type        for salary invoice
 	 *	@return	int					Return integer <O if KO, number of invoices if OK
 	 */
@@ -964,11 +1055,11 @@ class BonPrelevement extends CommonObject
 	 *  - Link the order with the prelevement_demande lines
 	 *  TODO delete params banque and agence when not necessary
 	 *
-	 *	@param 	int		$banque				dolibarr mysoc bank
-	 *	@param	int		$agence				dolibarr mysoc bank office (guichet)
+	 *	@param 	string	$banque				dolibarr mysoc bank
+	 *	@param	string	$agence				dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode				real=do action, simu=test only
 	 *  @param	string	$format				FRST, RCUR or ALL
-	 *  @param  string  $executiondate		Date to execute the transfer
+	 *  @param  int  	$executiondate		Date to execute the transfer
 	 *  @param	int	    $notrigger			Disable triggers
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
 	 *  @param	int		$did				ID of an existing payment request. If $did is defined, we use the existing payment request.
@@ -976,12 +1067,12 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$sourcetype			'invoice' or 'salary'
 	 *	@return	int							Return integer <0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
+	public function create($banque = '', $agence = '', $mode = 'real', $format = 'ALL', $executiondate = 0, $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
 
-		dol_syslog(__METHOD__ . " Bank=" . $banque . " Office=" . $agence . " mode=" . $mode . " format=" . $format, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format." type=".$type." did=".$did." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
@@ -1000,9 +1091,47 @@ class BonPrelevement extends CommonObject
 		}
 
 		$error = 0;
+		// Pre-store some values into variables to simplify following sql requests
+		if ($sourcetype != 'salary') {
+			$entities = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
+			$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
+			$socOrUser = 'fk_soc';
+			$societeOrUser = 'societe';
+		} else {
+			$entities = getEntity('salary');
+			$sqlTable = 'salary';
+			$socOrUser = 'fk_user';
+			$societeOrUser = 'user';
+		}
+
+		$thirdpartyBANId = 0;
+
+		// Check if there is an iban associated to the bank transfer request or if we take the default
+		if ($did > 0) {
+			$sql = "SELECT pd.fk_societe_rib";
+			$sql .= " FROM " . $this->db->prefix() . "prelevement_demande as pd";
+			$sql .= " WHERE pd.rowid = ".((int) $did);
+
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(__METHOD__ . " Read fk_societe_rib error " . $this->db->lasterror(), LOG_ERR);
+				return -1;
+			}
+
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$thirdpartyBANId = $obj->fk_societe_rib;
+
+				dol_syslog(__METHOD__ . " Found an BAN ID to use: ".$thirdpartyBANId);
+			}
+
+			$this->db->free($resql);
+		}
 
 		$datetimeprev = dol_now('gmt');
-		// Choice the date of the execution direct debit
+		// Choice of the date of the execution direct debit
 		if (!empty($executiondate)) {
 			$datetimeprev = $executiondate;
 		}
@@ -1016,56 +1145,51 @@ class BonPrelevement extends CommonObject
 		// Read invoices
 		$factures = array();
 		$factures_prev = array();
-		$factures_result = array();
 		$factures_prev_id = array();
-		$factures_errors = array();
+
 		if (!$error) {
 			dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
 
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
-			if ($sourcetype != 'salary') {
-				$sql .= ", f.fk_soc";
-			} else {
-				$sql .= ", f.fk_user";
-			}
+			$sql .= ", f.".$this->db->sanitize($socOrUser);		// fk_soc or fk_user
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			if ($sourcetype != 'salary') {
 				$sql .= ", s.nom as name";
-				$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
+				$sql .= ", f.ref";
+				$sql .= ", sr.bic, sr.iban_prefix, sr.frstrecur, sr.default_rib, sr.rum";
 			} else {
-				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";
-				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
+				$sql .= ", CONCAT(s.firstname, ' ', s.lastname) as name";
+				$sql .= ", f.ref";
+				$sql .= ", sr.bic, sr.iban_prefix, 'FRST' as frstrecur, sr.default_rib, '' as rum";
 			}
+			$sql .= ", pd.fk_societe_rib as soc_rib_id";
+			$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";	// f is salary, facture or facture_fourn
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$this->db->sanitize($sqlTable);
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser)." as s ON s.rowid = f.".$this->db->sanitize($socOrUser);
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser."_rib")." as sr ON s.rowid = sr.".$this->db->sanitize($socOrUser);
 			if ($sourcetype != 'salary') {
-				if ($type != 'bank-transfer') {
-					$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture";
+				if (!empty($thirdpartyBANId)) {
+					$sql .= " AND sr.rowid = " . ((int) $thirdpartyBANId);
 				} else {
-					$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture_fourn";
+					$sql .= " AND sr.default_rib = 1";
 				}
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
+				$sql .= " AND sr.type = 'ban'";
 			} else {
-				$sql .= " FROM " . MAIN_DB_PREFIX . "salary as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_salary";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as s ON s.rowid = f.fk_user";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";	// TODO Add AND sr.default_rib = 1 here
+				//$sql .= " AND sr.type = 'ban'";		// TODO Add AND sr.type = 'ban' for users too
+				// TODO Add 'AND sr.default_rib = 1' in sourcetype salary too
+				// Note: the column has been created in v21 in llx_user_rib and default to 0
+				// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
+				// Also it may be found for on thirdparty and not for the other.
 			}
+			$sql .= " WHERE f.entity IN (".$this->db->escape($entities).')';
 			if ($sourcetype != 'salary') {
-				if ($type != 'bank-transfer') {
-					$sql .= " WHERE f.entity IN (" . getEntity('invoice') . ')';
-				} else {
-					$sql .= " WHERE f.entity IN (" . getEntity('supplier_invoice') . ')';
-				}
-			} else {
-				$sql .= " WHERE f.entity IN (" . getEntity('salary') . ')';
-			}
-			if ($sourcetype != 'salary') {
-				$sql .= " AND f.fk_statut = 1"; // Invoice validated
+				$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED; // Invoice validated
 				$sql .= " AND f.paye = 0";
 				$sql .= " AND f.total_ttc > 0";
+				/*if ($socid > 0) {
+					$sql .= " AND f.fk_soc = ".((int) $socid);
+				}*/
 			} else {
 				//$sql .= " AND f.fk_statut = 1"; // Invoice validated
 				$sql .= " AND f.paye = 0";
@@ -1073,9 +1197,6 @@ class BonPrelevement extends CommonObject
 			}
 			$sql .= " AND pd.traite = 0";
 			$sql .= " AND pd.ext_payment_id IS NULL";
-			if ($sourcetype != 'salary') {
-				$sql .= " AND sr.type = 'ban'";		// TODO Add AND sr.type = 'ban' for users too
-			}
 			if ($did > 0) {
 				$sql .= " AND pd.rowid = " . ((int) $did);
 			}
@@ -1087,7 +1208,15 @@ class BonPrelevement extends CommonObject
 
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);	// TODO Replace with fetch_object()
-					$factures[$i] = $row; // All fields
+					'@phan-var-force array<int<0,12>,string> $row';
+
+					// All fields:
+					// 0=rowid, 1=pfdrowid, 2=$socOrUser, 3=code_banque, 4=code_guichet, 5=number, 6=key,
+					// 7=amount, 8=name, 9=ref, 10=bic, 11=iban, 12=frstrecur, 13=default_rib, 14=rum, 15=soc_rib_id
+					$factures[$i] = $row;
+
+					// Decode BAN
+					$factures[$i][11] = dolDecrypt($factures[$i][11]);
 
 					if ($row[7] == 0) {
 						$error++;
@@ -1101,7 +1230,6 @@ class BonPrelevement extends CommonObject
 				$this->db->free($resql);
 				dol_syslog(__METHOD__ . " Read invoices/salary, " . $i . " invoices/salary to withdraw", LOG_DEBUG);
 			} else {
-				$error++;
 				$this->error = $this->db->lasterror();
 				dol_syslog(__METHOD__ . " Read invoices/salary error " . $this->db->lasterror(), LOG_ERR);
 				return -1;
@@ -1120,20 +1248,10 @@ class BonPrelevement extends CommonObject
 
 			// Check BAN
 			$i = 0;
-			dol_syslog(__METHOD__ . " Check BAN", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " Check BAN for each invoices or salary", LOG_DEBUG);
 
 			if (count($factures) > 0) {
 				foreach ($factures as $key => $fac) {
-					/*
-					if ($type != 'bank-transfer') {
-						$tmpinvoice = new Facture($this->db);
-					} else {
-						$tmpinvoice = new FactureFournisseur($this->db);
-					}
-					$resfetch = $tmpinvoice->fetch($fac[0]);
-					if ($resfetch >= 0) {		// Field 0 of $fac is rowid of invoice
-					*/
-
 					// Check if $fac[8] s.nom is null
 					if ($fac[8] != null) {
 						if ($type != 'bank-transfer') {
@@ -1145,9 +1263,30 @@ class BonPrelevement extends CommonObject
 							}
 						}
 
-						$verif = checkSwiftForAccount(null, $fac[10]);
-						if ($verif) {
-							$verif = checkIbanForAccount(null, $fac[11]);
+						// If a bank account was forced on llx_prelevement_demande (the direct debit or credit transfer request),
+						// we must use this oney,so we reload values from soc_rib_id
+						if (!empty($fac[14])) {
+							$bankaccount = new CompanyBankAccount($this->db);
+							$bankaccount->fetch((int) $fac[15]);
+							if ($bankaccount->id > 0) {
+								$fac[3] = $bankaccount->code_banque;
+								$fac[4] = $bankaccount->code_guichet;
+								$fac[5] = $bankaccount->number;
+								$fac[6] = $bankaccount->cle_rib;
+								$fac[10] = $bankaccount->bic;
+								$fac[11] = $bankaccount->iban;
+								$fac[14] = $bankaccount->rum;
+								//var_dump('fetch id='.(int) $fac[14].' => '.$fac[3].'-'.$fac[4].'-'.$fac[5].'-'.$fac[6].'-'.$fac[10]."-".$fac[11]."-".$fac[14]);
+							}
+						}
+
+						$bicinloop = $fac[10];
+						$baninloop = $fac[11];
+
+						$verif = checkSwiftForAccount(null, $bicinloop);
+						if ($verif || (empty($fac[10]) && getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
+							dol_syslog(__METHOD__." now call checkIbanForAccount(null, ".$baninloop.")");
+							$verif = checkIbanForAccount(null, $baninloop);
 						}
 
 						if ($verif) {
@@ -1158,7 +1297,7 @@ class BonPrelevement extends CommonObject
 							//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
 						} else {
 							if ($type != 'bank-transfer') {
-								$tmpsoc->id = $fac[2];
+								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/compta/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
@@ -1166,7 +1305,7 @@ class BonPrelevement extends CommonObject
 								$error++;
 							}
 							if ($type == 'bank-transfer' && $sourcetype != 'salary') {
-								$tmpsoc->id = $fac[2];
+								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
@@ -1174,7 +1313,7 @@ class BonPrelevement extends CommonObject
 								$error++;
 							}
 							if ($type == 'bank-transfer' && $sourcetype == 'salary') {
-								$tmpuser->id = $fac[2];
+								$tmpuser->id = (int) $fac[2];
 								$tmpuser->firstname = $fac[8];
 								$salary_url = "<a href='" . DOL_URL_ROOT . '/salaries/card.php?id=' . $fac[0] . "'>" . $fac[0] . "</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
@@ -1200,7 +1339,7 @@ class BonPrelevement extends CommonObject
 		$ok = 0;
 
 		// Withdraw invoices in factures_prev array
-		$out = count($factures_prev) . " invoices will be included.";
+		$out = count($factures_prev) . " invoices or salaries will be included.";
 		//print $out."\n";
 		dol_syslog($out);
 
@@ -1303,7 +1442,7 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				dol_syslog(__METHOD__ . " Now loop on each document to insert them in llx_prelevement_demande");
 
-				// Add lines for the bon
+				// Add lines for the direct debit or crdit transfer
 				if (count($factures_prev) > 0) {
 					foreach ($factures_prev as $fac) {	// Add a link in database for each invoice ro salary
 						/*
@@ -1322,8 +1461,11 @@ class BonPrelevement extends CommonObject
 						 * $fac[10] : BIC
 						 * $fac[11] : IBAN
 						 * $fac[12] : frstrcur
+						 * $fac[13] : default_rib (0 or 1)
+						 * $fac[14] : rum
+						 * $fac[15] : soc_rib_id (id bank account preselected for direct debit or credit transfer)
 						 */
-						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
+						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype, $fac[10], $fac[11], $fac[14]);
 
 						if ($ri != 0) {
 							$error++;
@@ -1369,7 +1511,7 @@ class BonPrelevement extends CommonObject
 
 						$this->emetteur_ics = (($type == 'bank-transfer' && getDolGlobalString("SEPA_USE_IDS")) ? $account->ics_transfer : $account->ics);	// Example "FR78ZZZ123456"
 
-						$this->raison_sociale = $account->proprio;
+						$this->raison_sociale = $account->owner_name;
 					}
 					$this->factures = $factures_prev_id;
 					$this->context['factures_prev'] = $factures_prev;
@@ -1379,7 +1521,7 @@ class BonPrelevement extends CommonObject
 					if ($sourcetype == 'salary') {
 						$userid = $this->context['factures_prev'][0][2];
 					}
-					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid);
+					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid, $thirdpartyBANId);
 					if ($result < 0) {
 						//var_dump($this->error);
 						//var_dump($this->invoice_in_error);
@@ -1407,13 +1549,13 @@ class BonPrelevement extends CommonObject
 			}
 
 			if (!$error && !$notrigger) {
-				$triggername = 'DIRECT_DEBIT_ORDER_CREATE';
+				$triggerName = 'DIRECT_DEBIT_ORDER_CREATE';
 				if ($type != 'bank-transfer') {
-					$triggername = 'CREDIT_TRANSFER_ORDER_CREATE';
+					$triggerName = 'CREDIT_TRANSFER_ORDER_CREATE';
 				}
 
 				// Call trigger
-				$result = $this->call_trigger($triggername, $user);
+				$result = $this->call_trigger($triggerName, $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -1440,7 +1582,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					>0 if OK, <0 if KO
 	 */
-	public function delete($user = null, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$this->db->begin();
 
@@ -1684,14 +1826,15 @@ class BonPrelevement extends CommonObject
 	 * - Others countries: Warning message
 	 * File is generated with name this->filename
 	 *
-	 * @param	string	$format				FRST, RCUR or ALL
+	 * @param   string  $format				FRST, RCUR or ALL
 	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
-	 * @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 * @param   int     $fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 * @param   int  	$forsalary          If the SEPA is to pay salaries
+	 * @param   int  	$thirdpartyBANId	If defined, will use this ID to get the RIB. Otherwise, the first default BAN will be taken.
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $forsalary = 0)
+	public function generate(string $format = 'ALL', int $executiondate = 0, string $type = 'direct-debit', int $fk_bank_account = 0, int $forsalary = 0, int $thirdpartyBANId = 0)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -1707,7 +1850,7 @@ class BonPrelevement extends CommonObject
 		dol_syslog(get_class($this) . "::generate build file=" . $this->filename . " type=" . $type);
 
 		$this->file = fopen($this->filename, "w");
-		if (empty($this->file)) {
+		if ($this->file == false) {
 			$this->error = $langs->trans('ErrorFailedToOpenFile', $this->filename);
 			return -1;
 		}
@@ -1716,7 +1859,7 @@ class BonPrelevement extends CommonObject
 		$this->total = 0;
 
 		// Build file for European countries
-		if ($mysoc->isInEEC()) {
+		if ($mysoc->isInSEPA()) {
 			$found++;
 
 			if ($type != 'bank-transfer') {
@@ -1762,11 +1905,16 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND f.fk_soc = soc.rowid";
 				$sql .= " AND soc.fk_pays = c.rowid";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
-				$sql .= " AND rib.default_rib = 1";
+				if (!empty($thirdpartyBANId)) {
+					$sql .= " AND rib.rowid = " . ((int) $thirdpartyBANId);
+				} else {
+					$sql .= " AND rib.default_rib = 1";
+				}
 				$sql .= " AND rib.type = 'ban'";
 
 				// Define $fileDebiteurSection. One section DrctDbtTxInf per invoice.
 				$resql = $this->db->query($sql);
+				$nbtotalDrctDbtTxInf = -1;
 				if ($resql) {
 					$cachearraytotestduplicate = array();
 
@@ -1783,10 +1931,11 @@ class BonPrelevement extends CommonObject
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
+						$iban = dolDecrypt($obj->iban);
 
-						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->reffac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
+						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
 
-						$this->total = $this->total + $obj->somme;
+						$this->total += $obj->somme;
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
@@ -1814,7 +1963,7 @@ class BonPrelevement extends CommonObject
 				fwrite($this->file, '	<CstmrDrctDbtInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
-				fwrite($this->file, '			<MsgId>' . ('DD/' . $dateTime_YMD . '/REF' . $this->id) . '</MsgId>' . $CrLf);
+				fwrite($this->file, '			<MsgId>' . ('DOL/' . $dateTime_YMD . '/DD' . $this->id) . '</MsgId>' . $CrLf);
 				fwrite($this->file, '			<CreDtTm>' . $dateTime_ECMA . '</CreDtTm>' . $CrLf);
 				fwrite($this->file, '			<NbOfTxs>' . $i . '</NbOfTxs>' . $CrLf);
 				fwrite($this->file, '			<CtrlSum>' . $this->total . '</CtrlSum>' . $CrLf);
@@ -1900,10 +2049,16 @@ class BonPrelevement extends CommonObject
 					$sql .= " AND p.fk_facture_fourn = f.rowid";
 					$sql .= " AND f.fk_soc = soc.rowid";
 					$sql .= " AND rib.fk_soc = f.fk_soc";
-					$sql .= " AND rib.default_rib = 1";
+					if (!empty($thirdpartyBANId)) {
+						$sql .= " AND rib.rowid = " . ((int) $thirdpartyBANId);
+					} else {
+						$sql .= " AND rib.default_rib = 1";
+					}
 					$sql .= " AND rib.type = 'ban'";
 				}
 				// Define $fileCrediteurSection. One section DrctDbtTxInf per invoice.
+				$nbtotalDrctDbtTxInf = -1;
+
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$cachearraytotestduplicate = array();
@@ -1920,14 +2075,15 @@ class BonPrelevement extends CommonObject
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
+						$iban = dolDecrypt($obj->iban);
 						$refobj = $obj->reffac;
 						if (empty($refobj) && !empty($forsalary)) {	// If ref of salary not defined, we force a value
 							$refobj = "SAL" . $obj->idfac;
 						}
 
-						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $refobj, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type, $obj->fac_ref_supplier);
+						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $refobj, $obj->idfac, $iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type, $obj->fac_ref_supplier);
 
-						$this->total = $this->total + $obj->somme;
+						$this->total += $obj->somme;
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
@@ -1954,7 +2110,7 @@ class BonPrelevement extends CommonObject
 				fwrite($this->file, '	<CstmrCdtTrfInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
-				fwrite($this->file, '			<MsgId>' . ('TRF/' . $dateTime_YMD . '/REF' . $this->id) . '</MsgId>' . $CrLf);
+				fwrite($this->file, '			<MsgId>' . ('DOL/' . $dateTime_YMD . '/CT' . $this->id) . '</MsgId>' . $CrLf);
 				fwrite($this->file, '			<CreDtTm>' . $dateTime_ECMA . '</CreDtTm>' . $CrLf);
 				fwrite($this->file, '			<NbOfTxs>' . $i . '</NbOfTxs>' . $CrLf);
 				fwrite($this->file, '			<CtrlSum>' . $this->total . '</CtrlSum>' . $CrLf);
@@ -2004,7 +2160,7 @@ class BonPrelevement extends CommonObject
 
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$this->total = $this->total + $obj->amount;
+						$this->total += $obj->amount;
 
 						// TODO Write record into file
 						$i++;
@@ -2029,7 +2185,7 @@ class BonPrelevement extends CommonObject
 
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$this->total = $this->total + $obj->amount;
+						$this->total += $obj->amount;
 
 						// TODO Write record into file
 						$i++;
@@ -2164,7 +2320,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	int			$row_idfac			p.fk_facture AS idfac or p.fk_facture_fourn or p.fk_salary,
 	 *	@param	string		$row_iban			rib.iban_prefix AS iban,
 	 *	@param	string		$row_bic			rib.bic AS bic,
-	 *	@param	string		$row_datec			rib.datec,
+	 *	@param	int 		$row_datec			rib.datec,
 	 *	@param	string		$row_drum			rib.rowid used to generate rum
 	 * 	@param	string		$row_rum			rib.rum Rum defined on company bank account
 	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
@@ -2175,7 +2331,7 @@ class BonPrelevement extends CommonObject
 	public function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum, $row_rum, $type = 'direct-debit', $row_comment = '')
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $mysoc;
 
 		if (getDolGlobalString('SEPA_FORCE_TWO_DECIMAL')) {
 			$row_somme = number_format((float) price2num($row_somme, 'MT'), 2, ".", "");
@@ -2213,7 +2369,9 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '				</DrctDbtTx>' . $CrLf;
 			$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 			$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
-			$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+			if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) {
+				$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+			}
 			$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
 			$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
 			$XML_DEBITOR .= '				<Dbtr>' . $CrLf;
@@ -2221,7 +2379,7 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '					<PstlAdr>' . $CrLf;
 			$XML_DEBITOR .= '						<Ctry>' . $row_country_code . '</Ctry>' . $CrLf;
 			$addressline1 = strtr($row_address, array(chr(13) => ", ", chr(10) => ""));
-			$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : (string) $row_town), array(chr(13) => ", ", chr(10) => ""));
+			$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : '') . (string) $row_town, array(chr(13) => ", ", chr(10) => ""));
 			if (trim($addressline1)) {
 				$XML_DEBITOR .= '						<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
 			}
@@ -2236,8 +2394,20 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '					</Id>' . $CrLf;
 			$XML_DEBITOR .= '				</DbtrAcct>' . $CrLf;
 			$XML_DEBITOR .= '				<RmtInf>' . $CrLf;
-			// A string with some information on payment - 140 max
-			$XML_DEBITOR .= '					<Ustrd>' . getDolGlobalString('PRELEVEMENT_USTRD', dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($row_ref . ($row_comment ? ' - ' . $row_comment : '')), '', '', '', 1), 135, 'right', 'UTF-8', 1))) . '</Ustrd>' . $CrLf; // Free unstuctured data - 140 max
+
+			// Structured data for Belgium
+			if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $mysoc->country_code == 'BE') {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
+
+				$invoicestatic = new Facture($this->db);
+				$invoicestatic->fetch($row_idfac);
+
+				$invoicePaymentKey = dolBECalculateStructuredCommunication($invoicestatic->ref, $invoicestatic->type);
+				$XML_DEBITOR .= '					<strd>' . $invoicePaymentKey . '</strd>' . $CrLf;
+			} else {
+				// A string with some information on payment - 140 max
+				$XML_DEBITOR .= '					<Ustrd>' . getDolGlobalString('PRELEVEMENT_USTRD', dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($row_ref . ($row_comment ? ' - ' . $row_comment : '')), '', '', '', 1), 135, 'right', 'UTF-8', 1))) . '</Ustrd>' . $CrLf; // Free unstuctured data - 140 max
+			}
 			$XML_DEBITOR .= '				</RmtInf>' . $CrLf;
 			$XML_DEBITOR .= '			</DrctDbtTxInf>' . $CrLf;
 			return $XML_DEBITOR;
@@ -2247,7 +2417,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '			<CdtTrfTxInf>' . $CrLf;
 			$XML_CREDITOR .= '				<PmtId>' . $CrLf;
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
-			$XML_CREDITOR .= '					<EndToEndId>' . ((getDolGlobalString('PRELEVEMENT_END_TO_END') != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('CT-' . dol_trunc($row_idfac . '-' . $row_ref, 20, 'right', 'UTF-8', 1)) . '-' . $Rowing) . '</EndToEndId>' . $CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+			$XML_CREDITOR .= '					<EndToEndId>' . ((getDolGlobalString('PRELEVEMENT_END_TO_END') != "") ? getDolGlobalString("PRELEVEMENT_END_TO_END") : ('CT-' . dol_trunc($row_idfac . '-' . $row_ref, 20, 'right', 'UTF-8', 1)) . '-' . $Rowing) . '</EndToEndId>' . $CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_CREDITOR .= '				</PmtId>' . $CrLf;
 			if (!empty($this->sepa_xml_pti_in_ctti)) {
 				$XML_CREDITOR .= '				<PmtTpInf>' . $CrLf;
@@ -2258,12 +2428,16 @@ class BonPrelevement extends CommonObject
 				} else {
 					$instrprty = 'NORM';
 				}
+
+				// Set $categoryPurpose: CORE, TREA, SUPP, ...
+				$categoryPurpose = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_CATEGORY_PURPOSE', 'CORE');
+
 				$XML_CREDITOR .= '					<InstrPrty>' . $instrprty . '</InstrPrty>' . $CrLf;
 				$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
 				$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
 				$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
 				$XML_CREDITOR .= '					<CtgyPurp>' . $CrLf;
-				$XML_CREDITOR .= '						<Cd>CORE</Cd>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>' . $categoryPurpose . '</Cd>' . $CrLf;
 				$XML_CREDITOR .= '					</CtgyPurp>' . $CrLf;
 				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 			}
@@ -2290,7 +2464,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					<PstlAdr>' . $CrLf;
 			$XML_CREDITOR .= '						<Ctry>' . $row_country_code . '</Ctry>' . $CrLf;
 			$addressline1 = strtr($row_address, array(chr(13) => ", ", chr(10) => ""));
-			$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : (string) $row_town), array(chr(13) => ", ", chr(10) => ""));
+			$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : '') . (string) $row_town, array(chr(13) => ", ", chr(10) => ""));
 			if (trim($addressline1)) {
 				$XML_CREDITOR .= '						<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
 			}
@@ -2317,6 +2491,7 @@ class BonPrelevement extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Write sender of request (me).
+	 *  TODO This method seems not used anymore. What is it for ?
 	 *
 	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
 	 *	@return	void
@@ -2342,7 +2517,7 @@ class BonPrelevement extends CommonObject
 
 		fwrite($this->file, substr($this->raison_sociale . "                           ", 0, 24));
 
-		// Reference de la remise creancier D1 sur 7 caracteres
+		// Ref of thirdparty on 7 characters
 
 		fwrite($this->file, substr($this->reference_remise . "                           ", 0, 7));
 
@@ -2398,7 +2573,6 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 *	@return	string						String with SEPA Sender
-	 *  @see EnregEmetteur()
 	 */
 	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0)
 	{
@@ -2427,7 +2601,7 @@ class BonPrelevement extends CommonObject
 
 			$this->emetteur_ics = (($type == 'bank-transfer' && getDolGlobalString("SEPA_USE_IDS")) ? $account->ics_transfer : $account->ics);  // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
 
-			$this->raison_sociale = $account->proprio;
+			$this->raison_sociale = $account->owner_name;
 		}
 
 		// Get pending payments
@@ -2442,6 +2616,7 @@ class BonPrelevement extends CommonObject
 			$country = explode(':', $configuration->global->MAIN_INFO_SOCIETE_COUNTRY);
 			$IdBon  = sprintf("%05d", $obj->rowid);
 			$RefBon = $obj->ref;
+			$localInstrument = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_LOCAL_INSTRUMENT', 'CORE');
 
 			if (!empty($configuration->global->SEPA_FORCE_TWO_DECIMAL)) {
 				$total = number_format((float) price2num($total, 'MT'), 2, ".", "");
@@ -2451,7 +2626,7 @@ class BonPrelevement extends CommonObject
 				// SEPA Paiement Information of my company for Direct Debit
 				$XML_SEPA_INFO = '';
 				$XML_SEPA_INFO .= '		<PmtInf>' . $CrLf;
-				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DD/' . $dateTime_YMD . '/ID' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
+				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DOL/' . $dateTime_YMD . '/DD' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
 				$XML_SEPA_INFO .= '			<PmtMtd>DD</PmtMtd>' . $CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>' . $nombre . '</NbOfTxs>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CtrlSum>' . $total . '</CtrlSum>' . $CrLf;
@@ -2460,7 +2635,7 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
 				$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
 				$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
-				$XML_SEPA_INFO .= '					<Cd>CORE</Cd>' . $CrLf;
+				$XML_SEPA_INFO .= '					<Cd>' . $localInstrument . '</Cd>' . $CrLf;
 				$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
 				$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
 				$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
@@ -2514,7 +2689,7 @@ class BonPrelevement extends CommonObject
 				// SEPA Paiement Information of my company for Credit Transfer
 				$XML_SEPA_INFO = '';
 				$XML_SEPA_INFO .= '		<PmtInf>' . $CrLf;
-				$XML_SEPA_INFO .= '			<PmtInfId>' . ('TRF/' . $dateTime_YMD . '/ID' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
+				$XML_SEPA_INFO .= '			<PmtInfId>' . ('DOL/' . $dateTime_YMD . '/CT' . $IdBon . '-' . $RefBon) . '</PmtInfId>' . $CrLf;
 				$XML_SEPA_INFO .= '			<PmtMtd>TRF</PmtMtd>' . $CrLf;
 				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>' . $nombre . '</NbOfTxs>' . $CrLf;
@@ -2525,7 +2700,7 @@ class BonPrelevement extends CommonObject
 					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
 					$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
-					$XML_SEPA_INFO .= '					<Cd>CORE</Cd>' . $CrLf;
+					$XML_SEPA_INFO .= '					<Cd>' . $localInstrument . '</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
 					$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
@@ -2655,7 +2830,7 @@ class BonPrelevement extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut((isset($this->status) ? $this->status : $this->statut), $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2769,11 +2944,11 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

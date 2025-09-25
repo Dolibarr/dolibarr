@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +19,9 @@
  */
 
 /**
- * \file scripts/website/regenerate-pages.php
+ * \file 	scripts/website/regenerate-pages.php
  * \ingroup scripts
- * \brief Regenerate all pages of a web site
+ * \brief 	Regenerate all pages of a web site on disk. Note: this can also be done from the website module.
  */
 
 if (!defined('NOSESSION')) {
@@ -43,7 +45,7 @@ $error = 0;
 
 $mode = empty($argv[1]) ? '' : $argv[1];
 $websiteref = empty($argv[2]) ? '' : $argv[2];
-$max = (!isset($argv[3]) || (empty($argv[3]) && $argv[3] !== '0')) ? '10' : $argv[3];
+$max = (int) ((!isset($argv[3]) || (empty($argv[3]) && $argv[3] !== '0')) ? '10' : $argv[3]);
 
 if (empty($argv[2]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
 	print '***** '.$script_file.' *****'."\n";
@@ -54,9 +56,15 @@ if (empty($argv[2]) || !in_array($argv[1], array('test', 'confirm')) || empty($w
 }
 
 require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 
 $hookmanager->initHooks(array('cli'));
 
@@ -80,8 +88,6 @@ if ($result <= 0) {
 }
 
 $websitepagestatic = new WebsitePage($db);
-
-$db->begin();
 
 $listofpages = $websitepagestatic->fetchAll($website->id, '', '', $max);
 

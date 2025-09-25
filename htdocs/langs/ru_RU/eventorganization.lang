@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Организация мероприятий
 EventOrganizationDescription = Организация мероприятий через модуль Проекты
 EventOrganizationDescriptionLong= Управляйте организацией мероприятия (конференции, участники, спикеры, с публичными предложениями, страницами голосования или регистрации)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Организованные мероприятия
 EventOrganizationConferenceOrBoothMenuLeft = Конференция или выставка
-
 PaymentEvent=Оплата мероприятия
-
-#
+EventFee=Плата за мероприятие
 # Admin page
-#
 NewRegistration=Регистрация
 EventOrganizationSetup=Настройка организации мероприятий
 EventOrganization=Организация мероприятий
@@ -48,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон электронн�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон электронного письма для использования при отправке электронных писем из массовой акции «Отправить электронные письма» в списке участников
 EVENTORGANIZATION_FILTERATTENDEES_CAT = В форме создания/добавления участника ограничивает список третьих лиц третьими лицами в категории
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = В форме создания/добавления участника ограничивает список третьих лиц третьими лицами с характером
-
-#
 # Object
-#
 OrganizedEvent=Организованное мероприятие
 EventOrganizationConfOrBooth= Конференция или выставка
 EventOrganizationConfOrBoothes=Конференции или стенды
@@ -63,10 +50,7 @@ DateOfRegistration = Дата регистрации
 ConferenceOrBoothAttendee = Участник конференции или выставки
 ApplicantOrVisitor=Заявитель или посетитель
 Speaker=Оратор
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Ваш запрос на конференцию был получен
 YourOrganizationEventBoothRequestWasReceived = Ваш запрос на выставку был получен
 EventOrganizationEmailAskConf = Запрос на конференцию
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Регистрация на меро
 EventOrganizationMassEmailAttendees = Общение с участниками
 EventOrganizationMassEmailSpeakers = Общение со спикерами
 ToSpeakers=Спикерам
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Разрешить людям предлагать конференции
 AllowUnknownPeopleSuggestConfHelp=Разрешить неизвестным людям предлагать конференцию, которую они хотят провести
 AllowUnknownPeopleSuggestBooth=Разрешить людям подавать заявки на выставку
@@ -88,29 +69,29 @@ PriceOfRegistration=Стоимость регистрации
 PriceOfRegistrationHelp=Стоимость регистрации или участия в мероприятии
 PriceOfBooth=Стоимость подписки на выставку
 PriceOfBoothHelp=Стоимость подписки на выставку
+EventOrganizationICSLinkProject=ссылка ICS для мероприятия
 EventOrganizationICSLink=Link ICS для конференций
 ConferenceOrBoothInformation=Информация о конференции или стенде
+ConferenceOrBoothFormat=Режим конференции или кабинки
+ConferenceOrBoothFormatID=ID режима конференции или кабинки
+ConferenceOrBoothFormatCode=код режима конференции или кабинки
+ConferenceOrBoothFormatLabel=метка режима конференции или кабинки
 Attendees=Участники
-ListOfAttendeesOfEvent=Список участников событийного проекта
-DownloadICSLink = Ссылка для скачивания ICS
-EVENTORGANIZATION_SECUREKEY = Seed для защиты ключа для страницы публичной регистрации, чтобы предложить конференцию
-SERVICE_BOOTH_LOCATION = Услуга, используемая для строки счета-фактуры о местонахождении выставки
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Служба, используемая для строки счета о подписке участника на мероприятие
+ListOfAttendeesOfEvent=Список участников мероприятия Проекты
+ListOfConfOrBoothOfEvent=Список конференций или стендов мероприятий Проекты
+DownloadICSLink=Скачать ICS файл
+EVENTORGANIZATION_SECUREKEY=Seed для защиты ключа для страницы публичной регистрации, чтобы предложить конференцию
+SERVICE_BOOTH_LOCATION=Услуга, используемая для строки счета-фактуры о местонахождении выставки
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Служба, используемая для строки счета о подписке участника на мероприятие
 NbVotes=Количество голосов
-
-#
 # Status
-#
 EvntOrgDraft = Проект
 EvntOrgSuggested = Предложено
 EvntOrgConfirmed = Подтверждено
 EvntOrgNotQualified = Неквалифицировано
 EvntOrgDone = Завершено
 EvntOrgCancelled = Отменена
-
-#
 # Other
-#
 SuggestForm = Страница предложений
 SuggestOrVoteForConfOrBooth = Страница для предложения или голосования
 EvntOrgRegistrationHelpMessage = Здесь вы можете проголосовать за конференцию или предложить новую для мероприятия. Вы также можете подать заявку на получение выставки во время мероприятия.
@@ -133,6 +114,7 @@ EventType = Тип события
 LabelOfBooth=Этикетка выставки
 LabelOfconference=Этикетка конференции
 ConferenceIsNotConfirmed=Регистрация недоступна, конференция еще не подтверждена
+EventRegistrationAreClosed=Регистрация на мероприятия закрыта
 DateMustBeBeforeThan=%s должно быть до %s
 DateMustBeAfterThan=%s должно быть после %s
 MaxNbOfAttendeesReached=Достигнуто максимальное количество участников номер.
@@ -174,6 +156,11 @@ DateEndEvent=Конец события дата
 ModifyStatus=изменить статус
 ConfirmModifyStatus=Подтвердите изменение статус
 ConfirmModifyStatusQuestion=Вы действительно хотите на изменить выбранные записи(и) %s?
-RecordsUpdated = %s Записи обновлены
-RecordUpdated = Запись обновлена
-NoRecordUpdated = Ни одна запись не обновлена
+RecordsUpdated=%s Записи обновлены
+RecordUpdated=Запись обновлена
+NoRecordUpdated=Ни одна запись не обновлена
+ProfitPerValidatedAttendee=Прибыль на посетителя
+Confirmed=Подтверждено
+NotSelected=Не выбрано
+TheLinkIsAvailableOnTheProjectEventCard=Ссылки для предложения или Голос для конференции или подачи заявки на стенд приведены на странице проект/event
+ShowedUp=Появился

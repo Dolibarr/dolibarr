@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -100,6 +101,12 @@ class DateLibTest extends CommonClassTest
 		$result = num_between_day($date1, $date2, 0);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result);
+
+		/*
+		$result = num_between_day(1514332800, 1538265600, 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(277, $result);
+		*/
 
 		return $result;
 	}
@@ -224,6 +231,42 @@ class DateLibTest extends CommonClassTest
 		$result = num_open_day($date1, $date2, 'XX', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result, 'NumOpenDay for XX when saturday + sunday are working days');   // 3 opened day, 0 closes (even if country unknown)
+
+		// Define specific dates for these tests
+		$date_friday_4 = dol_mktime(0, 0, 0, 1, 4, 2013, 'gmt');   // Friday
+		$date_saturday_5 = dol_mktime(0, 0, 0, 1, 5, 2013, 'gmt'); // Saturday
+		$date_monday_7 = dol_mktime(0, 0, 0, 1, 7, 2013, 'gmt');   // Monday
+		$date_friday_11 = dol_mktime(0, 0, 0, 1, 11, 2013, 'gmt');  // Following Friday
+
+		// Case 1: Weekend Boundary (Friday morning -> Saturday morning)
+		// Expected: 1 day. No half-day deduction for end date on a non-working day.
+		// $starthalfday = 'morning', $endhalfday = 'morning' -> $halfday = 1
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
+		$result = num_open_day($date_friday_4, $date_saturday_5, 0, 1, 1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(1, $result, 'Case 1: Friday morning to Saturday morning should be 1 day');
+
+		// Case 2: Full week with half-day (Friday morning -> Following Friday morning)
+		// Expected: 5.5 days.
+		// $starthalfday = 'morning', $endhalfday = 'morning' -> $halfday = 1
+		$result = num_open_day($date_friday_4, $date_friday_11, 0, 1, 1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(5.5, $result, 'Case 2: Friday morning to next Friday morning should be 5.5 days');
+
+		// Case 3: Single Half-Day (Monday afternoon)
+		// Expected: 0.5 days.
+		// $starthalfday = 'afternoon' -> $halfday = -1
+		$result = num_open_day($date_monday_7, $date_monday_7, 0, 1, -1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(0.5, $result, 'Case 3: A single Monday afternoon should be 0.5 days');
+
+		// Case 4: Standard Leave (Monday morning -> Friday evening)
+		// Expected: 5 days.
+		// $starthalfday = 'morning', $endhalfday = 'evening' -> $halfday = 0
+		$result = num_open_day($date_monday_7, $date_friday_11, 0, 1, 0, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(5, $result, 'Case 4: Monday morning to Friday evening should be 5 days');
 	}
 
 	/**

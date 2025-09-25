@@ -32,9 +32,12 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- V18 forgotten
+-- V18 and - forgotten
 
 UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
+ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
+ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
 
 
 -- V19 forgotten
@@ -51,6 +54,9 @@ DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE fil
 DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
 
 UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
+
+
+UPDATE llx_menu SET url = CONCAT(url, '&mode=init') WHERE fk_mainmenu = 'ticket' AND titre = 'NewTicket' AND url LIKE '/ticket/card.php?action=create%' AND url NOT LIKE '%mode=init%';
 
 
 -- Use unique keys for extrafields
@@ -238,6 +244,9 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtex
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME TO llx_receptiondet_batch_extrafields;
 ALTER TABLE llx_commande_fournisseur_dispatch RENAME TO llx_receptiondet_batch;
 
+-- VPGSQL8.2 ALTER SEQUENCE llx_commande_fournisseur_dispatch_extrafields_rowid_seq RENAME TO llx_receptiondet_batch_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE llx_commande_fournisseur_dispatch_rowid_seq RENAME TO llx_receptiondet_batch_rowid_seq;
+
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
 
@@ -262,6 +271,8 @@ ALTER TABLE llx_ticket ADD COLUMN origin_references text DEFAULT NULL;
 
 ALTER TABLE llx_expensereport MODIFY COLUMN model_pdf varchar(255) DEFAULT NULL;
 ALTER TABLE llx_fichinter_rec MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+
 ALTER TABLE llx_societe ADD COLUMN geolat double(24,8) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geolong double(24,8) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geopoint point DEFAULT NULL;
@@ -306,6 +317,7 @@ ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_elementdet (fk_elem
 
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_element (fk_element);
 
 ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
 
@@ -332,6 +344,7 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active) values (
 
 
 DELETE FROM llx_societe_commerciaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+DELETE FROM llx_societe_commerciaux WHERE fk_user NOT IN (SELECT rowid FROM llx_user);
 
 ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
 
@@ -339,7 +352,8 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32
 -- VPGSQL8.2 DROP INDEX uk_societe_commerciaux;
 ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux_c_type_contact (fk_soc, fk_user, fk_c_type_contact_code);
 ALTER TABLE llx_c_type_contact ADD INDEX idx_c_type_contact_code (code);
-ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+-- Removed, not unique. ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+ALTER TABLE llx_societe_commerciaux DROP FOREIGN KEY fk_societe_commerciaux_fk_c_type_contact_code;
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
 
@@ -352,7 +366,7 @@ ALTER TABLE llx_ecm_files DROP column keyword;
 
 ALTER TABLE llx_c_type_container ADD COLUMN typecontainer varchar(10) DEFAULT 'page';
 UPDATE llx_c_type_container SET typecontainer  = 'container' WHERE code IN ('banner', 'other', 'menu');
---UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
+-- UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
 UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
 UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
 
@@ -365,12 +379,52 @@ UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_chang
 
 ALTER TABLE llx_socpeople ADD COLUMN url varchar(255);
 
--- knowledgemanagement module
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CREATE','Knowledgerecord created','Executed when a knowledgerecord is created','knowledgemanagement',57001);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_MODIFY','Knowledgerecord modified','Executed when a knowledgerecord is modified','knowledgemanagement',57002);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_VALIDATE','Knowledgerecord Evaluation validated','Executed when an evaluation is validated','knowledgemanagement',57004);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_REOPEN','Knowledgerecord reopen','Executed when an evaluation is back to draft','knowledgemanagement',57004);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_UNVALIDATE','Knowledgerecord unvalidated','Executed when an evaluation is back to draft','knowledgemanagement',57004);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CANCEL','Knowledgerecord cancel','Executed when an evaluation to cancel','knowledgemanagement',57004);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_SENTBYMAIL','Mails sent from knowledgerecord file','knowledgerecord when you send email from knowledgerecord file','knowledgemanagement',57004);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_DELETE','Knowledgerecord deleted','Executed when a knowledgerecord is deleted','knowledgemanagement',57006);
+-- knowledge management module
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CREATE','Knowledge article created','Executed when a article is created','knowledgemanagement',57001);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_MODIFY','Knowledge article modified','Executed when a article is modified','knowledgemanagement',57002);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_VALIDATE','Knowledge article Evaluation validated','Executed when an evaluation is validated','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_REOPEN','Knowledge article reopen','Executed when an evaluation is back to draft','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_UNVALIDATE','Knowledge article invalidated','Executed when an evaluation is back to draft','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CANCEL','Knowledge article cancel','Executed when an evaluation to cancel','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_SENTBYMAIL','Mails sent from article file','article when you send email from article file','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_DELETE','Knowledge article deleted','Executed when a article is deleted','knowledgemanagement',57006);
+
+-- table chargesociales indexes
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_type (fk_type);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_account (fk_account);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_mode_reglement (fk_mode_reglement);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_author (fk_user_author);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_modif (fk_user_modif);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_projet (fk_projet);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user (fk_user);
+
+-- table paiementcharge indexes
+ALTER TABLE llx_paiementcharge ADD INDEX idx_paiementcharge_fk_charge (fk_charge);
+
+ALTER TABLE llx_product ADD INDEX idx_product_entity_fk_product_type (entity, fk_product_type);
+
+ALTER TABLE llx_element_categorie ADD INDEX idx_element_categorie_fk_categorie (fk_categorie);
+
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1021, 102, 1.2, 'percent', 'Συντελεστής 1,2 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1022, 102, 2.4, 'percent', 'Συντελεστής 2,4 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1023, 102, 3.6, 'percent', 'Συντελεστής 3,6 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1024, 102, 1.0, 'fixed', 'Λοιπές περιπτώσεις Χαρτοσήμου', 1);
+
+ALTER TABLE llx_hrm_evaluation ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
+
+-- Error SQL DB_ERROR_1170 BLOB/TEXT column 'url' used in key specification without a key length, so we remove completely the unique key
+ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu;
+ALTER TABLE llx_menu MODIFY COLUMN url TEXT NOT NULL;
+-- ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, entity, url);
+
+UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI';
+
+-- missing entity field
+ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
+ALTER TABLE llx_c_holiday_types ADD COLUMN entity	integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
+
+
+-- Add ref_ext to asset_model to use various CommonOjbect methods
+ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;

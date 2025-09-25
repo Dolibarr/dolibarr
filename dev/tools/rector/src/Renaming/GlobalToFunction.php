@@ -63,9 +63,9 @@ class GlobalToFunction extends AbstractRector
 			'Change $conf->global to getDolGlobal in context (1) conf->global Operator Value or (2) function(conf->global...)',
 			[new CodeSample(
 				'$conf->global->CONSTANT',
-				'getDolGlobalInt(\'CONSTANT\')'
-			)]
-		);
+				'getDolGlobalString|Int(\'CONSTANT\')'
+				)]
+			);
 	}
 
 	/**
@@ -133,7 +133,7 @@ class GlobalToFunction extends AbstractRector
 				$node->dim = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 			}
 			return $node;
 		}
@@ -208,7 +208,7 @@ class GlobalToFunction extends AbstractRector
 				$leftConcat = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 				$rightConcat = $node->right;
 			}
 			if ($this->isGlobalVar($node->right)) {
@@ -219,7 +219,7 @@ class GlobalToFunction extends AbstractRector
 				$rightConcat = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 				$leftConcat = $node->left;
 			}
 			if (!isset($leftConcat, $rightConcat)) {
@@ -228,15 +228,38 @@ class GlobalToFunction extends AbstractRector
 			return new Concat($leftConcat, $rightConcat);
 		}
 
+		// If a && b and a or b is conf->global, we replace a or/and b
 		if ($node instanceof BooleanAnd) {
-			$nodes = $this->resolveTwoNodeMatch($node);
-			if (!isset($nodes)) {
-				return;
+			// Transformation sur le nœud gauche
+			$changedone = 0;
+			if ($this->isGlobalVar($node->left)) {
+				$constName = $this->getConstName($node->left);
+				if (empty($constName)) {
+					return;
+				}
+				$node->left = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+					);
+				$changedone++;
+			}
+			if ($this->isGlobalVar($node->right)) {
+				$constName = $this->getConstName($node->right);
+				if (empty($constName)) {
+					return;
+				}
+				$node->right = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+					);
+				$changedone++;
 			}
 
-			/** @var Equal $node */
-			$node = $nodes->getFirstExpr();
+			if ($changedone) {
+				return $node;
+			}
 		}
+
 
 		// Now process all comparison like:
 		// $conf->global->... Operator Value
@@ -264,11 +287,47 @@ class GlobalToFunction extends AbstractRector
 			$typeofcomparison = 'NotIdentical';
 			//var_dump($node->left);
 		}
+
 		if (empty($typeofcomparison)) {
 			return;
 		}
 
-		if (!$this->isGlobalVar($node->left)) {
+		// Now we process a comparison
+		$isconfglobal = $this->isGlobalVar($node->left);
+		if (!$isconfglobal) {
+			$isconfglobal = $this->isGlobalVar($node->right);
+			if (!$isconfglobal) {
+				// The left side and right side is not conf->global->xxx, so we leave
+				return;
+			}
+			// Right side is conf->global->xxx, but we can't know if we must use getDolGlobalInt or String,
+			// so we use getDolGlobalString if comparison is ==
+			if ($typeofcomparison == 'Equal') {
+				$constName = $this->getConstName($node->right);
+				if (empty($constName)) {
+					return;
+				}
+
+				// Test the type after the comparison conf->global->xxx to know the name of function
+				$typeleft = $node->left->getType();
+				switch ($typeleft) {
+					case 'Scalar_LNumber':
+						$funcName = 'getDolGlobalInt';
+						break;
+					case 'Scalar_String':
+						$funcName = 'getDolGlobalString';
+						break;
+					default:	// Can be Expr_FuncCall
+						$funcName = 'getDolGlobalString';
+						break;
+				}
+
+				$node->right = new FuncCall(
+						new Name($funcName),
+						[new Arg($constName)]
+						);
+				return $node;
+			}
 			return;
 		}
 
@@ -282,7 +341,8 @@ class GlobalToFunction extends AbstractRector
 				$funcName = 'getDolGlobalString';
 				break;
 			default:
-				return;
+				$funcName = 'getDolGlobalString';
+				break;
 		}
 
 		$constName = $this->getConstName($node->left);
@@ -295,9 +355,9 @@ class GlobalToFunction extends AbstractRector
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'NotEqual') {
 			return new NotEqual(
@@ -313,36 +373,36 @@ class GlobalToFunction extends AbstractRector
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'GreaterOrEqual') {
 			return new GreaterOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'Smaller') {
 			return new Smaller(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'SmallerOrEqual') {
 			return new SmallerOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'NotIdentical') {
 			return new NotIdentical(
@@ -353,36 +413,6 @@ class GlobalToFunction extends AbstractRector
 				$node->right
 				);
 		}
-	}
-
-	/**
-	 * Get nodes with check empty
-	 *
-	 * @param BooleanAnd $booleanAnd A BooleandAnd
-	 * @return    TwoNodeMatch|null
-	 */
-	private function resolveTwoNodeMatch(BooleanAnd $booleanAnd): ?TwoNodeMatch
-	{
-		return $this->binaryOpManipulator->matchFirstAndSecondConditionNode(
-			$booleanAnd,
-			// Function to check if we are in the case $conf->global->... == $value
-			function (Node $node): bool {
-				if (!$node instanceof Equal) {
-					return \false;
-				}
-				return $this->isGlobalVar($node->left);
-			},
-			// !empty(...) || isset(...)
-			function (Node $node): bool {
-				if ($node instanceof BooleanNot && $node->expr instanceof Empty_) {
-					return $this->isGlobalVar($node->expr->expr);
-				}
-				if (!$node instanceof Isset_) {
-					return $this->isGlobalVar($node);
-				}
-				return \true;
-			}
-		);
 	}
 
 	/**

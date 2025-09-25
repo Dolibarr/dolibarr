@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=ປີ້
 Module56000Desc=ລະບົບປີ້ ສຳ ລັບການຈັດການບັນຫາຫຼືການຮ້ອງຂໍ
-
 Permission56001=ເບິ່ງປີ້
 Permission56002=ແກ້ໄຂປີ້
 Permission56003=ລຶບປີ້
 Permission56004=ຈັດການປີ້
 Permission56005=ເບິ່ງປີ້ຂອງພາກສ່ວນທີສາມທັງ(ົດ (ບໍ່ມີປະສິດທິພາບສໍາລັບຜູ້ໃຊ້ພາຍນອກ, ຈໍາກັດສະເພາະກັບບຸກຄົນທີສາມທີ່ພວກເຂົາຂຶ້ນກັບ)
 Permission56006=ປີ້ສົ່ງອອກ
-
 Tickets=ປີ້
 TicketDictType=ປີ້ - ປະເພດ
 TicketDictCategory=ປີ້ - ກຸ່ມ
 TicketDictSeverity=ປີ້ - ຄວາມຮຸນແຮງ
 TicketDictResolution=ປີ້ - ຄວາມລະອຽດ
-
 TicketTypeShortCOM=ຄໍາຖາມການຄ້າ
 TicketTypeShortHELP=ຮ້ອງຂໍການຊ່ວຍເຫຼືອທີ່ເປັນປະໂຫຍດ
 TicketTypeShortISSUE=ບັນຫາຫຼືຂໍ້ຜິດພາດ
@@ -41,61 +33,51 @@ TicketTypeShortPROBLEM=ບັນຫາ
 TicketTypeShortREQUEST=ການປ່ຽນແປງຫຼືການຮ້ອງຂໍການປັບປຸງ
 TicketTypeShortPROJET=ໂຄງການ
 TicketTypeShortOTHER=ອື່ນ
-
 TicketSeverityShortLOW=ຕ່ ຳ
 TicketSeverityShortNORMAL=ປົກກະຕິ
 TicketSeverityShortHIGH=ສູງ
 TicketSeverityShortBLOCKING=ສຳ ຄັນ, ຂັດຂວາງ
-
 TicketCategoryShortOTHER=ອື່ນໆ
-
 ErrorBadEmailAddress=ຊ່ອງຂໍ້ມູນ '%s' ບໍ່ຖືກຕ້ອງ
 MenuTicketMyAssign=ປີ້ຂອງຂ້ອຍ
 MenuTicketMyAssignNonClosed=ປີ້ເປີດຂອງຂ້ອຍ
 MenuListNonClosed=ເປີດປີ້
-
 TypeContact_ticket_internal_CONTRIBUTOR=ຜູ້ປະກອບສ່ວນ
 TypeContact_ticket_internal_SUPPORTTEC=ມອບາຍຜູ້ໃຊ້
 TypeContact_ticket_external_SUPPORTCLI=ຕິດຕາມລູກຄ້າ / ຕິດຕາມເຫດການ
 TypeContact_ticket_external_CONTRIBUTOR=ຜູ້ປະກອບສ່ວນພາຍນອກ
-
 OriginEmail=ອີເມລ orter ຂອງນັກຂ່າວ
+EmailReplyto=Reply-To in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=ສົ່ງຂໍ້ຄວາມປີ້ທາງອີເມລ
-
 ExportDataset_ticket_1=ປີ້
-
 # Status
 Read=ອ່ານ
 Assigned=ມອບາຍ
 NeedMoreInformation=ລໍຖ້າ ຄຳ ຕິຊົມຂອງນັກຂ່າວ
 NeedMoreInformationShort=ກຳ ລັງລໍຖ້າ ຄຳ ຕິຊົມ
-TicketAnswered=Answered
 Waiting=ລໍຖ້າ
-SolvedClosed=ແກ້ໄຂແລ້ວ
+SolvedClosed=Closed
 Deleted=ລຶບແລ້ວ
-
 # Dict
-Type=ປະເພດ
 Severity=ຄວາມຮຸນແຮງ
 TicketGroupIsPublic=ກຸ່ມສາທາລະນະ
 TicketGroupIsPublicDesc=ຖ້າກຸ່ມປີ້ເປັນສາທາລະນະ, ມັນຈະປາກົດຢູ່ໃນຮູບແບບເມື່ອສ້າງປີ້ຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ
-
 # Email templates
 MailToSendTicketMessage=ເພື່ອສົ່ງອີເມວຈາກຂໍ້ຄວາມປີ້
-
-#
 # Admin page
-#
 TicketSetup=ການຕັ້ງຄ່າໂມດູນປີ້
 TicketSettings=ການຕັ້ງຄ່າ
 TicketPublicAccess=ສ່ວນຕິດຕໍ່ສາທາລະນະທີ່ບໍ່ຕ້ອງມີການລະບຸຕົວຕົນແມ່ນມີຢູ່ໃນ url ຕໍ່ໄປນີ້
 TicketSetupDictionaries=ປະເພດຂອງປີ້, ຄວາມຮຸນແຮງແລະລະຫັດການວິເຄາະແມ່ນສາມາດຕັ້ງຄ່າໄດ້ຈາກວັດຈະນານຸກົມ
 TicketParamModule=ການຕັ້ງຄ່າຕົວປ່ຽນໂມດູນ
 TicketParamMail=ການຕັ້ງອີເມລ
-TicketEmailNotificationFrom=ສົ່ງອີເມລສໍາລັບການແຈ້ງເຕືອນກ່ຽວກັບຄໍາຕອບ
-TicketEmailNotificationFromHelp=ສົ່ງອີເມລເພື່ອໃຊ້ເພື່ອສົ່ງອີເມວແຈ້ງເຕືອນເມື່ອມີຄໍາຕອບຢູ່ໃນຫ້ອງການຫຼັງ. ຕົວຢ່າງ noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=ແຈ້ງການສ້າງປີ້ກັບທີ່ຢູ່ອີເມວນີ້
-TicketEmailNotificationToHelp=ຖ້າມີ, ທີ່ຢູ່ອີເມວນີ້ຈະຖືກແຈ້ງໃຫ້ຮູ້ກ່ຽວກັບການສ້າງປີ້
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation (in addition to any other default recipients)
 TicketNewEmailBodyLabel=ຂໍ້ຄວາມໄດ້ຖືກສົ່ງຫຼັງຈາກການສ້າງປີ້
 TicketNewEmailBodyHelp=ຂໍ້ຄວາມທີ່ລະບຸຢູ່ທີ່ນີ້ຈະຖືກໃສ່ເຂົ້າໄປໃນອີເມວຢືນຢັນການສ້າງປີ້ໃfrom່ຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ. ຂໍ້ມູນກ່ຽວກັບການປຶກສາຫາລືຂອງປີ້ຈະຖືກເພີ່ມເຂົ້າໂດຍອັດຕະໂນມັດ.
 TicketParamPublicInterface=ຕັ້ງຄ່າສ່ວນຕິດຕໍ່ຜູ້ໃຊ້ສາທາລະນະ
@@ -116,7 +98,9 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=ຂໍ້ຄວາມນີ້ຈ�
 ExtraFieldsTicket=ຄຸນລັກສະນະພິເສດ
 TicketCkEditorEmailNotActivated=ຕົວແກ້ໄຂ HTML ບໍ່ໄດ້ຖືກເປີດ ນຳ ໃຊ້. ກະລຸນາໃສ່ເນື້ອໃນ FCKEDITOR_ENABLE_MAIL ໃສ່ 1 ເພື່ອເອົາມັນ.
 TicketsDisableEmail=ຢ່າສົ່ງອີເມວເພື່ອສ້າງປີ້ຫຼືບັນທຶກຂໍ້ຄວາມ
-TicketsDisableEmailHelp=ໂດຍຄ່າເລີ່ມຕົ້ນ, ອີເມວຈະຖືກສົ່ງເມື່ອມີການສ້າງປີ້ຫຼືຂໍ້ຄວາມໃnew່. ເປີດໃຊ້ຕົວເລືອກນີ້ເພື່ອປິດການແຈ້ງເຕືອນອີເມລ all * ທັງົດ
+TicketsDisableEmailHelp=By default, notification emails to third parties are sent when new tickets or messages are created for both backoffice and public interface. Enable this option to disable email notifications to thirdparties when creation is done from backoffice.
+TicketsNotifyThirdPartyFromBackOfficeByDefault=Notify third party by default on ticket creation from backoffice
+TicketsNotifyThirdPartyFromBackOfficeByDefaultHelp=When creating a ticket from the backoffice, the option "Notify third party" will be checked by default
 TicketsLogEnableEmail=ເປີດ ນຳ ໃຊ້ບັນທຶກທາງອີເມລ
 TicketsLogEnableEmailHelp=ໃນແຕ່ລະການປ່ຽນແປງ, ອີເມລ be ຈະຖືກສົ່ງ ** ໃຫ້ກັບແຕ່ລະຄົນຕິດຕໍ່ພົວພັນ ** ກັບປີ້.
 TicketParams=ພາລາມິເຕີ
@@ -133,11 +117,13 @@ TicketsLimitViewAssignedOnlyHelp=ມີພຽງປີ້ທີ່ມອບtoາ
 TicketsActivatePublicInterface=ເປີດ ນຳ ໃຊ້ສ່ວນຕິດຕໍ່ສາທາລະນະ
 TicketsActivatePublicInterfaceHelp=ສ່ວນຕິດຕໍ່ສາທາລະນະອະນຸຍາດໃຫ້ນັກທ່ອງທ່ຽວສາມາດສ້າງປີ້ໄດ້.
 TicketsAutoAssignTicket=ມອບtheາຍໃຫ້ຜູ້ໃຊ້ທີ່ສ້າງປີ້ໂດຍອັດຕະໂນມັດ
-TicketsAutoAssignTicketHelp=ເມື່ອສ້າງປີ້, ຜູ້ໃຊ້ສາມາດຖືກມອບtoາຍໃຫ້ກັບປີ້ໂດຍອັດຕະໂນມັດ.
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
+TicketAutoChangeStatusOnAnswer=Automatically assign a status when answering a ticket
+TicketAutoChangeStatusOnAnswerHelp=When a user answers to a ticket, the status will automatically be applied to the ticket
 TicketNumberingModules=ໂມດູນຕົວເລກປີ້
 TicketsModelModule=ແມ່ແບບເອກະສານ ສຳ ລັບປີ້
 TicketNotifyTiersAtCreation=ແຈ້ງໃຫ້ບຸກຄົນທີສາມໃນເວລາສ້າງ
-TicketsDisableCustomerEmail=ປິດການ ນຳ ໃຊ້ອີເມວທຸກເທື່ອເມື່ອມີການສ້າງປີ້ຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ
+TicketsDisableCustomerEmail=Always disable emails to third parties when a ticket is created from the backoffice
 TicketsPublicNotificationNewMessage=ສົ່ງອີເມວເມື່ອຂໍ້ຄວາມ/ຄຳ ເຫັນໃis່ຖືກເພີ່ມໃສ່ປີ້
 TicketsPublicNotificationNewMessageHelp=ສົ່ງອີເມລ when ເມື່ອມີການເພີ່ມຂໍ້ຄວາມໃfrom່ຈາກອິນເຕີເຟດສາທາລະນະ (ໃຫ້ກັບຜູ້ໃຊ້ທີ່ໄດ້ຮັບມອບorາຍຫຼືອີເມລແຈ້ງການຫາ (ອັບເດດ) ແລະ/ຫຼືອີເມວແຈ້ງການຫາ)
 TicketPublicNotificationNewMessageDefaultEmail=ອີເມວແຈ້ງເຕືອນຫາ (ອັບເດດ)
@@ -152,15 +138,16 @@ TicketsAutoNotifyClose=ແຈ້ງເຕືອນບຸກຄົນທີສາ
 TicketsAutoNotifyCloseHelp=ເມື່ອປິດປີ້, ທ່ານຈະຖືກສະເຫນີໃຫ້ສົ່ງຂໍ້ຄວາມໄປຫາຫນຶ່ງໃນຜູ້ຕິດຕໍ່ພາກສ່ວນທີສາມ. ໃນການປິດມະຫາຊົນ, ຂໍ້ຄວາມຈະຖືກສົ່ງໄປຫາຜູ້ຕິດຕໍ່ຂອງບຸກຄົນທີສາມທີ່ເຊື່ອມຕໍ່ກັບປີ້.
 TicketWrongContact=ລາຍຊື່ຕິດຕໍ່ທີ່ສະໜອງໃຫ້ບໍ່ແມ່ນສ່ວນໜຶ່ງຂອງລາຍຊື່ປີ້ປັດຈຸບັນ. ບໍ່ໄດ້ສົ່ງອີເມວ.
 TicketChooseProductCategory=ປະເພດຜະລິດຕະພັນສໍາລັບການສະຫນັບສະຫນູນປີ້
-TicketChooseProductCategoryHelp=ເລືອກປະເພດຜະລິດຕະພັນຂອງການສະຫນັບສະຫນູນປີ້. ອັນນີ້ຈະຖືກໃຊ້ເພື່ອເຊື່ອມຕໍ່ສັນຍາກັບປີ້ໂດຍອັດຕະໂນມັດ.
+TicketChooseProductCategoryHelp=Select the product category for support. The category will be used to find all contracts that include a product in this category. All contracts found will be linked to the created ticket.
 TicketUseCaptchaCode=ໃຊ້ລະຫັດກາຟິກ (CAPTCHA) ເມື່ອສ້າງປີ້
 TicketUseCaptchaCodeHelp=ເພີ່ມການຢັ້ງຢືນ CAPTCHA ເມື່ອສ້າງປີ້ໃໝ່.
 TicketsAllowClassificationModificationIfClosed=ອະນຸຍາດໃຫ້ແກ້ໄຂການຈັດປະເພດຂອງປີ້ປິດ
 TicketsAllowClassificationModificationIfClosedHelp=ອະນຸຍາດໃຫ້ແກ້ໄຂການຈັດປະເພດ (ປະເພດ, ກຸ່ມປີ້, ຄວາມຮຸນແຮງ) ເຖິງແມ່ນວ່າປີ້ຈະຖືກປິດ.
-
-#
+TicketAutoCheckNotifyThirdParty=Check by default “Notify third party” when creating a ticket
+TicketAutoCheckNotifyThirdPartyHelp=When creating a ticket, the option "Notify third-party" will be automatically checked.
+TicketAssignContactToMessage=Assign an external contact to a message
+TicketAssignContactToMessageHelp=When a known contact answer to a message, his name is displayed on the ticket messages list.
 # Index & list page
-#
 TicketsIndex=ປີ້ພື້ນທີ່
 TicketList=ລາຍຊື່ປີ້
 TicketAssignedToMeInfos=ໜ້າ ນີ້ສະແດງລາຍການປີ້ທີ່ສ້າງຂຶ້ນໂດຍຫຼືມອບtoາຍໃຫ້ກັບຜູ້ໃຊ້ປະຈຸບັນ
@@ -171,14 +158,9 @@ TicketViewNonClosedOnly=ເບິ່ງປີ້ເປີດເທົ່ານ�
 TicketStatByStatus=ປີ້ຕາມສະຖານະພາບ
 OrderByDateAsc=ຈັດຮຽງຕາມວັນທີທີ່ຫານ້ອຍ
 OrderByDateDesc=ຈັດຮຽງຕາມວັນທີໃຫຍ່ຫານ້ອຍ
-ShowAsConversation=ສະແດງເປັນລາຍການສົນທະນາ
-MessageListViewType=ສະແດງເປັນລາຍການຕາຕະລາງ
 ConfirmMassTicketClosingSendEmail=ສົ່ງອີເມວອັດຕະໂນມັດເມື່ອປິດປີ້
 ConfirmMassTicketClosingSendEmailQuestion=ທ່ານຕ້ອງການແຈ້ງບຸກຄົນທີສາມໃນເວລາປິດປີ້ເຫຼົ່ານີ້ບໍ?
-
-#
 # Ticket card
-#
 Ticket=ປີ້
 TicketCard=ບັດປີ້
 CreateTicket=ສ້າງປີ້
@@ -220,8 +202,8 @@ ConfirmAbandonTicket=ເຈົ້າຢືນຢັນການປິດປີ�
 ConfirmDeleteTicket=ກະລຸນາຢືນຢັນການລຶບປີ້
 TicketDeletedSuccess=ລຶບປີ້ດ້ວຍຄວາມ ສຳ ເລັດ
 TicketMarkedAsClosed=icketາຍປີ້ວ່າປິດແລ້ວ
-TicketDurationAuto=ໄລຍະເວລາທີ່ ຄຳ ນວນແລ້ວ
-TicketDurationAutoInfos=ໄລຍະເວລາຄິດໄລ່ອັດຕະໂນມັດຈາກການແຊກແຊງທີ່ກ່ຽວຂ້ອງ
+TicketDurationAuto=Duration of interventions
+TicketDurationAutoInfos=Duration calculated automatically from related interventions
 TicketUpdated=ອັບເດດປີ້ແລ້ວ
 SendMessageByEmail=ສົ່ງຂໍ້ຄວາມທາງອີເມລ
 TicketNewMessage=ຂໍ້ຄວາມໃ່
@@ -278,20 +260,14 @@ TicketsDelayFromLastResponseTooLong=ເວລາຜ່ານໄປຫຼາຍ�
 TicketNoContractFoundToLink=ບໍ່ພົບສັນຍາທີ່ຈະເຊື່ອມຕໍ່ອັດຕະໂນມັດກັບປີ້ນີ້. ກະລຸນາເຊື່ອມຕໍ່ສັນຍາດ້ວຍຕົນເອງ.
 TicketManyContractsLinked=ສັນຍາຈໍານວນຫຼາຍໄດ້ຖືກເຊື່ອມຕໍ່ໂດຍອັດຕະໂນມັດກັບປີ້ນີ້. ໃຫ້ແນ່ໃຈວ່າການກວດສອບທີ່ຄວນຈະຖືກເລືອກ.
 TicketRefAlreadyUsed=ການອ້າງອີງ [%s] ຖືກໃຊ້ແລ້ວ, ການອ້າງອີງໃໝ່ຂອງເຈົ້າແມ່ນ [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=ປີ້ %s ອ່ານໂດຍ %s
 NoLogForThisTicket=ບໍ່ມີບັນທຶກສໍາລັບປີ້ນີ້ເທື່ອ
 TicketLogAssignedTo=ປີ້ %s ມອບaາຍໃຫ້ %s
 TicketLogPropertyChanged=ປີ້ %s ຖືກແກ້ໄຂ: ການຈັດປະເພດຈາກ %s ຫາ %s
 TicketLogClosedBy=ປີ້ %s ປິດໂດຍ %s
 TicketLogReopen=ປີ້ %s ເປີດຄືນໃ່
-
-#
 # Public pages
-#
 TicketSystem=ລະບົບປີ້
 ShowListTicketWithTrackId=ສະແດງລາຍການປີ້ຈາກ ID ແທຣັກ
 ShowTicketWithTrackId=ສະແດງປີ້ຈາກ ID ແທຣັກ
@@ -306,13 +282,14 @@ TicketNewEmailBodyCustomer=ນີ້ແມ່ນອີເມວອັດຕະ�
 TicketNewEmailBodyInfosTicket=ຂໍ້ມູນສໍາລັບການຕິດຕາມປີ້
 TicketNewEmailBodyInfosTrackId=trackingາຍເລກຕິດຕາມປີ້: %s
 TicketNewEmailBodyInfosTrackUrl=ທ່ານສາມາດເບິ່ງຄວາມຄືບຫນ້າຂອງປີ້ໂດຍການຄລິກໃສ່ການເຊື່ອມຕໍ່ຕໍ່ໄປນີ້
-TicketNewEmailBodyInfosTrackUrlCustomer=ເຈົ້າສາມາດເບິ່ງຄວາມຄືບ ໜ້າ ຂອງປີ້ຢູ່ໃນສ່ວນຕິດຕໍ່ສະເພາະໂດຍການຄລິກທີ່ລິ້ງຕໍ່ໄປນີ້
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=ທ່ານສາມາດປຶກສາປະຫວັດຂອງປີ້ນີ້ໂດຍການຄລິກໃສ່ການເຊື່ອມຕໍ່ຕໍ່ໄປນີ້
 TicketEmailPleaseDoNotReplyToThisEmail=ກະລຸນາຢ່າຕອບກັບອີເມລ directly ນີ້ໂດຍກົງ! ໃຊ້ຕົວເຊື່ອມຕໍ່ເພື່ອຕອບກັບເຂົ້າໄປໃນອິນເຕີເຟດ.
+TicketEmailPleaseDoNotReplyToThisEmailNoInterface=Please do not reply directly to this email!
 TicketPublicInfoCreateTicket=ແບບຟອມນີ້ອະນຸຍາດໃຫ້ເຈົ້າບັນທຶກປີ້ສະ ໜັບ ສະ ໜູນ ໃນລະບົບການຈັດການຂອງພວກເຮົາ.
 TicketPublicPleaseBeAccuratelyDescribe=ກະລຸນາອະທິບາຍຄຳຮ້ອງຂໍຂອງເຈົ້າຢ່າງຖືກຕ້ອງ. ໃຫ້ຂໍ້ມູນຫຼາຍທີ່ສຸດທີ່ເປັນໄປໄດ້ເພື່ອໃຫ້ພວກເຮົາກໍານົດຄໍາຮ້ອງຂໍຂອງທ່ານຢ່າງຖືກຕ້ອງ.
 TicketPublicMsgViewLogIn=ກະລຸນາໃສ່ ID ຕິດຕາມປີ້
-TicketTrackId=ID ຕິດຕາມສາທາລະນະ
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=ຫນຶ່ງໃນ ID ຕິດຕາມຂອງເຈົ້າ
 ErrorTicketNotFound=ບໍ່ພົບປີ້ທີ່ມີ ID ການຕິດຕາມ %s!
 Subject=ຫົວຂໍ້
@@ -330,7 +307,6 @@ NumberOfTicketsByMonth=ຈຳ ນວນປີ້ຕໍ່ເດືອນ
 NbOfTickets=ຈຳ ນວນປີ້
 ExternalContributors=ຜູ້ປະກອບສ່ວນພາຍນອກ
 AddContributor=ເພີ່ມຜູ້ປະກອບສ່ວນພາຍນອກ
-
 # notifications
 TicketCloseEmailSubjectCustomer=ປິດປີ້
 TicketCloseEmailBodyCustomer=ນີ້ແມ່ນຂໍ້ຄວາມອັດຕະໂນມັດເພື່ອແຈ້ງໃຫ້ທ່ານຮູ້ວ່າປີ້ %s ຫາກໍ່ປິດແລ້ວ.
@@ -342,12 +318,8 @@ TicketNotificationRecipient=ຜູ້ຮັບການແຈ້ງເຕືອ�
 TicketNotificationLogMessage=ຂໍ້ຄວາມບັນທຶກ
 TicketNotificationEmailBodyInfosTrackUrlinternal=ເບິ່ງປີ້ເຂົ້າໄປໃນສ່ວນຕິດຕໍ່
 TicketNotificationNumberEmailSent=ສົ່ງອີເມວແຈ້ງເຕືອນແລ້ວ: %s
-
 ActionsOnTicket=ເຫດການຢູ່ໃນປີ້
-
-#
 # Boxes
-#
 BoxLastTicket=ປີ້ສ້າງຫຼ້າສຸດ
 BoxLastTicketDescription=ປີ້ສ້າງຫຼ້າສຸດ %s
 BoxLastTicketContent=
@@ -366,4 +338,7 @@ BoxNumberOfTicketByDay=ຈຳ ນວນປີ້ໃby່ຕໍ່ມື້
 BoxNewTicketVSClose=ຈຳນວນປີ້ທຽບກັບປີ້ປິດ (ມື້ນີ້)
 TicketCreatedToday=ປີ້ສ້າງມື້ນີ້
 TicketClosedToday=ປີ້ປິດມື້ນີ້
-KMFoundForTicketGroup=ພວກ​ເຮົາ​ພົບ​ເຫັນ​ຫົວ​ຂໍ້​ແລະ FAQs ທີ່​ອາດ​ຈະ​ຕອບ​ຄໍາ​ຖາມ​ຂອງ​ທ່ານ, ຂໍ​ຂອບ​ໃຈ​ທີ່​ຈະ​ກວດ​ເບິ່ງ​ໃຫ້​ເຂົາ​ເຈົ້າ​ກ່ອນ​ທີ່​ຈະ​ສົ່ງ​ປີ້
+KMFoundForTicketGroup=Checkout our FAQ
+SetTitle=Set title
+TicketSendToInternalCC=Force an email as CC recipient to all messages send from ticket page.
+TicketSendToInternalCCHelp=Enter the email you want to use automatically as a Carbon Copy recipient when sending an email from ticket page.

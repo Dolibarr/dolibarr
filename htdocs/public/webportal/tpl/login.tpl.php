@@ -1,10 +1,18 @@
 <!-- file login.tpl.php -->
 <?php
+/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ */
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'@phan-var-force Context $context';
+/**
+ * @var Context $context
+ * @var Translate $langs
+ */
 
 ?>
 <div class="login-page__container">

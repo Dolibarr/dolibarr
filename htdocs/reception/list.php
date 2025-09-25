@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
+
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2023-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->loadLangs(array("sendings", "receptions", "deliveries", 'companies', 'bills', 'orders'));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+$langs->loadLangs(array("sendings", "receptions", 'companies', 'bills', 'orders'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
@@ -46,7 +56,7 @@ $socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -78,7 +88,7 @@ $search_date_create_start = dol_mktime(0, 0, 0, $search_date_create_startmonth, 
 $search_date_create_end = dol_mktime(23, 59, 59, $search_date_create_endmonth, $search_date_create_endday, $search_date_create_endyear);
 $search_billed = GETPOST("search_billed", 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -101,7 +111,7 @@ $pagenext = $page + 1;
 $diroutputmassaction = $conf->reception->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 $object = new Reception($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptionlist'));
 $extrafields = new ExtraFields($db);
 
@@ -112,7 +122,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'e.ref' => "Ref",
-	'e.ref_supplier'=>"RefSupplier",
+	'e.ref_supplier' => "RefSupplier",
 	's.nom' => "ThirdParty",
 	'e.note_public' => 'NotePublic',
 );
@@ -120,21 +130,21 @@ if (empty($user->socid)) {
 	$fieldstosearchall["e.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
-	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-	'e.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => 1),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1),
-	's.town' => array('label' => $langs->trans("Town"), 'checked' => 1),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => 1),
-	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0),
-	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0),
+	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	'e.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1'),
+	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1'),
+	's.town' => array('label' => $langs->trans("Town"), 'checked' => '1'),
+	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1'),
+	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0'),
+	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0'),
 	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers),
-	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => 1),
-	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
+	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => '1'),
+	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
 );
 
 // Extra fields
@@ -142,7 +152,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $error = 0;
 
@@ -218,7 +227,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
-		$receptions = GETPOST('toselect', 'array');
+		$receptions = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -226,6 +235,7 @@ if (empty($reshook)) {
 
 		$TFact = array();
 		$TFactThird = array();
+		'@phan-var FactureFournisseur[] $TFactThird';
 		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
@@ -237,6 +247,7 @@ if (empty($reshook)) {
 		//sort ids to keep order if one bill per third
 		sort($receptions);
 		foreach ($receptions as $id_reception) {
+			$soc = null;
 			$rcp = new Reception($db);
 			// We not allow invoice reception that are in draft status
 			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut == $rcp::STATUS_DRAFT) {
@@ -253,7 +264,7 @@ if (empty($reshook)) {
 				// Add all links of this new reception to the existing invoice
 				$objecttmp->fetchObjectLinked();
 				$rcp->fetchObjectLinked();
-				if (count($rcp->linkedObjectsIds['order_supplier']) > 0) {
+				if (!empty($rcp->linkedObjectsIds['order_supplier']) && is_array($rcp->linkedObjectsIds['order_supplier'])) {
 					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
 						if (empty($objecttmp->linkedObjectsIds['order_supplier']) || !in_array($value, $objecttmp->linkedObjectsIds['order_supplier'])) { //Don't try to link if already linked
 							$objecttmp->add_object_linked('order_supplier', $value); // add supplier order linked object
@@ -265,6 +276,8 @@ if (empty($reshook)) {
 				$mode_reglement_id = 0;
 				$fk_account = 0;
 				$transport_mode_id = 0;
+				$multicurrency_code = null;
+
 				if (!empty($rcp->cond_reglement_id)) {
 					$cond_reglement_id = $rcp->cond_reglement_id;
 				}
@@ -277,11 +290,15 @@ if (empty($reshook)) {
 				if (!empty($rcp->transport_mode_id)) {
 					$transport_mode_id = $rcp->transport_mode_id;
 				}
+				if (!empty($rcp->multicurrency_code)) {
+					$multicurrency_code = $rcp->multicurrency_code;
+				}
 
 				if (empty($cond_reglement_id)
 					|| empty($mode_reglement_id)
 					|| empty($fk_account)
 					|| empty($transport_mode_id)
+					|| empty($multicurrency_code)
 				) {
 					if (!isset($rcp->supplier_order)) {
 						$rcp->fetch_origin();
@@ -302,9 +319,12 @@ if (empty($reshook)) {
 						if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
 							$transport_mode_id = $supplierOrder->transport_mode_id;
 						}
+						if (empty($multicurrency_code) && !empty($supplierOrder->multicurrency_code)) {
+							$multicurrency_code = $supplierOrder->multicurrency_code;
+						}
 					}
 
-					// try get from third-party of reception
+					// try get from third party of reception
 					if (!empty($rcp->thirdparty)) {
 						$soc = $rcp->thirdparty;
 						if (empty($cond_reglement_id) && !empty($soc->cond_reglement_supplier_id)) {
@@ -319,6 +339,9 @@ if (empty($reshook)) {
 						if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
 							$transport_mode_id = $soc->transport_mode_id;
 						}
+						if (empty($multicurrency_code) && !empty($soc->multicurrency_code)) {
+							$multicurrency_code = $soc->multicurrency_code;
+						}
 					}
 				}
 
@@ -329,9 +352,12 @@ if (empty($reshook)) {
 				$objecttmp->mode_reglement_id = $mode_reglement_id;
 				$objecttmp->fk_account = $fk_account;
 				$objecttmp->transport_mode_id = $transport_mode_id;
+				$objecttmp->multicurrency_code = $multicurrency_code;
 
 				// if the VAT reverse-charge is activated by default in supplier card to resume the information
-				$objecttmp->vat_reverse_charge = $soc->vat_reverse_charge;
+				if (is_object($soc)) {
+					$objecttmp->vat_reverse_charge = $soc->vat_reverse_charge;
+				}
 
 				$objecttmp->fk_project			= $rcp->fk_project;
 				//$objecttmp->multicurrency_code = $rcp->multicurrency_code;
@@ -384,6 +410,13 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
+				if (!isset($rcp->origin_object)) {
+					$rcp->fetch_origin();
+				}
+				if ($rcp->origin_object->multicurrency_code != $objecttmp->multicurrency_code) {
+					$errors[] = $rcp->ref." : ".$langs->trans("ReceptionMustBeInTheSameCurrencyThanOther");
+				}
+
 				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_reception);
 
 				if ($res == 0) {
@@ -405,7 +438,8 @@ if (empty($reshook)) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 						// If we build one invoice for several reception, we must put the ref of reception on the invoice line
 						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Reception").' '.$rcp->ref.' - '.dol_print_date($rcp->date, 'day'));
+							$desc = dol_concatdesc($desc, $langs->trans("Reception").' '.$rcp->ref);
+							$desc .= (!empty($rcp->date_reception) ? ' - '.dol_print_date($rcp->date_reception, 'day') : '');
 						}
 
 						if ($lines[$i]->subprice < 0) {
@@ -484,15 +518,15 @@ if (empty($reshook)) {
 								$date_start,
 								$date_end,
 								0,
-								$lines[$i]->info_bits,
+								(int) $lines[$i]->info_bits,
 								'HT',
 								$product_type,
 								$rang,
-								false,
+								0,
 								array(),
 								null,
 								$lines[$i]->rowid,
-								0,
+								$lines[$i]->multicurrency_subprice,
 								$lines[$i]->ref_supplier
 							);
 
@@ -547,7 +581,7 @@ if (empty($reshook)) {
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->fournisseur->facture->dir_output;
-				$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+				$permissiontoadd = ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'));
 
 				// Call action to build doc
 				$savobject = $object;
@@ -594,9 +628,9 @@ $reception = new Reception($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
 
-
+$title = $langs->trans('Receptions');
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
-llxHeader('', $langs->trans('ListOfReceptions'), $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'bodyforlist mod-reception page-list');
 
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as delivery_date, l.date_delivery as date_reception2, e.fk_statut as status, e.billed,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
@@ -628,6 +662,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
 // Add table from hooks
 $parameters = array();
+// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
@@ -702,7 +737,11 @@ $sql .= $hookmanager->resPrint;
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -717,7 +756,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -892,13 +931,13 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($massaction == 'createbills') {
 	//var_dump($_REQUEST);
 	print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-	print '<table class="noborder" width="100%" >';
+	print '<table class="noborder centpercent">';
 	print '<tr>';
 	print '<td class="titlefieldmiddle">';
 	print $langs->trans('DateInvoice');
@@ -951,7 +990,7 @@ if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters = array('type' => $type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
@@ -1096,6 +1135,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -1306,7 +1346,7 @@ while ($i < $imaxinloop) {
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';
-			if (!isset($typenArray) || empty($typenArray)) {
+			if (!isset($typenArray) || empty($typenArray)) {  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 				$typenArray = $formcompany->typent_array(1);
 			}
 			if (isset($typenArray[$obj->typent_code])) {
@@ -1441,7 +1481,7 @@ print '</form>';
 $db->free($resql);
 
 $hidegeneratedfilelistifempty = 1;
-if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+if ($massaction == 'builddoc' || $action == 'remove_file') {
 	$hidegeneratedfilelistifempty = 0;
 }
 

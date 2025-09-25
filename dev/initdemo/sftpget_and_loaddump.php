@@ -84,7 +84,7 @@ if (empty($sourceserver) || empty($server) || empty($login) || empty($sourcefile
 	print "Usage: $script_file login@server:/src/file.(sql|gz|bz2) passssh databaseserver databasename loginbase passbase\n";
 	print "Return code: 0 if success, <>0 if error\n";
 	print "Warning, this script may take a long time.\n";
-	exit(-1);
+	exit(1);
 }
 
 
@@ -106,7 +106,7 @@ $connection = ssh2_connect($server, 22);
 if ($connection) {
 	if (!@ssh2_auth_password($connection, $login, $password)) {
 		dol_syslog("Could not authenticate with username ".$login." . and password ".preg_replace('/./', '*', $password), LOG_ERR);
-		exit(-5);
+		exit(5);
 	} else {
 		//$stream = ssh2_exec($connection, '/usr/bin/php -i');
 		/*
@@ -143,7 +143,7 @@ if ($connection) {
 	}
 } else {
 	print 'Failed to connect to ssh2 to '.$server;
-	exit(-6);
+	exit(6);
 }
 
 

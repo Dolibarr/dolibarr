@@ -1,8 +1,22 @@
 <?php
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > */
+}
+/**
+ * @var Conf $conf
+ * @var string $left
+ * @var string $right
+ */
+// Expected to be defined by including parent
+'
+@phan-var-force string $right
+@phan-var-force string $left
+';
+?>
+/* IDE Hack <style type="text/css"> */
 
 /*
  * Component: Info Box
@@ -23,9 +37,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	min-height: 94px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
+	box-shadow: 1px 1px 20px rgba(192, 192, 192, 0.2);
 	border-radius: 2px;
 	border: 1px solid #e9e9e9;
+	/* border: 1px solid var(--colorbacktitle1); */
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm {
@@ -69,7 +84,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	color: #fff;
 	text-align: center;
 	background-color: #337ab7;
-	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	-webkit-transition: width .6s ease;
 	-o-transition: width .6s ease;
@@ -138,7 +152,7 @@ a.info-box-text.info-box-text-a {
 	/* display: table-cell; */
 	display: contents;
 }
-a.info-box-text-a i.fa.fa-exclamation-triangle {
+a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
 }
 
@@ -257,12 +271,6 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
 }
-/*.info-box-sm .info-box-content-warning {
-	background: #ffd7a3;
-}*/
-/*.info-box-icon.info-box-icon-module-enabled {
-	background: #e4f0e4 !important;
-}*/
 
 .info-box-number {
 	display: block;
@@ -292,7 +300,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 @media only screen and (max-width: 480px)
 {
 	.info-box-text {
-		font-size: 0.82em;
+		font-size: 0.85em;
 	}
 	.info-box-line {
 		line-height: 1.25em;
@@ -310,7 +318,33 @@ a.info-box-text{ text-decoration: none;}
 }
 
 
-
+/* customize section for home box link */
+.infobox-haslink .info-box-icon i {
+	transition: opacity 0.2s ease-in-out;
+}
+.infobox-haslink .info-box-icon:hover i {
+	opacity: 0.2;
+}
+.infobox-haslink .info-box-icon .info-box-createlink {
+	height:100%;
+	width:100%;
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	font-size:0.6em;
+	display: flex;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color:inherit;
+	text-decoration: none;
+}
+.infobox-haslink .info-box-icon:hover .info-box-createlink {
+	opacity: 1;
+}
+.infobox-haslink .info-box-icon .info-box-createlink span.fas {
+	margin:auto;
+}
 
 
 /* ICONS INFO BOX */
@@ -323,10 +357,10 @@ if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 }
 
 if (!isset($conf->global->THEME_SATURATE_RATIO)) {
-	$conf->global->THEME_SATURATE_RATIO = 0.7;
+	$conf->global->THEME_SATURATE_RATIO = 0.8;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTFLOAT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -335,11 +369,29 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #fff !important;
 	<?php } ?>
 	opacity: 0.95;
-	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
-		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	<?php if (getDolGlobalString('THEME_SATURATE_RATIO')) { ?>
+		filter: saturate(<?php echo getDolGlobalString('THEME_SATURATE_RATIO'); ?>);
 	<?php } ?>
 }
 
+.spannature {
+	padding-top: 5px !important;
+	padding-bottom: 6px !important;
+}
+
+.nonature-back {
+	background-color: #EEE;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.prospect-back {
+	background-color: #a7c5b0 !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .customer-back {
 	background-color: #55955d !important;
 	color: #FFF !important;
@@ -362,17 +414,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 
@@ -381,7 +435,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #b06080 !important;
+	<?php echo $prefix; ?>color: #906080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
 	<?php echo $prefix; ?>color: #65953d !important;
@@ -404,6 +458,15 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-holiday{
 	<?php echo $prefix; ?>color: #755114 !important;
 }
+.bg-infobox-cubes{
+	<?php echo $prefix; ?>color: #b0a53e !important;
+}
+
+/* Disable colors on left vmenu */
+a.vmenu span, span.vmenu, span.vmenu span {
+	/* To force no color on picto in left menu */
+	/* color: var(--colortextbackvmenu) !important; */
+}
 
 .infobox-adherent, .infobox-member {
 	color: #79633f;
@@ -412,7 +475,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #6c6aa8;
 }
 .infobox-action{
-	color: #b06080;
+	color: #906080;
 }
 /* Color for customer object */
 .infobox-propal:not(.error),
@@ -479,6 +542,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .fa-dol-holiday:before {
 	content: "\f5ca";
 }
+.fa-dol-cubes:before {
+	content: "\f1b3";
+}
 
 
 /* USING FONTAWESOME FOR WEATHER */
@@ -503,7 +569,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 
@@ -527,6 +593,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .box-flex-container-column:not(:last-of-type) {
 	border-right: 1px solid #AAA;
 }
+.box-flex-container-column.kanban {
+	flex: 1;
+}
+.kanban.kanbancollapsed {
+	flex: unset;
+	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
+}
+.kanban.kanbancollapsed .kanbanlabel, .text-vertical {
+	writing-mode: vertical-rl;
+}
 
 .box-flex-grow-zero {
 	flex-grow: 0 !important;
@@ -541,15 +619,36 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .box-flex-item.filler {
 	height: 0;
 }
-.box-flex-item {
+.box-flex-item, .kanbanlabel {
 	margin-top: 5px;
 	margin-<?php echo $right; ?>: 20px;
 	margin-bottom: 0px;
 	margin-<?php echo $left; ?>: 10px;
 }
+.kanbanlabel {
+	background: var(--colorbacktitle1);
+	padding: 5px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+}
 .kanban .box-flex-item {
 	line-height: 1.4em;
 }
+.kanban .box-flex-item-5lines {
+	line-height: 1.2em;
+}
+
+/* css for small kanban */
+.box-flex-item-small {
+	width: 200px !important;
+}
+.box-flex-item-small .info-box-sm .info-box-content {
+	margin-left: 0;
+}
+.box-flex-item-small .info-box-icon.bg-infobox-action {
+	display: none;
+}
+
 
 .info-box-title {
 	width: calc(100% - 20px);
@@ -574,6 +673,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 	.box-flex-item {
 		width: 280px;
+	}
+}
+
+@media only screen and (max-width: 570px)
+{
+	.box-flex-item {
+		margin: 3px 8px 3px 8px !important;
 	}
 }
 
@@ -603,7 +709,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.box-flex-container {
 		margin: 0 0 0 0px !important;
 		width: 100% !important;
-		justify-content: space-between;
+		/* justify-content: space-between; */
 	}
 	.info-box-module {
 		width: 100%;
@@ -629,8 +735,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 		padding-left: 10px;
 		padding-right: 2px;
 	}
+	/*
 	.info-box-line-text {
 		width: calc(100% - 98px);
 		max-width: calc(100% - 88px);
 	}
+	*/
 }

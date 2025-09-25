@@ -1,0 +1,11 @@
+div.ui-tooltip.mytooltip-hover-tooltip {
+	z-index: 999999;
+	border: solid 1px #BBBBBB;
+	padding: 10px 20px;
+	border-radius: 0;
+	box-shadow: 0 0 4px grey;
+	margin: 2px;
+	font-stretch: condensed;
+	line-height: 1.6em;
+	max-width: 550px;
+}

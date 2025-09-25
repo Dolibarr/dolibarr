@@ -6,8 +6,8 @@
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "orders"));
@@ -72,6 +81,7 @@ if ($action == 'updateMask') {
 	$maskinvoice = GETPOST('maskinvoice', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
 	$maskdeposit = GETPOST('maskdeposit', 'alpha');
+	$res = 0;
 
 	if ($maskconstinvoice && preg_match('/_MASK$/', $maskconstinvoice)) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
@@ -117,7 +127,7 @@ if ($action == 'specimen') {  // For invoices
 		require_once $file;
 
 		$module = new $classname($db, $facture);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFSuppliersInvoices $module';
 
 		if ($module->write_file($facture, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture_fournisseur&file=SPECIMEN.pdf");
@@ -136,7 +146,7 @@ if ($action == 'specimen') {  // For invoices
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF == "$value") {
+		if (getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'INVOICE_SUPPLIER_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -194,9 +204,10 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-supplier_invoice');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
 
 print "<br>";
@@ -236,6 +247,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
+					'@phan-var-force ModeleNumRefSuppliersInvoices $module';
+
 					if ($module->isEnabled()) {
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -246,7 +259,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -264,7 +277,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER == "$file") {
+						if (getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -291,7 +304,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print '</tr>';
@@ -367,6 +380,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, new FactureFournisseur($db));
 
+					'@phan-var-force ModelePDFSuppliersInvoices $module';
+
 
 					print "<tr class=\"oddeven\">\n";
 					print "<td>";
@@ -375,8 +390,9 @@ foreach ($dirmodels as $reldir) {
 					print "<td>\n";
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, $specimenthirdparty);
+					'@phan-var-force ModelePDFSuppliersInvoices $module';
 					if (method_exists($module, 'info')) {
-						print $module->info($langs);
+						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 					} else {
 						print $module->description;
 					}
@@ -426,7 +442,7 @@ foreach ($dirmodels as $reldir) {
 					$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
 					$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
 					print '<td class="center">';
-					print $form->textwithpicto('', $htmltooltip, 1, 0);
+					print $form->textwithpicto('', $htmltooltip, 1, 'info');
 					print '</td>';
 					print '<td class="center">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
@@ -457,7 +473,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 

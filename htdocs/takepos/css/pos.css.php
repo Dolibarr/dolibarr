@@ -119,6 +119,10 @@ button.calcbutton {
 	border-radius: 3px;
 }
 
+div.wrapper, div.wrapper2 {
+	border-radius: 5px;
+}
+
 button.calcbutton2 {
 	color: #fff;
 	background-color: #5555AA;
@@ -450,10 +454,8 @@ div.paymentbordline
 	padding-right: 8px;
 }
 
-
 tr.selected, tr.selected td {
-	/* font-weight: bold; */
-	background-color: rgb(240,230,210) !important;
+	background-color: var(--colorbacklinepairchecked) !important;
 }
 .order td {
 	color: green;
@@ -596,6 +598,12 @@ div.description_content {
 	max-width: 250px;
 	border-radius: 5px;
 }
+
+
+.login_block_other.takepos {
+	margin-top: 5px;
+}
+
 
 div#moreinfo, div#infowarehouse {
 	color: #aaa;
