@@ -1157,7 +1157,7 @@ if ($num) {
 					$fieldsforcontent[] = 'content_lines';
 				}
 
-				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[25] ?? '');
+				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[25]);
 				$hookmanager->executeHooks('editEmailTemplateFieldsForContent', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				foreach ($fieldsforcontent as $tmpfieldlist) {
