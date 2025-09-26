@@ -82,6 +82,7 @@ $arrayofcateg = array();
 foreach ($categstatic->MAP_ID as $key => $idtype) {
 	$arrayofcateg[$idtype] = array();
 	$arrayofcateg[$idtype]['key'] = $key;
+	$arrayofcateg[$idtype]['nb'] = 0;
 	$arrayofcateg[$idtype]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
 	$arrayofcateg[$idtype]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
 }
@@ -103,6 +104,20 @@ print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', -1, 0, $categ
 print '<span class="opacitymedium">';
 print $langs->trans("CategorieListOfType").'...<br>';
 print '</span>';
+
+// Define $nbmodulesnotautoenabled - TODO This code is at different places
+$nbmodulesnotautoenabled = count($conf->modules);
+$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+foreach ($listofmodulesautoenabled as $moduleautoenable) {
+	if (in_array($moduleautoenable, $conf->modules)) {
+		$nbmodulesnotautoenabled--;
+	}
+}
+
+if ($user->admin && $nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+	$langs->load("admin");
+	print info_admin($langs->trans("WarningOnlyCategoryTypesOfActivatedModules").' '.$langs->trans("YouCanEnableModulesFrom"));
+}
 
 print '<br>';
 

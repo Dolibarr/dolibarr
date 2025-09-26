@@ -257,15 +257,6 @@ if (empty($reshook)) {
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray['__ID__'] = $obj->source_id;
-						if ($obj->source_type == "thirdparty") {
-							$result = $thirdpartystatic->fetch($obj->source_id);
-
-							if ($result > 0) {
-								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
-							} else {
-								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = '';
-							}
-						}
 						$substitutionarray['__EMAIL__'] = $obj->email;
 						$substitutionarray['__LASTNAME__'] = $obj->lastname;
 						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;
@@ -275,6 +266,16 @@ if (empty($reshook)) {
 						$substitutionarray['__OTHER3__'] = $other3;
 						$substitutionarray['__OTHER4__'] = $other4;
 						$substitutionarray['__OTHER5__'] = $other5;
+
+						if ($obj->source_type == "thirdparty") {
+							$result = $thirdpartystatic->fetch($obj->source_id);
+							if ($result > 0) {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
+							} else {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = '';
+							}
+						}
+
 						$substitutionarray['__USER_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
 						$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
 						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($obj->tag).'&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY').'-'.$obj->tag.'-'.$obj->email.'-'.$obj->rowid, "md5").'&email='.urlencode($obj->email).'&mtid='.((int) $obj->rowid).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
@@ -927,7 +928,7 @@ if ($action == 'create') {	// aaa
 		}
 
 		if ($action != 'edit' && $action != 'edittxt' && $action != 'edithtml') {
-			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, $object->picto);
 
 			// View mode mailing
 			if ($action == 'sendall') {
@@ -1037,15 +1038,16 @@ if ($action == 'create') {	// aaa
 			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
-			$email = CMailFile::getValidAddress($object->email_from, 2);
-			if ($email && !isValidEmail($email)) {
-				$langs->load("errors");
-				print img_warning($langs->trans("ErrorBadEMail", $email));
-			} elseif ($email && !isValidMailDomain($email)) {
-				$langs->load("errors");
-				print img_warning($langs->trans("ErrorBadMXDomain", $email));
+			if ($action != 'editemail_from') {
+				$email = CMailFile::getValidAddress($object->email_from, 2);
+				if ($email && !isValidEmail($email)) {
+					$langs->load("errors");
+					print img_warning($langs->trans("ErrorBadEMail", $email));
+				} elseif ($email && !isValidMailDomain($email)) {
+					$langs->load("errors");
+					print img_warning($langs->trans("ErrorBadMXDomain", $email));
+				}
 			}
-
 			print '</td></tr>';
 
 			// Errors to
@@ -1057,17 +1059,19 @@ if ($action == 'create') {	// aaa
 				$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
 				foreach ($emailarray as $email => $name) {
 					if ($name != $email) {
-						print dol_escape_htmltag((string) $name).' &lt;'.$email;
-						print '&gt;';
-						if ($email && !isValidEmail($email)) {
-							$langs->load("errors");
-							print img_warning($langs->trans("ErrorBadEMail", $email));
-						} elseif ($email && !isValidMailDomain($email)) {
-							$langs->load("errors");
-							print img_warning($langs->trans("ErrorBadMXDomain", $email));
+						if ($action != 'editemail_errorsto') {
+							if ($email && !isValidEmail($email)) {
+								$langs->load("errors");
+								print img_warning($langs->trans("ErrorBadEMail", $email));
+							} elseif ($email && !isValidMailDomain($email)) {
+								$langs->load("errors");
+								print img_warning($langs->trans("ErrorBadMXDomain", $email));
+							}
 						}
 					} else {
-						print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+						if ($object->email_errorsto) {
+							print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+						}
 					}
 				}
 				print '</td></tr>';
@@ -1118,7 +1122,7 @@ if ($action == 'create') {	// aaa
 					$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 				}
 				if ($htmltooltip) {
-					print $form->textwithpicto($nbemail, $htmltooltip, 1, 'warning');
+					print $form->textwithpicto($nbemail, $htmltooltip, 1, 'info');
 				} else {
 					print $nbemail;
 				}
@@ -1351,7 +1355,7 @@ if ($action == 'create') {	// aaa
 			 * Edition mode mailing (CKeditor or HTML source)
 			 */
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, $object->picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

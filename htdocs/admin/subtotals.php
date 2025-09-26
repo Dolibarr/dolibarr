@@ -56,19 +56,19 @@ $formother = new FormOther($db);
 $default = 'ffffff';
 
 // Constant and translation of the module description
-$modules = array(
+$modules = [
 	'PROPAL' => array('lang' => 'propal', 'key' => 'Proposal', 'old_pdf' => '(azur model)'),
 	'COMMANDE' => array('lang' => 'orders', 'key' => 'CustomerOrder', 'old_pdf' => '(einstein model)'),
 	'FACTURE' => array('lang' => 'bills', 'key' => 'CustomerInvoice', 'old_pdf' => '(crabe model)'),
 	'FACTUREREC' => array('lang' => 'bills', 'key' => 'RecurringInvoiceTemplate'),
-);
+];
 // Conditions for the option to be offered
-$conditions = array(
-	'PROPAL' => (isModEnabled("propal")),
-	'COMMANDE' => (isModEnabled("order")),
-	'FACTURE' => (isModEnabled("invoice")),
-	'FACTUREREC' => (isModEnabled("invoice")),
-);
+$conditions = [
+	'PROPAL' => isModEnabled("propal"),
+	'COMMANDE' => isModEnabled("order"),
+	'FACTURE' => isModEnabled("invoice"),
+	'FACTUREREC' => isModEnabled("invoice"),
+];
 
 $max_depth = 0;
 
@@ -121,7 +121,8 @@ if ($action == 'update_colors') {
  */
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-subtotals');
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("SubtotalSetup"), $linkback, 'title_setup');
 

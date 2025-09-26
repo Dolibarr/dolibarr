@@ -78,6 +78,11 @@ class SMTPs
 	private $_smtpsToken = null;
 
 	/**
+	 * @var ?string Message-ID to use
+	 */
+	private $_msgId = null;
+
+	/**
 	 * @var ?array{org:string,real?:string,addr:string,user:string,host:string} Who sends the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -293,8 +298,20 @@ class SMTPs
 	 */
 	private $_options = array();
 
+
 	/**
-	 * Set delivery receipt
+	 * Set Message-ID
+	 *
+	 * @param	string	$_msgId		Message-ID to use
+	 * @return	void
+	 */
+	public function setMessageID($_msgId = '')
+	{
+		$this->_msgId = $_msgId;
+	}
+
+	/**
+	 * Set options
 	 *
 	 * @param	array<string,array<string,mixed>>	$_options	An array of options for stream_context_create()
 	 * @return	void
@@ -1546,16 +1563,15 @@ class SMTPs
 
 		$host = dol_getprefix('email');
 
-		//NOTE: Message-ID should probably contain the username of the user who sent the msg
 		$_header .= 'Subject: '.$this->getSubject()."\r\n";
 		$_header .= 'Date: '.date("r")."\r\n";
 
 		$trackid = $this->getTrackId();
 		if ($trackid) {
-			$_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
+			$_header .= 'Message-ID: <'.(empty($this->_msgId) ? uniqid().'.SMTPs-dolibarr-'.$trackid.'@'.$host : $this->_msgId).">\r\n";
 			$_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
 		} else {
-			$_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
+			$_header .= 'Message-ID: <'.(empty($this->_msgId) ? uniqid().'.SMTPs@'.$host : $this->_msgId).">\r\n";
 		}
 		if (!empty($_SERVER['REMOTE_ADDR'])) {
 			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";

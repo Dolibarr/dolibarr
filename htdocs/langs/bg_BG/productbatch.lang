@@ -6,7 +6,7 @@ ProductStatusNotOnBatch=Не (не се изисква партиден / сер
 ProductStatusOnBatchShort=Партиден
 ProductStatusOnSerialShort=Сериен
 ProductStatusNotOnBatchShort=Не
-BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryList=%s или %s е задължително
 BatchSellOrEatByMandatoryNone=Няма
 BatchSellOrEatByMandatoryAll=%s и %s
 Batch=Партиден / Сериен №
@@ -50,3 +50,5 @@ ToReplace=Сменете
 CantMoveNonExistantSerial=Грешка. Искате преместване на запис за сериен номер, който вече не съществува. Вероятно сте взели серииния номер на същия склад няколко пъти за една пратка или е използван за друга пратка. Премахнете тази пратка и направете нова.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Незавършена поправка в таблицата с партиди с параметър '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Необходима е наличност корекция поради уникалния сериен номер.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

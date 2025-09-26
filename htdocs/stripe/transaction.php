@@ -48,7 +48,7 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'salaries', '', '', '');
+//restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
@@ -72,12 +72,11 @@ $result = restrictedArea($user, 'banque');
  * View
  */
 
-$form = new Form($db);
 $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
@@ -111,7 +110,7 @@ if (!$rowid) {
 	$moreforfilter = '';
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);

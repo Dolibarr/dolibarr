@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,11 +56,6 @@ class Website extends CommonObject
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'globe';
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var string Ref
@@ -197,6 +192,8 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		$pathofwebsite = $conf->website->dir_output.'/'.$this->ref;
+
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
 		$sql .= 'entity,';
@@ -254,8 +251,6 @@ class Website extends CommonObject
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/image/'.$this->ref, DOL_DATA_ROOT);
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/js/'.$this->ref, DOL_DATA_ROOT);
 
-			$pathofwebsite = $conf->website->dir_output.'/'.$this->ref;
-
 			// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
 			// Recreate also dir of website if not found.
 			$pathtomedias = DOL_DATA_ROOT.'/medias';
@@ -283,7 +278,13 @@ class Website extends CommonObject
 			$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
 			$stringtodolibarrfile .= "param=value\n";
 			//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
-			file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
+			file_put_contents($pathofwebsite.'/.dolibarr', $stringtodolibarrfile);
+
+			$filelicense = $pathofwebsite.'/LICENSE';
+			if (!dol_is_file($filelicense)) {
+				$licensecontent = "LICENSE\n-------\nThis website template content (HTML and PHP code) is published under the license CC-BY-SA - https://creativecommons.org/licenses/by/4.0/";
+				$result = dolSaveLicense($filelicense, $licensecontent);
+			}
 		}
 
 		// Commit or rollback

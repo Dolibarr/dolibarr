@@ -139,6 +139,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 
 print '
 	jQuery(".classfortooltiponclicktext").dialog({
+		/* title: \'No title\', */
 		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
 		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700).',
 		modal: true,
@@ -232,7 +233,11 @@ if ($conf->browser->layout != 'phone') {
 					// Click on the preview picto
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
+						var titledocpreview = $(this).attr(\'data-title\');
+						if (titledocpreview == undefined || titledocpreview == "") {
+							titledocpreview = \''.dol_escape_js($langs->transnoentities("Preview")).'\'
+						}
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), titledocpreview);
                 		return false;
         			});
 		});'."\n";

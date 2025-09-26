@@ -560,8 +560,17 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 input {
 	font-size: unset;
 }
-.tableforfield input, .refidno input {
+.tableforfield input{
 	padding: 2px;
+}
+.refidno input {
+	margin-top: 0 !important;
+	padding: 0;
+}
+.refidno .button.smallpaddingimp {
+	padding: 3px !important;
+	padding-left: 6px !important;
+	padding-right: 6px !important;
 }
 
 /*
@@ -668,8 +677,12 @@ input, select {
 input.button.massactionconfirmed {
 	margin: 4px;
 }
+
 input.short {
 	width: 40px;
+}
+input.shortbis {
+	width: 48px;
 }
 
 input:invalid, select:invalid, input.--error , select.--error {
@@ -706,7 +719,7 @@ textarea {
 	border-bottom:solid 1px var(--inputbordercolor);
 
 	background-color: #FFF;
-	padding:4px;
+	padding:8px;
 	margin-left:1px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -1046,9 +1059,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-radius: 2px;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.refidno .button.smallpaddingimp {
-	font-size: 0.85em !important;
-}
 .button:focus, .buttonDelete:focus  {
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -1103,6 +1113,10 @@ div.floatright
 .inline-blockimp
 {
 	display:inline-block !important;
+}
+.displaycontents
+{
+	display:contents !important;
 }
 .largenumber {
 	font-size: 1.4em;
@@ -1942,19 +1956,34 @@ select.flat.selectlimit {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountpaymentcompletenoresize {
+	color: var(--amountpaymentcomplete);
+	white-space: nowrap;
+}
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	white-space: nowrap;
+}
+.amountremaintopaynoresize {
+	color: var(--amountremaintopaycolor);
 	white-space: nowrap;
 }
 .amountremaintopayback {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountremaintopaybacknoresize {
+	white-space: nowrap;
+}
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.4em;
+	white-space: nowrap;
+}
+.amountpaymentneutralnoresize {
+	color: var(--amountremaintopaybackcolor);
 	white-space: nowrap;
 }
 
@@ -2043,7 +2072,8 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	flex:1;
 }
 .flex-item-uploadfile {
-	border: 2px solid #888;
+	/* border: 2px solid #888; */
+	box-shadow: 2px 3px 10px #ccc;
 	border-radius: 5px;
 	cursor: pointer;
 	text-align: center;
@@ -2927,11 +2957,11 @@ img.hideonsmartphone.pictoactionview {
 
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;
+	width: 20px;	/* do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;
+	width: 18px;	/* Do not use em unit here */
 	padding-right: 2px;
 }
 
@@ -3780,6 +3810,9 @@ div.vmenu, td.vmenu {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
+}
+.vmenudisabled {
+	margin-<?php print $left; ?>: 8px !important
 }
 
 .vmenusearchselectcombo {
@@ -4679,7 +4712,7 @@ div.refidno  {
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: 92%;
-	line-height: 1.3em;
+	line-height: 1.5em;
 }
 div.refidno form {
 	display: inline-block;
@@ -5025,10 +5058,11 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
-tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center), tr.liste_titre_filter th.liste_titre_sel:not(.center) {
+	text-align: unset;
+}
 
 /*
 div.liste_titre {
@@ -5671,7 +5705,7 @@ div.backgreypublicpayment {
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
-	right: 8px;
+	right: 12px;
 	position: absolute;
 	font-size: 0.8em;
 	color: #222;
@@ -5760,6 +5794,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
+	maring-bottom: 10px;	/* same than .ui-widget-header */
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
@@ -5776,6 +5811,10 @@ div#card-errors {
 
 div#dialogforpopup {
 	background-color: #f8f8f8 !important;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .3em .4em;
 }
 
 
@@ -5827,7 +5866,7 @@ div.ui-tooltip {
 }
 
 div.ui-tooltip.mytooltip {
-	padding: 10px 20px;
+	padding: 20px 20px;
 	border-radius: 4px;
 	box-shadow: 0 0 4px #888;
 	margin: 2px;
@@ -5858,7 +5897,7 @@ div.ui-tooltip.mytooltip {
 
 
 /* ============================================================================== */
-/* Calendar date picker                                                                */
+/* Calendar date picker                                                           */
 /* ============================================================================== */
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
@@ -5875,6 +5914,7 @@ div#ui-datepicker-div {
 	padding-left: 5px;
 	padding-right: 5px;
 	padding-top: 5px;
+	z-index: 1010 !important;	/* must be over menu bar */
 }
 .ui-datepicker .ui-datepicker table {
 	font-size: unset;
@@ -5882,6 +5922,12 @@ div#ui-datepicker-div {
 .ui-datepicker .ui-widget-header {
 	border: unset;
 	background: unset;
+}
+
+/* the button Previous / Next month */
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	width: 2.5em;
+	height: 2.7em;
 }
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
@@ -5895,13 +5941,14 @@ select.ui-datepicker-year {
 	padding-left: 2px;
 	padding-right: 2px;
 }
-
+/*
 .bodyline {
 	border-radius: 4px;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
 	margin-bottom: 5px;
 }
+*/
 table.dp {
 	width: 180px;
 	background-color: #FFFFFF;
@@ -5987,7 +6034,7 @@ div.visible {
 }
 
 div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
-img.hidden, span.hidden, br.hidden, div.showifmore {
+img.hidden, span.hidden, br.hidden, div.showifmore, input.hidden {
 	display: none;
 }
 
@@ -6205,8 +6252,10 @@ td.peruser_holiday_imp {
 .cal_available { background: #0060d450; }
 .cal_chosen { background: #0060d4; }
 
+
+
 /* ============================================================================== */
-/*  Ajax - Combo list for autocompletion                                          */
+/*  UI features                                                                   */
 /* ============================================================================== */
 
 .ui-widget-content {
@@ -6214,6 +6263,43 @@ td.peruser_holiday_imp {
 	background: var(--colorbackbody) !important;
 	color: var(--colortext) !important;
 }
+
+/* Style to overwrites UI JQuery styles */
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+	/* border: 1px solid #888; */
+	background: rgb(<?php echo $colorbacktitle1; ?>);
+	color: unset;
+	font-weight: bold;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+	background: #007fff !important;
+	color: #ffffff !important;
+}
+
+.ui-menu .ui-menu-item a {
+	text-decoration:none;
+	display:block;
+	padding:.2em .4em;
+	line-height:1.5;
+	font-weight: normal;
+	font-family:<?php echo $fontlist; ?>;
+	font-size:1em;
+}
+.ui-widget {
+	font-family:<?php echo $fontlist; ?>;
+}
+.ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
+.ui-button-icon-only .ui-button-text { height: 8px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
+.ui-button-text
+{
+	line-height: 1em !important;
+}
+
+
+/* ============================================================================== */
+/*  Ajax combo list for autocompletion                                            */
+/* ============================================================================== */
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
 .ui-autocomplete {
@@ -6239,6 +6325,7 @@ td.peruser_holiday_imp {
 		   height:18px;
 		   cursor:pointer;
 		 }
+.ui-autocomplete-input { margin: 0; padding: 4px; }
 
 
 /* ============================================================================== */
@@ -6475,40 +6562,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .colorselector {
 	border: solid 1px #ddd !important;
 }
-
-
-/* Style to overwrites JQuery styles */
-.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
-	/* border: 1px solid #888; */
-	background: rgb(<?php echo $colorbacktitle1; ?>);
-	color: unset;
-	font-weight: bold;
-}
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
-	background: #007fff !important;
-	color: #ffffff !important;
-}
-
-.ui-menu .ui-menu-item a {
-	text-decoration:none;
-	display:block;
-	padding:.2em .4em;
-	line-height:1.5;
-	font-weight: normal;
-	font-family:<?php echo $fontlist; ?>;
-	font-size:1em;
-}
-.ui-widget {
-	font-family:<?php echo $fontlist; ?>;
-}
-.ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
-.ui-button-icon-only .ui-button-text { height: 8px; }
-.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
-.ui-button-text
-{
-	line-height: 1em !important;
-}
-.ui-autocomplete-input { margin: 0; padding: 4px; }
 
 
 /* ============================================================================== */
@@ -6914,6 +6967,7 @@ div#ecm-layout-center {
 	padding-right: 10px !important;
 	padding-top: 10px !important;
 	word-wrap: break-word;
+	max-height: 320px;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
@@ -7506,7 +7560,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-menu input {
   margin-right: 0.3em;
-  vertical-align: 0.1em;
+  /* vertical-align: 0.1em; */
 }
 
 .multi-select-button {
@@ -7522,8 +7576,13 @@ div.multi-select-menu[role="menu"] {
   border: none;
   border-bottom: solid 1px rgba(0,0,0,.2);
   padding: 5px;
-  padding-left: 2px;
+  padding-left: 6px;
   height: 17px;
+  <?php if ($right == 'left') { ?>
+	  padding-right: 22px;
+  <?php } ?>
+
+  text-align: start;
 }
 .multi-select-button:focus {
   outline: none;
@@ -7536,9 +7595,12 @@ div.multi-select-menu[role="menu"] {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.5em 0.23em 0em 0.23em;
+  border-width: 0.4em 0.3em 0em 0.3em;
   border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
+  position: absolute;
+  right: 10px;
+  top: 12px;
 }
 
 .multi-select-container--open .multi-select-menu { display: block; }
@@ -7551,10 +7613,10 @@ div.multi-select-menu[role="menu"] {
 .multi-select-menuitem {
 	clear: both;
 	float: left;
-	padding-left: 5px
+	padding-left: 10px
 }
 label.multi-select-menuitem {
-	line-height: 24px;
+	line-height: 32px;
 	text-align: start;
 }
 
@@ -7659,6 +7721,10 @@ dd.dropdowndd ul li {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+div.kanban.column div.ui-sortable-helper {
+	transform: rotate(4deg);
 }
 
 
@@ -8932,9 +8998,18 @@ if (is_object($db)) {
 }
 ::-webkit-scrollbar-thumb {
 	background: #ddd;
-}​
+}
 
-
+/* Remove text selection - Intuitive table selection */
+.row-with-select[data-is-last-changed] * {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
+			  supported by Chrome, Edge, Opera and Firefox */
+}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

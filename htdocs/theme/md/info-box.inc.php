@@ -45,6 +45,11 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 ?>
 
+.spannature {
+	padding-top: 5px !important;
+	padding-bottom: 6px !important;
+}
+
 .nonature-back {
 	background-color: #EEE;
 	padding: 2px;
@@ -100,7 +105,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #a47080  !important;
+	<?php echo $prefix; ?>color: #906080  !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
 	<?php echo $prefix; ?>color: #65953d !important;
@@ -143,7 +148,7 @@ div.login_block_other:not(.takepos) a {
 	color: #6c6aa8;
 }
 .infobox-action{
-	color: #a47080;
+	color: #906080;
 }
 /* Color for customer object */
 .infobox-propal:not(.pictotitle):not(.error),
@@ -183,7 +188,7 @@ a.info-box-text.info-box-text-a {
 	/* display: table-cell; */
 	display: contents;
 }
-a.info-box-text-a i.fa.fa-exclamation-triangle {
+a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
 }
 
@@ -480,7 +485,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #605ca8 !important;
 }
 .bg-infobox-action i.fa{
-	color: #d84b80  !important;
+	color: #906080  !important;
 }
 .bg-infobox-propal i.fa,
 .bg-infobox-facture i.fa,
@@ -575,7 +580,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 
@@ -609,6 +614,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban.kanbancollapsed {
 	flex: unset;
 	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
 }
 .kanban.kanbancollapsed .kanbanlabel, .text-vertical {
 	writing-mode: vertical-rl;
@@ -716,4 +723,32 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.box-flex-item {
 		width: 250px;
 	}
+}
+
+/* customize section for home box link */
+.infobox-haslink .info-box-icon i {
+	transition: opacity 0.2s ease-in-out;
+}
+.infobox-haslink .info-box-icon:hover i {
+	opacity: 0.2;
+}
+.infobox-haslink .info-box-icon .info-box-createlink {
+	height:100%;
+	width:100%;
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	font-size:0.6em;
+	display: flex;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color:inherit;
+	text-decoration: none;
+}
+.infobox-haslink .info-box-icon:hover .info-box-createlink {
+	opacity: 1;
+}
+.infobox-haslink .info-box-icon .info-box-createlink span.fas {
+	margin:auto;
 }

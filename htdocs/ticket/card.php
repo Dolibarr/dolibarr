@@ -76,6 +76,7 @@ $action    = GETPOST('action', 'aZ09');
 $cancel    = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma') ? GETPOST('sortfield', 'aZ09comma') : "a.datep";
@@ -202,7 +203,7 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
-	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
+	if ((($action == 'add' && GETPOST('save', 'alpha')) || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
 		$ifErrorAction = ($action == 'add' ? 'create' : 'edit');	// Test on permission not required here
 		if ($action == 'add') {		// Test on permission already done
 			$object->track_id = null;
@@ -294,7 +295,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 			}
 
@@ -457,7 +458,7 @@ if (empty($reshook)) {
 	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
-		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {
+		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {	// Test on pemrission already done
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
 			$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
@@ -706,7 +707,7 @@ if (isModEnabled('project')) {
 
 $help_url = 'EN:Module_Ticket|FR:DocumentationModuleTicket';
 
-$title = $actionobject->getTitle($action);
+$title = $actionobject->getTitle($action, $object);
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card');
 
@@ -741,7 +742,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(1, 'create', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
+} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
 	}
@@ -856,7 +857,7 @@ if ($action == 'create' || $action == 'presend') {
 				$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 				// Ref
-				print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+				print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="3">';
 				// Define a complementary filter for search of next/prev ref.
 				if (!$user->hasRight('projet', 'all', 'lire')) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
@@ -955,29 +956,36 @@ if ($action == 'create' || $action == 'presend') {
 			// If ticket create from public interface - TODO Add a more robust test to know if created by public interface
 			$createdfrompublicticket = 1;
 		} elseif (!empty($object->email_msgid)) {
-			// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import ky ?)
+			// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import key ?)
 			$createdfromemailcollector = 1;
 		}
 
 		//var_dump($object);
+		$htmltooltip = '';
 		if ($createdfrompublicticket) {
-			$htmltooptip = $langs->trans("OriginEmail").': '.$object->origin_email;
-			$htmltooptip .= '<br>'.$langs->trans("IP").': '.dol_print_ip($object->ip);
+			$htmltooltip .= $langs->trans("OriginEmail").': '.$object->origin_email;
+			$htmltooltip .= '<br>'.$langs->trans("IP").': '.dol_print_ip($object->ip);
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
 			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").' </span> ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltipcreatedbyportal').'</small>';
 		} elseif ($createdfromemailcollector) {
 			$langs->load("mails");
-			$htmltooltip = $langs->trans("EmailMsgID").': '.$object->email_msgid;
-			$htmltooltip .= '<br>'.$langs->trans("EmailDate").': '.dol_print_date($object->email_date, 'dayhour');
-			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->origin_email;
-			$htmltooltip .= '<br>'.$langs->trans("MailReply").': '.$object->origin_replyto;
-			$htmltooltip .= '<br>'.$langs->trans("MailReferences").': '.$object->origin_references;
+
+			$htmltooltip .= '<b>'.$langs->trans("EmailMsgID").':</b> '.$object->email_msgid;
+			$htmltooltip .= '<br><b>'.$langs->trans("EmailDate").':</b> '.dol_print_date($object->email_date, 'dayhour');
+			$htmltooltip .= '<br><b>'.$langs->trans("MailFrom").':</b> '.$object->origin_email;
+			$htmltooltip .= '<br><b>'.$langs->trans("MailReply").':</b> '.$object->origin_replyto;
+			$htmltooltip .= '<br><b>'.$langs->trans("MailReferences").':</b> '.$object->origin_references;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
 			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ');
-			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
+			$morehtmlref .= img_picto('From', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email);
+			if ($object->origin_replyto) {
+				$morehtmlref .= ' - '.img_picto('ReplyTo', 'email', 'class="paddingrightonly"');
+				$morehtmlref .= dol_escape_htmltag($object->origin_replyto);
+			}
+			$morehtmlref .= ' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltipcreatedbyemailcollector').'</small>';
 		}
 
 		$permissiontoedit = $object->status < 8 && !$user->socid && $user->hasRight('ticket', 'write');
@@ -1058,7 +1066,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="border tableforfield centpercent">';
 
 		// Track ID
-		print '<tr><td class="titlefield">'.$langs->trans("TicketTrackId").'</td><td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("TicketTrackId").'</td><td>';
 		if (!empty($object->track_id)) {
 			if (empty($object->ref)) {
 				$object->ref = (string) $object->id;
@@ -1083,7 +1091,7 @@ if ($action == 'create' || $action == 'presend') {
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
 		print dol_print_date($object->datec, 'dayhour', 'tzuser');
-		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
+		print '<span class="opacitymedium"><span class="small"> - '.$langs->trans("TimeElapsedSince").': <b><i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></b></span></span>';
 		print '</td></tr>';
 
 		// Origin
@@ -1107,8 +1115,10 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
 			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
-			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeElapsedBeforeSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
-			print ' / <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
+			print '<span class="opacitymedium"><span class="small"> - '.$langs->trans("TimeElapsedSince").': ';
+			//print '<b><i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i></b>';
+			//print ' / ';
+			print '<b><i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></b></span></span>';
 		}
 		print '</td></tr>';
 
@@ -1570,7 +1580,7 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->param['models'] = $modelmail;
 			$formticket->param['models_id'] = GETPOSTINT('modelmailselected');
 			//$formticket->param['socid']=$object->fk_soc;
-			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
+			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.urldecode($object->track_id);
 
 			$formticket->withsubstit = 1;
 			$formticket->substit = $substitutionarray;

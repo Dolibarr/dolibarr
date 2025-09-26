@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -626,7 +626,7 @@ class FormMail extends Form
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
-					'shipping_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
+					'shipping_send', 'reception_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
 					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
 				))) {
 				// If list of template is empty
@@ -1102,10 +1102,12 @@ class FormMail extends Form
 				$showlinktoailabel = $langs->trans("AIEnhancements");
 				$formatforouput = '';
 				$htmlname = 'message';
+
 				$formai->substit = $this->substit;
 				$formai->substit_lines = $this->substit_lines;
 
 				// Fill $out
+				$db = $this->db;
 				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
 				$out .= '</td>';
@@ -1211,7 +1213,7 @@ class FormMail extends Form
 				}
 				$out .= ' &lt;'.$this->tomail.'&gt;';
 				if ($this->withtofree) {
-					$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
+					$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
 				}
 			} else {
 				// Note withto may be a text like 'AllRecipientSelected'
@@ -1220,7 +1222,7 @@ class FormMail extends Form
 		} else {
 			// The free input of email
 			if (!empty($this->withtofree)) {
-				$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
+				$out .= '<input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
 			}
 			// The select combo
 			if (!empty($this->withto) && is_array($this->withto)) {
@@ -1498,12 +1500,13 @@ class FormMail extends Form
 	 * @param	string		$showlinktolayout	Show link to layout
 	 * @return  string                      	HTML for model email boxes
 	 */
-	public function getModelEmailTemplate($htmlContent = 'message', $showlinktolayout = 'email')
+	public function getEmailLayoutSelector($htmlContent = 'message', $showlinktolayout = 'email')
 	{
-		global $websitepage, $langs;
+		global $conf, $db, $websitepage, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 		$out = '<div id="template-selector" class="template-selector email-layout-container hidden" style="display:none;">';
@@ -1519,10 +1522,10 @@ class FormMail extends Form
 			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
 
 			// Exclude some layouts for some use cases
-			if ($layoutname == 'news' && !in_array($showlinktolayout, array('emailing', 'websitepage'))) {
+			if ($layoutname == 'news' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || !isModEnabled('website'))) {
 				continue;
 			}
-			if ($layoutname == 'products' && !in_array($showlinktolayout, array('emailing', 'websitepage'))) {
+			if ($layoutname == 'products' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || (!isModEnabled('product') && !isModEnabled('service')))) {
 				continue;
 			}
 
@@ -1544,19 +1547,39 @@ class FormMail extends Form
 		// Prepare the array for multiselect
 
 		// Fetch blogs
-		$websitepage = new WebsitePage($this->db);
-		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
-
 		$blogArray = array();
-		if (!empty($arrayofblogs)) {
-			foreach ($arrayofblogs as $blog) {
-				$blogArray[$blog->id] = substr(htmlentities($blog->title), 0, 30);
+		if (isModEnabled('website')) {
+			$websitepage = new WebsitePage($this->db);
+			$arrayofblogs = $websitepage->fetchAll('', 'ASC,DESC', 'fk_website,date_creation', 0, 0, array('type_container' => 'blogpost'));
+
+			if (empty($conf->cache['websiteurl'])) {
+				$conf->cache['websiteurl'] = array();
+			}
+
+			if (!empty($arrayofblogs)) {
+				foreach ($arrayofblogs as $blog) {
+					if (!isset($conf->cache['websiteurl'][$blog->id])) {
+						$tmpwebsite = new Website($db);
+						$tmpwebsite->fetch($blog->fk_website);
+						$conf->cache['websiteurl'][$blog->fk_website] = (empty($tmpwebsite->virtualhost) ? $tmpwebsite->ref : $tmpwebsite->virtualhost);
+					}
+
+					$labelwebsite = $conf->cache['websiteurl'][$blog->fk_website];
+					//$blog->fk_website
+
+					$blogArray[$blog->id] = array(
+						'id' => $blog->id,
+						'label' => '['.$labelwebsite.' '.$blog->type_container.' '.$blog->id.'] '.dol_trunc($blog->title, 40),
+						'labelhtml' => '<span class="opacitymedium">['.$labelwebsite.' '.$blog->type_container.' '.$blog->id.']</span> '.dol_trunc($blog->title, 40),
+					);
+				}
 			}
 		}
 
 		// Use the multiselect array function to create the dropdown
 		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
+		$out .= '<!-- select component for selection of products -->'."\n";
 		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200');
 		$out .= '</div>';
 
@@ -1578,36 +1601,39 @@ class FormMail extends Form
 
 				if (template === "news") {
 					$("#post-dropdown-container").show();
-					console.log("Displaying dropdown for news template");
+					console.log("Displaying dropdown for news selection");
+				} else if (template === "products") {
+					$("#post-dropdown-container").show();
+					console.log("Displaying dropdown for products selection");
 				} else {
 					$("#post-dropdown-container").hide();
-
-					var csrfToken = "' .newToken().'";
-					$.ajax({
-						type: "POST",
-						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
-						data: {
-							token: csrfToken,
-							template: template,
-							subject: subject,
-							fromtype: fromtype,
-							sendto: sendto,
-							sendtocc: sendtocc,
-							sendtoccc: sendtoccc,
-							selectedPosts: "[]"
-						},
-						success: function(response) {
-							jQuery("#'.$htmlContent.'").val(response);
-							var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
-							if (editorInstance) {
-								editorInstance.setData(response);
-							}
-						},
-						error: function(xhr, status, error) {
-							console.error("An error occurred: " + xhr.responseText);
-						}
-					});
 				}
+
+				var csrfToken = "' .newToken().'";
+				$.ajax({
+					type: "POST",
+					url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
+					data: {
+						token: csrfToken,
+						template: template,
+						subject: subject,
+						fromtype: fromtype,
+						sendto: sendto,
+						sendtocc: sendtocc,
+						sendtoccc: sendtoccc,
+						selectedPosts: "[]"
+					},
+					success: function(response) {
+						jQuery("#'.$htmlContent.'").val(response);
+						var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+						if (editorInstance) {
+							editorInstance.setData(response);
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error("An error occurred: " + xhr.responseText);
+					}
+				});
 			});
 
 			$("#blogpost-select").change(function() {
@@ -1693,7 +1719,9 @@ class FormMail extends Form
 			$this->error = 'LabelIsMandatoryWhenIdIs-2or-3';
 			return -1;
 		}
-
+		if ($type_template === 'societe') {
+			$type_template = 'thirdparty';
+		}
 		$ret = new ModelMail($dbs);
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
@@ -1706,7 +1734,7 @@ class FormMail extends Form
 
 		$sql = "SELECT rowid, entity, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
-		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
+		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = '".$dbs->escape($type_template)."_send' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
@@ -1795,6 +1823,8 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
 					} elseif ($type_template == 'shipping_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
+					} elseif ($type_template == 'reception_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendReception");
 					} elseif ($type_template == 'fichinter_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send') {
@@ -2006,7 +2036,6 @@ class FormMail extends Form
 
 			// For mass emailing, we have different keys specific to the data into tagerts list
 			$tmparray['__ID__'] = 'IdRecord';
-			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';
 			$tmparray['__EMAIL__'] = 'EMailRecipient';
 			$tmparray['__LASTNAME__'] = 'Lastname';
 			$tmparray['__FIRSTNAME__'] = 'Firstname';
@@ -2016,6 +2045,9 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
+
+			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';  // If source is a thirdparty
+
 			$tmparray['__CHECK_READ__'] = $langs->trans('TagCheckMail');
 			$tmparray['__UNSUBSCRIBE__'] = $langs->trans('TagUnsubscribe');
 			$tmparray['__UNSUBSCRIBE_URL__'] = $langs->trans('TagUnsubscribe').' (URL)';

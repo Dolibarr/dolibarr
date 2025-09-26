@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,7 @@ if (is_numeric($type)) {
 	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
-$upload_dir = $conf->categorie->multidir_output[$object->entity];
+$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity];
 
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');

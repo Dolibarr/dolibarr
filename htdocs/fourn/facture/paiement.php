@@ -232,7 +232,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTINT($key));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTFLOAT($key));
 			}
 		}
 
@@ -270,7 +270,7 @@ if (empty($reshook)) {
 	/*
 	 * Action add_paiement
 	 */
-	if ($action == 'add_paiement') {
+	if ($action == 'add_paiement') {	// Test on permission not required
 		if ($error) {
 			$action = 'create';
 		}
@@ -281,7 +281,7 @@ if (empty($reshook)) {
 	/*
 	 * Action confirm_paiement
 	 */
-	if ($action == 'confirm_paiement' && $confirm == 'yes') {
+	if ($action == 'confirm_paiement' && $confirm == 'yes' && $permissiontoadd) {
 		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 		$multicurrency_code = array();
@@ -631,7 +631,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<th>'.$langs->trans('Invoice').'</th>';
 						print '<th>'.$langs->trans('RefSupplier').'</th>';
 						if ($displayAllInvoices) {
-							print '<th>' . $langs->trans('Type') . '</th>';
+							print '<th class="center">' . $langs->trans('Type') . '</th>';
 						}
 						print '<th class="center">'.$langs->trans('Date').'</th>';
 						print '<th class="center">'.$langs->trans('DateMaxPayment').'</th>';

@@ -57,7 +57,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$toselect 	= GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss 	= GETPOST('optioncss', 'aZ');
@@ -140,6 +140,7 @@ $object = new Adherent($db);
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
+$diroutputmassaction = $conf->member->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -405,7 +406,7 @@ $memberstatic = new Adherent($db);
 $now = dol_now();
 
 // Page Header
-$title = $langs->trans("Members")." - ".$langs->trans("List");
+$title = $langs->trans("Members");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 $morejs = array();
 $morecss = array();
@@ -414,7 +415,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
+$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc as socid,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
@@ -598,7 +599,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1227,7 +1228,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->gender = $obj->gender;
 	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
-	$memberstatic->socid = $obj->fk_soc;
+	$memberstatic->socid = $obj->socid;
 	$memberstatic->photo = $obj->photo;
 	$memberstatic->email = $obj->email;
 	$memberstatic->morphy = $obj->morphy;
@@ -1235,7 +1236,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->note_private = $obj->note_private;
 	$memberstatic->need_subscription = $obj->subscription;
 
-	if (!empty($obj->fk_soc)) {
+	if (!empty($obj->socid)) {
 		$memberstatic->fetch_thirdparty();
 		if ($memberstatic->thirdparty->id > 0) {
 			$companyname = $memberstatic->thirdparty->name;
@@ -1291,14 +1292,14 @@ while ($i < $imaxinloop) {
 		}
 		// Technical ID
 		if (!empty($arrayfields['d.rowid']['checked'])) {
-			print '<td class="center" data-key="id">'.$obj->rowid.'</td>';
+			print '<td class="center" data-key="id">'.dolPrintHTML($obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Ref
 		if (!empty($arrayfields['d.ref']['checked'])) {
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			print $memberstatic->getNomUrl(-1, 0, 'card', 'ref', '', -1, 0, 1);
 			print "</td>\n";
 			if (!$i) {
@@ -1308,7 +1309,7 @@ while ($i < $imaxinloop) {
 		// Title/Civility
 		if (!empty($arrayfields['d.civility']['checked'])) {
 			print "<td>";
-			print dol_escape_htmltag($obj->civility);
+			print dolPrintHTML($obj->civility);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1347,13 +1348,13 @@ while ($i < $imaxinloop) {
 		}
 		// Company
 		if (!empty($arrayfields['d.company']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag((string) $companyname).'">';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute((string) $companyname).'">';
 			print $companynametoshow;
 			print "</td>\n";
 		}
 		// Login
 		if (!empty($arrayfields['d.login']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.$obj->login."</td>\n";
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($obj->login).'">'.dolPrintHTML($obj->login)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1381,7 +1382,7 @@ while ($i < $imaxinloop) {
 		// Address
 		if (!empty($arrayfields['d.address']['checked'])) {
 			print '<td class="nocellnopadd tdoverflowmax200" title="'.dol_escape_htmltag($obj->address).'">';
-			print dol_escape_htmltag($obj->address);
+			print dolPrintHTML($obj->address);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1390,7 +1391,7 @@ while ($i < $imaxinloop) {
 		// Zip
 		if (!empty($arrayfields['d.zip']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print dol_escape_htmltag($obj->zip);
+			print dolPrintHTML($obj->zip);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1399,7 +1400,7 @@ while ($i < $imaxinloop) {
 		// Town
 		if (!empty($arrayfields['d.town']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print dol_escape_htmltag($obj->town);
+			print dolPrintHTML($obj->town);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1408,7 +1409,7 @@ while ($i < $imaxinloop) {
 		// State / County / Departement
 		if (!empty($arrayfields['state.nom']['checked'])) {
 			print "<td>";
-			print dol_escape_htmltag($obj->state_name);
+			print dolPrintHTML($obj->state_name);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1417,8 +1418,8 @@ while ($i < $imaxinloop) {
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			$tmparray = getCountry($obj->country, 'all');
-			print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
-			print dol_escape_htmltag($tmparray['label']);
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($tmparray['label']).'">';
+			print dolPrintHTML($tmparray['label']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1467,7 +1468,7 @@ while ($i < $imaxinloop) {
 			if ($datefin) {
 				$s .= dol_print_date($datefin, 'day');
 				if ($memberstatic->hasDelay()) {
-					$textlate = ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+					$textlate = ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(getWarningDelay('member', 'subscription') / 60 / 60 / 24) >= 0 ? '+' : '').ceil(getWarningDelay('member', 'subscription') / 60 / 60 / 24).' '.$langs->trans("days").')';
 					$s .= " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 				}
 			} else {
@@ -1522,8 +1523,8 @@ while ($i < $imaxinloop) {
 		}
 		// Import key
 		if (!empty($arrayfields['d.import_key']['checked'])) {
-			print '<td class="tdoverflowmax100 center" title="'.dol_escape_htmltag($obj->import_key).'">';
-			print dol_escape_htmltag($obj->import_key);
+			print '<td class="tdoverflowmax100 center" title="'.dolPrintHTMLForAttribute($obj->import_key).'">';
+			print dolPrintHTML($obj->import_key);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

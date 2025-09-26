@@ -48,7 +48,7 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'salaries', '', '', '');
+//restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
@@ -77,7 +77,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
@@ -164,15 +164,20 @@ if (!$rowid) {
 				break;
 			}
 
+			$label = '';
 			if ($charge->refunded == '1') {
 				$status = img_picto($langs->trans("refunded"), 'statut6');
 			} elseif ($charge->paid == '1') {
 				$status = img_picto($langs->trans((string) $charge->status), 'statut4');
-			} else {
-				$label = $langs->trans("Message").": ".$charge->failure_message."<br>";
+			} elseif (empty($charge->failure_message)) {
 				$label .= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
 				$label .= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
-				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, -1);
+				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut4'), $label, 1);
+			} else {
+				$label .= $langs->trans("Error").": ".$charge->failure_message."<br>";
+				$label .= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
+				$label .= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
+				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, 1);
 			}
 
 			if (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'card') {
