@@ -33,7 +33,10 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+
 -- V22 forgotten
+
+ALTER TABLE llx_extrafields ADD module varchar(64) AFTER enabled;
 
 ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
@@ -172,3 +175,4 @@ ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account;
 ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id;
 
 -- end of migration
+

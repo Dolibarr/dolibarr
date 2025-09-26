@@ -1088,7 +1088,7 @@ class SupplierProposal extends CommonObject
 				}
 
 				if (!$error) {
-					// Mise a jour infos denormalisees
+					// Update denormalized data
 					$resql = $this->update_price(1);
 					if ($resql) {
 						$action = 'update';

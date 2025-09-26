@@ -1018,7 +1018,7 @@ class Facture extends CommonInvoice
 					}
 
 					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
-					$tva_npr = $_facrec->lines[$i]->info_bits;
+					$tva_npr = (int) $_facrec->lines[$i]->info_bits;
 					if (empty($tva_tx)) {
 						$tva_npr = 0;
 					}

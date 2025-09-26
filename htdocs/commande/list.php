@@ -839,7 +839,7 @@ if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 					} else {
 						$idwarehouse = 0;
 					}
-					if ($objecttmp->valid($user, $idwarehouse)) {
+					if ($objecttmp->valid($user, $idwarehouse) > 0) {
 						setEventMessages($langs->trans('hasBeenValidated', $objecttmp->ref), null, 'mesgs');
 					} else {
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -2419,7 +2419,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

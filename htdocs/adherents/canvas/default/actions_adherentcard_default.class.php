@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2018  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +113,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		} else {
 			// Confirm delete contact
 			if ($action == 'delete' && $user->hasRight('adherent', 'supprimer')) {
-				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteAdherent"), $langs->trans("ConfirmDeleteAdherent"), "confirm_delete", '', 0, 1);
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteAdherent"), $langs->trans("ConfirmDeleteMember"), "confirm_delete", '', 0, 1);
 			}
 		}
 	}

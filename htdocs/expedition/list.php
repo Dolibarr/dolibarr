@@ -439,7 +439,7 @@ if (empty($reshook)) {
 								$date_start,
 								$date_end,
 								0,
-								$lines[$i]->info_bits,
+								(int) $lines[$i]->info_bits,
 								$lines[$i]->fk_remise_except,
 								'HT',
 								0,

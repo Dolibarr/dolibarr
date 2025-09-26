@@ -151,7 +151,7 @@ class MoLine extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var float Quantity frozen
+	 * @var int<0,1> Is quantity frozen
 	 */
 	public $qty_frozen;
 	/**

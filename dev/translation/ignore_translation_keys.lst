@@ -198,8 +198,6 @@ ConfirmActionMyObject
 ConfirmActionTarget
 ConfirmCloneMyObject
 ConfirmCloneTask
-ConfirmCreateAdherent
-ConfirmDeleteAdherent
 ConfirmDeleteIndividual
 ConfirmDeleteReport
 ConfirmDeleteWebsiteAccount
@@ -287,7 +285,6 @@ EmailcollectorFilter
 EmailingTargetSelector
 Empty
 End
-EnterAnIP
 EnterNameOfDictionnaryToDeleteDesc
 Entries
 ErrSCAAuthentication
@@ -428,7 +425,6 @@ Gzip
 HTTPBasicPassword
 HelpAbandonProductReturned
 HideVersionLink
-HolidayStarted
 Hook
 Hooks
 IBANNotDefined

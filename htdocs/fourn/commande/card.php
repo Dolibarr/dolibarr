@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2004-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2022	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Ion Agorria				<ion@agorria.com>
+/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
- * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Nick Fragoulis
- * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2024 Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2024-2025 MDW						      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Nick Fragoulis
+ * Copyright (C) 2025		   Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1806,9 +1806,7 @@ if ($action == 'create') {
 			$usehourmin = 1;
 		}
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-
-		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, 0, "set");
-
+		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, 0, "set", 1, 1);
 		print '</td></tr>';
 
 		// Bank Account
@@ -1826,7 +1824,14 @@ if ($action == 'create') {
 
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
-			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+			if ($socid > 0) { // external user
+				$projSocFilter = $socid;
+			} elseif ((int) $societe->id == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
+				$projSocFilter = -1;
+			} else {
+				$projSocFilter = $societe->id;
+			}
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects($projSocFilter, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 			print '</td></tr>';
 		}
