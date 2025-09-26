@@ -19,15 +19,17 @@
  */
 
 /**
- * @var CommonObject $this
+ * @var DoliDB $db
+ * @var Mo $this
  * @var Conf $conf
  * @var Form $form
- * @var BOMLine $line
+ * @var MoLine $line
  * @var Translate $langs
  */
 
 '
-@phan-var-force BOMLine $line
+@phan-var-force MoLine $line
+@phan-var-force Mo $this
 ';
 
 // Protection to avoid direct call of template
@@ -35,8 +37,6 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
-'@phan-var-force CommonObject $this';
 
 global $db, $langs;
 
