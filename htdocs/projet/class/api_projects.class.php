@@ -409,7 +409,7 @@ class Projects extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
 		}
-		
+
 		$result = $this->project->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'project not found');
