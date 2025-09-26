@@ -218,7 +218,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTFLOAT($key));
 			}
 		}
 
