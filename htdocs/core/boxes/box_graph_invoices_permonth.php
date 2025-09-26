@@ -132,7 +132,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$HEIGHT = '192';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
-			$stats->where = "f.fk_statut > 0";
+			$stats->where = "f.entity IN (".getEntity('invoice').") AND f.fk_statut > 0";
 			$px1 = null;
 			$px2 = null;
 

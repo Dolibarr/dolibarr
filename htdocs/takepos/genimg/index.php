@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,9 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	require '../../main.inc.php'; // Load $user and permissions
 }
-
+/**
+ * @var Conf $conf
+ */
 $id = GETPOSTINT('id');
 $w = GETPOSTINT('w');
 $h = GETPOSTINT('h');
@@ -62,7 +65,7 @@ if ($query == "cat") {
 	$object = new Categorie($db);
 	$result = $object->fetch($id);
 
-	$upload_dir = $conf->categorie->multidir_output[$object->entity];
+	$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity];
 	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
 
@@ -83,7 +86,7 @@ if ($query == "cat") {
 
 	$objProd = new Product($db);
 	$objProd->fetch($id);
-	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity ?? $conf->entity], 'small', 1);
 
 	$match = array();
 	preg_match('@src="([^"]+)"@', $image, $match);

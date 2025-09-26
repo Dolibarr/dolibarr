@@ -31,14 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +38,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
@@ -55,7 +54,7 @@ $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$toselect 	= GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
 $optioncss 	= GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
@@ -72,10 +71,9 @@ $type = GETPOST('search_type', 'alphanohtml') ? GETPOST('search_type', 'alphanoh
 $year = GETPOSTINT("year");
 $month = GETPOSTINT("month");
 $day = GETPOSTINT("day");
-
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('search_actioncode', 'array')) {
-	$actioncode = GETPOST('search_actioncode', 'array', 3);
+if (GETPOST('search_actioncode', 'array:aZ09')) {
+	$actioncode = GETPOST('search_actioncode', 'array:aZ09', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -165,27 +163,37 @@ if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {	// 
 	$filtert = (string) $user->id;
 }
 
-$arrayfields = array(
-	'a.id' => array('label' => "Ref", 'checked' => '1'),
-	'owner' => array('label' => "Owner", 'checked' => '1'),
-	'c.libelle' => array('label' => "Type", 'checked' => '1'),
-	'a.label' => array('label' => "Title", 'checked' => '1'),
-	'a.note' => array('label' => 'Description', 'checked' => '0'),
-	'a.datep' => array('label' => "DateStart", 'checked' => '1'),
-	'a.datep2' => array('label' => "DateEnd", 'checked' => '1'),
-	's.nom' => array('label' => "ThirdParty", 'checked' => '1'),
-	'a.fk_contact' => array('label' => "Contact", 'checked' => '0'),
-	'a.fk_element' => array('label' => "LinkedObject", 'checked' => '1', 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
-	'a.datec' => array('label' => 'DateCreation', 'checked' => '0', 'position' => 510),
-	'a.tms' => array('label' => 'DateModification', 'checked' => '0', 'position' => 520),
-	'a.percent' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
-);
+// Definition of array of fields for columns
+$tableprefix = 'a';
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+// Complete arrayfields with special fields
+$arrayfields = array_merge($arrayfields, array(
+	'owner' => array('label' => "Owner", 'checked' => '1', 'position' => 46),
+	'c.libelle' => array('label' => "Type", 'checked' => '1', 'position' => 47),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 54),
+));
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Security check
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
@@ -244,7 +252,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if (empty($reshook) && !empty($massaction)) {
-	unset($percent);
+	$percent = null;
 
 	switch ($massaction) {
 		case 'set_all_events_to_todo':
@@ -484,22 +492,22 @@ $sql .= " WHERE a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND c.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode)) || $actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND c.type = 'systemauto'";
 		} else {
-			if ($actioncode == 'AC_OTH') {
+			if ((is_array($actioncode) && in_array('AC_OTH', $actioncode)) || $actioncode == 'AC_OTH') {
 				$sql .= " AND c.type != 'systemauto'";
 			}
-			if ($actioncode == 'AC_OTH_AUTO') {
+			if ((is_array($actioncode) && in_array('AC_OTH_AUTO', $actioncode)) || $actioncode == 'AC_OTH_AUTO') {
 				$sql .= " AND c.type = 'systemauto'";
 			}
 		}
 	} else {
-		if ($actioncode === 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND c.type != 'systemauto'";
-		} elseif ($actioncode === 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode)) || $actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND c.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
@@ -747,12 +755,12 @@ $viewmode .= '<span class="marginrightonly"></span>';
 
 $tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
 
-$newparam = '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
+$newparam = '?month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 $url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'];
 $url .= '&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
-$url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+$url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].$newparam);
 
 $newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', (int) ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')));
 
@@ -808,7 +816,7 @@ if (!empty($arrayfields['a.note']['checked'])) {
 	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
 }
 if (!empty($arrayfields['a.datep']['checked'])) {
-	print '<td class="liste_titre nowraponall" align="center">';
+	print '<td class="liste_titre nowraponall center">';
 	print '<div class="nowrap">';
 	print $form->selectDate($datestart_dtstart, 'datestart_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
 	print '</div>';
@@ -818,7 +826,7 @@ if (!empty($arrayfields['a.datep']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['a.datep2']['checked'])) {
-	print '<td class="liste_titre nowraponall" align="center">';
+	print '<td class="liste_titre nowraponall center">';
 	print '<div class="nowrap">';
 	print $form->selectDate($dateend_dtstart, 'dateend_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
 	print '</div>';
@@ -1116,8 +1124,11 @@ while ($i < $imaxinloop) {
 	// Description
 	if (!empty($arrayfields['a.note']['checked'])) {
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 1));
-		print '<td class="tdoverflow200" title="'.dol_escape_htmltag($text).'">';
-		print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
+		print '<td class="minwidth150">';
+		print '<div class="small twolinesmax lineheightsmall minwidth150 maxwidth250 classfortooltip" title="'.dolPrintHTMLForAttribute($actionstatic->note_private).'">';
+		//print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
+		print dolPrintHTML($text);
+		print '</div>';
 		print '</td>';
 	}
 

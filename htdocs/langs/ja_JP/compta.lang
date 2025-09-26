@@ -3,10 +3,10 @@ MenuFinancial=請求|支払
 TaxModuleSetupToModifyRules=<a href="%s"> Taxesモジュール設定</a>に移動して、計算のルールを変更する
 TaxModuleSetupToModifyRulesLT=<a href="%s">法人設定</a>に移動して、計算のルールを変更する
 OptionMode=会計のためのオプション
-OptionModeTrue=発生主義会計
-OptionModeVirtual=現金会計
-OptionModeTrueDesc=この場合、売上高は支払日（支払日）に基づいて計算される。この数値の妥当性は、支払に関する入出金を通じて簿記を精査することによってのみ保証される。
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=この文脈では、売上高は、請求書(検証日)に渡って計算される。これらの請求書が期日になると、支払が済んでいるかどうかに関わらず、売上高の出力に記載される。
+OptionModeTrueDesc=この場合、売上高は支払日（支払日）に基づいて計算される。この数値の妥当性は、支払に関する入出金を通じて簿記を精査することによってのみ保証される。
 FeatureIsSupportedInInOutModeOnly=​​債権・債務の会計モードでのみ使用可能な機能(会計モジュール設定を参照すること)
 VATReportBuildWithOptionDefinedInModule=ここに示されている金額は税モジュール設定によって定義されたルールを使用して計算される。
 LTReportBuildWithOptionDefinedInModule=ここに表示されている金額は、法人の設定で定義されたルールを使用して計算されている。
@@ -302,7 +302,6 @@ ByVatRate=売却税率
 TurnoverbyVatrate=消費税率別請求高
 TurnoverCollectedbyVatrate=消費税率別回収高
 PurchasebyVatrate=売却税率による購入
-LabelToShow=短縮ラベル
 PurchaseTurnover=購入売上高
 PurchaseTurnoverCollected=回収済購入取引高
 RulesPurchaseTurnoverDue=-支払の有無にかかわらず、サプライヤーの期日請求書が含まれる。 <br>-これらの請求書の請求日に基づいている。 <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=行の日付のルール
 Prepaid=プリペイド
 Postpaid=後払い
 SetRuleForLinesDates=行の日付のルールを設定する
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

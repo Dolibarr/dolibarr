@@ -114,7 +114,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mymodule', $id);
+//restrictedArea($user, 'mymodule', $id);
 
 //Parameters Page
 $paramwithsearch = '&sortfield=' . urlencode($sortfield);
@@ -285,6 +285,7 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+		$action = '';
 	}
 
 	// Save quantity found during inventory (when we click on Save button on inventory page)

@@ -35,9 +35,9 @@
  */
 function reception_prepare_head(Reception $object)
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf;
 
-	$langs->loadLangs(array("sendings", "deliveries"));
+	$langs->loadLangs(array("sendings"));
 
 	$h = 0;
 	$head = array();

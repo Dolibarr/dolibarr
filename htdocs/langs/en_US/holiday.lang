@@ -2,6 +2,7 @@
 HRM=HRM
 Holidays=Leaves
 Holiday=Leave
+HolidayStarted=Leave started
 CPTitreMenu=Leave
 MenuReportMonth=Monthly statement
 MenuAddCP=New leave request
@@ -161,3 +162,5 @@ ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Consume holidays at the end of t
 PleaseDefineSomeTypeOfHolidayFirst=Please define first some types of holiday into the dictionary (Menu Home - Setup - dictionaries)
 HolidayMailSenderAdress=Email address for holiday requests
 HolidayMailSenderAdressHelp=If you leave this field blank, the default e-mail address will be used.
+WrongAmount=Wrong amount of days
+ErrorUpdatingUsersCP=Error updating users paid leaves

@@ -348,6 +348,7 @@ VATIntraManualCheck=Tamén pode comprobar manualmente no sitio web da Comisión 
 ErrorVATCheckMS_UNAVAILABLE=Comprobación imposible. O servizo de comprobación non é fornecido polo Estado membro (%s).
 NorProspectNorCustomer=Nin cliente, nin cliente potencial
 JuridicalStatus=Forma xurídica
+CompnanyBirthDate=Data de constitución da empresa
 Workforce=Traballadores
 Staff=Empregados
 ProspectLevelShort=Potencial

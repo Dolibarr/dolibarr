@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,8 +185,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Creation (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_creation) || !empty($object->user_creation_id) || !empty($object->date_creation)) {
+	// Creation
+	if (!empty($object->user_creation_id) || !empty($object->date_creation)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -196,27 +196,18 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (! empty($object->user_creation) && is_object($object->user_creation)) {	// deprecated mode
-			if ($object->user_creation->id) {
-				print $object->user_creation->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
-		} else {
+		print '<div class="valignmiddle inline-block">';
+		if ($object->user_creation_id > 0) {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_creation_id);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+		} else {
+			print $langs->trans("Unknown");
 		}
-
-		if ((!empty($object->user_creation) || !empty($object->user_creation_id)) && !empty($object->date_creation)) {
-			print ' - ';
-		}
+		print '</div>';
 
 		if (!empty($object->date_creation)) {
+			print ' - ';
 			print '<div class="valignmiddle inline-block">';
 			print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
@@ -232,8 +223,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Last modification (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_modification) || !empty($object->user_modification_id) || !empty($object->date_modification)) {
+	// Last modification
+	if (!empty($object->user_modification_id) || !empty($object->date_modification)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -244,20 +235,12 @@ function dol_print_object_info($object, $usetable = 0)
 			print ': ';
 		}
 		print '<div class="valignmiddle inline-block">';
-		if (is_object($object->user_modification)) {
-			if ($object->user_modification->id) {
-				print $object->user_modification->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
-		} else {
+		if ($object->user_modification_id > 0) {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_modification_id);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+		} else {
+			print $langs->trans("Unknown");
 		}
 		print '</div>';
 
@@ -278,8 +261,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Validation (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_validation) || !empty($object->user_validation_id) || !empty($object->date_validation)) {
+	// Validation
+	if (!empty($object->user_validation_id) || !empty($object->date_validation)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -289,20 +272,12 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_validation)) {
-			if ($object->user_validation->id) {
-				print $object->user_validation->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+		$userstatic = new User($db);
+		$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $langs->trans("Unknown");
 		}
 
 		if (!empty($object->date_validation)) {
@@ -935,7 +910,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (preg_match('/\{(jj+)\}/i', $mask, $regJournal)) {
 		$journalcode = 'JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ';
 		if (is_object($objbookkeeping)) {
-			$journalcode = $objbookkeeping->code_journal;
+			$journalcode = (string) $objbookkeeping->code_journal;
 		}
 
 		$maskjournal = $regJournal[1];
@@ -1611,6 +1586,7 @@ function numero_semaine($time)
 {
 	$stime = dol_print_date($time, '%Y-%m-%d');
 
+	$reg = array();
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 		$annee = (int) $reg[1];
@@ -1876,9 +1852,10 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
+ *  @param	int			$showempty			Add an empty record if 1
  * 	@return	string[]|int<-1,0>	    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename", -1 if error
  */
-function getListOfModels($db, $type, $maxfilenamelength = 0)
+function getListOfModels($db, $type, $maxfilenamelength = 0, $showempty = 0)
 {
 	global $conf, $hookmanager, $langs;
 
@@ -1889,18 +1866,29 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$sql = "SELECT nom as id, nom as doc_template_name, libelle as label, description as description";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity IN (0,".$conf->entity.")";
+	$sql .= " AND entity IN (0,".((int) $conf->entity).")";
 	$sql .= " ORDER BY description DESC";
 
 	dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
+
 	$resql_models = $db->query($sql);
 	if ($resql_models) {
 		$num = $db->num_rows($resql_models);
+
+		if ($showempty) {
+			$docmodels[0] = '&nbsp;';
+		}
+
 		$i = 0;
 		while ($i < $num) {
 			$found = 1;
 
 			$obj = $db->fetch_object($resql_models);
+
+			if ($obj->id == '0') {	// We discard bad record (should not happen)
+				$i++;
+				continue;
+			}
 
 			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
@@ -1950,6 +1938,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					$docmodels[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}
+
 			$i++;
 		}
 	} else {
@@ -2130,7 +2119,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	} elseif ($objecttype == 'delivery') {
-		$langs->load('deliveries');
+		$langs->load('sendings');
 		$classpath = 'delivery/class';
 		$myobject = 'delivery';
 		$module = 'delivery_note';

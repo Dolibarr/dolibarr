@@ -288,8 +288,6 @@ function pdf_getPDFFont($outputlangs)
  */
 function pdf_getPDFFontSize($outputlangs)
 {
-	global $conf;
-
 	$size = 10; // By default, for FPDI or ISO language on TCPDF
 	if (class_exists('TCPDF')) {  // If TCPDF on, we can use an UTF8 font like DejaVuSans if required (slower)
 		if ($outputlangs->trans('FONTSIZEFORPDF') != 'FONTSIZEFORPDF') {
@@ -1138,7 +1136,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
 		} elseif (!empty($fromcompany->capital)) {
-			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", (string) $fromcompany->capital, $outputlangs);
+			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", (string) $fromcompany->capital);
 		}
 	}
 	// Prof Id 1
@@ -1424,7 +1422,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  */
 function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
 {
-	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);
+	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
+
 	if (!empty($linkedobjects)) {
 		foreach ($linkedobjects as $linkedobject) {
 			$reftoshow = $linkedobject["ref_title"].' : '.$linkedobject["ref_value"];
@@ -2323,7 +2322,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
  */
 function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $hookmanager, $langs;
+	global $hookmanager;
 
 	$reshook = 0;
 	$result = '';
@@ -2348,7 +2347,7 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 	}
 	if (empty($reshook)) {
 		if (empty($hidedetails) || $hidedetails > 1) {
-			$result .= $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
+			$result .= $object->lines[$i]->getLabelOfUnit('short', $outputlangs, 1);
 		}
 	}
 	return $result;
@@ -2510,7 +2509,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
  *
  *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object				Object
  *	@param	int			$i					Current line number
- *  @param 	Translate	$outputlangs		Object langs for output
+ *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int<0,2>	$hidedetails		Hide value (0 = no, 1 = yes, 2 = just special lines)
  *  @return	string							Return total of line incl tax
  */
@@ -2836,4 +2835,75 @@ function pdfExtractMetadata($file, $field = 'Keywords')
 	} else {
 		return "ERROR: FAILED TO READ PDF";
 	}
+}
+
+/**
+ * Render subtotals line with a colored background and adapted text color .
+ *
+ * @param  TCPDF              $pdf                PDF instance
+ * @param  CommonDocGenerator $generator          Generator object
+ * @param  float              $curY               Current Y position
+ * @param  CommonObject       $object             Object containing lines
+ * @param  int                $i                  Current line number
+ * @param  Translate          $outputlangs        Output language object
+ * @param  int                $hideref            Hide reference
+ * @param  int                $hidedesc           Hide description
+ * @param  array<int, int>    $bgColor            RGB color array [R,G,B]
+ * @param  bool               $isSubtotal         Whether this is a subtotal line
+ * @param  bool               $applySubtotalLogic Whether to apply subtotal specific logic
+ *
+ * @return void
+ */
+function pdf_render_subtotals(
+	TCPDF              $pdf,
+	CommonDocGenerator $generator,
+	float              $curY,
+	CommonObject       $object,
+	int                $i,
+	Translate          $outputlangs,
+	int                $hideref,
+	int                $hidedesc,
+	array              $bgColor,
+	bool               $isSubtotal = false,
+	bool               $applySubtotalLogic = true
+) {
+	$savePage = $pdf->getPage();
+	$saveX = $pdf->GetX();
+	$prevAlign = $generator->cols['desc']['content']['align'];
+
+	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
+		$outputlangs->load("subtotals");
+		$object->lines[$i]->desc = $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
+		$generator->cols['desc']['content']['align'] = ($prevAlign === 'L') ? 'R' : 'L';
+	}
+
+	$pdf->startTransaction();
+	$pdf->SetXY($saveX, $curY);
+	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+	$pageAfter = $pdf->getPage();
+	$yAfter = $pdf->GetY();
+	$pdf->rollbackTransaction(true);
+
+	$pdf->SetFillColor($bgColor[0], $bgColor[1], $bgColor[2]);
+	$width = $generator->page_largeur - $generator->marge_droite - $generator->marge_gauche;
+
+	$pdf->SetXY($generator->marge_gauche, $curY);
+	if ($pageAfter === $savePage) {
+		$pdf->MultiCell($width, max(0, $yAfter - $curY), '', 0, '', true);
+	} else {
+		$pdf->MultiCell($width, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
+
+		$pdf->setPage($pageAfter);
+		$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
+		$pdf->MultiCell($width, max(0, $yAfter - $pdf->getMargins()['top']), '', 0, '', true);
+
+		$pdf->setPage($savePage);
+	}
+
+	$pdf->SetTextColor(colorIsLight(implode(',', $bgColor)));
+	$pdf->SetXY($saveX, $curY);
+	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
+
+	$generator->cols['desc']['content']['align'] = $prevAlign;
 }
