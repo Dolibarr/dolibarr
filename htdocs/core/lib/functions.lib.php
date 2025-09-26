@@ -13431,7 +13431,7 @@ function dolIsAllowedForPreview($file)
 	}
 
 	// Check mime types
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp');
+	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
@@ -15011,6 +15011,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			$className = $element_prop['classname'];
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
+			/** @var CommonObject $objecttmp */
 
 			if ($element_id > 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);

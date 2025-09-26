@@ -193,8 +193,6 @@ if (empty($reshook)) {
 	}
 
 
-
-
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php';
 
@@ -220,7 +218,7 @@ if (empty($reshook)) {
 	$trackid = 'skill' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {		// Test on permission not required
 		$action = '';
 	}
 

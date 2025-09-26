@@ -20,7 +20,9 @@
 /**
  *		\file 		htdocs/admin/tools/dolibarr_export.php
  *		\ingroup	core
- *		\brief      Page to export database
+ *		\brief      Page to export database.
+ *				    See the file export_files.php for code to build a zip of documents
+ *					See the file export.php for code to build a dump file.
  */
 
 // Load Dolibarr environment

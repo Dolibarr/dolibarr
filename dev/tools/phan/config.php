@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This is the phan config file used by .github/workflows/phan.yml
  */

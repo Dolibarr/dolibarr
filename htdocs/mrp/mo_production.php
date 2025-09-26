@@ -503,10 +503,12 @@ if (empty($reshook)) {
 		$moline = new MoLine($db);
 		$res = $moline->fetch(GETPOSTINT('lineid'));
 		if ($result > 0) {
-			$extrafields->fetch_name_optionals_label($moline->element);
-			foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
-				$value = GETPOST('options_'.$key, 'alphanohtml');
-				$moline->array_options["options_".$key] = $value;
+			$extrafields->fetch_name_optionals_label($moline->table_element);
+			if (!empty($extrafields->attributes[$moline->table_element]['label'])) {
+				foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
+					$value = GETPOST('options_'.$key, 'alphanohtml');
+					$moline->array_options["options_".$key] = $value;
+				}
 			}
 			$moline->qty = GETPOSTFLOAT('qty_lineProduce');
 			if (GETPOSTISSET('warehouse_lineProduce')) {

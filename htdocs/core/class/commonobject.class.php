@@ -141,7 +141,48 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 *
+	 * 'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'email', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 * 'length' the length of field. Example: 255, '24,8'
+	 * 'label' the translation key.
+	 * 'langfile' the key of the language file for translation.
+	 * 'alias' the alias used into some old hard coded SQL requests
+	 * 'picto' is code of a picto to show before value in forms
+	 * 'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
+	 * 'position' is the sort order of field.
+	 * 'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 * 'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 * 'noteditable' says if field is not editable (1 or 0)
+	 * 'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 * 'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 * 'index' if we want an index in database.
+	 * 'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
+	 * 'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 * 'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 * 'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 * 'placeholder' to set the placeholder of a varchar field.
+	 * 'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 * 'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 * 'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code like the constructor of the class.
+	 * 'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 * 'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
+	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *
+	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array();
 
@@ -1306,7 +1347,8 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$notrigger) {
-					$result = $this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
+					$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper($this->element) : $this->TRIGGER_PREFIX);
+					$result = $this->call_trigger($triggerPrefix.'_ADD_CONTACT', $user);
 					if ($result < 0) {
 						$this->db->rollback();
 						return -1;
@@ -1404,7 +1446,8 @@ abstract class CommonObject
 		if (!$error && empty($notrigger)) {
 			// Call trigger
 			$this->context['contact_id'] = ((int) $rowid);
-			$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper($this->element) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_DELETE_CONTACT', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -2687,9 +2730,6 @@ abstract class CommonObject
 				if (!$error && !$notrigger) {
 					// Call triggers
 					$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
-					if (get_class($this) == 'Commande') {
-						$triggerName = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-					}
 					$result = $this->call_trigger($triggerName.'_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
@@ -3036,7 +3076,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'supplier_proposal', 'commande_fournisseur', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -3204,9 +3244,6 @@ abstract class CommonObject
 				// Call trigger
 				$this->context = array('shippingmethodupdate' => 1);
 				$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
-				if (get_class($this) == 'Commande') {
-					$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-				}
 				$result = $this->call_trigger($triggerPrefix.'_MODIFY', $userused);
 				if ($result < 0) {
 					$error++;
@@ -3830,9 +3867,6 @@ abstract class CommonObject
 				switch ($this->element) {
 					case 'societe':
 						$triggerName = 'COMPANY_MODIFY';
-						break;
-					case 'commande':
-						$triggerName = 'ORDER_MODIFY';
 						break;
 					case 'facture':
 						$triggerName = 'BILL_MODIFY';

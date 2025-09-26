@@ -637,27 +637,27 @@ if (empty($reshook)) {
 		// Action update
 		$error = 0;
 
-		if ($action == 'settracking_number') {
+		if ($action == 'settracking_number') {	// Test on permission not required
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
-		if ($action == 'settracking_url') {
+		if ($action == 'settracking_url') {		// Test on permission not required
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
-		if ($action == 'settrueWeight') {
+		if ($action == 'settrueWeight') {		// Test on permission not required
 			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
-		if ($action == 'settrueWidth') {
+		if ($action == 'settrueWidth') {		// Test on permission not required
 			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
-		if ($action == 'settrueHeight') {
+		if ($action == 'settrueHeight') {		// Test on permission not required
 			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
-		if ($action == 'settrueDepth') {
+		if ($action == 'settrueDepth') {		// Test on permission not required
 			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
-		if ($action == 'setshipping_method_id') {
+		if ($action == 'setshipping_method_id') {	// Test on permission not required
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
@@ -1259,7 +1259,7 @@ if ($action == 'create') {
 			$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
 			$object = $expe;
 			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 			$object = $objectsav;
 
 			print "</table>";
