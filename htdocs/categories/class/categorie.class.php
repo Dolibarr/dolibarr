@@ -1118,7 +1118,11 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+			if (($limit >= (int) $nbtotalofrecords) && $page > 0) {
+				return [];
+			}
+
+			if (($page * $limit) >= (int) $nbtotalofrecords) {	// if total resultset is smaller or equal then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
