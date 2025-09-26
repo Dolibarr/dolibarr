@@ -1683,7 +1683,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
 				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
-				print '<td class="tdoverflowmax150" title="' . dolPrintHTMLForAttribute($addresstoshow) . '">';
+				print '<td class="tdoverflowmax150 classfortooltip" title="'.dolPrintHTMLForAttribute($addresstoshow).'">';
 				print $addresstoshow;
 				print '</td>';
 			}
