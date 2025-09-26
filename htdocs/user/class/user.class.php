@@ -1811,17 +1811,16 @@ class User extends CommonObject
 		if (!empty($user) && is_object($user) && isset($user->socid) && $user->socid > 0) {
 			$this->socid = $user->socid;
 		}
-
 		// Insert into database
-	    $sql = "INSERT INTO ".$this->db->prefix()."user (datec, login, ldap_sid, fk_user_creat, entity, fk_soc)";
-	    $sql .= " VALUES(";
-	    $sql .= " '".$this->db->idate($this->datec)."',";
-	    $sql .= " '".$this->db->escape($this->login)."',";
-	    $sql .= " '".$this->db->escape($this->ldap_sid)."',";
-	    $sql .= " ".((int) $this->user_creation_id).",";
-	    $sql .= " ".((int) $this->entity).",";
-	    $sql .= " ".($this->socid > 0 ? (int) $this->socid : "null");
-	    $sql .= ")";
+		$sql = "INSERT INTO ".$this->db->prefix()."user (datec, login, ldap_sid, fk_user_creat, entity, fk_soc)";
+		$sql .= " VALUES(";
+		$sql .= " '".$this->db->idate($this->datec)."',";
+		$sql .= " '".$this->db->escape($this->login)."',";
+		$sql .= " '".$this->db->escape($this->ldap_sid)."',";
+		$sql .= " ".((int) $this->user_creation_id).",";
+		$sql .= " ".((int) $this->entity).",";
+		$sql .= " ".($this->socid > 0 ? (int) $this->socid : "null");
+		$sql .= ")";
 
 		$result = $this->db->query($sql);
 
