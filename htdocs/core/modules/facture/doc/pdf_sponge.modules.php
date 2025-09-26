@@ -1648,14 +1648,12 @@ class pdf_sponge extends ModelePDFFactures
 			if ($line->total_ht < 0) {
 				$total_line_remise += -$line->total_ht;
 			}
-
 			$usemc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1);
 			$total_line_remise_print = $total_line_remise;
 			if ($usemc) {
 				$ratio = (!empty($object->total_ht) ? (float) $object->multicurrency_total_ht / (float) $object->total_ht : 0);
 				if (!empty($ratio)) $total_line_remise_print = price2num($total_line_remise * $ratio, 'MT');
 			}
-
 		}
 		if ($total_line_remise > 0) {
 			if (getDolGlobalString('MAIN_SHOW_AMOUNT_DISCOUNT')) {
