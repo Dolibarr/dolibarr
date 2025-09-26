@@ -182,7 +182,7 @@ class CommandeFournisseur extends CommonOrder
 	public $methode_commande;
 
 	/**
-	 *  @var null|int|'' Expected Delivery Date
+	 *  @var null|int|'' 	Expected planned Delivery Date
 	 */
 	public $delivery_date;
 
@@ -217,37 +217,39 @@ class CommandeFournisseur extends CommonOrder
 	public $source;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_project;
-
-	/**
-	 * @var int Payment conditions ID
+	 * @var ?int 	Payment conditions ID
 	 */
 	public $cond_reglement_id;
 
 	/**
-	 * @var string Payment conditions code
+	 * @var string 	Payment conditions code
 	 */
 	public $cond_reglement_code;
 
 	/**
-	 * @var string Payment conditions label
+	 * @var string 	Payment conditions label
 	 */
 	public $cond_reglement_label;
 
 	/**
-	 * @var string Payment conditions label on documents
+	 * @var string 	Payment conditions label on documents
 	 */
 	public $cond_reglement_doc;
 
 	/**
-	 * @var int Account ID
+	 * @var float|string	Deposit percent for payment terms.
+	 *						Populated by $CommonObject->setPaymentTerms().
+	 * @see setPaymentTerms()
+	 */
+	public $deposit_percent;
+
+	/**
+	 * @var ?int 	Account ID
 	 */
 	public $fk_account;
 
 	/**
-	 * @var int Payment choice ID
+	 * @var ?int 	Payment choice ID
 	 */
 	public $mode_reglement_id;
 
@@ -298,14 +300,14 @@ class CommandeFournisseur extends CommonOrder
 	public $line;
 
 	/**
-	 * @var CommonObject Add for supplier_proposal
+	 * @var CommonObject|string|null Add for supplier_proposal
 	 */
 	public $origin;
+
 	/**
 	 * @var int
 	 */
 	public $origin_id;
-	public $linked_objects = array();
 
 	/**
 	 * @var int Date of the purchase order payment deadline
@@ -357,7 +359,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -402,6 +404,7 @@ class CommandeFournisseur extends CommonOrder
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPDF', 'enabled' => 1, 'visible' => 0, 'position' => 165),
 		'fk_input_method' => array('type' => 'integer', 'label' => 'OrderMode', 'enabled' => 1, 'visible' => 3, 'position' => 170),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => 3, 'position' => 175),
+		'deposit_percent' => array('type' => 'varchar(63)', 'label' => 'DepositPercent', 'enabled' => 1, 'visible' => -1, 'position' => 176),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => 3, 'position' => 180),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => 0, 'position' => 190),
 		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => 3, 'position' => 200),
@@ -510,7 +513,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " c.note_private, c.note_public, c.model_pdf, c.last_main_doc, c.extraparams, c.billed,";
 		$sql .= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
 		$sql .= " cm.libelle as methode_commande,";
-		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
+		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc, c.deposit_percent,";
 		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
 		$sql .= ', c.last_main_doc';
@@ -582,6 +585,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->cond_reglement_code = $obj->cond_reglement_code;
 			$this->cond_reglement_label = $obj->cond_reglement_label;
 			$this->cond_reglement_doc = $obj->cond_reglement_doc;
+			$this->deposit_percent = $obj->deposit_percent;
 			$this->fk_account = $obj->fk_account;
 			$this->mode_reglement_id = $obj->fk_mode_reglement;
 			$this->mode_reglement_code = $obj->mode_reglement_code;
@@ -641,13 +645,13 @@ class CommandeFournisseur extends CommonOrder
 		$this->lines = array();
 
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
-		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
+		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice, l.subprice_ttc,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
 		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit, l.extraparams,";
 		$sql .= " l.date_start, l.date_end,";
-		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
+		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_subprice_ttc, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseurdet as l";
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'product as p ON l.fk_product = p.rowid';
 		$sql .= " WHERE l.fk_commande = ".((int) $this->id);
@@ -680,7 +684,9 @@ class CommandeFournisseur extends CommonOrder
 				$line->localtax1_type	   = $objp->localtax1_type;
 				$line->localtax2_type	   = $objp->localtax2_type;
 				$line->subprice            = $objp->subprice;
-				$line->pu_ht = $objp->subprice;
+				$line->pu_ht 			   = $objp->subprice;	// deprecated
+				$line->subprice_ttc        = $objp->subprice_ttc;
+				$line->pu_ttc 			   = $objp->subprice_ttc;	// deprecated
 				$line->remise_percent      = $objp->remise_percent;
 
 				$line->vat_src_code        = $objp->vat_src_code;
@@ -742,6 +748,7 @@ class CommandeFournisseur extends CommonOrder
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice = $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_ttc = $objp->multicurrency_subprice_ttc;
 				$line->multicurrency_total_ht = $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
@@ -798,7 +805,7 @@ class CommandeFournisseur extends CommonOrder
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
-				$num = $this->ref;
+				$num = (string) $this->ref;
 			}
 			$this->newref = dol_sanitizeFileName($num);
 
@@ -1293,7 +1300,7 @@ class CommandeFournisseur extends CommonOrder
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
-				$num = $this->ref;
+				$num = (string) $this->ref;
 			}
 			$this->newref = dol_sanitizeFileName($num);
 
@@ -1461,13 +1468,11 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 * 	@param	User	$user			User making action
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
-	 * 	@return	int						>0 if Ok, <0 if Ko
+	 * 	@return	int						Return >0 if OK, <0 if KO
 	 */
-	public function Cancel($user, $idwarehouse = -1)
+	public function cancel($user, $idwarehouse = -1)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$error = 0;
 
 		//dol_syslog("CommandeFournisseur::Cancel");
@@ -1631,6 +1636,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", source";
 		$sql .= ", model_pdf";
 		$sql .= ", fk_mode_reglement";
+		$sql .= ", deposit_percent";
 		$sql .= ", fk_cond_reglement";
 		$sql .= ", fk_account";
 		$sql .= ", fk_incoterms, location_incoterms";
@@ -1653,6 +1659,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", ".((int) $this->source);
 		$sql .= ", '".$this->db->escape(getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF'))."'";
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'" . $this->db->escape($this->deposit_percent) . "'" : "null");
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".(int) $this->fk_incoterms;
@@ -1797,8 +1804,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Clean parameters
@@ -1838,8 +1843,9 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_validation_id) && $this->user_validation_id > 0 ? $this->user_validation_id : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
+		$sql .= " fk_projet=".((!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		//$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
@@ -1922,6 +1928,7 @@ class CommandeFournisseur extends CommonOrder
 			if ($objsoc->fetch($socid) > 0) {
 				$this->socid = $objsoc->id;
 				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
 				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$this->fk_project = 0;
 				$this->fk_delivery_address = 0;
@@ -2970,7 +2977,7 @@ class CommandeFournisseur extends CommonOrder
 			$ref = '';
 			if ($prod->fetch($comclient->lines[$i]->fk_product) > 0) {
 				$label  = $prod->label;
-				$ref    = $prod->ref;
+				$ref    = (string) $prod->ref;
 			}
 
 			$sql = "INSERT INTO ".$this->db->prefix()."commande_fournisseurdet";
@@ -2996,7 +3003,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function setStatus($user, $status)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();

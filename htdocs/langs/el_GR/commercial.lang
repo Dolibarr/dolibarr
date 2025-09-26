@@ -102,3 +102,4 @@ SignedReceiverOnline=Υπογεγραμμένο από τρίτο μέρος onl
 SignedAll=Υπογεγραμμένο από όλα τα μέρη
 SignStatus=Κατάσταση υπογραφής
 DocumentSigned=Έγγραφο υπογεγραμμένο
+DocumentUnsigned=Έγγραφο ανυπόγραφο

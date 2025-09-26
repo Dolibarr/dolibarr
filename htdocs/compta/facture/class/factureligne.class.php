@@ -21,7 +21,7 @@
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,11 +157,11 @@ class FactureLigne extends CommonInvoiceLine
 
 
 	/**
-	 * @var string|int
+	 * @var int|''
 	 */
 	public $date_start;
 	/**
-	 * @var string|int
+	 * @var int|''
 	 */
 	public $date_end;
 
@@ -1035,7 +1035,7 @@ class FactureLigne extends CommonInvoiceLine
 
 				if ($resql && $this->db->num_rows($resql) > 0) {
 					$obj = $this->db->fetch_object($resql);
-					$cumulated_percent += floatval($obj->situation_percent);
+					$cumulated_percent += (float) $obj->situation_percent;
 
 					if ($include_credit_note) {
 						$sql_credit_note = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
@@ -1047,7 +1047,7 @@ class FactureLigne extends CommonInvoiceLine
 						$res_credit_note = $this->db->query($sql_credit_note);
 						if ($res_credit_note) {
 							while ($cn = $this->db->fetch_object($res_credit_note)) {
-								$cumulated_percent += floatval($cn->situation_percent);
+								$cumulated_percent += (float) $cn->situation_percent;
 							}
 						} else {
 							dol_print_error($this->db);

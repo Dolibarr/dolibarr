@@ -240,14 +240,14 @@ if ($id > 0 || !empty($ref)) {
 
 				$i = 0;
 				print '<div class="div-table-responsive">';
-				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+				print '<table class="tagtable liste listwithfilterbefore centpercent">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre("DatePropal", $_SERVER["PHP_SELF"], "p.datep", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("DatePropal", $_SERVER["PHP_SELF"], "p.datep", "", $option, '', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, '', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.fk_statut", "", $option, '', $sortfield, $sortorder, 'right ');
 				print "</tr>\n";
 
 				if ($num > 0) {
@@ -260,10 +260,11 @@ if ($id > 0 || !empty($ref)) {
 						$propalstatic->id = $objp->propalid;
 						$propalstatic->ref = $objp->ref;
 						$propalstatic->ref_client = $objp->ref_client;
+						$propalstatic->ref_customer = $objp->ref_client;
 						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';
-						print '<td>';
+						print '<td class="tdoverflowmax150">';
 						print $propalstatic->getNomUrl(1);
 						print "</td>\n";
 						print '<td>'.$societestatic->getNomUrl(1).'</td>';

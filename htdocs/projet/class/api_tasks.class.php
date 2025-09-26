@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016   	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +197,7 @@ class Tasks extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -224,47 +225,35 @@ class Tasks extends DolibarrApi
 		return $this->task->id;
 	}
 
-	// /**
-	//  * Get time spent of a task
-	//  *
-	//  * @param int   $id                     Id of task
-	//  * @return int
-	//  *
-	//  * @url	GET {id}/tasks
-	//  */
-	/*
-	public function getLines($id, $includetimespent=0)
+	/**
+	 * Get time spent of a task
+	 *
+	 * @param 	int   				$id         Id of task
+	 * @return	array<int,mixed>				Array of timespent lines
+	 *
+	 * @url	GET {id}/timespent
+	 */
+	public function getTimespent($id)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'Project not found');
+		$result = $this->task->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Task not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('tasks', $this->task->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->project->getLinesArray(DolibarrApiAccess::$user);
+		$this->task->fetchTimeSpentOnTask();
 		$result = array();
-		foreach ($this->project->lines as $line)      // $line is a task
-		{
-			if ($includetimespent == 1)
-			{
-				$timespent = $line->getSummaryOfTimeSpent(0);
-			}
-			if ($includetimespent == 1)
-			{
-				// TODO
-				// Add class for timespent records and loop and fill $line->lines with records of timespent
-			}
-			array_push($result,$this->_cleanObjectDatas($line));
+		foreach ($this->task->lines as $line) {
+			array_push($result, $this->_cleanObjectDatas($line));
 		}
 		return $result;
 	}
-	*/
 
 	/**
 	 * Get roles a user is assigned to a task with

@@ -14,7 +14,6 @@ TicketCreateThirdPartyWithContactIfNotExist=Pregunte por el nombre y el nombre d
 PublicInterface=Interfaz pública
 TicketsDisableEmail=No envíe correos electrónicos para la creación de tickets o la grabación de mensajes
 TicketsActivatePublicInterface=Activar la interfaz pública
-TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket(Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined).
 TicketNotifyTiersAtCreation=Notificar a un cliente/proveedor en la creación
 NoTicketsFound=No se encontró Ticket
 TicketViewAllTickets=Ver todos los Ticket

@@ -304,7 +304,7 @@ class modProjet extends DolibarrModules
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('t'=>MAIN_DB_PREFIX.'projet', 'extra'=>MAIN_DB_PREFIX.'projet_extrafields'); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array('t.ref'=>'ProjectRef*', 't.title'=>'Label*', 't.description'=>"Description", 't.fk_soc' => 'ThirdPartyName', 't.public'=>"Public", 't.fk_statut'=>"Status");
-		$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('t.fk_opp_status'=>"OpportunityStatus", 't.opp_percent'=>"OpportunityProbability", 't.opp_amount'=>"OpportunityAmount", 't.note_public'=>"NotePublic", 't.note_private'=>"NotePrivate", 't.budget_amount'=>"Budget", 't.dateo'=>"DateStart", 't.datee'=>"DateEnd"));
+		$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('t.fk_opp_status'=>"OpportunityStatus", 't.opp_percent'=>"OpportunityProbability", 't.opp_amount'=>"OpportunityAmount", 't.note_public'=>"NotePublic", 't.note_private'=>"NotePrivate", 't.budget_amount'=>"Budget", 't.dateo'=>"DateStart", 't.datee'=>"DateEnd", 't.usage_opportunity' => "UsageOpportunity", 't.usage_task' => 'UsageTasks', 't.usage_bill_time' => 'UsageBillTimeShort'));
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -329,7 +329,7 @@ class modProjet extends DolibarrModules
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array('t.dateo'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datee'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
-		$this->import_examplevalues_array[$r] = array('t.fk_soc'=>'ThirdParty', 't.ref'=>"auto or PJ2010-1234", 't.title'=>"My project", 't.fk_statut'=>'0,1 or 2', 't.datec'=>'1972-10-10', 't.note_private'=>"My private note", 't.note_public'=>"My public note");
+		$this->import_examplevalues_array[$r] = array('t.fk_soc'=>'ThirdParty', 't.ref'=>"auto or PJ2010-1234", 't.title'=>"My project", 't.fk_statut'=>'0,1 or 2', 't.datec'=>'1972-10-10', 't.note_private'=>"My private note", 't.note_public'=>"My public note", 't.usage_opportunity' => '0/1', 't.usage_task' => '0/1', 't.usage_bill_time' => '0/1');
 
 		// Import list of tasks
 		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {

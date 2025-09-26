@@ -480,7 +480,7 @@ print '<br>';
 print img_picto('', 'folder', 'class="pictofixedwidth"');
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - '.$langs->trans("CacheByClient").'</strong><br>';
 print '<div class="divsection">';
-print '<div id="httpcachebybrowser">'.img_picto('', 'question.png', 'class="pictofixedwidth"').' '.$langs->trans("TestNotPossibleWithCurrentBrowsers").'</div>';
+print '<div id="httpcachebybrowser"><span class="opacitymedium">'.img_picto('', 'question.png', 'class="pictofixedwidth"').' '.$langs->trans("TestNotPossibleWithCurrentBrowsers").'</span></div>';
 print '</div>';
 
 
@@ -538,7 +538,7 @@ if ($resql) {
 	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT');
@@ -559,7 +559,7 @@ if ($resql) {
 	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT');
@@ -580,7 +580,7 @@ if ($resql) {
 	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT');
@@ -601,7 +601,7 @@ if ($resql) {
 	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT');
@@ -630,7 +630,7 @@ if ($resql) {
 	$limitforoptim = 100000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
@@ -653,7 +653,7 @@ if ($resql) {
 	$limitforoptim = 100000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
@@ -704,7 +704,8 @@ if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
 print $form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
-print ': '.yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
+print ': ';
+print yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
 print '<br>';
 
 if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
@@ -712,7 +713,8 @@ if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
-print 'MAIN_ENABLE_AJAX_TOOLTIP : ';
+print $form->textwithpicto($langs->trans('MAIN_ENABLE_AJAX_TOOLTIP'), $langs->trans("Option").' MAIN_ENABLE_AJAX_TOOLTIP');
+print ': ';
 print yn(getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP'));
 print '<br>';
 
@@ -722,7 +724,8 @@ if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
-print 'MAIN_CACHE_COUNT : ';
+print $form->textwithpicto($langs->trans('MAIN_CACHE_COUNT'), $langs->trans("Option").' MAIN_CACHE_COUNT');
+print ': ';
 print yn(getDolGlobalInt('MAIN_CACHE_COUNT'));
 //.' '.img_picto('', 'warning.png');
 print '<br>';
@@ -741,7 +744,8 @@ if (getDolGlobalInt('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST')) {
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
-print 'MAIN_DO_FETCH_IN_ONE_SQL_REQUEST = '.getDolGlobalString('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print $form->textwithpicto($langs->trans('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST'), $langs->trans("Option").' MAIN_DO_FETCH_IN_ONE_SQL_REQUEST');
+print ' = '.getDolGlobalString('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 //print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
 print '<br>';
 print '</div>';

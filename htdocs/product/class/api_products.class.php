@@ -3,6 +3,7 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,8 +197,6 @@ class Products extends DolibarrApi
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0, $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
 			throw new RestException(403);
 		}
@@ -451,8 +450,10 @@ class Products extends DolibarrApi
 				if ($this->product->tva_npr != $oldproduct->tva_npr) {
 					$pricemodified = true;
 				}
-				if ($this->product->default_vat_code != $oldproduct->default_vat_code) {
-					$pricemodified = true;
+				if (!empty($this->product->default_vat_code)) {
+					if ($this->product->default_vat_code != $oldproduct->default_vat_code) {
+						$pricemodified = true;
+					}
 				}
 
 				if ($this->product->price_base_type == 'TTC') {
@@ -2229,8 +2230,6 @@ class Products extends DolibarrApi
 		unset($object->lines);
 		unset($object->fk_bank);
 		unset($object->fk_account);
-
-		unset($object->supplierprices);	// Must use another API to get them
 
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			unset($object->stock_reel);

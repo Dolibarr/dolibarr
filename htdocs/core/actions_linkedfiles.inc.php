@@ -94,6 +94,7 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 				$generatethumbs = 0;
 			}
 			$allowoverwrite = (GETPOSTINT('overwritefile') ? 1 : 0);
+			$forceFullTextIndexation = (!empty($forceFullTextIndexation) ? $forceFullTextIndexation : '');
 
 			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, empty($forceFullTextIndexation) ? 0 : $forceFullTextIndexation);
@@ -294,7 +295,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 						$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 						setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
 					} elseif (!file_exists($destpath)) {
-						$result = dol_move($srcpath, $destpath, '0', 1, 0, 1);
+						$result = dol_move($srcpath, $destpath, '0', 1, 0, 1, [], $object->entity ?? 0);
 						if ($result) {
 							// Define if we have to generate thumbs or not
 							$generatethumbs = 1;

@@ -459,4 +459,19 @@ abstract class DoliDB implements Database
 
 		return false;
 	}
+
+	/**
+	 * Prepare a SQL statement for execution
+	 *
+	 * This method must be implemented by subclasses.
+	 *
+	 * @param string $sql SQL query to prepare
+	 * @return mixed Driver-specific prepared statement object or false on failure
+	 */
+	public function prepare($sql)
+	{
+		$this->lasterror = 'prepare() not implemented for this driver. Failed to prepare '.$sql;
+
+		return false;
+	}
 }

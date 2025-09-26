@@ -47,7 +47,7 @@ class Warehouses extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->warehouse = new Entrepot($this->db);
 	}
@@ -100,8 +100,6 @@ class Warehouses extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
@@ -345,9 +343,6 @@ class Warehouses extends DolibarrApi
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
-
-		// Remove the subscriptions because they are handled as a subresource.
-		//unset($object->subscriptions);
 
 		return $object;
 	}

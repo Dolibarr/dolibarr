@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Charlene Benke     		<charlene@patas-monkey.com>
  *
@@ -329,7 +329,7 @@ class modMrp extends DolibarrModules
 			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
-			'm.fk_soc'=>'Tiers',
+			'm.fk_soc'=>'ThirdParty',
 			'm.qty'=>'Qty',
 			'm.date_creation'=>'DateCreation',
 			'm.tms'=>'DateModification',
@@ -450,7 +450,7 @@ class modMrp extends DolibarrModules
 			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
-			'm.fk_soc'=>'Tiers',
+			'm.fk_soc'=>'ThirdParty',
 			'm.fk_warehouse'=>'Warehouse',
 			'm.qty'=>'Qty*',
 			'm.date_creation'=>'DateCreation',

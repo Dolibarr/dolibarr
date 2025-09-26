@@ -35,7 +35,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       # Get PHP and addons
       - name: Setup PHP
         id: setup-php
@@ -43,7 +43,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           coverage: none # disable xdebug, pcov
-          tools: phpstan:2.1.8, cs2pr
+          tools: phpstan:2.1.12, cs2pr
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
             mysql, pgsql, sqlite3, ldap, xml, mcrypt
 

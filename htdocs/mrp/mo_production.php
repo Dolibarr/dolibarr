@@ -503,10 +503,12 @@ if (empty($reshook)) {
 		$moline = new MoLine($db);
 		$res = $moline->fetch(GETPOSTINT('lineid'));
 		if ($result > 0) {
-			$extrafields->fetch_name_optionals_label($moline->element);
-			foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
-				$value = GETPOST('options_'.$key, 'alphanohtml');
-				$moline->array_options["options_".$key] = $value;
+			$extrafields->fetch_name_optionals_label($moline->table_element);
+			if (!empty($extrafields->attributes[$moline->table_element]['label'])) {
+				foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
+					$value = GETPOST('options_'.$key, 'alphanohtml');
+					$moline->array_options["options_".$key] = $value;
+				}
 			}
 			$moline->qty = GETPOSTFLOAT('qty_lineProduce');
 			if (GETPOSTISSET('warehouse_lineProduce')) {
@@ -550,7 +552,7 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-mrp page-card_p
 $newToken = newToken();
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create' && $action != 'reload'))) {
 	$res = $object->fetch_thirdparty();
 	$res = $object->fetch_optionals();
 
@@ -596,7 +598,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$object->fetch_product();
 			$numref = $object->getNextNumRef($object->product);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateMo', $numref);

@@ -41,15 +41,15 @@ require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$delimiter=',';
-$enclosure='"';
-$linelength=10000;
-$escape='/';
+$delimiter = ',';
+$enclosure = '"';
+$linelength = 10000;
+$escape = '/';
 
 // Global variables
-$version=DOL_VERSION;
-$confirmed=1;
-$error=0;
+$version = DOL_VERSION;
+$confirmed = 1;
+$error = 0;
 
 
 /*
@@ -71,15 +71,15 @@ if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) |
 	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [defaultlang] [startlinenb] [endlinenb]\n";
 	print "Usage:  $script_file test myfilepath.csv fr_FR 2 1002\n";
 	print "\n";
-	exit(-1);
+	exit(1);
 }
 if (! file_exists($filepath)) {
 	print "Error: File ".$filepath." not found.\n";
 	print "\n";
-	exit(-1);
+	exit(1);
 }
 
-$ret=$user->fetch('', 'admin');
+$ret = $user->fetch('', 'admin');
 if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
