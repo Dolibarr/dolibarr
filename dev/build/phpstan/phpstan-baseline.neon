@@ -7303,12 +7303,6 @@ parameters:
 			path: ../../../htdocs/core/lib/order.lib.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 11
-			path: ../../../htdocs/core/lib/pdf.lib.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 4
