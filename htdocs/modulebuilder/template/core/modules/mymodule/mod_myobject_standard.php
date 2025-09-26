@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +34,13 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string
+	 */
 	public $prefix = 'MYOBJECT';
 
 	/**
@@ -76,8 +81,8 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return bool						false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -87,13 +92,15 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
+		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
-			// TODO
+			$sql .= " AND t.entity = ".((int) $conf->entity);
+		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $object->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 
 		$resql = $db->query($sql);
@@ -116,8 +123,8 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|-1               Next free value if OK, -1 if KO
+	 *  @param  MyObject		$object		Object we need next value for
+	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($object)
 	{
@@ -125,13 +132,15 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
+		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
-			// TODO
+			$sql .= " AND t.entity = ".((int) $conf->entity);
+		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $object->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 
 		$resql = $db->query($sql);
@@ -154,7 +163,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04u", $max + 1);
 		}
 
 		dol_syslog("mod_myobject_standard::getNextValue return ".$this->prefix.$yymm."-".$num);

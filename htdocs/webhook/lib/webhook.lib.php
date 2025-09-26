@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function webhookAdminPrepareHead()
 {
@@ -43,6 +44,10 @@ function webhookAdminPrepareHead()
 	$head[$h][2] = 'targets';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT . '/webhook/triggerhistory_list.php?mode=modulesetup';
+	$head[$h][1] = $langs->trans("TriggerHistory");
+	$head[$h][2] = 'triggerhistory';
+	$h++;
 
 	/*
 	$head[$h][0] = dol_buildpath("/webhook/admin/myobject_extrafields.php", 1);

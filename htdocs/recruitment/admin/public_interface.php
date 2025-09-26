@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,15 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
 
@@ -80,8 +90,8 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans("RecruitmentSetup"), $help_url);
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("RecruitmentSetup"), $linkback, 'title_setup');
 
 $head = recruitmentAdminPrepareHead();
@@ -118,7 +128,7 @@ print '<input type="hidden" id="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" name="RECRU
 print '<br>';
 
 /*
-if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	print '<br>';
 
 	print '<table class="noborder centpercent">';

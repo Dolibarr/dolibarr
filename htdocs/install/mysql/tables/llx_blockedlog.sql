@@ -16,24 +16,27 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_blockedlog 
-( 
-	rowid integer AUTO_INCREMENT PRIMARY KEY, 
-	entity integer DEFAULT 1 NOT NULL, 
+CREATE TABLE llx_blockedlog
+(
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
+	entity integer DEFAULT 1 NOT NULL,
+	-- fields included into signature
 	date_creation	datetime,
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	action varchar(50), 
-	amounts double(24,8) NOT NULL, 
-	element varchar(50), 
-	fk_user	integer,
-	user_fullname varchar(255),
-	fk_object integer,
-	ref_object varchar(255), 
+	action varchar(50),
+	amounts double(24,8) NOT NULL,
+	ref_object varchar(255),
 	date_object	datetime,
-	signature varchar(100) NOT NULL, 
-	signature_line varchar(100) NOT NULL, 
+	user_fullname varchar(255),
 	object_data	mediumtext,
-	object_version varchar(32) DEFAULT '',
-	certified integer
+	-- the signature of line
+	signature varchar(100) NOT NULL,  			-- the hash of the key for signature with previous hash before
+	-- fields used for debug only
+	element varchar(50),
+	fk_user	integer,
+	fk_object integer,
+	signature_line varchar(100) NOT NULL, 		-- the hash of the key for signature for line only so without previous hash before (not used)
+	object_version varchar(32) DEFAULT '',		-- in which version did the line was recorded
+	certified integer,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	debuginfo mediumtext
 ) ENGINE=innodb;
-

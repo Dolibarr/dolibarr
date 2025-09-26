@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,14 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'errors', 'holiday', 'hrm', 'resource'));
 
@@ -68,10 +76,11 @@ $active = 1;
 
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -83,12 +92,14 @@ $search_country_id = GETPOST('search_country_id', 'int');
 if ($user->socid > 0) {
 	accessforbidden();
 }
+
+$permissiontoeditchart = $user->hasRight('accounting', 'chartofaccount');
 if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -132,7 +143,6 @@ $tabrowid[31] = "";
 // List of help for fields
 $tabhelp = array();
 $tabhelp[31] = array('pcg_version' => $langs->trans("EnterAnyCode"));
-
 
 
 /*
@@ -189,32 +199,15 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;
-		if ($tabrowid[$id]) {
-			// Get free id for insert
-			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") as newid FROM ".$db->sanitize($tabname[$id]);
-			$result = $db->query($sql);
-			if ($result) {
-				$obj = $db->fetch_object($result);
-				$newid = ($obj->newid + 1);
-			} else {
-				dol_print_error($db);
-			}
-		}
 
 		// Add new entry
 		$sql = "INSERT INTO ".$db->sanitize($tabname[$id])." (";
 		// List of fields
-		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $db->sanitize($tabrowid[$id]).",";
-		}
 		$sql .= $db->sanitize($tabfieldinsert[$id]);
 		$sql .= ",active)";
 		$sql .= " VALUES(";
 
 		// List of values
-		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $newid.",";
-		}
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
 			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
@@ -250,19 +243,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Si verif ok et action modify, on modifie la ligne
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
-		if ($tabrowid[$id]) {
-			$rowidcol = $tabrowid[$id];
-		} else {
-			$rowidcol = "rowid";
-		}
-
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
 		// Modifie valeur des champs
-		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
-			$sql .= $db->sanitize($tabrowid[$id])." = ";
-			$sql .= "'".$db->escape($rowid)."', ";
-		}
+
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
 			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
@@ -281,7 +265,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -292,14 +276,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
-
-	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
+// delete
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) {
+	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE rowid = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -313,7 +292,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 }
 
 // activate
-if ($action == 'activate') {
+if ($action == 'activate' && $permissiontoeditchart) {
 	$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE rowid = ".((int) $rowid);
 	$result = $db->query($sql);
 	if (!$result) {
@@ -322,7 +301,7 @@ if ($action == 'activate') {
 }
 
 // disable
-if ($action == $acts[1]) {
+if ($action == $acts[1] && $permissiontoeditchart) {
 	$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE rowid = ".((int) $rowid);
 	$result = $db->query($sql);
 	if (!$result) {
@@ -340,7 +319,7 @@ $formadmin = new FormAdmin($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans("Pcg_version"), $help_url);
+llxHeader('', $langs->trans("Pcg_version"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_accountmodel');
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
@@ -492,7 +471,7 @@ if ($resql) {
 	// There is several pages
 	if ($num > $listlimit) {
 		print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 		print '</td></tr>';
 	}
 
@@ -598,36 +577,19 @@ if ($resql) {
 					}
 				}
 
-				// Can an entry be erased or disabled ?
-				$iserasable = 1;
-				$canbedisabled = 1;
-				$canbemodified = 1; // true by default
-
 				$url = $_SERVER["PHP_SELF"].'?token='.newToken().($page ? '&page='.$page : '').'&sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
 				$url .= '&'.$param.'&';
 
 				// Active
 				print '<td class="center nowrap">';
-				if ($canbedisabled) {
-					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-				} else {
-					print $langs->trans("AlwaysActive");
-				}
+				print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
 				print "</td>";
 
 				// Modify link
-				if ($canbemodified) {
-					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
-				} else {
-					print '<td>&nbsp;</td>';
-				}
+				print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 
 				// Delete link
-				if ($iserasable) {
-					print '<td class="center"><a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
-				} else {
-					print '<td>&nbsp;</td>';
-				}
+				print '<td class="center"><a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
 
 				print "</tr>\n";
 			}
@@ -657,7 +619,7 @@ $db->close();
  *	Show fields in insert/edit mode
  *
  * 	@param		string[]	$fieldlist		Array of fields
- * 	@param		stdClass	$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		?stdClass	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
  *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
@@ -691,16 +653,8 @@ function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context 
 				print '</td>';
 			}
 		} elseif ($fieldlist[$field] == 'type_cdr') {
-			if ($fieldlist[$field] == 'type_cdr') {
-				print '<td class="center">';
-			} else {
-				print '<td>';
-			}
-			if ($fieldlist[$field] == 'type_cdr') {
-				print $form->selectarray($fieldlist[$field], array(0 => $langs->trans('None'), 1 => $langs->trans('AtEndOfMonth'), 2 => $langs->trans('CurrentNext')), (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''));
-			} else {
-				print $form->selectyesno($fieldlist[$field], (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''), 1);
-			}
+			print '<td class="center">';
+			print $form->selectarray($fieldlist[$field], array(0 => $langs->trans('None'), 1 => $langs->trans('AtEndOfMonth'), 2 => $langs->trans('CurrentNext')), (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''));
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" size="10" name="'.$fieldlist[$field].'"></td>';

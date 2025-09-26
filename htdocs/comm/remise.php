@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +28,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders', 'bills'));
@@ -69,9 +79,9 @@ if ($action == 'setremise' && $user->hasRight('societe', 'lire')) {
 	$discount_type = GETPOSTINT('discount_type');
 
 	if (!empty($discount_type)) {
-		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
+		$result = $object->set_remise_supplier((float) price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	} else {
-		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
+		$result = $object->set_remise_client((float) price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	}
 
 	if ($result > 0) {

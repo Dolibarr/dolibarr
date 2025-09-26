@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_magre extends ModelNumRefContracts
 {
-
 	// variables inherited from ModelNumRefContracts class
 	public $name = 'Magre';
 	public $version = 'dolibarr';
@@ -63,18 +63,23 @@ class mod_contract_magre extends ModelNumRefContracts
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstcontract" value="CONTRACT_MAGRE_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcontract" value="'.getDolGlobalString("CONTRACT_MAGRE_MASK").'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcontract" value="'.getDolGlobalString("CONTRACT_MAGRE_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -89,12 +94,18 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getExample()
 	{
-		global $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$contract = new Contrat($db);
+		$contract->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $contract);
+
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -107,7 +118,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *	@param	Societe			$objsoc     third party object
 	 *	@param	Contrat			$contract	contract object
-	 *	@return string|int      			Next value if OK, 0 if KO
+	 *	@return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{

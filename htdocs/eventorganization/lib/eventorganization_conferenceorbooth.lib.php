@@ -28,7 +28,7 @@
  *
  * @param	ConferenceOrBooth	$object		ConferenceOrBooth
  * @param	int	$with_project		Add project id to URL
- * @return 	array					Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function conferenceorboothPrepareHead($object, $with_project = 0)
 {
@@ -116,7 +116,7 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
  * Prepare array of tabs for ConferenceOrBooth Project tab
  *
  * @param Project $object Project
- * @return array
+ * @return array<array{0:string,1:string,2:string}>
  */
 function conferenceorboothProjectPrepareHead($object)
 {
@@ -191,7 +191,7 @@ function conferenceorboothProjectPrepareHead($object)
  * Prepare array of tabs for ConferenceOrBoothAttendees
  *
  * @param	ConferenceOrBoothAttendee	$object		ConferenceOrBoothAttendee
- * @return 	array<array<int,string>>				Array of tabs
+ * @return array<array{0:string,1:string,2:string}> Array of tabs
  */
 function conferenceorboothAttendeePrepareHead($object)
 {

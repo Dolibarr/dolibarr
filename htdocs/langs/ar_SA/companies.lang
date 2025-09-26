@@ -34,7 +34,7 @@ PriceFormatInCurrentLanguage=تنسيق عرض السعر باللغة والع�
 ThirdPartyName=اسم الطرف الثالث
 ThirdPartyEmail=البريد الإلكتروني للطرف الثالث
 ThirdParty=طرف ثالث
-ThirdParties=الأطراف الثالثة
+ThirdParties=أطراف ثالثة
 ThirdPartyProspects=فرص
 ThirdPartyProspectsStats=فرص
 ThirdPartyCustomers=العملاء
@@ -43,7 +43,7 @@ ThirdPartyCustomersWithIdProf12=العملاء الذين لديهم %s أو %s
 ThirdPartySuppliers=الموردين
 ThirdPartyType=نوع الطرف الثالث
 Individual=فرد
-ToCreateContactWithSameName=سيتم إنشاء جهة اتصال | عنوان تلقائيًا بنفس المعلومات مثل الطرف الثالث التابع للطرف الثالث. في معظم الحالات ، حتى لو كان الطرف الثالث شخصًا ماديًا ، يكفي إنشاء طرف ثالث بمفرده.
+ToCreateContactWithSameName=سيتم تلقائيًا إنشاء جهة اتصال/عنوان بنفس معلومات الطرف الثالث. في معظم الحالات، حتى لو كان الطرف الثالث شخصًا طبيعيًا، يكفي إنشاء طرف ثالث وحده.
 ParentCompany=الشركة الأم
 Subsidiaries=الشركات التابعة
 ReportByMonth=تقرير لكل شهر
@@ -65,6 +65,7 @@ State=الولاية / المقاطعة
 StateId=معرف الدولة
 StateCode=رمز الولاية / المقاطعة
 StateShort=الولاية
+DepartmentBuyer=ولاية أو مقاطعة المشتري
 Region=المنطقة
 Region-State=المنطقة - الولاية
 Country=الدولة
@@ -78,7 +79,7 @@ Chat=دردشة
 PhonePro=أوتوبيس. هاتف
 PhonePerso=الهاتف الشخصي
 PhoneMobile=الجوال
-No_Email=رفض الرسائل الإلكترونية الجماعية
+No_Email=رفض رسائل البريد الإلكتروني الجماعية
 Fax=الفاكس
 Zip=الرمز البريدي
 Town=مدينة
@@ -142,26 +143,26 @@ ProfId5AT=رقم EORI
 ProfId1AU=الهوية المهنية 1 (ABN)
 ProfId1BE=الهوية المهنية 1 (الرقم المهني)
 ProfId5BE=رقم EORI
-ProfId1BR=CNPJ
+ProfId1BR=رقم السجل الوطني للصحف -CNPJ-
 ProfId2BR=IE (Inscricao Estadual)
 ProfId3BR=IM (Inscricao Municipal)
 ProfId4BR=CPF
 #ProfId5BR=CNAE
 #ProfId6BR=INSS
-ProfId1CA=Registry ID
+ProfId1CA=معرف التسجيل
 ProfId1CH=UID-Nummer
 ProfId3CH=الهوية المهنية 1 (رقم اتحادي)
 ProfId4CH=الهوية المهنية 2 (رقم السجل التجاري)
 ProfId5CH=رقم EORI
 ProfId1CL=الهوية المهنية 1 (R.U.T.)
 ProfId1CM=هوية شخصية. الأستاذ. 1 (السجل التجاري)
-ProfId2CM=Id. prof. 2 (Unique Tax Identification Number)
+ProfId2CM=المعرف 2 (رقم التعريف الضريبي الفريد)
 ProfId3CM=بطاقة تعريف. البروفيسور 3 (رقم مرسوم الإنشاء)
 ProfId4CM=بطاقة تعريف. البروفيسور 4 (رقم شهادة الإيداع)
 ProfId5CM=هوية شخصية. الأستاذ. 5 (أخرى)
 ProfId1CN=USCI
 ProfId1ShortCM=السجل التجاري
-ProfId2ShortCM=UIN
+ProfId2ShortCM=رقم التعريف الخاص بالاتحاد -UIN-
 ProfId3ShortCM=رقم مرسوم الإنشاء
 ProfId4ShortCM=رقم شهادة الإيداع
 ProfId5ShortCM=آخرون
@@ -179,8 +180,8 @@ ProfId1FR=الأستاذ عيد 1 (صفارة إنذار)
 ProfId2FR=الأستاذ عيد 2 (SIRET)
 ProfId3FR=الأستاذ عيد 3 (NAF ، البالغ من العمر قرد)
 ProfId4FR=الأستاذ عيد 4 (نظام المنسقين المقيمين / لجمهورية مقدونيا)
-ProfId5FR=Prof Id 5 (EORI number)
-ProfId6FR=Prof Id 6 (RNA number)
+ProfId5FR=المعرف 5 (رقم EORI)
+ProfId6FR=المعرف 6  (RNA number)
 ProfId1ShortFR=صفارة إنذار
 ProfId2ShortFR=سيريت
 ProfId3ShortFR=ناف
@@ -209,7 +210,7 @@ ProfId1MX=الأستاذ رقم 1 (RFC).
 ProfId2MX=الأستاذ رقم 2 (ر. P. IMSS)
 ProfId3MX=معرف البروفيسور 3 (الميثاق المهني)
 ProfId1NL=KVK نومير
-ProfId4NL=-
+ProfId4NL=Burgerservicenummer (BSN)
 ProfId5NL=رقم EORI
 ProfId1PT=الأستاذ عيد 1 (NIPC)
 ProfId2PT=الأستاذ عيد 2 (رقم الضمان الاجتماعي)
@@ -243,10 +244,16 @@ ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+ProfId1GA=رقم الإحصاء
+ProfId2GA=الصندوق الوطني للضمان الاجتماعي
+ProfId3GA=CNAMGS
+ProfId4GA=المجلس الإقليمي للكومنولث
+ProfId5GA=نيم
+ProfId6GA=NIF
 VATIntra=VAT ID
 VATIntraShort=VAT ID
 VATIntraSyntaxIsValid=بناء الجملة صالح
-VATPaymentFrequency=VAT payment frequency
+VATPaymentFrequency=تكرار دفع ضريبة القيمة المضافة
 ProspectCustomer=فرصة | عميل
 Prospect=فرصة
 CustomerCard=بطاقة الزبون
@@ -260,12 +267,12 @@ CompanyHasNoRelativeDiscount=هذا العميل ليس لديه خصم نسبي
 HasRelativeDiscountFromSupplier=لديك خصم افتراضي بقيمة <b>%s%%</b> مع هذا المورد
 HasNoRelativeDiscountFromSupplier=لا يوجد الخصم النسبي افتراضي مع المورد.
 CompanyHasAbsoluteDiscount=يتوفر لدى هذا العميل خصومات (ملاحظات ائتمانية أو دفعات مقدمة) لـ <b> %s </b> %s
-CompanyHasDownPaymentOrCommercialDiscount=This customer has discounts available (commercial, down payments) for <b>%s</b>
-CompanyHasCreditNote=This customer still has credit notes for <b>%s</b>
+CompanyHasDownPaymentOrCommercialDiscount=يتوفر لدى هذا العميل خصومات (تجارية، دفعات أولى) لـ<b>%s</b>
+CompanyHasCreditNote=لا يزال هذا العميل لديه ملاحظات ائتمانية لـ<b>%s</b>
 HasNoAbsoluteDiscountFromSupplier=لا يوجد خصم/رصيد متاح من هذا المورد
 HasAbsoluteDiscountFromSupplier=لديك خصومات متاحة (ملاحظات ائتمانية أو دفعات مقدمة) لـ <b> %s </b> %s من هذا المورد
-HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> from this vendor
-HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> from this vendor
+HasDownPaymentOrCommercialDiscountFromSupplier=تتوفر لديك خصومات (تجارية، دفعات أولى) <b>%s</b> من هذا المورد
+HasCreditNoteFromSupplier=لديك ملاحظات ائتمانية <b>%s</b>من هذا المورد
 CompanyHasNoAbsoluteDiscount=هذا العميل ليس لديه ائتمان خصم متاح
 CustomerAbsoluteDiscountAllUsers=خصومات العملاء المطلقة (الممنوحة من قبل جميع المستخدمين)
 CustomerAbsoluteDiscountMy=خصومات العملاء المطلقة (ممنوحة منك)
@@ -284,10 +291,10 @@ ContactNotes=ملاحظات
 ContactPersonalData=البيانات الشخصية
 ContactRelatedItems=الأصناف ذات الصلة
 ContactLinkedFiles=الملفات المرتبطة
-ContactEvents=Events/Agenda
+ContactEvents=الأحداث/الأجندة
 ContactId=معرف جهة الاتصال
 ContactsAddresses=جهات الاتصال | العناوين
-ContactsAddressesExt=Shared Contacts/Addresses
+ContactsAddressesExt=جهات الاتصال/العناوين المشتركة
 FromContactName=اسم
 NoContactDefinedForThirdParty=لم يتم تحديد جهة اتصال لهذا الطرف الثالث
 NoContactDefined=لم يتم تحديد جهة اتصال
@@ -334,7 +341,7 @@ CapitalOf=راس مال %s
 EditCompany=تحرير الشركة
 ThisUserIsNot=هذا المستخدم ليس فرصة أو عميل أو مورد
 VATIntraCheck=فحص
-VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
+VATIntraCheckDesc=يجب أن يتضمن معرف ضريبة القيمة المضافة بادئة البلد. يستخدم الرابط <b>%s</b> خدمة التحقق من ضريبة القيمة المضافة الأوروبية (VIES) التي تتطلب اتصالاً بالإنترنت من خادم تخطيط موارد المؤسسات هذا.
 VATIntraCheckURL=https://ec.europa.eu/taxation_customs/vies/#/vat-validation
 VATIntraCheckableOnEUSite=تحقق من معرف ضريبة القيمة المضافة داخل الاتجاد على موقع المفوضية الأوروبية
 VATIntraManualCheck=يمكنك أيضًا التحقق يدويًا على موقع المفوضية الأوروبية <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a>
@@ -380,14 +387,14 @@ ProspectsByStatus=الفرص حسب الحالة
 NoParentCompany=بلا
 ExportCardToFormat=تصدير البطاقة إلى التنسيق
 ContactNotLinkedToCompany=جهة الاتصال ليست مرتبطة بأي طرف ثالث
-DolibarrLogin=تسجيل الدخول الى دوليبار
-NoDolibarrAccess=لا يوجد وصول دوليبار
-ExportDataset_company_1=الأطراف الثالثة (الشركات / المؤسسات / الأشخاص الطبيعيون) وممتلكاتهم
-ExportDataset_company_2=جهات الاتصال وخصائصها
-ExportDataset_company_3=حسابات بنكية لأطراف ثالثة
-ImportDataset_company_1=الأطراف الثالثة وممتلكاتهم
-ImportDataset_company_2=جهات اتصال | عناوين وسمات إضافية للأطراف الثالثة
-ImportDataset_company_3=حسابات بنكية لأطراف ثالثة
+DolibarrLogin=تسجيل الدخول للاتصال
+NoDolibarrAccess=لا يوجد تسجيل دخول اتصال
+ExportDataset_company_1=الجهات الخارجية (المنظمات/الأشخاص الطبيعيين) و الصفات
+ExportDataset_company_2=سمات جهات الاتصال/العناوين (جهات اتصال/عناوين إضافية لأطراف ثالثة) و
+ExportDataset_company_3=طرق الدفع الخاصة بأطراف ثالثة (الحسابات المصرفية)
+ImportDataset_company_1=الجهات الخارجية (المنظمات/الأشخاص الطبيعيين) و الصفات
+ImportDataset_company_2=سمات جهات الاتصال/العناوين (جهات اتصال/عناوين إضافية لأطراف ثالثة) و
+ImportDataset_company_3=طرق الدفع الخاصة بأطراف ثالثة (الحسابات المصرفية)
 ImportDataset_company_4=ممثلو مبيعات اطراف ثالثة (تعيين مندوبي مبيعات / مستخدمين للشركات)
 PriceLevel=مستوى السعر
 PriceLevelLabels=تسميات مستوى السعر
@@ -397,26 +404,26 @@ SupplierCategory=فئة المورد
 JuridicalStatus200=مستقل
 DeleteFile=حذف الملفات
 ConfirmDeleteFile=هل أنت متأكد أنك تريد حذف هذا الملف <b>%s</b>؟
-AllocateCommercial=Assign to sales representatives
-UnallocateCommercial=Unassigned sales representatives
+AllocateCommercial=تعيين لممثلي المبيعات
+UnallocateCommercial=ممثلو المبيعات غير المعينين
 Organization=المؤسسة
 FiscalYearInformation=السنة المالية
 FiscalMonthStart=شهر البداية للسنة المالية
 SocialNetworksInformation=الشبكات الاجتماعية
-SocialNetworksFacebookURL=Facebook URL
-SocialNetworksTwitterURL=Twitter URL
-SocialNetworksLinkedinURL=Linkedin URL
-SocialNetworksInstagramURL=Instagram URL
-SocialNetworksYoutubeURL=Youtube URL
-SocialNetworksGithubURL=Github URL
+SocialNetworksFacebookURL=رابط فيسبوك
+SocialNetworksTwitterURL=رابط تويتر
+SocialNetworksLinkedinURL=رابط لينكدإن
+SocialNetworksInstagramURL=رابط إنستغرام
+SocialNetworksYoutubeURL=رابط يوتيوب
+SocialNetworksGithubURL=رابط جيتهب -Github-
 YouMustAssignUserMailFirst=يجب عليك إنشاء بريد إلكتروني لهذا المستخدم قبل أن تتمكن من إضافة إشعار بريد إلكتروني.
 YouMustCreateContactFirst=لتتمكن من إضافة إشعارات البريد الإلكتروني ، يجب عليك أولاً تحديد جهات الاتصال التي تحتوي على رسائل بريد إلكتروني صالحة للطرف الثالث
 ListSuppliersShort=قائمة الموردين
 ListProspectsShort=قائمة الفرص
 ListCustomersShort=قائمة العملاء
 ThirdPartiesArea=الأطراف الثالثة | جهات الاتصال
-LastModifiedThirdParties=The latest %s modified Third Parties
-LastModifiedContacts=The latest %s modified contacts
+LastModifiedThirdParties=أحدث %s الجهات الخارجية المعدلة
+LastModifiedContacts=أحدث %s جهة/جهات الاتصال المعدلة
 UniqueThirdParties=إجمالي عدد الأطراف الثالثة
 InActivity=فتح
 ActivityCeased=مغلق
@@ -427,11 +434,11 @@ OutstandingBill=الأعلى للفاتورة المستحقة
 OutstandingBillReached=الأعلى لفاتورة مستحقة وصلت
 OrderMinAmount=الحد الأدنى للطلب
 MonkeyNumRefModelDesc=قم بإرجاع رقم بالتنسيق %syymm-nnnn للكود العميل و %syymm-nnnn للكود المورد حيث yy هي سنة، mm هي شهر و  nnnn هو رقم متسلسل يتزايد تلقائيًا بدون فاصل و ولا عودة إلى 0.
-LeopardNumRefModelDesc=Free code without verification.
+LeopardNumRefModelDesc=الكود مجاني بدون التحقق.
 ManagingDirectors=اسم المدير (المديرون) (الرئيس التنفيذي ، المدير ، الرئيس)
-MergeOriginThirdparty=Duplicated third party (the third party you want to delete)
+MergeOriginThirdparty=جهة خارجية مكررة (الجهة الثالثة التي تريد حذفها)
 MergeThirdparties=دمج أطراف ثالثة
-ConfirmMergeThirdparties=هل أنت متأكد أنك تريد دمج الطرف الثالث المختار مع الطرف الحالي؟ سيتم نقل جميع العناصر المرتبطة (الفواتير ، الطلبات ، ...) إلى الطرف الثالث الحالي ، وبعد ذلك سيتم حذف الطرف الثالث المختار.
+ConfirmMergeThirdparties=هل أنت متأكد من رغبتك في دمج الطرف الثالث المختار مع الطرف الثالث الحالي؟ سيتم نقل جميع الكائنات المرتبطة (الفواتير والطلبات وما إلى ذلك) إلى الطرف الثالث الحالي، ثم سيتم حذف الطرف الثالث المختار.
 ThirdpartiesMergeSuccess=تم دمج الأطراف الثالثة
 SaleRepresentativeLogin=تسجيل دخول مندوب مبيعات
 SaleRepresentativeFirstname=الاسم الأول لمندوب المبيعات
@@ -461,3 +468,7 @@ ExternalSystemID=معرف النظام الخارجي
 IDOfPaymentInAnExternalSystem=معرف طريقة الدفع في نظام خارجي (مثل Stripe، Paypal، ...)
 AADEWebserviceCredentials=بيانات اعتماد خدمة الويب AADE
 ThirdPartyMustBeACustomerToCreateBANOnStripe=يجب أن يكون الطرف الثالث العميل للسماح بإنشاء معلوماته المصرفية على جانب Stripe
+NewSocNameForClone=اسم الشركة الجديد
+ConfirmCloneThirdparties=هل أنت متأكد أنك تريد استنساخ الشركة <b>%s</b> ؟
+SocialNetworksBusiness=الشبكات الاجتماعية للشركة
+ErrorCommercialNotAllowedForThirdparty=المستخدم %s ليس لديه الإذن برؤية جميع الجهات الخارجية و ليس ممثل مبيعات مسموحًا له لـ شركة.

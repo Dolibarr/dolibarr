@@ -9,31 +9,30 @@ ActionsOnResource=Digwyddiadau am yr adnodd hwn
 ResourcePageIndex=Rhestr adnoddau
 ResourceSingular=Adnodd
 ResourceCard=Cerdyn adnoddau
+NewResource=New resource
 AddResource=Creu adnodd
 ResourceFormLabel_ref=Enw'r adnodd
-ResourceType=Math o adnodd
 ResourceFormLabel_description=Disgrifiad o'r adnodd
-
+ResourceType=Math o adnodd
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Adnoddau yn gysylltiedig ag elfen
 
 ShowResource=Dangos adnodd
-
 ResourceElementPage=Adnoddau elfen
 ResourceCreatedWithSuccess=Adnodd wedi'i greu'n llwyddiannus
 RessourceLineSuccessfullyDeleted=Wedi dileu'r llinell adnoddau yn llwyddiannus
 RessourceLineSuccessfullyUpdated=Mae'r llinell adnoddau wedi'i diweddaru'n llwyddiannus
 ResourceLinkedWithSuccess=Adnodd yn gysylltiedig â llwyddiant
-
 ConfirmDeleteResource=Cadarnhewch i ddileu'r adnodd hwn
 RessourceSuccessfullyDeleted=Adnodd wedi'i ddileu yn llwyddiannus
 DictionaryResourceType=Math o adnoddau
-
 SelectResource=Dewiswch adnodd
-
 IdResource=Adnodd id
 AssetNumber=Rhif Serial
 ResourceTypeCode=Cod math o adnodd
 ImportDataset_resource_1=Adnoddau
-
 ErrorResourcesAlreadyInUse=Mae rhai adnoddau yn cael eu defnyddio
 ErrorResourceUseInEvent=%s yn cael ei ddefnyddio mewn digwyddiad %s
+MaxUsers=Uchafswm y defnyddwyr (lleoedd, seddi, ac ati)
+MaxUsersLabel=Maximum users

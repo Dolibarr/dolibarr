@@ -17,8 +17,10 @@ Module4100Name = Veri Gizliliği Politikası
 Module4100Desc = Veri Gizliliğini yönetme modülü (GDPR'ye uygunluk)
 # Administration page
 datapolicySetup = Modül Veri Gizliliği Politikası Kurulumu
-Deletion = Verilerin silinmesi
-datapolicySetupPage = Ülkelerinizin yasalarına bağlı olarak (Örnek <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPR'nin 5. Maddesi</a>) kişisel verilerin belirli bir süre saklanması gerekir verilerin, arşivleme amaçları dışında, toplanma amacı için gerekli olduğu süreyi aşmayacak şekilde.<br>Silme işlemi, olaysız belirli bir sürenin (süre) ardından otomatik olarak gerçekleştirilecektir. aşağıda belirtmiş olacaksınız).
+DataDeletion=Verilerin silinmesi
+DataAnonymization=Verilerin anonimleştirilmesi
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Ülkenizin yasalarına bağlı olarak (Örnek <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPR'nin 5. Maddesi</a>), Çalışanveriler, arşivleme amaçları hariç, toplandıkları amaç için ihtiyaç duyulan süreyi aşmayan bir süre boyunca saklanmalıdır.<br>Bu modül, anonimleştirmeyi yapacaktır otomatikman, nesnenin mevcut bir iş nesnesi çocuğu yoksa, belirli bir süre boyunca olay olmadan (aşağıda belirteceğiniz süre) ve.
 NB_MONTHS = %s ay
 ONE_YEAR = 1 yıl
 NB_YEARS = %s yıl
@@ -33,12 +35,15 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potansiyel Müşteri/Müşteri
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ne potansiyel müşteri ne de müşteri
 DATAPOLICY_CONTACT_FOURNISSEUR = Tedarikçi
 DATAPOLICY_ADHERENT = Üye
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Başvuru
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
 SendAgreementText = İlgili tüm kişilerinize (henüz bir e-posta almamış olan ve GDPR sözleşmesi hakkında hiçbir şey kaydetmediğiniz) bir GDPR e-postası gönderebilirsiniz. Bunu yapmak için aşağıdaki düğmeyi kullanın.
 SendAgreement = Mailleri gönder
 AllAgreementSend = Tüm e-postalar gönderildi
 TXTLINKDATAPOLICYACCEPT = "Anlaşma" bağlantısı metni
 TXTLINKDATAPOLICYREFUSE = "Anlaşmazlık" bağlantısı metni
+DelayForAnonymization=Anonimleştirme için gecikme
+DelayForDeletion=Silme gecikmesi
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Kişisel verilerin işlenmesi
 DATAPOLICY_consentement = Kişisel verilerin işlenmesine ilişkin alınan onay
@@ -49,3 +54,5 @@ DATAPOLICY_date = Anlaşma/anlaşmazlık tarihi GDPR
 DATAPOLICY_send = Sözleşme e-postasının gönderildiği tarih
 MailSent = Mail gönderildi
 NUMBER_MONTH_BEFORE_DELETION = Silmeden önceki ay sayısı
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

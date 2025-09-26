@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2004       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2009  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Juanjo Menent	    	<jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	// variables inherited from ModelProductCode class
 	public $name = 'Elephant';
 	public $version = 'dolibarr';
+
+	/**
+	 * @var int		Position of module among others
+	 */
+	public $position = 50;
 
 	// variables not inherited
 
@@ -88,25 +93,26 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PRODUCT_ELEPHANT_MASK_PRODUCT">';
 		$texte .= '<input type="hidden" name="param2" value="PRODUCT_ELEPHANT_MASK_SERVICE">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Product"), $langs->transnoentities("Product"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4c");
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix customers
-		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT') ? $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<tr><td>'.$langs->trans("ProductCodeModel").'</td>';
+		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" placeholder="'.$langs->trans("Mask").'" value="'.getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 
 		$texte .= '</tr>';
 
 		// Parametrage du prefix suppliers
-		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ServiceCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.(getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE') ? $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<tr><td>'.$langs->trans("ServiceCodeModel").'</td>';
+		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" placeholder="'.$langs->trans("Mask").'" value="'.getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -119,13 +125,17 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate		$langs		Object langs
+	 * @param	?Translate		$langs		Object langs
 	 * @param	Product|string	$objproduct	Object product
-	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objproduct = '', $type = -1)
+	public function getExample($langs = null, $objproduct = '', $type = -1)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$exampleproduct = $exampleservice = '';
 
 		if ($type == 0 || $type == -1) {
@@ -167,7 +177,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	public function getNextValue($objproduct = null, $type = -1)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -199,7 +209,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$now = dol_now();
 
 		if (getDolGlobalString('PRODUCT_ELEPHANT_ADD_WHERE')) {
-			$where = ' AND ('.dol_string_nospecial(dol_string_unaccent($conf->global->PRODUCT_ELEPHANT_ADD_WHERE), '_', array(',', '@', '"', "|", ";", ":")).')';
+			$where = ' AND ('.dol_string_nospecial(dol_string_unaccent(getDolGlobalString('PRODUCT_ELEPHANT_ADD_WHERE')), '_', array(',', '@', '"', "|", ";", ":")).')';
 		}
 
 		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
@@ -264,10 +274,10 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			// Get Mask value
 			$mask = '';
 			if ($type == 0) {
-				$mask = !getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT') ? '' : $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
+				$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT');
 			}
 			if ($type == 1) {
-				$mask = !getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE') ? '' : $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+				$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE');
 			}
 			if (!$mask) {
 				$this->error = 'NotConfigured';

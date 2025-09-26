@@ -6,7 +6,7 @@
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $form  = new Form($db);
 
 // Load translation files required by the page
@@ -45,7 +53,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 
 
 // Security check
@@ -53,10 +61,11 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'societe', $socid, '&societe');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('projectthirdparty'));
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('thirdpartyproject', 'projectthirdparty'));
+
+$result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $object = new Societe($db);
 $permissiontodelete = $user->hasRight('societe', 'supprimer');
@@ -76,13 +85,11 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massactionbutton = '';
 }
 
-
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
-$parameters = array('id'=>$socid);
 
 // List of mass actions available
 $arrayofmassactions = array();
@@ -176,7 +183,7 @@ if ($socid) {
 	print dol_get_fiche_end();
 
 	print '<br>';
-	$params = '';
+	$params = array();
 	$backtopage = $_SERVER['PHP_SELF'].'?socid='.$object->id;
 	$newcardbutton = dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopage), '', 1, $params);
 

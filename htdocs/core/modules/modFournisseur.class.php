@@ -5,7 +5,8 @@
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2020      Ahmad Jamaly Rabib   <rabib@metroworks.co.jp>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -539,7 +540,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Purchase Orders and lines of purchase orders';
-		$this->export_icon[$r] = 'order';
+		$this->export_icon[$r] = 'supplier_order';
 		$this->export_permission[$r] = array(array("fournisseur", "commande", "export"));
 		$this->export_fields_array[$r] = array(
 			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',
@@ -622,7 +623,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "SupplierInvoices"; // Translation key
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_invoice';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('f' => MAIN_DB_PREFIX.'facture_fourn', 'extra' => MAIN_DB_PREFIX.'facture_fourn_extrafields');
 		$this->import_tables_creator_array[$r] = array('f' => 'fk_user_author'); // Fields to store import user id
@@ -724,7 +725,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "SupplierInvoiceLines"; // Translation key
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_invoice';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields');
 		$this->import_fields_array[$r] = array(
@@ -802,7 +803,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseur_'.$r;
 		$this->import_label[$r] = 'SuppliersOrders';
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_order';
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande_fournisseur', 'extra' => MAIN_DB_PREFIX.'commande_fournisseur_extrafields');
 		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
@@ -890,7 +891,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseurdet_'.$r;
 		$this->import_label[$r] = 'PurchaseOrderLines';
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_order';
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields');
 		$this->import_fields_array[$r] = array(
@@ -978,7 +979,7 @@ class modFournisseur extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
@@ -999,7 +1000,7 @@ class modFournisseur extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

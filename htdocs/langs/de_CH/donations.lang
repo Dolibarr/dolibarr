@@ -11,3 +11,4 @@ LastModifiedDonations=%s zuletzt geänderte Spenden
 DonationRecipient=Spenden Empfänger
 FreeTextOnDonations=Freier Text der in der Fusszeile angezeigt wird
 DonationValidated=Die Spende %s ist validiert.
+donationPublic=Öffentliche Spenden

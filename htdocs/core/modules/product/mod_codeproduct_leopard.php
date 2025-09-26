@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2009  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,12 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	public $version = 'dolibarr';
 
 	/**
+	 * @var int		Position of module among others
+	 */
+	public $position = 10;
+
+
+	/**
 	 *	Constructor
 	 */
 	public function __construct()
@@ -72,12 +78,12 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
-	 * @param	Product		$objproduct		Object product
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @param	?Translate		$langs		Object langs
+	 * @param	Product|string	$objproduct	Object product
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objproduct = null, $type = -1)
+	public function getExample($langs = null, $objproduct = '', $type = -1)
 	{
 		return '';
 	}
@@ -110,8 +116,6 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 */
 	public function verif($db, &$code, $product, $type)
 	{
-		global $conf;
-
 		$result = 0;
 		$code = strtoupper(trim($code));
 

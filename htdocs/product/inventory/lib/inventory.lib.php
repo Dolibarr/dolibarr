@@ -1,6 +1,7 @@
 <?php
 /* <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 /**
  *  Define head array for tabs of inventory tools setup pages
  *
- *  @return array Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function inventoryAdminPrepareHead()
 {
@@ -64,7 +65,7 @@ function inventoryAdminPrepareHead()
  *  @param  string      $title          parameter
  *  @param  string      $get            parameter
  *
- *  @return array                       Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
 {
@@ -75,7 +76,7 @@ function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
 		array(dol_buildpath('/product/inventory/inventory.php?id='.$inventory->id.$get, 1), $langs->trans('Inventory'), 'inventory')
 	);
 
-	$h=2;
+	$h = 2;
 
 	complete_head_from_modules($conf, $langs, $inventory, $head, $h, 'inventory');
 	complete_head_from_modules($conf, $langs, $inventory, $head, $h, 'inventory', 'remove');

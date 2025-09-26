@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,14 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda", "mails"));
 
@@ -80,23 +88,32 @@ if ($complete == 'na' || $complete == -2) {
 	$complete = -1;
 }
 
+$tzforfullday = null;
 if ($fulldayevent) {
 	$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 	// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-	$datep = dol_mktime('00', '00', 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-	$datef = dol_mktime('23', '59', '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datep = dol_mktime(0, 0, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datef = dol_mktime(23, 59, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	//print $db->idate($datep); exit;
 } else {
 	$datep = dol_mktime($aphour, $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
-	$datef = dol_mktime($p2hour, $p2min, '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
+	$datef = dol_mktime($p2hour, $p2min, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 }
-$reg = array();
+$reg = [];
 if (GETPOST('datep')) {
 	if (GETPOST('datep') == 'now') {
 		$datep = dol_now();
 	} elseif (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {		// Try to not use this. Use instead '&datep=now'
-		$datep = dol_mktime(0, 0, 0, $reg[2], $reg[3], $reg[1], 'tzuserrel');
+		$datep = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1], 'tzuserrel');
 	}
+}
+
+$currentyear = (int) dol_print_date(dol_now(), '%Y');
+
+if (GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100) {
+	$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTINT("limityear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+} else {
+	$repeateventlimitdate = dol_mktime(23, 59, 59, 12, 31, $currentyear, $tzforfullday ? $tzforfullday : 'tzuserrel');
 }
 
 // Security check
@@ -136,24 +153,41 @@ if ($id > 0 && $action != 'add') {
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+if (empty($action) && empty($object->id)) {
+	$action = 'create';
+}
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
-$parameters = array('socid' => $socid);
+$TRemindTypes = [];
+if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1));
+}
+if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1));
+}
+if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
+	$langs->load('sms');
+	$TRemindTypes['sms'] = [
+		'label' => $langs->trans('Sms'),
+		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
+	];
+}
+$TDurationTypes = $form->getDurationTypes($langs);
+$TDurationTypesExcluded = ['y', 'm', 's'];
+$enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
+$parameters = [
+	'socid' => $socid,
+	'TRemindTypes' => &$TRemindTypes,
+	'enablereminders' => &$enablereminders,
+	'TDurationTypes' => &$TDurationTypes,
+	'TDurationTypesExcluded' => &$TDurationTypesExcluded,
+];
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
-$TRemindTypes = array();
-if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (!getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 1 : 0));
-}
-if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (!getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 1 : 0));
-}
-
-$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
 
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
@@ -166,7 +200,7 @@ $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || ((empty($o
 
 $listUserAssignedUpdated = false;
 $listResourceAssignedUpdated = false;
-$assignedtouser = array();
+$assignedtouser = [];
 
 // Remove user to assigned list
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')) {
@@ -175,7 +209,7 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 	if (!empty($_SESSION['assignedtouser'])) {
 		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], true);
 	} else {
-		$tmpassigneduserids = array();
+		$tmpassigneduserids = [];
 	}
 
 	foreach ($tmpassigneduserids as $key => $val) {
@@ -202,7 +236,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 	if (!empty($_SESSION['assignedtoresource'])) {
 		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], true);
 	} else {
-		$tmpassignedresourceids = array();
+		$tmpassignedresourceids = [];
 	}
 
 	foreach ($tmpassignedresourceids as $key => $val) {
@@ -227,7 +261,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))) {
 	// Add a new user
 	if (GETPOST('assignedtouser') > 0) {
-		$assignedtouser = array();
+		$assignedtouser = [];
 		if (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 		}
@@ -249,7 +283,7 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassignedtoresource'))) {
 	// Add a new user
 	if (GETPOST('assignedtoresource') > 0) {
-		$assignedtoresource = array();
+		$assignedtoresource = [];
 		if (!empty($_SESSION['assignedtoresource'])) {
 			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
 		}
@@ -276,6 +310,7 @@ if (empty($reshook) && $action == 'classin' && ($user->hasRight('agenda', 'allac
 
 // Action clone object
 if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
+	// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
@@ -324,12 +359,14 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	if ($fulldayevent) {
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-		$datep = dol_mktime('00', '00', '00', GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-		$datef = dol_mktime('23', '59', '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datep = dol_mktime(0, 0, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datef = dol_mktime(23, 59, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	} else {
 		$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
 		$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 	}
+	//set end date to now if percentage is set to 100 and end date not set
+	$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
 
 	// Check parameters
 	if (!$datef && $percentage == 100) {
@@ -356,6 +393,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$object->type_code = GETPOST('actioncode', 'aZ09');
 	}
 
+	$listofresourceid = [];
+
 	if (!$error) {
 		// Initialisation of object actioncomm
 		$object->priority = GETPOSTISSET("priority") ? GETPOSTINT("priority") : 0;
@@ -377,6 +416,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
+				$object->elementid = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
@@ -403,6 +443,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			}
 
 			$object->fk_element = $taskid;
+			$object->elementid = $taskid;
 			$object->elementtype = 'task';
 		}
 
@@ -413,10 +454,15 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 
-		$listofuserid = array();
+		$listofuserid = [];
 		if (!empty($_SESSION['assignedtouser'])) {
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 		}
+
+		if (!empty($_SESSION['assignedtoresource'])) {
+			$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
+		}
+
 		$i = 0;
 		foreach ($listofuserid as $key => $value) {
 			if ($i == 0) {	// First entry
@@ -436,15 +482,12 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 	if (GETPOSTISSET("contactid")) {
 		$object->contact_id = GETPOSTINT("contactid");
-
-		$object->contact = $contact;	// For backward compatibility
+		$object->fetch_contact();
 	}
 
 	if (GETPOSTINT('socid') > 0) {
 		$object->socid = GETPOSTINT('socid');
 		$object->fetch_thirdparty();
-
-		$object->societe = $object->thirdparty; // For backward compatibility
 	}
 
 	// Check parameters
@@ -485,20 +528,22 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	}
 
 
-
 	if (!$error) {
 		$db->begin();
+
+		$dayinmonth = dol_print_date($object->datep, '%d');
+		$dayinweek = dol_print_date($object->datep, '%w');
 
 		$selectedrecurrulefreq = 'no';
 		$selectedrecurrulebymonthday = '';
 		$selectedrecurrulebyday = '';
 		$object->recurrule = GETPOSTISSET('recurrulefreq') ? "FREQ=".GETPOST('recurrulefreq', 'alpha') : "";
-		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'MONTHLY' && GETPOSTISSET('BYMONTHDAY')) ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
-		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'WEEKLY' && GETPOSTISSET('BYDAY')) ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
+		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'MONTHLY') ? "_BYMONTHDAY".((int) $dayinmonth) : "";
+		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'WEEKLY') ? "_BYDAY".((int) $dayinweek) : "";
 
-		$reg1 = array();
-		$reg2 = array();
-		$reg3 = array();
+		$reg1 = [];
+		$reg2 = [];
+		$reg3 = [];
 		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg1)) {
 			$selectedrecurrulefreq = $reg1[1];
 		}
@@ -511,7 +556,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		// Is event recurrent ?
 		$eventisrecurring = 0;
-		$userepeatevent = (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2 ? 1 : 0);
+		$userepeatevent = (getDolGlobalInt('MAIN_DISABLE_RECURRING_EVENTS') ? 0 : 1);
 		if ($userepeatevent && !empty($selectedrecurrulefreq) && $selectedrecurrulefreq != 'no') {
 			$eventisrecurring = 1;
 			$object->recurid = dol_print_date(dol_now('gmt'), 'dayhourlog', 'gmt');
@@ -524,22 +569,95 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		// Creation of action/event
 		$idaction = $object->create($user);
+		$moreparam = '';
 
 		if ($idaction > 0) {
 			if (!$object->error) {
+				if (is_array($listofresourceid) && count($listofresourceid)) {
+					foreach ($listofresourceid as $resource_id => $val) {
+						$resource_type = 'dolresource';
+						$busy = 1;//GETPOSTINT('busy');
+
+						// Resources association
+						if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK')) {
+							$eventDateStart = $object->datep;
+							$eventDateEnd = $object->datef;
+							$isFullDayEvent = $object->fulldayevent;
+							if (empty($eventDateEnd)) {
+								if ($isFullDayEvent) {
+									$eventDateStartArr = dol_getdate($eventDateStart);
+									$eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+									$eventDateEnd = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+								}
+							}
+
+							$sql = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+							$sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
+							$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = '" . $db->escape($resource_type) . "'";
+							$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
+							$sql .= " WHERE er.resource_id = " . ((int) $resource_id);
+							$sql .= " AND er.busy = 1";
+							$sql .= " AND (";
+
+							// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+							$sql .= " (ac.datep <= '" . $db->idate($eventDateStart) . "' AND (ac.datep2 IS NULL OR ac.datep2 >= '" . $db->idate($eventDateStart) . "'))";
+							// event date end between ac.datep and ac.datep2
+							if (!empty($eventDateEnd)) {
+								$sql .= " OR (ac.datep <= '" . $db->idate($eventDateEnd) . "' AND (ac.datep2 >= '" . $db->idate($eventDateEnd) . "'))";
+							}
+							// event date start before ac.datep and event date end after ac.datep2
+							$sql .= " OR (";
+							$sql .= "ac.datep >= '" . $db->idate($eventDateStart) . "'";
+							if (!empty($eventDateEnd)) {
+								$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '" . $db->idate($eventDateEnd) . "')";
+							}
+							$sql .= ")";
+
+							$sql .= ")";
+							$resql = $db->query($sql);
+							if (!$resql) {
+								$error++;
+								$object->error = $db->lasterror();
+								$object->errors[] = $object->error;
+							} else {
+								if ($db->num_rows($resql) > 0) {
+									// Resource already in use
+									$error++;
+									$object->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ';
+									while ($obj = $db->fetch_object($resql)) {
+										$object->error .= '<br> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
+									}
+									$object->errors[] = $object->error;
+
+									setEventMessages($object->error, null, 'errors');
+								}
+								$db->free($resql);
+							}
+						}
+
+						if (!$error) {
+							$res = $object->add_element_resource($resource_id, $resource_type, $busy, $val['mandatory']);
+						}
+					}
+				}
+
+				unset($_SESSION['assignedtoresource']);
+
+
 				// Category association
-				$categories = GETPOST('categories', 'array');
-				$object->setCategories($categories);
+				if (!$error) {
+					$categories = GETPOST('categories', 'array');
+					$object->setCategories($categories);
+				}
 
 				unset($_SESSION['assignedtouser']);
 
-				$moreparam = '';
 				if ($user->id != $object->userownerid) {
 					$moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 				}
 
 				// Create reminders
-				if ($addreminder == 'on') {
+				if (!$error && $addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
 					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
@@ -585,6 +703,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 					$db->commit();
 				}
 
+
 				// if (!empty($backtopage)) {
 				// 	dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
 				// 	header("Location: ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
@@ -610,25 +729,26 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$donotclearsession = 1;
 		}
 
-		if ($eventisrecurring) {
+		if (!$error && $eventisrecurring) {
+			$dayoffset = 0;
+			$monthoffset = 0;
 			// We set first date of recurrence and offsets
 			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
 				$firstdatearray = dol_get_first_day_week(GETPOSTINT("apday"), GETPOSTINT("apmonth"), GETPOSTINT("apyear"));
-				$datep = dol_mktime($fulldayevent ? '00' : GETPOSTINT("aphour"), $fulldayevent ? '00' : GETPOSTINT("apmin"), $fulldayevent ? '00' : GETPOSTINT("apsec"), $firstdatearray['month'], $firstdatearray['first_day'], $firstdatearray['year'], $tzforfullday ? $tzforfullday : 'tzuserrel');
+				$datep = dol_mktime($fulldayevent ? 0 : GETPOSTINT("aphour"), $fulldayevent ? 0 : GETPOSTINT("apmin"), $fulldayevent ? 0 : GETPOSTINT("apsec"), $firstdatearray['month'], $firstdatearray['first_day'], $firstdatearray['year'], $tzforfullday ? $tzforfullday : 'tzuserrel');
 				$datep = dol_time_plus_duree($datep, $selectedrecurrulebyday + 6, 'd');//We begin the week after
 				$dayoffset = 7;
 				$monthoffset = 0;
 			} elseif ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
 				$firstday = $selectedrecurrulebymonthday;
 				$firstmonth = GETPOST("apday") > $selectedrecurrulebymonthday ? GETPOSTINT("apmonth") + 1 : GETPOSTINT("apmonth");//We begin the week after
-				$datep = dol_mktime($fulldayevent ? '00' : GETPOSTINT("aphour"), $fulldayevent ? '00' : GETPOSTINT("apmin"), $fulldayevent ? '00' : GETPOSTINT("apsec"), $firstmonth, $firstday, GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+				$datep = dol_mktime($fulldayevent ? 0 : GETPOSTINT("aphour"), $fulldayevent ? 0 : GETPOSTINT("apmin"), $fulldayevent ? 0 : GETPOSTINT("apsec"), $firstmonth, $firstday, GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 				$dayoffset = 0;
 				$monthoffset = 1;
 			} else {
 				$error++;
 			}
 			// End date
-			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100 ? GETPOSTINT("limityear") : 2100, $tzforfullday ? $tzforfullday : 'tzuserrel');
 			// Set date of end of event
 			$deltatime = num_between_day($object->datep, $datep);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -725,9 +845,9 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 				// increment date for recurrent events
 				$datep = dol_time_plus_duree($datep, $dayoffset, 'd');
-				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');
+				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 				$datef = dol_time_plus_duree($datef, $dayoffset, 'd');
-				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');
+				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 			}
 		}
 		if (!empty($backtopage) && !$error) {
@@ -769,18 +889,29 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$object->fetch($id);
 		$object->fetch_optionals();
 		$object->fetch_userassigned();
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Clean parameters
 		if ($fulldayevent) {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-			$datep = dol_mktime('00', '00', '00', GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
-			$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+			$datep = dol_mktime(0, 0, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+			$datef = dol_mktime(23, 59, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 		} else {
-			$datep = dol_mktime(GETPOST("aphour", 'int'), GETPOST("apmin", 'int'), GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
-			$datef = dol_mktime(GETPOST("p2hour", 'int'), GETPOST("p2min", 'int'), GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
+			if (!GETPOSTISSET('ap') && !GETPOSTISSET('aphour') && !GETPOSTISSET('apmin')) {	// If date fields are disabled, we keep old value
+				$datep = $object->datep;
+			} else {
+				$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
+			}
+			if (!GETPOSTISSET('p2') && !GETPOSTISSET('p2hour') && !GETPOSTISSET('p2min')) {	// If date fields are disabled, we keep old value
+				$datef = $object->datef;
+			} else {
+				$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
+			}
 		}
+
+		//set end date to now if percentage is set to 100 and end date not set
+		$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
 
 		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
 			if ($private) {
@@ -813,7 +944,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOSTINT("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
-		$object->socpeopleassigned = array();
+		$object->socpeopleassigned = [];
 		foreach ($socpeopleassigned as $cid) {
 			$object->socpeopleassigned[$cid] = array('id' => $cid);
 		}
@@ -823,6 +954,18 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$object->contact_id = key($object->socpeopleassigned);
 		}
 		$object->fk_project  = GETPOSTINT("projectid");
+		$taskid = GETPOSTINT('taskid');
+		if (!empty($taskid)) {
+			$taskProject = new Task($db);
+			if ($taskProject->fetch($taskid) > 0) {
+				$object->fk_project = $taskProject->fk_project;
+			}
+
+			$object->fk_element = $taskid;
+			$object->elementid = $taskid;
+			$object->elementtype = 'task';
+		}
+
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 		if (GETPOST("elementtype", 'alpha')) {
@@ -835,21 +978,16 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			}
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
+				$object->elementid = GETPOSTINT("fk_element");
 				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
 
-		if (!$datef && $percentage == 100) {
-			$error++;
-			$donotclearsession = 1;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
-			$action = 'edit';
-		}
 
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 
 		// Users
-		$listofuserid = array();
+		$listofuserid = [];
 		if (!empty($_SESSION['assignedtouser'])) {	// Now concat assigned users
 			// Restore array with key with same value than param 'id'
 			$tmplist1 = json_decode($_SESSION['assignedtouser'], true);
@@ -864,7 +1002,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 				$listofuserid[$assignedtouser] = array('id' => $assignedtouser, 'mandatory' => 0, 'transparency' => ($user->id == $assignedtouser ? $transparency : '')); // Owner first
 			}
 		}
-		$object->userassigned = array();
+		$object->userassigned = [];
 		$object->userownerid = 0; // Clear old content
 		$i = 0;
 		foreach ($listofuserid as $key => $val) {
@@ -978,7 +1116,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 							$reminder->delete($user);
 						}
 					}
-					$object->reminders = array();
+					$object->reminders = [];
 				}
 
 				// Create reminders for every assigned user if reminder is on
@@ -1047,11 +1185,11 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 }
 
 // Delete event
-if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes') {
+if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes' && $usercancreate) {
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	if ($user->hasRight('agenda', 'myactions', 'delete')
 		|| $user->hasRight('agenda', 'allactions', 'delete')) {
@@ -1070,11 +1208,11 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
  * Action move update, used when user move an event in calendar by drag'n drop
  * TODO Move this into page comm/action/index that trigger this call by the drag and drop of event.
  */
-if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
+if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancreate) {
 	$error = 0;
 
-	$shour = dol_print_date($object->datep, "%H", 'tzuserrel');		// We take the date visible by user $newdate is also date visible by user.
-	$smin = dol_print_date($object->datep, "%M", 'tzuserrel');
+	$shour = (int) dol_print_date($object->datep, "%H", 'tzuserrel');		// We take the date visible by user $newdate is also date visible by user.
+	$smin = (int) dol_print_date($object->datep, "%M", 'tzuserrel');
 
 	$newdate = GETPOST('newdate', 'alpha');
 	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0) {
@@ -1082,7 +1220,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 		exit;
 	}
 
-	$datep = dol_mktime($shour, $smin, 0, substr($newdate, 13, 2), substr($newdate, 15, 2), substr($newdate, 9, 4), 'tzuserrel');
+	$datep = dol_mktime($shour, $smin, 0, (int) substr($newdate, 13, 2), (int) substr($newdate, 15, 2), (int) substr($newdate, 9, 4), 'tzuserrel');
 	//print dol_print_date($datep, 'dayhour');exit;
 
 	if ($datep != $object->datep) {
@@ -1232,19 +1370,55 @@ if ($action == 'create') {
 						console.log("setdatefields");
                         setdatefields();
                     });
-
+					var old_startdate = null;
+					$("#ap").focus(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").next(".ui-datepicker-trigger").click(function() {
+						old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+					});
+					$("#ap").change(function() {
+						setTimeout(function() {
+							if ($("#p2").val() !== "") {
+								var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+								var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+								if (new_startdate > old_enddate) {
+									var timeDiff = old_enddate - old_startdate;
+									var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+									$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+									$("#p2day").val(new_enddate.getDate());
+									$("#p2month").val(new_enddate.getMonth() + 1);
+									$("#p2year").val(new_enddate.getFullYear());
+								}
+							}
+						}, 0);
+					});
                     $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
                     });
 					$("#aphour,#apmin").change(function() {
 						if ($("#actioncode").val() == \'AC_RDV\') {
-							console.log("Start date was changed, we modify end date "+(parseInt($("#aphour").val()))+" "+$("#apmin").val()+" -> "+("00" + (parseInt($("#aphour").val()) + 1)).substr(-2,2));
-							$("#p2hour").val(("00" + (parseInt($("#aphour").val()) + 1)).substr(-2,2));
-							$("#p2min").val($("#apmin").val());
-							$("#p2day").val($("#apday").val());
-							$("#p2month").val($("#apmonth").val());
-							$("#p2year").val($("#apyear").val());
+							var oldhour = parseInt($("#aphour").val());
+							var oldmin = parseInt($("#apmin").val());
+							var oldday = parseInt($("#apday").val());
+							var oldmonth = $("#apmonth").val();
+							var oldyear = $("#apyear").val();
+
+							var newhour = oldhour + 1;
+							var newday = oldday;
+							var newmonth = oldmonth;
+							var newyear = oldyear;
+							if (newhour >= 24) {
+								newhour = 0;
+								newday = oldday + 1;
+							}
+							console.log("Start date was changed, we modify end date "+oldhour+" "+oldmin+" -> "+newhour+" "+oldmin);
+							$("#p2hour").val(("00" + newhour).substr(-2,2));
+							$("#p2min").val(("00" + oldmin).substr(-2,2));
+							$("#p2day").val(newday);
+							$("#p2month").val(newmonth);
+							$("#p2year").val(newyear);
 							$("#p2").val($("#ap").val());
 						}
 					});
@@ -1267,15 +1441,11 @@ if ($action == 'create') {
 		print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
 	}
 
-	if (GETPOST("actioncode", 'aZ09') == 'AC_RDV') {
-		print load_fiche_titre($langs->trans("AddActionRendezVous"), '', 'title_agenda');
-	} else {
-		print load_fiche_titre($langs->trans("AddAnAction"), '', 'title_agenda');
-	}
+	print load_fiche_titre($langs->trans("AddAnAction"), '', 'title_agenda');
 
 	print dol_get_fiche_head();
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent nobottom">';
 
 	// Type of event
 	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -1288,109 +1458,23 @@ if ($action == 'create') {
 	}
 
 	// Title
-	print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? '' : ' class="fieldrequired titlefieldcreate"').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Full day
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td>';
 	print '<td class="valignmiddle height30"><input class="valignmiddle" type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday" class="valignmiddle small">'.$langs->trans("EventOnFullDay").'</label>';
-
-	// Recurring event
-	$userepeatevent = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0);
-	if ($userepeatevent) {
-		// Repeat
-		print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block small">';
-		print img_picto($langs->trans("Recurrence"), 'recurring', 'style="margin-left: 6px" class="paddingright2"');
-		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
-
-		$selectedrecurrulefreq = 'no';
-		$selectedrecurrulebymonthday = '';
-		$selectedrecurrulebyday = '';
-		$object->recurrule = GETPOSTISSET('recurrulefreq') ? "FREQ=".GETPOST('recurrulefreq', 'alpha') : "";
-		$object->recurrule .= GETPOSTISSET('BYMONTHDAY') ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
-		$object->recurrule .= GETPOSTISSET('BYDAY') ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
-
-
-		$reg = array();
-		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulefreq = $reg[1];
-		}
-		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebymonthday = (int) $reg[1];
-		}
-		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebyday = (int) $reg[1];
-		}
-
-		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
-		// print '<script>console.log("recurrule: " +'.$object->recurrule.')</script>';
-		// For recursive event
-
-
-		// If recurrulefreq is MONTHLY
-		print '<div class="hidden marginrightonly inline-block repeateventBYMONTHDAY">';
-		print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';
-		print '</div>';
-		// If recurrulefreq is WEEKLY
-		print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
-		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
-		print '</div>';
-		// limit date
-		$repeateventlimitdate = !empty($repeateventlimitdate) ? $repeateventlimitdate : '';
-		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
-		print $langs->trans("Until")." ";
-		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
-		print '</div>';
-
-		print '<script type="text/javascript">
-			jQuery(document).ready(function() {
-				function init_repeat()
-				{
-					console.log("recurrule: " + "'.$object->recurrule.'");
-					console.log("reg1: " + "'.$selectedrecurrulefreq.'");
-					console.log("reg2: " + "'.$selectedrecurrulebymonthday.'");
-					console.log("reg3: " + "'.$selectedrecurrulebyday.'");
-					console.log("selectedrulefreq: " + "'.$selectedrecurrulefreq.'");
-					if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
-					{
-						jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
-						jQuery(".repeateventlimitdate").css("display", "inline-block");
-						jQuery(".repeateventBYDAY").hide();
-					}
-					else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
-					{
-						jQuery(".repeateventBYMONTHDAY").hide();
-						jQuery(".repeateventBYDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
-						jQuery(".repeateventlimitdate").css("display", "inline-block");
-					}
-					else
-					{
-						jQuery(".repeateventBYMONTHDAY").hide();
-						jQuery(".repeateventBYDAY").hide();
-						jQuery(".repeateventlimitdate").hide();
-					}
-				}
-				init_repeat();
-				jQuery("#recurrulefreq").change(function() {
-					init_repeat();
-				});
-			});
-			</script>';
-		print '</div>';
-		//print '</td></tr>';
-	}
-
 	print '</td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
-	if (GETPOSTINT('datep', 1)) {
-		$datep = dol_stringtotime(GETPOSTINT('datep', 1), 'tzuserrel');
+	if (GETPOST('datep', 'alpha', 1)) {
+		$datep = dol_stringtotime(GETPOST('datep', 'alpha', 1), 'tzuserrel');
 	}
 	$datef = ($datef ? $datef : $object->datef);
-	if (GETPOSTINT('datef', 1)) {
-		$datef = dol_stringtotime(GETPOSTINT('datef', 1), 'tzuserrel');
+	if (GETPOST('datef', 'alpha', 1)) {
+		$datef = dol_stringtotime(GETPOST('datef', 'alpha', 1), 'tzuserrel');
 	}
 	if (empty($datef) && !empty($datep)) {
-		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || !getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT')) {
+		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || (!getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT') || getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT') == '-1')) {
 			$datef = dol_time_plus_duree($datep, getDolGlobalInt('AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS', 1), 'h');
 		}
 	}
@@ -1407,13 +1491,105 @@ if ($action == 'create') {
 	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
 	print '</td></tr>';
 
+	// Recurring event
+	$userepeatevent = (getDolGlobalInt('MAIN_DISABLE_RECURRING_EVENTS') ? 0 : 1);
+	if ($userepeatevent) {
+		print '<tr><td></td><td>';
+
+		// Repeat
+		//print ' &nbsp; &nbsp; &nbsp; &nbsp; ';
+		print '<div class="opacitymedium inline-block small">';
+		print img_picto($langs->trans("Recurrence"), 'recurring', 'style="margin-left: 6px" class="paddingright2"');
+		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
+
+		$selectedrecurrulefreq = 'no';
+		$selectedrecurrulebymonthday = '';
+		$selectedrecurrulebyday = '';
+		$object->recurrule = GETPOSTISSET('recurrulefreq') ? "FREQ=".GETPOST('recurrulefreq', 'alpha') : "";
+		$object->recurrule .= GETPOSTISSET('BYMONTHDAY') ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
+		$object->recurrule .= GETPOSTISSET('BYDAY') ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
+
+
+		$reg = [];
+		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
+			$selectedrecurrulefreq = $reg[1];
+		}
+		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg)) {
+			$selectedrecurrulebymonthday = (int) $reg[1];
+		}
+		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
+			$selectedrecurrulebyday = (int) $reg[1];
+		}
+
+		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly minwidth100');
+		// print '<script>console.log("recurrule: " +'.$object->recurrule.')</script>';
+		// For recursive event
+
+
+		// If recurrulefreq is MONTHLY
+		/*
+		print '<div class="hidden marginrightonly inline-block repeateventBYMONTHDAY">';
+		print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';
+		print '</div>';
+		// If recurrulefreq is WEEKLY
+		print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
+		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
+		print '</div>';
+		*/
+
+		// limit date
+		$repeateventlimitdate = empty($repeateventlimitdate) ?  (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
+
+		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
+		print $langs->trans("Until")." ";
+		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+		print '</div>';
+
+		print '<script type="text/javascript">
+			jQuery(document).ready(function() {
+				function init_repeat()
+				{
+					console.log("recurrule: " + "'.$object->recurrule.'");
+					console.log("reg1: " + "'.$selectedrecurrulefreq.'");
+					console.log("reg2: " + "'.$selectedrecurrulebymonthday.'");
+					console.log("reg3: " + "'.$selectedrecurrulebyday.'");
+					console.log("selectedrulefreq: " + "'.$selectedrecurrulefreq.'");
+					if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
+					{
+						/* jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");	*/	/* use this instead of show because we want inline-block and not block */
+						jQuery(".repeateventlimitdate").css("display", "inline-block");
+						jQuery(".repeateventBYDAY").hide();
+					}
+					else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
+					{
+						jQuery(".repeateventBYMONTHDAY").hide();
+						/* jQuery(".repeateventBYDAY").css("display", "inline-block"); */		/* use this instead of show because we want inline-block and not block */
+						jQuery(".repeateventlimitdate").css("display", "inline-block");
+					}
+					else
+					{
+						jQuery(".repeateventBYMONTHDAY").hide();
+						jQuery(".repeateventBYDAY").hide();
+						jQuery(".repeateventlimitdate").hide();
+					}
+				}
+				init_repeat();
+				jQuery("#recurrulefreq").change(function() {
+					init_repeat();
+				});
+			});
+			</script>';
+		print '</div>';
+		print '</td></tr>';
+	}
+
 	print '<tr><td class="">&nbsp;</td><td></td></tr>';
 
 	// Assigned to user
 	print '<tr><td class="tdtop nowrap"><span class="fieldrequired">'.$langs->trans("ActionAffectedTo").'</span></td><td>';
-	$listofuserid = array();
-	$listofcontactid = array();
-	$listofotherid = array();
+	$listofuserid = [];
+	$listofcontactid = [];
+	$listofotherid = [];
 
 	if (empty($donotclearsession)) {
 		$assignedtouser = GETPOST("assignedtouser") ? GETPOST("assignedtouser") : (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
@@ -1427,13 +1603,16 @@ if ($action == 'create') {
 		if (!empty($_SESSION['assignedtouser'])) {
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 		}
+		if (!is_array($listofuserid)) {
+			$listofuserid = [];
+		}
 		$firstelem = reset($listofuserid);
 		if (isset($listofuserid[$firstelem['id']])) {
 			$listofuserid[$firstelem['id']]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 0); // 0 by default when refreshing
 		}
 	}
-	print '<div class="assignedtouser">';
-	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
+	print '<!-- list of user to assign --><div class="assignedtouser">';
+	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, [], 0, '', [], '0', 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid);
 	print '</div>';
 	print '</td></tr>';
 
@@ -1445,16 +1624,15 @@ if ($action == 'create') {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 3);
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
 		print "</td></tr>";
 	}
 
 	if (isModEnabled('resource')) {
-		// Categories
+		// Resources
 		print '<tr><td class="tdtop nowrap">'.$langs->trans("Resource").'</td><td>';
 
-		$listofresourceid = array();
+		$listofresourceid = [];
 		if (empty($donotclearsession)) {
 			$assignedtoresource = GETPOST("assignedtoresource");
 			if ($assignedtoresource) {
@@ -1465,19 +1643,22 @@ if ($action == 'create') {
 			if (!empty($_SESSION['assignedtoresource'])) {
 				$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
 			}
+			if (!is_array($listofresourceid)) {
+				$listofresourceid = [];
+			}
 			$firstelem = reset($listofresourceid);
 			if (isset($listofresourceid[$firstelem['id']])) {
 				$listofresourceid[$firstelem['id']]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 0); // 0 by default when refreshing
 			}
 		}
 		print '<div class="assignedtoresource">';
-		print $form->select_dolresources_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtoresource', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofresourceid);
+		print $form->select_dolresources_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtoresource', 1, [], 0, '', [], '0', 0, 0, 'AND u.statut != 0', 1, $listofresourceid);
 		print '</div>';
 		print '</td></tr>';
 	}
 
 	// Status
-	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
+	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td>';
 	print '<td>';
 	$percent = $complete !== '' ? $complete : -1;
 	if (GETPOSTISSET('status')) {
@@ -1500,7 +1681,7 @@ if ($action == 'create') {
 	print '<br><hr><br>';
 
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent nobottom">';
 
 	if (isModEnabled("societe")) {
 		// Related company
@@ -1511,13 +1692,13 @@ if ($action == 'create') {
 			print $societe->getNomUrl(1);
 			print '<input type="hidden" id="socid" name="socid" value="'.GETPOSTINT('socid').'">';
 		} else {
-			$events = array();
+			$events = [];
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			//For external user force the company to user company
 			if (!empty($user->socid)) {
 				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			} else {
-				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', $langs->trans('SelectThirdParty'), 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			}
 		}
 		print '</td></tr>';
@@ -1544,14 +1725,14 @@ if ($action == 'create') {
 			// FIXME Use a select without the "multiple" (not supported when CONTACT_USE_SEARCH_TO_SELECT is on) or allow use only when $object->socid is set...
 			/*
 			 $selected = array_keys($object->socpeopleassigned);
-			 print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array());
+			 print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, []);
 			 */
 			$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
 			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
-			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, array(), false, 'multiple', 'contactid');
+			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, [], 'multiple', 'contactid');
 			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
 		} else {
-			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, array(), false, 'multiple', 'contactid');
+			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, [], 'multiple', 'contactid');
 		}
 
 		print '</td></tr>';
@@ -1565,7 +1746,7 @@ if ($action == 'create') {
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container">';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx maxwidth500');
+		print $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx maxwidth500');
 
 		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(empty($societe->id) ? '' : $societe->id).'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
 		print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
@@ -1577,7 +1758,7 @@ if ($action == 'create') {
 		print '$(document).ready(function () {
 	               $("#projectid").change(function () {
                         var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
-						console.log("Call url to get new list of tasks: "+url);
+						console.log("Call url to get the new list of tasks: "+url);
                         $.get(url, function(data) {
                             console.log(data);
                             if (data) $("#taskid").html(data).select2();
@@ -1591,14 +1772,22 @@ if ($action == 'create') {
 		// Task
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Task").'</td><td id="project-task-input-container" >';
 		print img_picto('', 'projecttask', 'class="paddingrightonly"');
-		$projectsListId = false;
+		$projectsListId = '';
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
 		}
 
 		$tid = GETPOSTISSET("projecttaskid") ? GETPOSTINT("projecttaskid") : (GETPOSTISSET("taskid") ? GETPOSTINT("taskid") : '');
 
-		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', $projectsListId);
+		if (empty($projectsListId)) {
+			print '<select class="valignmiddle flat maxwidth500 widthcentpercentminusxx minwidth150imp" id="taskid" name="taskid">';
+			print '<option class="opacitymedium">&nbsp;</option>';
+			print '<option class="opacitymedium" disabled data-html="'.dolPrintHTMLForAttribute($langs->trans("SelectAProjectFirst")).'">'.$langs->trans("SelectAProjectFirst").'</option>';
+			print '</select>';
+			print ajax_combobox('taskid');
+		} else {
+			print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 32, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+		}
 		print '</td></tr>';
 	}
 
@@ -1646,7 +1835,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Other attributes
-	$parameters = array();
+	$parameters = [];
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
@@ -1656,7 +1845,7 @@ if ($action == 'create') {
 	print '</table>';
 
 
-	if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+	if ($enablereminders) {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
@@ -1669,7 +1858,7 @@ if ($action == 'create') {
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
+		print $form->selectTypeDuration('offsetunit', 'i', $TDurationTypesExcluded);
 		print '</td></tr>';
 
 		//Reminder Type
@@ -1686,6 +1875,41 @@ if ($action == 'create') {
 
 		print '</table>';
 		print '</div>';
+
+		$reminderDefaultEventTypes = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', '');
+		$reminderDefaultOffset = getDolGlobalInt('AGENDA_DEFAULT_REMINDER_OFFSET', 30);
+		$reminderDefaultUnit = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT');
+		$reminderDefaultEmailModel = getDolGlobalInt('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL');
+
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
+				const reminderDefaultEventTypes = \''.dol_escape_js($reminderDefaultEventTypes).'\';
+				$("#actioncode").change(function(){
+					var selected_event_type = $("#actioncode option:selected").val();
+
+					if (reminderDefaultEventTypes.includes(selected_event_type)) {
+						$(".reminderparameters").show();
+						$("#addreminder").prop("checked", true);
+
+						// Set period with default reminder period
+						$("[name=\"offsetvalue\"]").val(\'' . dol_escape_js((string) $reminderDefaultOffset) . '\');
+						$("#select_offsetunittype_duration").select2("destroy");
+						$("#select_offsetunittype_duration").val(\''.dol_escape_js($reminderDefaultUnit).'\');
+						$("#select_offsetunittype_duration").select2();
+
+						$("#selectremindertype").select2("destroy");
+						$("#selectremindertype").val("email");
+						$("#selectremindertype").select2();
+
+						// Set default reminder mail model
+						$("#select_actioncommsendmodel_mail").closest("tr").show();
+						$("#select_actioncommsendmodel_mail").select2("destroy");
+						$("#select_actioncommsendmodel_mail").val(\''.dol_escape_js((string) $reminderDefaultEmailModel).'\');
+						$("#select_actioncommsendmodel_mail").select2();
+					}
+				});
+		   })';
+		print '</script>'."\n";
 
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
@@ -1729,18 +1953,14 @@ if ($action == 'create') {
 }
 
 // View or edit
-if ($id > 0) {
+if ($id > 0 && $action != 'create') {
 	$result1 = $object->fetch($id);
 	if ($result1 <= 0) {
-		$langs->load("errors");
-		print $langs->trans("ErrorRecordNotFound");
-
-		llxFooter();
-		exit;
+		recordNotFound('', 0);
 	}
 
 	$result2 = $object->fetch_thirdparty();
-	$result2 = $object->fetch_projet();
+	$result2 = $object->fetchProject();
 	$result3 = $object->fetch_contact();
 	$result4 = $object->fetch_userassigned();
 	$result5 = $object->fetch_optionals();
@@ -1748,15 +1968,15 @@ if ($id > 0) {
 	if ($listUserAssignedUpdated || $donotclearsession) {
 		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOSTINT("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
-		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
-		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
+		$datep = dol_mktime($fulldayevent ? 0 : $aphour, $fulldayevent ? 0 : $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
+		$datef = dol_mktime($fulldayevent ? 23 : $p2hour, $fulldayevent ? 59 : $p2min, $fulldayevent ? 59 : 0, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority", "alphanohtml");
+		$object->priority = GETPOSTINT("priority");
 		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
 		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOSTINT("socid");
@@ -1764,8 +1984,8 @@ if ($id > 0) {
 		foreach ($socpeopleassigned as $tmpid) {
 			$object->socpeopleassigned[$id] = array('id' => $tmpid);
 		}
-		$object->contact_id   = GETPOSTINT("contactid");
-		$object->fk_project  = GETPOSTINT("projectid");
+		$object->contact_id = GETPOSTINT("contactid");
+		$object->fk_project = GETPOSTINT("projectid");
 
 		$object->note_private = GETPOST("note", 'restricthtml');
 	}
@@ -1773,17 +1993,6 @@ if ($id > 0) {
 	if ($result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0) {
 		dol_print_error($db, $object->error);
 		exit;
-	}
-
-	if ($object->authorid > 0) {
-		$tmpuser = new User($db);
-		$res = $tmpuser->fetch($object->authorid);
-		$object->author = $tmpuser;
-	}
-	if ($object->usermodid > 0) {
-		$tmpuser = new User($db);
-		$res = $tmpuser->fetch($object->usermodid);
-		$object->usermod = $tmpuser;
 	}
 
 
@@ -1803,6 +2012,8 @@ if ($id > 0) {
 	}
 
 	if ($action == 'edit') {
+		$caneditdateorowner = ($object->type != 'systemauto');
+
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n".'<script type="text/javascript">';
 			print '$(document).ready(function () {
@@ -1820,10 +2031,35 @@ if ($id > 0) {
 								$(".fulldayendmin").prop("disabled", true).val("59");
 	            			}
 	            		}
-	            		setdatefields();
+
+						'.($caneditdateorowner ? ' setdatefields();' : '').'
+
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
+						var old_startdate = null;
+						$("#ap").focus(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").next(".ui-datepicker-trigger").click(function() {
+							old_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+						});
+						$("#ap").change(function() {
+							setTimeout(function() {
+								if ($("#p2").val() !== "") {
+									var new_startdate = new Date($("#apyear").val(), $("#apmonth").val() - 1, $("#apday").val());
+									var old_enddate = new Date($("#p2year").val(), $("#p2month").val() - 1, $("#p2day").val());
+									if (new_startdate > old_enddate) {
+										var timeDiff = old_enddate - old_startdate;
+										var new_enddate = new Date(new_startdate.getTime() + timeDiff);
+										$("#p2").val(formatDate(new_enddate, "' . $langs->trans('FormatDateShortJavaInput') . '"));
+										$("#p2day").val(new_enddate.getDate());
+										$("#p2month").val(new_enddate.getMonth() + 1);
+										$("#p2year").val(new_enddate.getFullYear());
+									}
+								}
+							}, 0);
+						});
 	            		$("#actioncode").change(function() {
                         	if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         	else $("#dateend").removeClass("fieldrequired");
@@ -1847,14 +2083,14 @@ if ($id > 0) {
 
 		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), 0, 'action');
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Ref
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
 		// Type of event
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && $object->elementtype != "ticket") {
-			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
 			if ($object->type_code != 'AC_OTH_AUTO') {
 				print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
 				print $formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ? GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto", 0, 0, 0, 1);
@@ -1870,18 +2106,19 @@ if ($id > 0) {
 		if ($object->elementtype == 'ticket') {
 			print '<tr><td>'.$langs->trans("MarkMessageAsPrivate");
 			print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
-			print '</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? ' checked' : '').'></td></tr>';
+			print '</td><td><input type="checkbox" id="private" name="private" '.(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? ' checked' : '').'></td></tr>';
 		}
 
 		// Title
-		print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
+		print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
 
 		// Full day event
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td colspan="3" class="valignmiddle height30 small"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td class="valignmiddle height30 small">';
+		print '<input '.($caneditdateorowner ? '' : ' disabled').' type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'>';
 		print '<label for="fullday">'.$langs->trans("EventOnFullDay").'</label>';
 
 		// // Recurring event
-		// $userepeatevent = (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2 ? 1 : 0);
+		// $userepeatevent = (getDolGlobalInt('MAIN_DISABLE_RECURRING_EVENTS') ? 0 : 1);
 		// if ($userepeatevent) {
 		// 	// Repeat
 		// 	//print '<tr><td></td><td colspan="3">';
@@ -1942,21 +2179,17 @@ if ($id > 0) {
 
 		// Date start - end
 		print '<tr><td class="nowrap">';
-		/*print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
-		print ' - ';
-		print '<span id="dateend"'.($object->type_code == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
-		*/
-		print '</td><td td colspan="3">';
+		print '</td><td>';
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 2, ($caneditdateorowner ? 0 : 1), 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
-		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 2, ($caneditdateorowner ? 0 : 1), 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print '</td></tr>';
 
 		print '<tr><td class="">&nbsp;</td><td></td></tr>';
 
 		// Assigned to
-		$listofuserid = array(); // User assigned
+		$listofuserid = []; // User assigned
 		if (empty($donotclearsession)) {
 			if ($object->userownerid > 0) {
 				$listofuserid[$object->userownerid] = array(
@@ -1964,8 +2197,8 @@ if ($id > 0) {
 					'type' => 'user',
 					//'transparency'=>$object->userassigned[$user->id]['transparency'],
 					'transparency' => $object->transparency, // Force transparency on ownerfrom event
-					'answer_status' => (isset($object->userassigned[$object->userownerid]['answer_status']) ? $object->userassigned[$object->userownerid]['answer_status']: null),
-					'mandatory' => (isset($object->userassigned[$object->userownerid]['mandatory']) ? $object->userassigned[$object->userownerid]['mandatory']:null)
+					'answer_status' => (isset($object->userassigned[$object->userownerid]['answer_status']) ? $object->userassigned[$object->userownerid]['answer_status'] : null),
+					'mandatory' => (isset($object->userassigned[$object->userownerid]['mandatory']) ? $object->userassigned[$object->userownerid]['mandatory'] : null)
 				);
 			}
 			if (!empty($object->userassigned)) {	// Now concat assigned users
@@ -1987,9 +2220,9 @@ if ($id > 0) {
 		$listofcontactid = $object->socpeopleassigned; // Contact assigned
 		$listofotherid = $object->otherassigned; // Other undefined email (not used yet)
 
-		print '<tr><td class="tdtop nowrap fieldrequired">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
+		print '<tr><td class="tdtop nowrap fieldrequired">'.$langs->trans("ActionAssignedTo").'</td><td>';
 		print '<div class="assignedtouser">';
-		print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
+		print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, [], 0, '', [], '0', 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid, (int) $caneditdateorowner);
 		print '</div>';
 		/*if (in_array($user->id,array_keys($listofuserid)))
 		{
@@ -2001,26 +2234,19 @@ if ($id > 0) {
 
 		// Location
 		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.$object->location.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.$object->location.'"></td></tr>';
 		}
 
 		// Status
-		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td><td colspan="3">';
 		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
-		$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
+		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'maxwidth200');
 		print '</td></tr>';
 
 		// Tags-Categories
 		if (isModEnabled('category')) {
-			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 3);
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_ACTIONCOMM);
-			$arrayselected = array();
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+			print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -2037,7 +2263,7 @@ if ($id > 0) {
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div>';
-			$events = array(); // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
+			$events = []; // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if conf PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
@@ -2054,15 +2280,15 @@ if ($id > 0) {
 				// FIXME Use the select_contact supporting the "multiple"
 				/*
 				$selected = array_keys($object->socpeopleassigned);
-				print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array());
+				print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, []);
 				*/
 				$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
 				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
-				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, array(), 'multiple', 'contactid');
+				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, [], 'multiple', 'contactid');
 				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
 			} else {
 				// Warning: MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT will hangs on large databases
-				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, array(), 'multiple', 'contactid');
+				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, [], 'multiple', 'contactid');
 			}
 			print '</div>';
 			print '</td>';
@@ -2075,7 +2301,7 @@ if ($id > 0) {
 
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
 			print img_picto('', 'project', 'class="pictofixedwidth"');
-			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
+			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			if ($numprojet == 0) {
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			}
@@ -2090,7 +2316,7 @@ if ($id > 0) {
 		}
 
 		// Object linked
-		if (!empty($object->fk_element) && !empty($object->elementtype)) {
+		if ($object->fk_project || (!empty($object->elementid) && !empty($object->elementtype))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
@@ -2114,16 +2340,47 @@ if ($id > 0) {
                 })';
 				print '</script>'."\n";
 
-				$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->fk_element, 'fk_element', 24, 0, 0, 1, 0, 0, 'maxwidth500', $object->fk_project);
+				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 				print '</td>';
 			} else {
-				print '<td>';
-				print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
-				print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
-				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
-				print '</td>';
+				if (empty($object->elementtype) && empty($object->elementid) && $object->fk_project) {
+					$projectsListId = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : $object->fk_project;
+
+					print '<td id="project-task-input-container" >';
+
+					// update task list
+					print "\n".'<script type="text/javascript">';
+					print '$(document).ready(function () {
+							$("#projectid").change(function () {
+									var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+									console.log("Call url to get new list of tasks: "+url);
+									$.get(url, function(data) {
+										console.log(data);
+										if (data) $("#taskid").html(data).select2();
+									})
+							});
+						})';
+					print '</script>'."\n";
+
+					$tid = '';
+					if (GETPOSTISSET("projecttaskid") && GETPOSTINT("projecttaskid") > 0) {
+						$tid = GETPOSTINT("projecttaskid");
+					} elseif (GETPOSTISSET("taskid") && GETPOSTINT("taskid") > 0) {
+						$tid = GETPOSTINT("taskid");
+					}
+
+					print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+
+					print '</td>';
+				} else {
+					print '<td>';
+					print dolGetElementUrl($object->elementid, $object->elementtype, 1);
+					print '<input type="hidden" name="fk_element" value="'.$object->elementid.'">';
+					print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+					print '</td>';
+				}
 			}
 
 			print '</tr>';
@@ -2138,7 +2395,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters = array();
+		$parameters = [];
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
@@ -2148,7 +2405,7 @@ if ($id > 0) {
 		print '</table>';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
@@ -2171,9 +2428,11 @@ if ($id > 0) {
 				$actionCommReminder->typeremind = 'email';
 			}
 			$disabled = '';
+			/*
 			if ($object->datep < dol_now()) {
 				//$disabled = 'disabled title="'.dol_escape_htmltag($langs->trans("EventExpired")).'"';
 			}
+			*/
 
 			print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.($checked ? ' '.$checked : '').($disabled ? ' '.$disabled : '').'><br>';
 
@@ -2186,7 +2445,7 @@ if ($id > 0) {
 			// Reminder
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> ';
-			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, array('y', 'm'));
+			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, $TDurationTypesExcluded);
 			print '</td></tr>';
 
 			// Reminder Type
@@ -2202,7 +2461,7 @@ if ($id > 0) {
 			// Mail Model
 			if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 				print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-				print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+				print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1, (string) $actionCommReminder->fk_email_template);
 				print '</td></tr>';
 			}
 
@@ -2212,9 +2471,9 @@ if ($id > 0) {
 			print '$(document).ready(function () {
 	            		$("#addreminder").click(function(){
 	            		    if (this.checked) {
-	            		      $(".reminderparameters").show();
+	            		      	$(".reminderparameters").show();
                             } else {
-                            $(".reminderparameters").hide();
+                            	$(".reminderparameters").hide();
                             }
 	            		 });
 
@@ -2230,6 +2489,40 @@ if ($id > 0) {
                    })';
 			print '</script>'."\n";
 
+			$reminderDefaultEventTypes = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', '');
+			$reminderDefaultOffset = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET', 30);
+			$reminderDefaultUnit = getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT');
+			$reminderDefaultEmailModel = getDolGlobalString('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL');
+
+			print "\n".'<script type="text/javascript">';
+			print '$(document).ready(function () {
+					const reminderDefaultEventTypes = \''.dol_escape_js($reminderDefaultEventTypes).'\';
+					$("#actioncode").change(function(){
+						var selected_event_type = $("#actioncode option:selected").val();
+
+						if (reminderDefaultEventTypes.includes(selected_event_type)) {
+							$(".reminderparameters").show();
+							$("#addreminder").prop("checked", true);
+
+							// Set period with default reminder period
+							$("#offsetvalue").val(\''.dol_escape_js($reminderDefaultOffset).'\');
+							$("#select_offsetunittype_duration").select2("destroy");
+							$("#select_offsetunittype_duration").val(\''.dol_escape_js($reminderDefaultUnit).'\');
+							$("#select_offsetunittype_duration").select2();
+
+							$("#selectremindertype").select2("destroy");
+							$("#selectremindertype").val("email");
+							$("#selectremindertype").select2();
+
+							// Set default reminder mail model
+							$("#select_actioncommsendmodel_mail").closest("tr").show();
+							$("#select_actioncommsendmodel_mail").select2("destroy");
+							$("#select_actioncommsendmodel_mail").val(\''.dol_escape_js($reminderDefaultEmailModel).'\');
+							$("#select_actioncommsendmodel_mail").select2();
+						}
+					});
+			   })';
+			print '</script>'."\n";
 			print '</div>';		// End of div for reminderparameters
 		}
 
@@ -2245,11 +2538,11 @@ if ($id > 0) {
 
 		// Clone event
 		if ($action == 'clone') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', array(), 'yes', 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', [], 'yes', 1);
 		}
 
 		// Call Hook formConfirm
-		$parameters = array();
+		$parameters = [];
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -2292,7 +2585,7 @@ if ($id > 0) {
 		$linkback .= '</a>';
 
 		// Add more views from hooks
-		$parameters = array();
+		$parameters = [];
 		$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 		if (empty($reshook)) {
 			$linkback .= $hookmanager->resPrint;
@@ -2314,7 +2607,7 @@ if ($id > 0) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -2341,23 +2634,19 @@ if ($id > 0) {
 
 		// Type
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			$labeltoshow = $langs->trans("Action".$object->type_code);
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans("Type").'</td><td>';
+			$labeltype = ($langs->transnoentities("Action".$object->type_code) != "Action".$object->type_code) ? $langs->transnoentities("Action".$object->type_code) : $object->type_label;
+			$labeltoshow = $labeltype;
 			if ($object->code) {
 				$labeltoshow .= ' ('.$object->code.')';
 			}
 			print $object->getTypePicto('pictofixedwidth paddingright', $labeltoshow);
-			print $langs->trans("Action".$object->type_code);
+			print $labeltype;
 			print '</td></tr>';
 		}
 
 		// Full day event
-		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
-
-		// Event into a series
-		if ($object->recurid) {
-			print '<tr><td class="titlefield">'.$langs->trans("EventIntoASerie").'</td><td>'.dol_escape_htmltag($object->recurid).'</td></tr>';
-		}
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
 		$rowspan = 4;
 		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
@@ -2365,7 +2654,7 @@ if ($id > 0) {
 		}
 
 		// Date start
-		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td title="'.dol_print_date($object->datep, 'dayhoursec', 'tzuserrel').'">';
 		// Test a date before the 27 march and one after
 		//print dol_print_date($object->datep, 'dayhour', 'gmt');
 		//print dol_print_date($object->datep, 'dayhour', 'tzuser');
@@ -2383,7 +2672,7 @@ if ($id > 0) {
 		print '</tr>';
 
 		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td title="'.dol_print_date($object->datef, 'dayhoursec', 'tzuserrel').'">';
 		if (empty($object->fulldayevent)) {
 			print dol_print_date($object->datef, 'dayhour', 'tzuserrel');
 		} else {
@@ -2395,6 +2684,17 @@ if ($id > 0) {
 		}
 		print '</td></tr>';
 
+		// Recurring event (into a series)
+		if ($object->recurid) {
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans("RecurringEvent").'</td><td>';
+			print img_picto($langs->trans("EventPartOfARecurringSerie", $object->recurid), 'recurring', 'class="pictofixedwidth"');
+			$reg = [];
+			if (preg_match('/FREQ=MONTHLY_BYMONTHDAY(\d+)/', $object->recurrule, $reg)) {
+				print $langs->trans("EveryMonth").' <span class="opacitymedium small">('.$langs->trans("DayOfMonth").' '.$reg[1].' - '.$langs->trans("Until").' '.dol_print_date($object->recurdateend, 'day').')</span>';
+			}
+			print '</td></tr>';
+		}
+
 		// Location
 		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
 			print '<tr><td>'.$langs->trans("Location").'</td><td>'.$object->location.'</td></tr>';
@@ -2402,7 +2702,7 @@ if ($id > 0) {
 
 		// Assigned to user
 		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td>';
-		$listofuserid = array();
+		$listofuserid = [];
 		if (empty($donotclearsession)) {
 			if ($object->userownerid > 0) {
 				$listofuserid[$object->userownerid] = array(
@@ -2428,10 +2728,10 @@ if ($id > 0) {
 			}
 		}
 
-		$listofcontactid = array(); // not used yet
-		$listofotherid = array(); // not used yet
+		$listofcontactid = []; // not used yet
+		$listofotherid = []; // not used yet
 		print '<div class="assignedtouser">';
-		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($object->datep != $object->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
+		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, [], 0, '', [], '0', 0, 0, '', ($object->datep != $object->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
 		print '</div>';
 		/*
 		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
@@ -2508,10 +2808,10 @@ if ($id > 0) {
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm.
-		if (!empty($object->fk_element) && !empty($object->elementtype) && !in_array($object->elementtype, array('societe', 'contact', 'project'))) {
+		if (!empty($object->elementid) && !empty($object->elementtype) && !in_array($object->elementtype, array('societe', 'contact', 'project'))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			$link = dolGetElementUrl($object->fk_element, $object->elementtype, 1);
+			$link = dolGetElementUrl($object->elementid, $object->elementtype, ($object->elementtype == 'user' ? -1 : 1));
 			print '<td>';
 			if (empty($link)) {
 				print '<span class="opacitymedium">'.$langs->trans("ObjectDeleted").'</span>';
@@ -2544,7 +2844,7 @@ if ($id > 0) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
@@ -2599,7 +2899,7 @@ if ($id > 0) {
 	 */
 	print '<div class="tabsAction">';
 
-	$parameters = array();
+	$parameters = [];
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		if ($action != 'edit') {
@@ -2633,21 +2933,29 @@ if ($id > 0) {
 			print '<div class="clearboth"></div><div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
-			/*
-			 * Generated documents
-			 */
-
+			// Generated documents
 			$filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 			$genallowed = $user->hasRight('agenda', 'myactions', 'read');
 			$delallowed = $user->hasRight('agenda', 'myactions', 'create');
 
+			print $formfile->showdocuments('actions', (string) $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $langs->getDefaultLang());
 
-			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $langs->getDefaultLang());
-
+			if (getDolGlobalString('AGENDA_ENABLE_LINKED_ELEMENTS')) {
+				// Show links to link elements
+				$tmparray = $form->showLinkToObjectBlock($object, [], array('myobject'), 1);
+				if (is_array($tmparray)) {
+					$linktoelem = $tmparray['linktoelem'];
+					$htmltoenteralink = $tmparray['htmltoenteralink'];
+					print $htmltoenteralink;
+					$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+				} else {
+					// backward compatibility
+					$somethingshown = $form->showLinkedObjectBlock($object, $tmparray);
+				}
+			}
 			print '</div><div class="fichehalfright">';
-
 
 			print '</div></div>';
 		}

@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 
@@ -73,17 +81,17 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
 	if ($result <= 0) {
 		accessforbidden('User not found');
 	}
-	$object->getrights();
+	$object->loadRights();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
