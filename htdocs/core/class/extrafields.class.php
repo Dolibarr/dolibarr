@@ -1161,9 +1161,7 @@ class ExtraFields
 
 		$reshook = $hookmanager->executeHooks('showInputExtraField', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook > 0) {
-			$out = $hookmanager->resPrint;
-			$hookmanager->resPrint = '';
-			return $out;
+			return $hookmanager->resPrint;
 		}
 
 		$objectid = (is_numeric($object) ? $object : $object->id);
@@ -2101,9 +2099,7 @@ class ExtraFields
 
 		$reshook = $hookmanager->executeHooks('showOutputExtraField', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook > 0) {
-			$out = $hookmanager->resPrint;
-			$hookmanager->resPrint = '';
-			return $out;
+			return $hookmanager->resPrint;
 		}
 
 		$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
