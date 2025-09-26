@@ -305,6 +305,10 @@ class Conf extends stdClass
 	 * @var stdClass
 	 */
 	public $productbatch;
+
+	/**
+	 * @var stdClass
+	 */
 	public $api;
 
 	/**
