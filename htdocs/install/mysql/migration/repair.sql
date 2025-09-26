@@ -323,9 +323,18 @@ drop table tmp_accounting_account_double;
 drop table tmp_commande_extrafields_double;
 --select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
 create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
---select * from tmp_links_double;
+--select * from tmp_commande_extrafields_double;
 delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
 drop table tmp_commande_extrafields_double;
+
+
+-- Sequence to removed duplicated values of llx_c_transport_mode. Run several times if you still have duplicate.
+drop table tmp_c_transport_mode;
+--select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2
+create table tmp_c_transport_mode as (select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2);
+--select * from tmp_c_transport_mode;
+delete from llx_c_transport_mode where (rowid) in (select max_rowid from tmp_c_transport_mode);
+drop table tmp_c_transport_mode;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
@@ -422,7 +431,7 @@ drop table tmp_c_shipment_mode;
 
 -- Restore id of user on link for payment of expense report
 drop table tmp_bank_url_expense_user;
-create table tmp_bank_url_expense_user (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
+create table tmp_bank_url_expense_user as (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
 update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
 drop table tmp_bank_url_expense_user;
 
@@ -585,6 +594,11 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
 
+-- Clean templates that does not exists
+DELETE FROM llx_document_model WHERE TYPE = 'bom' AND nom = 'alpha';
+DELETE FROM llx_const WHERE name = 'BOM_ADDON_PDF' AND value = 'alpha';
+DELETE FROM llx_const WHERE name = 'MRP_MO_ADDON_PDF' AND value = 'alpha';
+
 
 -- Sequence to fix the content of llx_bank.amount_main_currency (value was empty and should not for payment on bank account with a different currency so when amount_main_currency is different than amount)
 -- Note: amount is amount in the currency of the bank account
@@ -601,6 +615,10 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 -- Sequence to fix the content of llx_bank.amount_main_currency (sign was wrong with some version)
 -- UPDATE llx_bank as b SET b.amount_main_currency = -b.amount_main_currency WHERE b.amount IS NOT NULL AND b.amount_main_currency IS NOT NULL AND SIGN(b.amount_main_currency) <> SIGN(b.amount);
 
+
+-- Sequence to fix the table llx_paiement_facture and llx_paiement for payment record on a bank account that does not exists anymore.
+-- delete from llx_paiement_facture where fk_paiement in (select rowid from llx_paiement WHERE fk_bank is not null AND fk_bank not in (select rowid from llx_bank));
+-- delete from llx_paiement WHERE fk_bank is not null AND fk_bank not in (select rowid from llx_bank);
 
 
 -- Delete duplicate entries into llx_c_transport_mode
@@ -680,3 +698,15 @@ alter table llx_product_attribute_combination_price_level drop index fk_product_
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
 ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
+
+-- delete a constant that should not be set
+DELETE FROM llx_const WHERE name = 'INVOICE_USE_RETAINED_WARRANTY' AND value = -1;
+
+
+DELETE FROM llx_hrm_skilldet WHERE rankorder = 0;
+
+UPDATE llx_c_tva SET type_vat = 0 WHERE type_vat < 0;
+
+-- We can't have this on by default because we may have old payment mode using something else than stripe and account matching the pk_xxx rule.
+--update llx_societe_rib set ext_payment_site = 'StripeLive' where stripe_account like '%pk_live%' AND ext_payment_site IS NULL;
+--update llx_societe_rib set ext_payment_site = 'StripeTest' where stripe_account like '%pk_test%' AND ext_payment_site IS NULL;

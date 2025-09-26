@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,12 +83,6 @@ class CActionComm
 	public $picto;
 
 	/**
-	 * @var array array of type_actions
-	 */
-	public $type_actions = array();
-
-
-	/**
 	 * @var array{id:array<int,string>,code:array<string,string>,all:array<string,array{id:string,label:string,type:string,color:mixed,picto:string}>}	Used to return value by some methods
 	 */
 	public $liste_array;
@@ -163,11 +158,13 @@ class CActionComm
 		global $langs, $conf, $user;
 		$langs->load("commercial");
 
+		/*
 		$actionstatic = new ActionComm($this->db);
 
 		$rep_id = array();
 		$rep_code = array();
 		$rep_all = array();
+		*/
 
 		$sql = "SELECT id, code, libelle as label, module, type, color, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
@@ -193,13 +190,13 @@ class CActionComm
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
+			$TSystem = array(
+				'id' => [],
+				'code' => [],
+				'all' => []
+			);
 			if ($nump) {
 				$idforallfornewmodule = 96;
-				$TSystem = array(
-					'id' => [],
-					'code' => [],
-					'all' => []
-				);
 				$TSystemAuto = array(
 					'id' => [],
 					'code' => [],

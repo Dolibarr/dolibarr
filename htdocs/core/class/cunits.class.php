@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2011 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +37,8 @@ class CUnits extends CommonDict
 	 */
 	public $records = array();
 
-	//var $element='ctypent';			//!< Id that identify managed objects
-	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
+	// public $element = 'cunits';			//!< Id that identify managed objects
+	// public $table_element = 'c_units';	//!< Name of table without prefix where object is stored
 
 	/**
 	 * @var string label
@@ -50,16 +51,19 @@ class CUnits extends CommonDict
 	 * @var string
 	 */
 	public $sortorder;
+
 	/**
 	 * @var string
 	 */
 	public $short_label;
+
 	/**
 	 * @var string
 	 */
 	public $unit_type;
+
 	/**
-	 * @var string
+	 * @var ?int
 	 */
 	public $scale;
 
@@ -107,7 +111,7 @@ class CUnits extends CommonDict
 			$this->active = (int) $this->active;
 		}
 		if (isset($this->scale)) {
-			$this->scale = trim($this->scale);
+			$this->scale = (int) $this->scale;
 		}
 
 		// Check parameters
@@ -122,12 +126,12 @@ class CUnits extends CommonDict
 		$sql .= "unit_type,";
 		$sql .= "scale";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape($this->id)."'").",";
+		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape((string) $this->id)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->short_label) ? 'NULL' : "'".$this->db->escape($this->short_label)."'").",";
 		$sql .= " ".(!isset($this->unit_type) ? 'NULL' : "'".$this->db->escape($this->unit_type)."'").",";
-		$sql .= " ".(!isset($this->scale) ? 'NULL' : "'".$this->db->escape($this->scale)."'");
+		$sql .= " ".(!isset($this->scale) ? 'NULL' : (int) $this->scale);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -176,7 +180,6 @@ class CUnits extends CommonDict
 		$sql .= " t.short_label,";
 		$sql .= " t.scale,";
 		$sql .= " t.unit_type,";
-		$sql .= " t.scale,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix()."c_units as t";
 		$sql_where = array();
@@ -201,14 +204,13 @@ class CUnits extends CommonDict
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
+				$this->id = (int) $obj->rowid;
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->short_label = $obj->short_label;
-				$this->scale = $obj->scale;
+				$this->scale = $obj->scale ? (int) $obj->scale : null;
 				$this->unit_type = $obj->unit_type;
-				$this->scale = $obj->scale;
-				$this->active = $obj->active;
+				$this->active = (int) $obj->active;
 			}
 			$this->db->free($resql);
 
@@ -294,14 +296,14 @@ class CUnits extends CommonDict
 				while ($obj = $this->db->fetch_object($resql)) {
 					$record = new self($this->db);
 
-					$record->id = $obj->rowid;
+					$record->id = (int) $obj->rowid;
 					$record->code = $obj->code;
 					$record->sortorder = $obj->sortorder;
 					$record->label = $obj->label;
 					$record->short_label = $obj->short_label;
 					$record->unit_type = $obj->unit_type;
-					$record->scale = $obj->scale;
-					$record->active = $obj->active;
+					$record->scale = $obj->scale ? (int) $obj->scale : null;
+					$record->active = (int) $obj->active;
 
 					$this->records[$record->id] = $record;
 				}
@@ -346,7 +348,7 @@ class CUnits extends CommonDict
 			$this->libelle = trim($this->unit_type);
 		}
 		if (isset($this->scale)) {
-			$this->scale = trim($this->scale);
+			$this->scale = (int) $this->scale;
 		}
 		if (isset($this->active)) {
 			$this->active = (int) $this->active;
@@ -362,7 +364,7 @@ class CUnits extends CommonDict
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " short_label=".(isset($this->short_label) ? "'".$this->db->escape($this->short_label)."'" : "null").",";
 		$sql .= " unit_type=".(isset($this->unit_type) ? "'".$this->db->escape($this->unit_type)."'" : "null").",";
-		$sql .= " scale=".(isset($this->scale) ? "'".$this->db->escape($this->scale)."'" : "null").",";
+		$sql .= " scale=".(isset($this->scale) ? "'".$this->db->escape((string) $this->scale)."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? $this->active : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -486,7 +488,7 @@ class CUnits extends CommonDict
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// TODO : add base col into unit dictionary table
-			$unit = $this->db->fetch_object($sql);
+			$unit = $this->db->fetch_object($resql);
 			if ($unit) {
 				// TODO : if base exists in unit dictionary table, remove this conversion exception and update conversion infos in database.
 				// Example time hour currently scale 3600 will become scale 2 base 60

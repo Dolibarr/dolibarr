@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,31 @@
 @phan-var-force string $hidedesc
 @phan-var-force string $hideref
 ';
-
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ * @var CommonObject $this
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var ?string $action
+ * @var ?string $cancel
+ * @var string $permissiontoadd
+ * @var ?string $permissionedit
+ * @var string $permissiontodelete
+ * @var string $backurlforlist
+ * @var ?string $backtopage
+ * @var ?string $noback
+ * @var ?string $triggermodname
+ * @var string $hidedetails
+ * @var string $hidedesc
+ * @var string $hideref
+ * @var ?string $confirm
+ * @var ?int $lineid
+ * @var ?int $id
+ */
 // $action or $cancel must be defined
 // $object must be defined
 // $permissiontoadd must be defined
@@ -53,7 +77,7 @@
 $hidedetails = isset($hidedetails) ? $hidedetails : '';
 $hidedesc = isset($hidedesc) ? $hidedesc : '';
 $hideref = isset($hideref) ? $hideref : '';
-
+$error = 0;
 
 if (!empty($permissionedit) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissionedit; // For backward compatibility
@@ -313,9 +337,17 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		$object->$key = $value;
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+
+		if ($key == 'pass_crypted' && property_exists($object, 'pass')) {
+			if (GETPOST("pass", "password")) {	// If not provided, we do not change it. We never erase a password with empty.
+				$object->pass = GETPOST("pass", "password");
+			}
+			// TODO Manadatory for password not yet managed
+		} else {
+			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
 		}
 
 		// Validation of fields values
@@ -373,7 +405,7 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 	$keyforfield = $reg[1];
 	if (property_exists($object, $keyforfield)) {
 		if (!empty($object->fields[$keyforfield]) && in_array($object->fields[$keyforfield]['type'], array('date', 'datetime', 'timestamp'))) {
-			$object->$keyforfield = dol_mktime(GETPOST($keyforfield.'hour'), GETPOST($keyforfield.'min'), GETPOST($keyforfield.'sec'), GETPOST($keyforfield.'month'), GETPOST($keyforfield.'day'), GETPOST($keyforfield.'year'));
+			$object->$keyforfield = dol_mktime(GETPOSTINT($keyforfield.'hour'), GETPOSTINT($keyforfield.'min'), GETPOSTINT($keyforfield.'sec'), GETPOSTINT($keyforfield.'month'), GETPOSTINT($keyforfield.'day'), GETPOSTINT($keyforfield.'year'));
 		} else {
 			$object->$keyforfield = GETPOST($keyforfield);
 		}
@@ -392,12 +424,18 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 }
 
 // Action to update one extrafield
-if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoadd)) {
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
+if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoeditextra)) {
 	$object->fetch(GETPOSTINT('id'));
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$attribute = GETPOST('attribute', 'alphanohtml');
+	$attribute = GETPOST('attribute', 'aZ09');
 
 	$error = 0;
 
@@ -408,7 +446,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoad
 		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	} else {
-		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);	// TODO Remove $triggermodname to use $object->TRIGGER_PREFIX.'_MODIFY' instead
 		if ($result > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			$action = 'view';
@@ -472,7 +510,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {
@@ -517,7 +555,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -554,7 +592,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -598,7 +636,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {
@@ -623,13 +661,14 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd)) {
+	// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
 		// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
 		$objectutil = dol_clone($object, 1);
 		// We used native clone to keep this->db valid and allow to use later all the methods of object.
-		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+		// $objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth', 'int'), GETPOSTINT('newdateday', 'int'), GETPOSTINT('newdateyear', 'int'));
 		// ...
 		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
 		if (is_object($result) || $result > 0) {

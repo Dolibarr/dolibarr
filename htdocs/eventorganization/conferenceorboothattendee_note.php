@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,15 @@
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
-require_once DOL_DOCUMENT_ROOT . '/eventorganization/lib/eventorganization_conferenceorboothattendee.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('eventorganization', 'companies'));
@@ -51,12 +59,12 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'eventorganization', $id);
+//restrictedArea($user, 'eventorganization', $id);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->eventorganization->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->eventorganization->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
 }
 
 // Permissions

@@ -2,8 +2,8 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
@@ -97,7 +105,7 @@ if ($action == 'up') {
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
-	$sql .= " AND m.fk_menu = '".$db->escape($current['fk_menu'])."'";
+	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
 	$sql .= " ORDER BY m.position, m.rowid";
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
@@ -148,7 +156,7 @@ if ($action == 'up') {
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
-	$sql .= " AND m.fk_menu = '".$db->escape($current['fk_menu'])."'";
+	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
 	$sql .= " ORDER BY m.position, m.rowid";
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);

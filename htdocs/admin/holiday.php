@@ -2,8 +2,8 @@
 /* Copyright (C) 2011-2019      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "holiday"));
 
@@ -55,6 +64,7 @@ if (!getDolGlobalString('HOLIDAY_ADDON')) {
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -116,7 +126,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->HOLIDAY_ADDON_PDF == "$value") {
+		if (getDolGlobalString('HOLIDAY_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'HOLIDAY_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -167,7 +177,8 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-holiday');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
 $head = holiday_admin_prepare_head();
@@ -235,7 +246,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->HOLIDAY_ADDON == "$file") {
+						if (getDolGlobalString('HOLIDAY_ADDON') == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -264,7 +275,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print '</tr>';
@@ -385,7 +396,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 									// Default
 									print '<td class="center">';
-									if ($conf->global->HOLIDAY_ADDON_PDF == $name) {
+									if (getDolGlobalString('HOLIDAY_ADDON_PDF') == $name) {
 										print img_picto($langs->trans("Default"), 'on');
 									} else {
 										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -409,7 +420,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 
 									print '<td class="center">';
-									print $form->textwithpicto('', $htmltooltip, 1, 0);
+									print $form->textwithpicto('', $htmltooltip, 1, 'info');
 									print '</td>';
 
 									// Preview
@@ -417,7 +428,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 									if ($module->type == 'pdf') {
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 									} else {
-										print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 									}
 									print '</td>';
 
@@ -451,26 +462,8 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60"></td>';
 print "</tr>\n";
-
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
-
-if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
-	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
-}
-if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY)) {
-	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
-}
-
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
-
 
 // Set working days
 print '<tr class="oddeven">';

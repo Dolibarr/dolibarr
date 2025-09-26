@@ -43,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluationdet.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'companies', 'other'));
 
@@ -342,6 +350,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$object->getRights();
 		$head = user_prepare_head($object);
 		$listLink = dol_buildpath('/user/list.php', 1);
+	} else {
+		$head = [];
 	}
 
 	print dol_get_fiche_head($head, 'skill_tab', $langs->trans("Workstation"), -1, $object->picto);
@@ -457,9 +467,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$addadmin = '';
 			if (property_exists($object, 'admin')) {
 				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
 				} elseif (!empty($object->admin)) {
-					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 				}
 			}
 			print showValueWithClipboardCPButton(!empty($object->login) ? $object->login : '').$addadmin;
@@ -603,15 +613,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= " WHERE e.rowid = ed.fk_evaluation";
 		$sql .= " AND s.rowid = ed.fk_skill";
 		$sql .= " AND e.fk_user = ".((int) $id);
-		$sql .= " AND e.status > 0";
+
 		$resql = $db->query($sql);
 		$num = $db->num_rows($resql);
 
 		//num of evaluations for each user
-		$sqlEval = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+		$sqlEval = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 		$sqlEval .= " WHERE e.fk_user = ".((int) $id);
 		$rslt = $db->query($sqlEval);
-		$numEval = $db->num_rows($rslt);
+		$tmpobj = $db->fetch_object($rslt);
+		$numEval = 0;
+		if ($tmpobj) {
+			$numEval = $tmpobj->nb;
+		}
 
 		$page = 0;
 		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $numEval, $numEval, $evaltmp->picto, 0);
@@ -638,6 +652,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$objects[$i] = $obj;
 				$i++;
 			}
+
 			//grouped skills by evaluation
 			$resultArray = getGroupedEval($objects);
 			foreach ($resultArray as $object) {
@@ -665,12 +680,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print $evaltmp->getLibStatut(2);
 				print '</td>';
 				print '<td class="linecolrank tdoverflowmax300">';
-
-				if (!is_array($object)) {
-					print $object->result;
-				} else {
-					foreach ($object as $skill) {
-						print $skill->result;
+				if ($job->status == $job::STATUS_VALIDATED) {
+					if (!is_array($object)) {
+						print $object->result;
+					} else {
+						foreach ($object as $skill) {
+							print $skill->result;
+						}
 					}
 				}
 				print '</td>';

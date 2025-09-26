@@ -55,6 +55,17 @@ abstract class ModeleDon extends CommonDocGenerator
 
 		return $list;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Write the object to document file to disk
+	 *
+	 *  @param	Don			$don			Donation object
+	 *  @param	Translate	$outputlangs	Lang object for output language
+	 *  @param	string		$currency		Currency code
+	 *  @return	int<-1,1>					>0 if OK, <0 if KO
+	 */
+	abstract public function write_file($don, $outputlangs, $currency = '');
 }
 
 

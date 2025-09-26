@@ -44,6 +44,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
 
@@ -250,9 +258,9 @@ if (is_array($results)) {
 			print  $langs->trans("ContactForRecruitment").' : ';
 			$emailforcontact = $object->email_recruiter;
 			if (empty($emailforcontact)) {
-				$emailforcontact = $tmpuser->email;
+				$emailforcontact = $tmpuser->email ?? '';
 				if (empty($emailforcontact)) {
-					$emailforcontact = $mysoc->email;
+					$emailforcontact = $mysoc->email ?? '';
 				}
 			}
 			print '<b class="wordbreak">';

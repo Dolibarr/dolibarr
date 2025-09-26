@@ -9,28 +9,28 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automaticky vytvoriť zákaznícku fakt
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automaticky vytvoriť zákaznícku faktúru po uzavretí predajnej objednávky (nová faktúra bude mať rovnakú sumu ako objednávka)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Pri vytváraní tiketu automaticky vytvorte zásah.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
-descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Keď je predajná objednávka nastavená na fakturáciu, klasifikovať prepojené zdrojové návrhy ako fakturované (a ak je suma objednávky rovnaká ako celková suma podpísaných prepojených návrhov).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Po overení faktúry zákazníka klasifikovať prepojené zdrojové návrhy ako fakturované (a ak je suma faktúry rovnaká ako celková suma podpísaných prepojených návrhov).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Keď je faktúra zákazníka nastavená na zaplatenú, klasifikujte prepojené zdrojové predajné objednávky ako fakturované (a ak je suma faktúry rovnaká ako celková suma prepojených predajných objednávok). Ak vygenerujete 1 faktúru pre n objednávok, môže sa stať, že všetky objednávky budú tiež fakturované.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Po overení faktúry zákazníka klasifikujte všetky prepojené zdrojové predajné objednávky ako fakturované (a ak je suma faktúry rovnaká ako celková suma prepojených zdrojových predajných objednávok). Ak vygenerujete 1 spoločnú faktúru pre n objednávok, môže to nastaviť všetky zdrojové objednávky ako fakturované.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Po overení faktúry zákazníka klasifikujte prepojenú predajnú objednávku (ak existuje iba jedna) ako fakturovanú, ak sa celková suma prepojenej predajnej objednávky rovná celkovej sume všetkých faktúr vystavených z nej. Ak vygenerujete n faktúr pre 1 objednávku, umožní to nastaviť objednávku na fakturáciu hneď po overení všetkých faktúr.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Po overení zásielky klasifikovať prepojené zdrojové predajné objednávky ako odoslané (a ak je množstvo odoslané všetkými zásielkami rovnaké ako v objednávke, ktorú chcete aktualizovať)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Po uzavretí zásielky klasifikovať prepojenú zdrojovú predajnú objednávku ako odoslanú (a ak je množstvo odoslané všetkými zásielkami rovnaké ako v objednávke, ktorú chcete aktualizovať)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Po overení faktúry dodávateľa klasifikovať prepojený návrh dodávateľa ako fakturovaný (a ak je suma faktúry rovnaká ako celková suma prepojených návrhov).
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Po overení faktúry dodávateľa klasifikovať objednávku z prepojeného zdroja ako fakturovanú (a ak je suma faktúry rovnaká ako celková suma prepojených objednávok).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Po overení príjmu klasifikovať objednávku prepojeného zdroja ako prijatú (a ak je množstvo prijaté všetkými príjmami rovnaké ako v objednávke na aktualizáciu).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Po uzavretí príjmu klasifikovať prepojené zdrojové objednávky ako prijaté (a ak je množstvo prijaté všetkými príjmami vydanými z objednávky rovnaké ako v aktualizovanej objednávke)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Po overení faktúry zákazníka klasifikovať prepojenú zdrojovú zásielku ako uzavretú (a ak je suma faktúry rovnaká ako celková suma prepojených zásielok).
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Po overení faktúry zákazníka klasifikovať prepojenú zdrojovú zásielku ako fakturovanú (a ak je suma faktúry rovnaká ako celková suma prepojených zásielok).
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Po overení nákupnej faktúry klasifikovať prepojené príjmy ako uzavreté (a ak je suma faktúry rovnaká ako celková suma prepojených príjmov).
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Po overení nákupnej faktúry klasifikovať prepojené príjmy ako fakturované (a ak je suma faktúry rovnaká ako celková suma prepojených príjmov).
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
+descWORKFLOW_TICKET_LINK_CONTRACT=Po vytvorení tiketu ho prepojte s dostupnými zmluvami, ktoré zodpovedajú rovnakej tretej strane ako tiket.
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Pri automatickom prepojení tiketu so zmluvami vyhľadávať zmluvy medzi zmluvami materských spoločností
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Zatvorte všetky zásahy spojené s tiketom, keď je tiket zatvorený
 AutomaticCreation=Automatické vytváranie

@@ -10,7 +10,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,26 +31,30 @@
  * $conf
  * $langs
  * $dateSelector
- * $forceall (0 by default, 1 for supplier invoices/orders)
  * $element     (used to test $user->rights->$element->creer)
  * $permtoedit  (used to replace test $user->rights->$element->creer)
- * $senderissupplier (0 by default, 1 for supplier invoices/orders)
- * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  * $disableedit, $disablemove, $disableremove
  *
  * $text, $description, $line
  */
 
+/**
+ * @var string $action
+ * @var int $i
+ * @var int $permissiontoadd
+ * @var CommonObjectLine $line
+ * @var CommonObject $this
+ * @var ?Conf $conf
+ * @var Form $form
+ * @var Translate $langs
+ */
+
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object)) {
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
-global $mysoc;
-global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
@@ -66,6 +71,8 @@ $coldisplay = 0;
 <?php } ?>
 	<td class="linecollabel"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
+$skill = null;
+$resSkill = 0;
 if ($line->fk_skill > 0) {
 	$skill = new Skill($this->db);
 	$resSkill = $skill->fetch($line->fk_skill);
@@ -77,7 +84,7 @@ if ($line->fk_skill > 0) {
 	</td>
 	<td>
 <?php
-if ($line->fk_skill > 0) {
+if ($line->fk_skill > 0 && $skill !== null) {
 	print $skill->getNomUrl(1);
 }
 ?>
@@ -87,9 +94,9 @@ if ($line->fk_skill > 0) {
 <?php
 
 // Add description in form
-if ($line->fk_skill > 0 && $resSkill > 0) {
-	//print $skill->description;
-}
+//if ($line->fk_skill > 0 && $resSkill > 0) {
+//print $skill->description;
+//}
 
 ?>
 	</td>

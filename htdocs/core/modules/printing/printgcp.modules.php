@@ -1,7 +1,7 @@
 <?php
 /*
- * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2014-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class printing_printgcp extends PrintingDriver
 	public $active = 'PRINTING_PRINTGCP';
 
 	/**
-	 * @var array module parameters
+	 * @var array<string|int,string|array{varname:string,info:string,type:'info',renew?:string,delete?:string}|array{enabled:int<0,1>,type:'submit'}> module parameters
 	 */
 	public $conf = array();
 
@@ -75,6 +75,9 @@ class printing_printgcp extends PrintingDriver
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	private $OAUTH_SERVICENAME_GOOGLE = 'Google';
 
 	const LOGIN_URL = 'https://accounts.google.com/o/oauth2/token';
@@ -99,19 +102,20 @@ class printing_printgcp extends PrintingDriver
 
 		$this->db = $db;
 
-		if (!$conf->oauth->enabled) {
+		if (!isModEnabled('oauth')) {
 			$this->conf[] = array(
 				'varname' => 'PRINTGCP_INFO',
 				'info' => $langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"),
 				'type' => 'info',
 			);
 		} else {
-			$keyforprovider = '';	// @FIXME
+			$keyforprovider = 'googleprint';
 
 			$this->google_id = getDolGlobalString('OAUTH_GOOGLE_ID');
 			$this->google_secret = getDolGlobalString('OAUTH_GOOGLE_SECRET');
 			// Token storage
 			$storage = new DoliStorage($this->db, $conf, $keyforprovider);
+
 			//$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
 			// Setup the credentials for the requests
 			$credentials = new Credentials(
@@ -120,11 +124,15 @@ class printing_printgcp extends PrintingDriver
 				$urlwithroot.'/core/modules/oauth/google_oauthcallback.php'
 			);
 			$access = ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? 'HasAccessToken' : 'NoAccessToken');
+
 			$serviceFactory = new \OAuth\ServiceFactory();
+			// Call $serviceFactory->buildV2Service() that do a construct with "new OAuth/OAuth2/Service/Google()" to build the $apiService object
 			$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
 			'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
+
 			$token_ok = true;
 			try {
+				// Do a select into oauth_token to get existing token
 				$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
 			} catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
@@ -150,7 +158,11 @@ class printing_printgcp extends PrintingDriver
 				}
 			}
 			if ($this->google_id != '' && $this->google_secret != '') {
-				$this->conf[] = array('varname' => 'PRINTGCP_INFO', 'info' => 'GoogleAuthConfigured', 'type' => 'info');
+				$this->conf[] = array(
+					'varname' => 'PRINTGCP_INFO',
+					'info' => 'GoogleAuthConfigured',
+					'type' => 'info'
+				);
 				$this->conf[] = array(
 					'varname' => 'PRINTGCP_TOKEN_ACCESS',
 					'info' => $access,
@@ -185,7 +197,11 @@ class printing_printgcp extends PrintingDriver
 					$this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
 				}*/
 			} else {
-				$this->conf[] = array('varname' => 'PRINTGCP_INFO', 'info' => 'GoogleAuthNotConfigured', 'type' => 'info');
+				$this->conf[] = array(
+					'varname' => 'PRINTGCP_INFO',
+					'info' => 'GoogleAuthNotConfigured',
+					'type' => 'info'
+				);
 			}
 		}
 		// do not display submit button
@@ -213,7 +229,7 @@ class printing_printgcp extends PrintingDriver
 		$html .= '<td>'.$langs->trans('GCP_Type').'</td>';
 		$html .= '<td class="center">'.$langs->trans("Select").'</td>';
 		$html .= '</tr>'."\n";
-		$list = $this->getlistAvailablePrinters();
+		$list = $this->getlistAvailableGcpPrinters();
 		//$html.= '<td><pre>'.print_r($list,true).'</pre></td>';
 		foreach ($list['available'] as $printer_det) {
 			$html .= '<tr class="oddeven">';
@@ -226,7 +242,7 @@ class printing_printgcp extends PrintingDriver
 			$html .= '<td>'.$langs->trans('TYPE_'.$printer_det['type']).'</td>';
 			// Default
 			$html .= '<td class="center">';
-			if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id']) {
+			if (getDolGlobalString('PRINTING_GCP_DEFAULT') == $printer_det['id']) {
 				$html .= img_picto($langs->trans("Default"), 'on');
 			} else {
 				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'&mode=test&varname=PRINTING_GCP_DEFAULT&driver=printgcp&value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -242,14 +258,26 @@ class printing_printgcp extends PrintingDriver
 	/**
 	 *  Return list of available printers
 	 *
-	 *  @return array{available:array}	list of printers
+	 *  @return array<array{name:string,displayName:string,id:string,ownerName:string,status:string,connectionStatus:string,type:string}>	list of printers
 	 */
 	public function getlistAvailablePrinters()
+	{
+		/* Compatible with paretn class signature */
+		return $this->getlistAvailableGcpPrinters()['available'];
+	}
+
+
+	/**
+	 *  Return list of available printers (internal format)
+	 *
+	 *  @return array{available:array<array{name:string,displayName:string,id:string,ownerName:string,status:string,connectionStatus:string,type:string}>}	list of printers
+	 */
+	public function getlistAvailableGcpPrinters()
 	{
 		global $conf;
 		$ret = array();
 
-		$keyforprovider = '';	// @FIXME
+		$keyforprovider = 'googleprint';
 
 		// Token storage
 		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
@@ -366,7 +394,7 @@ class printing_printgcp extends PrintingDriver
 	 *  @param  string      $printjobtitle  Job Title
 	 *  @param  string      $filepath       File Path to be send to Google Cloud Print
 	 *  @param  string      $contenttype    File content type by example application/pdf, image/png
-	 *  @return array                       status array
+	 *  @return array{status:int<0,1>,errorcode:string,errormessage:string}  status array
 	 */
 	public function sendPrintToPrinter($printerid, $printjobtitle, $filepath, $contenttype)
 	{
@@ -392,7 +420,7 @@ class printing_printgcp extends PrintingDriver
 			'contentType' => $contenttype,
 		);
 
-		$keyforprovider = '';	// @FIXME
+		$keyforprovider = 'googleprint';
 
 		// Dolibarr Token storage
 		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
@@ -447,7 +475,7 @@ class printing_printgcp extends PrintingDriver
 		$error = 0;
 		$html = '';
 
-		$keyforprovider = '';	// @FIXME
+		$keyforprovider = 'googleprint';
 
 		// Token storage
 		$storage = new DoliStorage($this->db, $conf, $keyforprovider);

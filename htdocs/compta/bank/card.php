@@ -8,7 +8,7 @@
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,15 @@ if (isModEnabled('accounting')) {
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "withdrawals"));
@@ -206,7 +215,7 @@ if (empty($reshook)) {
 			$id = $object->create($user);
 			if ($id > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 
 				$action = '';
@@ -320,7 +329,7 @@ if (empty($reshook)) {
 			$result = $object->update($user);
 			if ($result >= 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 
 				$id = GETPOSTINT("id"); // Force load of this page
@@ -461,7 +470,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($selectedcode) {
 		print img_picto('', 'state', 'class="pictofixedwidth"');
-		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : '', $selectedcode, 'account_state_id');
+		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOSTINT("account_state_id") : 0, $selectedcode, 'account_state_id');
 	} else {
 		print $countrynotdefined;
 	}
@@ -486,17 +495,7 @@ if ($action == 'create') {
 	// Tags-Categories
 	if (isModEnabled('category')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 3);
-
-		$arrayselected = array();
-		$c = new Categorie($db);
-		$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
-		if (is_array($cats)) {
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-		}
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_ACCOUNT, 'categories', $object);
 		print "</td></tr>";
 	}
 
@@ -585,6 +584,10 @@ if ($action == 'create') {
 				$name = 'cle_rib';
 				$sizecss = 'minwidth50';
 				$content = $object->cle_rib;
+			} else {
+				$name = 'undefined';
+				$sizecss = 'undefined';
+				$content = 'undefined';
 			}
 
 			print '<td>'.$langs->trans($val).'</td>';
@@ -593,7 +596,7 @@ if ($action == 'create') {
 		}
 
 		if (isModEnabled('paymentbybanktransfer')) {
-			if ($mysoc->isInEEC()) {
+			if ($mysoc->isInSEPA()) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
 				print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>';
 				print '</td></tr>';
@@ -638,10 +641,11 @@ if ($action == 'create') {
 	}
 
 	if (isModEnabled('accounting')) {
+		/** @var FormAccounting $formaccounting */
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
-		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+		print $formaccounting->select_account($object->account_number, 'account_number', 1, array(), 1, 1);
 		if ($formaccounting->nbaccounts == 0) {
 			$langs->load("errors");
 			$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
@@ -655,9 +659,10 @@ if ($action == 'create') {
 
 	// Accountancy journal
 	if (isModEnabled('accounting')) {
+		/** @var FormAccounting $formaccounting */
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
-		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
+		print $formaccounting->select_journal((string) $object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 		print '</td></tr>';
 	}
 
@@ -784,7 +789,7 @@ if ($action == 'create') {
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT) {
 			print '<table class="border tableforfield centpercent">';
 
-			print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("BankName").'</td>';
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans("BankName").'</td>';
 			print '<td>'.$object->bank.'</td></tr>';
 
 			$ibankey = FormBank::getIBANLabel($object);
@@ -849,7 +854,7 @@ if ($action == 'create') {
 					print '<td>'.$object->ics_transfer.'</td>';
 					print '</tr>';
 				}
-				if ($mysoc->isInEEC()) {
+				if ($mysoc->isInSEPA()) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td><td>';
 					print(empty($object->pti_in_ctti) ? $langs->trans("No") : $langs->trans("Yes"));
 					print "</td></tr>\n";
@@ -1048,17 +1053,7 @@ if ($action == 'create') {
 		// Tags-Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 3);
-
-			$arrayselected = array();
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
-			if (is_array($cats)) {
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-			}
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_ACCOUNT, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -1097,8 +1092,9 @@ if ($action == 'create') {
 		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		if (isModEnabled('accounting')) {
+			/** @var FormAccounting $formaccounting */
 			print img_picto('', 'accounting_account', 'class="pictofixedwidth"');
-			print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
+			print $formaccounting->select_account($object->account_number, 'account_number', 1, array(), 1, 1);
 			if ($formaccounting->nbaccounts == 0) {
 				$langs->load("errors");
 				$htmltext = $langs->transnoentitiesnoconv("WarningGoOnAccountancySetupToAddAccounts", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Chartofaccounts"));
@@ -1111,9 +1107,10 @@ if ($action == 'create') {
 
 		// Accountancy journal
 		if (isModEnabled('accounting')) {
+			/** @var FormAccounting $formaccounting */
 			print '<tr><td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
-			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
+			print $formaccounting->select_journal((string) $object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 			print '</td></tr>';
 		}
 
@@ -1169,6 +1166,10 @@ if ($action == 'create') {
 					$name = 'cle_rib';
 					$css = 'width50';
 					$content = $object->cle_rib;
+				} else {
+					$name = 'undefined';
+					$css = 'undefined';
+					$content = 'undefined';
 				}
 
 				print '<tr><td>'.$langs->trans($val).'</td>';
@@ -1186,7 +1187,7 @@ if ($action == 'create') {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 					print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
 				}
-				if ($mysoc->isInEEC()) {
+				if ($mysoc->isInSEPA()) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
 					print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. ($object->pti_in_ctti ? ' checked ' : '') . '>';
 					print '</td></tr>';

@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -73,6 +76,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrOrder', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -213,6 +217,7 @@ $order_fields = array(
 	'total_localtax2' => array('name' => 'total_localtax2', 'type' => 'xsd:double'),
 	'total' => array('name' => 'total', 'type' => 'xsd:double'),
 	'date' => array('name' => 'date', 'type' => 'xsd:date'),
+	'date_due' => array('name' => 'date_due', 'type' => 'xsd:date'),
 	'date_creation' => array('name' => 'date_creation', 'type' => 'xsd:dateTime'),
 	'date_validation' => array('name' => 'date_validation', 'type' => 'xsd:dateTime'),
 	'date_modification' => array('name' => 'date_modification', 'type' => 'xsd:dateTime'),
@@ -374,7 +379,7 @@ $server->register(
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
@@ -517,7 +522,7 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id of thirdparty
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getOrdersForThirdParty($authentication, $idthirdparty)
 {
@@ -538,6 +543,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 
 	if ($fuser->socid) {
 		$socid = $fuser->socid;
+	} else {
+		$socid = 0;
 	}
 
 	// Check parameters
@@ -620,14 +627,13 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande ? dol_print_date($order->date_commande, 'dayrfc') : '',
+					'date' => $order->date ? dol_print_date($order->date, 'dayrfc') : '',
 
 					'source' => $order->source,
 					'billed' => $order->billed,
 					'note_private' => $order->note_private,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
-					'cond_reglement' => $order->cond_reglement,
 					'cond_reglement_doc' => $order->cond_reglement_doc,
 					'cond_reglement_code' => $order->cond_reglement_code,
 					'mode_reglement_id' => $order->mode_reglement_id,
@@ -669,8 +675,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
  * Create order
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array		$order				Order info
- * @return	array							array of new order
+ * @param 	array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{line:mixed,id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
+ * @return 	array{result:array{result_code:string,result_label:string}} Array result
  */
 function createOrder($authentication, $order)
 {
@@ -680,7 +686,7 @@ function createOrder($authentication, $order)
 
 	$now = dol_now();
 
-	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
+	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['thirdparty_id']);
 
 	if ($authentication['entity']) {
 		$conf->entity = $authentication['entity'];
@@ -692,6 +698,7 @@ function createOrder($authentication, $order)
 	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$newobject = null;
 
 	// Check parameters
 
@@ -699,17 +706,17 @@ function createOrder($authentication, $order)
 	if (!$error) {
 		$newobject = new Commande($db);
 		$newobject->socid = $order['thirdparty_id'];
-		$newobject->type = $order['type'];
 		$newobject->ref_ext = $order['ref_ext'];
 		$newobject->date = dol_stringtotime($order['date'], 'dayrfc');
-		$newobject->date_lim_reglement = dol_stringtotime($order['date_due'], 'dayrfc');
+		$newobject->date_lim_reglement = dol_stringtotime((string) $order['date_due'], 'dayrfc');
 		$newobject->note_private = $order['note_private'];
 		$newobject->note_public = $order['note_public'];
 		$newobject->statut = Commande::STATUS_DRAFT; // We start with status draft
-		$newobject->billed = $order['billed'];
-		$newobject->fk_project = $order['project_id'];
-		$newobject->cond_reglement_id = $order['cond_reglement_id'];
-		$newobject->demand_reason_id = $order['demand_reason_id'];
+		$newobject->status = Commande::STATUS_DRAFT; // We start with status draft
+		$newobject->billed = (int) $order['billed'];
+		$newobject->fk_project = (int) $order['project_id'];
+		$newobject->cond_reglement_id = (int) $order['cond_reglement_id'];
+		$newobject->demand_reason_id = (int) $order['demand_reason_id'];
 		$newobject->date_creation = $now;
 
 		$elementtype = 'commande';
@@ -728,27 +735,30 @@ function createOrder($authentication, $order)
 		// Trick because nusoap does not store data with same structure if there is one or several lines
 		$arrayoflines = array();
 		if (isset($order['lines']['line'][0])) {
-			$arrayoflines = $order['lines']['line'];
+			$arrayoflines = $order['lines']['line'];  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 		} else {
 			$arrayoflines = $order['lines'];
+		}
+		if (!is_array($arrayoflines)) {
+			$arrayoflines = array();
 		}
 
 		foreach ($arrayoflines as $key => $line) {
 			// $key can be 'line' or '0','1',...
 			$newline = new OrderLine($db);
 
-			$newline->type = $line['type'];
+			$newline->product_type = (int) $line['type'];
 			$newline->desc = $line['desc'];
-			$newline->fk_product = $line['product_id'];
-			$newline->tva_tx = $line['vat_rate'];
-			$newline->qty = $line['qty'];
-			$newline->price = $line['price'];
-			$newline->subprice = $line['unitprice'];
-			$newline->total_ht = $line['total_net'];
-			$newline->total_tva = $line['total_vat'];
-			$newline->total_ttc = $line['total'];
-			$newline->date_start = $line['date_start'];
-			$newline->date_end = $line['date_end'];
+			$newline->fk_product = (int) $line['product_id'];
+			$newline->tva_tx = (float) $line['vat_rate'];
+			$newline->qty = (float) $line['qty'];
+			$newline->price = (float) $line['price'];
+			$newline->subprice = (float) $line['unitprice'];
+			$newline->total_ht = (float) $line['total_net'];
+			$newline->total_tva = (float) $line['total_vat'];
+			$newline->total_ttc = (float) $line['total'];
+			$newline->date_start = dol_stringtotime($line['date_start']);
+			$newline->date_end = dol_stringtotime($line['date_end']);
 
 			$elementtype = 'commandedet';
 
@@ -812,7 +822,7 @@ function createOrder($authentication, $order)
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
  * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function validOrder($authentication, $id = 0, $id_warehouse = 0)
 {
@@ -881,7 +891,7 @@ function validOrder($authentication, $id = 0, $id_warehouse = 0)
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	array{id:string,ref:string,refext:string}	$order	Order info
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function updateOrder($authentication, $order)
 {
@@ -912,7 +922,7 @@ function updateOrder($authentication, $order)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Commande($db);
-		$result = $object->fetch($order['id'], (empty($order['id']) ? $order['ref'] : ''), (empty($order['id']) && empty($order['ref']) ? $order['ref_ext'] : ''));
+		$result = $object->fetch((int) $order['id'], (empty($order['id']) ? $order['ref'] : ''), (empty($order['id']) && empty($order['ref']) ? $order['ref_ext'] : ''));
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -928,7 +938,7 @@ function updateOrder($authentication, $order)
 					if ($result >= 0) {
 						// Define output language
 						$outputlangs = $langs;
-						$object->generateDocument($order->model_pdf, $outputlangs);
+						$object->generateDocument($object->model_pdf, $outputlangs);
 					}
 				}
 				if ($order['status'] == 0) {

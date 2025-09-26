@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -34,6 +34,9 @@ class box_project_opportunities extends ModeleBoxes
 {
 	public $boxcode = "project_opportunities";
 	public $boximg  = "object_projectpub";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	// var $depends = array("projet");
 
@@ -74,6 +77,7 @@ class box_project_opportunities extends ModeleBoxes
 		$textHead = $langs->trans("OpenedProjectsOpportunities");
 		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
 
+		$num = 0;
 		$i = 0;
 		// list the summary of the orders
 		if ($user->hasRight('projet', 'lire')) {
@@ -121,6 +125,7 @@ class box_project_opportunities extends ModeleBoxes
 					$projectstatic->title = $objp->title;
 					$projectstatic->public = $objp->public;
 					$projectstatic->statut = $objp->status;
+					$projectstatic->status = $objp->status;
 					$projectstatic->opp_status = $objp->opp_status;
 					$projectstatic->opp_status_code = $objp->opp_status_code;
 					$projectstatic->opp_percent = $objp->opp_percent;

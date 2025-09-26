@@ -35,6 +35,16 @@ use OAuth\Common\Consumer\Credentials;
 
 $supportedoauth2array = getSupportedOauth2Array();
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
@@ -60,23 +70,20 @@ if (!$user->admin) {
 /*
  * Action
  */
+$error = 0;
 
-/*if (($mode == 'test' || $mode == 'setup') && empty($driver))
-{
+/*if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
 	header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
 	exit;
 }*/
 
 if ($action == 'setconst' && $user->admin) {
-	$error = 0;
 	$db->begin();
 
 	$setupconstarray = GETPOST('setupdriver', 'array');
 
 	foreach ($setupconstarray as $setupconst) {
-		//print '<pre>'.print_r($setupconst, true).'</pre>';
-
 		$constname = dol_escape_htmltag($setupconst['varname']);
 		$constvalue = dol_escape_htmltag($setupconst['value']);
 		$consttype = dol_escape_htmltag($setupconst['type']);
@@ -228,7 +235,8 @@ $help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-oauthlogintokens');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
 $head = oauthadmin_prepare_head();

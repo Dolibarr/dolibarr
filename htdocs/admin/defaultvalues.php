@@ -2,6 +2,7 @@
 /* Copyright (C) 2017-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'errors'));
@@ -302,7 +311,7 @@ if ($mode != 'focus' && $mode != 'mandatory') {
 		foreach ($substitutionarray as $key => $val) {
 			$texthelp .= $key.' -> '.$val.'<br>';
 		}
-		$textvalue = $form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, 'subsitutiontooltip');
+		$textvalue = $form->textwithpicto($langs->trans("Value"), $langs->trans("DefaultValuesHelpText"));
 	} else {
 		$texthelp = 'ASC or DESC';
 		$textvalue = $form->textwithpicto($langs->trans("SortOrder"), $texthelp);
@@ -336,6 +345,9 @@ print '</td>';
 if ($mode != 'focus' && $mode != 'mandatory') {
 	print '<td>';
 	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
+	if ($mode != 'sortorder') {
+		print $form->textwithpicto('', $texthelp, 1, 'list-alt', 'paddingleftimp cursorpointer', 0, 2, 'subsitutiontooltip');
+	}
 	print '</td>';
 }
 // Limit to superadmin
@@ -356,8 +368,8 @@ if (!getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
 print '</td>'."\n";
 print '</tr>'."\n";
-
-$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type' => $mode, 't.entity' => array($user->entity,$conf->entity)));
+//"(t.type:=:".$mode.") AND (t.entity:in:("((int)$user->entity).", ".((int)$conf->entity)."))"
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, "(t.type:=:'".$mode."') AND (t.entity:in:".((int) $user->entity).", ".((int) $conf->entity).")");
 
 if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');

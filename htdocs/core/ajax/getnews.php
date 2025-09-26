@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 
 // Just for display errors in editor
 ini_set('display_errors', 1);
@@ -20,6 +22,14 @@ if (!defined('NOREQUIRESOC')) {
 }
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 top_httphead();
 

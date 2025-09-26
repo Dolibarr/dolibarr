@@ -3,7 +3,8 @@
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2006-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_cards.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
+ */
 
 $langs->loadLangs(array("members", "errors"));
 
@@ -69,7 +80,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 	$arrayofmembers = array();
 
 	// request taking into account member with up to date subscriptions
-	$sql = "SELECT d.rowid, d.ref, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
+	$sql = "SELECT d.rowid, d.ref, d.civility, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
 	$sql .= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
 	$sql .= " t.libelle as type,";
 	$sql .= " c.code as country_code, c.label as country";
@@ -125,11 +136,46 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				}
 			}
 
+
+			$now = dol_now();
+			$year = dol_print_date($now, '%Y');
+			$month = dol_print_date($now, '%m');
+			$day = dol_print_date($now, '%d');
+
 			// List of values to scan for a replacement
 			$substitutionarray = array(
+				'__MEMBER_ID__' => $objp->rowid,
+				'__MEMBER_REF__' => $objp->ref,
+				'__MEMBER_LOGIN__' => empty($objp->login) ? '' : $objp->login,
+				'__MEMBER_TITLE__' => empty($objp->civility) ? '' : $langs->trans("Civility".$objp->civility),
+				'__MEMBER_FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
+				'__MEMBER_LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
+				'__MEMBER_FULLNAME__' => $adherentstatic->getFullName($langs),
+				'__MEMBER_COMPANY__' => empty($objp->company) ? '' : $objp->company,
+				'__MEMBER_ADDRESS__' => empty($objp->address) ? '' : $objp->address,
+				'__MEMBER_ZIP__' => empty($objp->zip) ? '' : $objp->zip,
+				'__MEMBER_TOWN__' => empty($objp->town) ? '' : $objp->town,
+				'__MEMBER_COUNTRY__' => empty($objp->country) ? '' : $objp->country,
+				'__MEMBER_COUNTRY_CODE__' => empty($objp->country_code) ? '' : $objp->country_code,
+				'__MEMBER_EMAIL__' => empty($objp->email) ? '' : $objp->email,
+				'__MEMBER_BIRTH__' => dol_print_date($objp->birth, 'day'),
+				'__MEMBER_TYPE__' => empty($objp->type) ? '' : $objp->type,
+				'__YEAR__' => $year,
+				'__MONTH__' => $month,
+				'__DAY__' => $day,
+				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
+				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
+			);
+			foreach ($adherentstatic->array_options as $key => $val) {
+				$substitutionarray['__'.strtoupper($key).'__'] = $val;
+			}
+
+			// Add old values for backward compatibility (need upgrade of member setup to be removed)
+			$substitutionarrayold = array(
 				'__ID__' => $objp->rowid,
 				'__REF__' => $objp->ref,
 				'__LOGIN__' => empty($objp->login) ? '' : $objp->login,
+				'__TITLE__' => empty($objp->civility) ? '' : $langs->trans("Civility".$objp->civility),
 				'__FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
 				'__LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
 				'__FULLNAME__' => $adherentstatic->getFullName($langs),
@@ -142,12 +188,9 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				'__EMAIL__' => empty($objp->email) ? '' : $objp->email,
 				'__BIRTH__' => dol_print_date($objp->birth, 'day'),
 				'__TYPE__' => empty($objp->type) ? '' : $objp->type,
-				'__YEAR__' => $year,
-				'__MONTH__' => $month,
-				'__DAY__' => $day,
-				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
-				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
+			$substitutionarray = array_merge($substitutionarray, $substitutionarrayold);
+
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
 			// For business cards
@@ -165,24 +208,24 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 					for ($j = 0; $j < $nb; $j++) {
 						$arrayofmembers[] = array(
-							'textleft'=>$textleft,
-							'textheader'=>$textheader,
-							'textfooter'=>$textfooter,
-							'textright'=>$textright,
-							'id'=>$objp->rowid,
-							'ref'=>$objp->ref,
-							'photo'=>$objp->photo
+							'textleft' => $textleft,
+							'textheader' => $textheader,
+							'textfooter' => $textfooter,
+							'textright' => $textright,
+							'id' => $objp->rowid,
+							'ref' => $objp->ref,
+							'photo' => $objp->photo
 						);
 					}
 				} else {
 					$arrayofmembers[] = array(
-						'textleft'=>$textleft,
-						'textheader'=>$textheader,
-						'textfooter'=>$textfooter,
-						'textright'=>$textright,
-						'id'=>$objp->rowid,
-						'ref'=>$objp->ref,
-						'photo'=>$objp->photo
+						'textleft' => $textleft,
+						'textheader' => $textheader,
+						'textfooter' => $textfooter,
+						'textright' => $textright,
+						'id' => $objp->rowid,
+						'ref' => $objp->ref,
+						'photo' => $objp->photo
 					);
 				}
 			}
@@ -190,7 +233,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			// For labels
 			if ($mode == 'label') {
 				if (!getDolGlobalString('ADHERENT_ETIQUETTE_TEXT')) {
-					$conf->global->ADHERENT_ETIQUETTE_TEXT = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
+					$conf->global->ADHERENT_ETIQUETTE_TEXT = "__MEMBER_TITLE__\n__MEMBER_FULLNAME__\n__MEMBER_ADDRESS__\n__MEMBER_ZIP__ __MEMBER_TOWN__\n__MEMBER_COUNTRY__";
 				}
 				$textleft = make_substitutions(getDolGlobalString('ADHERENT_ETIQUETTE_TEXT'), $substitutionarray);
 				$textheader = '';
@@ -198,13 +241,13 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$textright = '';
 
 				$arrayofmembers[] = array(
-					'textleft'=>$textleft,
-					'textheader'=>$textheader,
-					'textfooter'=>$textfooter,
-					'textright'=>$textright,
-					'id'=>$objp->rowid,
-					'ref'=>$objp->ref,
-					'photo'=>$objp->photo,
+					'textleft' => $textleft,
+					'textheader' => $textheader,
+					'textfooter' => $textfooter,
+					'textright' => $textright,
+					'id' => $objp->rowid,
+					'ref' => $objp->ref,
+					'photo' => $objp->photo,
 				);
 			}
 
@@ -222,7 +265,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
 			}
 			if (!$mesg) {
-				$result = members_card_pdf_create($db, $arrayofmembers, $modelcard, $outputlangs, '', 'standard', 'tmp_cards');
+				$result = members_card_pdf_create($db, $arrayofmembers, $modelcard, $outputlangs, '', 'standard_member', 'tmp_cards');
 			}
 		} elseif ($mode == 'cardlogin') {
 			if (!count($arrayofmembers)) {
@@ -232,7 +275,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
 			}
 			if (!$mesg) {
-				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs, '', 'standard', 'tmp_cards_login');
+				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs, '', 'standard_member', 'tmp_cards_login');
 			}
 		} elseif ($mode == 'label') {
 			if (!count($arrayofmembers)) {
@@ -247,7 +290,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 		}
 
 		if ($result <= 0) {
-			dol_print_error(null, $result);
+			dol_print_error(null, $mesg);
 		}
 	} else {
 		dol_print_error($db);

@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012 Destailleur Laurent 	<eldy@users.sourceforge.net>
- * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
- * Copyright (C) 2023 	   Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2005-2018  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2012  Destailleur Laurent 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014 	    Henry Florian 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2023 	    Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'languages'));
 
@@ -49,8 +57,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+$object = new Product($db);
 if ($id > 0 || !empty($ref)) {
-	$object = new Product($db);
 	$object->fetch($id, $ref);
 }
 
@@ -88,17 +96,14 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $usercancreate) {
-		$object = new Product($db);
-		$object->fetch($id);
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		$action = '';
+		header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+		exit;
 	}
 
 	// Add translation
 	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $usercancreate) {
-		$object = new Product($db);
-		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
 
 		// update de l'objet
@@ -123,7 +128,8 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'add';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -132,8 +138,6 @@ if (empty($reshook)) {
 
 	// Edit translation
 	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $usercancreate) {
-		$object = new Product($db);
-		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
 
 		foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
@@ -152,7 +156,8 @@ if (empty($reshook)) {
 
 		$result = $object->setMultiLangs($user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -161,22 +166,18 @@ if (empty($reshook)) {
 
 	// Delete translation
 	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $usercancreate) {
-		$object = new Product($db);
-		$object->fetch($id);
 		$langtodelete = GETPOST('langdel', 'alpha');
 
 		$result = $object->delMultiLangs($langtodelete, $user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
-
-$object = new Product($db);
-$result = $object->fetch($id, $ref);
 
 
 /*
@@ -270,7 +271,7 @@ if ($action == 'edit') {
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
-			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
 			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 			$doleditor->Create();

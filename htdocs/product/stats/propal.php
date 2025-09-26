@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'companies'));
@@ -159,10 +168,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND d.fk_propal = p.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(p.datep) IN ('.$db->sanitize($search_month).')';
+				$sql .= ' AND MONTH(p.datep) = '.((int) $search_month);
 			}
 			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(p.datep) IN ('.$db->sanitize($search_year).')';
+				$sql .= ' AND YEAR(p.datep) = '.((int) $search_year);
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -221,7 +230,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("DatePropal").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -231,14 +240,14 @@ if ($id > 0 || !empty($ref)) {
 
 				$i = 0;
 				print '<div class="div-table-responsive">';
-				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+				print '<table class="tagtable liste listwithfilterbefore centpercent">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre("DatePropal", $_SERVER["PHP_SELF"], "p.datep", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("DatePropal", $_SERVER["PHP_SELF"], "p.datep", "", $option, '', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, '', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.fk_statut", "", $option, '', $sortfield, $sortorder, 'right ');
 				print "</tr>\n";
 
 				if ($num > 0) {
@@ -251,10 +260,11 @@ if ($id > 0 || !empty($ref)) {
 						$propalstatic->id = $objp->propalid;
 						$propalstatic->ref = $objp->ref;
 						$propalstatic->ref_client = $objp->ref_client;
+						$propalstatic->ref_customer = $objp->ref_client;
 						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';
-						print '<td>';
+						print '<td class="tdoverflowmax150">';
 						print $propalstatic->getNomUrl(1);
 						print "</td>\n";
 						print '<td>'.$societestatic->getNomUrl(1).'</td>';

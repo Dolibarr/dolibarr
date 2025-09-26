@@ -90,7 +90,7 @@ class box_services_contracts extends ModeleBoxes
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= ")";
@@ -143,7 +143,7 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
+					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + getWarningDelay('contract', 'services', 'expires')) < $now) {
 						$late = img_warning($langs->trans("Late"));
 					}
 
@@ -166,7 +166,7 @@ class box_services_contracts extends ModeleBoxes
 						}
 						$description = $objp->description;
 
-						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, '');
+						$s = $form->textwithtooltip($text, $description, 3, 0, '', '', 0, '');
 					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
 					}

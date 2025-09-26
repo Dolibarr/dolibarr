@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2015 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2021      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,14 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');

@@ -1,7 +1,8 @@
 <?php
 /**
  * Copyright (C) 2015 Marcos García	<marcosgdf@gmail.com
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'products'));
@@ -84,12 +93,12 @@ if ($action == 'update') {
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_pricerules (level, fk_level, var_percent, var_min_percent) VALUES (";
-		$sql .= ((int) $i).", ".$db->escape($i_fk_level).", ".$i_var_percent.", ".$i_var_min_percent.")";
+		$sql .= ((int) $i).", ".((int) $i_fk_level).", ".$i_var_percent.", ".$i_var_min_percent.")";
 
 		if (!$db->query($sql)) {
 			//If we could not create, then we try updating
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product_pricerules";
-			$sql .= " SET fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".((int) $i);
+			$sql .= " SET fk_level = ".((int) $i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".((int) $i);
 
 			if (!$db->query($sql)) {
 				setEventMessages($langs->trans('ErrorSavingChanges'), null, 'errors');
@@ -131,7 +140,7 @@ if (!isModEnabled("product")) {
 
 llxHeader('', $langs->trans('MultipriceRules'), '', '', 0, 0, '', '', '', 'mod-product page-admin_price_rules');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 

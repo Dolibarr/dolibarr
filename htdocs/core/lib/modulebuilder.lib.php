@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
 	$error = 0;
 
-	// Check parameters
+	// Check parameters into $addfieldentry (this provided array is filled by modulebuilder/index.php)
 	if (is_array($addfieldentry) && count($addfieldentry) > 0) {
 		if (empty($addfieldentry['name'])) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Name")), null, 'errors');
@@ -66,11 +66,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 			return -2;
 		}
 		if (!preg_match('/^(integer|price|sellist|varchar|double|text|html|duration|stars)/', $addfieldentry['type'])
-			&& !preg_match('/^(boolean|smallint|real|date|datetime|timestamp|phone|mail|url|ip|password)$/', $addfieldentry['type'])) {
+			&& !preg_match('/^(boolean|smallint|real|date|datetime|timestamp|phone|email|url|ip|password)$/', $addfieldentry['type'])) {	// Use email for email, mail is kept for compatibility
 			setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
 			return -2;
 		}
 		// Check for type stars(NumberOfStars), NumberOfStars must be an integer between 1 and 10
+		$matches = array();
 		if (preg_match('/^stars\((.+)\)$/', $addfieldentry['type'], $matches)) {
 			if (!ctype_digit($matches[1]) || $matches[1] < 1 || $matches[1] > 10) {
 				setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
@@ -143,10 +144,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$texttoinsert .= " 'notnull' => ".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
 				$texttoinsert .= ' "visible" => "'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
-					$texttoinsert .= ' "noteditable" => "'.dol_escape_php($val['noteditable']).'",';
+					$texttoinsert .= ' "noteditable" => "'.dol_escape_php((string) $val['noteditable']).'",';
 				}
 				if (!empty($val['alwayseditable'])) {
-					$texttoinsert .= ' "alwayseditable" => "'.dol_escape_php($val['alwayseditable']).'",';
+					$texttoinsert .= ' "alwayseditable" => "'.dol_escape_php((string) $val['alwayseditable']).'",';
 				}
 				if (array_key_exists('default', $val) && (!empty($val['default']) || $val['default'] === '0')) {
 					$texttoinsert .= ' "default" => "'.dol_escape_php($val['default']).'",';
@@ -348,7 +349,9 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
-			} elseif ($type == 'mail') {
+			} elseif ($type == 'chkbxlst') {
+				$type = 'varchar(128)';
+			} elseif ($type == 'mail' || $type == 'email') {	// Prefer to use 'email'
 				$type = 'varchar(128)';
 			} elseif (strpos($type, 'stars(') === 0) {
 				$type = 'integer';
@@ -356,6 +359,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'varchar(20)';
 			} elseif ($type == 'ip') {
 				$type = 'varchar(32)';
+			} elseif ($type == 'url') {
+				$type = 'varchar(255)';
 			}
 
 			$texttoinsert .= "\t".$key." ".$type;
@@ -409,7 +414,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 		foreach ($object->fields as $key => $val) {
 			$i++;
 			if (!empty($val['index'])) {
-				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
+				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD ".($key == 'ref' ? "UNIQUE INDEX uk_" : "INDEX idx_").strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.($key == 'ref' && array_key_exists('entity', $object->fields) ? ", entity" : "").");";
 				$texttoinsert .= "\n";
 			}
 			if (!empty($val['foreignkey'])) {
@@ -553,7 +558,7 @@ function deletePerms($file)
  * @param	int|string	$a	value 1
  * @param	int|string	$b	value 2
  * @return	int<-1,1> 		<=0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
-*/
+ */
 function compareFirstValue($a, $b)
 {
 	return strcmp($a[0], $b[0]);
@@ -623,7 +628,6 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 	'@phan-var-force array<int,string[]> $permissions';
 	if (!$error) {
 		// prepare permissions array
-		$count_perms = count($permissions);
 		foreach (array_keys($permissions) as $i) {
 			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
 			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
@@ -1119,8 +1123,8 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 /**
  * @param	string		$file		path of filename
- * @param	array<int,array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>	$menus      all menus for module
- * @param	null|string|array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
+ * @param	array<int,array{commentgroup?:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int|string,enabled:int|string,perms:string,target:string,user:int}>	$menus      all menus for module
+ * @param	null|string|array{commentgroup?:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int|string,enabled:int|string,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
  * @param	?int		$key		key for the concerned menu
  * @param	int<-1,2>	$action		for specify what action (0 = delete perm, 1 = add perm, 2 = update perm, -1 = when we delete object)
  * @return	int<-1,1>				1 if OK, -1 if KO

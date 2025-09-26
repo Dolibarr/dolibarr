@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 
@@ -63,6 +72,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
+$sql = null;
 /*
  * Action
  */
@@ -81,7 +91,7 @@ llxHeader();
 
 $thirdpartystatic = new Societe($db);
 
-if ($mode == 'search') {
+if ($mode == 'search' && $sql !== null) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		if ($db->num_rows($resql) == 1) {

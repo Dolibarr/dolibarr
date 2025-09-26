@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +54,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 // Global variables
@@ -94,10 +95,18 @@ if (!$res && file_exists("../../../master.inc.php")) {
 }
 if (!$res) {
 	print "Include of master fails";
-	exit(-1);
+	exit(1);
 }
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
 $langs->load("main"); // To load language file for default language
@@ -120,7 +129,7 @@ $hookmanager->initHooks(array('cli'));
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 if (!isset($argv[1])) {	// Check parameters
 	print "Usage: ".$script_file." param1 param2 ...\n";
-	exit(-1);
+	exit(1);
 }
 print '--- start'."\n";
 print 'Argument 1='.$argv[1]."\n";
@@ -175,7 +184,7 @@ else print "Object with id ".$myobject->id." deleted\n";
 // An example of a direct SQL read without using the fetch method
 /*
 $sql = "SELECT field1, field2";
-$sql.= " FROM ".MAIN_DB_PREFIX."myobject";
+$sql.= " FROM ".$db->prefix()."myobject";
 $sql.= " WHERE field3 = 'xxx'";
 $sql.= " ORDER BY field1 ASC";
 

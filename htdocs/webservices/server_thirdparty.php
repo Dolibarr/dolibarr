@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -72,6 +76,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrThirdParty', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -313,7 +318,7 @@ $server->register(
  * @param	string		$barcode	   		barcode
  * @param	string		$profid1	   		profid1
  * @param	string		$profid2	   		profid2
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $barcode = '', $profid1 = '', $profid2 = '')
 {
@@ -343,7 +348,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 
 		if ($fuser->hasRight('societe', 'lire')) {
 			$thirdparty = new Societe($db);
-			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
+			$result = $thirdparty->fetch((int) $id, $ref, $ref_ext, $barcode, $profid1, $profid2);
 			if ($result > 0) {
 				$thirdparty_result_fields = array(
 						'id' => $thirdparty->id,
@@ -434,8 +439,8 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
  * Create a thirdparty
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array		$thirdparty		    Thirdparty
- * @return	array							Array result
+ * @param	array{id:string,ref:string,ref_ext:string,fk_user_author:string,status:string,client:string,supplier:string,customer_code:string,supplier_code:string,customer_code_accountancy:string,supplier_code_accountancy:string,date_creation:string,date_modification:string,note_private:string,note_public:string,address:string,zip:string,town:string,region_code:string,country_id:string,country_code:string,country:string,phone:string,fax:string,email:string,url:string,profid1:string,profid2:string,profid3:string,profid4:string,profid5:string,profid6:string,capital:string,vat_used:string,vat_number:string}		$thirdparty		    Thirdparty
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createThirdParty($authentication, $thirdparty)
 {
@@ -470,9 +475,9 @@ function createThirdParty($authentication, $thirdparty)
 		$newobject->ref = $thirdparty['ref'];
 		$newobject->name = $thirdparty['ref'];
 		$newobject->ref_ext = $thirdparty['ref_ext'];
-		$newobject->status = $thirdparty['status'];
-		$newobject->client = $thirdparty['client'];
-		$newobject->fournisseur = $thirdparty['supplier'];
+		$newobject->status = (int) $thirdparty['status'];
+		$newobject->client = (int) $thirdparty['client'];
+		$newobject->fournisseur = (int) $thirdparty['supplier'];
 		$newobject->code_client = $thirdparty['customer_code'];
 		$newobject->code_fournisseur = $thirdparty['supplier_code'];
 		$newobject->code_compta = $thirdparty['customer_code_accountancy'];
@@ -485,7 +490,7 @@ function createThirdParty($authentication, $thirdparty)
 		$newobject->zip = $thirdparty['zip'];
 		$newobject->town = $thirdparty['town'];
 
-		$newobject->country_id = $thirdparty['country_id'];
+		$newobject->country_id = (int) $thirdparty['country_id'];
 		if ($thirdparty['country_code']) {
 			$newobject->country_id = getCountry($thirdparty['country_code'], '3');
 		}
@@ -503,13 +508,13 @@ function createThirdParty($authentication, $thirdparty)
 		$newobject->idprof5 = $thirdparty['profid5'];
 		$newobject->idprof6 = $thirdparty['profid6'];
 
-		$newobject->capital = $thirdparty['capital'];
+		$newobject->capital = (float) $thirdparty['capital'];
 
-		$newobject->barcode = empty($thirdparty['barcode']) ? '' : $thirdparty['barcode'];
+		$newobject->barcode = !isset($thirdparty['barcode']) ? '' : $thirdparty['barcode'];
 		$newobject->tva_assuj = empty($thirdparty['vat_used']) ? 0 : $thirdparty['vat_used'];
 		$newobject->tva_intra = empty($thirdparty['vat_number']) ? '' : $thirdparty['vat_number'];
 
-		$newobject->canvas = empty($thirdparty['canvas']) ? '' : $thirdparty['canvas'];
+		$newobject->canvas = !isset($thirdparty['canvas']) ? '' : $thirdparty['canvas'];
 		$newobject->particulier = empty($thirdparty['individual']) ? 0 : $thirdparty['individual'];
 
 		$elementtype = 'societe';
@@ -531,8 +536,8 @@ function createThirdParty($authentication, $thirdparty)
 
 		$result = $newobject->create($fuser);
 		if ($newobject->particulier && $result > 0) {
-			$newobject->firstname = $thirdparty['firstname'];
-			$newobject->name_bis = $thirdparty['lastname'];
+			$newobject->firstname = isset($thirdparty['firstname']) ? $thirdparty['firstname'] : '';
+			$newobject->name_bis = isset($thirdparty['lastname']) ? $thirdparty['lastname'] : '';
 			$result = $newobject->create_individual($fuser);
 		}
 		if ($result <= 0) {
@@ -542,9 +547,9 @@ function createThirdParty($authentication, $thirdparty)
 		if (!$error) {
 			$db->commit();
 
-			// Patch to add capability to associate (one) sale representative
-			if (!empty($thirdparty['commid']) && $thirdparty['commid'] > 0) {
-				$newobject->add_commercial($fuser, $thirdparty["commid"]);
+			// Patch to add capability to associate (one) sales representative
+			if (isset($thirdparty['commid']) && $thirdparty['commid'] > 0) {  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+				$newobject->add_commercial($fuser, $thirdparty['commid']);
 			}
 
 			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref);
@@ -567,8 +572,8 @@ function createThirdParty($authentication, $thirdparty)
  * Update a thirdparty
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array		$thirdparty		    Thirdparty
- * @return	array							Array result
+ * @param	array{id:string,ref:string,ref_ext:string,fk_user_author:string,status:string,client:string,supplier:string,customer_code:string,supplier_code:string,customer_code_accountancy:string,supplier_code_accountancy:string,date_creation:string,date_modification:string,note_private:string,note_public:string,address:string,zip:string,town:string,region_code:string,country_id:string,country_code:string,country:string,phone:string,fax:string,email:string,url:string,profid1:string,profid2:string,profid3:string,profid4:string,profid5:string,profid6:string,capital:string,vat_used:string,vat_number:string}		$thirdparty		    Thirdparty
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function updateThirdParty($authentication, $thirdparty)
 {
@@ -601,7 +606,7 @@ function updateThirdParty($authentication, $thirdparty)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Societe($db);
-		$result = $object->fetch($thirdparty['id']);
+		$result = $object->fetch((int) $thirdparty['id']);
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -609,9 +614,9 @@ function updateThirdParty($authentication, $thirdparty)
 			$object->ref = $thirdparty['ref'];
 			$object->name = $thirdparty['ref'];
 			$object->ref_ext = $thirdparty['ref_ext'];
-			$object->status = $thirdparty['status'];
-			$object->client = $thirdparty['client'];
-			$object->fournisseur = $thirdparty['supplier'];
+			$object->status = (int) $thirdparty['status'];
+			$object->client = (int) $thirdparty['client'];
+			$object->fournisseur = (int) $thirdparty['supplier'];
 			$object->code_client = $thirdparty['customer_code'];
 			$object->code_fournisseur = $thirdparty['supplier_code'];
 			$object->code_compta = $thirdparty['customer_code_accountancy'];
@@ -624,7 +629,7 @@ function updateThirdParty($authentication, $thirdparty)
 			$object->zip = $thirdparty['zip'];
 			$object->town = $thirdparty['town'];
 
-			$object->country_id = $thirdparty['country_id'];
+			$object->country_id = (int) $thirdparty['country_id'];
 			if ($thirdparty['country_code']) {
 				$object->country_id = getCountry($thirdparty['country_code'], '3');
 			}
@@ -642,13 +647,13 @@ function updateThirdParty($authentication, $thirdparty)
 			$object->idprof5 = $thirdparty['profid5'];
 			$object->idprof6 = $thirdparty['profid6'];
 
-			$object->capital = $thirdparty['capital'];
+			$object->capital = (float) $thirdparty['capital'];
 
-			$object->barcode = $thirdparty['barcode'];
-			$object->tva_assuj = $thirdparty['vat_used'];
+			$object->barcode = !isset($thirdparty['barcode']) ? '' : $thirdparty['barcode'];
+			$object->tva_assuj = (int) $thirdparty['vat_used'];
 			$object->tva_intra = $thirdparty['vat_number'];
 
-			$object->canvas = $thirdparty['canvas'];
+			$object->canvas = !isset($thirdparty['canvas']) ? '' : $thirdparty['canvas'];
 
 			$elementtype = 'societe';
 
@@ -667,7 +672,7 @@ function updateThirdParty($authentication, $thirdparty)
 
 			$db->begin();
 
-			$result = $object->update($thirdparty['id'], $fuser);
+			$result = $object->update((int) $thirdparty['id'], $fuser);
 			if ($result <= 0) {
 				$error++;
 			}
@@ -706,8 +711,8 @@ function updateThirdParty($authentication, $thirdparty)
  * getListOfThirdParties
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array		$filterthirdparty	Filter fields (key=>value to filer on. For example 'client'=>2, 'supplier'=>1, 'category'=>idcateg, 'name'=>'searchstring', ...)
- * @return	array							Array result
+ * @param	array<string,mixed>		$filterthirdparty	Filter fields (key=>value to filer on. For example 'client'=>2, 'supplier'=>1, 'category'=>idcateg, 'name'=>'searchstring', ...)
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getListOfThirdParties($authentication, $filterthirdparty)
 {
@@ -819,7 +824,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
  * @param	string		$id		    		internal id
  * @param	string		$ref		    	internal reference
  * @param	string		$ref_ext	   		external reference
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
@@ -851,7 +856,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 
 		if ($fuser->hasRight('societe', 'lire') && $fuser->hasRight('societe', 'supprimer')) {
 			$thirdparty = new Societe($db);
-			$result = $thirdparty->fetch($id, $ref, $ref_ext);
+			$result = $thirdparty->fetch((int) $id, $ref, $ref_ext);
 
 			if ($result > 0) {
 				$db->begin();

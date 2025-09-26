@@ -5,7 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Francis Appels  <francis.appels@yahoo.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,12 +107,12 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_COUNTY = 1;
 	protected $_First = 1;
 	/**
-	 * @var array{name:string,paper-size:string,orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}
+	 * @var ?array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}
 	 */
 	public $Tformat;
 
 	/**
-	 * @var array<string,array{name:string,paper-size:string,orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>
+	 * @var array<string,array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>
 	 */
 	public $_Avery_Labels;
 	// phpcs:enable
@@ -131,13 +131,14 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	/**
 	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *  @param	array<string,mixed>		$arrayofrecords  	Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *  @param  Adherent|array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:string,photo:string}>   $arrayofrecords     Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *  @param  Translate	$outputlangs     	Lang object for output language
 	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *	@param	string		$outputdir			Output directory for pdf file
-	 *  @return int             				1=OK, 0=KO
+	 *  @param  string		$outputdir			Output directory for pdf file
+	 *  @param  string		$filename           Short file name of output file
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
-	abstract public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
+	abstract public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = '');
 	// phpcs:enable
 
 	/**
@@ -226,7 +227,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
 	 * @param int	$y2					Y2
-	 * @param int	$epaisseur			Epaisseur
+	 * @param float	$epaisseur			Epaisseur
 	 * @param int	$taille             Size
 	 * @return void
 	 *
@@ -303,7 +304,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
+	 * @param    array{metric:string,name:string,code?:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:int}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)

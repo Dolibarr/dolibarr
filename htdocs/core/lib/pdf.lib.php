@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2006-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		Patrick Raguin      	<patrick.raguin@gmail.com>
@@ -13,8 +14,8 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +205,7 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		*/
 
 		// For TCPDF, we specify permission we want to block
-		$pdfrights = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_RIGHTS') ? json_decode($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS, true) : array('modify', 'copy')); // Json format in llx_const
+		$pdfrights = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_RIGHTS') ? json_decode(getDolGlobalString('PDF_SECURITY_ENCRYPTION_RIGHTS'), true) : array('modify', 'copy')); // Json format in llx_const
 
 		// Password for the end user
 		$pdfuserpass = getDolGlobalString('PDF_SECURITY_ENCRYPTION_USERPASS');
@@ -217,7 +218,7 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 
 		// Array of recipients containing public-key certificates ('c') and permissions ('p').
 		// For example: array(array('c' => 'file://../examples/data/cert/tcpdf.crt', 'p' => array('print')))
-		$pubkeys = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_PUBKEYS') ? json_decode($conf->global->PDF_SECURITY_ENCRYPTION_PUBKEYS, true) : null); // Json format in llx_const
+		$pubkeys = (getDolGlobalString('PDF_SECURITY_ENCRYPTION_PUBKEYS') ? json_decode(getDolGlobalString('PDF_SECURITY_ENCRYPTION_PUBKEYS'), true) : null); // Json format in llx_const
 
 		$pdf->SetProtection($pdfrights, $pdfuserpass, $pdfownerpass, $encstrength, $pubkeys);
 	}
@@ -287,8 +288,6 @@ function pdf_getPDFFont($outputlangs)
  */
 function pdf_getPDFFontSize($outputlangs)
 {
-	global $conf;
-
 	$size = 10; // By default, for FPDI or ISO language on TCPDF
 	if (class_exists('TCPDF')) {  // If TCPDF on, we can use an UTF8 font like DejaVuSans if required (slower)
 		if ($outputlangs->trans('FONTSIZEFORPDF') != 'FONTSIZEFORPDF') {
@@ -328,7 +327,8 @@ function pdf_getHeightForLogo($logo, $url = false)
 }
 
 /**
- * Function to try to calculate height of a HTML Content
+ * Function to try to calculate height of a HTML Content.
+ * WARNING: Do not use this function inside a TCPDF transaction.
  *
  * @param 	TCPDF     $pdf				PDF initialized object
  * @param 	string    $htmlcontent		HTML Content
@@ -339,6 +339,9 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 {
 	// store current object
 	$pdf->startTransaction();
+	// To avoid pagebreak effect or strange behavior of writeHTMLCell when we are out of page, we imagine we are at the begin of page to test the height of the text
+	// Another solution would be to do the test on another PDF instance with samefont, width...
+	$pdf->setY(0);
 	// store starting values
 	$start_y = $pdf->GetY();
 	//var_dump($start_y);
@@ -415,7 +418,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 		throw new InvalidArgumentException('Parameter 1 $thirdparty is not a Societe nor Contact');
 	}
 
-	return $outputlangs->convToOutputCharset($socname);
+	return $outputlangs->convToOutputCharset((string) $socname);
 }
 
 
@@ -454,6 +457,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if (is_object($hookmanager)) {
 		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact);
 		$action = '';
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		$stringaddress .= $hookmanager->resPrint;
 	}
@@ -464,12 +468,19 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				$withCountry = 1;
 			}
 
-			$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($sourcecompany, $withCountry, "\n", $outputlangs))."\n";
+			$fulladdress = dol_format_address($sourcecompany, $withCountry, "\n", $outputlangs);
+			if ($fulladdress) {
+				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($fulladdress)."\n";
+			}
 
 			if (!getDolGlobalString('MAIN_PDF_DISABLESOURCEDETAILS')) {
 				// Phone
 				if ($sourcecompany->phone) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("PhoneShort").": ".$outputlangs->convToOutputCharset($sourcecompany->phone);
+				}
+				// Phone mobile
+				if ($sourcecompany->phone_mobile && getDolGlobalString('MAIN_PDF_SHOW_SOURCE_PHONE_MOBILE')) {
+					$stringaddress .= ($stringaddress ? ($sourcecompany->phone ? " - " : "\n") : '').$outputlangs->transnoentities("PhoneShort").": ".$outputlangs->convToOutputCharset($sourcecompany->phone_mobile);
 				}
 				// Fax
 				if ($sourcecompany->fax) {
@@ -545,7 +556,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 				if (!empty($targetcontact->address)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
-				} else {
+				} elseif (is_object($targetcompany)) {
 					$companytouseforaddress = $targetcompany;
 
 					// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
@@ -558,9 +569,9 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 				// Country
 				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
+					$stringaddress .= (($stringaddress && !getDolGlobalString('MAIN_PDF_REMOVE_BREAK_BEFORE_COUNTRY')) ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
 				} elseif (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
+					$stringaddress .= (($stringaddress && !getDolGlobalString('MAIN_PDF_REMOVE_BREAK_BEFORE_COUNTRY')) ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
 				}
 
 				if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || preg_match('/targetwithdetails/', $mode)) {
@@ -594,7 +605,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					// Web
 					if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/', $mode)) {
 						if ($targetcontact->url) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
+							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset((string) $targetcontact->url);
 						}
 					}
 				}
@@ -723,7 +734,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
  *
  *   	@param	TCPDF		$pdf     		Object PDF
  *      @param	Translate	$outputlangs	Object lang for output
- * 		@param	int			$page_height	Height of page
+ * 		@param	float		$page_height	Height of page
  *      @return	void
  */
 function pdf_pagehead(&$pdf, $outputlangs, $page_height)
@@ -734,16 +745,16 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 	if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF') && (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF') != '-1')) {		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
 		$filepath = $conf->mycompany->dir_output.'/logos/' . getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF');
 		if (file_exists($filepath)) {
-			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
+			$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak before adding image
 			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) {
-				$pdf->SetAlpha($conf->global->MAIN_USE_BACKGROUND_ON_PDF_ALPHA);
+				$pdf->SetAlpha(getDolGlobalFloat('MAIN_USE_BACKGROUND_ON_PDF_ALPHA'));
 			} // Option for change opacity of background
-			$pdf->Image($filepath, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
+			$pdf->Image($filepath, getDolGlobalFloat('MAIN_USE_BACKGROUND_ON_PDF_X'), getDolGlobalFloat('MAIN_USE_BACKGROUND_ON_PDF_Y'), 0, $page_height);
 			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) {
 				$pdf->SetAlpha(1);
 			}
 			$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
-			$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+			$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
 		}
 	}
 	if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') != '-1') {
@@ -776,8 +787,8 @@ function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null,
  *
  *      @param	TCPDF      	$pdf            Object PDF
  *      @param  Translate	$outputlangs	Object lang
- *      @param  int		    $h		        Height of PDF
- *      @param  int		    $w		        Width of PDF
+ *      @param  float	    $h		        Height of PDF
+ *      @param  float	    $w		        Width of PDF
  *      @param  string	    $unit           Unit of height (mm, pt, ...)
  *      @param  string		$text           Text to show
  *      @return	void
@@ -815,17 +826,17 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$pdf->SetFont('', 'B', 40);
 	$pdf->SetTextColor(255, 0, 0);
 
-	//rotate
+	// rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', cos($watermark_angle), sin($watermark_angle), -sin($watermark_angle), cos($watermark_angle), $watermark_x * $k, ($h - $watermark_y) * $k, -$watermark_x * $k, -($h - $watermark_y) * $k));
-	//print watermark
+	// print watermark
 	$pdf->SetAlpha(0.5);
 	$pdf->SetXY($watermark_x_pos, $watermark_y_pos);
 
 	// set alpha to semi-transparency
 	$pdf->SetAlpha(0.3);
-	$pdf->Cell($w - 20, 25, $outputlangs->convToOutputCharset($text), "", 2, "C", 0);
+	$pdf->Cell($w - 20, 25, $outputlangs->convToOutputCharset($text), "", 2, "C", false);
 
-	//antirotate
+	// antirotate
 	$pdf->_out('Q');
 
 	$pdf->SetXY($savx, $savy);
@@ -840,8 +851,8 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *
  *  @param	TCPDF		$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
- *  @param  int			$curx            		X
- *  @param  int			$cury            		Y
+ *  @param  float		$curx            		X
+ *  @param  float		$cury            		Y
  *  @param  Account		$account         		Bank account object
  *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and address)
  *  @param	int			$default_font_size		Default font size
@@ -859,7 +870,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	if (empty($onlynumber)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', false);
 		$cury += 4;
 	}
 
@@ -881,7 +892,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		if (empty($onlynumber)) {
 			$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 			$pdf->SetXY($curx, $cury);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', false);
 			$cury += 3;
 		}
 
@@ -895,7 +906,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 				$pdf->line($curx + 1, $cury + 1, $curx + 1, $cury + 6);
 			}
 
-
+			$bank_number_length = 0;
 			foreach ($account->getFieldsToShow() as $val) {
 				$pdf->SetXY($curx, $cury + 4);
 				$pdf->SetFont('', '', $default_font_size - 3);
@@ -925,28 +936,35 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 					break;
 				}
 
-				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', 0);
+				if ($content == '') {
+					continue;
+				}
+
+				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', false);
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
 				$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
-				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', 0);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', false);
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}
+
+				// Only set this variable when table was printed
+				$bank_number_length = 8;
 			}
 
 			$curx = $savcurx;
-			$cury += 8;
+			$cury += $bank_number_length;
 		}
 	} elseif (!empty($account->number)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', false);
 		$cury += 3;
 
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': '.$outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': '.$outputlangs->convToOutputCharset($account->number), 0, 'L', false);
 		$cury += 3;
 
 		if ($diffsizecontent <= 2) {
@@ -959,7 +977,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	if (empty($onlynumber) && !empty($account->address)) {
 		$pdf->SetXY($curx, $cury);
 		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset($account->address);
-		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $val, 0, 'L', false);
 		//$nboflines=dol_nboflines_bis($val,120);
 		//$cury+=($nboflines*3)+2;
 		$tmpy = $pdf->getStringHeight(100, $val);
@@ -969,7 +987,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	if (!empty($account->owner_name)) {
 		$pdf->SetXY($curx, $cury);
 		$val = $outputlangs->transnoentities("BankAccountOwner").': '.$outputlangs->convToOutputCharset($account->owner_name);
-		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $val, 0, 'L', false);
 		$tmpy = $pdf->getStringHeight(100, $val);
 		$cury += $tmpy;
 	} elseif (!$usedetailedbban) {
@@ -994,14 +1012,14 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': '.$ibanDisplay, 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': '.$ibanDisplay, 0, 'L', false);
 		$cury += 3;
 	}
 
 	if (!empty($account->bic)) {
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', false);
 	}
 
 	return $pdf->getY();
@@ -1014,13 +1032,13 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	?Societe	$fromcompany	Object company
- * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
- * 	@param	int			$marge_gauche	Margin left (no more used)
+ * 	@param	float		$marge_basse	Margin bottom we use for the autobreak
+ * 	@param	float		$marge_gauche	Margin left (no more used)
  * 	@param	float		$page_hauteur	Page height
  * 	@param	CommonObject	$object			Object shown in PDF
  * 	@param	int<0,3>	$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
- *  @param	int			$page_largeur	Page width
+ *  @param	float		$page_largeur	Page width
  *  @param	string		$watermark		Watermark text to print on page
  * 	@return	int							Return height of bottom margin including footer text
  */
@@ -1109,7 +1127,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	// Line 3 of company infos
 	// Juridical status
-	if (!empty($fromcompany->forme_juridique_code) && $fromcompany->forme_juridique_code) {
+	if (!empty($fromcompany->forme_juridique_code)) {
 		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel((string) $fromcompany->forme_juridique_code));
 	}
 	// Capital
@@ -1118,11 +1136,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
 		} elseif (!empty($fromcompany->capital)) {
-			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", $fromcompany->capital, $outputlangs);
+			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", (string) $fromcompany->capital);
 		}
 	}
 	// Prof Id 1
-	if (!empty($fromcompany->idprof1) && $fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
+	if (!empty($fromcompany->idprof1) && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
 		$field = $outputlangs->transcountrynoentities("ProfId1", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1130,7 +1148,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line3 .= ($line3 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
 	}
 	// Prof Id 2
-	if (!empty($fromcompany->idprof2) && $fromcompany->idprof2) {
+	if (!empty($fromcompany->idprof2)) {
 		$field = $outputlangs->transcountrynoentities("ProfId2", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1140,7 +1158,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	// Line 4 of company infos
 	// Prof Id 3
-	if (!empty($fromcompany->idprof3) && $fromcompany->idprof3) {
+	if (!empty($fromcompany->idprof3)) {
 		$field = $outputlangs->transcountrynoentities("ProfId3", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1148,7 +1166,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
 	}
 	// Prof Id 4
-	if (!empty($fromcompany->idprof4) && $fromcompany->idprof4) {
+	if (!empty($fromcompany->idprof4)) {
 		$field = $outputlangs->transcountrynoentities("ProfId4", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1156,7 +1174,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
 	}
 	// Prof Id 5
-	if (!empty($fromcompany->idprof5) && $fromcompany->idprof5) {
+	if (!empty($fromcompany->idprof5)) {
 		$field = $outputlangs->transcountrynoentities("ProfId5", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1164,7 +1182,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof5);
 	}
 	// Prof Id 6
-	if (!empty($fromcompany->idprof6) &&  $fromcompany->idprof6) {
+	if (!empty($fromcompany->idprof6)) {
 		$field = $outputlangs->transcountrynoentities("ProfId6", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1172,7 +1190,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof6);
 	}
 	// Prof Id 7
-	if (!empty($fromcompany->idprof7) &&  $fromcompany->idprof7) {
+	if (!empty($fromcompany->idprof7)) {
 		$field = $outputlangs->transcountrynoentities("ProfId7", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1180,7 +1198,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof7);
 	}
 	// Prof Id 8
-	if (!empty($fromcompany->idprof8) &&  $fromcompany->idprof8) {
+	if (!empty($fromcompany->idprof8)) {
 		$field = $outputlangs->transcountrynoentities("ProfId8", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1188,7 +1206,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof8);
 	}
 	// Prof Id 9
-	if (!empty($fromcompany->idprof9) &&  $fromcompany->idprof9) {
+	if (!empty($fromcompany->idprof9)) {
 		$field = $outputlangs->transcountrynoentities("ProfId9", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1196,7 +1214,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof9);
 	}
 	// Prof Id 10
-	if (!empty($fromcompany->idprof10) &&  $fromcompany->idprof10) {
+	if (!empty($fromcompany->idprof10)) {
 		$field = $outputlangs->transcountrynoentities("ProfId10", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1212,13 +1230,13 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$pdf->SetDrawColor(224, 224, 224);
 	// Option for footer text color
 	if (getDolGlobalString('PDF_FOOTER_TEXT_COLOR')) {
-		list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_TEXT_COLOR, '%d, %d, %d');
+		list($r, $g, $b) = sscanf(getDolGlobalString('PDF_FOOTER_TEXT_COLOR'), '%d, %d, %d');
 		$pdf->SetTextColor($r, $g, $b);
 	}
 
 	// The start of the bottom of this page footer is positioned according to # of lines
 	$freetextheight = 0;
-	$align = null;
+	$align = '';
 	if ($line) {	// Free text
 		//$line="sample text<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
 		if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
@@ -1231,7 +1249,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$freetextheight = $pdf->getStringHeight($width, $line);
 		} else {
 			$freetextheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($line, 1, 'UTF-8', 0)); // New method (works for HTML content)
-			//print '<br>'.$freetextheight;exit;
+			//print '<br>'.$freetextheight;
 		}
 	}
 
@@ -1251,25 +1269,25 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
-				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
+				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
-				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
 			}
 
 			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(0, 0);
+				$pdf->setAutoPageBreak(false, 0);
 			} // Option for disable auto pagebreak
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
-					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
+					$pdf->MultiCell(0, 3, $line, 0, $align, false);
 				} else {
 					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
 			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 			} // Restore pagebreak
 
 			$pdf->SetY(-$posy);
@@ -1287,11 +1305,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(0, 0);
+				$pdf->setAutoPageBreak(false, 0);
 			} // Option for disable auto pagebreak
 			$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 			} // Restore pagebreak
 
 			$posy -= $mycustomfooterheight - 3;
@@ -1303,25 +1321,25 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
-				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
+				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
-				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
 			}
 
 			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(0, 0);
+				$pdf->setAutoPageBreak(false, 0);
 			} // Option for disable auto pagebreak
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
-					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
+					$pdf->MultiCell(0, 3, $line, 0, $align, false);
 				} else {
 					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
 			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 			} // Restore pagebreak
 
 			$pdf->SetY(-$posy);
@@ -1343,7 +1361,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!empty($line1)) {
 					$pdf->SetFont('', 'B', 7);
 					$pdf->SetXY($dims['lm'], -$posy);
-					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', false);
 					$posy -= 3;
 					$pdf->SetFont('', '', 7);
 				}
@@ -1351,20 +1369,20 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!empty($line2)) {
 					$pdf->SetFont('', 'B', 7);
 					$pdf->SetXY($dims['lm'], -$posy);
-					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', false);
 					$posy -= 3;
 					$pdf->SetFont('', '', 7);
 				}
 
 				if (!empty($line3)) {
 					$pdf->SetXY($dims['lm'], -$posy);
-					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', false);
 				}
 
 				if (!empty($line4)) {
 					$posy -= 3;
 					$pdf->SetXY($dims['lm'], -$posy);
-					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', false);
 				}
 			}
 		}
@@ -1378,7 +1396,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	if (in_array(pdf_getPDFFont($outputlangs), array('freemono',  'DejaVuSans'))) {
 		$fontRenderCorrection = 10;
 	}
-	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', 0);
+	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', false);
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {
@@ -1394,8 +1412,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  *	@param	TCPDF		$pdf				Object PDF
  *	@param	CommonObject	$object				Object
  *	@param  Translate	$outputlangs		Object lang
- *	@param  int			$posx				X
- *	@param  int			$posy				Y
+ *	@param  float			$posx				X
+ *	@param  float			$posy				Y
  *	@param	float		$w					Width of cells. If 0, they extend up to the right margin of the page.
  *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
  *	@param	string		$align				Align
@@ -1404,7 +1422,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  */
 function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
 {
-	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);
+	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
+
 	if (!empty($linkedobjects)) {
 		foreach ($linkedobjects as $linkedobject) {
 			$reftoshow = $linkedobject["ref_title"].' : '.$linkedobject["ref_value"];
@@ -1429,8 +1448,8 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *	@param	CommonObject	$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output
- *  @param  int				$w					Width
- *  @param  int				$h					Height
+ *  @param  float			$w					Width
+ *  @param  float			$h					Height
  *  @param  float			$posx				Pos x
  *  @param  float			$posy				Pos y
  *  @param  int<0,1>		$hideref       		Hide reference
@@ -1453,6 +1472,8 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		}
 		$parameters = array('pdf' => $pdf, 'i' => $i, 'outputlangs' => $outputlangs, 'w' => $w, 'h' => $h, 'posx' => $posx, 'posy' => $posy, 'hideref' => $hideref, 'hidedesc' => $hidedesc, 'issupplierline' => $issupplierline, 'special_code' => $special_code);
 		$action = '';
+		// WARNING: A hook must not close/open the PDF transaction. Doing this generates a lot of trouble.
+		// Test to know if content added by the hooks is already done by the main caller of pdf_writelinedesc
 		$reshook = $hookmanager->executeHooks('pdf_writelinedesc', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 		if (!empty($hookmanager->resPrint)) {
@@ -1506,6 +1527,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
 	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
 
+	$multilangsactive = getDolGlobalInt('MAIN_MULTILANGS');
+
 	if ($issupplierline) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$prodser = new ProductFournisseur($db);
@@ -1518,11 +1541,55 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		}
 	}
 
+	//id
+	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
 	if ($idprod) {
 		$prodser->fetch($idprod);
+		//load multilangs
+		if ($multilangsactive) {
+			$prodser->getMultiLangs();
+			$object->lines[$i]->multilangs = $prodser->multilangs;
+		}
+	}
+	//label
+	if (!empty($object->lines[$i]->label)) {
+		$label = $object->lines[$i]->label;
+	} else {
+		if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang]['label']) && $multilangsactive) {
+			$label = $object->lines[$i]->multilangs[$outputlangs->defaultlang]['label'];
+		} else {
+			if (!empty($object->lines[$i]->product_label)) {
+				$label = $object->lines[$i]->product_label;
+			} else {
+				$label = '';
+			}
+		}
+	}
+	//description
+	if (!empty($object->lines[$i]->desc)) {
+		$desc = $object->lines[$i]->desc;
+	} else {
+		if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang]['description']) && $multilangsactive) {
+			$desc = $object->lines[$i]->multilangs[$outputlangs->defaultlang]['description'];
+		} else {
+			if (!empty($object->lines[$i]->description)) {
+				$desc = $object->lines[$i]->description;
+			} else {
+				$desc = '';
+			}
+		}
+	}
+	//ref supplier
+	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
+	//note
+	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
+	//dbatch
+	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
+
+	if ($idprod) {
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if (getDolGlobalInt('MAIN_MULTILANGS') && ($outputlangs->defaultlang != $langs->defaultlang)) {
-			$translatealsoifmodified = (getDolGlobalString('MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED')); // By default if value was modified manually, we keep it (no translation because we don't have it)
+		if ($multilangsactive && ($outputlangs->defaultlang != $langs->defaultlang)) {
+			$translatealsoifmodified = getDolGlobalString('MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED'); // By default if value was modified manually, we keep it (no translation because we don't have it)
 
 			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation
 			// ($textwasnotmodified is replaced with $textwasmodifiedorcompleted and we add completion).
@@ -1694,14 +1761,23 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
-				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
+				$filter = array('fk_product' => (string) $idprod, 'fk_soc' => (string) $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
 
 				if ($nbCustomerPrices > 0) {
-					$productCustomerPrice = $productCustomerPriceStatic->lines[0];
+					$productCustomerPrice = null;
+					if (count($productCustomerPriceStatic->lines) > 0) {
+						$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+						foreach ($productCustomerPriceStatic->lines as $k => $custprice_line) {
+							if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+								$productCustomerPrice = $custprice_line;
+								break;
+							}
+						}
+					}
 
-					if (!empty($productCustomerPrice->ref_customer)) {
+					if (isset($productCustomerPrice) && !empty($productCustomerPrice->ref_customer)) {
 						switch ($conf->global->PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE) {
 							case 1:
 								$ref_prodserv = $productCustomerPrice->ref_customer;
@@ -1796,7 +1872,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if ($detail->batch) {
 				$dte[] = $outputlangs->transnoentitiesnoconv('printBatch', $detail->batch);
 			}
-			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', $detail->qty);
+			if ($detail->qty) {
+				$dte[] = $outputlangs->transnoentitiesnoconv('printQty', (string) $detail->qty);
+			}
 
 			// Add also info of planned warehouse for lot
 			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
@@ -1959,25 +2037,25 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 		if (empty($hidedetails) || $hidedetails > 1) {
 			$tmpresult = '';
 
-			$tmpresult .= vatrate($object->lines[$i]->tva_tx, 0, $object->lines[$i]->info_bits, -1);
+			$tmpresult .= vatrate($object->lines[$i]->tva_tx, false, $object->lines[$i]->info_bits, -1);
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_SECOND_TAX')) {
-				if ($object->lines[$i]->total_localtax1 != 0) {
+				if (price2num($object->lines[$i]->localtax1_tx)) {
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
 						$tmpresult .= '/';
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax1_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax1_tx), false);
 				}
 			}
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_THIRD_TAX')) {
-				if ($object->lines[$i]->total_localtax2 != 0) {
+				if (price2num($object->lines[$i]->localtax2_tx)) {
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
 						$tmpresult .= '/';
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax2_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax2_tx), false);
 				}
 			}
 			$tmpresult .= '%';
@@ -2244,7 +2322,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
  */
 function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $hookmanager, $langs;
+	global $hookmanager;
 
 	$reshook = 0;
 	$result = '';
@@ -2269,7 +2347,7 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 	}
 	if (empty($reshook)) {
 		if (empty($hidedetails) || $hidedetails > 1) {
-			$result .= $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
+			$result .= $object->lines[$i]->getLabelOfUnit('short', $outputlangs, 1);
 		}
 	}
 	return $result;
@@ -2431,7 +2509,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
  *
  *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object				Object
  *	@param	int			$i					Current line number
- *  @param 	Translate	$outputlangs		Object langs for output
+ *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int<0,2>	$hidedetails		Hide value (0 = no, 1 = yes, 2 = just special lines)
  *  @return	string							Return total of line incl tax
  */
@@ -2511,11 +2589,11 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}
-		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
+		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
 			'@phan-var-force array<Commande|CommandeFournisseur> $objects';
 			$outputlangs->load('orders');
 
-			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+			if (count($objects) > 1 && count($objects) <= getDolGlobalInt("MAXREFONDOC", 10) && !getDolGlobalString("PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE")) {
 				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
 					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
 					foreach ($objects as $elementobject) {
@@ -2583,7 +2661,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					}
 				}
 
-				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects']) && !getDolGlobalString("PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE")) { // Check if already appended before add to avoid repeat data
 					$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
 				}
 			} elseif (count($objects) == 1) {
@@ -2629,8 +2707,11 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 	if (is_object($hookmanager)) {
 		$parameters = array('linkedobjects' => $linkedobjects, 'outputlangs' => $outputlangs);
 		$action = '';
-		$hookmanager->executeHooks('pdf_getLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (!empty($hookmanager->resArray)) {
+		$reshook = $hookmanager->executeHooks('pdf_getLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook)) {
+			$linkedobjects = array_replace($linkedobjects, $hookmanager->resArray); // array_replace is used to preserve keys
+		} elseif ($reshook > 0) {
+			// The array must be reinserted even if it is empty because clearing the array could be one of the actions performed by the hook.
 			$linkedobjects = $hookmanager->resArray;
 		}
 	}
@@ -2647,10 +2728,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
  */
 function pdf_getSizeForImage($realpath)
 {
-	global $conf;
-
 	$maxwidth = getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20);
 	$maxheight = getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT', 32);
+
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($realpath);
 	$width = 0;
@@ -2668,23 +2748,26 @@ function pdf_getSizeForImage($realpath)
 }
 
 /**
- *	Return line total amount discount
+ *	Return line total amount discount.
+ *  Calculated by taking the unit price (subprice) * quantity - (total without tax)
  *
  *	@param	Commande|Facture|Propal			$object				Object
  *	@param	int								$i					Current line number
  *  @param  Translate						$outputlangs		Object langs for output
  *  @param	int<0,2>						$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	float|string										Return total of line excl tax
+ *  @param	int<0,1>						$multicurrency		1=Get value in the foreign currency
+ * 	@return	int|float|string									Return total of line excl tax
  */
-function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
+function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0, $multicurrency = 0)
 {
-	global $conf, $hookmanager;
+	global $hookmanager;
 
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
 	if ($object->lines[$i]->special_code == 3) {
+		// If option
 		return $outputlangs->transnoentities("Option");
 	} else {
 		if (is_object($hookmanager)) {
@@ -2697,14 +2780,15 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 				'i' => $i,
 				'outputlangs' => $outputlangs,
 				'hidedetails' => $hidedetails,
-				'special_code' => $special_code
+				'special_code' => $special_code,
+				'multicurrency' => $multicurrency
 			);
 
 			$action = '';
 
 			if ($hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action) > 0) {	// Note that $action and $object may have been modified by some hooks
 				if (isset($hookmanager->resArray['linetotalremise'])) {
-					return $hookmanager->resArray['linetotalremise'];
+					return (float) $hookmanager->resArray['linetotalremise'];
 				} else {
 					return (float) $hookmanager->resPrint;	// For backward compatibility
 				}
@@ -2712,8 +2796,114 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 
 		if (empty($hidedetails) || $hidedetails > 1) {
-			return $sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
+			if (empty($multicurrency)) {
+				return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
+			} else {
+				return (float) price2num($sign * (($object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->multicurrency_total_ht), 'MT', 1);
+			}
 		}
 	}
 	return 0;
+}
+
+/**
+ * Function to extract metadata from a PDF file by doing a binary parsing of the PDF file
+ *
+ * @param 	string	$file		Path of file
+ * @param 	string	$field		Key to extract
+ * @return 	string				String of the extracted key or string started with 'ERROR:' if error.
+ */
+function pdfExtractMetadata($file, $field = 'Keywords')
+{
+	if (!dol_is_file($file)) {
+		return "ERROR: FILE NOT FOUND OR NOT VALID";
+	}
+
+	// Get content of PDF file
+	$content = file_get_contents(dol_osencode($file));
+
+	// Use a regex to capture the metadata
+	if ($content) {
+		$matches = array();
+
+		// Remove non printablecaracters
+		$content = preg_replace('/[^(\x20-\x7F)]*/', '', $content);
+		if (preg_match('/\/' . preg_quote($field, '/') . '\s*\((.*?)\)/', $content, $matches)) {
+			return trim($matches[1]);
+		}
+		return "ERROR: NOT FOUND";
+	} else {
+		return "ERROR: FAILED TO READ PDF";
+	}
+}
+
+/**
+ * Render subtotals line with a colored background and adapted text color .
+ *
+ * @param  TCPDF              $pdf                PDF instance
+ * @param  CommonDocGenerator $generator          Generator object
+ * @param  float              $curY               Current Y position
+ * @param  CommonObject       $object             Object containing lines
+ * @param  int                $i                  Current line number
+ * @param  Translate          $outputlangs        Output language object
+ * @param  int                $hideref            Hide reference
+ * @param  int                $hidedesc           Hide description
+ * @param  array<int, int>    $bgColor            RGB color array [R,G,B]
+ * @param  bool               $isSubtotal         Whether this is a subtotal line
+ * @param  bool               $applySubtotalLogic Whether to apply subtotal specific logic
+ *
+ * @return void
+ */
+function pdf_render_subtotals(
+	TCPDF              $pdf,
+	CommonDocGenerator $generator,
+	float              $curY,
+	CommonObject       $object,
+	int                $i,
+	Translate          $outputlangs,
+	int                $hideref,
+	int                $hidedesc,
+	array              $bgColor,
+	bool               $isSubtotal = false,
+	bool               $applySubtotalLogic = true
+) {
+	$savePage = $pdf->getPage();
+	$saveX = $pdf->GetX();
+	$prevAlign = $generator->cols['desc']['content']['align'];
+
+	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
+		$outputlangs->load("subtotals");
+		$object->lines[$i]->desc = $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
+		$generator->cols['desc']['content']['align'] = ($prevAlign === 'L') ? 'R' : 'L';
+	}
+
+	$pdf->startTransaction();
+	$pdf->SetXY($saveX, $curY);
+	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+	$pageAfter = $pdf->getPage();
+	$yAfter = $pdf->GetY();
+	$pdf->rollbackTransaction(true);
+
+	$pdf->SetFillColor($bgColor[0], $bgColor[1], $bgColor[2]);
+	$width = $generator->page_largeur - $generator->marge_droite - $generator->marge_gauche;
+
+	$pdf->SetXY($generator->marge_gauche, $curY);
+	if ($pageAfter === $savePage) {
+		$pdf->MultiCell($width, max(0, $yAfter - $curY), '', 0, '', true);
+	} else {
+		$pdf->MultiCell($width, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
+
+		$pdf->setPage($pageAfter);
+		$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
+		$pdf->MultiCell($width, max(0, $yAfter - $pdf->getMargins()['top']), '', 0, '', true);
+
+		$pdf->setPage($savePage);
+	}
+
+	$pdf->SetTextColor(colorIsLight(implode(',', $bgColor)));
+	$pdf->SetXY($saveX, $curY);
+	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
+
+	$generator->cols['desc']['content']['align'] = $prevAlign;
 }

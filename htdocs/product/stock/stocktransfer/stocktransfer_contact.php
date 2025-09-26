@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_stocktransfer.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'orders', 'sendings', 'companies', 'stocks'));
 
@@ -44,6 +54,7 @@ $lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'alpha');
 
 $object = new StockTransfer($db);
+$error = 0;
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
@@ -82,8 +93,8 @@ $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $ob
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-//$result = restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
+//restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
 
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();
@@ -113,7 +124,7 @@ if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer',
 	}
 } elseif ($action == 'swapstatut' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) { // Toggle the status of a contact
 	if ($object->id > 0) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 	}
 } elseif ($action == 'deletecontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) { // Deletes a contact
 	$result = $object->delete_contact($lineid);

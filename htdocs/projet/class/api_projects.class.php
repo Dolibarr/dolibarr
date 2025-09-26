@@ -1,7 +1,9 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 class Projects extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -39,12 +41,12 @@ class Projects extends DolibarrApi
 	);
 
 	/**
-	 * @var Project $project {@type Project}
+	 * @var Project {@type Project}
 	 */
 	public $project;
 
 	/**
-	 * @var Task $task {@type Task}
+	 * @var Task {@type Task}
 	 */
 	public $task;
 
@@ -209,7 +211,7 @@ class Projects extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -219,6 +221,7 @@ class Projects extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
@@ -312,7 +315,7 @@ class Projects extends DolibarrApi
 	{
 		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -384,6 +387,90 @@ class Projects extends DolibarrApi
 	}
 
 	/**
+	 * Adds a contact to an project
+	 *
+	 * @param   int		$id					project ID
+	 * @param   int		$fk_socpeople		Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
+	 * @param   string	$type_contact       Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
+	 * @param   string  $source				external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 * @param   int     $notrigger          Disable all triggers
+	 *
+	 * @url POST    {id}/contacts
+	 *
+	 * @return  object
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->project->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
+		if ($result < 0) {
+			throw new RestException(500, 'Error : '.$this->project->error);
+		}
+
+		return $this->_cleanObjectDatas($this->project);
+	}
+
+	/**
+	 * Delete a contact type of given project
+	 *
+	 * @param	int    $id             Id of project to update
+	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
+	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @return	Object				   Object with cleaned properties
+	 *
+	 * @url	DELETE {id}/contact/{contactid}/{type}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteContact($id, $contactid, $type)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->project->liste_contact(-1, $source);
+
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->project->delete_contact($contact['rowid']);
+					if (!$result) {
+						throw new RestException(500, 'Error when deleted the contact');
+					}
+				}
+			}
+		}
+		return $this->_cleanObjectDatas($this->project);
+	}
+	/**
 	 * Get tasks of a project.
 	 * See also API /tasks
 	 *
@@ -437,8 +524,6 @@ class Projects extends DolibarrApi
 	 */
 	public function getRoles($id, $userid = 0)
 	{
-		global $db;
-
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
@@ -459,7 +544,7 @@ class Projects extends DolibarrApi
 			$userp = new User($this->db);
 			$userp->fetch($userid);
 		}
-		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, $id, 0);
+		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, (string) $id, 0);
 		$result = array();
 		foreach ($this->project->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));

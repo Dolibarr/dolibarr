@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -77,6 +82,7 @@ $server->soap_defencoding            = 'UTF-8';
 $server->decode_utf8                 = false;
 $ns                                  = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrPayment', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -163,8 +169,9 @@ function createPayment($authentication, $payment)
 
 	$now = dol_now();
 
-	dol_syslog("Function: createPayment login=".$authentication['login']." id=".$payment->id.
-			   ", ref=".$payment->ref.", ref_ext=".$payment->ref_ext);
+	// TODO: Verify 'ref' and 'ref_ext', not defined in the WS Payment object.
+	dol_syslog("Function: createPayment login=".$authentication['login']." id=".$payment['id'].
+			   ", ref=".($payment['ref'] ?? '').", ref_ext=".($payment['ref_ext'] ?? ''));
 
 	if ($authentication['entity']) {
 		$conf->entity = $authentication['entity'];
@@ -197,7 +204,7 @@ function createPayment($authentication, $payment)
 		$new_payment->amounts     = array($payment['invoice_id'] => (float) $payment['amount']);
 
 		$db->begin();
-		$result = $new_payment->create($fuser, true);
+		$result = $new_payment->create($fuser, 1);
 
 		if ($payment['bank_account']) {
 			$new_payment->addPaymentToBank($fuser, 'payment', $payment['int_label'], $payment['bank_account'], $payment['emitter'], $payment['bank_source']);

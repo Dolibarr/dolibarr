@@ -2,6 +2,7 @@
 /* Copyright (C) 2013	Florian Henry	<florian.henry@open-concept.pro>
  * Copyright (C) 2015	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -76,7 +85,8 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans("ECMSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-ecm');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ECMSetup"), $linkback, 'title_setup');
 print '<br>';
 
@@ -87,7 +97,7 @@ print dol_get_fiche_head($head, 'ecm', '', -1, '');
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center" width="100px">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="center" width="100px"></td>'."\n";
 print '</tr>';
 
 // Mail required for members

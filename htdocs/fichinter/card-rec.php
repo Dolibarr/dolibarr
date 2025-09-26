@@ -10,7 +10,7 @@
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,14 @@ if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
@@ -113,14 +121,14 @@ $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 
 $permissiontoadd = $user->hasRight('ficheinter', 'creer');
 $permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
-
+$objp = null;
 
 /*
  * Actions
  */
+$error = 0;
 
 if ($cancel) {
-	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
 	if (!empty($backtopageforcancel)) {
 		header("Location: ".$backtopageforcancel);
 		exit;
@@ -147,19 +155,19 @@ if ($action == 'add' && $permissiontoadd) {
 
 	// gestion des fréquences et des échéances
 	$frequency = GETPOSTINT('frequency');
-	$reyear = GETPOST('reyear');
-	$remonth = GETPOST('remonth');
-	$reday = GETPOST('reday');
-	$rehour = GETPOST('rehour');
-	$remin = GETPOST('remin');
+	$rec_year = GETPOST('rec_year');
+	$rec_month = GETPOST('rec_month');
+	$rec_day = GETPOST('rec_day');
+	$rec_hour = GETPOST('rec_hour');
+	$rec_min = GETPOST('rec_min');
 	$nb_gen_max = GETPOSTINT('nb_gen_max');
 	if ($frequency) {
-		if (empty($reyear) || empty($remonth) || empty($reday)) {
+		if (empty($rec_year) || empty($rec_month) || empty($rec_day)) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			$action = "create";
 			$error++;
 		} else {
-			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
+			$date_next_execution = dol_mktime((int) $rec_hour, (int) $rec_min, 0, (int) $rec_month, (int) $rec_day, (int) $rec_year);
 		}
 		if ($nb_gen_max === 0) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
@@ -170,11 +178,11 @@ if ($action == 'add' && $permissiontoadd) {
 
 	if (!$error) {
 		$object->id_origin = $id;
-		$object->title			= GETPOST('title', 'alpha');
-		$object->description	= GETPOST('description', 'restricthtml');
-		$object->socid			= GETPOSTINT('socid');
-		$object->fk_project		= GETPOSTINT('projectid');
-		$object->fk_contrat		= GETPOSTINT('contractid');
+		$object->title = GETPOST('title', 'alpha');
+		$object->description = GETPOST('description', 'restricthtml');
+		$object->socid = GETPOSTINT('socid');
+		$object->fk_project = GETPOSTINT('projectid');
+		$object->fk_contrat = GETPOSTINT('contractid');
 
 		$object->frequency = $frequency;
 		$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
@@ -207,7 +215,7 @@ if ($action == 'add' && $permissiontoadd) {
 	}
 
 	$newinter->entity = $object->entity;
-	$newinter->duree = $object->duree;
+	$newinter->duration = $object->duration;
 
 	$newinter->description = $object->description;
 	$newinter->note_private = $object->note_private;
@@ -246,11 +254,11 @@ if ($action == 'add' && $permissiontoadd) {
 } elseif ($action == 'setfrequency' && $permissiontoadd) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
-	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
+	$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOST('unit_frequency', 'alpha'));
 } elseif ($action == 'setdate_when' && $permissiontoadd) {
 	// Set next date of execution
 	$object->fetch($id);
-	$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
+	$date = dol_mktime(GETPOSTINT('date_whenhour'), GETPOSTINT('date_whenmin'), 0, GETPOSTINT('date_whenmonth'), GETPOSTINT('date_whenday'), GETPOSTINT('date_whenyear'));
 	if (!empty($date)) {
 		$object->setNextDate($date);
 	}
@@ -270,7 +278,10 @@ $help_url = '';
 llxHeader('', $langs->trans("RepeatableIntervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card-rec');
 
 $form = new Form($db);
+$fichinterrecstatic = new FichinterRec($db);
 $companystatic = new Societe($db);
+$contratstatic = null;
+$projectstatic = null;
 if (isModEnabled('contract')) {
 	$contratstatic = new Contrat($db);
 }
@@ -387,9 +398,9 @@ if ($action == 'create') {
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
 		if (empty($date_next_execution)) {
-			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
+			$date_next_execution = (GETPOST('rec_month') ? dol_mktime(12, 0, 0, GETPOSTINT('rec_month'), GETPOSTINT('rec_day'), GETPOSTINT('rec_year')) : -1);
 		}
-		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
+		print $form->selectDate($date_next_execution, 'rec_', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
@@ -499,11 +510,11 @@ if ($action == 'create') {
 			$object->fetch_thirdparty();
 
 			$author = new User($db);
-			$author->fetch($object->user_author);
+			$author->fetch((int) $object->user_author_id);
 
 			$head = fichinter_rec_prepare_head($object);
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, 'intervention');
+			print dol_get_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, $object->picto);
 
 			// Intervention card
 			$linkback = '<a href="card-rec.php">'.$langs->trans("BackToList").'</a>';
@@ -526,11 +537,11 @@ if ($action == 'create') {
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 					}
 				} else {
 					if (!empty($object->fk_project)) {
@@ -568,7 +579,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
 			// Contract
-			if (isModEnabled('contract')) {
+			if (isModEnabled('contract') && $contratstatic !== null) {
 				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
@@ -590,7 +601,7 @@ if ($action == 'create') {
 					if ($object->fk_contrat) {
 						$contratstatic = new Contrat($db);
 						$contratstatic->fetch($object->fk_contrat);
-						print $contratstatic->getNomUrl(0, '', 1);
+						print $contratstatic->getNomUrl(0, 0, 1);
 					} else {
 						print "&nbsp;";
 					}
@@ -657,7 +668,7 @@ if ($action == 'create') {
 			// Max period / Rest period
 			print '<tr><td>';
 			if ($user->hasRight('ficheinter', 'creer') && ($action == 'nb_gen_max' || $object->frequency > 0)) {
-				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->hasRight('facture', 'creer'));
+				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', (string) $object->nb_gen_max, $object, $user->hasRight('facture', 'creer'));
 			} else {
 				print $langs->trans("MaxPeriodNumber");
 			}
@@ -677,7 +688,7 @@ if ($action == 'create') {
 			// Frequencry/Recurring section
 			if ($object->frequency > 0) {
 				print '<br>';
-				if (empty($conf->cron->enabled)) {
+				if (isModEnabled('cron')) {
 					$txtinfoadmin = $langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name"));
 					print info_admin($txtinfoadmin);
 				}
@@ -734,9 +745,9 @@ if ($action == 'create') {
 					$type = $object->lines[$i]->product_type;
 				} // else { $object->lines[$i]->fk_product_type; }
 
-				if (is_object($objp)) {
-					// Try to enhance type detection using date_start and date_end for free lines when type
-					// was not saved.
+				// TODO: $objp is not set here, so why test?
+				if (isset($objp) && is_object($objp)) {  // $objp always null @phpstan-ignore-line
+					// Try to enhance type detection using date_start and date_end for free lines when type was not saved.
 					if (!empty($objp->date_start)) {
 						$type = 1;
 					}
@@ -778,7 +789,7 @@ if ($action == 'create') {
 	} else {
 		// List mode
 
-		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.title,";
+		$sql = "SELECT f.rowid as id, s.nom as name, s.rowid as socid, f.title,";
 		$sql .= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
 		$sql .= " f.date_last_gen, f.date_when, f.datec, f.status";
 
@@ -843,16 +854,17 @@ if ($action == 'create') {
 			print "</tr>\n";
 
 
-			// les filtres à faire ensuite
+			// TODO filters
 
 			if ($num > 0) {
 				while ($i < min($num, $limit)) {
 					$objp = $db->fetch_object($resql);
+					$fichinterrecstatic->id = $objp->id;
+					$fichinterrecstatic->ref = $objp->title;
+					$fichinterrecstatic->title = $objp->title;
 
 					print '<tr class="oddeven">';
-					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->fich_rec.'">';
-					print img_object($langs->trans("ShowIntervention"), "intervention").' '.$objp->title;
-					print "</a></td>\n";
+					print '<td>'.$fichinterrecstatic->getNomUrl(1)."</td>\n";
 					if ($objp->socid) {
 						$companystatic->id = $objp->socid;
 						$companystatic->name = $objp->name;
@@ -861,7 +873,7 @@ if ($action == 'create') {
 						print '<td>'.$langs->trans("None").'</td>';
 					}
 
-					if (isModEnabled('contract')) {
+					if (isModEnabled('contract') && $contratstatic !== null) {
 						print '<td>';
 						if ($objp->fk_contrat > 0) {
 							$contratstatic->fetch($objp->fk_contrat);
@@ -869,7 +881,7 @@ if ($action == 'create') {
 						}
 						print '</td>';
 					}
-					if (isModEnabled('project')) {
+					if (isModEnabled('project') && $projectstatic !== null) {
 						print '<td>';
 						if ($objp->fk_project > 0) {
 							$projectstatic->fetch($objp->fk_project);
@@ -911,7 +923,7 @@ if ($action == 'create') {
 						if ($user->hasRight('ficheinter', 'creer')) {
 							if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel';
-								print '&socid='.$objp->socid.'&id='.$objp->fich_rec.'&token='.newToken().'">';
+								print '&socid='.$objp->socid.'&id='.$objp->id.'&token='.newToken().'">';
 								print $langs->trans("NewIntervention").'</a>';
 							} else {
 								print $langs->trans("DateIsNotEnough");

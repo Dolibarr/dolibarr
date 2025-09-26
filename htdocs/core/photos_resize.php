@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("products", "other"));
@@ -131,12 +139,12 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->product->multidir_output[$object->entity]; // By default
+		$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity]; // By default
 		if ($object->type == Product::TYPE_PRODUCT) {
-			$dir = $conf->product->multidir_output[$object->entity];
+			$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity];
 		}
 		if ($object->type == Product::TYPE_SERVICE) {
-			$dir = $conf->service->multidir_output[$object->entity];
+			$dir = $conf->service->multidir_output[$object->entity ?? $conf->entity];
 		}
 	}
 } elseif ($modulepart == 'project') {
@@ -147,7 +155,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->project->multidir_output[$object->entity]; // By default
+		$dir = $conf->project->multidir_output[$object->entity ?? $conf->entity]; // By default
 	}
 } elseif ($modulepart == 'propal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -157,7 +165,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->propal->multidir_output[$object->entity]; // By default
+		$dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]; // By default
 	}
 } elseif ($modulepart == 'holiday') {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
@@ -410,8 +418,8 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 	}
 }
 
-// Crop d'une image
-if ($action == 'confirm_crop') {
+// Crop if image
+if ($action == 'confirm_crop') {		// Test on permission already done
 	if (empty($dir)) {
 		print 'Bug: Value for $dir could not be defined.';
 	}
@@ -510,8 +518,8 @@ print '<input type="hidden" name="backtourl" value="'.$backtourl.'">';
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
-print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50 right"> px  &nbsp; <span class="opacitymedium">'.$langs->trans("or").'</span> &nbsp; ';
-print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50 right"> px &nbsp; <br>';
+print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth75 right"> px  &nbsp; <span class="opacitymedium">'.$langs->trans("or").'</span> &nbsp; ';
+print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth75 right"> px &nbsp; <br>';
 
 print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';

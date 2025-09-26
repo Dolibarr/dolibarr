@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,14 @@ require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'boxes', 'accountancy'));
@@ -71,7 +79,7 @@ if ($action == 'add') {
 					$sql = "SELECT fk_user";
 					$sql .= " FROM ".MAIN_DB_PREFIX."user_param";
 					$sql .= " WHERE param = 'MAIN_BOXES_".$db->escape($pos)."' AND value = '1'";
-					$sql .= " AND entity = ".$conf->entity;
+					$sql .= " AND entity = ".((int) $conf->entity);
 					dol_syslog("boxes.php search fk_user to activate box for", LOG_DEBUG);
 					$resql = $db->query($sql);
 					if ($resql) {
@@ -463,7 +471,7 @@ print '</tr>';
 print '</table>';
 print '</div>';
 
-print $form->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
+print $form->buttonsSaveCancel("Save", '', array(), false, 'reposition');
 
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";

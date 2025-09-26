@@ -7,7 +7,7 @@
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 require_once './lib/replenishment.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
@@ -56,7 +64,7 @@ $result = restrictedArea($user, 'produit|service');
 $action = GETPOST('action', 'aZ09');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTINT('type');
 $tobuy = GETPOSTINT('tobuy');
 $salert = GETPOST('salert', 'alpha');
@@ -72,6 +80,7 @@ $fk_entrepot = GETPOSTINT('fk_entrepot');
 // List all visible warehouses
 $resWar = $db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . $db->sanitize(getEntity('stock')) . ")");
 $listofqualifiedwarehousesid = "";
+$lastWarehouseID = 0;
 $count = 0;
 while ($tmpobj = $db->fetch_object($resWar)) {
 	if (!empty($listofqualifiedwarehousesid)) {
@@ -278,10 +287,10 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						0,
 						$line->type,
 						0,
-						false,
-						null,
-						null,
 						0,
+						null,
+						null,
+						array(),
 						$line->fk_unit,
 						$line->multicurrency_subprice
 					);
@@ -570,7 +579,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {
+	if (($page * $limit) > (int) $nbtotalofrecords) {
 		$page = 0;
 		$offset = 0;
 	}
@@ -737,7 +746,7 @@ if ($usevirtualstock == 0) {
 	$stocklabel = $langs->trans('PhysicalStock');
 }
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
-	$stocklabelbis = $stocklabel.' (Selected warehouse)';
+	$stocklabelbis = $stocklabel.' ('.$langs->trans('SelectedWarehouse').')';
 	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
 $texte = $langs->trans('Replenishment');
@@ -847,7 +856,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			exit;
 		}
 
-		$prod->load_stock('warehouseopen, warehouseinternal'.(!$usevirtualstock ? ', novirtual' : ''), $draftchecked);
+		$prod->load_stock('warehouseopen, warehouseinternal'.(!$usevirtualstock ? ', novirtual' : ''), $draftchecked === 'checked' ? 1 : 0);
 
 		// Multilangs
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {

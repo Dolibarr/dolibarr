@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2024 Laurent Destailleur  <eldy@users.sourceforge.net>
+
+/* Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
-*
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -29,11 +30,11 @@
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofmesures	Array of measures already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofmesures	Array of measures already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of measures
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of measures
  */
 function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesures, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -97,23 +98,24 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath
 			);
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				$arrayofmesures[$tablealias.'.'.$key.'-stddevpop'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
-					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
-					'position' => ($position + ($count * 100000)).'.5',
-					'table' => $object->table_element,
-					'tablefromt' => $tablepath
-				);
-			}
+			$arrayofmesures[$tablealias.'.'.$key.'-stddevpop'] = array(
+				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
+				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
+				'position' => ($position + ($count * 100000)).'.5',
+				'table' => $object->table_element,
+				'tablefromt' => $tablepath
+			);
 		}
 	}
 	// Add extrafields to Measures
 	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
-				// @phan-suppress-next-line PhanTypeMismatchDimAssignment
-				$position = (!empty($val['position']) ? $val['position'] : 0);
+				if (isset($extrafields->attributes[$object->table_element]['pos'][$key])) {
+					$position = $extrafields->attributes[$object->table_element]['pos'][$key];
+				} else {
+					$position = 0;
+				}
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-sum'] = array(
 					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
@@ -142,15 +144,13 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-					$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-stddevpop'] = array(
-						'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
-						'labelnohtml' => $labelofobject.': '.$langs->trans($val),
-						'position' => ($position + ($count * 100000)).'.5',
-						'table' => $object->table_element,
-						'tablefromt' => $tablepath
-					);
-				}
+				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-stddevpop'] = array(
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
+					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
+					'position' => ($position + ($count * 100000)).'.5',
+					'table' => $object->table_element,
+					'tablefromt' => $tablepath
+				);
 			}
 		}
 	}
@@ -183,11 +183,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofxaxis	Array of xaxis already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		$arrayofxaxis	Array of xaxis already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of xaxis
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of xaxis
  */
 function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -352,11 +352,11 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
  * @param 	CommonObject	$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>	$arrayofgroupby	Array of groupby already filled
+ * @param	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>	$arrayofgroupby	Array of groupby already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return	array<string,array{abel:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of groupby
+ * @return	array<string,array{label:string,labelnohtml:string,position:int,table:string,tablefromt:string}>		Array of groupby
  */
 function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroupby, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -410,21 +410,21 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
 				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key.'-year'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[$tablealias.'.'.$key.'-month'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[$tablealias.'.'.$key.'-day'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.3',
 					'table' => $object->table_element,
@@ -433,7 +433,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			} else {
 				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)),
 					'table' => $object->table_element,
@@ -456,14 +456,14 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('timestamp', 'date', 'datetime'))) {
 				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intval($extrafields->attributes[$object->table_element]['pos'][$key]));
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-year'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-month'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element,
@@ -527,10 +527,12 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 {
 	global $langs, $extrafields, $db;
 
+	$MAXLEVEL = 2;
+
 	if (empty($object)) {	// Protection against bad use of method
 		return array();
 	}
-	if ($level >= 3) {	// Limit scan on 2 levels max
+	if ($level > $MAXLEVEL) {	// Limit scan on 2 levels max
 		return $arrayoffields;
 	}
 
@@ -545,9 +547,10 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
 		if (empty($val['measure'])) {
+			// Exclude some fields
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
+				'parent', 'pass', 'pass_crypted', 'pass_temp', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
 			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
@@ -568,13 +571,19 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayoffields[$tablealias.'.'.$key] = array(
-				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
+				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),  // @phan-suppress-current-line PhanUndeclaredProperty
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 				'position' => ($position + ($count * 100000)),
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath,
 				'type' => $val['type']
 			);
+			if (!empty($val['arrayofkeyval'])) {
+				$arrayoffields[$tablealias.'.'.$key]['arrayofkeyval'] = $val['arrayofkeyval'];
+			}
+			if ((!isset($val['isamesaure']) || $val['isamesaure'] != 1) && (!isset($val['notnull']) || $val['notnull'] != '1')) {
+				$arrayoffields[$tablealias.'.'.$key]['maybenull'] = 1;
+			}
 		}
 	}
 
@@ -594,7 +603,7 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 				'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000),
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath,
-				'type' => $val['type']  // TODO: Check this, seems a copy/paste error
+				'type' => $extrafields->attributes[$object->table_element]['type'][$key],
 			);
 		}
 	}
@@ -609,7 +618,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 				if (class_exists($newobject)) {
 					$tmpobject = new $newobject($db);
 					$count++;
-					$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+					if (!empty($val['nodepth'])) {
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tablepath);
+					} else {
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+					}
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}

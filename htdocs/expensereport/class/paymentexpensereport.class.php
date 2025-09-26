@@ -2,7 +2,7 @@
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -557,6 +557,7 @@ class PaymentExpenseReport extends CommonObject
 
 			//Fix me field
 			$total = $this->amount;
+			$amount = 0;
 
 			if ($mode == 'payment_expensereport') {
 				$amount = $total;
@@ -565,11 +566,11 @@ class PaymentExpenseReport extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
+				(string) $this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				-$amount,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque
@@ -745,7 +746,7 @@ class PaymentExpenseReport extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

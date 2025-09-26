@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,10 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/objectonoff.php
- *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
- *       			 This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       \file      htdocs/core/ajax/objectonoff.php
+ *       \brief     File to set status for an object. Called when ajax_object_onoff() is used.
+ *       			This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       			TODO Rename into updatestatus.php
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -41,6 +43,14 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage');

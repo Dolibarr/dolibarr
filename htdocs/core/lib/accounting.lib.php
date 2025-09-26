@@ -94,8 +94,6 @@ function clean_account($account)
  */
 function length_accountg($account)
 {
-	global $conf;
-
 	if ($account < 0 || is_empty($account)) {
 		return '';
 	}
@@ -283,7 +281,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
  */
 function getDefaultDatesForTransfer()
 {
-	global $db, $conf;
+	global $db;
 
 	$date_start = '';
 	$date_end = '';
@@ -297,7 +295,7 @@ function getDefaultDatesForTransfer()
 		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
-		if ($res->num_rows > 0) {
+		if ($db->num_rows($res) > 0) {
 			$obj = $db->fetch_object($res);
 
 			$date_start = $db->jdate($obj->date_start);
@@ -349,7 +347,7 @@ function getDefaultDatesForTransfer()
  * 	@param 	Conf		$conf				Config
  * 	@param 	?int 		$from_time			[=null] Get current time or set time to find fiscal period
  *	@param	'tzserver'|'gmt'	$gm			'gmt' => we return GMT timestamp (recommended), 'tzserver' => we return in the PHP server timezone
- * 	@param	int			$withenddateonly	Do not return period if and date is not defined
+ * 	@param	int			$withenddateonly	Do not return period if end date is not defined
  * 	@return array{date_start:int,date_end:int}	Period of fiscal year : [date_start, date_end]
  */
 function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzserver', $withenddateonly = 1)
@@ -358,6 +356,8 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzse
 	$now_arr = dol_getdate($now);
 	if ($from_time === null) {
 		$from_time = $now;
+	} else {
+		$now_arr = dol_getdate($from_time);
 	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';

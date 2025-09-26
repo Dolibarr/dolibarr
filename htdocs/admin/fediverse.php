@@ -25,9 +25,9 @@
  */
 
 /**
- *      \file       htdocs/admin/faitdivers.php
- *      \ingroup    faitdivers
- *      \brief      Page to setupe module Socialnetworks
+ *      \file       htdocs/admin/fediverse.php
+ *      \ingroup    fedivers
+ *      \brief      Page to setup fedivers in module Socialnetworks
  */
 
 //load Dolibarr environment
@@ -39,7 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fediverseparser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/boxes/box_fediverse.php';
 
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 //load translation files requires by the page
 $langs->loadLangs(array('admin', 'users', 'dict'));
@@ -183,7 +189,7 @@ if ($action == 'updatesocialnetwork') {
 	$paramsKey = GETPOST('paramsKey', 'array');
 	$paramsVal = GETPOST('paramsVal', 'array');
 
-	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf);
+	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf->entity);
 	$socialNetworkData = json_decode($result, true);
 
 	foreach ($paramsKey as $index => $key) {
@@ -234,7 +240,7 @@ if ($action == 'editsocialnetwork' && GETPOST('confirm') == 'yes') {
 	$paramKey = GETPOST('paramkey', 'alpha');
 	$key = GETPOST('key', 'alpha');
 	$name = GETPOST('name');
-	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf);
+	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf->entity);
 	$socialNetworkData = json_decode($result, true);
 
 	unset($socialNetworkData[$paramKey]);
@@ -263,12 +269,13 @@ llxHeader('', $langs->trans("FediverseSetup"), '', '', 0, 0, '', '', '', 'mod-ad
 
 $head = socialnetwork_prepare_head();
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print dol_get_fiche_head($head, 'divers', $langs->trans('MenuDict'), -1, 'user', 0, $linkback, '', 0, '', 0);
 
 $title = $langs->trans("ConfigImportSocialNetwork");
 
-print_barre_liste($title, '', $_SERVER["PHP_SELF"], '', '', '', '', -1, '', 'tools', 0, '', '', -1, 0, 0, 0, '');
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', -1, '', 'tools', 0, '', '', -1, 0, 0, 0, '');
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

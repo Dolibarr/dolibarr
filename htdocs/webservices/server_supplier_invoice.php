@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -69,6 +74,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrSupplierInvoice', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -152,6 +158,7 @@ $server->wsdl->addComplexType(
 		'ref_supplier' => array('name' => 'ref_supplier', 'type' => 'xsd:string'),
 		'fk_user_author' => array('name' => 'fk_user_author', 'type' => 'xsd:int'),
 		'fk_user_valid' => array('name' => 'fk_user_valid', 'type' => 'xsd:int'),
+		'fk_user_modif' => array('name' => 'fk_user_modif', 'type' => 'xsd:int'),
 		'fk_thirdparty' => array('name' => 'fk_thirdparty', 'type' => 'xsd:int'),
 		'date_creation' => array('name' => 'date_creation', 'type' => 'xsd:dateTime'),
 		'date_validation' => array('name' => 'date_validation', 'type' => 'xsd:dateTime'),
@@ -241,7 +248,7 @@ $server->register(
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
@@ -278,7 +285,7 @@ function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 				foreach ($invoice->lines as $line) {
 					//var_dump($line); exit;
 					$linesresp[] = array(
-						'id' => $line->rowid,
+						'id' => $line->id,
 						'type' => $line->product_type,
 						'total_net' => $line->total_ht,
 						'total_vat' => $line->total_tva,
@@ -297,16 +304,17 @@ function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 					'ref' => $invoice->ref,
 					'ref_supplier' => $invoice->ref_supplier,
 					'ref_ext' => $invoice->ref_ext,
-					'fk_user_author' => $invoice->fk_user_author,
-					'fk_user_valid' => $invoice->fk_user_valid,
-					'fk_thirdparty' => $invoice->fk_soc,
+					'fk_user_author' => $invoice->user_creation_id,
+					'fk_user_valid' => $invoice->user_validation_id,
+					'fk_user_modif' => $invoice->user_modification_id,
+					'fk_thirdparty' => $invoice->socid,
 					'type' => $invoice->type,
 					'status' => $invoice->status,
 					'total_net' => $invoice->total_ht,
 					'total_vat' => $invoice->total_tva,
 					'total' => $invoice->total_ttc,
-					'date_creation' => dol_print_date($invoice->datec, 'dayhourrfc'),
-					'date_modification' => dol_print_date($invoice->tms, 'dayhourrfc'),
+					'date_creation' => dol_print_date($invoice->date_creation, 'dayhourrfc'),
+					'date_modification' => dol_print_date($invoice->date_modification, 'dayhourrfc'),
 					'date_invoice' => dol_print_date($invoice->date, 'dayhourrfc'),
 					'date_term' => dol_print_date($invoice->date_echeance, 'dayhourrfc'),
 					'label' => $invoice->label,
@@ -346,7 +354,7 @@ function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 {
@@ -431,8 +439,8 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 					'total_net' => $invoice->total_ht,
 					'total_vat' => $invoice->total_tva,
 					'total' => $invoice->total_ttc,
-					'date_creation' => dol_print_date($invoice->datec, 'dayhourrfc'),
-					'date_modification' => dol_print_date($invoice->tms, 'dayhourrfc'),
+					'date_creation' => dol_print_date($invoice->date_creation, 'dayhourrfc'),
+					'date_modification' => dol_print_date($invoice->date_modification, 'dayhourrfc'),
 					'date_invoice' => dol_print_date($invoice->date, 'dayhourrfc'),
 					'date_term' => dol_print_date($invoice->date_echeance, 'dayhourrfc'),
 					'label' => $invoice->label,

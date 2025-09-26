@@ -2,13 +2,13 @@
 name: Win CI
 # yamllint disable-line rule:truthy
 on:
-  # push:
-  # pull_request:
+  # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:
       gh_event:
         required: true
         type: string
+  # can run job manually
   workflow_dispatch:
 
 concurrency:
@@ -35,7 +35,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -57,7 +57,7 @@ jobs:
         id: cache
         uses: actions/cache/restore@v4
         env:
-          HASH: ${{ hashFiles('htdocs/install/**') }}
+          HASH: ${{ hashFiles('htdocs/install/**', 'htdocs/filefunc.inc.php') }}
           KEY_ROOT: ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}
         with:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
@@ -72,7 +72,7 @@ jobs:
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.head_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.base_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-
-            ${{ env.KEY_ROOT }}-
+            # ${{ env.KEY_ROOT }}-
 
       - name: Setup MariaDB
         uses: frederic34/setup-mariadb@v1
@@ -165,7 +165,7 @@ jobs:
           for /f "tokens=2 delims==" %%A in ('doskey /m:err') do EXIT /B %%A
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.3.5
+        uses: mdeweerd/logToCheckStyle@v2025.1.1
         if: ${{ failure() }}
         with:
           in: ${{ env.PHPUNIT_LOG }}

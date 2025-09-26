@@ -2,6 +2,8 @@
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2020		Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
@@ -37,7 +47,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$TSelectedCats = GETPOST('categories', 'array');
+$TSelectedCats = GETPOST('categories', 'array:int');
 $socid = 0;
 
 $mesg = '';
@@ -68,7 +78,7 @@ if (GETPOST('startdatemonth')) {
 	$startdate = dol_mktime(0, 0, 0, GETPOSTINT('startdatemonth'), GETPOSTINT('startdateday'), GETPOSTINT('startdateyear'));
 }
 if (GETPOST('enddatemonth')) {
-	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
+	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOSTINT('enddateyear'));
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -117,11 +127,11 @@ print '<table class="border centpercent">';
 // Product
 print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'product').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All', 0, '', 0, '', null, 1);
+print img_picto('', 'product', 'class="pictofixedwidth"').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 1, 0, '', 0, '', null, 1);
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories('product', array(), '', 64, 0, 3);
+$TCats = $form->select_all_categories('product', 0, '', 64, 0, 3);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';
@@ -134,11 +144,11 @@ print '</tr>';
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
+print img_picto('', 'agenda', 'class="pictofixedwidth"').$form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
+print img_picto('', 'agenda', 'class="pictofixedwidth"').$form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -270,7 +280,7 @@ if ($result) {
 
 	$i = 0;
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable noborder nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if ($id > 0) {

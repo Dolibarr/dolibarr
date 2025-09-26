@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +55,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
 
@@ -62,16 +73,17 @@ $hookmanager->initHooks(array('newpayment'));
 global $dolibarr_main_url_root;
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $errmsg = '';
+$error = 0;
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -87,14 +99,14 @@ $listofvotes = explode(',', $_SESSION["savevotes"]);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 $project = new Project($db);
-$resultproject = $project->fetch($id);
+$resultproject = $project->fetch((int) $id);
 if ($resultproject < 0) {
 	$error++;
 	$errmsg .= $project->error;
 }
 
 // Security check
-if (empty($conf->eventorganization->enabled)) {
+if (!isModEnabled('eventorganization')) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
 
@@ -112,8 +124,8 @@ $listOfConferences .= '<td>'.$langs->trans('Note').'</td></tr>';
 
 $sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle as label
 		FROM ".MAIN_DB_PREFIX."actioncomm as a
-		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
-		WHERE a.status<2";
+		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action = ca.id)
+		WHERE a.status < 2";
 
 $sqlforconf = $sql." AND ca.module='conference@eventorganization'";
 //$sqlforbooth = $sql." AND ca.module='booth@eventorganization'";
@@ -163,10 +175,11 @@ while ($i < $db->num_rows($result)) {
 */
 
 // Get vote result
-$idvote = GETPOST("vote");
-$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'vote'.$idvote);
+$idvote = GETPOSTINT("vote");
+$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'vote'.$idvote);
 
-if (strlen($idvote)) {
+if ($idvote > 0) {
+	$votestatus = 'err';
 	if (in_array($hashedvote, $listofvotes)) {
 		// Has already voted
 		$votestatus = 'ko';
@@ -227,7 +240,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
+//print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print "\n";
 
 

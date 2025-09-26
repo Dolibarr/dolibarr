@@ -27,12 +27,17 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
-global $langs, $user;
-
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/bookcal.lib.php';
-//require_once "../class/myclass.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Translations
 $langs->loadLangs(array("admin", "agenda"));
@@ -72,6 +77,7 @@ $formSetup = new FormSetup($db);
 // Setup conf BOOKCAL_PUBLIC_INTERFACE_TOPIC
 $item = $formSetup->newItem('BOOKCAL_PUBLIC_INTERFACE_TOPIC');
 $item->defaultFieldValue = 'MyBigCompany public interface for Bookcal';
+$item->cssClass = 'minwidth300';
 
 $setupnotempty = + count($formSetup->items);
 
@@ -166,7 +172,7 @@ $page_name = "BookCalSetup";
 llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-admin_setup');
 
 // Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 

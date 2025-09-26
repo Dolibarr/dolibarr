@@ -8,8 +8,8 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
+$langs->loadLangs(array("admin", "sendings", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -55,6 +64,7 @@ $type = 'delivery';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -210,7 +220,8 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delivery');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
 print '<br>';
 $head = expedition_admin_prepare_head();
@@ -226,8 +237,8 @@ if (!getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print ' <a class="inline-block valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=disable_delivery&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 
-print '<br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
-print '<br>';
+print '<br><br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
+print '<br><br>';
 print '<br>';
 
 
@@ -291,7 +302,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 							print '</td>'."\n";
 
 							print '<td class="center">';
-							if ($conf->global->DELIVERY_ADDON_NUMBER == "$file") {
+							if (getDolGlobalString('DELIVERY_ADDON_NUMBER') == "$file") {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -318,7 +329,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 							}
 
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 0);
+							print $form->textwithpicto('', $htmltooltip, 1, 'info');
 							print '</td>';
 
 							print '</tr>';
@@ -446,7 +457,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").'</u>:';
 								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -454,7 +465,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -480,7 +491,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+	print '<td align="center" width="60"></td>';
 	print '<td width="80">&nbsp;</td>';
 	print "</tr>\n";
 

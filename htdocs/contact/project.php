@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		VIAL-GOUTEYRON Quentin		<quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +25,20 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 $langs->loadLangs(array("contacts", "companies", "projects"));
+
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $id = GETPOSTINT('id');
@@ -34,7 +46,10 @@ $id = GETPOSTINT('id');
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcontact'));
 
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+$object = new Project($db);
+
+restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
 
 /*
  *	Actions
@@ -46,6 +61,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+
 /*
  *	View
  */
@@ -53,9 +69,6 @@ if ($reshook < 0) {
 $form = new Form($db);
 
 if ($id) {
-	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
-
 	$object = new Contact($db);
 
 	$result = $object->fetch($id);

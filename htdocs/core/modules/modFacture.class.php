@@ -95,7 +95,7 @@ class modFacture extends DolibarrModules
 
 		$this->const[$r][0] = "FACTURE_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/invoices";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/invoices";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -120,12 +120,12 @@ class modFacture extends DolibarrModules
 				'objectname' => 'FactureRec',
 				'method' => 'createRecurringInvoices',
 				'parameters' => '',
-				'comment' => 'Generate recurring invoices',
+				'comment' => 'Generate recurring invoices.',
 				'frequency' => 1,
 				'unitfrequency' => 3600 * 24,
 				'priority' => 51,
 				'status' => 1,
-				'test' => '$conf->facture->enabled',
+				'test' => 'isModEnabled("invoice")',
 				'datestart' => $datestart
 			),
 			1 => array(
@@ -140,7 +140,7 @@ class modFacture extends DolibarrModules
 				'unitfrequency' => 3600 * 24,
 				'priority' => 50,
 				'status' => 0,
-				'test' => '$conf->facture->enabled',
+				'test' => 'isModEnabled("invoice")',
 				'datestart' => $datestart
 			),
 		);
@@ -513,7 +513,7 @@ class modFacture extends DolibarrModules
 		$this->export_permission[$r] = array(array("facture", "facture", "export", "other"));
 
 		$this->export_fields_array[$r] = array(
-			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 'cd.nom' => 'State',
+			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.name_alias' => 'AliasNameShort', 'ps.nom' => 'ParentCompany', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 'cd.nom' => 'State',
 			's.phone' => 'Phone',
 			's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4',
 			's.code_compta' => 'CustomerAccountancyCode',
@@ -585,7 +585,7 @@ class modFacture extends DolibarrModules
 		}
 
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid' => 'Numeric', 's.nom' => 'Text', 'ps.nom' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 'cd.nom' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text',
+			's.rowid' => 'Numeric', 's.nom' => 'Text', 's.name_alias' => 'Text', 'ps.nom' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 'cd.nom' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text',
 			's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
 			't.libelle' => "Text", // 'ce.code'=>"List:c_effectif:libelle:code", "cfj.libelle"=>"Text",
 			'f.rowid' => 'Numeric', 'f.ref' => "Text", 'f.ref_client' => 'Text', 'f.fk_facture_source' => 'Numeric', 'f.type' => "Numeric", 'f.datec' => "Date", 'f.datef' => "Date", 'f.date_lim_reglement' => "Date",
@@ -608,7 +608,7 @@ class modFacture extends DolibarrModules
 			'f.multicurrency_tx' => 'Number', 'f.multicurrency_total_ht' => 'Number', 'f.multicurrency_total_tva' => 'Number', 'f.multicurrency_total_ttc' => 'Number'
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid' => "company", 's.nom' => 'company', 'ps.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 'cd.nom' => 'company', 's.phone' => 'company',
+			's.rowid' => "company", 's.nom' => 'company', 's.name_alias' => 'company', 'ps.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 'cd.nom' => 'company', 's.phone' => 'company',
 			's.siren' => 'company', 's.siret' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.code_compta' => 'company', 's.code_compta_fournisseur' => 'company', 's.tva_intra' => 'company',
 			't.libelle' => 'company', // 'ce.code'=>'company', 'cfj.libelle'=>'company'
 			'pj.ref' => 'project', 'pj.title' => 'project', 'fd.rowid' => 'invoice_line', 'fd.description' => "invoice_line",
@@ -675,7 +675,7 @@ class modFacture extends DolibarrModules
 		$this->export_icon[$r] = 'invoice';
 		$this->export_permission[$r] = array(array("facture", "facture", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 'cd.nom' => 'State',
+			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.name_alias' => 'AliasNameShort', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 'cd.nom' => 'State',
 			's.phone' => 'Phone',
 			's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.code_compta' => 'CustomerAccountancyCode',
 			's.code_compta_fournisseur' => 'SupplierAccountancyCode', 's.tva_intra' => 'VATIntra',
@@ -710,7 +710,7 @@ class modFacture extends DolibarrModules
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid' => 'Numeric', 's.nom' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 'cd.nom' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text',
+			's.rowid' => 'Numeric', 's.nom' => 'Text', 's.name_alias' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'c.code' => 'Text', 'cd.nom' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text',
 			's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
 			'f.rowid' => "Numeric", 'f.ref' => "Text", 'f.ref_client' => 'Text', 'f.fk_facture_source' => 'Numeric', 'f.type' => "Numeric", 'f.datec' => "Date", 'f.datef' => "Date", 'f.date_lim_reglement' => "Date",
 			'f.fk_cond_reglement' => 'Numeric', 'f.fk_mode_reglement' => 'Numeric',
@@ -725,7 +725,7 @@ class modFacture extends DolibarrModules
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
 		$this->export_entities_array[$r] = array(
-			's.rowid' => "company", 's.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 'cd.nom' => 'company', 's.phone' => 'company',
+			's.rowid' => "company", 's.nom' => 'company', 's.name_alias' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'c.code' => 'company', 'cd.nom' => 'company', 's.phone' => 'company',
 			's.siren' => 'company', 's.siret' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.code_compta' => 'company', 's.code_compta_fournisseur' => 'company',
 			's.tva_intra' => 'company', 'pj.ref' => 'project', 'pj.title' => 'project', 'p.rowid' => 'payment', 'p.ref' => 'payment', 'p.amount' => 'payment', 'pf.amount' => 'payment', 'p.datep' => 'payment',
 			'p.num_paiement' => 'payment', 'pt.code' => 'payment', 'pt.libelle' => 'payment', 'p.note' => 'payment', 'f.fk_user_author' => 'user', 'uc.login' => 'user',
@@ -775,12 +775,14 @@ class modFacture extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$this->_load_tables('/install/mysql/', 'facture');
+
 		// Remove permissions and default values
 		$this->remove($options);
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/invoices';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/invoices';
 		$dest = $dirodt.'/template_invoice.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

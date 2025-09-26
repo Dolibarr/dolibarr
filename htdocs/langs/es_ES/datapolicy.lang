@@ -17,8 +17,10 @@ Module4100Name = Política de privacidad de datos
 Module4100Desc = Módulo para gestionar la Privacidad de los Datos (Conformidad con el RGPD)
 # Administration page
 datapolicySetup = Configuración del módulo de Política de Privacidad de Datos
-Deletion = Eliminación de datos
-datapolicySetupPage = Dependiendo de las leyes de sus países (Ejemplo <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artículo 5</a> del RGPD), los datos personales deben conservarse durante un período sin exceder el tiempo que los datos son necesarios para el propósito para el cual fueron recopilados, excepto para fines de archivo.<br>La eliminación se realizará automáticamente después de una cierta duración sin eventos (la duración que habrás indicado a continuación).
+DataDeletion=Eliminación de datos
+DataAnonymization=Anonimización de datos
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Dependiendo de las leyes de su país (Ejemplo <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artículo 5</a> del RGPD), los datos personales deben conservarse durante un período que no exceda la duración en la que los datos son necesarios para el propósito para el cual fueron recopilados, excepto para fines de archivo.<br>Este módulo realizará una anonimización automáticamente después de una cierta duración sin eventos (la duración que habrá indicado a continuación) y si el objeto no tiene hijos de objetos comerciales existentes.
 NB_MONTHS = %s meses
 ONE_YEAR = 1 año
 NB_YEARS = %s años
@@ -33,12 +35,15 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Cliente potencial/Cliente
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = No es cliente potencial/cliente
 DATAPOLICY_CONTACT_FOURNISSEUR = Proveedor
 DATAPOLICY_ADHERENT = Miembro
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Aplicacion
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
 SendAgreementText = Puede enviar un correo electrónico de GDPR a todos sus contactos relevantes (que aún no han recibido un correo electrónico y para los cuales no ha registrado nada sobre su acuerdo de GDPR). Para ello, utilice el siguiente botón.
 SendAgreement = Enviar correos electrónicos
 AllAgreementSend = Todos los correos electrónicos han sido enviados.
 TXTLINKDATAPOLICYACCEPT = Texto para el enlace "acuerdo"
 TXTLINKDATAPOLICYREFUSE = Texto para el enlace "desacuerdo"
+DelayForAnonymization=Retraso para la anonimización
+DelayForDeletion=Retraso para la eliminación
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = RGPD: Tratamiento de datos personales
 DATAPOLICY_consentement = Consentimiento obtenido para el tratamiento de datos personales
@@ -49,3 +54,5 @@ DATAPOLICY_date = Fecha de acuerdo/desacuerdo RGPD
 DATAPOLICY_send = Fecha de envío del correo electrónico del acuerdo
 MailSent = E-mail ha sido enviado
 NUMBER_MONTH_BEFORE_DELETION = Número de meses antes de la eliminación
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

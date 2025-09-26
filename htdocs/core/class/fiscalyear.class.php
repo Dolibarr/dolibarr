@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2014-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020       OScss-Shop          <support@oscss-shop.fr>
  * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,8 +119,6 @@ class Fiscalyear extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
-		$this->labelStatusShort = array(self::STATUS_OPEN => 'Opened', self::STATUS_CLOSED => 'Closed');
-		$this->labelStatus = array(self::STATUS_OPEN => 'Opened', self::STATUS_CLOSED => 'Closed');
 	}
 
 	/**
@@ -198,7 +196,7 @@ class Fiscalyear extends CommonObject
 		$sql .= " SET label = '".$this->db->escape($this->label)."'";
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= ", statut = '".$this->db->escape($this->status ? $this->status : 0)."'";
+		$sql .= ", statut = '".$this->db->escape($this->status ? (string) $this->status : '0')."'";
 		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -355,9 +353,9 @@ class Fiscalyear extends CommonObject
 		if (empty($notooltip) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("FiscalPeriod");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -406,11 +404,11 @@ class Fiscalyear extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("mymodule@mymodule");
-			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Disabled');
+
+			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('FiscalYearOpened');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('FiscalYearClosed');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('FiscalYearOpenedShort');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('FiscalYearClosedShort');
 		}
 
 		$statusType = 'status4';

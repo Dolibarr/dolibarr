@@ -1,13 +1,39 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
+include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 
 // When no photo, we show the login name, so we need an offset to output picto at a fixed position.
 $atoploginusername = empty($user->photo) ? 52 : 0;
 
+/**
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinepair1
+ * @var string $colortextbackhmenu
+ * @var string $colortextlink
+ * @var int<0,1> $disableimages
+ * @var string $left
+ * @var string $right
+ */
+'
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colortextbackhmenu
+@phan-var-force string $colortextlink
+@phan-var-force int<0,1> $disableimages
+@phan-var-force string $left
+@phan-var-force string $right
+';
+
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+$WIDTHMENUDROPDOWN = 370;
 ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */
@@ -41,7 +67,7 @@ div.login_block_tools > div {
 
 div#topmenu-login-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 20px;
+	<?php echo $right; ?>: 10px;
 	top: 0px;
 }
 
@@ -51,8 +77,9 @@ div#topmenu-login-dropdown {
 }
 
 #topmenu-global-search-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-login-dropdown .dropdown-menu {
-	min-width: 370px;
-	max-width: 400px;
+	min-width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
+	max-width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
+	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 }
 
 button.dropdown-item.global-search-item {
@@ -83,7 +110,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-bookmark {
@@ -106,7 +132,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-menu {
@@ -127,9 +152,8 @@ button.dropdown-item.global-search-item {
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	border: 1px solid #ccc;
-	border: 1px solid rgba(0,0,0,.15);
+	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
@@ -229,7 +253,7 @@ div#topmenu-login-dropdown {
 	<?php if ($disableimages) { ?>
 		line-height: 35px;
 	<?php } else { ?>
-		line-height: 46px;
+		line-height: 50px;
 	<?php } ?>
 }
 a.top-menu-dropdown-link {
@@ -250,9 +274,11 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: rgb(--colorbackhmenu1);
+	/*background: var(--colorbackhmenu1);
+	color: var(--colortextbackhmenu);*/
+	background: #f9f9f9;
+	color: #000;
 }
-
 
 
 .dropdown-menu .dropdown-header{
@@ -369,14 +395,11 @@ a.dropdown-item {
 	user-select: none;
 	background-image: none;
 	border: 1px solid transparent;
-	border-radius: 4px;
+	border-radius: <?php echo $borderradius; ?>px;
 }
 
 .user-footer .button-top-menu-dropdown {
 	color: #666666;
-	border-radius: 0;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	border-width: 1px;
 	background-color: #f4f4f4;
@@ -385,8 +408,6 @@ a.dropdown-item {
 
 .dropdown-menu a.top-menu-dropdown-link {
 	color: rgb(<?php print $colortextlink; ?>) !important;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	display: block;
 	margin: 5px 0px;
@@ -403,9 +424,6 @@ a.dropdown-item {
 	text-align: inherit;
 	background-color: transparent;
 	border: 0;
-
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 }
 
@@ -448,6 +466,7 @@ li.liinputsearch {
 	display: block;
 	top: 0;
 	background: var(--colorbackbody);
+	z-index: 1;
 }
 
 
@@ -475,7 +494,8 @@ li.liinputsearch {
 	background-repeat: no-repeat;
 	background-size: 16px 16px;
 	background-position: 95% center;
-	border-radius: 50px;
+	border-radius: <?php print $borderradius; ?>px;
+
 	border: 1px solid #c4c4c2 !important;
 	transition: all 250ms ease-in-out;
 	backface-visibility: hidden;
@@ -483,23 +503,6 @@ li.liinputsearch {
 
 }
 
-.search-dropdown-body {
-	padding: unset;
-}
-
-.global-search-item {
-	font-size: 1.1em;
-	padding-top: 8px;
-	padding-bottom: 8px;
-}
-
-.global-search-item:before {
-	content: none;
-}
-
-.global-search-header {
-	color: #444 !important;
-}
 
 
 /*
@@ -513,6 +516,8 @@ li.liinputsearch {
 
 .quickadd-body.dropdown-body {
 	padding: unset;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .quickadd-item {
@@ -579,7 +584,7 @@ div.quickaddblock:focus {
 .dropdown-content {
 	display: none;
 	position: absolute;
-	z-index: 1;
+	z-index: 5;
 	width: 300px;
 	right:0;
 	bottom: 0;
@@ -588,7 +593,6 @@ div.quickaddblock:focus {
 	background: #fff;
 	border: 1px solid #bbb;
 	text-align: <?php echo $left; ?>;
-	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 }
 
@@ -682,6 +686,7 @@ div.quickaddblock:focus {
 {
 	div.login_block {
 		top: unset;
+		border-right: 1px solid rgba(0, 0, 0, 0.3)
 	}
 
 	.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {
@@ -702,6 +707,10 @@ div.quickaddblock:focus {
 		color: var(--colortextbackvmenu);
 	}
 
+	.dropdown-menu:not(.ai_dropdown) {
+		border: none;
+		box-shadow: none;
+	}
 
 	#topmenu-global-search-dropdown a.login-dropdown-a,
 	#topmenu-quickadd-dropdown a.login-dropdown-a,

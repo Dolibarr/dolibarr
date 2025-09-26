@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'fckeditor', 'errors'));
 
@@ -107,18 +116,15 @@ foreach ($modules as $const => $desc) {
 	}
 }
 
+if (GETPOST('action') == 'enable_specialchar') {
+	dolibarr_set_const($db, "FCKEDITOR_ENABLE_SPECIALCHAR", "1", 'chaine', 0, '', $conf->entity);
+}
+if (GETPOST('action') == 'disable_specialchar') {
+	dolibarr_del_const($db, "FCKEDITOR_ENABLE_SPECIALCHAR", $conf->entity);
+}
+
 if (GETPOST('save', 'alpha')) {
 	$error = 0;
-
-	$fckeditor_skin = GETPOST('fckeditor_skin', 'alpha');
-	if (!empty($fckeditor_skin)) {
-		$result = dolibarr_set_const($db, 'FCKEDITOR_SKIN', $fckeditor_skin, 'chaine', 0, '', $conf->entity);
-		if ($result <= 0) {
-			$error++;
-		}
-	} else {
-		$error++;
-	}
 
 	$fckeditor_test = GETPOST('formtestfield', 'restricthtml');
 	if (!empty($fckeditor_test)) {
@@ -146,7 +152,8 @@ if (GETPOST('save', 'alpha')) {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-fckeditor');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("AdvancedEditor"), $linkback, 'title_setup');
 print '<br>';
 
@@ -204,7 +211,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<td class="center"></td>';
 	print "</tr>\n";
 
-	$constante = 'FCKEDITOR_ENANLE_SPECIALCHAR';
+	$constante = 'FCKEDITOR_ENABLE_SPECIALCHAR';
 	print '<!-- constant = '.$constante.' -->'."\n";
 	print '<tr class="oddeven">';
 	print '<td>';
@@ -213,9 +220,9 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<td class="center width100">';
 	$value = getDolGlobalInt($constante, 0);
 	if ($value == 0) {
-		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_specialchar&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	} elseif ($value == 1) {
-		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_specialchar&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 	}
 
 	print "</td>";

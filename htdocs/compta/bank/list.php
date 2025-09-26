@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -46,6 +46,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
 
@@ -53,7 +61,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bankaccountlist'; // To manage different context of search
 $mode = GETPOST('mode', 'aZ');
 
@@ -111,25 +119,24 @@ $fieldstosearchall = array(
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => 1, 'position' => 10),
-	'b.label' => array('label' => $langs->trans("Label"), 'checked' => 1, 'position' => 12),
-	'accountype' => array('label' => $langs->trans("Type"), 'checked' => 1, 'position' => 14),
-	'b.number' => array('label' => $langs->trans("AccountIdShort"), 'checked' => 1, 'position' => 16),
-	'b.account_number' => array('label' => $langs->trans("AccountAccounting"), 'checked' => (isModEnabled('accounting')), 'position' => 18),
-	'b.fk_accountancy_journal' => array('label' => $langs->trans("AccountancyJournal"), 'checked' => (isModEnabled('accounting')), 'position' => 20),
-	'toreconcile' => array('label' => $langs->trans("TransactionsToConciliate"), 'checked' => 1, 'position' => 50),
-	'b.currency_code' => array('label' => $langs->trans("Currency"), 'checked' => 0, 'position' => 22),
-	'b.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'b.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'b.clos' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 1010),
+	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => '1', 'position' => 10),
+	'b.label' => array('label' => $langs->trans("Label"), 'checked' => '1', 'position' => 12),
+	'accountype' => array('label' => $langs->trans("Type"), 'checked' => '1', 'position' => 14),
+	'b.number' => array('label' => $langs->trans("AccountIdShort"), 'checked' => '1', 'position' => 16),
+	'b.account_number' => array('label' => $langs->trans("AccountAccounting"), 'checked' => (string) (int) (isModEnabled('accounting')), 'position' => 18),
+	'b.fk_accountancy_journal' => array('label' => $langs->trans("AccountancyJournal"), 'checked' => (string) (int) (isModEnabled('accounting')), 'position' => 20),
+	'toreconcile' => array('label' => $langs->trans("TransactionsToConciliate"), 'checked' => '1', 'position' => 50),
+	'b.currency_code' => array('label' => $langs->trans("Currency"), 'checked' => '0', 'position' => 22),
+	'b.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'b.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'b.clos' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'balance' => array('label' => $langs->trans("Balance"), 'checked' => '1', 'position' => 1010),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 $permissiontodelete = $user->hasRight('banque', 'configurer');
@@ -281,7 +288,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -775,13 +782,13 @@ foreach ($accounts as $key => $type) {
 				if (is_numeric($result) && $result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				} else {
-					print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
+					print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.((int) $objecttmp->id).'&search_account='.((int) $objecttmp->id).'&search_conciliated=0&contextpage=banktransactionlist">';
 					print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
 					print $result->nbtodo;
 					print '</span>';
 					print '</a>';
 					if ($result->nbtodolate) {
-						print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
+						print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-warning marginleftonlyshort">';
 						print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
 						print '</span>';
 					}

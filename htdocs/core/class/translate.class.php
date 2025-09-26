@@ -2,7 +2,8 @@
 /* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
  * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,12 +159,12 @@ class Translate
 		if (!empty($langpart[1])) {	// If it's for a codetouse that is a long code xx_YY
 			// Array force long code from first part, even if long code is defined
 			$longforshort = array('ar' => 'ar_SA');
-			$longforshortexcep = array('ar_EG');
+			$longforshortexcep = array('ar_DZ', 'ar_EG', 'ar_IQ', 'ar_JO', 'ar_SY');
 			if (isset($longforshort[strtolower($langpart[0])]) && !in_array($codetouse, $longforshortexcep)) {
 				$srclang = $longforshort[strtolower($langpart[0])];
 			} elseif (!is_numeric($langpart[1])) {		// Second part YY may be a numeric with some Chrome browser
 				$srclang = strtolower($langpart[0]) . "_" . strtoupper($langpart[1]);
-				$longforlong = array('no_nb' => 'nb_NO');
+				$longforlong = array('no_nb' => 'nb_NO');	// When lang and code are inverted by browser
 				if (isset($longforlong[strtolower($srclang)])) {
 					$srclang = $longforlong[strtolower($srclang)];
 				}
@@ -255,7 +256,7 @@ class Translate
 	 */
 	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0, $forceloadifalreadynotfound = 0, &$tabtranslatedomain = [], $langkey = '')
 	{
-		global $conf, $db;
+		global $db;
 
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
@@ -481,8 +482,6 @@ class Translate
 	 */
 	public function loadFromDatabase($db)
 	{
-		global $conf;
-
 		$domain = 'database';
 
 		// Check parameters
@@ -525,14 +524,11 @@ class Translate
 
 		if ($usecachekey) {
 			//dol_syslog('Translate::Load we will cache result into usecachekey '.$usecachekey);
-			//global $aaa; $aaa+=1;
-			//print $aaa." ".$usecachekey."\n";
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 			$tmparray = dol_getcache($usecachekey);
 			if (is_array($tmparray) && count($tmparray)) {
 				$this->tab_translate += $tmparray; // Faster than array_merge($tmparray,$this->tab_translate). Note: If a value already exists into tab_translate, value into tmparaay is not added.
 				//print $newdomain."\n";
-				//var_dump($this->tab_translate);
 				$fileread = 1;
 				$found = true; // Found in dolibarr PHP cache
 			}
@@ -628,17 +624,17 @@ class Translate
 
 		$newstr = $key;
 		$reg = array();
-		if (preg_match('/^Civility([0-9A-Z]+)$/i', $key, $reg)) {
+		if (preg_match('/^Civility([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_civility', 'code', 'label');
 		} elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_currencies', 'code_iso', 'label');
-		} elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^SendingMethod([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_shipment_mode', 'code', 'libelle');
-		} elseif (preg_match('/^PaymentType(?:Short)?([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^PaymentType(?:Short)?([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_paiement', 'code', 'libelle', '', 1);
-		} elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^OppStatus([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_lead_status', 'code', 'label');
-		} elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^OrderSource([0-9A-Z_]+)$/i', $key, $reg)) {
 			// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
 			//$newstr=$this->getLabelFromKey($db,$reg[1],'llx_c_input_reason','code','label');
 		}
@@ -658,13 +654,13 @@ class Translate
 	 *  If there is no match for this text, we look in alternative file and if still not found, it is returned as it is.
 	 *  The parameters of this method should not contain HTML tags. If there is, they will be htmlencoded to have no effect.
 	 *
-	 *  @param	string		$key        Key to translate
-	 *  @param  string|int	$param1     param1 string
-	 *  @param  string|int	$param2     param2 string
-	 *  @param  string|int	$param3     param3 string
-	 *  @param  string|int	$param4     param4 string
-	 *	@param	int		$maxsize	Max length of text. Warning: Will not work if paramX has HTML content. deprecated.
-	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
+	 *  @param	string				$key        Key to translate
+	 *  @param  string|float|int	$param1     param1 string
+	 *  @param  string|float|int	$param2     param2 string
+	 *  @param  string|float|int	$param3     param3 string
+	 *  @param  string|float|int	$param4     param4 string
+	 *	@param	int					$maxsize	Max length of text. Warning: Will not work if paramX has HTML content. deprecated.
+	 *  @return string      					Translated string (encoded into HTML entities and UTF8)
 	 */
 	public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0)
 	{
@@ -681,22 +677,29 @@ class Translate
 				}
 			}
 
-			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
-			// we want to keep '"' '<b>' '</b>' '<strong' '</strong>' '<a ' '</a>' '<br>' '< ' '<span' '</span>' that are reliable HTML tags inside translation strings.
-			$str = str_replace(
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
-				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
-				$str
-			);
+
+			$str = preg_replace('/([^%])%([^%0sdmYIMpHSBb])/', '\1__percent_with_bad_specifier__\2', $str);
 
 			if (strpos($key, 'Format') !== 0) {
 				try {
 					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+					// Note: the catch ValueError is possible only when php min will be 8.1
 				} catch (Exception $e) {
 					// No exception managed
 				}
 			}
+
+			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
+
+
+			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
+			// we want to keep '"' '<b>' '</b>' '<u>' '</u>' '<i>' '</i>' '<center> '</center>' '<strong' '</strong>' '<a ' '</a>' '<br>' '<span' '</span>' '< ' that are reliable HTML tags inside translation strings.
+			$str = str_replace(
+				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
+				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
+				$str
+			);
 
 			// Encode string into HTML
 			$str = htmlentities($str, ENT_COMPAT, $this->charset_output); // Do not convert simple quotes in translation (strings in html are embraced by "). Use dol_escape_htmltag around text in HTML content
@@ -704,7 +707,7 @@ class Translate
 			// Restore reliable HTML tags into original translation string
 			$str = str_replace(
 				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
+				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
 				$str
 			);
 
@@ -758,10 +761,28 @@ class Translate
 	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string
 	 */
+	public function tr($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
+	{
+		return $this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4, $param5);
+	}
+
+	/**
+	 *  Return translated value of a text string. Alias of tr() for backward compatibility.
+	 * 				 If there is no match for this text, we look in alternative file and if still not found,
+	 * 				 it is returned as is.
+	 *               No conversion to encoding charset of lang object is done.
+	 *               Parameters of this method must not contains any HTML tags.
+	 *
+	 *  @param	string	$key        Key to translate
+	 *  @param  string	$param1     chaine de param1
+	 *  @param  string	$param2     chaine de param2
+	 *  @param  string	$param3     chaine de param3
+	 *  @param  string	$param4     chaine de param4
+	 *  @param  string	$param5     chaine de param5
+	 *  @return string      		Translated string
+	 */
 	public function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
 	{
-		global $conf;
-
 		if (!empty($this->tab_translate[$key])) {	// Translation is available
 			$str = $this->tab_translate[$key];
 
@@ -775,11 +796,19 @@ class Translate
 				}
 			}
 
-			if (!preg_match('/^Format/', $key)) {
-				//print $str;
-				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-				$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
+			$str = preg_replace('/([^%])%([^%0sdmYIMpHSBb])/', '\1__percent_with_bad_specifier__\2', $str);
+
+			if (strpos($key, 'Format') !== 0) {
+				try {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
+					$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
+					// Note: the catch ValueError is possible only when php min will be 8.1
+				} catch (Exception $e) {
+					// No exception managed.
+				}
 			}
+
+			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
 
 			// Remove dangerous sequence we should never have. Not needed into a translated response.
 			// %27 is entity code for ' and is replaced by browser automatically when translation is inside a javascript code called by a click like on a href link.

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,14 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
@@ -95,7 +103,7 @@ if (empty($action) && empty($object->id)) {
 	accessforbidden('Object not found');
 }
 
-$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 //$permissiontoread = $user->hasRight('maling', 'read');
 $permissiontocreate = $user->hasRight('mailing', 'creer');
@@ -145,7 +153,7 @@ if (empty($reshook)) {
 		if (!GETPOST("clone_content", 'alpha') && !GETPOST("clone_receivers", 'alpha')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
-			$result = $object->createFromClone($user, $object->id, GETPOST("clone_content", 'alpha'), GETPOST("clone_receivers", 'alpha'));
+			$result = $object->createFromClone($user, $object->id, GETPOST("clone_content") ? 1 : 0, GETPOST("clone_receivers") ? 1 : 0);
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 				exit;
@@ -249,15 +257,6 @@ if (empty($reshook)) {
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray['__ID__'] = $obj->source_id;
-						if ($obj->source_type == "thirdparty") {
-							$result = $thirdpartystatic->fetch($obj->source_id);
-
-							if ($result > 0) {
-								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
-							} else {
-								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = '';
-							}
-						}
 						$substitutionarray['__EMAIL__'] = $obj->email;
 						$substitutionarray['__LASTNAME__'] = $obj->lastname;
 						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;
@@ -267,6 +266,16 @@ if (empty($reshook)) {
 						$substitutionarray['__OTHER3__'] = $other3;
 						$substitutionarray['__OTHER4__'] = $other4;
 						$substitutionarray['__OTHER5__'] = $other5;
+
+						if ($obj->source_type == "thirdparty") {
+							$result = $thirdpartystatic->fetch($obj->source_id);
+							if ($result > 0) {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
+							} else {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = '';
+							}
+						}
+
 						$substitutionarray['__USER_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
 						$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
 						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($obj->tag).'&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY').'-'.$obj->tag.'-'.$obj->email.'-'.$obj->rowid, "md5").'&email='.urlencode($obj->email).'&mtid='.((int) $obj->rowid).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
@@ -428,7 +437,7 @@ if (empty($reshook)) {
 							dol_syslog("comm/mailing/card.php: error for #".$iforemailloop.($mail->error ? ' - '.$mail->error : ''), LOG_WARNING);
 
 							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sql .= " SET statut=-1, error_text='".$db->escape(substr($mail->error, 0, 255))."', date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
+							$sql .= " SET statut=-1, error_text='".$db->escape(dol_trunc($mail->error, 250))."', date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
 							$resql2 = $db->query($sql);
 							if (!$resql2) {
 								dol_print_error($db);
@@ -444,14 +453,14 @@ if (empty($reshook)) {
 				// Loop finished, set global statut of mail
 				if ($nbko > 0) {
 					$statut = 2; // Status 'sent partially' (because at least one error)
-					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
+					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", (string) $nbok), null, 'mesgs');
 				} else {
 					if ($nbok >= $num) {
 						$statut = 3; // Send to everybody
 					} else {
 						$statut = 2; // Status 'sent partially' (because not send to everybody)
 					}
-					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
+					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", (string) $nbok), null, 'mesgs');
 				}
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid = ".((int) $object->id);
@@ -473,7 +482,7 @@ if (empty($reshook)) {
 	if ($action == 'send' && ! $cancel && $permissiontovalidatesend) {
 		$error = 0;
 
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		$object->sendto = GETPOST("sendto", 'alphawithlgt');
 		if (!$object->sendto) {
@@ -556,7 +565,7 @@ if (empty($reshook)) {
 		$object->email_replyto  = (string) GETPOST("replyto", 'alphawithlgt'); // Must allow 'name <email>'
 		$object->email_errorsto = (string) GETPOST("errorsto", 'alphawithlgt'); // Must allow 'name <email>'
 		$object->title          = (string) GETPOST("title");
-		$object->sujet          = (string) GETPOST("sujet");
+		$object->sujet          = (string) GETPOST("subject");
 		$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 		$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
 		$object->bgimage        = (string) GETPOST("bgimage");
@@ -586,7 +595,7 @@ if (empty($reshook)) {
 
 	// Action update description of emailing
 	if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail_replyto' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontovalidatesend) {
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		if ($action == 'settitle') {					// Test on permission already done
 			$object->title = trim(GETPOST('title', 'alpha'));
@@ -621,7 +630,7 @@ if (empty($reshook)) {
 	 * Action of adding a file in email form
 	 */
 	if (GETPOST('addfile') && $permissiontocreate) {
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -632,18 +641,18 @@ if (empty($reshook)) {
 	}
 
 	// Action of file remove
-	if (GETPOST("removedfile") && $permissiontocreate) {
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+	if (GETPOSTINT("removedfile") && $permissiontocreate) {
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		dol_remove_file_process(GETPOST('removedfile'), 0, 0); // We really delete file linked to mailing
+		dol_remove_file_process(GETPOSTINT('removedfile'), 0, 0); // We really delete file linked to mailing
 
 		$action = "edit";
 	}
 
 	// Action of emailing update
-	if ($action == 'update' && !GETPOST("removedfile") && !$cancel && $permissiontocreate) {
+	if ($action == 'update' && !GETPOSTINT("removedfile") && !$cancel && $permissiontocreate) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$isupload = 0;
@@ -652,7 +661,7 @@ if (empty($reshook)) {
 			$mesgs = array();
 
 			//$object->messtype       = (string) GETPOST("messtype");	// We must not be able to change the messtype
-			$object->sujet          = (string) GETPOST("sujet");
+			$object->sujet          = (string) GETPOST("subject");
 			$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 			$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
 			$object->bgimage        = (string) GETPOST("bgimage");
@@ -784,14 +793,14 @@ if ($action == 'create') {	// aaa
 	$htmltext .= '</span></i>';
 
 
-	$availablelink = $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
+	$availablelink = $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
 	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 
 
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	print dol_get_fiche_head(array(), '', '', -4, '', 0, '', '');
+	print dol_get_fiche_head(array(), '', '', -3, '', 0, '', 'noborderbottom');
 
 	print '<table class="border centpercent">';
 
@@ -823,17 +832,21 @@ if ($action == 'create') {	// aaa
 	}
 	print '</table>';
 
-	print '<br><br>';
+	print '<br>';
 
 	print '<table class="border centpercent">';
 
-	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.(GETPOSTISSET('from') ? GETPOST('from') : getDolGlobalString('MAILING_EMAIL_FROM')).'"></td></tr>';
+	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailFrom").'</td>';
+	print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').'<input class="flat minwidth200" name="from" value="'.(GETPOSTISSET('from') ? GETPOST('from') : getDolGlobalString('MAILING_EMAIL_FROM')).'"></td></tr>';
 
-	print '<tr class="fieldsforsms hidden"><td class="fieldrequired titlefieldcreate">'.$langs->trans("PhoneFrom").'</td><td><input class="flat minwidth200" name="fromphone" value="'.(GETPOSTISSET('fromphone') ? GETPOST('fromphone') : getDolGlobalString('MAILING_SMS_FROM')).'" placeholder="+123..."></td></tr>';
+	print '<tr class="fieldsforsms hidden"><td class="fieldrequired titlefieldcreate">'.$langs->trans("PhoneFrom").'</td>';
+	print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').'<input class="flat minwidth200" name="fromphone" value="'.(GETPOSTISSET('fromphone') ? GETPOST('fromphone') : getDolGlobalString('MAILING_SMS_FROM')).'" placeholder="+123..."></td></tr>';
 
-	print '<tr class="fieldsforemail"><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.getDolGlobalString('MAILING_EMAIL_ERRORSTO', getDolGlobalString('MAIN_MAIL_ERRORS_TO')).'"></td></tr>';
+	print '<tr class="fieldsforemail"><td>'.$langs->trans("MailErrorsTo").'</td>';
+	print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').'<input class="flat minwidth200" name="errorsto" value="'.getDolGlobalString('MAILING_EMAIL_ERRORSTO', getDolGlobalString('MAIN_MAIL_ERRORS_TO')).'"></td></tr>';
 
-	print '<tr class="fieldsforemail"><td>'.$langs->trans("MailReply").'</td><td><input class="flat minwidth200" name="replyto" value="'.getDolGlobalString('MAILING_EMAIL_REPLYTO', getDolGlobalString('MAIN_MAIL_REPLY_TO')).'"></td></tr>';
+	print '<tr class="fieldsforemail"><td>'.$langs->trans("MailReply").'</td>';
+	print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').'<input class="flat minwidth200" name="replyto" value="'.getDolGlobalString('MAILING_EMAIL_REPLYTO', getDolGlobalString('MAIN_MAIL_REPLY_TO')).'"></td></tr>';
 
 	// Other attributes
 	$parameters = array();
@@ -844,10 +857,14 @@ if ($action == 'create') {	// aaa
 	}
 
 	print '</table>';
-	print '<br><br>';
+
+	print '<br>';
 
 	print '<table class="border centpercent">';
-	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input id="sujet" class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
+
+	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td>';
+	print '<td><input id="subject" class="flat minwidth200 quatrevingtpercent" name="subject" id="subject" value="'.dol_escape_htmltag(GETPOST('subject', 'alphanohtml')).'"></td></tr>';
+
 	print '<tr class="fieldsforemail"><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
 	print '</td></tr>';
@@ -859,7 +876,7 @@ if ($action == 'create') {	// aaa
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop"></td></tr>';
 
-	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
+	print '<tr class="fieldsforemail"><td class="tdtop" colspan="2">';
 
 	$out = '';
 	$showlinktolayout = ($formmail->withfckeditor ? $formmail->withlayout : '');
@@ -881,7 +898,7 @@ if ($action == 'create') {	// aaa
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '90%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 	$doleditor->Create();
 	print '</div>';
 
@@ -892,7 +909,7 @@ if ($action == 'create') {	// aaa
 	print '</form>';
 } else {
 	if ($object->id > 0) {
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		$head = emailing_prepare_head($object);
 
@@ -911,7 +928,7 @@ if ($action == 'create') {	// aaa
 		}
 
 		if ($action != 'edit' && $action != 'edittxt' && $action != 'edithtml') {
-			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, $object->picto);
 
 			// View mode mailing
 			if ($action == 'sendall') {
@@ -997,7 +1014,7 @@ if ($action == 'create') {	// aaa
 
 			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
-			if ($object->status == 2 || $object->status == 3) {
+			if ($object->status == $object::STATUS_SENTPARTIALY || $object->status == $object::STATUS_SENTCOMPLETELY) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
@@ -1013,44 +1030,48 @@ if ($action == 'create') {	// aaa
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
+
 			print '<table class="border centpercent tableforfield">'."\n";
 
 			// From
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
-			$email = CMailFile::getValidAddress($object->email_from, 2);
-			if ($email && !isValidEmail($email)) {
-				$langs->load("errors");
-				print img_warning($langs->trans("ErrorBadEMail", $email));
-			} elseif ($email && !isValidMailDomain($email)) {
-				$langs->load("errors");
-				print img_warning($langs->trans("ErrorBadMXDomain", $email));
+			if ($action != 'editemail_from') {
+				$email = CMailFile::getValidAddress($object->email_from, 2);
+				if ($email && !isValidEmail($email)) {
+					$langs->load("errors");
+					print img_warning($langs->trans("ErrorBadEMail", $email));
+				} elseif ($email && !isValidMailDomain($email)) {
+					$langs->load("errors");
+					print img_warning($langs->trans("ErrorBadMXDomain", $email));
+				}
 			}
-
 			print '</td></tr>';
 
 			// Errors to
 			if ($object->messtype != 'sms') {
 				print '<tr><td>';
-				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 				print '</td><td>';
 				print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
 				foreach ($emailarray as $email => $name) {
 					if ($name != $email) {
-						print dol_escape_htmltag($name).' &lt;'.$email;
-						print '&gt;';
-						if ($email && !isValidEmail($email)) {
-							$langs->load("errors");
-							print img_warning($langs->trans("ErrorBadEMail", $email));
-						} elseif ($email && !isValidMailDomain($email)) {
-							$langs->load("errors");
-							print img_warning($langs->trans("ErrorBadMXDomain", $email));
+						if ($action != 'editemail_errorsto') {
+							if ($email && !isValidEmail($email)) {
+								$langs->load("errors");
+								print img_warning($langs->trans("ErrorBadEMail", $email));
+							} elseif ($email && !isValidMailDomain($email)) {
+								$langs->load("errors");
+								print img_warning($langs->trans("ErrorBadMXDomain", $email));
+							}
 						}
 					} else {
-						print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+						if ($object->email_errorsto) {
+							print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+						}
 					}
 				}
 				print '</td></tr>';
@@ -1059,7 +1080,7 @@ if ($action == 'create') {	// aaa
 			// Reply to
 			if ($object->messtype != 'sms') {
 				print '<tr><td>';
-				print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+				print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 				print '</td><td>';
 				print $form->editfieldval("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				$email = CMailFile::getValidAddress($object->email_replyto, 2);
@@ -1089,19 +1110,19 @@ if ($action == 'create') {	// aaa
 			print '</td><td>';
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
-				$text = '';
+				$htmltooltip = '';
 				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
+						$htmltooltip .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
-						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
+						$htmltooltip .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
 				}
 				if (empty($nbemail)) {
 					$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 				}
-				if ($text) {
-					print $form->textwithpicto($nbemail, $text, 1, 'warning');
+				if ($htmltooltip) {
+					print $form->textwithpicto($nbemail, $htmltooltip, 1, 'info');
 				} else {
 					print $nbemail;
 				}
@@ -1166,7 +1187,7 @@ if ($action == 'create') {	// aaa
 				}
 
 				if (($object->status == 0 || $object->status == 1 || $object->status == 2) && $user->hasRight('mailing', 'creer')) {
-					if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_MAILING') && $object->messtype != 'sms') {
+					if (isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_MAILING') && $object->messtype != 'sms') {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edittxt&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';
@@ -1316,12 +1337,12 @@ if ($action == 'create') {	// aaa
 			print '</table>';
 
 			// Message
-			print '<div style="padding-top: 10px; background: '.($object->bgcolor ? (preg_match('/^#/', $object->bgcolor) ? '' : '#').$object->bgcolor : 'white').'">';
+			print '<div class="previewemail" style="padding-top: 10px; background: '.($object->bgcolor ? (preg_match('/^#/', $object->bgcolor) ? '' : '#').$object->bgcolor : 'white').'">';
 			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff') {	// CKEditor does not apply the color of the div into its content area
 				$readonly = 1;
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, true, !getDolGlobalString('FCKEDITOR_ENABLE_MAILING') ? 0 : 1, 20, '90%', $readonly);
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%', $readonly);
 				$doleditor->Create();
 			} else {
 				print dol_htmlentitiesbr($object->body);
@@ -1334,7 +1355,7 @@ if ($action == 'create') {	// aaa
 			 * Edition mode mailing (CKeditor or HTML source)
 			 */
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, $object->picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1397,19 +1418,20 @@ if ($action == 'create') {	// aaa
 			print '</td><td>';
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
-				$text = '';
-				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->status == 1 || $object->status == 2)) {
+				$htmltooltip = '';
+				// MAILING_LIMIT_SENDBYWEB can be 'default'
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || $object->status == 2)) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
+						$htmltooltip .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
-						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
+						$htmltooltip .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
 				}
 				if (empty($nbemail)) {
 					$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 				}
-				if ($text) {
-					print $form->textwithpicto($nbemail, $text, 1, 'warning');
+				if ($htmltooltip) {
+					print $form->textwithpicto($nbemail, $htmltooltip, 1, 'warning');
 				} else {
 					print $nbemail;
 				}
@@ -1477,8 +1499,8 @@ if ($action == 'create') {	// aaa
 			// Subject
 			if ($object->messtype != 'sms') {
 				print '<tr><td class="fieldrequired titlefield">';
-				print $langs->trans("MailTopic");
-				print '</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';
+				print $form->textwithpicto($langs->trans("MailTopic"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp');
+				print '</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" id="subject" name="subject" value="'.$object->sujet.'"></td></tr>';
 			}
 
 			$trackid = ''; // TODO To avoid conflicts with 2 mass emailing, we should set a trackid here, even if we use another one into email header.
@@ -1531,6 +1553,33 @@ if ($action == 'create') {	// aaa
 				print '</td></tr>';
 			}
 
+
+			// Add editor assistants
+			$out = '';
+			$out .= '<tr>';
+			$out .= '<td class="tdtop">';
+			$out .= $form->textwithpicto($langs->trans('MailText'), $htmltext, 1, 'help', '', 0, 2, 'substittooltipfrombody');
+			$out .= '</td>';
+			$out .= '<td class="tdtop">';
+
+			//$formmail = $this;
+			$showlinktolayout = getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? 'emailing' : '';
+			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+			$showlinktoai = isModEnabled('ai') ? 'textgenerationemail' : '';
+			$showlinktoailabel = $langs->trans("AIEnhancements");
+			$formatforouput = '';
+			$htmlname = 'bodyemail';
+			//$formai->substit = $this->substit;
+			//$formai->substit_lines = $this->substit_lines;
+
+			// Fill $out
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+			$out .= '</td>';
+			$out .= '</tr>';
+
+			print $out;
+
 			print '</table>';
 
 
@@ -1540,24 +1589,28 @@ if ($action == 'create') {	// aaa
 			if ($action == 'edit') {
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '90%');
+				if ($object->bgcolor) {
+					if (!preg_match('/^<div style="background-color: #'.$object->bgcolor.'">/', $object->body)) {
+						$object->body = '<div style="background-color: #'.$object->bgcolor.'; margin-bottom:-20px; margin-left:-10px; margin-right:-10px; margin-top:-10px; padding: 10px;">'.$object->body.'</div>';
+					}
+				}
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 				$doleditor->Create();
 			}
 			if ($action == 'edittxt') {
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, 0, 20, '90%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, 0, 20, '100%');
 				$doleditor->Create();
 			}
 			if ($action == 'edithtml') {
 				// HTML source editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, 'ace', 20, '90%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, 'ace', 20, '100%');
 				$doleditor->Create(0, '', false, 'HTML Source', 'php');
 			}
 
 			print '</div>';
-
 
 			print dol_get_fiche_end();
 
