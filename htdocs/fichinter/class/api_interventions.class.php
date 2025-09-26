@@ -605,8 +605,6 @@ class Interventions extends DolibarrApi
 	 * @param int $id ID of the interventional
 	 * @param int $lineid ID of the line to delete
 	 * @return  Object						Object with cleaned properties
-	 * @phan-return AccountLine[]
-	 * @phpstan-return AccountLine[]
 	 *
 	 * @throws RestException
 	 *
@@ -624,10 +622,10 @@ class Interventions extends DolibarrApi
 		}
 
 		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Interventional not in Draft Status : '.$this->interventional->getLibStatut(1));
+			throw new RestException(403, 'Interventional not in Draft Status : '.$this->fichinter->getLibStatut(1));
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->interventional->id)) {
+		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -731,7 +729,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(404, 'Interventional not found');
 		}
 
-		return $this->_cleanObjectDatas($this->interventional);
+		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
 		/**
