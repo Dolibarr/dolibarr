@@ -76,7 +76,9 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 
 			//see #21072: Update a public note with a "document model not found" is not really a problem : the PDF is not created/updated
 			//but the note is saved, so just add a notification will be enough
+
 			$resultGenDoc = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
 			if ($resultGenDoc < 0) {
 				setEventMessages($object->error, $object->errors, 'warnings');
 			}

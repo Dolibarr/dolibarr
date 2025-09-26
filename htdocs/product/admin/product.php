@@ -303,7 +303,7 @@ if (!isModEnabled("product")) {
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = product_admin_prepare_head();
@@ -324,8 +324,10 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td class="center"></td>';
+print '  <td class="center" width="60"></td>';
 print "</tr>\n";
+
+$arrayofmodules = array();
 
 foreach ($dirproduct as $dirroot) {
 	$dir = dol_buildpath($dirroot, 0);
@@ -354,40 +356,47 @@ foreach ($dirproduct as $dirroot) {
 					continue;
 				}
 
-				print '<tr class="oddeven">'."\n";
-				print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
-				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
-				print '<td class="nowrap"><span class="opacitymedium">'.$modCodeProduct->getExample($langs).'</span></td>'."\n";
-
-				if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') == $file) {
-					print '<td class="center">'."\n";
-					print img_picto($langs->trans("Activated"), 'switch_on');
-					print "</td>\n";
-				} else {
-					$disabled = false;
-					// if (!(isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] == $conf->entity)))) {
-					// }
-					print '<td class="center">';
-					if (!$disabled) {
-						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&token='.newToken().'&value='.urlencode($file).'">';
-					}
-					print img_picto($langs->trans("Disabled"), 'switch_off');
-					if (!$disabled) {
-						print '</a>';
-					}
-					print '</td>';
-				}
-
-				print '<td class="center">';
-				$s = $modCodeProduct->getToolTip($langs, '', -1);
-				print $form->textwithpicto('', $s, 1);
-				print '</td>';
-
-				print '</tr>';
+				$arrayofmodules[$file] = $modCodeProduct;
 			}
 		}
 		closedir($handle);
 	}
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+'@phan-var-force array<string,ModeleProductCode> $arrayofmodules';
+
+foreach ($arrayofmodules as $file => $modCodeProduct) {
+	print '<tr class="oddeven">'."\n";
+	print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
+	print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
+	print '<td class="nowrap"><span class="opacitymedium">'.$modCodeProduct->getExample($langs).'</span></td>'."\n";
+
+	if (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') == $file) {
+		print '<td class="center">'."\n";
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print "</td>\n";
+	} else {
+		$disabled = false;
+		// if (!(isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] == $conf->entity)))) {
+		// }
+		print '<td class="center">';
+		if (!$disabled) {
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&token='.newToken().'&value='.urlencode($file).'">';
+		}
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		if (!$disabled) {
+			print '</a>';
+		}
+		print '</td>';
+	}
+
+	print '<td class="center">';
+	$s = $modCodeProduct->getToolTip($langs, '', -1);
+	print $form->textwithpicto('', $s, 1);
+	print '</td>';
+
+	print '</tr>';
 }
 print '</table>';
 print '</div>';

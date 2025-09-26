@@ -26,49 +26,54 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1);
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', 1);
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	if (!defined('NOREQUIRESOC')) {
+		define('NOREQUIRESOC', '1');
+	}
+	if (!defined('NOCSRFCHECK')) {
+		define('NOCSRFCHECK', 1);
+	}
+	if (!defined('NOTOKENRENEWAL')) {
+		define('NOTOKENRENEWAL', 1);
+	}
+	if (!defined('NOLOGIN')) {
+		define('NOLOGIN', 1);
+	}
+	if (!defined('NOREQUIREMENU')) {
+		define('NOREQUIREMENU', 1);
+	}
+	if (!defined('NOREQUIREHTML')) {
+		define('NOREQUIREHTML', 1);
+	}
+	if (!defined('NOREQUIREAJAX')) {
+		define('NOREQUIREAJAX', '1');
+	}
 
-session_cache_limiter('public');
+	session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+	require_once '../../main.inc.php';
+}
 /**
  * @var Conf $conf
  * @var Translate $langs
+ *
+ * @var string $dolibarr_nocache
  */
 
-/*
+
+/**
  * View
  */
-
-// Define javascript type
-top_httphead('text/javascript; charset=UTF-8');
-// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	// Define javascript type
+	top_httphead('text/javascript; charset=UTF-8');
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	if (empty($dolibarr_nocache)) {
+		header('Cache-Control: max-age=10800, public, must-revalidate');
+	} else {
+		header('Cache-Control: no-cache');
+	}
 }
-
 
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
@@ -1083,14 +1088,20 @@ function document_preview(file, type, title)
 				console.log("Object width is small, we set width of popup according to image width.");
 				popupWidth = object_width + 50
 			}
-			popupHeight = $( window ).height() * 0.90 - 100;
+			if (popupWidth < 250) {	/* Set a minimal width because we need to have neough space for the buttons */
+				popupWidth = 250;
+			}
+
+			popupHeight = $( window ).height() * 0.90 - 160;
 			console.log("object_height="+object_height+" popup window height="+popupHeight);
-			if (object_height < (popupHeight - 100)) {
+			if (object_height < (popupHeight - 160)) {
 				console.log("Object height is small, we set height of popup according to image height.");
-				popupHeight = object_height + 100
+				popupHeight = object_height + 160
 			} else {
 				showOriginalSizeButton = true;
 			}
+
+			console.log("popupWidth="+popupWidth+" popupHeight="+popupHeight);
 
 			show_preview('image');
 
@@ -1108,7 +1119,7 @@ function document_preview(file, type, title)
 			var savMaxHeight = 0;
 			optionsbuttons = {
 				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>': function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
-				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>': function() { $( this ).dialog( "close" ); }
+				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindowShort")); ?>': function() { $( this ).dialog( "close" ); }
 				};
 			if (showOriginalSizeButton) {
 				optionsbuttons = {
@@ -1693,5 +1704,94 @@ function onKanbanColumnChange(item, newColumn) {
 	item.data('original-column', newColumn);
 }
 
+/*
+* Intuitive table selection
+*/
+$(function() {
+
+	/**
+	 * @param {jQuery}  el
+	 * @param {Integer}  status
+	 */
+	let setLastClickedRowStatus = function (el, status = 1){
+		$('.row-with-select').attr('data-is-last-changed', 0);
+		el.attr('data-is-last-changed', status === 0 ? 0 : 1);
+	}
+
+	/**
+	 * Remove data-is-last-changed on double click
+	 * Because if data-is-last-changed is present the user can't select text
+	 */
+	$(document).on("dblclick", ".row-with-select", function(e) {
+		$('.row-with-select[data-is-last-changed]').removeAttr( 'data-is-last-changed' );
+	});
+
+	/**
+	 * DISABLE on click a and button
+	 * Because Ctrl + Click on link is also used for open ion a new tab
+	 * we need to block select tool
+	 */
+	$(document).on("click", ".row-with-select a, .row-with-select button", function (e) {
+		// we need to block select tool
+		if (e.ctrlKey) {
+			e.stopPropagation();
+		}
+	});
+
+	$(document).on("mousedown click", ".row-with-select input.checkforselect", function (e) {
+		// Prevents automatic change of “checked”
+		e.preventDefault();
+		e.stopPropagation(); // parent click trigger will be done below
+
+		let parentRow = $(this).closest(".row-with-select");
+
+		// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
+		// We simulate a click on the parent line
+		parentRow.trigger({
+			type: "click",
+			ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+			metaKey: !e.shiftKey, // simulate metaKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+			shiftKey: e.shiftKey,
+			originalEvent: e
+		});
+
+	});
+
+	$(document).on("click", ".row-with-select", function (e) {
+		let checkBox = $(this).find('.checkforselect');
+		let nextCheckStatus = !checkBox.is(':checked')
+
+		if (e.ctrlKey || e.metaKey) {
+			// Add line to selection
+			if(checkBox){
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+			}
+			setLastClickedRowStatus($(this), 1);
+		}
+
+		if (e.shiftKey) {
+			let lastLastChanged = $(this).closest('table').find('.row-with-select[data-is-last-changed="1"]');
+
+			if(lastLastChanged.length>0){
+				// Add all lines to selection betwin last selected line
+				if($(this).index() === lastLastChanged.index()) {
+					return null;
+				}
+
+				if($(this).index() < lastLastChanged.index()) {
+					$(this).nextUntil(lastLastChanged, ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				}else{
+					lastLastChanged.nextUntil($(this), ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				}
+
+
+				lastLastChanged.find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+
+				setLastClickedRowStatus($(this), 1);
+			}
+		}
+	});
+});
 
 // End of lib_head.js.php

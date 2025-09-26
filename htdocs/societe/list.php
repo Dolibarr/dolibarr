@@ -35,12 +35,20 @@
 /**
  *	\file       htdocs/societe/list.php
  *	\ingroup    societe
- *	\brief      Page to show list of third parties
+ *	\brief      Page to list all third parties
  */
 
 // Load Dolibarr environment
 require_once '../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -51,14 +59,6 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
@@ -68,7 +68,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 $optioncss = GETPOST('optioncss', 'alpha');
 if ($contextpage == 'poslist') {
@@ -76,7 +76,7 @@ if ($contextpage == 'poslist') {
 }
 $mode = GETPOST("mode", 'alpha');
 
-// search fields
+// Search fields
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
@@ -125,11 +125,11 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 	$searchCategorySupplierOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array:int');
 if (!empty($search_categ_cus) && empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerList = array($search_categ_cus);
 }
-$searchCategorySupplierList = GETPOST('search_category_supplier_list', 'array');
+$searchCategorySupplierList = GETPOST('search_category_supplier_list', 'array:int');
 if (!empty($search_categ_sup) && empty($searchCategorySupplierList)) {
 	$searchCategorySupplierList = array($search_categ_sup);
 }
@@ -807,8 +807,11 @@ if (strlen($search_vat)) {
 	$sql .= natural_search("s.tva_intra", $search_vat);
 }
 // Filter on type of thirdparty
-if ($search_type > 0 && in_array($search_type, array('1,3', '1,2,3', '2,3'))) {
-	$sql .= " AND s.client IN (".$db->sanitize($search_type).")";
+$reshook = $hookmanager->executeHooks('filterType', array('search_type' => $search_type), $sql);
+if (empty($reshook)) {
+	if ($search_type > 0 && in_array($search_type, array('1,3', '1,2,3', '2,3'))) {
+		$sql .= " AND s.client IN (".$db->sanitize($search_type).")";
+	}
 }
 if ($search_type > 0 && in_array($search_type, array('4'))) {
 	$sql .= " AND s.fournisseur = 1";
@@ -865,23 +868,29 @@ if ($search_date_modif_start) {
 if ($search_date_modif_end) {
 	$sql .= " AND s.tms <= '".$db->idate($search_date_modif_end)."'";
 }
+if ($socid) {
+	$sql .= " AND s.rowid = ".((int) $socid);
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
-$parameters = array('socid' => $socid);
+$parameters = array('socid' => $socid, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
-	if ($socid) {
-		$sql .= " AND s.rowid = ".((int) $socid);
-	}
+	$sql .= $hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
 }
-$sql .= $hookmanager->resPrint;
 
 // Add GroupBy from hooks
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= $hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -1567,7 +1576,10 @@ if (!empty($arrayfields['customerorsupplier']['checked'])) {
 	if ($type != '') {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 	}
-	print $formcompany->selectProspectCustomerType($search_type, 'search_type', 'search_type', 'list');
+	$reshook = $hookmanager->executeHooks('selectProspectCustomerType', array('client_type' => $search_type));
+	if (empty($reshook)) {
+		print $formcompany->selectProspectCustomerType($search_type, 'search_type', 'search_type', 'list');
+	}
 	print '</td>';
 }
 // Prospect level
@@ -1626,14 +1638,14 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Note public
 if (!empty($arrayfields['s.note_public']['checked'])) {
-	// Note public
 	print '<td class="liste_titre">';
 	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
 	print '</td>';
 }
+// Note private
 if (!empty($arrayfields['s.note_private']['checked'])) {
-	// Note private
 	print '<td class="liste_titre">';
 	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
 	print '</td>';
@@ -2248,7 +2260,10 @@ while ($i < $imaxinloop) {
 		// Nature
 		if (!empty($arrayfields['customerorsupplier']['checked'])) {
 			print '<td class="center">';
-			print $companystatic->getTypeUrl(1);
+			$reshook = $hookmanager->executeHooks('getTypeUrl', array('client_type' => $obj->client));
+			if (empty($reshook)) {
+				print $companystatic->getTypeUrl(1);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

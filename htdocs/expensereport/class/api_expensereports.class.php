@@ -215,7 +215,7 @@ class ExpenseReports extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 
 		// Check mandatory fields
@@ -568,7 +568,7 @@ class ExpenseReports extends DolibarrApi
 	public function validate($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
@@ -586,8 +586,6 @@ class ExpenseReports extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->error);
 		}
-
-		$this->expensereport->fetchObjectLinked();
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
@@ -615,7 +613,7 @@ class ExpenseReports extends DolibarrApi
 	public function approve($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
@@ -633,8 +631,6 @@ class ExpenseReports extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
 		}
-
-		$this->expensereport->fetchObjectLinked();
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
@@ -663,7 +659,7 @@ class ExpenseReports extends DolibarrApi
 	public function deny($id, $details, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
@@ -682,7 +678,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->error);
 		}
 
-		$this->expensereport->fetchObjectLinked();
+
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}

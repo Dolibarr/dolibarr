@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2011-2023  Philippe Grand	        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013       Florian Henry	        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,12 @@ class Delivery extends CommonObject
 	public $element = "delivery";
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'DELIVERY';
+
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = "fk_delivery";
@@ -79,12 +85,12 @@ class Delivery extends CommonObject
 	public $draft;
 
 	/**
-	 * @var int thirdparty id
+	 * @var ?int thirdparty id
 	 */
 	public $socid;
 
 	/**
-	 * @var string ref customer
+	 * @var ?string ref customer
 	 */
 	public $ref_customer;
 
@@ -156,8 +162,8 @@ class Delivery extends CommonObject
 		}
 
 		$error = 0;
-
 		$now = dol_now();
+		$this->ref_customer = trim((string) $this->ref_customer);
 
 		/* Delivery note as draft On positionne en mode draft le bon de livraison */
 		$this->draft = 1;
@@ -196,6 +202,7 @@ class Delivery extends CommonObject
 		$sql .= ")";
 
 		dol_syslog("Delivery::create", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."delivery");
@@ -354,6 +361,7 @@ class Delivery extends CommonObject
 				$this->note_public          = $obj->note_public;
 				$this->model_pdf            = $obj->model_pdf;
 				$this->origin               = $obj->origin; // May be 'shipping'
+				$this->origin_type          = $obj->origin; // May be 'shipping'
 				$this->origin_id            = $obj->origin_id; // May be id of shipping
 
 				//Incoterms
@@ -403,6 +411,11 @@ class Delivery extends CommonObject
 
 		dol_syslog(get_class($this)."::valid begin");
 
+		if (!isset($this->socid)) {
+			dol_syslog(get_class($this)."::can't valid socid not set", LOG_WARNING);
+			return 0;
+		}
+
 		$this->db->begin();
 
 		$error = 0;
@@ -421,13 +434,14 @@ class Delivery extends CommonObject
 					// Retrieving the new reference
 					$objMod = new $modName($this->db);
 					'@phan-var-force ModeleNumRefDeliveryOrder $objMod';
+					/** @var ModeleNumRefDeliveryOrder $objMod */
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 						$numref = $objMod->getNextValue($soc, $this);
 					} else {
-						$numref = $this->ref;
+						$numref = (string) $this->ref;
 					}
 					$this->newref = dol_sanitizeFileName($numref);
 
@@ -447,9 +461,12 @@ class Delivery extends CommonObject
 					}
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."delivery SET";
-					$sql .= " ref='".$this->db->escape($numref)."'";
+					$sql .= " ref = '".$this->db->escape($numref)."'";
 					$sql .= ", fk_statut = 1";
 					$sql .= ", date_valid = '".$this->db->idate($now)."'";
+					if (!empty($this->date_delivery)) {
+						$sql .= ", date_delivery = '".$this->db->idate($this->date_delivery)."'";
+					}
 					$sql .= ", fk_user_valid = ".((int) $user->id);
 					$sql .= " WHERE rowid = ".((int) $this->id);
 					$sql .= " AND fk_statut = 0";
@@ -581,7 +598,7 @@ class Delivery extends CommonObject
 		$this->note_private         = $expedition->note_private;
 		$this->note_public          = $expedition->note_public;
 		$this->fk_project           = $expedition->fk_project;
-		$this->date_delivery        = $expedition->date_delivery;
+		$this->date_delivery        = '';									// Date of real reception. The Expedition->date_delivery is the planned one.
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
 		$this->ref_customer         = $expedition->ref_customer;
@@ -757,7 +774,7 @@ class Delivery extends CommonObject
 	{
 		global $langs;
 
-		$langs->load('deliveries');
+		$langs->load('sendings');
 
 		$datas = [];
 
@@ -1120,9 +1137,9 @@ class Delivery extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
-		$langs->load("deliveries");
+		$langs->load("sendings");
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {

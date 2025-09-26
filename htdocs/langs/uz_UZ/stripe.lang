@@ -77,9 +77,10 @@ ClickHereToTryAgain= <a href="%s"> Qayta urinish uchun shu erni bosing ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Kuchli mijozlarni autentifikatsiya qilish qoidalariga ko'ra, kartani yaratish Stripe orqa ofisidan amalga oshirilishi kerak. Stripe mijozlar rekordini yoqish uchun shu yerni bosing: %s
 STRIPE_CARD_PRESENT=Stripe terminallari uchun karta sovg'asi
 TERMINAL_LOCATION=Stripe terminallari uchun joy (manzil).
-RequestDirectDebitWithStripe=Stripe bilan to'g'ridan-to'g'ri debetni talab qiling
-RequesCreditTransferWithStripe=Stripe bilan kredit o'tkazmasini talab qiling
-STRIPE_SEPA_DIRECT_DEBIT=Stripe orqali to'g'ridan-to'g'ri debet to'lovlarini yoqing
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Klarna yordamida to'lovlarni yoqing
 STRIPE_BANCONTACT=BANCONTACT yordamida to'lovlarni yoqing
 STRIPE_IDEAL=IDEAL yordamida toʻlovlarni yoqing

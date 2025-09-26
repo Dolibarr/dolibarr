@@ -63,10 +63,11 @@ $cancel = GETPOST('cancel', 'alpha');
 $projectid = GETPOSTINT('projectid');
 
 // Security check
+/*
 $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
-}
+} */
 $hookmanager->initHooks(array('loancard', 'globalcard'));
 $result = restrictedArea($user, 'loan', $id, '', '');
 
@@ -291,8 +292,6 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewLoan"), '', 'money-bill-alt');
 
-	$datec = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-
 	print '<form name="loan" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -348,7 +347,7 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject = $formproject->select_projects(-1, (string) $projectid, 'projectid', 16, 0, 1, 1);
+		$formproject->select_projects(-1, (string) $projectid, 'projectid', 16, 0, 1, 1);
 
 		print '</td></tr>';
 	}
@@ -684,8 +683,6 @@ if ($id > 0) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$total_insurance = 0;
-			$total_interest = 0;
 			$total_capital = 0;
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

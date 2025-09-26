@@ -52,7 +52,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check - Protection if external user
 // if ($user->socid > 0) accessforbidden();
 // if ($user->socid > 0) $socid = $user->socid;
-// $result = restrictedArea($user, 'bom', $id);
+// restrictedArea($user, 'bom', $id);
 
 // Load variables for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -124,7 +124,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = bomPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, $object->picto);
 
 
 	// Build file list

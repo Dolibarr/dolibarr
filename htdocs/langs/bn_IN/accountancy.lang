@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=নিম্নলিখিত ক্রিয়�
 AccountancyAreaDescActionOnceBis=অ্যাকাউন্টিংয়ে ডেটা স্থানান্তর করার সময় আপনাকে স্বয়ংক্রিয়ভাবে সঠিক ডিফল্ট অ্যাকাউন্টিং অ্যাকাউন্টের পরামর্শ দিয়ে ভবিষ্যতে আপনার সময় বাঁচাতে পরবর্তী পদক্ষেপগুলি করা উচিত
 AccountancyAreaDescActionFreq=নিম্নলিখিত ক্রিয়াগুলি সাধারণত খুব বড় কোম্পানিগুলির জন্য প্রতি মাসে, সপ্তাহে বা দিনে সম্পাদিত হয়...
 AccountancyAreaDescJournalSetup=ধাপ %s: মেনু %s থেকে আপনার জার্নাল তালিকার বিষয়বস্তু পরীক্ষা করুন
-AccountancyAreaDescChartModel=ধাপ %s: চেক করুন যে অ্যাকাউন্টের চার্টের একটি মডেল বিদ্যমান আছে বা মেনু থেকে একটি তৈরি করুন %s
+AccountancyAreaDescChartModel=STEP %s: আপনার দেশের জন্য অ্যাকাউন্ট চার্টের একটি মডেল বিদ্যমান কিনা তা পরীক্ষা করুন অথবা মেনু থেকে একটি তৈরি করুন %s
 AccountancyAreaDescChart=ধাপ %s: নির্বাচন করুন এবং|অথবা মেনু %s থেকে আপনার অ্যাকাউন্টের চার্ট সম্পূর্ণ করুন
 AccountancyAreaDescFiscalPeriod=STEP %s: অ্যাকাউন্টিং এন্ট্রি তৈরির জন্য গৃহীত তারিখের পরিসর নির্ধারণ করে এমন আর্থিক সময়কাল নির্ধারণ করুন। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
 AccountancyAreaDescVat=ধাপ %s: প্রতিটি ভ্যাট হারের জন্য অ্যাকাউন্টিং অ্যাকাউন্ট সংজ্ঞায়িত করুন। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=অ্যাকাউন্ট (চার্ট অ�
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) সদস্যতা সদস্যতা নিবন্ধন করতে ব্যবহার করা হবে (সদস্য মডিউল - যদি সদস্যতা চালান ছাড়া রেকর্ড করা হয়)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=গ্রাহক আমানত নিবন্ধন করার জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে)
 UseAuxiliaryAccountOnCustomerDeposit=ডাউন পেমেন্টের লাইনের জন্য সাবসিডিয়ারি লেজারে পৃথক অ্যাকাউন্ট হিসাবে গ্রাহক অ্যাকাউন্ট সংরক্ষণ করুন (অক্ষম থাকলে, ডাউন পেমেন্ট লাইনের জন্য পৃথক অ্যাকাউন্ট খালি থাকবে)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) ডিফল্ট হিসাবে ব্যবহার করতে হবে
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=ডাউন পেমেন্ট লাইনের জন্য সাবসিডিয়ারি লেজারে পৃথক অ্যাকাউন্ট হিসাবে সরবরাহকারীর অ্যাকাউন্ট সংরক্ষণ করুন (অক্ষম থাকলে, ডাউন পেমেন্ট লাইনের জন্য পৃথক অ্যাকাউন্ট খালি থাকবে)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=গ্রাহক ধরে রাখা ওয়ারেন্টি নিবন্ধন করার জন্য ডিফল্টরূপে অ্যাকাউন্টিং অ্যাকাউন্ট
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) একই দেশের মধ্যে কেনা পণ্যগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (প্রোডাক্ট শীটে সংজ্ঞায়িত না থাকলে ব্যবহার করা হয়)
@@ -275,9 +275,10 @@ HideOpeningBalance=খোলার ব্যালেন্স লুকান
 ShowSubtotalByGroup=স্তর অনুসারে সাবটোটাল দেখান
 Pcgtype=অ্যাকাউন্টের গ্রুপ
 PcgtypeDesc=অ্যাকাউন্টের গ্রুপ কিছু অ্যাকাউন্টিং রিপোর্টের জন্য পূর্বনির্ধারিত 'ফিল্টার' এবং 'গ্রুপিং' মানদণ্ড হিসাবে ব্যবহৃত হয়। উদাহরণস্বরূপ, 'আয়' বা 'ব্যয়' ব্যয়/আয় প্রতিবেদন তৈরি করার জন্য পণ্যের অ্যাকাউন্টিং অ্যাকাউন্টের জন্য গ্রুপ হিসাবে ব্যবহৃত হয়।
-AccountingCategoriesDesc=ফিল্টার ব্যবহার বা কাস্টম রিপোর্ট তৈরি করা সহজ করার জন্য অ্যাকাউন্টের কাস্টম গ্রুপ অ্যাকাউন্টিং অ্যাকাউন্টগুলিকে একটি নামে গ্রুপ করতে ব্যবহার করা যেতে পারে।
+AccountingCategoriesDesc=ফিল্টার ব্যবহার বা কাস্টম রিপোর্ট তৈরি সহজ করার জন্য অ্যাকাউন্টিং অ্যাকাউন্টগুলিকে একটি নামে গোষ্ঠীভুক্ত করার জন্য কাস্টম অ্যাকাউন্ট গ্রুপ ব্যবহার করা যেতে পারে।
 Reconcilable=মিলনযোগ্য
 Centralized=কেন্দ্রীভূত অ্যাকাউন্ট
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=ট্যাক্সের আগে মোট টার্নওভার
 TotalMarge=মোট বিক্রয় মার্জিন
 DescVentilCustomer=এখানে অ্যাকাউন্টের চার্ট থেকে একটি পণ্য অ্যাকাউন্টে আবদ্ধ (বা না) গ্রাহক চালান লাইনের তালিকা দেখুন
@@ -319,7 +320,7 @@ NotReconciled=মিটমাট হয়নি
 WarningRecordWithoutSubledgerAreExcluded=সতর্কতা, সাবলেজার অ্যাকাউন্ট ছাড়া সমস্ত লাইন এই ভিউ থেকে ফিল্টার করা এবং বাদ দেওয়া হয়েছে
 AccountRemovedFromCurrentChartOfAccount=অ্যাকাউন্টিং অ্যাকাউন্ট যা অ্যাকাউন্টের বর্তমান চার্টে বিদ্যমান নেই
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=সতর্কতা, এই পৃষ্ঠায় শুধুমাত্র অ্যাকাউন্টিং সিস্টেমে স্থানান্তরিত এন্ট্রি রয়েছে।
-BookkeepingNumRefModelDesc = yyyyjjnnnn ফর্ম্যাটে রেফারেন্স নম্বরটি প্রদান করে যেখানে yyyy হল বছর এবং jj হল জার্নাল কোড, nnnn হল বছর এবং জার্নাল কোডের উপর নির্ভর করে একটি ক্রমিক স্বয়ংক্রিয়-বৃদ্ধিকারী সংখ্যা।
+BookkeepingNumRefModelDesc = yymmjjnnnn বিন্যাসে রেফারেন্স নম্বরটি প্রদান করে যেখানে yy হল বছর, mm হল মাস এবং jj হল জার্নাল কোড, nnnnn হল বছর, মাস এবং জার্নাল কোডের উপর নির্ভর করে একটি ক্রমিক স্বয়ংক্রিয়-বৃদ্ধিকারী সংখ্যা।
 BookkeepingNumberingModules = হিসাবরক্ষণ সংখ্যায়ন মডেল
 ## Admin
 BindingOptions=হিসাববিজ্ঞানে স্থানান্তরের বিকল্পগুলি
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=সরবরাহকারী ক্
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=সাবসিডিয়ারি লেজার দেখতে তৃতীয় পক্ষের কার্ডগুলিতে একটি ট্যাব সক্রিয় করুন
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=এই বিকল্পটি সক্রিয় থাকলে, তৃতীয় পক্ষের কার্ডগুলিতে একটি নতুন ট্যাব প্রদর্শিত হবে যেখানে তৃতীয় পক্ষের অ্যাকাউন্টিং দেখতে এবং পরিচালনা করতে হবে যাতে তারা সমন্বয়, মুদ্রণ এবং আরও অনেক কিছু করতে পারে।
+
 ## Export
 NotExportLettering=ফাইল তৈরি করার সময় অক্ষর রপ্তানি করবেন না
 NotifiedExportDate=রপ্তানি করা <span class="warning"> হিসাবে এখনও রপ্তানি হয়নি লাইনগুলিকে ফ্ল্যাগ করুন (রপ্তানি করা হিসাবে পতাকাঙ্কিত একটি লাইন সংশোধন করতে, আপনাকে পুরো লেনদেনটি মুছে ফেলতে হবে এবং অ্যাকাউন্টিংয়ে পুনরায় স্থানান্তর করতে হবে)</span>
@@ -389,6 +391,7 @@ Modelcsv_Gestinumv5=Gestinum (v5) এর জন্য রপ্তানি ক�
 Modelcsv_charlemagne=অ্যাপলিম শার্লেমেনের জন্য রপ্তানি করুন
 ChartofaccountsId=অ্যাকাউন্টস আইডির চার্ট
 ExportToPdf = PDF এ রপ্তানি করুন
+ExportToCsv = CSV তে রপ্তানি করুন
 PdfLedgerTitle = লেজার অ্যাকাউন্ট
 PdfBalanceTitle = লেজার ব্যালেন্স
 PdfBookkeepingTitle = জার্নাল
@@ -440,7 +443,7 @@ AccountRemovedFromGroup=গ্রুপ থেকে অ্যাকাউন্
 SaleLocal=স্থানীয় বিক্রয়
 SaleExport=রপ্তানি বিক্রয়
 SaleEEC=ইইসি-তে বিক্রয়
-SaleEECWithVAT=বিক্রয়টি EEC-তে ভ্যাট ছাড়াই করা হয়েছে, তাই আমরা ধরে নিচ্ছি এটি কোনও আন্তঃসামাজিক বিক্রয় নয় এবং প্রস্তাবিত অ্যাকাউন্টটি হল স্ট্যান্ডার্ড পণ্য অ্যাকাউন্ট।
+SaleEECWithVAT=বিক্রয়টি EEC-তে ভ্যাট ছাড়াই করা হয়েছে, তাই আমরা ধরে নিচ্ছি এটি কোনও আন্তঃ-সম্প্রদায়িক বিক্রয় নয় এবং প্রস্তাবিত অ্যাকাউন্টটি হল স্ট্যান্ডার্ড পণ্য অ্যাকাউন্ট।
 SaleEECWithoutVATNumber=বিক্রয় EEC তে কোন ভ্যাট ছাড়াই করা হচ্ছে কিন্তু তৃতীয় পক্ষের ভ্যাট আইডি সংজ্ঞায়িত করা হয়নি। আমরা স্ট্যান্ডার্ড বিক্রয়ের জন্য অ্যাকাউন্টের উপর নির্ভর করি। আপনি তৃতীয় পক্ষের ভ্যাট আইডি ঠিক করতে পারেন, অথবা প্রয়োজনে বাইন্ডিংয়ের জন্য প্রস্তাবিত পণ্য অ্যাকাউন্ট পরিবর্তন করতে পারেন।
 AnySale=যেকোনো বিক্রয়
 ForbiddenTransactionAlreadyExported=নিষিদ্ধ: লেনদেন বৈধ করা হয়েছে এবং/অথবা রপ্তানি করা হয়েছে।
@@ -485,7 +488,7 @@ AccountancyClosureConfirmClose=আপনি কি নিশ্চিত আপ�
 AccountancyClosureConfirmAccountingReversal=আপনি কি "রক্ষিত উপার্জন" এর জন্য এন্ট্রি রেকর্ড করার বিষয়ে নিশ্চিত?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=সেটআপের কিছু বাধ্যতামূলক পদক্ষেপ করা হয়নি, অনুগ্রহ করে সেগুলি সম্পূর্ণ করুন৷
@@ -508,7 +511,7 @@ ErrorNoFiscalPeriodActiveFound=কোনও সক্রিয় আর্থ�
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=বুককিপিং ডক তারিখ সক্রিয় আর্থিক সময়ের মধ্যে নেই
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=বুককিপিং ডক তারিখ একটি বন্ধ আর্থিক সময়ের মধ্যে আছে
 Error_BOOKKEEPING_ADDON_NotDefined=ত্রুটি, হিসাবরক্ষণ নম্বর রেফারেন্সের নিয়মটি হিসাবরক্ষণ মডিউলের সাধারণ সেটআপে সংজ্ঞায়িত করা হয়নি।
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=%s (পেমেন্ট আইডি: %s) বইতে একটি অ-ভারসাম্য লেনদেন সন্নিবেশ করার চেষ্টা করুন। বাতিল করা হয়েছে। অবশ্যই একটি ত্রুটি।
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=আপনি %s (পেমেন্ট আইডি: %s) বইতে একটি ভারসাম্যহীন লেনদেন সন্নিবেশ করার চেষ্টা করেছিলেন। পদক্ষেপ বাতিল করা হয়েছে।
 ProductUsage=পণ্য বা পরিষেবার ব্যবহার
 ## Import
 ImportAccountingEntries=অ্যাকাউন্টিং এন্ট্রি
@@ -537,15 +540,15 @@ ExpenseReportJournal=খরচ রিপোর্ট জার্নাল
 DocsAlreadyExportedAreIncluded=ইতিমধ্যে রপ্তানি করা নথি অন্তর্ভুক্ত করা হয়েছে৷
 ClickToShowAlreadyExportedLines=ইতিমধ্যে রপ্তানি করা লাইন দেখাতে ক্লিক করুন
 NAccounts=%s অ্যাকাউন্ট
-ACCOUNTING_USE_TREASURY_Desc=এটি ট্রেজারি অ্যাকাউন্টেন্সির পদ্ধতি। আমরা অ্যাকাউন্টেন্সি করার জন্য শুধুমাত্র পেমেন্ট এবং তাদের তারিখ ব্যবহার করছি।
-ACCOUNTING_USE_NON_TREASURY_Desc=এটি হল বাস্তব হিসাবরক্ষণের পদ্ধতি। আমরা হিসাবরক্ষণের জন্য ইনভয়েস এবং পেমেন্ট উভয়ই ব্যবহার করছি।
+ACCOUNTING_USE_NON_TREASURY_Desc=এটি হল অ্যাক্রুয়াল অ্যাকাউন্টিংয়ের পদ্ধতি (যা "বাস্তব" বা "সম্পূর্ণ" নামে পরিচিত)। আমরা অ্যাকাউন্টিং তৈরি করতে সমস্ত তথ্য (বিক্রয় এবং ক্রয় চালান, ব্যয়ের প্রতিবেদন, ব্যাংক, ইত্যাদি) ব্যবহার করি।
+ACCOUNTING_USE_TREASURY_Desc=এটি নগদ হিসাব পদ্ধতি। আমরা হিসাব তৈরি করতে শুধুমাত্র অর্থপ্রদান এবং তাদের তারিখ ব্যবহার করি। আপনি এই হিসাব পদ্ধতির জন্য যোগ্য কিনা তা জানতে আপনার হিসাব প্রতিষ্ঠানের সাথে যোগাযোগ করুন।
 PieceDesc=এই ব্যাংক লেনদেন তৈরি করে এমন উৎস নথির রেফারেন্স (ইনভয়েস রেফারেন্স, ব্যয় রিপোর্ট রেফারেন্স, ...)
 BankTransactionRef=ব্যাংক লেনদেনের জন্য একটি রেফারেন্স (ঐচ্ছিক, একটি স্বয়ংক্রিয় আইডি ইতিমধ্যেই তৈরি করা হয়েছে)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=এটি বুককিপিং এন্ট্রি ক্লোন করবে (এই বুককিপিং এন্ট্রির সাথে সংযুক্ত সমস্ত লাইন ক্লোন করা হবে)। আপনি কি নিশ্চিত যে আপনি নির্বাচিত %s রেকর্ডগুলি ক্লোন করতে চান?
 ConfirmMassCloneBookkeepingWriting=গণ ক্লোনিং নিশ্চিত করুন
-ConfirmMassReturnAccountBookkeepingWriting=গণবিলুপ্তি নিশ্চিত করুন
-ConfirmMassReturnAccountBookkeepingWritingQuestion=This will extinguish the bookkeeping entry (all lines linked to this bookkeeping entry will be extinguished). Are you sure you want to bypass the %s selected records?
+ConfirmMassReturnAccountBookkeepingWriting=ভর বিপরীতকরণ নিশ্চিত করুন
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=এটি সমস্ত নির্বাচিত লাইনের অ্যাকাউন্ট পরিবর্তন করবে।
 confirmMassAssignAccountBookkeepingWritingConfirm=গণ অ্যাকাউন্ট পরিবর্তন নিশ্চিত করুন
 CloningSuccess=সফল লেনদেন ক্লোনিং : %s
@@ -560,6 +563,6 @@ NoAccountsChangedWithAccountNumber=অ্যাকাউন্ট নম্ব�
 HasAlreadyBeenReversed=ইতিমধ্যেই উল্টে গেছে
 ErrorWhileCreating=তৈরির সময় ত্রুটি %s
 ReturnAccount=প্রত্যাবর্তন
-Clone=ক্লোনার
+Clone=ক্লোন
 AlreadyReturnedAccount=এন্ট্রি n°%s ইতিমধ্যেই উল্টে দেওয়া হয়েছে
 SuccessReturnedAccount=এন্ট্রি n°%s উল্টানো হয়েছে
