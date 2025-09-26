@@ -1806,8 +1806,8 @@ class User extends CommonObject
 		}
 
 		// Security: prevent external users from changing third party association
-		if (!empty($user) && $user->socid > 0) {
-			$this->socid = $user->socid;
+		if (!empty($user) && is_object($user) && isset($user->socid) && $user->socid > 0) {
+		    $this->socid = $user->socid;
 		}
 
 		// Insert into database
