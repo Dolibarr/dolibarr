@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ if (GETPOST('cancel', 'alpha')) {
 	exit;
 }
 
-if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
+if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // already checked */) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -132,7 +132,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			}
 		}
 	}
-} elseif ($action == 'edit' && $user->hasRight('accounting', 'chartofaccount')) {
+} elseif ($action == 'edit' /* && $user->hasRight('accounting', 'chartofaccount') // already checked */) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -419,11 +419,11 @@ if ($action == 'create') {
 			 */
 			print '<div class="tabsAction">';
 
-			if ($user->hasRight('accounting', 'chartofaccount')) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
-			}
+			// if ($user->hasRight('accounting', 'chartofaccount')) { // already checked
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
+			// } else {
+			// 	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
+			// }
 
 			// Delete
 			$permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
