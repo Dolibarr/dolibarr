@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
