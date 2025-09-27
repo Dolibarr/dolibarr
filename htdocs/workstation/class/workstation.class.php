@@ -52,6 +52,11 @@ class Workstation extends CommonObject
 	 */
 	public $picto = 'workstation';
 
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'WORKSTATION';
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
