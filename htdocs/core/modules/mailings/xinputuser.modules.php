@@ -34,7 +34,7 @@ class mailing_xinputuser extends MailingTargets
 {
 	public $name = 'EmailsFromUser'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc = 'EMails input by user'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $desc = 'EMails input by user'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
 
 	/**
 	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
@@ -117,8 +117,8 @@ class mailing_xinputuser extends MailingTargets
 	{
 		global $langs;
 
-		$s = '';
-		$s .= '<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
+		$s = '<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
+
 		return $s;
 	}
 

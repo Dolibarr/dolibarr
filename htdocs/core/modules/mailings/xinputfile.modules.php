@@ -34,7 +34,7 @@ class mailing_xinputfile extends MailingTargets
 {
 	public $name = 'EmailsFromFile'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc = 'EMails from a file'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $desc = 'EMails from a file'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
 
 	/**
 	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
