@@ -37,9 +37,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "other"));
+$langs->loadLangs(array("companies", "bills", "cashdesk"));
 
-// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('monthlyreportcompany'));
 
@@ -359,7 +359,7 @@ print '</td>';
 print '<td class="right">';
 // Search button
 print '<button type="submit" class="button button_search" title="' . $langs->trans('Search') . '" style="font-size: 14px; padding: 4px 8px; margin-right: 5px;"><span class="fa fa-search"></span></button>';
-// PDF export button  
+// PDF export button
 print '<a href="' . $_SERVER["PHP_SELF"] . '?socid=' . $socid . '&action=export_pdf&report_type=' . urlencode($report_type) . '" class="butAction" style="font-size: 14px; padding: 4px 8px;" target="_blank" title="' . $langs->trans('ExportToPDF') . '"><span class="fa fa-file-pdf-o"></span> PDF</a>';
 print '</td>';
 print '</tr>';
