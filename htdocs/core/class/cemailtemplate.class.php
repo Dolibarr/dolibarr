@@ -357,59 +357,6 @@ class cEmailTemplate extends CommonObject
 	}
 
 	/**
-	 * Check if an email template id or ref exists
-	 * If you don't need or want to instantiate the email template and just need to know if the email template exists, use this method instead of fetch
-	 *
-	 *  @param	string	$element   	String which is "email_template"
-	 *  @param	int		$id      	Id of email template
-	 *  @param  string	$label     	Label of email template to check
-	 *  @param	string	$ref_ext	UNUSED, making the function similar to the one in commonobject.class.php
-
-	 *  @return int     			Return integer <0 if KO, 0 if OK but not found, >0 if OK and exists
-	 */
-	public function isExistingObject($element, $id, $label = '', $ref_ext = '')
-	{
-		global $conf;
-
-		// hardcoded string because I kept getting this error
-		// PHP Fatal error:  Uncaught Error: Using $this when not in object context
-		// same with the $sql .= " FROM line
-		$myelement = 'email_template';
-		if ($myelement != $element) {
-			return -1;
-		}
-
-		$sql = "SELECT rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
-		$sql .= " WHERE entity IN (".getEntity($element).")";
-
-		if ($id > 0) {
-			$sql .= " AND rowid = ".((int) $id);
-		} elseif ($label) {
-			$sql .= " AND label = '".$this->db->escape($label)."'";
-		} else {
-			$error = 'ErrorWrongParameters';
-			dol_syslog(get_class()."::isExistingObject ".$error, LOG_ERR);
-			return -1;
-		}
-		if ($label) {		// Because the same label can exists in 2 different entities, we force the current one in priority
-			$sql .= " AND entity = ".((int) $conf->entity);
-		}
-
-		dol_syslog(get_class()."::isExistingObject", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num > 0) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-		return -1;
-	}
-
-	/**
 	 *      Update database with changed email template
 	 *
 	 *      @param      User	$user        	User that modify
