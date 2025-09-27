@@ -374,7 +374,7 @@ class cEmailTemplate extends CommonObject
 		$sql .= " type_template=".(isset($this->type_template) ? "'".$this->db->escape($this->type_template)."'" : "null").",";
 		$sql .= " lang=".(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").",";
 		$sql .= " private=".$this->private.",";
-		$sql .= " fk_user=".(property_exists($this, 'fk_user') && !empty($this->fk_user) ? $this->fk_user : "null").",";
+		$sql .= " fk_user=".(property_exists($this, 'fk_user') && !empty($this->fk_user) ? $this->db->escape($this->fk_user) : "null").",";
 		$sql .= " datec=".$this->datec.",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " position=".(isset($this->position) ? $this->position : "null").",";
