@@ -141,7 +141,7 @@ function formatObject($objtoshow, $prefix)
 
 				// Field code
 				$s .= '<td>';
-				$s .= '<!-- '.$key.' '.$arrayoffields[$key]['type'].''.$arrayoffields[$convertkey[$key]].' -->';
+				$s .= '<!-- '.$key.' '.$arrayoffields[$key]['type'].''.$arrayoffields[$convertkey[$key]]['label'].' -->';
 				$s .= ($prefix ? $prefix.' > ' : '');
 				$s .= $key;
 				$s .= '</td>';
