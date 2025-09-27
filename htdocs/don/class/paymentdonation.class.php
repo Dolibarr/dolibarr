@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro	  		<aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ class PaymentDonation extends CommonObject
 	public $rowid;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_donation;
 
@@ -67,7 +67,7 @@ class PaymentDonation extends CommonObject
 	public $datep = '';
 
 	/**
-	 * @var float amount
+	 * @var ?float amount
 	 */
 	public $amount; // Total amount of payment
 
@@ -77,14 +77,14 @@ class PaymentDonation extends CommonObject
 	public $amounts = array(); // Array of amounts
 
 	/**
-	 * @var int  Payment mode ID
+	 * @var ?int  Payment mode ID
 	 * @deprecated Use $paymenttype
 	 * @see $paymenttype
 	 */
 	public $fk_typepayment;
 
 	/**
-	 * @var int Payment mode ID or Code. TODO Use only the code in this field.
+	 * @var ?int Payment mode ID or Code. TODO Use only the code in this field.
 	 */
 	public $paymenttype;
 
@@ -112,7 +112,7 @@ class PaymentDonation extends CommonObject
 	/**
 	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
-	 * @var float
+	 * @var ?float
 	 */
 	public $total;
 
