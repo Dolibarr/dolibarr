@@ -214,13 +214,12 @@ class EmailTemplates extends DolibarrApi
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to email templates');
 		}
-		// entity stolen from api_setup.class.php
-		$entity = (int) DolibarrApiAccess::$user->entity;
+		$entity = getEntity('email_template');
 		$obj_ret = array();
 
 		$sql = "SELECT e.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS e";
-		$sql .= " WHERE e.entity = ".((int) $entity);
+		$sql .= " WHERE e.entity = ".$entity;
 		if (!$fk_user == '') {
 			$sql .= " AND e.fk_user = ".((int) $fk_user);
 		}
