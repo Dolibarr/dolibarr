@@ -81,7 +81,7 @@ if (isModEnabled('accounting')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'banks'));
+$langs->loadLangs(array('companies', 'banks', 'commercial'));
 
 if (isModEnabled('contract')) {
 	$langs->load("contracts");
@@ -184,7 +184,7 @@ if (empty($reshook)) {
 	}
 
 	// set accountancy code
-	if ($action == 'setcustomeraccountancycodegeneral') {
+	if ($action == 'setcustomeraccountancycodegeneral' && $permissiontoadd) {
 		$result = $object->fetch($id);
 		$object->accountancy_code_customer_general = GETPOST("customeraccountancycodegeneral");
 		$result = $object->update($object->id, $user, 1, 1, 0);
@@ -208,7 +208,7 @@ if (empty($reshook)) {
 	// Payment terms of the settlement
 	if ($action == 'setconditions' && $permissiontoadd) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTINT('cond_reglement_id_deposit_percent'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -667,7 +667,7 @@ if ($object->id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'edittransportmode') {
-			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'transport_mode_id', 1);
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'transport_mode_id', 1, 1);
 		} else {
 			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'none');
 		}
@@ -971,7 +971,7 @@ if ($object->id > 0) {
 				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/comm/propal/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
-				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
+				if (($db->jdate($objp->date_limit) < ($now - getWarningDelay('propal', 'cloture'))) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
 					print " ".img_warning();
 				}
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
@@ -1260,7 +1260,7 @@ if ($object->id > 0) {
 				$late = '';
 				foreach ($contrat->lines as $line) {
 					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
-						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contract->services->expires->warning_delay) < $now) {
+						if (((!empty($line->date_end) ? $line->date_end : 0) + getWarningDelay('contract', 'service', 'expires')) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
 					}
@@ -1592,8 +1592,10 @@ if ($object->id > 0) {
 				$facturestatic->statut = $objp->status;	// deprecated
 				$facturestatic->status = $objp->status;
 				$facturestatic->paye = $objp->paye;
+
 				$facturestatic->alreadypaid = $objp->am;
 				$facturestatic->totalpaid = $objp->am;
+
 				$facturestatic->date = $db->jdate($objp->df);
 				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
 

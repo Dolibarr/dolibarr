@@ -2,6 +2,58 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 23.0.0 compared to 22.0 *****
+
+For users:
+----------
+
+
+
+For developers:
+---------------
+
+
+
+WARNING:
+--------
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The deprecated column egroupware_id has been dropped.
+* The property $sumpayed (duplicated of $totalpaid), $sumdeposit (duplicate of $totaldeposits) and $sumcreditnote (duplicate of $totalcreditnotes) has
+  been removed (there are replaced with the property that was a duplication of (same for $sumpayed_multicurrency, $sumdeposit_multicurrency, $sumcreditnote_multicurrency).
+* Parameters $maxlen and $notooltip of Contract have been inverted to follow the standard. It was breaking the common use of getNomUrl() but if you were using the parameter
+  maxlen (rare) by using the old signature, result may be a tooltip that is no more visible on ref printed by you module.
+* Removed array $MAP_ID_TO_CODE that was a duplicate of array "array_flip($categ->MAP_ID)"
+* The signature of the Sale order ->cancel() method and shipment ->cancel() has been modified to introduce the $user param like for other methods that modify a status.
+* Adding new document templates must be done by adding files into the mymodule/core/modules/xxx/doc directory. Adding files into custom directory with the
+  same path than the core path without using a mymodule directory is now forbidden.
+* The directory theme/common/octicons has been removed
+* The library timepicker.js has been removed. Was not used by Dolibarr.
+
+
+***** ChangeLog for 22.0.1 compared to 22.0.0 *****
+
+FIX: #34843 (#34875)
+FIX: #34936
+FIX: a Fatal error when a trigger files is not correctly named.
+FIX: array for arrayofkeyval is lost in module builder edit of property
+FIX: asset: could not select invoice in disposal pop-in (#34725)
+FIX: avoid php warning with "$forceFullTextIndexation" (#34881)
+FIX: bad consistency on test on permission to disable service
+FIX: Can edit status of tasks
+FIX: Create public ticket if email need exist. (#34965)
+FIX: DA026536: missing <br> in automatic e-mail (#34895)
+FIX: extrafields of type "int" not displayed on `projet/tasks.php` (#34896)
+FIX: Filter on the balance of leave
+FIX: Logo on company is no more visible.
+FIX: mailing destination list title (#34929)
+FIX: main checkbox left column was before global conf (#34858)
+FIX: Missing a column on group permissions
+FIX: several minor troubles with modulebuilder
+FIX: Test on mandatory product or thirdparty barcode
+FIX: trigger mailmanspip when un/linking categories
+FIX: Security when using Advanced Target page of emailing (feature hidden in v21, default in v22+). Possible
+     SQL injection by users with permission to make and send mass emailing.
+
 
 ***** ChangeLog for 22.0.0 compared to 21.0 *****
 
@@ -14,7 +66,6 @@ NEW: ticket : display files linked to actioncomm (#32325)
 NEW: Support of monthly or weekly recurring events
 NEW: AI feature to autofill extrafields
 NEW: Introduce the view "Kanban Grouped By" opportunity status in projects
-NEW: #22848
 NEW: #32706 - Treasury accountancy (#33701)
 NEW: #33506 Add a constant to apply a ratio to resize images in ODT templates (#33543)
 NEW: Accountancy - Add centralized account (SQL & migration part) (#33384) (#33577)
@@ -51,7 +102,7 @@ NEW: Add Shared links on links in attachments (#33459)
 NEW: Add tags / category on supplier invoice (#33490)
 NEW: Add the possibility to merge PDF from the product list (#33723)
 NEW: allow stock management by product (#32326)
-NEW: attendee status Used - to ensure that only one attendee gets in on a ticket (#33987)
+NEW: attendee status "Showed up" - to ensure that only one attendee gets in on a ticket (#33987)
 NEW: auto-detect country from code in creation	(follow-up)
 NEW: autofix mysqldump command for backup when path is wrong
 NEW: Better presentation of list of user approver.
@@ -117,9 +168,10 @@ NEW: Accountancy - Add actions on entries (Cloning, assigning, returning)
 NEW: Add conf PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE to hide linked object in public note of pdf.
 NEW: Add MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF for legal requirement that need both currencies on PDF
 NEW: Add note public and private on order export
+NEW: Finish dev for API_ENABLE_COUNT_CALLS (count of API use is visible on user API key field)
 
 For developers:
-----------
+---------------
 NEW: Add an API endpoint to get properties of a single line of an order (#34045)
 NEW: add const to not include default CSS in top_htmlhead with DISABLE_CSS_DEFAULT_THEME
 NEW: add const to not include default lib_head.js in top_htmlhead with DISABLE_LIB_HEAD_JS
@@ -146,7 +198,6 @@ NEW: expense report API deny
 
 WARNING:
 --------
-
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The use of GETPOST function is not allowed inside extrafields conditions or any strings that contains dynamic code evaluated with dol_eval().
 * The deprecated variable $trigger_name (duplicate of variable $triggersendname) has been removed. You must use $triggersendname everywhere now.
@@ -158,6 +209,149 @@ The following changes may create regressions for some external modules, but were
 * The signature of API get for intervention has been modified to match other get api on other objects.
 * The directory /build has been moved into /dev/build.
 * The API to create a website account /idthirdparty/accounts/site is now POST (instead of PUT) and to update is PUT (instead of PATCH).
+* Debug v22 - Invert option TICKET_DO_NOT_INCLUDE_LINK_TO_CUSTOMER (that add link to backoffice interface link when it should remain private)
+  into TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE. It also avoid often emails marked as SPAM due to suspicious link.
+* The property ->price_ht of an object line that was a duplicate of ->subprice has been standardized. Use ->subprice everywhere now.
+
+
+***** ChangeLog for 21.0.4 compared to 21.0.3 *****
+FIX: #35147 SQL Error on Beluga Export when ExpenseReport is enabled (#35149)
+FIX: error when using a code too large in dictionary
+FIX: Security when using Advanced Target page of emailing (feature hidden in v21, default in v22+). Possible
+     SQL injection by users with permission to make and send mass emailing.
+
+
+***** ChangeLog for 21.0.3 compared to 21.0.2 *****
+FIX: #34843 (#34875)
+FIX: #34936
+FIX: #35005
+FIX: #35006 SQL error when using external user
+FIX: a Fatal error when a trigger files is not correctly named.
+FIX: array for arrayofkeyval is lost in module builder edit of property
+FIX: asset: could not select invoice in disposal pop-in (#34725)
+FIX: avoid php warning with "$forceFullTextIndexation" (#34881)
+FIX: bad consistency on test on permission to disable service
+FIX: Can edit status of tasks
+FIX: Create public ticket if email need exist. (#34965)
+FIX: DA026536: missing <br> in automatic e-mail (#34895)
+FIX: extrafields of type "int" not displayed on `projet/tasks.php` (#34896)
+FIX: Filter on the balance of leave
+FIX: Logo on company is no more visible.
+FIX: mailing destination list title (#34929)
+FIX: main checkbox left column was before global conf (#34858)
+FIX: Missing a column on group permissions
+FIX: several minor troubles with modulebuilder
+FIX: Test on mandatory product or thirdparty barcode
+FIX: trigger mailmanspip when un/linking categories
+SEC: Remove functions accepting callable params - Reported by phdwg1410 - CVE-2024-40137
+
+
+***** ChangeLog for 21.0.2 compared to 21.0.1 *****
+
+FIX: 21.0: $height and $width can be ints, but also 'auto' (#34636)
+FIX: #33030 (#34460)
+FIX: #33727 Sec
+FIX: #33774 #34214
+FIX: #33854
+FIX: #34313 Accountancy - Export with sources no longer works (#34324)
+FIX: (#34448)
+FIX: #34541 (#34597)
+FIX: #34564 (#34590)
+FIX: #34591 FIX: #34692
+FIX: #34618 (#34621)
+FIX: #34654
+FIX: accountancy: bad filter on custom account groups (#34205)
+FIX: accountancy balance: keep subtotals when sorting (#34001)
+FIX: accountancy closure: if subledger_label is not found, PHP8.2 throws an error. (#34736)
+FIX: accountancy: create new french PCG25-DEV accounting system in upgrade (#34036)
+FIX: accountancy expensereport journal: php 8.1 warning (#34457)
+FIX: accountancy fec export: remove dol_print_date warning (#34363)
+FIX: accountancy general ledger: last total not shown if last account group shown has only one entry (#34251)
+FIX: accountancy lettering: php8.1 warning (#34469)
+FIX: Accountancy - Problem with constant ACCOUNTANCY_COMBO_FOR_AUX (#34414)
+FIX: accountancy sales/purchases journal: sql error logged when no invoice in journal (#34339)
+FIX: accountancy: warning when account not found in plan (#34030)
+FIX: a comment without after a comma create a sql error (#33752)
+FIX: Add others allowed tags (table, tr, td) for the prices history table displayed in the link url of the supplier product in supplier product prices list (#34532)
+FIX: add payment to bank (#34263)
+FIX: allow double colon and string obfuscation in dol eval for computed extra fields (#34015)
+FIX: API expense report line comments (v18+) (#34297)
+FIX: Approver must be able to approve even if user not in hierarchy.
+FIX: asset depreciation: division by zero (#34218)
+FIX: asset depreciation: php warnings (#34219)
+FIX: avoid sql error when a comment is after without comma (#33758)
+FIX: Backport fix of substitution of thirdparty info in notification
+FIX: backport of replaceement of thirdparty information on notification
+FIX: bad value for company ref crashes canvas feature (#34331)
+FIX: bank payment rejection on SEPA (backport commit 100a657) (#33838)
+FIX: BankTransfer information in line.php (#34425)
+FIX: BankTransfer link in list.php (#34513)
+FIX: BankTransfer link in rejets.php (#34424)
+FIX: Bug filters (#34546)
+FIX: Can set default value of the nature of member
+FIX: Can set the default value of nature of thirdparty
+FIX: cash control report: php warning (#34358)
+FIX: common fields: php warning with select input field (#34495)
+FIX: constant PAYMENTBYBANKTRANSFER_ADDDAYS was never saved (#33799)
+FIX: creating acredit note from the remain to pay was always 0
+FIX: DetecHTML on upload file from filemanager fails due to need to lock
+FIX: Disallow special char in name of oauth entries
+FIX: do not add a filter on status when doing a global search on project
+FIX: Do not allow to force amount for online payment of order
+FIX: do not forget extrafields for BOM in export lines (#34020)
+FIX: Edition of target of menu entries
+FIX: element must be visible to set focus on select input when using default values (#34406)
+FIX: email collector: php 8 warning (#34496)
+FIX: encoding issues with underscores in mb_convert_encoding functionality (#34411)
+FIX: ensure dir exists before trying to move something in it (#34211)
+FIX: event info tab: php 8.1 warning (#34458)
+FIX: expense report card: mail notifications not sent (#34556)
+FIX: expensereport payment list: php warning (#34453)
+FIX: expensereport: php warning when generating pdf with multilangs (#34492)
+FIX: files lib: multiple php 8.1 warnings (#34462)
+FIX: filter agenda on user and resource SQL error (#34580)
+FIX: HTML broken by the trunc.
+FIX: html title when using custom value
+FIX: if filter is set on export for Duree type filed, then there is SQL error (#34616)
+FIX: interventions: sql error when signed_status not set (#34515)
+FIX: js warning (Backport commit 84d982c) (#34555)
+FIX: local taxes text in object line view mode (#34103)
+FIX: local taxes text in PDF (#34343)
+FIX: mandatory extrafelds on lines are not checked (#34228)
+FIX: manufacturing orders: php 8.1 warnings on agenda tab (#34475)
+FIX: mass assignment of sale representative
+FIX: Missing ol in no escape tags (#34261)
+FIX: modification de dates de pièces comptables sur plusieurs entités différentes (#34226)
+FIX: oauth: php 8 warnings (#34027)
+FIX: online propal sign: double header with logo when custom logo set (#34504)
+FIX: Order error translation (#33834)
+FIX: page of bom when only bom module is on
+FIX: partial result on timespent list (#33855)
+FIX: pgsql: boolean fields correctly defined in creation but not in migration (#34215)
+FIX: pgsql: case sensitivity in select queries (#34028)
+FIX: pgsql: error when creating sequences in migration scripts (#34021)
+FIX: PHP 8 Error 500 (#34545)
+FIX: prelevement order list: handle case of use by banktransfer module (#33801)
+FIX: pre-send mail mass action: keep __EMAIL__ substitution (#34522)
+FIX: prevent log warning with online signature url (#34361)
+FIX: Product batch series - Title, help url et picto (#34560)
+FIX: product multiprices: fatal error on vat update on php 8.2 (#34444)
+FIX: product suplier tab: last modif date column was wrongly dependent of module barcode (#34170)
+FIX: product translation: redirect after successful action (#34403)
+FIX: projects: go back to edit view after cloning (#34221)
+FIX: receptions: crash from api because of classes not found (#34523)
+FIX: Remove useless amp; after & (#34288)
+FIX: select supplier when creating object from project (#33766)
+FIX: social contribution payment: correct error reporting (#34002)
+FIX: stock control condition in reception delete (#33952)
+FIX: Tmparray string not array (#34287)
+FIX: Too heavy sql query (#34371)
+FIX: try to fix v18 github action workflow (#34439)
+FIX: Various payment - List - Can't see payment with subledger account (#34101)
+FIX: warehouse list: broken status filter (#33667)
+FIX: warnings when printing start/end date on line tpl (#34359)
+FIX: wrong multicompany filter (#34714)
+FIX: ws detection
 
 
 ***** ChangeLog for 21.0.1 compared to 21.0.0 *****
@@ -491,7 +685,7 @@ FIX: product variants copy: also copy multiprice variations
 FIX: refactorize (maybe broken feature for not received completely)
 FIX: remove debug trace
 FIX: remove socid when cloning a project without third parties
-FIX: removes traces of <<<HEAD conflicts following the postponement of branch 13 modifications (#32014)
+FIX: removes traces of HEAD conflicts following the postponement of branch 13 modifications (#32014)
 FIX: remove unused code
 FIX: same broken feature for propal and invoice
 FIX: select 2 no record found translate
@@ -1036,6 +1230,7 @@ FIX: Vat code is lost when updating lines in POS
 FIX: when qty is not an integer, apply price() (#31138)
 FIX: Wrong default PDF model when creating the second situation invoice (#30843)
 FIX: wrong subprice if price base type is TTC (#30887)
+
 
 ***** ChangeLog for 19.0.3 compared to 19.0.2 *****
 FIX: #29403 HRM - Unable to delete a skill in a job Profile (#29779)
@@ -1600,7 +1795,39 @@ The following changes may create regressions for some external modules, but were
 * The load of hook context productdao has been removed before calling loadvirtualstock. Modules must use the context of main parent page or 'all' for all cases.
 * booking.class.php was removed, please have a look at calendar.class.php
 
+***** ChangeLog for 18.0.8 compared to 18.0.7 *****
+35 files changed, 647 insertions(+), 298 deletions(-)
+
+FIX: #34746 - More complete fix for CVE-2024-40137
+FIX: Correct the calculation of the amount of the current period between the period provided (#35083)
+FIX: Add security test for show terminal selection if no terminal selected when invoice.php is call (#34717)
+FIX: Add security test for show terminal selection if no terminal selected when invoice.php is call
+FIX: missing quick edit for extrafields (baclport commit 4fc66c6) (#35160)
+FIX: Missing sentence part (#35144)
+FIX: set global mysoc and load langs in API access (#35041)
+FIX: set global mysoc and load langs in API access
+FIX: reset mysoc and langs only if entity of API has changed
+FIX: accountancy general ledger: bad handling of hook return (#34029)
+FIX: accountancy general ledger: bad handling of hook return
+FIX: accountancy balance: bad handling of hook return
+FIX: - Fix missing token for disable custom group category for compta report (page /htdocs/accountancy/admin/categories_list.php) (#35084)
+FIX: The combo of custom groups has disappeared (backport v19) (#35016)
+FIX: #34893 (#34897)
+FIX: #34893
+FIX: change error code to USERNOTALLOWEDTOCHANGEPASS
+FIX: asset: could not select invoice in disposal pop-in (#34725)
+FIX: 17.0 SQL syntax error and/or constraint error when calling Facture::update() after a clone (e.g. in a trigger) (#34778)
+FIX: 17.0: when you clone an invoice that was created from a template invoice, the clone should not be linked to the template invoice (#34777)
+FIX: pre-send mail mass action: keep __EMAIL__ substitution (#34522)
+FIX: pre-send mail mass action: keep __EMAIL__ substitution
+FIX: comment
+FIX: massaction email tpl: keep preset
+FIX: loop interrupt if an error occurs in sendEmailsRemindersOnInvoiceDueDate (#34657)
+FIX: #34654
+
 ***** ChangeLog for 18.0.7 compared to 18.0.6 *****
+138 files changed, 1622 insertions(+), 530 deletions(-)
+
 FIX: 17.0 API endpoints "PUT": prevent overwriting all extrafields if only some are supplied in the request cf. PR #29237
 FIX: 17.0 - collisions in cache for dol_getIdFromCode
 FIX: 17.0 - missing error handling for FactureRec::fetch in card-rec.php
@@ -2274,7 +2501,7 @@ Following changes may create regressions for some external modules, but were nec
 
 
 ***** ChangeLog for 17.0.4 compared to 17.0.3 *****
-FIX: $this->newref already exists and could have been modified by trigger but we still use a local variable for the filesystem-based renaming
+FIX: $this->newref already exists and could have been modified by a trigger but we still use a local variable for the filesystem-based renaming
 FIX: 16.0 only, backport fix for SQL error on global search product
 FIX: 17.0: deprecated field should only be a fallback
 FIX: 17.0 PHP8: supplier invoice class:

@@ -102,6 +102,8 @@ if (!empty($action) && $action == 'fetch' && !empty($id) && $user->hasRight('soc
 } else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+	$form = new Form($db);
+
 	if ($htmlname === '') {
 		return;
 	}
@@ -120,19 +122,16 @@ if (!empty($action) && $action == 'fetch' && !empty($id) && $user->hasRight('soc
 		return;
 	}
 
-	if (empty($form) || !is_object($form)) {
-		$form = new Form($db);
-	}
-
 	if (!empty($excludeids)) {
 		$excludeids = explode(',', $excludeids);
 	} else {
 		$excludeids = array();
 	}
 
-	// FIXME
-	// If SOCIETE_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
-
+	// Add an AntiDOS protection
+	if (dol_strlen($filter) < getDolGlobalInt('SOCIETE_USE_SEARCH_TO_SELECT')) {
+		httponly_accessforbidden('Call the societe/ajax/company file with a too short filter', 400);
+	}
 
 	$arrayresult = $form->select_thirdparty_list('0', (string) $htmlname, $filter, 1, $showtype, 0, array(), $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
 

@@ -711,7 +711,15 @@ function New() {
  * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
-	var eventKeyCode = window.event.keyCode;
+	var eventKeyCode = null;
+
+	if (window.event && window.event.keyCode) {
+		eventKeyCode = window.event.keyCode;
+	}
+	if (eventKeyCode === null && keyCodeForEnter !== '') {
+		// No key code available, exit early if a key code is required
+		return;
+	}
 
 	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter+", eventKeyCode="+eventKeyCode);
 
@@ -1418,18 +1426,26 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	//Button to print receipt before payment
+	// Button to print receipt before payment
+	$customprinterallowed = true;
+	$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
+	if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
+		$customprinterallowed = false;
+	}
+
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
-				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'TakeposConnector(placeid);');
+		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
+			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL')) == true) {
+				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposConnector(placeid);');
 			} else {
-				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'TakeposPrinting(placeid);');
+				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposPrinting(placeid);');
 			}
-		} elseif ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
+		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+			// Button Print Receipt on special printer
+			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
 		} else {
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'Print(placeid);');
+			// Button Print Receipt on browser
+			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');
 		}
 	}
 	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {

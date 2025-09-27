@@ -5,7 +5,7 @@
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,7 +152,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch"));
 
 		if ($conf->expedition->dir_output) {
 			$object->fetch_thirdparty();
@@ -404,6 +404,8 @@ class pdf_merou extends ModelePdfExpedition
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -533,8 +535,8 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetXY(11, 7);
 		if ($this->emetteur->logo) {
 			$logodir = $conf->mycompany->dir_output;
-			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-				$logodir = $conf->mycompany->multidir_output[$object->entity];
+			if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+				$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 			}
 			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;

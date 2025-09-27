@@ -262,10 +262,12 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 
 Follow Dolibarr project on:
 
-- [Mastodon](https://pouet.chapril.org/@dolibarr)
-- [Facebook](https://www.facebook.com/dolibarr)
-- [X](https://x.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
+- [Mastodon](https://pouet.chapril.org/@dolibarr)
+- [BlueSky](https://bsky.app/profile/dolibarr.org)
+- [Threads](https://www.threads.net/@dolibarr)
+- [X](https://x.com/dolibarr)
+- [Facebook](https://www.facebook.com/dolibarr)
 - [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)

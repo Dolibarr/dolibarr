@@ -659,7 +659,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $extrafields;
 
-		$sumpayed = $sumdeposit = $sumcreditnote = '';
+		$totalpaid = $totaldeposits = $totalcreditnotes = '';
 		$already_payed_all = 0;
 
 		if ($object->element == 'facture') {
@@ -669,10 +669,10 @@ abstract class CommonDocGenerator
 			if ($object->fk_facture_source > 0) {
 				$invoice_source->fetch($object->fk_facture_source);
 			}
-			$sumpayed = $object->getSommePaiement();
-			$sumdeposit = $object->getSumDepositsUsed();
-			$sumcreditnote = $object->getSumCreditNotesUsed();
-			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
+			$totalpaid = $object->getSommePaiement();
+			$totaldeposits = $object->getSumDepositsUsed();
+			$totalcreditnotes = $object->getSumCreditNotesUsed();
+			$already_payed_all = $totalpaid + $totaldeposits + $totalcreditnotes;
 		}
 
 		// Ignore notice for deprecated date - @phan-suppress-next-line PhanUndeclaredProperty
@@ -737,12 +737,12 @@ abstract class CommonDocGenerator
 			$array_key.'_note' => $object->note_public, // For backward compatibility
 
 			// Payments
-			$array_key.'_already_payed_locale' => price($sumpayed, 0, $outputlangs),
-			$array_key.'_already_payed' => price2num($sumpayed),
-			$array_key.'_already_deposit_locale' => price($sumdeposit, 0, $outputlangs),
-			$array_key.'_already_deposit' => price2num($sumdeposit),
-			$array_key.'_already_creditnote_locale' => price($sumcreditnote, 0, $outputlangs),
-			$array_key.'_already_creditnote' => price2num($sumcreditnote),
+			$array_key.'_already_payed_locale' => price($totalpaid, 0, $outputlangs),
+			$array_key.'_already_payed' => price2num($totalpaid),
+			$array_key.'_already_deposit_locale' => price($totaldeposits, 0, $outputlangs),
+			$array_key.'_already_deposit' => price2num($totaldeposits),
+			$array_key.'_already_creditnote_locale' => price($totalcreditnotes, 0, $outputlangs),
+			$array_key.'_already_creditnote' => price2num($totalcreditnotes),
 
 			$array_key.'_already_payed_all_locale' => price(price2num($already_payed_all, 'MT'), 0, $outputlangs),
 			$array_key.'_already_payed_all' => price2num($already_payed_all, 'MT'),
@@ -758,7 +758,7 @@ abstract class CommonDocGenerator
 			if (property_exists($object, 'fk_account') && $object->fk_account > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 				$bank_account = new Account($this->db);
-				$bank_account->fetch($object->fk_account);
+				$bank_account->fetch((int) $object->fk_account);
 			}
 
 			$resarray[$array_key.'_bank_iban'] = (empty($bank_account) ? '' : $bank_account->iban);
@@ -880,12 +880,13 @@ abstract class CommonDocGenerator
 			'line_product_desc' => (empty($line->product_desc) ? '' : $line->product_desc),
 
 			'line_desc' => $line->desc,
-			'line_vatrate' => vatrate($line->tva_tx, true, $line->info_bits),
+			'line_vatrate' => vatrate($line->tva_tx, true, (int) $line->info_bits),
 			'line_up' => price2num($line->subprice),
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
 			'line_total_up' => price2num($line->subprice * (float) $line->qty),
 			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
 			'line_qty' => $line->qty,
+			'line_qty_locale' => price($line->qty),
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
 			'line_price_ttc' => price2num($line->total_ttc),
@@ -943,8 +944,9 @@ abstract class CommonDocGenerator
 
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			$resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
-			$resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
+			$resarray['line_unit'] = $line->getLabelOfUnit('long', $outputlangs);
+			$resarray['line_unit_short'] = $line->getLabelOfUnit('short', $outputlangs);
+			//$resarray['line_unit_code'] = $line->getLabelOfUnit('code', $outputlangs);
 		}
 
 		// Retrieve extrafields

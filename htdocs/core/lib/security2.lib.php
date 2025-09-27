@@ -152,8 +152,14 @@ if (!function_exists('dol_loginfunction')) {
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
+
+		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($customapplication) {
+			if (preg_match('/^\+/', $customapplication)) {
+				$title .= $customapplication;
+			} else {
+				$title = $customapplication;
+			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
@@ -602,7 +608,7 @@ function showEyeForField($htmlname, $htmlnameofinput)
 {
 	return '<!-- code to manage the eye hide/show -->
 <span id="'.$htmlname.'" tabindex="-1"><span class="fa fa-eye"></span></span>
-<script nonce="<?php echo getNonce(); ?>">
+<script nonce="'.getNonce().'">
 	$(document).ready(function () {
 		$(\'#'.$htmlname.'\').on(\'click\', function (e) {
 			e.preventDefault();

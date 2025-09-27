@@ -3,10 +3,10 @@ MenuFinancial=Rechnung | Zahlung
 TaxModuleSetupToModifyRules=Im <a href="%s">Steuer-Modul</a> können Sie die Einstellungen für die Berechnungen vornehmen
 TaxModuleSetupToModifyRulesLT=Hier können Sie die <a href="%s">Einstellungen</a> für die Berechnungen vornehmen
 OptionMode=Buchhaltungsoptionen
-OptionModeTrue=Soll-Buchhaltung/Periodenbuchhaltung
-OptionModeVirtual=Ist-Buchhaltung/Zahlungsbuchhaltung
-OptionModeTrueDesc=Der Umsatz wird über die Zahlungen (Datum der Zahlungen) berechnet. Die Validität der Zahlen ist nur dann gewährleistet, wenn die Buchhaltung für die Ein- und Ausgaben der Zahlungen erfolgt.
-OptionModeVirtualDesc=Der Umsatz wird über Rechnungen (Rechnungsdatum) ermittelt (Soll-Versteuerung). Wenn diese Rechnungen fällig sind, ob sie bezahlt wurden oder nicht, werden sie in der Umsatzausgabe aufgeführt.
+OptionModeVirtual=Einnahmen-Überschuss-Rechnung (EÜR)
+OptionModeTrue=Doppelte Buchführung mit Bilanzierung
+OptionModeVirtualDesc=Der Umsatz wird über Rechnungen (Rechnungsdatum) ermittelt. Wenn diese Rechnungen fällig sind,  werden sie in der Umsatzberechnung berücksichtigt, unabhängig davon, ob eine Zahlung bereits erfolgt ist.
+OptionModeTrueDesc=Der Umsatz wird über die Zahlungen (Datum der Zahlungen) ermittelt. Die Validität der Zahlen ist nur dann gewährleistet, wenn die Buchhaltung für die Ein- und Ausgaben der Zahlungen erfolgt.
 FeatureIsSupportedInInOutModeOnly=Dieses Feature ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
 VATReportBuildWithOptionDefinedInModule=Die hier ausgewiesenen Beträge werden unter Verwendung der USt.-Regeln definiert.
 LTReportBuildWithOptionDefinedInModule=Die hier ausgewiesenen Beträge werden unter Verwendung der Firmen-Regeln definiert.
@@ -302,7 +302,6 @@ ByVatRate=Nach Steuersätzen
 TurnoverbyVatrate=Verrechneter Umsatz pro Steuersatz
 TurnoverCollectedbyVatrate=Realisierter Umsatz pro Steuersatz
 PurchasebyVatrate=Einkäufe pro Steuersatz
-LabelToShow=Kurzbezeichnung
 PurchaseTurnover=Einkaufsvolumen fakturiert
 PurchaseTurnoverCollected=Einkaufsvolumen abgerechnet
 RulesPurchaseTurnoverDue=- Es enthält die fälligen Rechnungen des Lieferanten, ob diese bezahlt sind oder nicht. <br> - Es basiert auf dem Rechnungsdatum dieser Rechnungen. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Regel für Positions-Daten
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Regel für Positions-Daten festlegen
+SomeNotConvertedCreditNoteExists=Es gibt <b>%s</b> Stornorechnungen, die noch nicht zur Weiterverwendung des Guthabens umgewandelt wurden

@@ -79,9 +79,13 @@ create table llx_facture
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,			-- payment term (30 days, end of month...)
   fk_mode_reglement		integer,								-- payment mode (Virement, Prelevement)
   date_lim_reglement	date,									-- due date
+
   payment_reference     varchar(25),                            -- SEPA and any other national or custom payment id
+  dispute_status		integer DEFAULT 0,						-- set to 1 if a dispute on a payment on invoice is open
+
   note_private			text,
   note_public			text,
+
   model_pdf				varchar(255),
   last_main_doc			varchar(255),							-- relative filepath+filename of last main generated document
   fk_input_reason       integer DEFAULT NULL,                   -- id coming from c_input_reason

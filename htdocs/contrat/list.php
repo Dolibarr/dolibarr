@@ -60,7 +60,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -149,10 +149,7 @@ $hookmanager->initHooks(array('contractlist'));
 
 $result = restrictedArea($user, 'contrat', $id);
 
-$diroutputmassaction = $conf->contrat->dir_output.'/temp/massgeneration/'.$user->id;
-
-$staticcontrat = new Contrat($db);
-$staticcontratligne = new ContratLigne($db);
+$diroutputmassaction = $conf->contract->dir_output.'/temp/massgeneration/'.$user->id;
 
 if ($search_status == '') {
 	$search_status = 1;
@@ -161,6 +158,7 @@ if ($search_status == '') {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
+$staticcontratligne = new ContratLigne($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -252,7 +250,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_town = '';
 	$search_zip = "";
 	$search_state = "";
-	$search_type = '';
+	$search_type_thirdparty = '';
 	$search_country = '';
 	$search_contract = "";
 	$search_ref_customer = "";
@@ -288,7 +286,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_status = "";
 	$search_signed_status = '';
 	$toselect = array();
-	$search_type_thirdparty = '';
 	$searchCategoryCustomerList = array();
 	$search_array_options = array();
 }
@@ -296,7 +293,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (empty($reshook)) {
 	$objectclass = 'Contrat';
 	$objectlabel = 'Contracts';
-	$uploaddir = $conf->contrat->dir_output;
+	$uploaddir = $conf->contract->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -343,11 +340,11 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (c.fk_soc = s.rowid)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= ", ".MAIN_DB_PREFIX."contrat as c";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (c.rowid = ef.fk_object)";
 }
@@ -356,8 +353,11 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-$sql .= " WHERE c.fk_soc = s.rowid ";
-$sql .= ' AND c.entity IN ('.getEntity('contract').')';
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE c.entity IN (".getEntity('contract').")";
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 }
@@ -394,9 +394,6 @@ if ($search_town) {
 if ($search_country && $search_country != '-1') {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
-/*if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}*/
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -535,9 +532,13 @@ if (empty($reshook)) {
 		} else {
 			$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
 		}
+		$sql .= empty($hookmanager->resPrint) ? "" : " AND ".$hookmanager->resPrint;
+	} else {
+		$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 	}
+} else {
+	$sql = $hookmanager->resPrint;
 }
-$sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -574,7 +575,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		}
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

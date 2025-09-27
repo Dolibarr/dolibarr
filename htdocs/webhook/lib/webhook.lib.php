@@ -44,6 +44,10 @@ function webhookAdminPrepareHead()
 	$head[$h][2] = 'targets';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT . '/webhook/triggerhistory_list.php?mode=modulesetup';
+	$head[$h][1] = $langs->trans("TriggerHistory");
+	$head[$h][2] = 'triggerhistory';
+	$h++;
 
 	/*
 	$head[$h][0] = dol_buildpath("/webhook/admin/myobject_extrafields.php", 1);

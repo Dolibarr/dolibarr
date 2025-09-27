@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ class Skill extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -197,7 +197,7 @@ class Skill extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -245,10 +245,7 @@ class Skill extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $langs,$conf;
-
 		$resultcreate = $this->createCommon($user, $notrigger);
-
 
 		if ($resultcreate > 0) {
 			// skillDet create
@@ -266,9 +263,9 @@ class Skill extends CommonObject
 	 */
 	public function createSkills($i = 1)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
-		$MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', self::DEFAULT_MAX_RANK_PER_SKILL);
+		$maxNumberSkill = getDolGlobalInt('HRM_MAXRANK', self::DEFAULT_MAX_RANK_PER_SKILL);
 		$defaultSkillDesc = getDolGlobalString('HRM_DEFAULT_SKILL_DESCRIPTION', $langs->trans("NoDescription"));
 
 		$error = 0;
@@ -278,8 +275,9 @@ class Skill extends CommonObject
 		$this->db->begin();
 
 		// Create level 0 of skills
+		/* Removed this. if a skill is not required for a job, the skill will just not be added to the job profile or will be added with expected level = N/A
 		$skilldet = new Skilldet($this->db);
-		$skilldet->description = $langs->trans('SkillNotRequired');
+		$skilldet->description = $langs->transnoentitiesnoconv('SkillNotRequired');
 		$skilldet->rankorder = 0;
 		$skilldet->fk_skill = $this->id;
 
@@ -287,15 +285,17 @@ class Skill extends CommonObject
 		if ($result <= 0) {
 			$error++;
 		}
+		*/
 
 		// Create level of skills
-		while ($i <= $MaxNumberSkill) {
+		while ($i <= $maxNumberSkill) {
 			$skilldet = new Skilldet($this->db);
 			$skilldet->description = $defaultSkillDesc . " " . $i;
 			$skilldet->rankorder = $i;
 			$skilldet->fk_skill = $this->id;
 
 			$result =  $skilldet->create($user);
+
 			if ($result <= 0) {
 				$error++;
 			}
@@ -599,7 +599,7 @@ class Skill extends CommonObject
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
@@ -914,11 +914,13 @@ class Skill extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
+		// phpcs:enable
 		if (empty($status)) {
 			$status = 0;
 		}
 
-		// phpcs:enable
+		return '';
+		/*
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
@@ -937,6 +939,7 @@ class Skill extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		*/
 	}
 
 	/**

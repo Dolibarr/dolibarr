@@ -45,7 +45,7 @@ $id				= GETPOSTINT('id');
 $action			= GETPOST('action', 'alpha');
 $massaction		= GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm		= GETPOST('confirm', 'alpha');
-$toselect		= GETPOST('toselect', 'array');
+$toselect		= GETPOST('toselect', 'array:int');
 $contextpage	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
 
 $lineid			= GETPOSTINT('lineid');
@@ -334,7 +334,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

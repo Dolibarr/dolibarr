@@ -51,7 +51,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 //$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'aZ09');
 $mode = GETPOST('mode', 'aZ');
 
@@ -80,7 +80,7 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array:int');
 
 if (!isset($search_projectstatus) || $search_projectstatus === '') {
 	if ($search_all != '') {
@@ -576,7 +576,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

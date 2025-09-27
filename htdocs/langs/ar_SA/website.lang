@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=يمكنك انشاء صفحة جديدة او 
 SyntaxHelp=مساعدة ونصائح في تكريب جمل معينة
 YouCanEditHtmlSourceckeditor=يمكن تحرير مصدر  لغة ترميز النصوص التشعبية باستخدام زر "تحرير المصدر" في المحرر
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> يمكنك تضمين كود بي إتش بي -PHP- في هذا المصدر باستخدام أوسمة <strong>&lt;?php ?&gt;</strong>. المتغيرات العالمية التالية متاحة: $conf، $db، $mysoc، $user، $website، $websitepage، $weblangs، $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> يمكنك أيضًا تضمين محتوى صفحة/حاوية أخرى باستخدام الصيغة التالية:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> يمكنك إجراء إعادة توجيه إلى صفحة/حاوية أخرى باستخدام الصيغة التالية (ملاحظة: لا تقم بإخراج أي محتوى قبل إعادة التوجيه):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>يمكنك أيضًا إجراء إعادة توجيه باستخدام معلمات GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> لإضافة رابط إلى صفحة أخرى، استخدم الصيغة التالية:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> يمكنك تعيين <strong>عنوان تحسين محركات البحث -SEO- و علامات التعريف الوصفية</strong> (العنوان، الكلمات الرئيسية، الوصف). قم ببساطة بتحديد المتغيرات التالية:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // مفصولة بفاصلة</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> لتضمين <strong>رابط لتنزيل</strong> ملف مخزن في مجلد <strong>المستندات</strong> ، استخدم الغلاف <strong>document.php</strong> :<br>على سبيل المثال، لملف في المستندات/إدارة المحتوى الإلكتروني (يحتاج إلى الدخول)، يكون بناء الجملة كما يلي:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>لتحويل ملف إلى مستندات/وسائط (مجلد مفتوح للوصول العام)، يكون بناء الجملة كالتالي:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=بالنسبة للملف المشترك باستخدام رابط مشاركة (الوصول المفتوح باستخدام مفتاح مشاركة الملف)، يكون بناء الجملة كما يلي:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1= <br><span class="fa fa-image paddingright"></span>لتضمين <strong>صورة</strong> مخزنة في مجلد <strong>الوسائط</strong> (مجلد مفتوح للوصول العام)، استخدم المسار النسبي الذي يبدأ بـ<strong>/medias</strong> مثال:<br><strong> &lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=لقد نسخت الصفحة كترجمة . 
 ParentPageId=معرف الصفحة الام
 WebsiteId=معرف الموقع الإلكتروني
 CreateByFetchingExternalPage=إنشاء صفحة\\حاوية عن طريق جلبها من رابط خارجي
-OrEnterPageInfoManually=او انشئ صفحة من البداية او من قالب صفحة..
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=جلب و إنشاء
 ExportSite=تصدير الموقع الالكتروني
 ImportSite=إستيراد قالب موقع إلكتروني
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=للأسف، هذا الموقع غير متصل 
 WEBSITE_USE_WEBSITE_ACCOUNTS=تمكين جدول حساب موقع الويب للجهات الخارجية
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=تمكين الجدول لتخزين حسابات موقع الويب (الدخول/كلمة السر) لكل طرف ثالث
 YouMustDefineTheHomePage=لابد ان تُعرف الصفحة الرئيسية المبدئية اولاً
-OnlyEditionOfSourceForGrabbedContentFuture=تحذير: إنشاء صفحة ويب عن طريق استيراد صفحة ويب خارجية مخصص للمستخدمين ذوي الخبرة. قد تختلف نتيجة الاستيراد عن الصفحة الأصلية، وذلك حسب تعقيد الصفحة المراد إستيرادها. كذلك، إذا كانت الصفحة المراد إستيرادها تستخدم أوراق الأنماط المتتالية -CSS- شائعة أو جافا سكريبت متعارضة، فقد يؤثر ذلك على مظهر أو ميزات محرر الموقع الإلكتروني عند العمل عليها. تُعد هذه الطريقة أسرع لإنشاء صفحة، ولكن يُنصح بإنشاء صفحتك الجديدة من الصفر أو من قالب صفحة مقترح.<br>لاحظ أيضًا أن المحرر المضمّن قد لا يعمل بشكل صحيح عند استخدامه على صفحة خارجية مُستخدَمة.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=لا يمكن تعديل مصدر لغة توصيف النص الفائق -HTML- إلا عند الحصول على المحتوى من موقع خارجي
 GrabImagesInto=جلب الصور الموجودة في الصفحة او في ملف المظهر ايضاً.
 ImagesShouldBeSavedInto=يجب ان تُحفظ الصور في مسار
@@ -423,8 +423,8 @@ contactFormPhone = الهاتف
 contactFormSubjectEntered = الموضوع المدخل
 contactFormMessageLabel = رسالة
 contactFormSuccessAlert = شكرًا لرسالتك. سنتواصل معك قريبًا.
-socials=الشبكة الاجتماعية
-rgpd=RGPD
+socials=الشبكات الاجتماعية
+rgpd=GDPR
 joinUs=انضم إلينا
 home=الصفحة الرئيسية
 anonymous=مجهول
@@ -455,3 +455,4 @@ SampleGoalOne=تعزيز التعاون والتضامن بين و.
 SampleGoaltwo=تشجيع الممارسات المستدامة المسؤولة و في جميع الأنشطة.
 SampleGoalthree=دعم المشاريع المؤثرة التي تعود بالنفع على المجتمع ككل.
 SHOW_LANG_SELECTOR=عرض القائمة المنسدلة لاختيار اللغة
+ForAdvancedWebmastersOnly=For technical webmasters only

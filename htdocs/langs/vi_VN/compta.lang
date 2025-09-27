@@ -3,10 +3,10 @@ MenuFinancial=Hóa đơn | Thanh toán
 TaxModuleSetupToModifyRules=Tới <a href="%s">Thuế thiết lập mô-đun</a> để sửa đổi quy định để tính
 TaxModuleSetupToModifyRulesLT=Tới <a href="%s">thiết lập Công ty</a> để sửa đổi quy định để tính
 OptionMode=Tùy chọn cho kế toán
-OptionModeTrue=Kế toán dồn tích
-OptionModeVirtual=Kế toán tiền mặt
-OptionModeTrueDesc=Trong bối cảnh này, doanh thu được tính theo các khoản thanh toán (ngày thanh toán). Tính hợp lệ của các số liệu chỉ được đảm bảo nếu việc ghi sổ kế toán được kiểm tra kỹ lưỡng thông qua đầu vào/đầu ra của các khoản thanh toán.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Trong bối cảnh này, doanh thu được tính toán trên hoá đơn (ngày xác nhận). Khi các hóa đơn đến hạn, cho dù họ đã được trả tiền hay không, chúng được liệt kê trong đầu ra doanh thu.
+OptionModeTrueDesc=Trong bối cảnh này, doanh thu được tính theo các khoản thanh toán (ngày thanh toán). Tính hợp lệ của các số liệu chỉ được đảm bảo nếu việc ghi sổ kế toán được kiểm tra kỹ lưỡng thông qua đầu vào/đầu ra của các khoản thanh toán.
 FeatureIsSupportedInInOutModeOnly=Tính năng chỉ khả dụng trong chế độ kế toán CREDITS-DEBTS (Xem cấu hình mô-đun Kế toán)
 VATReportBuildWithOptionDefinedInModule=Các khoản tiền được hiển thị ở đây được tính bằng các quy tắc được xác định bởi thiết lập mô-đun Thuế.
 LTReportBuildWithOptionDefinedInModule=Các khoản tiền được hiển thị ở đây được tính bằng các quy tắc được xác định bởi thiết lập Công ty.
@@ -302,7 +302,6 @@ ByVatRate=Theo thuế suất bán hàng
 TurnoverbyVatrate=Doanh thu được lập hóa đơn theo thuế suất bán hàng
 TurnoverCollectedbyVatrate=Doanh thu được thu thập theo thuế suất bán hàng
 PurchasebyVatrate=Mua theo thuế suất bán hàng
-LabelToShow=Nhãn ngắn
 PurchaseTurnover=Doanh số hàng mua
 PurchaseTurnoverCollected=Doanh số hàng mua
 RulesPurchaseTurnoverDue=- Bao gồm các hoá đơn đến hạn của nhà cung cấp dù đã được thanh toán hay chưa. <br>- Căn cứ vào ngày lập hóa đơn của các hóa đơn này.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Quy tắc cho ngày dòng
 Prepaid=Trả trước
 Postpaid=Trả sau
 SetRuleForLinesDates=Đặt quy tắc cho ngày dòng
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

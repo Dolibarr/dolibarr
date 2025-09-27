@@ -6,7 +6,7 @@
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ if (isModEnabled('stripe')) {
 
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha')*/) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -459,16 +459,26 @@ if (!empty($object->ext_payment_id)) {
 		if (!empty($stripeacc)) {
 			$connect = $stripeacc.'/';
 		}
-		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
-		if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
-			$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+
+		if ($stripecu) {
+			$url = 'https://dashboard.stripe.com/'.$connect.($object->ext_payment_site == 'Stripe' ? 'test/' : '').'customers/'.$stripecu;
+			if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
+				$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+			}
+		} else {
+			$url = 'https://dashboard.stripe.com/'.($object->ext_payment_site == 'Stripe' ? 'test/' : '').'payments/'.$object->ext_payment_id;
 		}
+
 		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account_payment, 'globe').'</a>';
 	} else {
 		print dol_escape_htmltag($object->ext_payment_id);
 	}
 	print '</td></tr>';
 }
+
+// Other attributes
+$cols = 2;
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 // Other attributes
 $parameters = array();

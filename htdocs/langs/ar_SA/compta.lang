@@ -3,10 +3,10 @@ MenuFinancial=الفواتير | السداد
 TaxModuleSetupToModifyRules=إذهب إلى <a href="%s">إعدادات وحدة الضرائب</a> لتعديل قواعد الحساب
 TaxModuleSetupToModifyRulesLT=إذهب إلى <a href="%s">إعدادات الشركة</a> لتعديل قواعد الحساب
 OptionMode=خيار المحاسبة
-OptionModeTrue=الاستحقاق المحاسبة
-OptionModeVirtual=المحاسبة النقدية
-OptionModeTrueDesc=في هذا السياق، يُحسب التغيير بناءً على المدفوعات (تاريخ الدفع). ولا تُضمن صحة الأرقام إلا بتدقيق دفاتر الحسابات من خلال مدخلات/مخرجات المدفوعات.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=وفي هذا السياق ، فإن أكثر من الدوران يحسب الفواتير (تاريخ التصديق). إذا كانت هذه الفواتير المستحقة ، وعما إذا كانت قد دفعت أم لا ، فهي مدرجة في حجم الانتاج.
+OptionModeTrueDesc=في هذا السياق، يُحسب التغيير بناءً على المدفوعات (تاريخ الدفع). ولا تُضمن صحة الأرقام إلا بتدقيق دفاتر الحسابات من خلال مدخلات/مخرجات المدفوعات.
 FeatureIsSupportedInInOutModeOnly=الميزة الوحيدة المتاحة في سداد ديون قروض المحاسبة طريقة (انظر التكوين وحدة المحاسبة)
 VATReportBuildWithOptionDefinedInModule=المبالغ المبينة هنا يتم حسابها باستخدام القواعد التي تحددها وحدة الإعداد الضرائب.
 LTReportBuildWithOptionDefinedInModule=وتحسب المبالغ المبينة هنا باستخدام القواعد التي يحددها الإعداد الشركة.
@@ -302,7 +302,6 @@ ByVatRate=حسب معدل ضريبة البيع
 TurnoverbyVatrate=معدل دوران بفاتورة معدل ضريبة البيع
 TurnoverCollectedbyVatrate=حجم المبيعات المحصلة عن طريق معدل ضريبة البيع
 PurchasebyVatrate=الشراء حسب معدل ضريبة البيع
-LabelToShow=التسمية قصيرة
 PurchaseTurnover=معدل دوران الشراء
 PurchaseTurnoverCollected=جمع دوران الشراء
 RulesPurchaseTurnoverDue=- تشمل فواتير المورد المستحقة سواء تم دفعها أم لا. <br> - يعتمد على تاريخ فاتورة هذه الفواتير. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=قاعدة لتواريخ الخطوط
 Prepaid=الدفع المسبق
 Postpaid=الدفع الآجل
 SetRuleForLinesDates=تعيين قاعدة لتواريخ الخطوط
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

@@ -25,17 +25,11 @@
 /**
  *	\file       htdocs/comm/propal/note.php
  *	\ingroup    propal
- *	\brief      Fiche d'information sur une proposition commerciale
+ *	\brief      Page for notes on proposals
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +37,12 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'compta', 'bills', 'companies'));
@@ -103,7 +103,7 @@ llxHeader('', $title, $help_url);
 if ($object->id > 0) {
 	if ($object->fetch_thirdparty() > 0) {
 		$head = propal_prepare_head($object);
-		print dol_get_fiche_head($head, 'note', $langs->trans('Proposal'), -1, 'propal');
+		print dol_get_fiche_head($head, 'note', $langs->trans('Proposal'), -1, $object->picto);
 
 		$cssclass = 'titlefield';
 		//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
@@ -117,15 +117,15 @@ if ($object->id > 0) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
-		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {
+			if (0) {	// @phpstan-ignore-line
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';

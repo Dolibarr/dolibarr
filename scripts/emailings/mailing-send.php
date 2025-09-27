@@ -146,7 +146,7 @@ if ($resql) {
 			$emailing = new Mailing($db);
 			$emailing->fetch($obj->rowid);
 
-			$upload_dir = $conf->mailing->dir_output."/".get_exdir($emailing->id, 2, 0, 1, $emailing, 'mailing');
+			$upload_dir = $conf->mailing->dir_output."/".get_exdir($emailing->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $emailing, 'mailing');
 
 			$id = $emailing->id;
 			$subject = $emailing->sujet;
@@ -433,7 +433,7 @@ if ($resql) {
 					$result_sql = $db->query($sql);
 
 					dol_syslog("update global status", LOG_DEBUG);
-					print "Update status of emailing id ".$id." to ".$statut."\n";
+					print "Update status of emailing id ".$id." to 3\n";
 				}
 			} else {
 				dol_print_error($db);

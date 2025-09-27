@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->loadLangs(array("admin", "accountancy", "companies", "other"));
 
@@ -60,6 +59,7 @@ $formcompany = new FormCompany($db);
 /*
  * Actions
  */
+
 $error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
@@ -360,7 +360,8 @@ $form = new Form($db);
 $help_url = 'EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers|ES:Configuración_del_módulo_terceros';
 llxHeader('', $langs->trans("CompanySetup"), $help_url);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("CompanySetup"), $linkback, 'title_setup');
 
 
@@ -433,7 +434,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 	print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
 	print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
-	if ($conf->global->SOCIETE_CODECLIENT_ADDON == (string) $file) {
+	if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') == (string) $file) {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
@@ -515,7 +516,7 @@ foreach ($arrayofmodules as $file => $modCodeCompta) {
 	print '</td>';
 	print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
 
-	if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file") {
+	if (getDolGlobalString('SOCIETE_CODECOMPTA_ADDON') == "$file") {
 		print '<td class="center">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</td>';
@@ -964,7 +965,7 @@ print '</tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	// Default Prospect/Customer thirdparty type on customer création
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
+	print '<td>'.$langs->trans("DefaultCustomerType", $langs->transnoentitiesnoconv("MenuNewThirdParty"), $langs->transnoentitiesnoconv("MenuNewCustomer")).'</td>';
 	print '<td>';
 	print $formcompany->selectProspectCustomerType(getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
 	print '</td>';
