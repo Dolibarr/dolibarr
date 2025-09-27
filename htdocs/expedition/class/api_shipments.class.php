@@ -146,7 +146,7 @@ class Shipments extends DolibarrApi
 			$action = 'list';
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
-				$sql .= $hookmanager->resPrint;
+				$sql = $hookmanager->resPrint;
 			} elseif ($reshook == 0) {
 				$sql .= $hookmanager->resPrint;
 			}
