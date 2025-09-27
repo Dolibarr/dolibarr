@@ -134,7 +134,7 @@ if ($action == 'print' || $action == 'print_content') {
 	}
 
 	// Generate data for print view
-	$current_year = (int)date('Y');
+	$current_year = (int) date('Y');
 	$years = array($current_year, $current_year - 1, $current_year - 2);
 	$data_by_year = array();
 	foreach ($years as $year) {
@@ -147,8 +147,8 @@ if ($action == 'print' || $action == 'print_content') {
 			$sql .= " COUNT(f.rowid) as nb_invoices";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 			$sql .= " WHERE f.fk_statut IN (1,2,3)";
-			$sql .= " AND f.fk_soc = " . (int)$socid;
-			$sql .= " AND YEAR(f.datef) = " . (int)$year;
+			$sql .= " AND f.fk_soc = " . (int) $socid;
+			$sql .= " AND YEAR(f.datef) = " . (int) $year;
 			$sql .= " AND f.entity IN (" . getEntity('invoice') . ")";
 			$sql .= " GROUP BY MONTH(f.datef)";
 			$sql .= " ORDER BY month ASC";
@@ -160,8 +160,8 @@ if ($action == 'print' || $action == 'print_content') {
 			$sql .= " COUNT(f.rowid) as nb_invoices";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
 			$sql .= " WHERE f.fk_statut IN (1,2,3)";
-			$sql .= " AND f.fk_soc = " . (int)$socid;
-			$sql .= " AND YEAR(f.datef) = " . (int)$year;
+			$sql .= " AND f.fk_soc = " . (int) $socid;
+			$sql .= " AND YEAR(f.datef) = " . (int) $year;
 			$sql .= " AND f.entity IN (" . getEntity('supplier_invoice') . ")";
 			$sql .= " GROUP BY MONTH(f.datef)";
 			$sql .= " ORDER BY month ASC";
@@ -173,10 +173,10 @@ if ($action == 'print' || $action == 'print_content') {
 			$sql .= " COUNT(rowid) as nb_invoices";
 			$sql .= " FROM (";
 			$sql .= " SELECT datef, total_ht, total_ttc, rowid FROM " . MAIN_DB_PREFIX . "facture";
-			$sql .= " WHERE fk_statut IN (1,2,3) AND fk_soc = " . (int)$socid . " AND YEAR(datef) = " . (int)$year . " AND entity IN (" . getEntity('invoice') . ")";
+			$sql .= " WHERE fk_statut IN (1,2,3) AND fk_soc = " . (int) $socid . " AND YEAR(datef) = " . (int) $year . " AND entity IN (" . getEntity('invoice') . ")";
 			$sql .= " UNION ALL";
 			$sql .= " SELECT datef, total_ht, total_ttc, rowid FROM " . MAIN_DB_PREFIX . "facture_fourn";
-			$sql .= " WHERE fk_statut IN (1,2,3) AND fk_soc = " . (int)$socid . " AND YEAR(datef) = " . (int)$year . " AND entity IN (" . getEntity('supplier_invoice') . ")";
+			$sql .= " WHERE fk_statut IN (1,2,3) AND fk_soc = " . (int) $socid . " AND YEAR(datef) = " . (int) $year . " AND entity IN (" . getEntity('supplier_invoice') . ")";
 			$sql .= " ) as combined";
 			$sql .= " GROUP BY MONTH(datef)";
 			$sql .= " ORDER BY month ASC";
@@ -410,7 +410,7 @@ print '<style>
 </style>';
 
 // Get monthly data for the last 3 years
-$current_year = (int)date('Y');
+$current_year = (int) date('Y');
 $years = array($current_year, $current_year - 1, $current_year - 2);
 
 // Build data array for all years
@@ -425,8 +425,8 @@ foreach ($years as $year) {
 		$sql .= " COUNT(f.rowid) as nb_invoices";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 		$sql .= " WHERE f.fk_statut IN (1,2,3)";
-		$sql .= " AND f.fk_soc = " . (int)$socid;
-		$sql .= " AND YEAR(f.datef) = " . (int)$year;
+		$sql .= " AND f.fk_soc = " . (int) $socid;
+		$sql .= " AND YEAR(f.datef) = " . (int) $year;
 		$sql .= " AND f.entity IN (" . getEntity('invoice') . ")";
 		$sql .= " GROUP BY MONTH(f.datef)";
 		$sql .= " ORDER BY month ASC";
@@ -438,8 +438,8 @@ foreach ($years as $year) {
 		$sql .= " COUNT(f.rowid) as nb_invoices";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
 		$sql .= " WHERE f.fk_statut IN (1,2,3)";
-		$sql .= " AND f.fk_soc = " . (int)$socid;
-		$sql .= " AND YEAR(f.datef) = " . (int)$year;
+		$sql .= " AND f.fk_soc = " . (int) $socid;
+		$sql .= " AND YEAR(f.datef) = " . (int) $year;
 		$sql .= " AND f.entity IN (" . getEntity('supplier_invoice') . ")";
 		$sql .= " GROUP BY MONTH(f.datef)";
 		$sql .= " ORDER BY month ASC";
@@ -451,10 +451,10 @@ foreach ($years as $year) {
 		$sql .= " COUNT(rowid) as nb_invoices";
 		$sql .= " FROM (";
 		$sql .= " SELECT datef, total_ht, total_ttc, rowid FROM " . MAIN_DB_PREFIX . "facture";
-		$sql .= " WHERE fk_statut IN (1,2,3) AND fk_soc = " . (int)$socid . " AND YEAR(datef) = " . (int)$year . " AND entity IN (" . getEntity('invoice') . ")";
+		$sql .= " WHERE fk_statut IN (1,2,3) AND fk_soc = " . (int) $socid . " AND YEAR(datef) = " . (int) $year . " AND entity IN (" . getEntity('invoice') . ")";
 		$sql .= " UNION ALL";
 		$sql .= " SELECT datef, total_ht, total_ttc, rowid FROM " . MAIN_DB_PREFIX . "facture_fourn";
-		$sql .= " WHERE fk_statut IN (1,2,3) AND fk_soc = " . (int)$socid . " AND YEAR(datef) = " . (int)$year . " AND entity IN (" . getEntity('supplier_invoice') . ")";
+		$sql .= " WHERE fk_statut IN (1,2,3) AND fk_soc = " . (int) $socid . " AND YEAR(datef) = " . (int) $year . " AND entity IN (" . getEntity('supplier_invoice') . ")";
 		$sql .= " ) as combined";
 		$sql .= " GROUP BY MONTH(datef)";
 		$sql .= " ORDER BY month ASC";
