@@ -57,7 +57,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin"));
+$langs->loadLangs(array("admin", "bills", "cashdesk", "companies"));
 
 
 /*
@@ -66,7 +66,8 @@ $langs->loadLangs(array("admin"));
 
 top_httphead();
 
-print '<div id="pop-info"><table height="80%" class="border centpercent"><thead><th width="50%" class="left">'.$langs->trans('Field').'</th><th class="left">'.$langs->trans('Value').'</th></thead>';
+print '<div id="pop-info"><table height="80%" class="border centpercent"><thead>';
+print '<th width="30%" class="left">'.$langs->trans('Field').'</th><th class="left">'.$langs->trans('Label').'</th><th class="left">'.$langs->trans('Value').'</th></thead>';
 print '<tbody>';
 
 if ($block->fetch($id) > 0) {
@@ -92,24 +93,93 @@ $db->close();
  */
 function formatObject($objtoshow, $prefix)
 {
+	global $db, $langs;
+
 	$s = '';
 
 	$newobjtoshow = $objtoshow;
+
+	$arrayoffields = array();
+	if ($prefix == 'mycompany' || $prefix == 'thirdparty') {
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$tmpobject = new Societe($db);
+		$arrayoffields = $tmpobject->fields;
+	} elseif ($prefix == 'invoice') {
+		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$tmpobject = new Facture($db);
+		$arrayoffields = $tmpobject->fields;
+	} elseif ($prefix == 'invoiceline') {
+		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/factureligne.class.php';
+		$tmpobject = new FactureLigne($db);
+		$arrayoffields = $tmpobject->fields;
+	}
+
+
+	$convertkey = array(
+		'name' => 'nom',
+		'country_code' => 'fk_pays',
+		'typent_code' => 'fk_typent',
+		'forme_juridique_code' => 'fk_forme_juridique',
+	);
+
+	$otherlabels = array(
+		'module_source' => 'POSModule',
+		'pos_source' => "POSTerminal",
+		'posmodule' => 'POSModule',
+		'posnumber' => 'POSTerminal',
+		'managers' => 'Managers',
+		'type_code' => 'PaymentMode'
+	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {
 		//var_dump($newobjtoshow);
 		foreach ($newobjtoshow as $key => $val) {
 			if (!is_object($val) && !is_array($val)) {
 				// TODO $val can be '__PHP_Incomplete_Class', the is_object return false
-				$s .= '<tr><td>'.($prefix ? $prefix.' > ' : '').$key.'</td>';
+				$s .= '<tr>';
+
+				// Field code
 				$s .= '<td>';
-				if (in_array($key, array('date', 'datef', 'dateh', 'datec', 'datem', 'datep'))) {
-					//var_dump(is_object($val));
-					//var_dump(is_array($val));
-					//var_dump(is_array($val));
-					//var_dump(@get_class($val));
-					//var_dump($val);
+				$s .= '<!-- '.$key.' '.$arrayoffields[$key]['type'].''.$arrayoffields[$convertkey[$key]].' -->';
+				$s .= ($prefix ? $prefix.' > ' : '');
+				$s .= $key;
+				$s .= '</td>';
+
+				// Label
+				$s .= '<td>';
+				$label = ''.$convertkey[$key];
+				if (isset($arrayoffields[$key]['label'])) {
+					$label = $langs->trans($tmpobject->fields[$key]['label']);
+				} elseif (!empty($convertkey[$key]) && isset($arrayoffields[$convertkey[$key]]['label'])) {
+					$label = $langs->trans($tmpobject->fields[$convertkey[$key]]['label']);
+				} elseif ($prefix == 'mycompany' || $prefix == 'thirdparty') {
+					$reg = array();
+					if (preg_match('/^idprof(\d+)$/', $key, $reg)) {
+						$countrycode = property_exists($newobjtoshow, 'country_code') ? ($newobjtoshow->country_code ?? '') : '';
+						$label = $langs->trans("ProfId".$reg[1].$countrycode);
+					}
+				}
+				if (empty($label) && !empty($otherlabels[$key])) {
+					$label = $langs->trans($otherlabels[$key]);
+				}
+				if (!empty($label)) {
+					$s .= '<span class="opacitymedium">'.$label.'</span>';
+				}
+
+				// Value
+				$s .= '<td>';
+				if (in_array($key, array('date', 'datef'))) {
+					$s .= dol_print_date($val, 'day');
+				} elseif (in_array($key, array('dateh', 'datec', 'date_creation', 'datem', 'tms', 'date_valid', 'datep'))) {
 					$s .= dol_print_date($val, 'dayhour');
+				} elseif (in_array($key, array(
+					'qty', 'subprice',
+					'tva_tx', 'localtax1_tx', 'localtax2_tx', 'total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2', 'localtax2', 'localtax2', 'revenuestamp',
+					'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc', 'multicurrency_subprice',
+					'opening', 'cash', 'cheque', 'card',
+					'amount'
+				)) || (isset($arrayoffields[$key]['type']) && in_array($arrayoffields[$key]['type'], array('price')))) {
+					$s .= '<span class="amount">'.price($val, 0, $langs, 1, 0, -2).'</span>';
 				} else {
 					$s .= $val;
 				}

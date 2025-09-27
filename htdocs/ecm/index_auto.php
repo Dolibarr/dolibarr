@@ -2,8 +2,9 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025 Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -410,8 +411,14 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
-		$sectionauto[] = $hookmanager->resArray;
-		$rowspan += count($hookmanager->resArray);
+		$res = $hookmanager->resArray[0];
+		if (is_array($hookmanager->resArray[0])) {
+			$sectionauto = array_merge($sectionauto, $hookmanager->resArray);
+			$rowspan += count($hookmanager->resArray);
+		} else {
+			$sectionauto[] = $hookmanager->resArray;
+			$rowspan++;
+		}
 	}
 }
 
