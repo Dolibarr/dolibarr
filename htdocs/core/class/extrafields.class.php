@@ -1595,7 +1595,7 @@ class ExtraFields
 						}
 						$sql .= $sqlwhere;
 
-						$sql .= $this->db->order(implode(', ', $fields_label));
+						$sql .= ' ORDER BY '.implode(', ', $fields_label);  // not use $this->db->order here, because $fields_label can contain SQL functions like concat_ws which needs parameters seperated by , - $this->db->order would break this
 						$sql .= ' LIMIT ' . getDolGlobalInt('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', 1000);
 						//print $sql;
 
