@@ -276,7 +276,7 @@ class Expedition extends CommonObject
 	 */
 	public $multicurrency_code;
 	/**
-	 * @var float
+	 * @var ?float
 	 */
 	public $multicurrency_tx;
 	/**

@@ -330,7 +330,7 @@ class CommandeFournisseur extends CommonOrder
 	public $multicurrency_code;
 
 	/**
-	 * @var float Rate
+	 * @var ?float Rate
 	 */
 	public $multicurrency_tx;
 
