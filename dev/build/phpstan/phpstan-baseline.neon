@@ -7831,30 +7831,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: '#^Property mod_facture_mars\:\:\$prefixcreditnote has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixdeposit has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixinvoice has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixreplacement has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
 			message: '#^Access to constant TYPE_NON on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
 			identifier: class.notFound
 			count: 1
