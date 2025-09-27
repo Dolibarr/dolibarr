@@ -8,6 +8,7 @@
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1787,6 +1788,11 @@ class CMailFile
 						$mimetype_list[$i] = "application/octet-stream";
 					}
 
+					// Skip files that have a CID (they will be added as inline images instead)
+					if (!empty($cidlist) && is_array($cidlist) && !empty($cidlist[$i])) {
+						continue; // Skip this file as it will be processed as inline image
+					}
+
 					$out .= "--".$this->mixed_boundary.$this->eol;
 					$out .= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
 					$out .= "Content-Type: ".$mimetype_list[$i]."; name=\"".$filename_list[$i]."\"".$this->eol;
@@ -2121,6 +2127,21 @@ class CMailFile
 					$this->html = str_replace('src="data:image/'.$ext.';base64,'.$filecontent.'"', 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
 				}
 				$i++;
+			}
+
+			// Also add cidfromdata images to images_encoded array so they are sent as inline images
+			foreach ($this->html_images as $img) {
+				if ($img['type'] == 'cidfromdata') {
+					$image_content = file_get_contents($img['fullpath']);
+					if ($image_content !== false) {
+						$idx = count($this->images_encoded);
+						$this->images_encoded[$idx]['name'] = $img['name'];
+						$this->images_encoded[$idx]['fullpath'] = $img['fullpath'];
+						$this->images_encoded[$idx]['content_type'] = $img['content_type'];
+						$this->images_encoded[$idx]['cid'] = $img['cid'];
+						$this->images_encoded[$idx]['image_encoded'] = chunk_split(base64_encode($image_content), 68, $this->eol);
+					}
+				}
 			}
 
 			return 1;
