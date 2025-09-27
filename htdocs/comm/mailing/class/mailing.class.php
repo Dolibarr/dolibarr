@@ -577,6 +577,28 @@ class Mailing extends CommonObject
 		}
 	}
 
+	/**
+	 *  SetDraft emailing
+	 *
+	 *  @param	User	$user      	Object user that makes it draft
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setDraft($user)
+	{
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
+		$sql .= " SET statut = 0, fk_user_modif=".$user->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog("Mailing::valid", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Delete emailing
