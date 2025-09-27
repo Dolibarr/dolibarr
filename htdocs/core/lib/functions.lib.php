@@ -13431,7 +13431,7 @@ function dolIsAllowedForPreview($file)
 	}
 
 	// Check mime types
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp');
+	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
@@ -14708,7 +14708,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
-	} elseif ($elementType == 'mo') {
+	} elseif ($elementType == 'mo' || $elementType == 'mrp') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
 		$classname = 'Mo';

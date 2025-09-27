@@ -410,12 +410,12 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
+$savnbfield = $totalarray['nbfield'];
 
 
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
-$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
@@ -454,6 +454,9 @@ while ($i < $imaxinloop) {
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Ref
@@ -465,13 +468,13 @@ while ($i < $imaxinloop) {
 	}
 
 	// Title
-	print '<td class="tdoverflowmax125">'.dol_htmlentities($obj->title).'</td>';
+	print '<td class="tdoverflowmax200">'.dol_htmlentities($obj->title).'</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
 	// Type
-	print '<td class="tdoverflowmax100">';
+	print '<td class="tdoverflowmax125">';
 	$type = ($obj->format == 'A') ? 'classic' : 'date';
 	print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 	print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate");
@@ -480,7 +483,7 @@ while ($i < $imaxinloop) {
 		$totalarray['nbfield']++;
 	}
 
-	print '<td class="tdoverflowmax100">';
+	print '<td class="tdoverflowmax125">';
 	// Author
 	if ($obj->fk_user_creat) {
 		$userstatic = new User($db);
@@ -504,7 +507,7 @@ while ($i < $imaxinloop) {
 		$totalarray['nbfield']++;
 	}
 
-	print '<td class="center">'.dol_print_date($db->jdate($obj->date_fin), 'day');
+	print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_fin), 'day');
 	if ($db->jdate($obj->date_fin) < $now && $obj->status == Opensurveysondage::STATUS_VALIDATED) {
 		print img_warning($langs->trans("Expired"));
 	}
@@ -513,7 +516,7 @@ while ($i < $imaxinloop) {
 		$totalarray['nbfield']++;
 	}
 
-	print '<td class="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour');
+	print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->tms), 'dayhour');
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
@@ -541,9 +544,9 @@ while ($i < $imaxinloop) {
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-	}
-	if (!$i) {
-		$totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print '</tr>'."\n";
@@ -556,12 +559,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found
 if ($num == 0) {
-	$colspan = 8;
-	foreach ($arrayfields as $key => $val) {	//
-		if (!empty($val['checked'])) {
-			$colspan++;
-		}
-	}
+	$colspan = $savnbfield;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
