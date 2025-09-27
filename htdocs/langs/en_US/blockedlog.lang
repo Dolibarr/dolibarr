@@ -33,6 +33,7 @@ BlockedLogDisabled=System to track events into unalterable logs has been disable
 BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.
 LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
 SavedOnLine=Saved on line
+UnlaterableDataOfEvent=Unalterable data of event
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted
