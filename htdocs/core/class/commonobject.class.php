@@ -3076,7 +3076,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'supplier_proposal', 'commande_fournisseur', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
