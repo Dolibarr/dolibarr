@@ -317,52 +317,52 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		$rowspan++;
-		$sectionauto[] = array('position' => 10, 'level' => 1, 'module' => 'product', 'test' => (isModEnabled("product") || isModEnabled("service")), 'label' => $langs->trans("ProductsAndServices"), 'desc' => $langs->trans("ECMDocsByProducts"));
+		$sectionauto[] = array('position' => 10, 'level' => 1, 'module' => 'product', 'test' => ((isModEnabled("product") || isModEnabled("service")) && $user->hasRight('produit', 'lire')), 'label' => $langs->trans("ProductsAndServices"), 'desc' => $langs->trans("ECMDocsByProducts"));
 	}
 	if (isModEnabled("societe")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 20, 'level' => 1, 'module' => 'company', 'test' => isModEnabled('societe'), 'label' => $langs->trans("ThirdParties"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));
+		$sectionauto[] = array('position' => 20, 'level' => 1, 'module' => 'company', 'test' => (isModEnabled('societe') && $user->hasRight('societe', 'lire')), 'label' => $langs->trans("ThirdParties"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));
 	}
 	if (isModEnabled("propal")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 30, 'level' => 1, 'module' => 'propal', 'test' => isModEnabled('propal'), 'label' => $langs->trans("Proposals"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
+		$sectionauto[] = array('position' => 30, 'level' => 1, 'module' => 'propal', 'test' => (isModEnabled('propal') && $user->hasRight('propale', 'lire')), 'label' => $langs->trans("Proposals"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
 	}
 	if (isModEnabled('contract')) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 40, 'level' => 1, 'module' => 'contract', 'test' => isModEnabled('contract'), 'label' => $langs->trans("Contracts"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
+		$sectionauto[] = array('position' => 40, 'level' => 1, 'module' => 'contract', 'test' => (isModEnabled('contract') && $user->hasRight('contrat', 'lire')), 'label' => $langs->trans("Contracts"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
 	}
 	if (isModEnabled('order')) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 50, 'level' => 1, 'module' => 'order', 'test' => isModEnabled('order'), 'label' => $langs->trans("CustomersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
+		$sectionauto[] = array('position' => 50, 'level' => 1, 'module' => 'order', 'test' => (isModEnabled('order') && $user->hasRight('commande', 'lire')), 'label' => $langs->trans("CustomersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
 	}
 	if (isModEnabled('invoice')) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 60, 'level' => 1, 'module' => 'invoice', 'test' => isModEnabled('invoice'), 'label' => $langs->trans("CustomersInvoices"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
+		$sectionauto[] = array('position' => 60, 'level' => 1, 'module' => 'invoice', 'test' => (isModEnabled('invoice') && $user->hasRight('facture', 'lire')), 'label' => $langs->trans("CustomersInvoices"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
 	}
 	if (isModEnabled('supplier_proposal')) {
 		$langs->load("supplier_proposal");
 		$rowspan++;
-		$sectionauto[] = array('position' => 70, 'level' => 1, 'module' => 'supplier_proposal', 'test' => isModEnabled('supplier_proposal'), 'label' => $langs->trans("SupplierProposals"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierProposals")));
+		$sectionauto[] = array('position' => 70, 'level' => 1, 'module' => 'supplier_proposal', 'test' => (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')), 'label' => $langs->trans("SupplierProposals"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierProposals")));
 	}
 	if (isModEnabled("supplier_order")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => isModEnabled("supplier_order"), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => (isModEnabled("supplier_order") && $user->hasRight('fournisseur', 'commande', 'lire')), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
 	}
 	if (isModEnabled("supplier_invoice")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 90, 'level' => 1, 'module' => 'invoice_supplier', 'test' => isModEnabled("supplier_invoice"), 'label' => $langs->trans("SuppliersInvoices"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
+		$sectionauto[] = array('position' => 90, 'level' => 1, 'module' => 'invoice_supplier', 'test' => (isModEnabled("supplier_invoice") && $user->hasRight('fournisseur', 'facture', 'lire')), 'label' => $langs->trans("SuppliersInvoices"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
 	}
 	if (isModEnabled('tax')) {
 		$langs->load("compta");
 		$rowspan++;
-		$sectionauto[] = array('position' => 100, 'level' => 1, 'module' => 'tax', 'test' => isModEnabled('tax'), 'label' => $langs->trans("SocialContributions"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
+		$sectionauto[] = array('position' => 100, 'level' => 1, 'module' => 'tax', 'test' => (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')), 'label' => $langs->trans("SocialContributions"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
 		$rowspan++;
-		$sectionauto[] = array('position' => 110, 'level' => 1, 'module' => 'tax-vat', 'test' => isModEnabled('tax'), 'label' => $langs->trans("VAT"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
+		$sectionauto[] = array('position' => 110, 'level' => 1, 'module' => 'tax-vat', 'test' => (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')), 'label' => $langs->trans("VAT"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
 	}
 	if (isModEnabled('salaries')) {
 		$langs->load("compta");
 		$rowspan++;
-		$sectionauto[] = array('position' => 120, 'level' => 1, 'module' => 'salaries', 'test' => isModEnabled('salaries'), 'label' => $langs->trans("Salaries"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
+		$sectionauto[] = array('position' => 120, 'level' => 1, 'module' => 'salaries', 'test' => (isModEnabled('salaries') && $user->hasRight('salaries', 'read')), 'label' => $langs->trans("Salaries"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
 	}
 	if (isModEnabled('project')) {
 		$rowspan++;
@@ -373,37 +373,37 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled('intervention')) {
 		$langs->load("interventions");
 		$rowspan++;
-		$sectionauto[] = array('position' => 150, 'level' => 1, 'module' => 'fichinter', 'test' => isModEnabled('intervention'), 'label' => $langs->trans("Interventions"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
+		$sectionauto[] = array('position' => 150, 'level' => 1, 'module' => 'fichinter', 'test' => (isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')), 'label' => $langs->trans("Interventions"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 	}
 	if (isModEnabled('expensereport')) {
 		$langs->load("trips");
 		$rowspan++;
-		$sectionauto[] = array('position' => 160, 'level' => 1, 'module' => 'expensereport', 'test' => isModEnabled('expensereport'), 'label' => $langs->trans("ExpenseReports"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
+		$sectionauto[] = array('position' => 160, 'level' => 1, 'module' => 'expensereport', 'test' => (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')), 'label' => $langs->trans("ExpenseReports"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
 	}
 	if (isModEnabled('holiday')) {
 		$langs->load("holiday");
 		$rowspan++;
-		$sectionauto[] = array('position' => 170, 'level' => 1, 'module' => 'holiday', 'test' => isModEnabled('holiday'), 'label' => $langs->trans("Holidays"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
+		$sectionauto[] = array('position' => 170, 'level' => 1, 'module' => 'holiday', 'test' => (isModEnabled('holiday') && $user->hasRight('holiday', 'read')), 'label' => $langs->trans("Holidays"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 	}
 	if (isModEnabled("bank")) {
 		$langs->load("banks");
 		$rowspan++;
-		$sectionauto[] = array('position' => 180, 'level' => 1, 'module' => 'banque', 'test' => isModEnabled('bank'), 'label' => $langs->trans("BankAccount"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+		$sectionauto[] = array('position' => 180, 'level' => 1, 'module' => 'banque', 'test' => (isModEnabled('bank') && $user->hasRight('banque', 'lire')), 'label' => $langs->trans("BankAccount"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
 		// TODO Enable this
 		//$rowspan++;
-		//$sectionauto[] = array('position' => 182, 'level' => 1, 'module' => 'bank-statement', 'test' => isModEnabled('bank'), 'label' => $langs->trans("BankAccount").' - '.$langs->trans("Statement"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount").' - '.$langs->transnoentitiesnoconv("Statement")));
+		//$sectionauto[] = array('position' => 182, 'level' => 1, 'module' => 'bank-statement', 'test' => (isModEnabled('bank') && $user->hasRight('banque', 'lire')), 'label' => $langs->trans("BankAccount").' - '.$langs->trans("Statement"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount").' - '.$langs->transnoentitiesnoconv("Statement")));
 		$rowspan++;
-		$sectionauto[] = array('position' => 190, 'level' => 1, 'module' => 'chequereceipt', 'test' => isModEnabled('bank'), 'label' => $langs->trans("CheckReceipt"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
+		$sectionauto[] = array('position' => 190, 'level' => 1, 'module' => 'chequereceipt', 'test' => (isModEnabled('bank') && $user->hasRight('banque', 'lire')), 'label' => $langs->trans("CheckReceipt"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
 	}
 	if (isModEnabled('mrp')) {
 		$langs->load("mrp");
 		$rowspan++;
-		$sectionauto[] = array('position' => 200, 'level' => 1, 'module' => 'mrp-mo', 'test' => isModEnabled('mrp'), 'label' => $langs->trans("MOs"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
+		$sectionauto[] = array('position' => 200, 'level' => 1, 'module' => 'mrp-mo', 'test' => (isModEnabled('mrp') && $user->hasRight('mrp', 'read')), 'label' => $langs->trans("MOs"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
 	}
 	if (isModEnabled('recruitment')) {
 		$langs->load("recruitment");
 		$rowspan++;
-		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => isModEnabled('recruitment'), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
+		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => (isModEnabled('recruitment') && $user->hasRight('recruitment', 'read')), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
 	}
 	$rowspan++;
 	$sectionauto[] = array('position' => 220, 'level' => 1, 'module' => 'user', 'test' => 1, 'label' => $langs->trans("Users"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));
