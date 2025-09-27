@@ -7201,18 +7201,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions2.lib.php
 
 		-
-			message: '#^Parameter \#3 \$value of function curl_setopt expects 0\|2, bool given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/geturl.lib.php
-
-		-
-			message: '#^Parameter \#3 \$value of function curl_setopt expects bool, int given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/core/lib/geturl.lib.php
-
-		-
 			message: '#^Call to function function_exists\(\) with ''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 3
