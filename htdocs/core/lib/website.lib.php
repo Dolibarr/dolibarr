@@ -1227,6 +1227,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	'@phan-var-force Website $website';
+	/** @var Website $website */
 
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
