@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +19,17 @@
  */
 
 /**
- * @var CommonObject $this
+ * @var DoliDB $db
+ * @var Mo $this
  * @var Conf $conf
  * @var Form $form
- * @var BOMLine $line
+ * @var MoLine $line
  * @var Translate $langs
  */
 
 '
-@phan-var-force BOMLine $line
+@phan-var-force MoLine $line
+@phan-var-force Mo $this
 ';
 
 // Protection to avoid direct call of template
@@ -35,8 +37,6 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
-'@phan-var-force CommonObject $this';
 
 global $db, $langs;
 
@@ -83,7 +83,7 @@ if ($res) {
 }
 print '</td>';
 // Qty
-print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
+print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto((string) $this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
 // Unit
 print '<td class="right">'.measuringUnitString($this->tpl['fk_unit'], '', null, 1).'</td>';
 // Stock

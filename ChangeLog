@@ -3,6 +3,45 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 22.0.2 compared to 22.0.1 *****
+
+FIX: ContratLigne::fetch() returns 1 even if the line doesn't exist (#35324)
+FIX: #34678
+FIX: #35142 FIX: #35143
+FIX: #35154 - Massaction createbills in reception list don't mind about order and/or thirdparty currency (#35156)
+FIX: #35181 Cancelled purchase orders now shown as such in Project Overview (#35186)
+FIX: #35407 After updating to version 22, local taxes were no longer applied (#35408)
+FIX: #35425 (#35426)
+FIX: accountancy general ledger: bad handling of hook return (#34029)
+FIX: Add security test for show terminal selection if no terminal selected when invoice.php is call (#34717)
+FIX: allow to create First Sutuation Invoice (#35228)
+FIX: api orders : forward database error on failure (backpot commit d9e81cb) (#35478)
+FIX: Can't edit tags of a user.
+FIX: can't reset intracomm transport mode
+FIX: can't save setup of odt template for stock
+FIX: check commande liste validate (#35479)
+FIX: color of late warning for nb of bank account reconciliation lines
+FIX: Correct the calculation of the amount of the current period between the period provided (#35083)
+FIX: Date planned of delivery is not propagated from order to shipment
+FIX: Edit of email in emailing. Property messtype not set.
+FIX: extra field list depend on parent list when editing a card (#35165)
+FIX: fallback of "from" email when sending email in member module
+FIX: missing token to disable custom group category for compta report (page /htdocs/accountancy/admin/categories_list.php) (#35084)
+FIX: Generation of member cards (file not found and substitution broken)
+FIX: invoice not set to closed when we add a credit note to close it
+FIX: missing check constant PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS (#33277)
+FIX: missing entity filter (#35461)
+FIX: missing quick edit for extrafields (baclport commit 4fc66c6) (#35160)
+FIX: Missing sentence part (#35144)
+FIX: Remove perms to access commerce tab when the only active permission is fournisseur:lire (#35467)
+FIX: Restore decimal quantity for stock correction/transfer
+FIX: save the packaging qty on update buying price (#35234)
+FIX: set global mysoc and load langs in API access (#35041)
+FIX: Societe - Problem of date on outstanding opened late (#35266)
+FIX: vat detection when country of buyer is unknown.
+FIX: wrong extrafield template in create mode (#35241) (#35470)
+
+
 ***** ChangeLog for 22.0.1 compared to 22.0.0 *****
 
 FIX: #34843 (#34875)
