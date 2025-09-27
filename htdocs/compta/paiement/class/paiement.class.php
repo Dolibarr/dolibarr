@@ -13,7 +13,7 @@
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ class Paiement extends CommonObject
 	public $datepaye;
 
 	/**
-	 * @var int|string					same than $datepaye
+	 * @var int|string					same than `$datepaye`
 	 */
 	public $date;
 
@@ -153,7 +153,7 @@ class Paiement extends CommonObject
 	public $type_label;
 
 	/**
-	 * @var string							Type of payment code (seems duplicate with $paiementcode);
+	 * @var string							Type of payment code (seems duplicate with);
 	 */
 	public $type_code;
 
@@ -171,11 +171,6 @@ class Paiement extends CommonObject
 	public $num_payment;
 
 	/**
-	 * @var string Id of external payment mode
-	 */
-	public $ext_payment_id;
-
-	/**
 	 * @var int Id of prelevement
 	 */
 	public $id_prelevement;
@@ -186,7 +181,12 @@ class Paiement extends CommonObject
 	public $num_prelevement;
 
 	/**
-	 * @var string Name of external payment mode
+	 * @var string Id of external payment mode (With Stripe: 'pi_xxx:cus_ccc@pk_ppp', ...)
+	 */
+	public $ext_payment_id;
+
+	/**
+	 * @var string Name of external payment mode ('StripeLive', 'StripeTest', 'stripe' on old version, 'paypal', ...)
 	 */
 	public $ext_payment_site;
 
@@ -296,7 +296,8 @@ class Paiement extends CommonObject
 	/**
 	 *  Create payment of invoices into database.
 	 *  It uses this->amounts and ->multicurrency_amounts to get the list of detail of payment for each invoices for the payment.
-	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
+	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative.
+	 *  Can also close the invoice if remain to pay is 0.
 	 *  This will set also ->amount and ->multicurrency_amount at end.
 	 *
 	 *  @param	User	  $user                	Object user
@@ -541,7 +542,7 @@ class Paiement extends CommonObject
 										// Loop on each vat rate
 										$i = 0;
 										foreach ($invoice->lines as $line) {
-											if ($line->total_ht != 0) {    // no need to create discount if amount is null
+											if ($line->product_type != 9 && $line->total_ht != 0) {    // no need to create discount if amount is null or is special product
 												if (!array_key_exists($line->tva_tx, $amount_ht)) {
 													$amount_ht[$line->tva_tx] = 0.0;
 													$amount_tva[$line->tva_tx] = 0.0;
@@ -562,11 +563,17 @@ class Paiement extends CommonObject
 
 										foreach ($amount_ht as $tva_tx => $xxx) {
 											$discount->amount_ht = abs($amount_ht[$tva_tx]);
+											$discount->total_ht = abs($amount_ht[$tva_tx]);
 											$discount->amount_tva = abs($amount_tva[$tva_tx]);
+											$discount->total_tva = abs($amount_tva[$tva_tx]);
 											$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+											$discount->total_ttc = abs($amount_ttc[$tva_tx]);
 											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+											$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$tva_tx]);
 											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+											$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$tva_tx]);
 											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+											$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
 											$discount->tva_tx = abs((float) $tva_tx);
 
 											$result = $discount->create($user);
@@ -852,7 +859,7 @@ class Paiement extends CommonObject
 				$accountancycode,
 				0,
 				'',
-				$totalamount_main_currency
+				(float) $totalamount_main_currency
 			);
 
 			// Mise a jour fk_bank dans llx_paiement
@@ -895,10 +902,11 @@ class Paiement extends CommonObject
 									$bank_line_id,
 									$fac->thirdparty->id,
 									DOL_URL_ROOT.'/comm/card.php?socid=',
-									$fac->thirdparty->name,
+									(string) $fac->thirdparty->name,
 									'company'
 								);
 								if ($result <= 0) {
+									$error++;
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
 								$linkaddedforthirdparty[$fac->thirdparty->id] = $fac->thirdparty->id; // Mark as done for this thirdparty
@@ -913,10 +921,11 @@ class Paiement extends CommonObject
 									$bank_line_id,
 									$fac->thirdparty->id,
 									DOL_URL_ROOT.'/fourn/card.php?socid=',
-									$fac->thirdparty->name,
+									(string) $fac->thirdparty->name,
 									'company'
 								);
 								if ($result <= 0) {
+									$error++;
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
 								$linkaddedforthirdparty[$fac->thirdparty->id] = $fac->thirdparty->id; // Mark as done for this thirdparty

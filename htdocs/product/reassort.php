@@ -481,12 +481,12 @@ if ($resql) {
 	if ($virtualdiffersfromphysical) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
-	print '<td class="liste_titre"></td>';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
+	print '<td class="liste_titre"></td>';
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -524,13 +524,13 @@ if ($resql) {
 	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print_liste_field_titre("Unit", $_SERVER["PHP_SELF"], "unit_short", '', $param, 'align="right"', $sortfield, $sortorder);
 	}
-	print_liste_field_titre('');
-	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", '', $param, "", $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Hook fields
 	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
+	print_liste_field_titre('');
+	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", '', $param, "", $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('');
@@ -549,14 +549,15 @@ if ($resql) {
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
-		print '<td class="nowrap">';
-		print $product->getNomUrl(1, '', 16);
+		print '<td class="tdoverflowmax250">';
+		print $product->getNomUrl(1);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($product->label).'">'.dol_escape_htmltag($product->label).'</td>';
 
 		if (isModEnabled("service") && $type == 1) {
 			print '<td class="center">';
+			$regs = array();
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 				print $regs[1].' '.$langs->trans("DurationYear");
 			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
@@ -619,16 +620,16 @@ if ($resql) {
 		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			print '<td class="left">'.dol_escape_htmltag($objp->unit_short).'</td>';
 		}
+		// Fields from hook
+		$parameters = array('obj' => $objp);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		print '<td class="center nowraponall">';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 		print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a>';
 		print '</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
-		// Fields from hook
-		$parameters = array('obj' => $objp);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
@@ -636,6 +637,9 @@ if ($resql) {
 
 		print "</tr>\n";
 		$i++;
+	}
+	if ($num == 0) {
+		print '<tr><td colspan="">'.$langs->trans("None").'</td></tr>';
 	}
 
 	print "</table>";

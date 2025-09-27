@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2019		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,24 +130,24 @@ $objectlist = new MouvementStock($db);
 
 // Definition of fields for list
 $arrayfields = array(
-	'm.rowid' => array('label' => "Ref", 'checked' => 1, 'position' => 1),
-	'm.datem' => array('label' => "Date", 'checked' => 1, 'position' => 2),
-	'p.ref' => array('label' => "ProductRef", 'checked' => 1, 'css' => 'maxwidth100', 'position' => 3),
-	'p.label' => array('label' => "ProductLabel", 'checked' => 0, 'position' => 5),
-	'm.batch' => array('label' => "BatchNumberShort", 'checked' => 1, 'position' => 8, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.eatby' => array('label' => "EatByDate", 'checked' => 0, 'position' => 9, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.sellby' => array('label' => "SellByDate", 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
-	'e.ref' => array('label' => "Warehouse", 'checked' => 1, 'position' => 100, 'enabled' => (!($id > 0))), // If we are on specific warehouse, we hide it
-	'm.fk_user_author' => array('label' => "Author", 'checked' => 0, 'position' => 120),
-	'm.inventorycode' => array('label' => "InventoryCodeShort", 'checked' => 1, 'position' => 130),
-	'm.label' => array('label' => "MovementLabel", 'checked' => 1, 'position' => 140),
-	'm.type_mouvement' => array('label' => "TypeMovement", 'checked' => 0, 'position' => 150),
-	'origin' => array('label' => "Origin", 'checked' => 1, 'position' => 155),
-	'm.fk_projet' => array('label' => 'Project', 'checked' => 0, 'position' => 180),
-	'm.value' => array('label' => "Qty", 'checked' => 1, 'position' => 200),
-	'm.price' => array('label' => "UnitPurchaseValue", 'checked' => 0, 'position' => 210)
-	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
+	'm.rowid' => array('label' => "Ref", 'checked' => '1', 'position' => 1),
+	'm.datem' => array('label' => "Date", 'checked' => '1', 'position' => 2),
+	'p.ref' => array('label' => "ProductRef", 'checked' => '1', 'css' => 'maxwidth100', 'position' => 3),
+	'p.label' => array('label' => "ProductLabel", 'checked' => '0', 'position' => 5),
+	'm.batch' => array('label' => "BatchNumberShort", 'checked' => '1', 'position' => 8, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.eatby' => array('label' => "EatByDate", 'checked' => '0', 'position' => 9, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.sellby' => array('label' => "SellByDate", 'checked' => '0', 'position' => 10, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'e.ref' => array('label' => "Warehouse", 'checked' => '1', 'position' => 100, 'enabled' => (string) (int) (!($id > 0))), // If we are on specific warehouse, we hide it
+	'm.fk_user_author' => array('label' => "Author", 'checked' => '0', 'position' => 120),
+	'm.inventorycode' => array('label' => "InventoryCodeShort", 'checked' => '1', 'position' => 130),
+	'm.label' => array('label' => "MovementLabel", 'checked' => '1', 'position' => 140),
+	'm.type_mouvement' => array('label' => "TypeMovement", 'checked' => '0', 'position' => 150),
+	'origin' => array('label' => "Origin", 'checked' => '1', 'position' => 155),
+	'm.fk_projet' => array('label' => 'Project', 'checked' => '0', 'position' => 180),
+	'm.value' => array('label' => "Qty", 'checked' => '1', 'position' => 200),
+	'm.price' => array('label' => "UnitPurchaseValue", 'checked' => '0', 'position' => 210)
+	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>'0', 'position'=>500),
+	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>'0', 'position'=>500)
 );
 if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
@@ -169,7 +169,7 @@ $permissiontoproduce = $permissiontoadd;
 $permissiontoupdatecost = $user->hasRight('bom', 'write'); // User who can define cost must have knowledge of pricing
 
 if ($permissiontoupdatecost) {
-	$arrayfields['m.price']['enabled'] = 1;
+	$arrayfields['m.price']['enabled'] = '1';
 }
 
 $arrayofselected = array();
@@ -254,7 +254,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'confirm_reopen') {
+	if ($action == 'confirm_reopen' && $permissiontoadd) {
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 }
@@ -304,22 +304,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMo', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx') {
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -360,7 +344,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -982,7 +966,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objp->inventorycode).'">';
-			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
+			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php' . '?id=' . ((int) $objp->entrepot_id) . '&search_inventorycode=' . urlencode($objp->inventorycode) . '&search_type_mouvement=' . urlencode($objp->type_mouvement) . '">';
 			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';
@@ -1016,7 +1000,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// fk_project
 			print '<td>';
 			if ($objp->fk_project != 0) {
-				print $movement->get_origin($objp->fk_project, 'project');
+				print $objectlist->get_origin($objp->fk_project, 'project');
 			}
 			print '</td>';
 		}

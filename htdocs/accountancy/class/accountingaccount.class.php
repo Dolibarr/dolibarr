@@ -624,6 +624,9 @@ class AccountingAccount extends CommonObject
 		if ($mode == 1) {
 			$fieldtouse = 'reconcilable';
 		}
+		if ($mode == 2) {
+			$fieldtouse = 'centralized';
+		}
 
 		if ($result > 0) {
 			$this->db->begin();
@@ -664,6 +667,9 @@ class AccountingAccount extends CommonObject
 		$fieldtouse = 'active';
 		if ($mode == 1) {
 			$fieldtouse = 'reconcilable';
+		}
+		if ($mode == 2) {
+			$fieldtouse = 'centralized';
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;

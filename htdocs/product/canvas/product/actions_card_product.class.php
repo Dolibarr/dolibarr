@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,23 +245,23 @@ class ActionsCardProduct
 
 			// Finished
 			$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-			$this->tpl['finished'] = $form->selectarray('finished', $statutarray, $this->object->finished);
+			$this->tpl['finished'] = $form->selectarray('finished', $statutarray, (int) $this->object->finished);
 
 			// Weight
 			$this->tpl['weight'] = $this->object->weight;
-			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", $this->object->weight_units, 0, 2);
+			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) $this->object->weight_units, 0, 2);
 
 			// Length
 			$this->tpl['length'] = $this->object->length;
-			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", $this->object->length_units, 0, 2);
+			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", (string) $this->object->length_units, 0, 2);
 
 			// Surface
 			$this->tpl['surface'] = $this->object->surface;
-			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", $this->object->surface_units, 0, 2);
+			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", (string) $this->object->surface_units, 0, 2);
 
 			// Volume
 			$this->tpl['volume'] = $this->object->volume;
-			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", $this->object->volume_units, 0, 2);
+			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", (string) $this->object->volume_units, 0, 2);
 		}
 
 		if ($action == 'view') {

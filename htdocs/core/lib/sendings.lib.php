@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($object->statut == Expedition::STATUS_DRAFT) {
+	if ($object->status == Expedition::STATUS_DRAFT) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/dispatch.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("ShipmentDistribution");
 		$head[$h][2] = 'dispatch';
@@ -71,7 +72,7 @@ function shipping_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $object;
-		if ($object->origin == 'commande' && $object->origin_id > 0) {
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->origin_type == 'commande' && $object->origin_id > 0) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($object->origin_id);
 		}
@@ -85,9 +86,10 @@ function shipping_prepare_head($object)
 		$h++;
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
+	// Files
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+	$upload_dir = $conf->expedition->dir_output . "/sending/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$object->id;
@@ -98,6 +100,7 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	// Notes
 	$nbNote = 0;
 	if (!empty($object->note_private)) {
 		$nbNote++;
@@ -111,6 +114,41 @@ function shipping_prepare_head($object)
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	}
 	$head[$h][2] = 'note';
+	$h++;
+
+	// Events
+	$head[$h][0] = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of thirdparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_events_expedition_' . $object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
+			$sql .= " WHERE fk_element = " . ((int) $object->id);
+			$sql .= " AND elementtype = 'shipping'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm ' . $db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);    // If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbEvent . '</span>';
+		}
+	}
+	$head[$h][2] = 'agenda';
 	$h++;
 
 	// Show more tabs from modules
@@ -128,7 +166,7 @@ function shipping_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Delivery	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function delivery_prepare_head($object)
@@ -163,7 +201,7 @@ function delivery_prepare_head($object)
 
 	// Get parent object
 	$tmpobject = null;
-	if ($object->origin) {
+	if ($object->origin_type) {
 		$tmpobject = new Expedition($db);
 		$tmpobject->fetch($object->origin_id);
 	} else {
@@ -172,7 +210,7 @@ function delivery_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $tmpobject;
-		if ($tmpobject->origin == 'commande' && $tmpobject->origin_id > 0) {
+		if ($tmpobject->origin_type == 'commande' && $tmpobject->origin_id > 0) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($tmpobject->origin_id);
 		}
@@ -186,6 +224,7 @@ function delivery_prepare_head($object)
 		$h++;
 	}
 
+	// Files
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($tmpobject->ref);
@@ -199,6 +238,7 @@ function delivery_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	// Notes
 	$nbNote = 0;
 	if (!empty($tmpobject->note_private)) {
 		$nbNote++;
@@ -213,6 +253,42 @@ function delivery_prepare_head($object)
 	}
 	$head[$h][2] = 'note';
 	$h++;
+
+	// Events
+	$head[$h][0] = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $tmpobject->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of thirdparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_events_expedition_' . $tmpobject->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
+			$sql .= " WHERE fk_element = " . ((int) $tmpobject->id);
+			$sql .= " AND elementtype = 'shipping'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm ' . $db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);    // If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbEvent . '</span>';
+		}
+	}
+	$head[$h][2] = 'agenda';
+	$h++;
+
 
 	$object->id = $tmpobject->id;
 
@@ -241,7 +317,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$expedition = new Expedition($db);
 	$warehousestatic = new Entrepot($db);
 
-	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
+	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end, obj.special_code,";
 	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot as warehouse_id,";
 	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status, e.signed_status,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
@@ -254,6 +330,9 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 	$sql .= " AND obj.fk_".$origin." = ".((int) $origin_id);
 	$sql .= " AND obj.rowid = ed.fk_elementdet";
+	if (isModEnabled('subtotals')) {
+		$sql .= " AND obj.special_code <> ".SUBTOTALS_SPECIAL_CODE;
+	}
 	$sql .= " AND ed.fk_expedition = e.rowid";
 	if ($filter) {
 		$sql .= $filter;
@@ -358,7 +437,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text, $description, 3, 0, '', $i);
+					print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 					// Show range
 					print_date_range($objp->date_start, $objp->date_end);
@@ -379,7 +458,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						print $form->textwithtooltip($text, $objp->description, 3, 0, '', $i);
+						print $form->textwithtooltip($text, $objp->description, 3, 0, '', (string) $i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}
@@ -454,6 +533,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 
 					if (!empty($receiving)) {
+						/** @var Delivery $receiving */
 						'@phan-var-force Delivery $receiving';
 						// $expedition->fk_elementdet = id of det line of order
 						// $receiving->fk_origin_line = id of det line of order
@@ -462,7 +542,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 						// Ref
 						print '<td>';
-						print $receiving->getNomUrl($db);
+						print $receiving->getNomUrl(1);
 						//print '<a href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received

@@ -10,6 +10,9 @@ postgresql
 # ZAR currency
 zar
 
+# Need as part of some PHP keys for some array variables
+referer
+
 # Name of contributores
 noe
 udo
@@ -33,6 +36,7 @@ doubleclick
 errorstring
 exten
 falsy
+focusin
 master
 medias
 projet
@@ -86,7 +90,7 @@ espace
 methode
 datee
 
-# Some string found because part of a text the is html entities escaped into file
+# Some string found because it is part text that is html entities escaped into files
 tre
 activ
 

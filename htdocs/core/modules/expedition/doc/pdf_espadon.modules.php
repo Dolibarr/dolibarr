@@ -3,9 +3,9 @@
  * Copyright (C) 2005-2012  Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023 		Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -264,7 +264,7 @@ class pdf_espadon extends ModelePdfExpedition
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -361,7 +361,7 @@ class pdf_espadon extends ModelePdfExpedition
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
@@ -391,7 +391,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 						$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
-						$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+						$notetoshow = make_substitutions((string) $notetoshow, $substitutionarray, $outputlangs);
 						$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 						$pdf->startTransaction();
@@ -418,12 +418,12 @@ class pdf_espadon extends ModelePdfExpedition
 								// $this->_pagefoot($pdf,$object,$outputlangs,1);
 								$pdf->setTopMargin($tab_top_newpage);
 								// The only function to edit the bottom margin of current page to set it.
-								$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+								$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 							}
 
 							// back to start
 							$pdf->setPage($pageposbeforenote);
-							$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+							$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 							$pdf->SetFont('', '', $default_font_size - 1);
 							$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 							$pageposafternote = $pdf->getPage();
@@ -437,7 +437,7 @@ class pdf_espadon extends ModelePdfExpedition
 								$pdf->setPage($pageposafternote);
 								$pdf->setTopMargin($tab_top_newpage);
 								// The only function to edit the bottom margin of current page to set it.
-								$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+								$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 								//$posyafter = $tab_top_newpage;
 							}
 
@@ -469,7 +469,7 @@ class pdf_espadon extends ModelePdfExpedition
 								}
 
 								// Add footer
-								$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+								$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 								$this->_pagefoot($pdf, $object, $outputlangs, 1);
 
 								$i++;
@@ -572,6 +572,19 @@ class pdf_espadon extends ModelePdfExpedition
 				$pagenb = $pageposbeforeprintlines;
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
+
+					$sub_options = $object->lines[$i]->extraparams["subtotal"] ?? array();
+
+					if (($curY + 6) > ($this->page_hauteur - $heightforfooter) || isset($sub_options['titleforcepagebreak']) && !($pdf->getNumPages() == 1 && $curY == $tab_top + $this->tabTitleHeight)) {
+						$pdf->AddPage();
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
+
+						$pdf->setPage($pdf->getNumPages());
+						$nexY = $curY = $tab_top_newpage;
+					}
+
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
 
@@ -582,7 +595,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -620,41 +633,46 @@ class pdf_espadon extends ModelePdfExpedition
 
 					// Description of product line
 					if ($this->getColumnStatus('desc')) {
-						$pdf->startTransaction();
-
-						$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-
-						$pageposafter = $pdf->getPage();
-						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
-							$pdf->rollbackTransaction(true);
+						if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
+							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
+							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
+						} else {
+							$pdf->startTransaction();
 
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 
 							$pageposafter = $pdf->getPage();
-							$posyafter = $pdf->GetY();
-							//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot))) {	// There is no space left for total+free text
-								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
-									$pdf->AddPage('', '', true);
-									if (!empty($tplidx)) {
-										$pdf->useTemplate($tplidx);
+							if ($pageposafter > $pageposbefore) {	// There is a pagebreak
+								$pdf->rollbackTransaction(true);
+
+								$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+
+								$pageposafter = $pdf->getPage();
+								$posyafter = $pdf->GetY();
+								//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
+								if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot))) {	// There is no space left for total+free text
+									if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
+										$pdf->AddPage('', '', true);
+										if (!empty($tplidx)) {
+											$pdf->useTemplate($tplidx);
+										}
+										//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+										$pdf->setPage($pageposafter + 1);
 									}
-									//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
-									$pdf->setPage($pageposafter + 1);
-								}
-							} else {
-								// We found a page break
-								// Allows data in the first page if description is long enough to break in multiples pages
-								if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-									$showpricebeforepagebreak = 1;
 								} else {
-									$showpricebeforepagebreak = 0;
+									// We found a page break
+									// Allows data in the first page if description is long enough to break in multiples pages
+									if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
+										$showpricebeforepagebreak = 1;
+									} else {
+										$showpricebeforepagebreak = 0;
+									}
 								}
+							} else { // No pagebreak
+								$pdf->commitTransaction();
 							}
-						} else { // No pagebreak
-							$pdf->commitTransaction();
+							$posYAfterDescription = $pdf->GetY();
 						}
-						$posYAfterDescription = $pdf->GetY();
 					}
 
 					$nexY = max($pdf->GetY(), $posYAfterImage);
@@ -662,7 +680,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -685,42 +703,42 @@ class pdf_espadon extends ModelePdfExpedition
 
 					// weight
 					$weighttxt = '';
-					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->weight) {
+					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->weight && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$weighttxt = round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, getDolGlobalInt('SHIPMENT_ROUND_WEIGHT_ON_PDF', 5)).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units, 1);
 					}
 					$voltxt = '';
-					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->volume && !getDolGlobalString('SHIPPING_PDF_HIDE_VOLUME')) {
+					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->volume && !getDolGlobalString('SHIPPING_PDF_HIDE_VOLUME') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$voltxt = round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, getDolGlobalInt('SHIPMENT_ROUND_VOLUME_ON_PDF', 5)).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units ? $object->lines[$i]->volume_units : 0, 1);
 					}
 
 					// weight and volume
-					if ($this->getColumnStatus('weight')) {
+					if ($this->getColumnStatus('weight') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$this->printStdColumnContent($pdf, $curY, 'weight', $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
-					if ($this->getColumnStatus('qty_asked')) {
-						$this->printStdColumnContent($pdf, $curY, 'qty_asked', $object->lines[$i]->qty_asked);
+					if ($this->getColumnStatus('qty_asked') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+						$this->printStdColumnContent($pdf, $curY, 'qty_asked', (string) $object->lines[$i]->qty_asked);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
-					if ($this->getColumnStatus('unit_order')) {
-						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString($object->lines[$i]->fk_unit));
+					if ($this->getColumnStatus('unit_order') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString((int) $object->lines[$i]->fk_unit));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
-					if ($this->getColumnStatus('qty_shipped')) {
-						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', $object->lines[$i]->qty_shipped);
+					if ($this->getColumnStatus('qty_shipped') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', (string) $object->lines[$i]->qty_shipped);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
-					if ($this->getColumnStatus('subprice')) {
+					if ($this->getColumnStatus('subprice') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$this->printStdColumnContent($pdf, $curY, 'subprice', price($object->lines[$i]->subprice, 0, $outputlangs));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Extrafields
-					if (!empty($object->lines[$i]->array_options)) {
+					if (!empty($object->lines[$i]->array_options) && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
 							if ($this->getColumnStatus($extrafieldColKey)) {
 								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
@@ -729,6 +747,17 @@ class pdf_espadon extends ModelePdfExpedition
 							}
 						}
 					}
+
+					$parameters = array(
+						'object' => $object,
+						'i' => $i,
+						'pdf' => & $pdf,
+						'curY' => & $curY,
+						'nexY' => & $nexY,
+						'outputlangs' => $outputlangs,
+						'hidedetails' => $hidedetails
+					);
+					$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this);
 
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
@@ -750,7 +779,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -831,10 +860,10 @@ class pdf_espadon extends ModelePdfExpedition
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Expedition	$object         Object expedition
-	 *	@param  int			$deja_regle     Amount already paid
-	 *	@param	int         $posy           Start Position
+	 *	@param  float		$deja_regle     Amount already paid
+	 *	@param	float       $posy           Start Position
 	 *	@param	Translate	$outputlangs	Object langs
-	 *	@return int							Position for suite
+	 *	@return float						Position for suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -915,7 +944,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		if ($this->getColumnStatus('qty_asked') && $totalOrdered) {
-			$this->printStdColumnContent($pdf, $tab2_top, 'qty_asked', $totalOrdered);
+			$this->printStdColumnContent($pdf, $tab2_top, 'qty_asked', (string) $totalOrdered);
 		}
 
 		if ($this->getColumnStatus('qty_shipped') && $totalToShip) {
@@ -938,7 +967,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		float|int	$tab_top		Top position of table
 	 *   @param		float|int	$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y
+	 *   @param		float		$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
@@ -1069,6 +1098,27 @@ class pdf_espadon extends ModelePdfExpedition
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
+		}
+
+		if (getDolGlobalInt('PDF_SHOW_PROJECT_TITLE')) {
+			$object->fetchProject();
+			if (!empty($object->project->ref)) {
+				$posy += 4;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+			}
+		}
+
+		if (getDolGlobalInt('PDF_SHOW_PROJECT')) {
+			$object->fetchProject();
+			if (!empty($object->project->ref)) {
+				$outputlangs->load("projects");
+				$posy += 4;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
+			}
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && !empty($object->thirdparty->code_client)) {
@@ -1428,7 +1478,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
 			'width' => 30, // in mm
-			'status' => true,
+			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP'),
 			'title' => array(
 				'textkey' => 'QtyToShip'
 			),

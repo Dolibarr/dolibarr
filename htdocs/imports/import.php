@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -238,7 +238,7 @@ if ($step == 3 && $datatoimport) {
 		dol_mkdir($conf->import->dir_temp);
 		$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
-		$fullpath = $conf->import->dir_temp."/".$nowyearmonth.'-'.$_FILES['userfile']['name'];
+		$fullpath = $conf->import->dir_temp."/".$nowyearmonth.'-'.dol_string_nohtmltag(dol_sanitizeFileName($_FILES['userfile']['name']));
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
 			dol_syslog("File ".$fullpath." was added for import");
 		} else {
@@ -248,7 +248,7 @@ if ($step == 3 && $datatoimport) {
 	}
 
 	// Delete file
-	if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+	if ($action == 'confirm_deletefile' && $confirm == 'yes' && $user->hasRight('import', 'run')) {
 		$langs->load("other");
 
 		$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
@@ -345,11 +345,27 @@ if ($step == 1 || !$datatoimport) {
 
 	$head = import_prepare_head($param, 1);
 
-	print dol_get_fiche_head($head, 'step1', '', -1);
+	print dol_get_fiche_head($head, 'step1', 'Import', -1, 'upload');
 
-	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
+	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div>';
 
-	// Affiche les modules d'imports
+
+	// Define $nbmodulesnotautoenabled - TODO This code is at different places
+	$nbmodulesnotautoenabled = count($conf->modules);
+	$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+	foreach ($listofmodulesautoenabled as $moduleautoenable) {
+		if (in_array($moduleautoenable, $conf->modules)) {
+			$nbmodulesnotautoenabled--;
+		}
+	}
+
+	if ($user->admin && $nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+		print info_admin($langs->trans("WarningOnlyProfilesOfActivatedModules").' '.$langs->trans("YouCanEnableModulesFrom"));
+	}
+
+	print '<br>';
+
+	// Show profile for import
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre">';
@@ -415,7 +431,7 @@ if ($step == 2 && $datatoimport) {
 
 	$head = import_prepare_head($param, 2);
 
-	print dol_get_fiche_head($head, 'step2', '', -2);
+	print dol_get_fiche_head($head, 'step2', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -525,7 +541,7 @@ if ($step == 3 && $datatoimport) {
 
 	$head = import_prepare_head($param, 3);
 
-	print dol_get_fiche_head($head, 'step3', '', -2);
+	print dol_get_fiche_head($head, 'step3', 'Import', -2, 'upload');
 
 	/*
 	 * Confirm delete file
@@ -837,12 +853,11 @@ if ($step == 4 && $datatoimport) {
 		foreach ($arrayrecord as $key => $val) {
 			if ($val["type"] != -1) {
 				$fieldssource[$i]['example1'] = dol_trunc($val['val'], 128);
-				$i++;
 			} else {
 				$fieldssource[$i]['example1'] = $langs->trans('Empty');
-				$i++;
 			}
-			$fieldssource[$i]['imported'] = 0;
+			$fieldssource[$i]['imported'] = false;
+			$i++;
 		}
 		$obj->import_close_file();
 	}
@@ -948,7 +963,7 @@ if ($step == 4 && $datatoimport) {
 
 	$head = import_prepare_head($param, 4);
 
-	print dol_get_fiche_head($head, 'step4', '', -2);
+	print dol_get_fiche_head($head, 'step4', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1057,8 +1072,8 @@ if ($step == 4 && $datatoimport) {
 	$s = str_replace('{s1}', img_picto('', 'grip_title', '', 0, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
-	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
-	print '<input type="submit" class="button small reposition" value="'.$langs->trans("Select").'">';
+	$htmlother->select_import_model((string) $importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
+	print '<input type="submit" class="button smallpaddingimp reposition" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
 
@@ -1088,8 +1103,7 @@ if ($step == 4 && $datatoimport) {
 
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_elem($fieldssource, $key, $val); // key is field number in source file
+		show_elem($fieldssource, $key, (string) $key); // key is field number in source file @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
 		$valforsourcefieldnb[$lefti] = $key;
@@ -1156,6 +1170,7 @@ if ($step == 4 && $datatoimport) {
 		/*if ($i == $minpos) {
 			break;
 		}*/
+		//var_dump($line);
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		// Note: $code is int, but index should be fieldname? -> @phan-suppress-next-line PhanTypeMismatchDimFetch
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
@@ -1168,11 +1183,7 @@ if ($step == 4 && $datatoimport) {
 
 		$selectforline = '';
 		$selectforline .= '<select id="selectorderimport_'.($i + 1).'" class="targetselectchange minwidth300" name="select_'.($i + 1).'">';
-		if (!empty($line["imported"])) {
-			$selectforline .= '<option value="-1">&nbsp;</option>';
-		} else {
-			$selectforline .= '<option selected="" value="-1">&nbsp;</option>';
-		}
+		$selectforline .= '<option value="-1">&nbsp;</option>';
 
 		$j = 0;
 		$codeselectedarray = array();
@@ -1620,7 +1631,7 @@ if ($step == 5 && $datatoimport) {
 	print '<input type="hidden" name="step" value="5">'; // step 5
 	print '<input type="hidden" name="action" value="launchsimu">'; // step 5
 
-	print dol_get_fiche_head($head, 'step5', '', -2);
+	print dol_get_fiche_head($head, 'step5', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1681,7 +1692,7 @@ if ($step == 5 && $datatoimport) {
 	print '<td>';
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart).'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
@@ -1770,7 +1781,7 @@ if ($step == 5 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="centpercent border tableforfield">';
 
 	// Tables imported
 	print '<tr><td class="titlefieldcreate">';
@@ -1815,7 +1826,7 @@ if ($step == 5 && $datatoimport) {
 
 	// Fields imported
 	print '<tr><td>';
-	print $langs->trans("FieldsTarget").'</td><td>';
+	print $langs->trans("FieldsTarget").'</td><td class="small">';
 	$listfields = array();
 	$i = 0;
 	//print 'fieldsource='.$fieldssource;
@@ -1859,8 +1870,8 @@ if ($step == 5 && $datatoimport) {
 		// Launch import
 		$arrayoferrors = array();
 		$arrayofwarnings = array();
-		$maxnboferrors = !getDolGlobalString('IMPORT_MAX_NB_OF_ERRORS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_ERRORS;
-		$maxnbofwarnings = !getDolGlobalString('IMPORT_MAX_NB_OF_WARNINGS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_WARNINGS;
+		$maxnboferrors = getDolGlobalInt('IMPORT_MAX_NB_OF_ERRORS', 50);
+		$maxnbofwarnings = getDolGlobalInt('IMPORT_MAX_NB_OF_WARNINGS', 50);
 		$nboferrors = 0;
 		$nbofwarnings = 0;
 
@@ -2119,7 +2130,7 @@ if ($step == 6 && $datatoimport) {
 
 	$head = import_prepare_head($param, 6);
 
-	print dol_get_fiche_head($head, 'step6', '', -1);
+	print dol_get_fiche_head($head, 'step6', 'Import', -1, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -2474,7 +2485,7 @@ function show_elem($fieldssource, $pos, $key)
 		print '<td class="nocellnopadd" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' because it's value used in DOM draggable objects to define the area used to catch the full object
 		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
-		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwidth"');
+		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwidth marginleftonly"');
 		print '</td>';
 		if (isset($fieldssource[$pos]['imported']) && $fieldssource[$pos]['imported'] == false) {
 			print '<td class="nowraponall boxtdunused" style="font-weight: normal">';

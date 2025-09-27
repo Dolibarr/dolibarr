@@ -544,7 +544,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="tdmaxoverflow150">';
+					print '<td class="tdoverflowmax150">';
 					//print $company_static->getNomUrl(1);
 					print $fields['company_link'];
 					print '</td>';
@@ -781,7 +781,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="tdmaxoverflow150">';
+					print '<td class="tdoverflowmax150">';
 					//print $company_static->getNomUrl(1);
 					print $fields['company_link'];
 					print '</td>';

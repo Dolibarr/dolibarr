@@ -1,10 +1,12 @@
 <?php
+
 /* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006 	    Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +55,9 @@ class Conf extends stdClass
 	public $browser;
 
 	//! To store some setup of generic modules
+	/**
+	 * @var stdClass
+	 */
 	public $mycompany;
 
 	/**
@@ -71,7 +76,13 @@ class Conf extends stdClass
 	public $multicompany;
 
 	//! To store module status of special module names
+	/**
+	 * @var ?mixed
+	 */
 	public $expedition_bon;
+	/**
+	 * @var ?mixed
+	 */
 	public $delivery_note;
 
 	/**
@@ -85,7 +96,7 @@ class Conf extends stdClass
 	public $disable_compute;
 
 	/**
-	 * @var string Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
+	 * @var string Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol:->getCurrencySymbol($this->currency)
 	 */
 	public $currency;
 
@@ -149,12 +160,12 @@ class Conf extends stdClass
 	public $entities = array();
 
 	/**
-	 * @var int Set if we force param dol_hide_topmenu into login url
+	 * @var int<0,1> Set if we force param dol_hide_topmenu into login url
 	 */
 	public $dol_hide_topmenu;
 
 	/**
-	 * @var int Set if we force param dol_hide_leftmenu into login url
+	 * @var int<0,1> Set if we force param dol_hide_leftmenu into login url
 	 */
 	public $dol_hide_leftmenu;
 
@@ -172,15 +183,45 @@ class Conf extends stdClass
 	 */
 	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url. 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 
+	/**
+	 * @var string
+	 */
 	public $format_date_short; // Format of day with PHP/C tags (strftime functions)
+	/**
+	 * @var string
+	 */
 	public $format_date_short_java; // Format of day with Java tags
+	/**
+	 * @var string
+	 */
 	public $format_hour_short;
+	/**
+	 * @var string
+	 */
 	public $format_hour_short_duration;
+	/**
+	 * @var string
+	 */
 	public $format_date_text_short;
+	/**
+	 * @var string
+	 */
 	public $format_date_text;
+	/**
+	 * @var string
+	 */
 	public $format_date_hour_short;
+	/**
+	 * @var string
+	 */
 	public $format_date_hour_sec_short;
+	/**
+	 * @var string
+	 */
 	public $format_date_hour_text_short;
+	/**
+	 * @var string
+	 */
 	public $format_date_hour_text;
 
 	/**
@@ -312,12 +353,13 @@ class Conf extends stdClass
 	public $api;
 
 	/**
+	 * @var ?stdClass
 	 * @deprecated Use project
 	 */
 	public $projet;
 
 	/**
-	 * @var stdClass
+	 * @var ?stdClass
 	 */
 	public $project;
 
@@ -341,6 +383,10 @@ class Conf extends stdClass
 	 */
 	public $category;
 
+	/**
+	 * @var ?stdClass
+	 */
+	public $mrp;
 
 	/**
 	 * Constructor
@@ -549,7 +595,7 @@ class Conf extends stdClass
 
 								$modulename = strtolower($reg[1]);
 								$partname = strtolower($reg[2]);
-								if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) {
+								if (!array_key_exists($partname, $this->modules_parts) || !is_array($this->modules_parts[$partname])) {
 									$this->modules_parts[$partname] = array();
 								}
 
@@ -638,8 +684,9 @@ class Conf extends stdClass
 			}
 
 			// Object $mc
+			global $mc;
+			$mc = null;
 			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
-				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret && class_exists('ActionsMulticompany')) {
 					$mc = new ActionsMulticompany($db);
@@ -921,7 +968,6 @@ class Conf extends stdClass
 					}
 				}
 			}
-
 			if (!isset($this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT)) {
 				$this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT = 1;
 			}
@@ -936,13 +982,13 @@ class Conf extends stdClass
 				$this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30; // Less than 1 minutes to be sure
 			}
 
-			// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
+			// Option for accounting modules (simple or double parties). Define mode of calculation of reports.
 			if (empty($this->global->ACCOUNTING_MODE)) {
-				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+				$this->global->ACCOUNTING_MODE = 'CREANCES-DETTES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES' (default)
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
-				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 0;	// Not enabled by default (still trouble of persistent tooltip)
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;	// Try to have it enabled by default with v21+
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -958,6 +1004,10 @@ class Conf extends stdClass
 			// MAIN_HTML_TITLE
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
 				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
+			}
+			// MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME
+			if (!isset($this->global->MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME)) {
+				$this->global->MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME = 1;
 			}
 
 			// conf->liste_limit = constant to limit size of lists
@@ -1043,7 +1093,7 @@ class Conf extends stdClass
 				$this->global->MAIN_MAX_DECIMALS_SHOWN = 8;
 			}
 
-			// Non working days
+			// Non working days by default if not set in setup
 			if (!isset($this->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
 				$this->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
 			}
@@ -1170,6 +1220,13 @@ class Conf extends stdClass
 				$this->propal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_CLOSE') * 86400;
 				$this->propal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_BILL') * 86400;
 			}
+			// @phpstan-ignore-next-line
+			if (isset($this->supplier_proposal)) {
+				$this->supplier_proposal->cloture = new stdClass();
+				$this->supplier_proposal->facturation = new stdClass();
+				$this->supplier_proposal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE') * 86400;
+				$this->supplier_proposal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL') * 86400;
+			}
 			if (isset($this->facture)) {
 				$this->facture->client = new stdClass();
 				$this->facture->fournisseur = new stdClass();
@@ -1183,12 +1240,12 @@ class Conf extends stdClass
 				$this->contrat->services->inactifs->warning_delay = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
 				$this->contrat->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
 			}
-			if (isset($this->bank)) {
-				$this->bank->rappro	= new stdClass();
-				$this->bank->cheque	= new stdClass();
-				$this->bank->rappro->warning_delay = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
-				$this->bank->cheque->warning_delay = getDolGlobalInt('MAIN_DELAY_CHEQUES_TO_DEPOSIT') * 86400;
-			}
+
+			$this->bank->rappro	= new stdClass();
+			$this->bank->cheque	= new stdClass();
+			$this->bank->rappro->warning_delay = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
+			$this->bank->cheque->warning_delay = getDolGlobalInt('MAIN_DELAY_CHEQUES_TO_DEPOSIT') * 86400;
+
 			if (isset($this->expensereport)) {
 				$this->expensereport->approve = new stdClass();
 				$this->expensereport->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS') * 86400;
@@ -1198,6 +1255,10 @@ class Conf extends stdClass
 			if (isset($this->holiday)) {
 				$this->holiday->approve = new stdClass();
 				$this->holiday->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_HOLIDAYS') * 86400;
+			}
+			if (isset($this->mrp)) {
+				$this->mrp->progress = new stdClass();
+				$this->mrp->progress->warning_delay = getDolGlobalInt('MAIN_DELAY_MRP') * 86400;
 			}
 
 			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT')) {
@@ -1215,10 +1276,10 @@ class Conf extends stdClass
 
 			// For modules that want to disable top or left menu
 			if (!empty($this->global->MAIN_HIDE_TOP_MENU)) {
-				$this->dol_hide_topmenu = getDolGlobalInt('MAIN_HIDE_TOP_MENU');
+				$this->dol_hide_topmenu = (int) (bool) getDolGlobalInt('MAIN_HIDE_TOP_MENU');
 			}
 			if (!empty($this->global->MAIN_HIDE_LEFT_MENU)) {
-				$this->dol_hide_leftmenu = getDolGlobalInt('MAIN_HIDE_LEFT_MENU');
+				$this->dol_hide_leftmenu = (int) (bool) getDolGlobalInt('MAIN_HIDE_LEFT_MENU');
 			}
 
 			if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) {
@@ -1239,10 +1300,10 @@ class Conf extends stdClass
 			}
 
 			if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) {
-				$this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com';
+				$this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com/api/';
 			}
 			if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) {
-				$this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';
+				$this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorepublicapi';
 			}
 
 			// Enable by default the CSRF protection by token.
@@ -1262,6 +1323,11 @@ class Conf extends stdClass
 				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;	// Use the domain in $dolibarr_main_url_root (mydomain.com)
 			}
 
+			if (!empty($this->use_javascript_ajax) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+				$this->global->EMAILING_USE_ADVANCED_SELECTOR = 1;
+			}
+
+			// Security
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 				if (defined('MAIN_ANTIVIRUS_COMMAND')) {
 					$this->global->MAIN_ANTIVIRUS_COMMAND = constant('MAIN_ANTIVIRUS_COMMAND');
@@ -1269,6 +1335,13 @@ class Conf extends stdClass
 				if (defined('MAIN_ANTIVIRUS_PARAM')) {
 					$this->global->MAIN_ANTIVIRUS_PARAM = constant('MAIN_ANTIVIRUS_PARAM');
 				}
+			}
+
+			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)) {
+				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+			}
+			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
+				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 			}
 
 			// For backward compatibility
@@ -1291,13 +1364,6 @@ class Conf extends stdClass
 			if (!empty($this->global->MAIN_TZUSERINPUTKEY)) {
 				$this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
 			}
-
-			if (!empty($this->global->PRODUIT_AUTOFILL_DESC)) {
-				$this->global->MAIN_NO_CONCAT_DESCRIPTION = 1;
-			} else {
-				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
-			}
-
 
 			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 
