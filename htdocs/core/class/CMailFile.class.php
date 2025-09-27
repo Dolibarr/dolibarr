@@ -1789,7 +1789,7 @@ class CMailFile
 					}
 
 					// Skip files that have a CID (they will be added as inline images instead)
-					if (!empty($cidlist) && is_array($cidlist) && isset($cidlist[$i]) && !empty($cidlist[$i])) {
+					if (!empty($cidlist) && is_array($cidlist) && isset($cidlist[$i]) && $cidlist[$i] !== null && $cidlist[$i] !== '') {
 						continue; // Skip this file as it will be processed as inline image
 					}
 
