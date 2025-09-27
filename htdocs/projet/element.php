@@ -10,6 +10,7 @@
  * Copyright (C) 2021       Noé Cendrier            <noe.cendrier@altairis.fr>
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Guenter Lukas			<github@gl.co.at>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
