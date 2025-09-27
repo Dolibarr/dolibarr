@@ -7333,18 +7333,6 @@ parameters:
 			path: ../../../htdocs/core/lib/website.lib.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/lib/website.lib.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/lib/website.lib.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -10732,12 +10720,6 @@ parameters:
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-

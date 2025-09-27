@@ -758,13 +758,13 @@ abstract class CommonObject
 	public $user_modification_id;
 
 	/**
-	 * @var int 		ID
+	 * @var int|null 		ID
 	 * @deprecated	Use $user_creation_id
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var ?int 		ID
+	 * @var int|null 		ID
 	 * @deprecated 	Use $user_modification_id
 	 */
 	public $fk_user_modif;
@@ -11342,7 +11342,7 @@ abstract class CommonObject
 		$comment = new Comment($this->db);
 		$result = $comment->fetchAllFor($this->element, $this->id);
 		if ($result < 0) {
-			$this->errors = array_merge($this->errors, $comment->errors);
+			$this->setErrorsFromObject($comment);
 			return -1;
 		} else {
 			$this->comments = $comment->comments;

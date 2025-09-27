@@ -89,23 +89,23 @@ class PaymentDonation extends CommonObject
 	public $paymenttype;
 
 	/**
-	 * @var string      Payment reference
+	 * @var ?string      Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_modif;
 
@@ -320,8 +320,8 @@ class PaymentDonation extends CommonObject
 				$this->num_payment    = $obj->num_payment;
 				$this->note_public    = $obj->note_public;
 				$this->fk_bank        = $obj->fk_bank;
-				$this->fk_user_creat  = $obj->fk_user_creat;
-				$this->fk_user_modif  = $obj->fk_user_modif;
+				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->fk_user_modif = $obj->fk_user_modif;
 
 				$this->type_code = $obj->type_code;
 				$this->type_label = $obj->type_label;
@@ -405,17 +405,13 @@ class PaymentDonation extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
-			if (!$notrigger) {
-				if (!$error && !$notrigger) {
-					// Call triggers
-					$result = $this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -443,20 +439,19 @@ class PaymentDonation extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
+
 		$error = 0;
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql .= " WHERE type='payment_donation' AND url_id=".(int) $this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
+		$sql .= " WHERE type='payment_donation' AND url_id=".(int) $this->id;
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -471,17 +466,13 @@ class PaymentDonation extends CommonObject
 			}
 		}
 
-		if (!$error) {
-			if (!$notrigger) {
-				if (!$error && !$notrigger) {
-					// Call triggers
-					$result = $this->call_trigger('DONATION_PAYMENT_DELETE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('DONATION_PAYMENT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Commit or rollback
