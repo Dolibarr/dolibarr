@@ -7201,18 +7201,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions2.lib.php
 
 		-
-			message: '#^Parameter \#3 \$value of function curl_setopt expects 0\|2, bool given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/geturl.lib.php
-
-		-
-			message: '#^Parameter \#3 \$value of function curl_setopt expects bool, int given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/core/lib/geturl.lib.php
-
-		-
 			message: '#^Call to function function_exists\(\) with ''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 3
@@ -7325,12 +7313,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/lib/signature.lib.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 6
-			path: ../../../htdocs/core/lib/tax.lib.php
 
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
@@ -7591,12 +7573,6 @@ parameters:
 			path: ../../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
 
 		-
-			message: '#^Property modTcpdfbarcode\:\:\$is2d has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/barcode/doc/tcpdfbarcode.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7841,30 +7817,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixcreditnote has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixdeposit has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixinvoice has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixreplacement has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
 
 		-
 			message: '#^Access to constant TYPE_NON on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
