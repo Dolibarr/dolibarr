@@ -14708,7 +14708,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
-	} elseif ($elementType == 'mo') {
+	} elseif ($elementType == 'mo' || $elementType == 'mrp') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
 		$classname = 'Mo';
