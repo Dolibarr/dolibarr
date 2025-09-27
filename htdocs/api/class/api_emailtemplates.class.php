@@ -219,7 +219,7 @@ class EmailTemplates extends DolibarrApi
 
 		$sql = "SELECT e.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS e";
-		$sql .= " WHERE e.entity = ".$entity;
+		$sql .= " WHERE e.entity = ".((int) $entity);
 		if (!$fk_user == '') {
 			$sql .= " AND e.fk_user = ".((int) $fk_user);
 		}
