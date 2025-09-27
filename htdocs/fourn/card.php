@@ -145,7 +145,7 @@ if (empty($reshook)) {
 	// Set payment terms of the settlement
 	if ($action == 'setconditions' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_supplier_id'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_supplier_id'), GETPOSTINT('cond_reglement_supplier_id_deposit_percent'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -360,9 +360,9 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editconditions') {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', 1);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?socid=' . $object->id, (string) $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', 1, '', 1, $object->deposit_percent);
 	} else {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->cond_reglement_supplier_id, 'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?socid=' . $object->id, (string) $object->cond_reglement_supplier_id, 'none', 0, '', 1, $object->deposit_percent);
 	}
 	print "</td>";
 	print '</tr>';

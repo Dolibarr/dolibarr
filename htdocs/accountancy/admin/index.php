@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2017		Laurent Destailleur		<eldy@destailleur.fr>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,75 +180,73 @@ if ($action == 'updatemode') {
 if ($action == 'update2') {
 	$error = 0;
 
-	if (!$error) {
-		foreach ($list as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-		if ($error) {
-			setEventMessages($langs->trans("Error"), null, 'errors');
-		}
-
-		// option in section binding
-		foreach ($list_binding as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-
-			if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
-				$constvalue = dol_mktime(0, 0, 0, GETPOSTINT($constname.'month'), GETPOSTINT($constname.'day'), GETPOSTINT($constname.'year'));
-			}
-
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-
-		// options in section other
-		if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-
-		// Export options
-		$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
-
-		if (!empty($modelcsv)) {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-			//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
-			//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
-			//}
-		} else {
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
+	}
+	if ($error) {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 
-		foreach ($main_option as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
+	// option in section binding
+	foreach ($list_binding as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+		if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
+			$constvalue = dol_mktime(0, 0, 0, GETPOSTINT($constname.'month'), GETPOSTINT($constname.'day'), GETPOSTINT($constname.'year'));
+		}
+
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	// options in section other
+	if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	// Export options
+	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
+
+	if (!empty($modelcsv)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
+		//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
+		//}
+	} else {
+		$error++;
+	}
+
+	foreach ($main_option as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	foreach ($listparam[$modelcsv] as $key => $value) {
+		$constante = $key;
+
+		if (strpos($constante, 'ACCOUNTING') !== false) {
+			$constvalue = GETPOST($key, 'alpha');
+			if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
 		}
+	}
 
-		foreach ($listparam[$modelcsv] as $key => $value) {
-			$constante = $key;
-
-			if (strpos($constante, 'ACCOUNTING') !== false) {
-				$constvalue = GETPOST($key, 'alpha');
-				if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
-					$error++;
-				}
-			}
-		}
-
-		if (!$error) {
-			// reload
-			$configuration = $accountancyexport->getTypeConfig();
-			$listparam = $configuration['param'];
-		}
+	if (!$error) {
+		// reload
+		$configuration = $accountancyexport->getTypeConfig();
+		$listparam = $configuration['param'];
 	}
 
 	if (!$error) {
