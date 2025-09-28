@@ -9559,12 +9559,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
 		-
-			message: '#^Property ConferenceOrBoothAttendee\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
-
-		-
 			message: '#^Variable \$withproject in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -17533,12 +17527,6 @@ parameters:
 			path: ../../../htdocs/user/class/usergroup.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$lastname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/user/class/usergroup.class.php
-
-		-
 			message: '#^Property UserGroup\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -18215,78 +18203,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/website/websiteaccount_card.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Workstation\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Workstation\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Workstation\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Workstation\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Method Workstation\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
 
 		-
 			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
