@@ -344,7 +344,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		$object->ref = empty($this->fields['ref']['default']) ? "(PROV)" : $this->fields['ref']['default'];
+		$object->ref = "(PROV)";
 		$object->status = self::STATUS_DRAFT;
 		$object->date_creation = dol_now();
 		$object->date_modification = null;
