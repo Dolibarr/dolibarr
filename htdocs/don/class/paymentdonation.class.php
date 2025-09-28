@@ -630,7 +630,7 @@ class PaymentDonation extends CommonObject
 				$this->datep,
 				(string) $this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
-				$amount,
+				(float) $amount,
 				$this->num_payment,
 				0,
 				$user,
