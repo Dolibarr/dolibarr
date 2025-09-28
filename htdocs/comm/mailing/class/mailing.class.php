@@ -361,15 +361,26 @@ class Mailing extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
+		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.entity, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
 		$sql .= ", m.note_public, m.note_private";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut as status, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
+		$sql .= ", m.tms as date_modification";
 		$sql .= ", m.date_creat";
 		$sql .= ", m.date_valid";
 		$sql .= ", m.date_envoi";
 		$sql .= ", m.extraparams";
+		$sql .= ", m.tag";
+		$sql .= ", m.name_from";
+		$sql .= ", m.fk_user_modif";
+		$sql .= ", m.fk_user_appro";
+		$sql .= ", m.date_appro";
+		$sql .= ", m.cible";
+		$sql .= ", m.joined_file1";
+		$sql .= ", m.joined_file2";
+		$sql .= ", m.joined_file3";
+		$sql .= ", m.joined_file4";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 		$sql .= " WHERE entity IN (".getEntity('mailing').")";
 		if ($ref) {
