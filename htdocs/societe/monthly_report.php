@@ -1240,3 +1240,4 @@ print '</div>'; // End fichecenter
 // End of page
 llxFooter();
 $db->close();
+
