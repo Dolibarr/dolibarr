@@ -204,7 +204,7 @@ class Mailings extends DolibarrApi
 	 *
 	 * @since	23.0.0	Initial implementation
 	 *
-	 *	@param  int		$fromid     		Id of object to clone
+	 *	@param  int		$id     		Id of object to clone
 	 *	@param	int		$cloneContent		1=Clone content (default), 0=Forget content
 	 *	@param	int		$cloneRecipients	1=Clone recipients (default), 0=Forget recipients
 	 * 	@param	int		$notrigger			1=Disable triggers, 0=Active triggers if any (default)
@@ -389,6 +389,8 @@ class Mailings extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
+	 * @url DELETE    {id}/deleteTargets
+	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
@@ -428,7 +430,7 @@ class Mailings extends DolibarrApi
 	 * @param   int     $id             Mass mailing ID
 	 * @return	Object					Object with cleaned properties
 	 *
-	 * @url POST    {id}/settodraft
+	 * @url PUT    {id}/settodraft
 	 *
 	 * @throws RestException 304
 	 * @throws RestException 403
@@ -476,7 +478,7 @@ class Mailings extends DolibarrApi
 	 * @param   int     $id             Mass mailing ID
 	 * @return	Object					Object with cleaned properties
 	 *
-	 * @url POST    {id}/validate
+	 * @url PUT    {id}/validate
 	 *
 	 * @throws RestException 304
 	 * @throws RestException 403
