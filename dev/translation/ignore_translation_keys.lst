@@ -633,8 +633,6 @@ PrintModule
 PrintUserConfDesc
 PrinterId
 PrinterIdEmpty
-PrinterLocation
-PrinterNameEmpty
 PrinterParameterEmpty
 Printers
 Printing
