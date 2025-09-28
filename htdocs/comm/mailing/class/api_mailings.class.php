@@ -142,7 +142,7 @@ class Mailings extends DolibarrApi
 			}
 		}
 
-		//this query will return total proposals with the filters given
+		//this query will return total mass mailings with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -207,7 +207,7 @@ class Mailings extends DolibarrApi
 	 * @param   array   $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return  int     ID of proposal
+	 * @return  int     ID of mass mailing
 	 *
 	 * @throws	RestException
 	 */
@@ -228,15 +228,8 @@ class Mailings extends DolibarrApi
 
 			$this->mailing->$field = $this->_checkValForAPI($field, $value, $this->mailing);
 		}
-		/*if (isset($request_data["lines"])) {
-		  $lines = array();
-		  foreach ($request_data["lines"] as $line) {
-			array_push($lines, (object) $line);
-		  }
-		  $this->mailing->lines = $lines;
-		}*/
 		if ($this->mailing->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->mailing->error), $this->mailing->errors));
+			throw new RestException(500, "Error creating mass mailing", array_merge(array($this->mailing->error), $this->mailing->errors));
 		}
 
 		return ((int) $this->mailing->id);
@@ -350,7 +343,7 @@ class Mailings extends DolibarrApi
 	 *
 	 * @since	23.0.0	Initial implementation
 	 *
-	 * @param   int     $id             Order ID
+	 * @param   int     $id             Mass mailing ID
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/settodraft
