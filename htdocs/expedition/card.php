@@ -39,6 +39,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
@@ -64,14 +72,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'productbatch'));
 
@@ -95,8 +95,8 @@ $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOSTINT('lineid');
 $facid = GETPOSTINT('facid');
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
 //PDF
@@ -1992,19 +1992,16 @@ if ($action == 'create') {
 
 				// Display lines for extrafields of the Shipment line
 				// $line is a 'Order line'
-				if (!empty($extrafields)) {
-					//var_dump($line);
-					$colspan = 5;
-					$expLine = new ExpeditionLigne($db);
+				$colspan = 5;
+				$expLine = new ExpeditionLigne($db);
 
-					$srcLine = new OrderLine($db);
-					$srcLine->id = $line->id;
-					$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
+				$srcLine = new OrderLine($db);
+				$srcLine->id = $line->id;
+				$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
 
-					$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
+				$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
 
-					print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), (string) $indiceAsked, '', '1');
-				}
+				print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), (string) $indiceAsked, '', '1');
 			} elseif (empty($reshook) && $line->special_code == SUBTOTALS_SPECIAL_CODE && !in_array($line->id, $title_lines_to_disable)) {
 				require dol_buildpath('/core/tpl/subtotalline_select.tpl.php');
 			}
@@ -2560,7 +2557,7 @@ if ($action == 'create') {
 
 	// Get list of products already sent for same source object into $alreadysent
 	$alreadysent = array();
-	if ($origin && $origin_id > 0) {
+	if ($origin_id > 0) {
 		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end, obj.special_code";
 		$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot";
 		$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
@@ -2706,7 +2703,7 @@ if ($action == 'create') {
 			print '<td class="center linecolqty">' . $lines[$i]->qty_asked . ' ' . $unit_order . '</td>';
 
 			// Qty in other shipments (with shipment and warehouse used)
-			if ($origin && $origin_id > 0) {
+			if ($origin_id > 0) {
 				print '<td class="linecolqtyinothershipments center nowrap">';
 				$htmltooltip = '';
 				$qtyalreadysent = 0;
