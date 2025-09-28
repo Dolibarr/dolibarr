@@ -1185,7 +1185,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		$ret = '';
 
-		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+		$ret .= dolGetFirstLastname((string) $firstname, (string) $lastname, (string) $nameorder);
 
 		return dol_trunc($ret, $maxlen);
 	}
