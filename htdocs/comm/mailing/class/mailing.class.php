@@ -467,9 +467,10 @@ class Mailing extends CommonObject
 	 *	@param  int		$fromid     	Id of object to clone
 	 *	@param	int		$option1		1=Clone content, 0=Forget content
 	 *	@param	int		$option2		1=Clone recipients
+	 * 	@param	int		$notrigger		Disable triggers
 	 *	@return	int						New id of clone
 	 */
-	public function createFromClone(User $user, $fromid, $option1, $option2)
+	public function createFromClone(User $user, $fromid, $option1, $option2, $notrigger = 0)
 	{
 		global $langs;
 
@@ -512,7 +513,7 @@ class Mailing extends CommonObject
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result = $object->create($user);
+		$result = $object->create($user, $notrigger);
 
 		// Other options
 		if ($result < 0) {
