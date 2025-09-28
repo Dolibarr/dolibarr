@@ -1783,7 +1783,7 @@ if ($action == 'create') {
 		if (!isModEnabled('stock')) {
 			$editColspan--;
 		}
-		if (empty($conf->productbatch->enabled)) {
+		if (!isModEnabled('productbatch')) {
 			$editColspan--;
 		}
 		print '<td class="center" colspan="'.$editColspan.'">';

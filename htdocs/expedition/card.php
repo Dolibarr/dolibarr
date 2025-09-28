@@ -39,6 +39,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
@@ -64,14 +72,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'productbatch'));
 
@@ -95,8 +95,8 @@ $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOSTINT('lineid');
 $facid = GETPOSTINT('facid');
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
 //PDF
@@ -164,7 +164,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($cancel) {
-		if ($origin && $origin_id > 0) {
+		if ($origin_id > 0) {
 			if ($origin == 'commande') {
 				header("Location: " . DOL_URL_ROOT . '/expedition/shipment.php?id=' . ((int) $origin_id));
 				exit;
@@ -661,14 +661,11 @@ if (empty($reshook)) {
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
-		if (!$error) {
-			if ($object->update($user) >= 0) {
-				header("Location: card.php?id=" . $object->id);
-				exit;
-			}
-			setEventMessages($object->error, $object->errors, 'errors');
+		if ($object->update($user) >= 0) {
+			header("Location: card.php?id=" . $object->id);
+			exit;
 		}
-
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action = "";
 	} elseif ($action == 'classifybilled' && $permissiontoadd) {
 		$object->fetch($id);
@@ -895,7 +892,7 @@ if (empty($reshook)) {
 									unset($_POST[$qty]);
 								}
 							}
-						} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+						} elseif (!isModEnabled('stock') && !isModEnabled('productbatch')) { // both product batch and stock are not activated.
 							$qty = "qtyl" . $line_id;
 							$line->id = $line_id;
 							$line->qty = GETPOSTFLOAT($qty);
@@ -1070,541 +1067,785 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
-	if (!$origin) {
-		setEventMessages($langs->trans("ErrorBadParameters"), null, 'errors');
-	}
+	$classname = ucfirst($origin);
 
-	if ($origin) {
-		$classname = ucfirst($origin);
+	$object = new $classname($db);
+	/* @var Commande|Facture $object */
+	'@phan-var-force Commande|Facture $object';
 
-		$object = new $classname($db);
-		/* @var Commande|Facture $object */
-		'@phan-var-force Commande|Facture $object';
+	if ($object->fetch($origin_id)) {	// This include the fetch_lines
+		$soc = new Societe($db);
+		$soc->fetch($object->socid);
 
-		if ($object->fetch($origin_id)) {	// This include the fetch_lines
-			$soc = new Societe($db);
-			$soc->fetch($object->socid);
+		$author = new User($db);
+		$author->fetch($object->user_author_id);
 
-			$author = new User($db);
-			$author->fetch($object->user_author_id);
+		if (isModEnabled('stock')) {
+			$entrepot = new Entrepot($db);
+		}
 
-			if (isModEnabled('stock')) {
-				$entrepot = new Entrepot($db);
+		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+		print '<input type="hidden" name="token" value="' . newToken() . '">';
+		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="origin" value="' . $origin . '">';
+		print '<input type="hidden" name="origin_id" value="' . $object->id . '">';
+		if (GETPOSTINT('entrepot_id')) {
+			print '<input type="hidden" name="entrepot_id" value="' . GETPOSTINT('entrepot_id') . '">';
+		}
+
+		print dol_get_fiche_head([]);
+
+		print '<table class="border centpercent">';
+
+		// Ref
+		print '<tr><td class="titlefieldcreate fieldrequired">';
+		if ($origin == 'commande' && isModEnabled('order')) {
+			print $langs->trans("RefOrder");
+		}
+		if ($origin == 'propal' && isModEnabled("propal")) {
+			print $langs->trans("RefProposal");
+		}
+		print '</td><td colspan="3">';
+		print $object->getNomUrl(1);
+		print '</td>';
+		print "</tr>\n";
+
+		// Ref client
+		print '<tr><td>';
+		if ($origin == 'commande') {
+			print $langs->trans('RefCustomerOrder');
+		} elseif ($origin == 'propal') {
+			print $langs->trans('RefCustomerOrder');
+		} else {
+			print $langs->trans('RefCustomer');
+		}
+		print '</td><td colspan="3">';
+		print '<input type="text" name="ref_customer" value="' . $object->ref_client . '" />';
+		print '</td>';
+		print '</tr>';
+
+		// Tiers
+		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Company') . '</td>';
+		print '<td colspan="3">' . $soc->getNomUrl(1) . '</td>';
+		print '</tr>';
+
+		// Project
+		if (isModEnabled('project') && is_object($formproject)) {
+			$projectid = GETPOSTINT('projectid');
+			if (empty($projectid) && !empty($object->fk_project)) {
+				$projectid = (int) $object->fk_project;
+			}
+			if ($origin == 'project') {
+				$projectid = ($object->id ? $object->id : 0);
 			}
 
-			print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
-			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			print '<input type="hidden" name="action" value="add">';
-			print '<input type="hidden" name="origin" value="' . $origin . '">';
-			print '<input type="hidden" name="origin_id" value="' . $object->id . '">';
-			if (GETPOSTINT('entrepot_id')) {
-				print '<input type="hidden" name="entrepot_id" value="' . GETPOSTINT('entrepot_id') . '">';
-			}
-
-			print dol_get_fiche_head([]);
-
-			print '<table class="border centpercent">';
-
-			// Ref
-			print '<tr><td class="titlefieldcreate fieldrequired">';
-			if ($origin == 'commande' && isModEnabled('order')) {
-				print $langs->trans("RefOrder");
-			}
-			if ($origin == 'propal' && isModEnabled("propal")) {
-				print $langs->trans("RefProposal");
-			}
-			print '</td><td colspan="3">';
-			print $object->getNomUrl(1);
+			$langs->load("projects");
+			print '<tr>';
+			print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
+			print img_picto('', 'project', 'class="pictofixedwidth"');
+			print $formproject->select_projects($soc->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'widthcentpercentminusxx');
+			print ' <a class="paddingleft" href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $soc->id) . '"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 			print '</td>';
-			print "</tr>\n";
-
-			// Ref client
-			print '<tr><td>';
-			if ($origin == 'commande') {
-				print $langs->trans('RefCustomerOrder');
-			} elseif ($origin == 'propal') {
-				print $langs->trans('RefCustomerOrder');
-			} else {
-				print $langs->trans('RefCustomer');
-			}
-			print '</td><td colspan="3">';
-			print '<input type="text" name="ref_customer" value="' . $object->ref_client . '" />';
-			print '</td>';
 			print '</tr>';
+		}
 
-			// Tiers
-			print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Company') . '</td>';
-			print '<td colspan="3">' . $soc->getNomUrl(1) . '</td>';
-			print '</tr>';
+		// Date delivery planned
+		print '<tr><td>' . $langs->trans("DateDeliveryPlanned") . '</td>';
+		print '<td colspan="3">';
+		print img_picto('', 'action', 'class="pictofixedwidth"');
+		$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
+		print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
+		print "</td>\n";
+		print '</tr>';
 
-			// Project
-			if (isModEnabled('project') && is_object($formproject)) {
-				$projectid = GETPOSTINT('projectid');
-				if (empty($projectid) && !empty($object->fk_project)) {
-					$projectid = (int) $object->fk_project;
-				}
-				if ($origin == 'project') {
-					$projectid = ($object->id ? $object->id : 0);
-				}
+		// Date shipment (sending)
+		print '<tr><td>' . $langs->trans("DateShipping") . '</td>';
+		print '<td colspan="3">';
+		print img_picto('', 'action', 'class="pictofixedwidth"');
+		//$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
+		print $form->selectDate($date_shipping ? $date_shipping : -1, 'date_shipping', 1, 1, 1);
+		print "</td>\n";
+		print '</tr>';
 
-				$langs->load("projects");
-				print '<tr>';
-				print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
-				print img_picto('', 'project', 'class="pictofixedwidth"');
-				print $formproject->select_projects($soc->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'widthcentpercentminusxx');
-				print ' <a class="paddingleft" href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $soc->id) . '"><span class="fa fa-plus-circle valignmiddle"></span></a>';
-				print '</td>';
-				print '</tr>';
-			}
+		// Note Public
+		print '<tr><td>' . $langs->trans("NotePublic") . '</td>';
+		print '<td colspan="3">';
+		$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+		print $doleditor->Create(1);
+		print "</td></tr>";
 
-			// Date delivery planned
-			print '<tr><td>' . $langs->trans("DateDeliveryPlanned") . '</td>';
+		// Note Private
+		if ($object->note_private && !$user->socid) {
+			print '<tr><td>' . $langs->trans("NotePrivate") . '</td>';
 			print '<td colspan="3">';
-			print img_picto('', 'action', 'class="pictofixedwidth"');
-			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
-			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
-			print "</td>\n";
-			print '</tr>';
-
-			// Date shipment (sending)
-			print '<tr><td>' . $langs->trans("DateShipping") . '</td>';
-			print '<td colspan="3">';
-			print img_picto('', 'action', 'class="pictofixedwidth"');
-			//$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
-			print $form->selectDate($date_shipping ? $date_shipping : -1, 'date_shipping', 1, 1, 1);
-			print "</td>\n";
-			print '</tr>';
-
-			// Note Public
-			print '<tr><td>' . $langs->trans("NotePublic") . '</td>';
-			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
+		}
 
-			// Note Private
-			if ($object->note_private && !$user->socid) {
-				print '<tr><td>' . $langs->trans("NotePrivate") . '</td>';
-				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
-				print $doleditor->Create(1);
-				print "</td></tr>";
-			}
+		// Weight
+		print '<tr><td>';
+		print $langs->trans("Weight");
+		print '</td><td colspan="3">';
+		print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
+		print '<input name="weight" size="4" value="' . GETPOSTINT('weight') . '"> ';
+		$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
+		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
+		print $form->textwithpicto($text, $htmltext);
+		print '</td></tr>';
+		// Dim
+		print '<tr><td>';
+		print $langs->trans("Width") . ' x ' . $langs->trans("Height") . ' x ' . $langs->trans("Depth");
+		print ' </td><td colspan="3">';
+		print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
+		print '<input name="sizeW" size="4" value="' . GETPOSTINT('sizeW') . '">';
+		print ' x <input name="sizeH" size="4" value="' . GETPOSTINT('sizeH') . '">';
+		print ' x <input name="sizeS" size="4" value="' . GETPOSTINT('sizeS') . '">';
+		print ' ';
+		$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
+		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
+		print $form->textwithpicto($text, $htmltext);
+		print '</td></tr>';
 
-			// Weight
-			print '<tr><td>';
-			print $langs->trans("Weight");
-			print '</td><td colspan="3">';
-			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-			print '<input name="weight" size="4" value="' . GETPOSTINT('weight') . '"> ';
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
-			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
-			print $form->textwithpicto($text, $htmltext);
+		// Delivery method
+		print "<tr><td>" . $langs->trans("DeliveryMethod") . "</td>";
+		print '<td colspan="3">';
+		$expe->fetch_delivery_methods();
+		print img_picto('', 'dolly', 'class="pictofixedwidth"');
+		print $form->selectarray("shipping_method_id", $expe->meths, GETPOSTINT('shipping_method_id'), 1, 0, 0, "", 1, 0, 0, '', 'widthcentpercentminusxx');
+		if ($user->admin) {
+			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		}
+		print "</td></tr>\n";
+
+		// Tracking number
+		print "<tr><td>" . $langs->trans("TrackingNumber") . "</td>";
+		print '<td colspan="3">';
+		print img_picto('', 'barcode', 'class="pictofixedwidth"');
+		print '<input name="tracking_number" size="20" value="' . GETPOST('tracking_number', 'alpha') . '">';
+		print "</td></tr>\n";
+
+		// Incoterms
+		if (isModEnabled('incoterm')) {
+			print '<tr>';
+			print '<td><label for="incoterm_id">' . $form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1) . '</label></td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print img_picto('', 'incoterm', 'class="pictofixedwidth"');
+			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
 			print '</td></tr>';
-			// Dim
-			print '<tr><td>';
-			print $langs->trans("Width") . ' x ' . $langs->trans("Height") . ' x ' . $langs->trans("Depth");
-			print ' </td><td colspan="3">';
-			print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
-			print '<input name="sizeW" size="4" value="' . GETPOSTINT('sizeW') . '">';
-			print ' x <input name="sizeH" size="4" value="' . GETPOSTINT('sizeH') . '">';
-			print ' x <input name="sizeS" size="4" value="' . GETPOSTINT('sizeS') . '">';
-			print ' ';
-			$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
-			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
-			print $form->textwithpicto($text, $htmltext);
-			print '</td></tr>';
+		}
 
-			// Delivery method
-			print "<tr><td>" . $langs->trans("DeliveryMethod") . "</td>";
+		// Document model
+		include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
+		$list = ModelePdfExpedition::liste_modeles($db);
+		if (is_countable($list) && count($list) > 1) {
+			print "<tr><td>" . $langs->trans("DefaultModel") . "</td>";
 			print '<td colspan="3">';
-			$expe->fetch_delivery_methods();
-			print img_picto('', 'dolly', 'class="pictofixedwidth"');
-			print $form->selectarray("shipping_method_id", $expe->meths, GETPOSTINT('shipping_method_id'), 1, 0, 0, "", 1, 0, 0, '', 'widthcentpercentminusxx');
-			if ($user->admin) {
-				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			}
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			print $form->selectarray('model', $list, getDolGlobalString('EXPEDITION_ADDON_PDF'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx');
 			print "</td></tr>\n";
+		}
 
-			// Tracking number
-			print "<tr><td>" . $langs->trans("TrackingNumber") . "</td>";
-			print '<td colspan="3">';
-			print img_picto('', 'barcode', 'class="pictofixedwidth"');
-			print '<input name="tracking_number" size="20" value="' . GETPOST('tracking_number', 'alpha') . '">';
-			print "</td></tr>\n";
+		// Other attributes. Fields from hook formObjectOptions and Extrafields.
+		// $objectsrc is Commande|Facture
+		$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
+		$object = $expe;
+		$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+		$object = $objectsav;
 
-			// Incoterms
-			if (isModEnabled('incoterm')) {
-				print '<tr>';
-				print '<td><label for="incoterm_id">' . $form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1) . '</label></td>';
-				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print img_picto('', 'incoterm', 'class="pictofixedwidth"');
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
-				print '</td></tr>';
+		print "</table>";
+
+		print dol_get_fiche_end();
+
+
+		// Shipment lines
+
+		$numAsked = count($object->lines);
+
+		print '<script type="text/javascript">' . "\n";
+		print 'jQuery(document).ready(function() {' . "\n";
+		print 'jQuery("#autofill").click(function() {';
+		$i = 0;
+		while ($i < $numAsked) {
+			print 'jQuery("#qtyl' . $i . '").val(jQuery("#qtyasked' . $i . '").val() - jQuery("#qtydelivered' . $i . '").val());' . "\n";
+			if (isModEnabled('productbatch')) {
+				print 'jQuery("#qtyl' . $i . '_' . $i . '").val(jQuery("#qtyasked' . $i . '").val() - jQuery("#qtydelivered' . $i . '").val());' . "\n";
 			}
+			$i++;
+		}
+		print 'return false; });' . "\n";
+		print 'jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0);' . "\n";
+		print 'return false; });' . "\n";
+		print '});' . "\n";
+		print '</script>' . "\n";
 
-			// Document model
-			include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
-			$list = ModelePdfExpedition::liste_modeles($db);
-			if (is_countable($list) && count($list) > 1) {
-				print "<tr><td>" . $langs->trans("DefaultModel") . "</td>";
-				print '<td colspan="3">';
-				print img_picto('', 'pdf', 'class="pictofixedwidth"');
-				print $form->selectarray('model', $list, getDolGlobalString('EXPEDITION_ADDON_PDF'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx');
-				print "</td></tr>\n";
-			}
+		print '<br>';
 
-			// Other attributes. Fields from hook formObjectOptions and Extrafields.
-			// $objectsrc is Commande|Facture
-			$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
-			$object = $expe;
-			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-			$object = $objectsav;
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 
-			print "</table>";
-
-			print dol_get_fiche_end();
+		// Load shipments already done for same order
+		$object->loadExpeditions();
 
 
-			// Shipment lines
+		$alreadyQtyBatchSetted = $alreadyQtySetted = array();
 
-			$numAsked = count($object->lines);
+		$title_lines_to_disable = array();
 
-			print '<script type="text/javascript">' . "\n";
-			print 'jQuery(document).ready(function() {' . "\n";
-			print 'jQuery("#autofill").click(function() {';
-			$i = 0;
-			while ($i < $numAsked) {
-				print 'jQuery("#qtyl' . $i . '").val(jQuery("#qtyasked' . $i . '").val() - jQuery("#qtydelivered' . $i . '").val());' . "\n";
-				if (isModEnabled('productbatch')) {
-					print 'jQuery("#qtyl' . $i . '_' . $i . '").val(jQuery("#qtyasked' . $i . '").val() - jQuery("#qtydelivered' . $i . '").val());' . "\n";
+		if ($numAsked) {
+			if (isModEnabled('subtotals')) {
+				if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
+					$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
 				}
-				$i++;
-			}
-			print 'return false; });' . "\n";
-			print 'jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0);' . "\n";
-			print 'return false; });' . "\n";
-			print '});' . "\n";
-			print '</script>' . "\n";
-
-			print '<br>';
-
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder centpercent">';
-
-			// Load shipments already done for same order
-			$object->loadExpeditions();
-
-
-			$alreadyQtyBatchSetted = $alreadyQtySetted = array();
-
-			$title_lines_to_disable = array();
-
-			if ($numAsked) {
-				if (isModEnabled('subtotals')) {
-					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
-						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
-					}
-					foreach ($object->lines as $line) {
-						if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
-							$show_check_add_buttons = true;
-							break;
-						}
+				foreach ($object->lines as $line) {
+					if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+						$show_check_add_buttons = true;
+						break;
 					}
 				}
-				print '<tr class="liste_titre">';
-				print '<td>';
-				if (isset($show_check_add_buttons)) {
-					print $form->showCheckAddButtons('checkforselect');
-				}
-				print $langs->trans("Description");
-				print '</td>';
-				print '<td class="center">' . $langs->trans("QtyOrdered") . '</td>';
-				print '<td class="center">' . $langs->trans("QtyShipped") . '</td>';
-				print '<td class="center">' . $langs->trans("QtyToShip");
-				if (empty($conf->productbatch->enabled)) {
-					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">' . img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"') . '</a>';
-					print ' / ';
+			}
+			print '<tr class="liste_titre">';
+			print '<td>';
+			if (isset($show_check_add_buttons)) {
+				print $form->showCheckAddButtons('checkforselect');
+			}
+			print $langs->trans("Description");
+			print '</td>';
+			print '<td class="center">' . $langs->trans("QtyOrdered") . '</td>';
+			print '<td class="center">' . $langs->trans("QtyShipped") . '</td>';
+			print '<td class="center">' . $langs->trans("QtyToShip");
+			if (!isModEnabled('productbatch')) {
+				print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">' . img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"') . '</a>';
+				print ' / ';
+			} else {
+				print '<br>';
+			}
+			print '<span id="autoreset" class="opacitymedium link cursor cursorpointer">' . img_picto($langs->trans("Reset"), 'eraser') . '</span>';
+			print '</td>';
+			if (isModEnabled('stock')) {
+				if (!isModEnabled('productbatch')) {
+					print '<td class="left">' . $langs->trans("Warehouse") . ' (' . $langs->trans("Stock") . ')</td>';
 				} else {
-					print '<br>';
+					print '<td class="left">' . $langs->trans("Warehouse") . ' / ' . $langs->trans("Batch") . ' (' . $langs->trans("Stock") . ')</td>';
 				}
-				print '<span id="autoreset" class="opacitymedium link cursor cursorpointer">' . img_picto($langs->trans("Reset"), 'eraser') . '</span>';
-				print '</td>';
-				if (isModEnabled('stock')) {
-					if (empty($conf->productbatch->enabled)) {
-						print '<td class="left">' . $langs->trans("Warehouse") . ' (' . $langs->trans("Stock") . ')</td>';
-					} else {
-						print '<td class="left">' . $langs->trans("Warehouse") . ' / ' . $langs->trans("Batch") . ' (' . $langs->trans("Stock") . ')</td>';
+			}
+			if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+				print '<td class="left">' . $langs->trans('StockEntryDate') . '</td>';
+			}
+			print "</tr>\n";
+		}
+
+		$warehouse_id = GETPOSTINT('entrepot_id');
+		$warehousePicking = array();
+		// get all warehouse children for picking
+		if ($warehouse_id > 0) {
+			$warehousePicking[] = $warehouse_id;
+			$warehouseObj = new Entrepot($db);
+			$warehouseObj->get_children_warehouses($warehouse_id, $warehousePicking);
+		}
+
+		$indiceAsked = 0;
+		while ($indiceAsked < $numAsked) {
+			$product = new Product($db);
+
+			$line = $object->lines[$indiceAsked];
+
+			$parameters = array('i' => $indiceAsked, 'line' => $line, 'num' => $numAsked);
+			$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+
+			if (empty($reshook) && $line->special_code != SUBTOTALS_SPECIAL_CODE) {
+				// Show product and description
+				$type = $line->product_type ? $line->product_type : $line->fk_product_type;
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
+				if (!empty($line->date_start)) {
+					$type = 1;
+				}
+				if (!empty($line->date_end)) {
+					$type = 1;
+				}
+
+				print '<!-- line for order line ' . $line->id . ' -->' . "\n";
+				print '<tr class="oddeven" id="row-' . $line->id . '">' . "\n";
+
+				$qtyProdCom = $line->qty;
+				$productChildrenNb = 0;
+				// Product label
+				if ($line->fk_product > 0) {  // If predefined product
+					$res = $product->fetch($line->fk_product);
+					if ($res < 0) {
+						dol_print_error($db, $product->error, $product->errors);
 					}
-				}
-				if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-					print '<td class="left">' . $langs->trans('StockEntryDate') . '</td>';
-				}
-				print "</tr>\n";
-			}
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $product->hasFatherOrChild(1);
+					}
+					if ($productChildrenNb > 0) {
+						$product->loadStockForVirtualProduct('warehouseopen', $qtyProdCom);
+					} else {
+						$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+					}
+					//var_dump($product->stock_warehouse[1]);
 
-			$warehouse_id = GETPOSTINT('entrepot_id');
-			$warehousePicking = array();
-			// get all warehouse children for picking
-			if ($warehouse_id > 0) {
-				$warehousePicking[] = $warehouse_id;
-				$warehouseObj = new Entrepot($db);
-				$warehouseObj->get_children_warehouses($warehouse_id, $warehousePicking);
-			}
+					print '<td>';
+					print '<a name="' . $line->id . '"></a>'; // ancre pour retourner sur la ligne
 
-			$indiceAsked = 0;
-			while ($indiceAsked < $numAsked) {
-				$product = new Product($db);
-
-				$line = $object->lines[$indiceAsked];
-
-				$parameters = array('i' => $indiceAsked, 'line' => $line, 'num' => $numAsked);
-				$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
-				if ($reshook < 0) {
-					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				}
-
-				if (empty($reshook) && $line->special_code != SUBTOTALS_SPECIAL_CODE) {
 					// Show product and description
-					$type = $line->product_type ? $line->product_type : $line->fk_product_type;
-					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
-					if (!empty($line->date_start)) {
-						$type = 1;
+					$product_static->type = $line->fk_product_type;
+					$product_static->id = $line->fk_product;
+					$product_static->ref = $line->ref;
+					$product_static->status = $line->product_tosell;
+					$product_static->status_buy = $line->product_tobuy;
+					$product_static->status_batch = $line->product_tobatch;
+
+					$showdescinproductdesc = getDolGlobalString('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE');
+
+					$text = $product_static->getNomUrl(1);
+					$text .= ' - ' . (!empty($line->label) ? $line->label : $line->product_label);
+					$description = ($showdescinproductdesc ? '' : dol_htmlentitiesbr($line->desc));
+					$description .= empty($product->stockable_product) ? $langs->trans('StockDisabled') : $langs->trans('StockEnabled');
+					print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
+
+					// Show range
+					print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
+
+					// Add description in form
+					if ($showdescinproductdesc) {
+						print ($line->desc && $line->desc != $line->product_label) ? '<br>' . dol_htmlentitiesbr($line->desc) : '';
 					}
-					if (!empty($line->date_end)) {
-						$type = 1;
-					}
 
-					print '<!-- line for order line ' . $line->id . ' -->' . "\n";
-					print '<tr class="oddeven" id="row-' . $line->id . '">' . "\n";
-
-					$qtyProdCom = $line->qty;
-					$productChildrenNb = 0;
-					// Product label
-					if ($line->fk_product > 0) {  // If predefined product
-						$res = $product->fetch($line->fk_product);
-						if ($res < 0) {
-							dol_print_error($db, $product->error, $product->errors);
-						}
-						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
-							$productChildrenNb = $product->hasFatherOrChild(1);
-						}
-						if ($productChildrenNb > 0) {
-							$product->loadStockForVirtualProduct('warehouseopen', $qtyProdCom);
-						} else {
-							$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
-						}
-						//var_dump($product->stock_warehouse[1]);
-
-						print '<td>';
-						print '<a name="' . $line->id . '"></a>'; // ancre pour retourner sur la ligne
-
-						// Show product and description
-						$product_static->type = $line->fk_product_type;
-						$product_static->id = $line->fk_product;
-						$product_static->ref = $line->ref;
-						$product_static->status = $line->product_tosell;
-						$product_static->status_buy = $line->product_tobuy;
-						$product_static->status_batch = $line->product_tobatch;
-
-						$showdescinproductdesc = getDolGlobalString('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE');
-
-						$text = $product_static->getNomUrl(1);
-						$text .= ' - ' . (!empty($line->label) ? $line->label : $line->product_label);
-						$description = ($showdescinproductdesc ? '' : dol_htmlentitiesbr($line->desc));
-						$description .= empty($product->stockable_product) ? $langs->trans('StockDisabled') : $langs->trans('StockEnabled');
-						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
-
-						// Show range
-						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
-
-						// Add description in form
-						if ($showdescinproductdesc) {
-							print ($line->desc && $line->desc != $line->product_label) ? '<br>' . dol_htmlentitiesbr($line->desc) : '';
-						}
-
-						print '</td>';
+					print '</td>';
+				} else {
+					print "<td>";
+					if ($type == 1) {
+						$text = img_object($langs->trans('Service'), 'service');
 					} else {
-						print "<td>";
-						if ($type == 1) {
-							$text = img_object($langs->trans('Service'), 'service');
-						} else {
-							$text = img_object($langs->trans('Product'), 'product');
-						}
-
-						if (!empty($line->label)) {
-							$text .= ' <strong>' . $line->label . '</strong>';
-							print $form->textwithtooltip($text, $line->desc, 3, 0, '', (string) $i);
-						} else {
-							print $text . ' ' . nl2br($line->desc);
-						}
-
-						// Show range
-						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
-						print "</td>\n";
+						$text = img_object($langs->trans('Product'), 'product');
 					}
 
-					// unit of order
-					$unit_order = '';
-					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-						$unit_order = measuringUnitString($line->fk_unit);
-					}
-
-					// Qty
-					print '<td class="center">' . $line->qty;
-					print '<input name="qtyasked' . $indiceAsked . '" id="qtyasked' . $indiceAsked . '" type="hidden" value="' . $line->qty . '">';
-					print '' . $unit_order . '</td>';
-
-					// Qty already shipped
-					print '<td class="center">';
-					$quantityDelivered = isset($object->expeditions[$line->id]) ? $object->expeditions[$line->id] : '';
-					print $quantityDelivered;
-					print '<input name="qtydelivered' . $indiceAsked . '" id="qtydelivered' . $indiceAsked . '" type="hidden" value="' . $quantityDelivered . '">';
-					print '' . $unit_order . '</td>';
-
-					// Qty to ship
-					$quantityAsked = $line->qty;
-					if ($line->product_type == 1 && !getDolGlobalString('STOCK_SUPPORTS_SERVICES') && !getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
-						$quantityToBeDelivered = 0;
+					if (!empty($line->label)) {
+						$text .= ' <strong>' . $line->label . '</strong>';
+						print $form->textwithtooltip($text, $line->desc, 3, 0, '', (string) $i);
 					} else {
-						if (is_numeric($quantityDelivered)) {
-							$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
-						} else {
-							$quantityToBeDelivered = $quantityAsked;
-						}
+						print $text . ' ' . nl2br($line->desc);
 					}
 
-					$warehouseObject = null;
-					if (count($warehousePicking) == 1 || !($line->fk_product > 0) || !isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
-						print '<!-- Case warehouse already known or product not a predefined product -->';
-						//ship from preselected location
-						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
-						if ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
-							$deliverableQty = $quantityToBeDelivered;
+					// Show range
+					print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
+					print "</td>\n";
+				}
+
+				// unit of order
+				$unit_order = '';
+				if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+					$unit_order = measuringUnitString($line->fk_unit);
+				}
+
+				// Qty
+				print '<td class="center">' . $line->qty;
+				print '<input name="qtyasked' . $indiceAsked . '" id="qtyasked' . $indiceAsked . '" type="hidden" value="' . $line->qty . '">';
+				print '' . $unit_order . '</td>';
+
+				// Qty already shipped
+				print '<td class="center">';
+				$quantityDelivered = isset($object->expeditions[$line->id]) ? $object->expeditions[$line->id] : '';
+				print $quantityDelivered;
+				print '<input name="qtydelivered' . $indiceAsked . '" id="qtydelivered' . $indiceAsked . '" type="hidden" value="' . $quantityDelivered . '">';
+				print '' . $unit_order . '</td>';
+
+				// Qty to ship
+				$quantityAsked = $line->qty;
+				if ($line->product_type == 1 && !getDolGlobalString('STOCK_SUPPORTS_SERVICES') && !getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+					$quantityToBeDelivered = 0;
+				} else {
+					if (is_numeric($quantityDelivered)) {
+						$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
+					} else {
+						$quantityToBeDelivered = $quantityAsked;
+					}
+				}
+
+				$warehouseObject = null;
+				if (count($warehousePicking) == 1 || !($line->fk_product > 0) || !isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+					print '<!-- Case warehouse already known or product not a predefined product -->';
+					//ship from preselected location
+					$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
+					if ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+						$deliverableQty = $quantityToBeDelivered;
+					} else {
+						$deliverableQty = min($quantityToBeDelivered, $stock);
+					}
+					if ($deliverableQty < 0) {
+						$deliverableQty = 0;
+					}
+					if (!isModEnabled('productbatch') || !$product->hasbatch()) {
+						// Quantity to send
+						print '<td class="center">';
+						if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
+							if (GETPOSTINT('qtyl' . $indiceAsked)) {
+								$deliverableQty = GETPOSTINT('qtyl' . $indiceAsked);
+							}
+							print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
+							$qtylValue = $deliverableQty;
+							if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+								$qtylValue = '';
+							}
+							print '<input name="qtyl' . $indiceAsked . '" id="qtyl' . $indiceAsked . '" class="qtyl right" type="text" size="4" value="' . $qtylValue . '">';
 						} else {
-							$deliverableQty = min($quantityToBeDelivered, $stock);
-						}
-						if ($deliverableQty < 0) {
-							$deliverableQty = 0;
-						}
-						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
-							// Quantity to send
-							print '<td class="center">';
-							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
-								if (GETPOSTINT('qtyl' . $indiceAsked)) {
-									$deliverableQty = GETPOSTINT('qtyl' . $indiceAsked);
-								}
+							if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 								print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
+								print '<input name="qtyl' . $indiceAsked . '" id="qtyl' . $indiceAsked . '" type="hidden" value="0">';
+							}
+
+							print $langs->trans("NA");
+						}
+						print '</td>';
+
+						// Stock
+						if (isModEnabled('stock')) {
+							print '<td class="left">';
+							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {   // Type of product need stock change ?
+								// Show warehouse combo list
+								$ent = "entl" . $indiceAsked;
+								$idl = "idl" . $indiceAsked;
+								$tmpentrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : $warehouse_id;
+								if ($line->fk_product > 0) {
+									print '<!-- Show warehouse selection -->';
+
+									$stockMin = false;
+									if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+										$stockMin = 0;
+									}
+									if ($productChildrenNb > 0) {
+										print $formproduct->selectWarehouses($tmpentrepot_id, 'entl' . $indiceAsked, '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+									} else {
+										if ($product->stockable_product == Product::ENABLED_STOCK) {
+											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl' . $indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+										} else {
+											print img_warning() . ' ' . $langs->trans('StockDisabled');
+										}
+									}
+
+									if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id) {
+										//print $stock.' '.$quantityToBeDelivered;
+										if ($stock < $quantityToBeDelivered) {
+											print ' ' . img_warning($langs->trans("StockTooLow")); // Stock too low for this $warehouse_id but you can change warehouse
+										}
+									}
+								}
+							} else {
+								print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span><input name="entl' . $indiceAsked . '" id="entl' . $indiceAsked . '" type="hidden" value="0">';
+							}
+							print '</td>';
+						}
+						if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+							print '<td></td>';
+						} //StockEntrydate
+						print "</tr>\n";
+
+						// Show subproducts of product
+						if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $line->fk_product > 0) {
+							$product->get_sousproduits_arbo();
+							$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+							if (count($prods_arbo) > 0) {
+								foreach ($prods_arbo as $key => $value) {
+									//print $value[0];
+									$img = '';
+									if ($value['stock'] < $value['stock_alert']) {
+										$img = img_warning($langs->trans("StockTooLow"));
+									}
+									print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
+											<a href=\"" . DOL_URL_ROOT . "/product/card.php?id=" . $value['id'] . "\">" . $value['fullpath'] . "
+											</a> (" . $value['nb'] . ")</td><td class=\"center\"> " . $value['nb_total'] . "</td><td>&nbsp;</td><td>&nbsp;</td>
+											<td class=\"center\">" . $value['stock'] . " " . $img . "</td>";
+									if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td></td>';
+									} //StockEntrydate
+									print "</tr>";
+								}
+							}
+						}
+					} else {
+						// Product need lot
+						print '<td></td><td></td>';
+						if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+							print '<td></td>';
+						} //StockEntrydate
+						print '</tr>'; // end line and start a new one for lot/serial
+						print '<!-- Case product need lot -->';
+
+						$staticwarehouse = new Entrepot($db);
+						if ($warehouse_id > 0) {
+							$staticwarehouse->fetch($warehouse_id);
+						}
+
+						$subj = 0;
+						// Define nb of lines suggested for this order line
+						$nbofsuggested = 0;
+						if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
+							foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {
+								$nbofsuggested++;
+							}
+						}
+						print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
+						if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
+							foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
+								//var_dump($dbatch);
+								$batchStock = +$dbatch->qty; // To get a numeric
+								$deliverableQty = min($quantityToBeDelivered, $batchStock);
+
+								// Now we will check if we have to reduce the deliverableQty by taking into account the qty already suggested in previous line
+								if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+									$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
+								} else {
+									if (!isset($alreadyQtyBatchSetted[$line->fk_product])) {
+										$alreadyQtyBatchSetted[$line->fk_product] = array();
+									}
+
+									if (!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])) {
+										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch] = array();
+									}
+
+									$deliverableQty = min($quantityToBeDelivered, $batchStock);
+								}
+
+								if ($deliverableQty < 0) {
+									$deliverableQty = 0;
+								}
+
+								$inputName = 'qtyl' . $indiceAsked . '_' . $subj;
+								if (GETPOSTISSET($inputName)) {
+									$deliverableQty = GETPOST($inputName, 'int');
+								}
+
+								$tooltipClass = $tooltipTitle = '';
+								if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+									$tooltipClass = ' classfortooltip';
+									$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines') . ' : ' . $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+								} else {
+									$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = 0;
+								}
+								$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+
+								print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
+								print '<td colspan="3" ></td><td class="center">';
 								$qtylValue = $deliverableQty;
 								if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 									$qtylValue = '';
 								}
-								print '<input name="qtyl' . $indiceAsked . '" id="qtyl' . $indiceAsked . '" class="qtyl right" type="text" size="4" value="' . $qtylValue . '">';
-							} else {
-								if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
-									print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
-									print '<input name="qtyl' . $indiceAsked . '" id="qtyl' . $indiceAsked . '" type="hidden" value="0">';
-								}
-
-								print $langs->trans("NA");
-							}
-							print '</td>';
-
-							// Stock
-							if (isModEnabled('stock')) {
-								print '<td class="left">';
-								if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {   // Type of product need stock change ?
-									// Show warehouse combo list
-									$ent = "entl" . $indiceAsked;
-									$idl = "idl" . $indiceAsked;
-									$tmpentrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : $warehouse_id;
-									if ($line->fk_product > 0) {
-										print '<!-- Show warehouse selection -->';
-
-										$stockMin = false;
-										if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-											$stockMin = 0;
-										}
-										if ($productChildrenNb > 0) {
-											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl' . $indiceAsked, '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
-										} else {
-											if ($product->stockable_product == Product::ENABLED_STOCK) {
-												print $formproduct->selectWarehouses($tmpentrepot_id, 'entl' . $indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
-											} else {
-												print img_warning() . ' ' . $langs->trans('StockDisabled');
-											}
-										}
-
-										if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id) {
-											//print $stock.' '.$quantityToBeDelivered;
-											if ($stock < $quantityToBeDelivered) {
-												print ' ' . img_warning($langs->trans("StockTooLow")); // Stock too low for this $warehouse_id but you can change warehouse
-											}
-										}
-									}
-								} else {
-									print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span><input name="entl' . $indiceAsked . '" id="entl' . $indiceAsked . '" type="hidden" value="0">';
-								}
+								print '<input class="qtyl ' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="' . $qtylValue . '">';
 								print '</td>';
-							}
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-								print '<td></td>';
-							} //StockEntrydate
-							print "</tr>\n";
 
-							// Show subproducts of product
-							if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $line->fk_product > 0) {
-								$product->get_sousproduits_arbo();
-								$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-								if (count($prods_arbo) > 0) {
-									foreach ($prods_arbo as $key => $value) {
-										//print $value[0];
-										$img = '';
-										if ($value['stock'] < $value['stock_alert']) {
-											$img = img_warning($langs->trans("StockTooLow"));
-										}
-										print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
-											<a href=\"" . DOL_URL_ROOT . "/product/card.php?id=" . $value['id'] . "\">" . $value['fullpath'] . "
-											</a> (" . $value['nb'] . ")</td><td class=\"center\"> " . $value['nb_total'] . "</td><td>&nbsp;</td><td>&nbsp;</td>
-											<td class=\"center\">" . $value['stock'] . " " . $img . "</td>";
-										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-											print '<td></td>';
-										} //StockEntrydate
-										print "</tr>";
-									}
+								print '<!-- Show details of lot -->';
+								print '<td class="left">';
+
+								print $staticwarehouse->getNomUrl(0) . ' / ';
+
+								print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
+
+								$detail = '';
+								$detail .= $langs->trans("Batch") . ': ' . $dbatch->batch;
+								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($dbatch->sellby)) {
+									$detail .= ' - ' . $langs->trans("SellByDate") . ': ' . dol_print_date($dbatch->sellby, "day");
 								}
+								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($dbatch->eatby)) {
+									$detail .= ' - ' . $langs->trans("EatByDate") . ': ' . dol_print_date($dbatch->eatby, "day");
+								}
+								$detail .= ' - ' . $langs->trans("Qty") . ': ' . $dbatch->qty;
+								$detail .= '<br>';
+								print $detail;
+
+								$quantityToBeDelivered -= $deliverableQty;
+								if ($quantityToBeDelivered < 0) {
+									$quantityToBeDelivered = 0;
+								}
+								$subj++;
+								print '</td>';
+								if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+									print '<td>' . dol_print_date($dbatch->context['stock_entry_date'], 'day') . '</td>'; //StockEntrydate
+								}
+								print '</tr>';
 							}
 						} else {
-							// Product need lot
-							print '<td></td><td></td>';
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+							print '<!-- Case there is no details of lot at all -->';
+							print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
+							print '<input class="qtyl right" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="0" disabled="disabled"> ';
+							print '</td>';
+
+							print '<td class="left">';
+							print img_warning() . ' ' . $langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
+							print '</td>';
+							if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
 								print '<td></td>';
 							} //StockEntrydate
-							print '</tr>'; // end line and start a new one for lot/serial
-							print '<!-- Case product need lot -->';
+							print '</tr>';
+						}
+					}
+				} else {
+					// ship from multiple locations
+					if (isModEnabled('productbatch') || !$product->hasbatch()) {
+						print '<!-- Case warehouse not already known and product does not need lot -->';
+						print '<td></td><td></td>';
+						if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+							print '<td></td>';
+						} //StockEntrydate
+						print '</tr>' . "\n"; // end line and start a new one for each warehouse
 
-							$staticwarehouse = new Entrepot($db);
-							if ($warehouse_id > 0) {
-								$staticwarehouse->fetch($warehouse_id);
+						print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
+						$subj = 0;
+						// Define nb of lines suggested for this order line
+						$nbofsuggested = 0;
+
+						foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+							if ($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+								$nbofsuggested++;
+							}
+						}
+						$tmpwarehouseObject = new Entrepot($db);
+						foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {    // $stock_warehouse is product_stock
+							$var = $subj % 2;
+							if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
+								// if a warehouse was selected by user, picking is limited to this warehouse and his children
+								continue;
 							}
 
-							$subj = 0;
-							// Define nb of lines suggested for this order line
-							$nbofsuggested = 0;
-							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
-								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {
-									$nbofsuggested++;
+							$tmpwarehouseObject->fetch($warehouse_id);
+							if ($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+								$stock = +$stock_warehouse->real; // Convert it to number
+								$deliverableQty = min($quantityToBeDelivered, $stock);
+								$deliverableQty = max(0, $deliverableQty);
+								// Quantity to send
+								print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
+								print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked=' . $indiceAsked . ') -->';
+								if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+									if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
+										$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
+									} else {
+										if (!isset($alreadyQtySetted[$line->fk_product])) {
+											$alreadyQtySetted[$line->fk_product] = array();
+										}
+
+										$deliverableQty = min($quantityToBeDelivered, $stock);
+									}
+
+									if ($deliverableQty < 0) {
+										$deliverableQty = 0;
+									}
+
+									$tooltipClass = $tooltipTitle = '';
+									if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
+										$tooltipClass = ' classfortooltip';
+										$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines') . ' : ' . $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
+									} else {
+										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
+									}
+
+									$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
+
+									$inputName = 'qtyl' . $indiceAsked . '_' . $subj;
+									if (GETPOSTISSET($inputName)) {
+										$deliverableQty = GETPOSTINT($inputName);
+									}
+									$qtylValue = $deliverableQty;
+									if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+										$qtylValue = '';
+									}
+									print '<input class="qtyl' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="text" size="4" value="' . $qtylValue . '">';
+									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_id . '">';
+								} else {
+									if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
+										print '<input name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="hidden" value="0">';
+									}
+
+									print $langs->trans("NA");
+								}
+								print '</td>';
+
+								// Stock
+								print '<td class="left">';
+								if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+									if ($product->stockable_product == Product::ENABLED_STOCK || $productChildrenNb > 0) {
+										print $tmpwarehouseObject->getNomUrl(0) . ' ';
+										if ($productChildrenNb <= 0) {
+											print '<!-- Show details of stock -->';
+											print '(' . $stock . ')';
+										}
+									} else {
+										print img_warning() . ' ' . $langs->trans('StockDisabled');
+									}
+								} else {
+									print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span>';
+								}
+								print '</td>';
+								$quantityToBeDelivered -= $deliverableQty;
+								if ($quantityToBeDelivered < 0) {
+									$quantityToBeDelivered = 0;
+								}
+								$subj++;
+								if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+									print '<td></td>';
+								} //StockEntrydate
+								print "</tr>\n";
+							}
+						}
+						// Show subproducts of product (not recommended)
+						if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $line->fk_product > 0) {
+							$product->get_sousproduits_arbo();
+							$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+							if (count($prods_arbo) > 0) {
+								foreach ($prods_arbo as $key => $value) {
+									//print $value[0];
+									$img = '';
+									if ($value['stock'] < $value['stock_alert']) {
+										$img = img_warning($langs->trans("StockTooLow"));
+									}
+									print '<tr class"oddeven"><td>';
+									print "&nbsp; &nbsp; &nbsp; ->
+										<a href=\"" . DOL_URL_ROOT . "/product/card.php?id=" . $value['id'] . "\">" . $value['fullpath'] . "
+										</a> (" . $value['nb'] . ")</td><td class=\"center\"> " . $value['nb_total'] . "</td><td>&nbsp;</td><td>&nbsp;</td>
+										<td class=\"center\">" . $value['stock'] . " " . $img . "</td>";
+									if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td></td>';
+									} //StockEntrydate
+									print "</tr>";
 								}
 							}
-							print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
-							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
-								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
-									//var_dump($dbatch);
-									$batchStock = +$dbatch->qty; // To get a numeric
-									$deliverableQty = min($quantityToBeDelivered, $batchStock);
+						}
+					} else {
+						print '<!-- Case warehouse not already known and product need lot -->';
+						print '<td></td><td></td>';
+						if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+							print '<td></td>';
+						} //StockEntrydate
+						print '</tr>'; // end line and start a new one for lot/serial
 
-									// Now we will check if we have to reduce the deliverableQty by taking into account the qty already suggested in previous line
+						$subj = 0;
+						print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
+
+						$tmpwarehouseObject = new Entrepot($db);
+						$productlotObject = new Productlot($db);
+
+						// Define nb of lines suggested for this order line
+						$nbofsuggested = 0;
+						foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+							if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
+								$nbofsuggested += count($stock_warehouse->detail_batch);
+							}
+						}
+
+						foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+							$var = $subj % 2;
+							if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
+								// if a warehouse was selected by user, picking is limited to this warehouse and his children
+								continue;
+							}
+
+							$tmpwarehouseObject->fetch($warehouse_id);
+							if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
+								foreach ($stock_warehouse->detail_batch as $dbatch) {
+									$batchStock = +$dbatch->qty; // To get a numeric
 									if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
 										$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
 									} else {
@@ -1625,7 +1866,7 @@ if ($action == 'create') {
 
 									$inputName = 'qtyl' . $indiceAsked . '_' . $subj;
 									if (GETPOSTISSET($inputName)) {
-										$deliverableQty = GETPOST($inputName, 'int');
+										$deliverableQty = GETPOSTINT($inputName);
 									}
 
 									$tooltipClass = $tooltipTitle = '';
@@ -1637,404 +1878,149 @@ if ($action == 'create') {
 									}
 									$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
-									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
-									print '<td colspan="3" ></td><td class="center">';
+									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '><td colspan="3"></td><td class="center">';
 									$qtylValue = $deliverableQty;
 									if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 										$qtylValue = '';
 									}
-									print '<input class="qtyl ' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="' . $qtylValue . '">';
+									print '<input class="qtyl right ' . $tooltipClass . '" title="' . $tooltipTitle . '" name="' . $inputName . '" id="' . $inputName . '" type="text" size="4" value="' . $qtylValue . '">';
 									print '</td>';
 
-									print '<!-- Show details of lot -->';
 									print '<td class="left">';
 
-									print $staticwarehouse->getNomUrl(0) . ' / ';
+									print $tmpwarehouseObject->getNomUrl(0) . ' / ';
 
+									print '<!-- Show details of lot -->';
 									print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
 
-									$detail = '';
-									$detail .= $langs->trans("Batch") . ': ' . $dbatch->batch;
+									//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
+									print $langs->trans("Batch") . ': ';
+									$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
+									if ($result > 0) {
+										print $productlotObject->getNomUrl(1);
+									} else {
+										print $langs->trans("TableLotIncompleteRunRepairWithParamStandardEqualConfirmed");
+									}
 									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($dbatch->sellby)) {
-										$detail .= ' - ' . $langs->trans("SellByDate") . ': ' . dol_print_date($dbatch->sellby, "day");
+										print ' - ' . $langs->trans("SellByDate") . ': ' . dol_print_date($dbatch->sellby, "day");
 									}
 									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($dbatch->eatby)) {
-										$detail .= ' - ' . $langs->trans("EatByDate") . ': ' . dol_print_date($dbatch->eatby, "day");
+										print ' - ' . $langs->trans("EatByDate") . ': ' . dol_print_date($dbatch->eatby, "day");
 									}
-									$detail .= ' - ' . $langs->trans("Qty") . ': ' . $dbatch->qty;
-									$detail .= '<br>';
-									print $detail;
-
+									print ' (' . $dbatch->qty . ')';
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0) {
 										$quantityToBeDelivered = 0;
 									}
+									//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
 									$subj++;
 									print '</td>';
-									if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-										print '<td>' . dol_print_date($dbatch->context['stock_entry_date'], 'day') . '</td>'; //StockEntrydate
+									if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td class="left">' . dol_print_date($dbatch->context['stock_entry_date'], 'day') . '</td>';
 									}
 									print '</tr>';
 								}
-							} else {
-								print '<!-- Case there is no details of lot at all -->';
-								print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
-								print '<input class="qtyl right" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="0" disabled="disabled"> ';
-								print '</td>';
-
-								print '<td class="left">';
-								print img_warning() . ' ' . $langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
-								print '</td>';
-								if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-									print '<td></td>';
-								} //StockEntrydate
-								print '</tr>';
 							}
 						}
-					} else {
-						// ship from multiple locations
-						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
-							print '<!-- Case warehouse not already known and product does not need lot -->';
-							print '<td></td><td></td>';
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-								print '<td></td>';
-							} //StockEntrydate
-							print '</tr>' . "\n"; // end line and start a new one for each warehouse
+					}
+					if ($subj == 0) { // Line not shown yet, we show it
+						$warehouse_selected_id = GETPOSTINT('entrepot_id');
 
-							print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
-							$subj = 0;
-							// Define nb of lines suggested for this order line
-							$nbofsuggested = 0;
+						print '<!-- line not shown yet, we show it -->';
+						print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
 
-							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if ($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-									$nbofsuggested++;
-								}
+						if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+							$disabled = '';
+							if (isModEnabled('productbatch') && $product->hasbatch()) {
+								$disabled = 'disabled="disabled"';
 							}
-							$tmpwarehouseObject = new Entrepot($db);
-							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {    // $stock_warehouse is product_stock
-								$var = $subj % 2;
-								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
-									// if a warehouse was selected by user, picking is limited to this warehouse and his children
-									continue;
-								}
+							if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
+								$disabled = 'disabled="disabled"';
+							}
+							// finally we overwrite the input with the product status stockable_product if it's disabled
+							if ($product->stockable_product == Product::DISABLED_STOCK) {
+								$disabled = '';
+							}
+							print '<input class="qtyl right" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="0"' . ($disabled ? ' ' . $disabled : '') . '> ';
+							if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+								print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
+							}
+						} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+							$disabled = '';
+							if (isModEnabled('productbatch') && $product->hasbatch()) {
+								$disabled = 'disabled="disabled"';
+							}
+							if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
+								$disabled = 'disabled="disabled"';
+							}
+							print '<input class="qtyl right" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="' . $quantityToBeDelivered . '"' . ($disabled ? ' ' . $disabled : '') . '> ';
+							if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+								print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
+							}
+						} else {
+							print $langs->trans("NA");
+						}
+						print '</td>';
 
-								$tmpwarehouseObject->fetch($warehouse_id);
-								if ($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-									$stock = +$stock_warehouse->real; // Convert it to number
-									$deliverableQty = min($quantityToBeDelivered, $stock);
-									$deliverableQty = max(0, $deliverableQty);
-									// Quantity to send
-									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
-									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked=' . $indiceAsked . ') -->';
-									if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
-										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
-										} else {
-											if (!isset($alreadyQtySetted[$line->fk_product])) {
-												$alreadyQtySetted[$line->fk_product] = array();
-											}
-
-											$deliverableQty = min($quantityToBeDelivered, $stock);
-										}
-
-										if ($deliverableQty < 0) {
-											$deliverableQty = 0;
-										}
-
-										$tooltipClass = $tooltipTitle = '';
-										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$tooltipClass = ' classfortooltip';
-											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines') . ' : ' . $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
-										} else {
-											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
-										}
-
-										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
-
-										$inputName = 'qtyl' . $indiceAsked . '_' . $subj;
-										if (GETPOSTISSET($inputName)) {
-											$deliverableQty = GETPOSTINT($inputName);
-										}
-										$qtylValue = $deliverableQty;
-										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
-											$qtylValue = '';
-										}
-										print '<input class="qtyl' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="text" size="4" value="' . $qtylValue . '">';
-										print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_id . '">';
+						print '<td class="left">';
+						if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+							if ($warehouse_selected_id > 0) {
+								$warehouseObject = new Entrepot($db);
+								$warehouseObject->fetch($warehouse_selected_id);
+								print img_warning() . ' ' . $langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
+							} else {
+								if ($line->fk_product) {
+									if ($product->stockable_product == Product::ENABLED_STOCK) {
+										print img_warning() . ' ' . $langs->trans('StockTooLow');
 									} else {
-										if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
-											print '<input name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="hidden" value="0">';
-										}
-
-										print $langs->trans("NA");
+										print img_warning() . ' ' . $langs->trans('StockDisabled');
 									}
-									print '</td>';
-
-									// Stock
-									if (isModEnabled('stock')) {
-										print '<td class="left">';
-										if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-											if ($product->stockable_product == Product::ENABLED_STOCK || $productChildrenNb > 0) {
-												print $tmpwarehouseObject->getNomUrl(0) . ' ';
-												if ($productChildrenNb <= 0) {
-													print '<!-- Show details of stock -->';
-													print '(' . $stock . ')';
-												}
-											} else {
-												print img_warning() . ' ' . $langs->trans('StockDisabled');
-											}
-										} else {
-											print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span>';
-										}
-										print '</td>';
-									}
-									$quantityToBeDelivered -= $deliverableQty;
-									if ($quantityToBeDelivered < 0) {
-										$quantityToBeDelivered = 0;
-									}
-									$subj++;
-									if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-										print '<td></td>';
-									} //StockEntrydate
-									print "</tr>\n";
-								}
-							}
-							// Show subproducts of product (not recommended)
-							if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $line->fk_product > 0) {
-								$product->get_sousproduits_arbo();
-								$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-								if (count($prods_arbo) > 0) {
-									foreach ($prods_arbo as $key => $value) {
-										//print $value[0];
-										$img = '';
-										if ($value['stock'] < $value['stock_alert']) {
-											$img = img_warning($langs->trans("StockTooLow"));
-										}
-										print '<tr class"oddeven"><td>';
-										print "&nbsp; &nbsp; &nbsp; ->
-										<a href=\"" . DOL_URL_ROOT . "/product/card.php?id=" . $value['id'] . "\">" . $value['fullpath'] . "
-										</a> (" . $value['nb'] . ")</td><td class=\"center\"> " . $value['nb_total'] . "</td><td>&nbsp;</td><td>&nbsp;</td>
-										<td class=\"center\">" . $value['stock'] . " " . $img . "</td>";
-										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-											print '<td></td>';
-										} //StockEntrydate
-										print "</tr>";
-									}
+								} else {
+									print '';
 								}
 							}
 						} else {
-							print '<!-- Case warehouse not already known and product need lot -->';
-							print '<td></td><td></td>';
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-								print '<td></td>';
-							} //StockEntrydate
-							print '</tr>'; // end line and start a new one for lot/serial
-
-							$subj = 0;
-							print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
-
-							$tmpwarehouseObject = new Entrepot($db);
-							$productlotObject = new Productlot($db);
-
-							// Define nb of lines suggested for this order line
-							$nbofsuggested = 0;
-							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
-									$nbofsuggested += count($stock_warehouse->detail_batch);
-								}
-							}
-
-							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								$var = $subj % 2;
-								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
-									// if a warehouse was selected by user, picking is limited to this warehouse and his children
-									continue;
-								}
-
-								$tmpwarehouseObject->fetch($warehouse_id);
-								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
-									foreach ($stock_warehouse->detail_batch as $dbatch) {
-										$batchStock = +$dbatch->qty; // To get a numeric
-										if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
-											$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
-										} else {
-											if (!isset($alreadyQtyBatchSetted[$line->fk_product])) {
-												$alreadyQtyBatchSetted[$line->fk_product] = array();
-											}
-
-											if (!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])) {
-												$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch] = array();
-											}
-
-											$deliverableQty = min($quantityToBeDelivered, $batchStock);
-										}
-
-										if ($deliverableQty < 0) {
-											$deliverableQty = 0;
-										}
-
-										$inputName = 'qtyl' . $indiceAsked . '_' . $subj;
-										if (GETPOSTISSET($inputName)) {
-											$deliverableQty = GETPOSTINT($inputName);
-										}
-
-										$tooltipClass = $tooltipTitle = '';
-										if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
-											$tooltipClass = ' classfortooltip';
-											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines') . ' : ' . $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
-										} else {
-											$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = 0;
-										}
-										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
-
-										print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '><td colspan="3"></td><td class="center">';
-										$qtylValue = $deliverableQty;
-										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
-											$qtylValue = '';
-										}
-										print '<input class="qtyl right ' . $tooltipClass . '" title="' . $tooltipTitle . '" name="' . $inputName . '" id="' . $inputName . '" type="text" size="4" value="' . $qtylValue . '">';
-										print '</td>';
-
-										print '<td class="left">';
-
-										print $tmpwarehouseObject->getNomUrl(0) . ' / ';
-
-										print '<!-- Show details of lot -->';
-										print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
-
-										//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
-										print $langs->trans("Batch") . ': ';
-										$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
-										if ($result > 0) {
-											print $productlotObject->getNomUrl(1);
-										} else {
-											print $langs->trans("TableLotIncompleteRunRepairWithParamStandardEqualConfirmed");
-										}
-										if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($dbatch->sellby)) {
-											print ' - ' . $langs->trans("SellByDate") . ': ' . dol_print_date($dbatch->sellby, "day");
-										}
-										if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($dbatch->eatby)) {
-											print ' - ' . $langs->trans("EatByDate") . ': ' . dol_print_date($dbatch->eatby, "day");
-										}
-										print ' (' . $dbatch->qty . ')';
-										$quantityToBeDelivered -= $deliverableQty;
-										if ($quantityToBeDelivered < 0) {
-											$quantityToBeDelivered = 0;
-										}
-										//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
-										$subj++;
-										print '</td>';
-										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-											print '<td class="left">' . dol_print_date($dbatch->context['stock_entry_date'], 'day') . '</td>';
-										}
-										print '</tr>';
-									}
-								}
-							}
+							print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span>';
 						}
-						if ($subj == 0) { // Line not shown yet, we show it
-							$warehouse_selected_id = GETPOSTINT('entrepot_id');
-
-							print '<!-- line not shown yet, we show it -->';
-							print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
-
-							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-								$disabled = '';
-								if (isModEnabled('productbatch') && $product->hasbatch()) {
-									$disabled = 'disabled="disabled"';
-								}
-								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
-									$disabled = 'disabled="disabled"';
-								}
-								// finally we overwrite the input with the product status stockable_product if it's disabled
-								if ($product->stockable_product == Product::DISABLED_STOCK) {
-									$disabled = '';
-								}
-								print '<input class="qtyl right" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="0"' . ($disabled ? ' ' . $disabled : '') . '> ';
-								if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
-								}
-							} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
-								$disabled = '';
-								if (isModEnabled('productbatch') && $product->hasbatch()) {
-									$disabled = 'disabled="disabled"';
-								}
-								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
-									$disabled = 'disabled="disabled"';
-								}
-								print '<input class="qtyl right" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="' . $quantityToBeDelivered . '"' . ($disabled ? ' ' . $disabled : '') . '> ';
-								if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
-								}
-							} else {
-								print $langs->trans("NA");
-							}
-							print '</td>';
-
-							print '<td class="left">';
-							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-								if ($warehouse_selected_id > 0) {
-									$warehouseObject = new Entrepot($db);
-									$warehouseObject->fetch($warehouse_selected_id);
-									print img_warning() . ' ' . $langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
-								} else {
-									if ($line->fk_product) {
-										if ($product->stockable_product == Product::ENABLED_STOCK) {
-											print img_warning() . ' ' . $langs->trans('StockTooLow');
-										} else {
-											print img_warning() . ' ' . $langs->trans('StockDisabled');
-										}
-									} else {
-										print '';
-									}
-								}
-							} else {
-								print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span>';
-							}
-							print '</td>';
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-								print '<td></td>';
-							} //StockEntrydate
-							print '</tr>';
-						}
+						print '</td>';
+						if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+							print '<td></td>';
+						} //StockEntrydate
+						print '</tr>';
 					}
-
-					// Display lines for extrafields of the Shipment line
-					// $line is a 'Order line'
-					if (!empty($extrafields)) {
-						//var_dump($line);
-						$colspan = 5;
-						$expLine = new ExpeditionLigne($db);
-
-						$srcLine = new OrderLine($db);
-						$srcLine->id = $line->id;
-						$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
-
-						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
-
-						print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), (string) $indiceAsked, '', '1');
-					}
-				} elseif (empty($reshook) && $line->special_code == SUBTOTALS_SPECIAL_CODE && !in_array($line->id, $title_lines_to_disable)) {
-					require dol_buildpath('/core/tpl/subtotalline_select.tpl.php');
 				}
 
-				$indiceAsked++;
+				// Display lines for extrafields of the Shipment line
+				// $line is a 'Order line'
+				$colspan = 5;
+				$expLine = new ExpeditionLigne($db);
+
+				$srcLine = new OrderLine($db);
+				$srcLine->id = $line->id;
+				$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
+
+				$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
+
+				print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), (string) $indiceAsked, '', '1');
+			} elseif (empty($reshook) && $line->special_code == SUBTOTALS_SPECIAL_CODE && !in_array($line->id, $title_lines_to_disable)) {
+				require dol_buildpath('/core/tpl/subtotalline_select.tpl.php');
 			}
 
-			print "</table>";
-			print '</div>';
-
-			print '<br>';
-
-			print $form->buttonsSaveCancel("Create");
-
-			print '</form>';
-
-			print '<br>';
-		} else {
-			dol_print_error($db);
+			$indiceAsked++;
 		}
+
+		print "</table>";
+		print '</div>';
+
+		print '<br>';
+
+		print $form->buttonsSaveCancel("Create");
+
+		print '</form>';
+
+		print '<br>';
+	} else {
+		dol_print_error($db);
 	}
 } elseif ($object->id > 0) {
 	'@phan-var-force Expedition $object';  // Need to force it (type overridden earlier)
@@ -2504,7 +2490,7 @@ if ($action == 'create') {
 	print '<td  class="linecoldescription" >' . $langs->trans("Products") . '</td>';
 	// Qty
 	print '<td class="center linecolqty">' . $langs->trans("QtyOrdered") . '</td>';
-	if ($origin && $origin_id > 0) {
+	if ($origin_id > 0) {
 		print '<td class="center linecolqtyinothershipments">' . $langs->trans("QtyInOtherShipments") . '</td>';
 	}
 	if ($action == 'editline') {
@@ -2512,7 +2498,7 @@ if ($action == 'create') {
 		if (!isModEnabled('stock')) {
 			$editColspan--;
 		}
-		if (empty($conf->productbatch->enabled)) {
+		if (!isModEnabled('productbatch')) {
 			$editColspan--;
 		}
 		print '<td class="center linecoleditlineotherinfo" colspan="' . $editColspan . '">';
@@ -2571,7 +2557,7 @@ if ($action == 'create') {
 
 	// Get list of products already sent for same source object into $alreadysent
 	$alreadysent = array();
-	if ($origin && $origin_id > 0) {
+	if ($origin_id > 0) {
 		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end, obj.special_code";
 		$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot";
 		$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
@@ -2717,7 +2703,7 @@ if ($action == 'create') {
 			print '<td class="center linecolqty">' . $lines[$i]->qty_asked . ' ' . $unit_order . '</td>';
 
 			// Qty in other shipments (with shipment and warehouse used)
-			if ($origin && $origin_id > 0) {
+			if ($origin_id > 0) {
 				print '<td class="linecolqtyinothershipments center nowrap">';
 				$htmltooltip = '';
 				$qtyalreadysent = 0;
@@ -2835,7 +2821,7 @@ if ($action == 'create') {
 						print '<td></td>';
 						print '</tr>';
 					}
-				} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+				} elseif (!isModEnabled('stock') && !isModEnabled('productbatch')) { // both product batch and stock are not activated.
 					print '<!-- case edit 7 -->';
 					print '<tr>';
 					// Qty to ship or shipped
@@ -3006,27 +2992,26 @@ if ($action == 'create') {
 
 			// Display lines extrafields.
 			// $line is a line of shipment
-			if (!empty($extrafields)) {
-				$colspan = 6;
-				if ($origin && $origin_id > 0) {
-					$colspan++;
-				}
-				if (isModEnabled('productbatch')) {
-					$colspan++;
-				}
-				if (isModEnabled('stock')) {
-					$colspan++;
-				}
 
-				$line = $lines[$i];
-				$line->fetch_optionals();
+			$colspan = 6;
+			if ($origin_id > 0) {
+				$colspan++;
+			}
+			if (isModEnabled('productbatch')) {
+				$colspan++;
+			}
+			if (isModEnabled('stock')) {
+				$colspan++;
+			}
 
-				// TODO Show all in same line by setting $display_type = 'line'
-				if ($action == 'editline' && $line->id == $line_id) {
-					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
-				} else {
-					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
-				}
+			$line = $lines[$i];
+			$line->fetch_optionals();
+
+			// TODO Show all in same line by setting $display_type = 'line'
+			if ($action == 'editline' && $line->id == $line_id) {
+				print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
+			} else {
+				print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
 			}
 		} elseif (empty($reshook) && $lines[$i]->product_type == "9") {
 			$objectsrc = new OrderLine($db);
