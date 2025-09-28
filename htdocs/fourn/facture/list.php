@@ -96,6 +96,7 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_status = GETPOST('search_status', 'intcomma');	// Can be '' or a numeric
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentcond = GETPOST('search_paymentcond') ? GETPOSTINT('search_paymentcond') : '';
+$search_vat_reverse_charge = GETPOST('search_vat_reverse_charge', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
@@ -200,7 +201,8 @@ $arrayfields = array(
 	's.zip' => array('label' => "Zip", 'checked' => '-1', 'position' => 44),
 	'state.nom' => array('label' => "StateShort", 'checked' => '0', 'position' => 45),
 	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 46),
-	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 49),
+	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 48),
+	'f.vat_reverse_charge' => array('label' => "VATReverseCharge", 'checked' => '0', 'position' => 49, 'enabled' => (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE') ? '1' : '0')),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 52),
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 50),
 	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 105),
@@ -305,6 +307,7 @@ if (empty($reshook)) {
 		$search_status = '';
 		$search_paymentmode = '';
 		$search_paymentcond = '';
+		$search_vat_reverse_charge = '';
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -510,7 +513,7 @@ $help_url = 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedo
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
+$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement, f.vat_reverse_charge,";
 $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.close_code, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_modification,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -678,6 +681,9 @@ if ($search_paymentmode > 0) {
 }
 if ($search_paymentcond > 0) {
 	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentcond);
+}
+if ($search_vat_reverse_charge != '') {
+	$sql .= " AND f.vat_reverse_charge = ".((int) $search_vat_reverse_charge);
 }
 if ($search_date_start) {
 	$sql .= " AND f.datef >= '" . $db->idate($search_date_start) . "'";
@@ -1021,6 +1027,9 @@ if ($search_paymentmode) {
 if ($search_paymentcond) {
 	$param .= '&search_paymentcond='.urlencode((string) ($search_paymentcond));
 }
+if ($search_vat_reverse_charge != '') {
+	$param .= '&search_vat_reverse_charge='.urlencode((string) ($search_vat_reverse_charge));
+}
 if ($show_files) {
 	$param .= '&show_files='.urlencode((string) ($show_files));
 }
@@ -1285,6 +1294,12 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 	print '</td>';
 }
+// VAT Reverse Charge
+if (!empty($arrayfields['f.vat_reverse_charge']['checked'])) {
+	print '<td class="liste_titre center">';
+	print $form->selectyesno('search_vat_reverse_charge', $search_vat_reverse_charge, 1, 0, 1, 1);
+	print '</td>';
+}
 // Condition of payment
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print '<td class="liste_titre left">';
@@ -1492,6 +1507,10 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 }
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['f.vat_reverse_charge']['checked'])) {
+	print_liste_field_titre($arrayfields['f.vat_reverse_charge']['label'], $_SERVER["PHP_SELF"], "f.vat_reverse_charge", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
@@ -1913,6 +1932,15 @@ while ($i < $imaxinloop) {
 				$typenArray = $formcompany->typent_array(1);
 			}
 			print $typenArray[$obj->typent_code];
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// VAT Reverse Charge
+		if (!empty($arrayfields['f.vat_reverse_charge']['checked'])) {
+			print '<td class="center">';
+			print yn($obj->vat_reverse_charge);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
