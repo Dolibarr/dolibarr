@@ -503,7 +503,6 @@ class Mailings extends DolibarrApi
 		unset($object->fk_multicurrency);
 		unset($object->fk_project);
 		unset($object->fk_projet);
-		unset($object->id);
 		unset($object->import_key);
 		unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
