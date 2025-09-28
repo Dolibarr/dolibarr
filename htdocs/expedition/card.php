@@ -892,7 +892,7 @@ if (empty($reshook)) {
 									unset($_POST[$qty]);
 								}
 							}
-						} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+						} elseif (!isModEnabled('stock') && !isModEnabled('productbatch')) { // both product batch and stock are not activated.
 							$qty = "qtyl" . $line_id;
 							$line->id = $line_id;
 							$line->qty = GETPOSTFLOAT($qty);
@@ -1315,7 +1315,7 @@ if ($action == 'create') {
 			print '<td class="center">' . $langs->trans("QtyOrdered") . '</td>';
 			print '<td class="center">' . $langs->trans("QtyShipped") . '</td>';
 			print '<td class="center">' . $langs->trans("QtyToShip");
-			if (empty($conf->productbatch->enabled)) {
+			if (!isModEnabled('productbatch')) {
 				print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">' . img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"') . '</a>';
 				print ' / ';
 			} else {
@@ -1324,7 +1324,7 @@ if ($action == 'create') {
 			print '<span id="autoreset" class="opacitymedium link cursor cursorpointer">' . img_picto($langs->trans("Reset"), 'eraser') . '</span>';
 			print '</td>';
 			if (isModEnabled('stock')) {
-				if (empty($conf->productbatch->enabled)) {
+				if (!isModEnabled('productbatch')) {
 					print '<td class="left">' . $langs->trans("Warehouse") . ' (' . $langs->trans("Stock") . ')</td>';
 				} else {
 					print '<td class="left">' . $langs->trans("Warehouse") . ' / ' . $langs->trans("Batch") . ' (' . $langs->trans("Stock") . ')</td>';
@@ -1480,7 +1480,7 @@ if ($action == 'create') {
 					if ($deliverableQty < 0) {
 						$deliverableQty = 0;
 					}
-					if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
+					if (!isModEnabled('productbatch') || !$product->hasbatch()) {
 						// Quantity to send
 						print '<td class="center">';
 						if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
@@ -2824,7 +2824,7 @@ if ($action == 'create') {
 						print '<td></td>';
 						print '</tr>';
 					}
-				} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+				} elseif (!isModEnabled('stock') && !isModEnabled('productbatch')) { // both product batch and stock are not activated.
 					print '<!-- case edit 7 -->';
 					print '<tr>';
 					// Qty to ship or shipped
