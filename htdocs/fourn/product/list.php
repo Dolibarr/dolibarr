@@ -421,7 +421,7 @@ while ($i < $imaxinloop) {
 	$productstatic->barcode = $objp->barcode;
 	$productstatic->barcode_type = $objp->fk_barcode_type;
 
-	print '<tr data-rowid="'.$productstatic->id.'" class="oddeven">';
+	print '<tr data-rowid="'.$productstatic->id.'" class="oddeven row-with-select">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
