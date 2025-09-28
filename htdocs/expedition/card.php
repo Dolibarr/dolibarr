@@ -1764,23 +1764,21 @@ if ($action == 'create') {
 								print '</td>';
 
 								// Stock
-								if (isModEnabled('stock')) {
-									print '<td class="left">';
-									if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-										if ($product->stockable_product == Product::ENABLED_STOCK || $productChildrenNb > 0) {
-											print $tmpwarehouseObject->getNomUrl(0) . ' ';
-											if ($productChildrenNb <= 0) {
-												print '<!-- Show details of stock -->';
-												print '(' . $stock . ')';
-											}
-										} else {
-											print img_warning() . ' ' . $langs->trans('StockDisabled');
+								print '<td class="left">';
+								if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+									if ($product->stockable_product == Product::ENABLED_STOCK || $productChildrenNb > 0) {
+										print $tmpwarehouseObject->getNomUrl(0) . ' ';
+										if ($productChildrenNb <= 0) {
+											print '<!-- Show details of stock -->';
+											print '(' . $stock . ')';
 										}
 									} else {
-										print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span>';
+										print img_warning() . ' ' . $langs->trans('StockDisabled');
 									}
-									print '</td>';
+								} else {
+									print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span>';
 								}
+								print '</td>';
 								$quantityToBeDelivered -= $deliverableQty;
 								if ($quantityToBeDelivered < 0) {
 									$quantityToBeDelivered = 0;
@@ -2495,7 +2493,7 @@ if ($action == 'create') {
 	print '<td  class="linecoldescription" >' . $langs->trans("Products") . '</td>';
 	// Qty
 	print '<td class="center linecolqty">' . $langs->trans("QtyOrdered") . '</td>';
-	if ($origin && $origin_id > 0) {
+	if ($origin_id > 0) {
 		print '<td class="center linecolqtyinothershipments">' . $langs->trans("QtyInOtherShipments") . '</td>';
 	}
 	if ($action == 'editline') {
@@ -2503,7 +2501,7 @@ if ($action == 'create') {
 		if (!isModEnabled('stock')) {
 			$editColspan--;
 		}
-		if (empty($conf->productbatch->enabled)) {
+		if (!isModEnabled('productbatch')) {
 			$editColspan--;
 		}
 		print '<td class="center linecoleditlineotherinfo" colspan="' . $editColspan . '">';
