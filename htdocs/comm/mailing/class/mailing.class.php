@@ -773,7 +773,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Count number of target with status
 	 *
-	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error, 'alreadysentok' = Sent success, 'alreadysentko' = Sent error)
+	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error, 'alreadysentok' = Sent success, 'alreadysentko' = Sent error, 'all' = Just return all no matter status)
 	 *  @return int        		Nb of target with status
 	 */
 	public function countNbOfTargets($mode)
@@ -786,6 +786,8 @@ class Mailing extends CommonObject
 			$sql .= " AND statut > 0";
 		} elseif ($mode == 'alreadysentko') {
 			$sql .= " AND statut = -1";
+		} elseif ($mode == 'all') {
+			// just want to return all possible recipients
 		} else {
 			$this->error = 'BadValueForParameterMode';
 			return -2;
