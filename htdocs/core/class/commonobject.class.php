@@ -682,12 +682,12 @@ abstract class CommonObject
 	public $name;
 
 	/**
-	 * @var string 		The lastname
+	 * @var ?string 		The lastname
 	 */
 	public $lastname;
 
 	/**
-	 * @var string 		The firstname
+	 * @var ?string 		The firstname
 	 */
 	public $firstname;
 
