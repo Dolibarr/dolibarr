@@ -1053,7 +1053,7 @@ while ($i < $imaxinloop) {
 	}
 	$event_start_date_css = $event_end_date_css = $event_more_class;
 
-	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
+	print '<tr class="oddeven row-with-select ' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
