@@ -1185,47 +1185,47 @@ if ($action == 'create') {
 
 		// Weight
 		print '<tr><td>';
-			print $langs->trans("Weight");
-			print '</td><td colspan="3">';
-			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-			print '<input name="weight" size="4" value="' . GETPOSTINT('weight') . '"> ';
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
-			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
-			print $form->textwithpicto($text, $htmltext);
-			print '</td></tr>';
-			// Dim
-			print '<tr><td>';
-			print $langs->trans("Width") . ' x ' . $langs->trans("Height") . ' x ' . $langs->trans("Depth");
-			print ' </td><td colspan="3">';
-			print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
-			print '<input name="sizeW" size="4" value="' . GETPOSTINT('sizeW') . '">';
-			print ' x <input name="sizeH" size="4" value="' . GETPOSTINT('sizeH') . '">';
-			print ' x <input name="sizeS" size="4" value="' . GETPOSTINT('sizeS') . '">';
-			print ' ';
-			$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
-			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
-			print $form->textwithpicto($text, $htmltext);
-			print '</td></tr>';
+		print $langs->trans("Weight");
+		print '</td><td colspan="3">';
+		print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
+		print '<input name="weight" size="4" value="' . GETPOSTINT('weight') . '"> ';
+		$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
+		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
+		print $form->textwithpicto($text, $htmltext);
+		print '</td></tr>';
+		// Dim
+		print '<tr><td>';
+		print $langs->trans("Width") . ' x ' . $langs->trans("Height") . ' x ' . $langs->trans("Depth");
+		print ' </td><td colspan="3">';
+		print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
+		print '<input name="sizeW" size="4" value="' . GETPOSTINT('sizeW') . '">';
+		print ' x <input name="sizeH" size="4" value="' . GETPOSTINT('sizeH') . '">';
+		print ' x <input name="sizeS" size="4" value="' . GETPOSTINT('sizeS') . '">';
+		print ' ';
+		$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
+		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
+		print $form->textwithpicto($text, $htmltext);
+		print '</td></tr>';
 
-			// Delivery method
-			print "<tr><td>" . $langs->trans("DeliveryMethod") . "</td>";
-			print '<td colspan="3">';
-			$expe->fetch_delivery_methods();
-			print img_picto('', 'dolly', 'class="pictofixedwidth"');
-			print $form->selectarray("shipping_method_id", $expe->meths, GETPOSTINT('shipping_method_id'), 1, 0, 0, "", 1, 0, 0, '', 'widthcentpercentminusxx');
+		// Delivery method
+		print "<tr><td>" . $langs->trans("DeliveryMethod") . "</td>";
+		print '<td colspan="3">';
+		$expe->fetch_delivery_methods();
+		print img_picto('', 'dolly', 'class="pictofixedwidth"');
+		print $form->selectarray("shipping_method_id", $expe->meths, GETPOSTINT('shipping_method_id'), 1, 0, 0, "", 1, 0, 0, '', 'widthcentpercentminusxx');
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-			print "</td></tr>\n";
+		print "</td></tr>\n";
 
-			// Tracking number
-			print "<tr><td>" . $langs->trans("TrackingNumber") . "</td>";
-			print '<td colspan="3">';
-			print img_picto('', 'barcode', 'class="pictofixedwidth"');
-			print '<input name="tracking_number" size="20" value="' . GETPOST('tracking_number', 'alpha') . '">';
-			print "</td></tr>\n";
+		// Tracking number
+		print "<tr><td>" . $langs->trans("TrackingNumber") . "</td>";
+		print '<td colspan="3">';
+		print img_picto('', 'barcode', 'class="pictofixedwidth"');
+		print '<input name="tracking_number" size="20" value="' . GETPOST('tracking_number', 'alpha') . '">';
+		print "</td></tr>\n";
 
-			// Incoterms
+		// Incoterms
 		if (isModEnabled('incoterm')) {
 			print '<tr>';
 			print '<td><label for="incoterm_id">' . $form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1) . '</label></td>';
@@ -1235,9 +1235,9 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
-			// Document model
-			include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
-			$list = ModelePdfExpedition::liste_modeles($db);
+		// Document model
+		include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
+		$list = ModelePdfExpedition::liste_modeles($db);
 		if (is_countable($list) && count($list) > 1) {
 			print "<tr><td>" . $langs->trans("DefaultModel") . "</td>";
 			print '<td colspan="3">';
@@ -1246,27 +1246,27 @@ if ($action == 'create') {
 			print "</td></tr>\n";
 		}
 
-			// Other attributes. Fields from hook formObjectOptions and Extrafields.
-			// $objectsrc is Commande|Facture
-			$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
-			$object = $expe;
-			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-			$object = $objectsav;
+		// Other attributes. Fields from hook formObjectOptions and Extrafields.
+		// $objectsrc is Commande|Facture
+		$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
+		$object = $expe;
+		$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+		$object = $objectsav;
 
-			print "</table>";
+		print "</table>";
 
-			print dol_get_fiche_end();
+		print dol_get_fiche_end();
 
 
-			// Shipment lines
+		// Shipment lines
 
-			$numAsked = count($object->lines);
+		$numAsked = count($object->lines);
 
-			print '<script type="text/javascript">' . "\n";
-			print 'jQuery(document).ready(function() {' . "\n";
-			print 'jQuery("#autofill").click(function() {';
-			$i = 0;
+		print '<script type="text/javascript">' . "\n";
+		print 'jQuery(document).ready(function() {' . "\n";
+		print 'jQuery("#autofill").click(function() {';
+		$i = 0;
 		while ($i < $numAsked) {
 			print 'jQuery("#qtyl' . $i . '").val(jQuery("#qtyasked' . $i . '").val() - jQuery("#qtydelivered' . $i . '").val());' . "\n";
 			if (isModEnabled('productbatch')) {
@@ -1274,24 +1274,24 @@ if ($action == 'create') {
 			}
 			$i++;
 		}
-			print 'return false; });' . "\n";
-			print 'jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0);' . "\n";
-			print 'return false; });' . "\n";
-			print '});' . "\n";
-			print '</script>' . "\n";
+		print 'return false; });' . "\n";
+		print 'jQuery("#autoreset").click(function() { console.log("Reset values to 0"); jQuery(".qtyl").val(0);' . "\n";
+		print 'return false; });' . "\n";
+		print '});' . "\n";
+		print '</script>' . "\n";
 
-			print '<br>';
+		print '<br>';
 
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder centpercent">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 
-			// Load shipments already done for same order
-			$object->loadExpeditions();
+		// Load shipments already done for same order
+		$object->loadExpeditions();
 
 
-			$alreadyQtyBatchSetted = $alreadyQtySetted = array();
+		$alreadyQtyBatchSetted = $alreadyQtySetted = array();
 
-			$title_lines_to_disable = array();
+		$title_lines_to_disable = array();
 
 		if ($numAsked) {
 			if (isModEnabled('subtotals')) {
@@ -1336,16 +1336,16 @@ if ($action == 'create') {
 			print "</tr>\n";
 		}
 
-			$warehouse_id = GETPOSTINT('entrepot_id');
-			$warehousePicking = array();
-			// get all warehouse children for picking
+		$warehouse_id = GETPOSTINT('entrepot_id');
+		$warehousePicking = array();
+		// get all warehouse children for picking
 		if ($warehouse_id > 0) {
 			$warehousePicking[] = $warehouse_id;
 			$warehouseObj = new Entrepot($db);
 			$warehouseObj->get_children_warehouses($warehouse_id, $warehousePicking);
 		}
 
-			$indiceAsked = 0;
+		$indiceAsked = 0;
 		while ($indiceAsked < $numAsked) {
 			$product = new Product($db);
 
@@ -1685,7 +1685,7 @@ if ($action == 'create') {
 					}
 				} else {
 					// ship from multiple locations
-					if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
+					if (isModEnabled('productbatch') || !$product->hasbatch()) {
 						print '<!-- Case warehouse not already known and product does not need lot -->';
 						print '<td></td><td></td>';
 						if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
