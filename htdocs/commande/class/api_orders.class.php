@@ -1115,12 +1115,14 @@ class Orders extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
 			if ($num <= 0) {
 				throw new RestException(404, 'Shipments not found ');
 			}
-			$i = 0;
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$shipment_static = new Expedition($this->db);
 				if ($shipment_static->fetch($obj->rowid)) {

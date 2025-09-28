@@ -378,7 +378,7 @@ class ActionComm extends CommonObject
 	public $event_paid;
 
 	/**
-	 * @var int status use but Event organisation module
+	 * @var ?int status use but Event organisation module
 	 */
 	public $status;
 
