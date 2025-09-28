@@ -1130,6 +1130,9 @@ td.wordbreak img, td.wordbreakimp img {
 .nopadding {
 	padding: 0;
 }
+.nopaddingimp {
+	padding: 0 !important;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0;
 }
@@ -4586,7 +4589,7 @@ td.linecoldescription {
 table.tableforfield td, .tagtr.table-border-row .tagtd, table.border.margintable .trforfield td {
 	padding: 2px 4px 2px 10px;			/* t r b l */
 }
-table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
+table.liste td, table.noborder > tr > td, table.noborder > tbody > tr > td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 8px 10px 8px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract */
 	height: 32px;

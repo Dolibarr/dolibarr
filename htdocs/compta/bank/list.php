@@ -658,7 +658,7 @@ foreach ($accounts as $key => $type) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$objecttmp->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$objecttmp->id.'" class="oddeven row-with-select">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

@@ -2,7 +2,7 @@
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024      William Mead      <william.mead@manchenumerique.fr>
- * Copyright (C) 2024      MDW                      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025      Quentin VIAL--GOUTEYRON   <quentin.vial-gouteyron@atm-consulting.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -273,7 +273,7 @@ class DataPolicyCron
 	 *
 	 * @return 	int 	Returns 0 for success, 1 for failure, as required for cron jobs.
 	 */
-	public function cleanDataForDataPolicy() : int
+	public function cleanDataForDataPolicy(): int
 	{
 		global $conf, $user;
 
@@ -411,7 +411,7 @@ class DataPolicyCron
 	 * @param 	array<string, mixed> $policy 	The policy configuration.
 	 * @return 	int   							The result of the update operation, or 0 if skipped.
 	 */
-	private function _handleAnonymize($object, $user, $policy) : int
+	private function _handleAnonymize($object, $user, $policy): int
 	{
 		foreach ($policy['anonymize_fields'] as $field => $val) {
 			if ($val == 'MAKEANONYMOUS') {
@@ -437,7 +437,7 @@ class DataPolicyCron
 	 * @param CommonObject $object The target object.
 	 * @param User $user The user object.
 	 * @param array<string, mixed> $policy The policy configuration.
-	 * @param string $method The method key ('delete' or 'update').
+	 * @param 'delete'|'update' $method The method key ('delete' or 'update').
 	 * @return mixed[] The list of arguments for the call.
 	 */
 	private function _buildCallArguments($object, $user, $policy, $method)
@@ -449,9 +449,16 @@ class DataPolicyCron
 
 		$paramConfig = $policy['call_params'][$method] ?? [];
 
-		return array_map(function (string $paramName) use ($availableArgs) {
-			return $availableArgs[$paramName];
-		}, $paramConfig);
+		return array_map(
+			/**
+			 * @param	string$paramName	Name of parameter to get
+			 * @return	mixed				Parameter value
+			 */
+			static function (string $paramName) use ($availableArgs) {
+				return $availableArgs[$paramName];
+			},
+			$paramConfig
+		);
 	}
 
 	/**
