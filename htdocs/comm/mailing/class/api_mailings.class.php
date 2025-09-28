@@ -423,6 +423,49 @@ class Mailings extends DolibarrApi
 	}
 
 	/**
+	 * reset target status of a mass mailing
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param   int     $id         Mass mailing ID
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @url PUT    {id}/resetTargetsStatus
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function resetTargetsStatus($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mailing', 'write')) {
+			throw new RestException(403);
+		}
+		$result = $this->mailing->fetch($id);
+		if ($result < 0) {
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$count = $this->mailing->countNbOfTargets('all');
+		if (!$this->mailing->reset_targets_status(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when reset targets status of Mass mailing : '.$this->mailing->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Resetting status of '.$count.' target recipients in Mass mailing with id='.$id
+			)
+		);
+	}
+
+	/**
 	 * Set a mass mailing to draft
 	 *
 	 * @since	23.0.0	Initial implementation
