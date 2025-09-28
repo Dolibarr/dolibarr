@@ -380,6 +380,47 @@ class Mailings extends DolibarrApi
 	}
 
 	/**
+	 * Delete targets of a mass mailing
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param   int     $id         Mass mailing ID
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteTargets($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mailing', 'delete')) {
+			throw new RestException(403);
+		}
+		$result = $this->mailing->fetch($id);
+		if ($result < 0) {
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$count = $this->mailing->countNbOfTargets('all');
+		if (!$this->mailing->delete_targets()) {
+			throw new RestException(500, 'Error when delete targets of Mass mailing : '.$this->mailing->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Target receipients ('.$count.') of Mass mailing with id='.$id.' deleted'
+			)
+		);
+	}
+
+	/**
 	 * Set a mass mailing to draft
 	 *
 	 * @since	23.0.0	Initial implementation
