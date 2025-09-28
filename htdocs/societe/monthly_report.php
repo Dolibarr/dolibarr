@@ -19,7 +19,7 @@
  *	\file       htdocs/societe/monthly_report.php
  *  \ingroup    societe
  *  \brief      Monthly Report for a specific third party
- *  
+ *
  *  Features:
  *  - All texts are translatable using \$langs->trans()
  *  - PDF export
