@@ -567,36 +567,28 @@ function cleanSerialize(expr) {
 
 /*
  * =================================================================
- * Purpose: Display a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fieldId
- * Input:   message
- * Author:  Regis Houssin
+ * Purpose: Fonction to open a confirm popup on a clie of a link
+ * Input:   msg
+ * Input:   width
  * Licence: GPL
  * ==================================================================
  */
-function displayMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	if (textbox.value == '') {
-		textbox.style.color = 'grey';
-		textbox.value = message;
-	}
-}
-
-/*
- * =================================================================
- * Purpose: Hide a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fiedId
- * Input:   message
- * Author:  Regis Houssin
- * Licence: GPL
- * ==================================================================
- */
-function hideMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	textbox.style.color = 'black';
-	if (textbox.value == message) textbox.value = '';
+function confirmDolibarr(msg, id, width = 400) {
+  let alink = document.getElementById(id);
+  if (alink.getAttribute("data-alreadyclicked") === "0") {
+	  new Promise(res => {
+		$("#dialogforpopup").text(msg).dialog({
+		  modal: true,
+		  width: width,
+		  buttons: {
+			OK() { $(this).dialog("close"); res(false); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); },
+		  }
+		});
+	  });
+	  return false;
+  } else {
+	  return true;
+  }
 }
 
 
