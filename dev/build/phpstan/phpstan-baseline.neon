@@ -9589,6 +9589,24 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
 
 		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: ../../../htdocs/expedition/card.php
+
+		-
+			message: '#^Variable \$rowEnd might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/expedition/card.php
+
+		-
+			message: '#^Variable \$rowExtrafieldsView might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/expedition/card.php
+
+		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1

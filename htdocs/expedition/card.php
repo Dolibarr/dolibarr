@@ -2992,27 +2992,26 @@ if ($action == 'create') {
 
 			// Display lines extrafields.
 			// $line is a line of shipment
-			if (!empty($extrafields)) {
-				$colspan = 6;
-				if ($origin && $origin_id > 0) {
-					$colspan++;
-				}
-				if (isModEnabled('productbatch')) {
-					$colspan++;
-				}
-				if (isModEnabled('stock')) {
-					$colspan++;
-				}
 
-				$line = $lines[$i];
-				$line->fetch_optionals();
+			$colspan = 6;
+			if ($origin_id > 0) {
+				$colspan++;
+			}
+			if (isModEnabled('productbatch')) {
+				$colspan++;
+			}
+			if (isModEnabled('stock')) {
+				$colspan++;
+			}
 
-				// TODO Show all in same line by setting $display_type = 'line'
-				if ($action == 'editline' && $line->id == $line_id) {
-					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
-				} else {
-					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
-				}
+			$line = $lines[$i];
+			$line->fetch_optionals();
+
+			// TODO Show all in same line by setting $display_type = 'line'
+			if ($action == 'editline' && $line->id == $line_id) {
+				print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
+			} else {
+				print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
 			}
 		} elseif (empty($reshook) && $lines[$i]->product_type == "9") {
 			$objectsrc = new OrderLine($db);
