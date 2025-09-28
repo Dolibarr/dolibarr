@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,15 +182,15 @@ class Interventions extends DolibarrApi
 			$action = 'list';
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this->fichinter, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
-				$sql .= $hookmanager->resPrint;
+				$sql = $hookmanager->resPrint;
 			} elseif ($reshook == 0) {
 				$sql .= $hookmanager->resPrint;
+			}
 
-				$errormessage = '';
-				$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-				if ($errormessage) {
-					throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
-				}
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
 
