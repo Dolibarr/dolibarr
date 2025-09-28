@@ -18205,12 +18205,6 @@ parameters:
 			path: ../../../htdocs/website/websiteaccount_card.php
 
 		-
-			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/workstation/workstation_card.php
-
-		-
 			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
