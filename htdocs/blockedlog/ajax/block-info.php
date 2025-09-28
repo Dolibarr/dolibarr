@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017 ATM Consulting       <contact@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,6 +99,7 @@ function formatObject($objtoshow, $prefix)
 
 	$newobjtoshow = $objtoshow;
 
+	$tmpobject = null;
 	$arrayoffields = array();
 	if ($prefix == 'mycompany' || $prefix == 'thirdparty') {
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -140,7 +141,7 @@ function formatObject($objtoshow, $prefix)
 
 				// Field code
 				$s .= '<td>';
-				$s .= '<!-- '.$key.' '.$arrayoffields[$key]['type'].''.$arrayoffields[$convertkey[$key]].' -->';
+				$s .= '<!-- '.$key.' '.$arrayoffields[$key]['type'].''.$arrayoffields[$convertkey[$key]]['label'].' -->';
 				$s .= ($prefix ? $prefix.' > ' : '');
 				$s .= $key;
 				$s .= '</td>';

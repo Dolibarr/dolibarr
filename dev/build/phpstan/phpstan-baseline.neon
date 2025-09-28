@@ -7333,18 +7333,6 @@ parameters:
 			path: ../../../htdocs/core/lib/website.lib.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/lib/website.lib.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/lib/website.lib.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7591,12 +7579,6 @@ parameters:
 			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -7612,12 +7594,6 @@ parameters:
 			message: '#^Property Commande\:\:\$availability \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
@@ -7747,12 +7723,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -7783,12 +7753,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7804,12 +7768,6 @@ parameters:
 			message: '#^Property CommonInvoice\:\:\$type \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
@@ -8017,30 +7975,6 @@ parameters:
 			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
 
 		-
-			message: '#^Property mailing_contacts1\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/contacts1.modules.php
-
-		-
-			message: '#^Property mailing_contacts1\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/contacts1.modules.php
-
-		-
-			message: '#^Property mailing_fraise\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/fraise.modules.php
-
-		-
-			message: '#^Property mailing_fraise\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/fraise.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -8063,30 +7997,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/modules/mailings/modules_mailings.php
-
-		-
-			message: '#^Property mailing_xinputfile\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/xinputfile.modules.php
-
-		-
-			message: '#^Property mailing_xinputfile\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/xinputfile.modules.php
-
-		-
-			message: '#^Property mailing_xinputuser\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/xinputuser.modules.php
-
-		-
-			message: '#^Property mailing_xinputuser\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/xinputuser.modules.php
 
 		-
 			message: '#^Comparison operation "\>" between 1 and 0 is always true\.$#'
@@ -8647,12 +8557,6 @@ parameters:
 			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
 			message: '#^Property Mo\:\:\$lines \(array\<MoLine\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -8779,22 +8683,10 @@ parameters:
 			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -8833,12 +8725,6 @@ parameters:
 			path: ../../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 2
@@ -8857,12 +8743,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
 		-
-			message: '#^Property CommandeFournisseur\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 2
@@ -8877,12 +8757,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
@@ -8905,12 +8779,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: '#^Property SupplierProposal\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -8919,12 +8787,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property SupplierProposal\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -9437,60 +9299,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/document.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 5
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$amount \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_bank \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_donation \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_typepayment \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_user_creat \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_user_modif \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$num_payment \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Result of && is always true\.$#'
-			identifier: booleanAnd.alwaysTrue
-			count: 2
-			path: ../../../htdocs/don/class/paymentdonation.class.php
 
 		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
@@ -10786,12 +10594,6 @@ parameters:
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
