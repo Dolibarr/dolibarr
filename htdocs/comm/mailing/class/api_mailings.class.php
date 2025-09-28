@@ -200,6 +200,47 @@ class Mailings extends DolibarrApi
 	}
 
 	/**
+	 * Clone a mass mailing
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 *	@param  int		$fromid     		Id of object to clone
+	 *	@param	int		$cloneContent		1=Clone content (default), 0=Forget content
+	 *	@param	int		$cloneRecipients	1=Clone recipients (default), 0=Forget recipients
+	 * 	@param	int		$notrigger			1=Disable triggers, 0=Active triggers if any (default)
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function clone($fromid, $cloneContent = 1, $cloneRecipients = 1, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mailing', 'write')) {
+			throw new RestException(403, "Insufficient rights");
+		}
+		$result = $this->mailing->fetch($fromid);
+		if ($result < 0) {
+			throw new RestException(404, 'Mass mailing to clone not found, id='.$fromid);
+		}
+
+		$cloningResult = $this->mailing->createFromClone(DolibarrApiAccess::$user, ((int) $fromid), ((int) $cloneContent), ((int) $cloneRecipients), ((int) $notrigger));
+		if ($cloningResult < 0) {
+			throw new RestException(500, "Error cloning mass mailing", array_merge(array($this->mailing->error), $this->mailing->errors));
+		}
+
+		if ($cloningResult > 0) {
+			return $this->get($cloningResult);
+		} else {
+			throw new RestException(500, $this->mailing->error);
+		}
+
+		return [];
+	}
+
+	/**
 	 * Create a mass mailing
 	 *
 	 * @since	23.0.0	Initial implementation
