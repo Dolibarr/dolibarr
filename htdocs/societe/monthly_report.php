@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024 Monthly Report Module
+/* Copyright (C) 2024 Christos Kanotidis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1009,40 +1009,40 @@ print '<div class="fichecenter">';
 // CSS styling for the monthly report table
 print '<style>
 .monthly-report-table {
-    border-collapse: collapse;
-    border: 1px solid #ddd;
+	border-collapse: collapse;
+	border: 1px solid #ddd;
 }
 .monthly-report-table td, .monthly-report-table th {
-    padding: 8px;
+	padding: 8px;
 }
 .monthly-report-table th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+	background-color: #f5f5f5;
+	font-weight: bold;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 }
 .year-separator {
-    border-left: 1px solid #ddd;
+	border-left: 1px solid #ddd;
 }
 .first-year-separator {
-    border-left: 1px solid #ddd;
+	border-left: 1px solid #ddd;
 }
 .month-header-separator {
-    border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 }
 .change-positive { color: #4CAF50; }
 .change-negative { color: #f44336; }
 .report-filter-select {
-    width: 350px;
-    min-width: 350px;
+	width: 350px;
+	min-width: 350px;
 }
 .select2-container {
-    width: 350px;
-    min-width: 350px;
+	width: 350px;
+	min-width: 350px;
 }
 .noborder td {
-    white-space: nowrap;
-    overflow: visible;
+	white-space: nowrap;
+	overflow: visible;
 }
 </style>';
 
