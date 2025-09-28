@@ -1404,7 +1404,7 @@ class Expedition extends CommonObject
 			$this->line->rang = $rang;
 
 			$this->line->fk_expedition = $this->id;
-			$this->ine->element_type = $element_type;
+			$this->line->element_type = $element_type;
 			$this->line->fk_product = $fk_product;
 			$this->line->qty = $qty;
 			$this->line->fk_unit = $fk_unit;
