@@ -396,6 +396,7 @@ class Mailing extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref = $obj->rowid;
 				$this->title = $obj->title;
 				$this->messtype = $obj->messtype;
@@ -428,8 +429,20 @@ class Mailing extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->date_creat);
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
+				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
+
+				$this->tag = $obj->tag;
+				$this->name_from = $obj->name_from;
+				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->fk_user_appro = $obj->fk_user_appro;
+				$this->date_appro = $obj->date_appro;
+				$this->cible = $obj->cible;
+				$this->joined_file1 = $obj->joined_file1;
+				$this->joined_file2 = $obj->joined_file2;
+				$this->joined_file3 = $obj->joined_file3;
+				$this->joined_file4 = $obj->joined_file4;
 
 				if ($this->messtype == 'sms') {
 					$this->picto = 'phone';

@@ -576,13 +576,9 @@ class Mailings extends DolibarrApi
 		unset($object->totalpaid);
 		unset($object->tpl);
 		unset($object->transport_mode_id);
-		unset($object->user_closing_id);
-		unset($object->user_creation_id);
-		unset($object->user_modification_id);
-		unset($object->user_validation_id);
 		unset($object->user);
 		unset($object->warehouse_id);
-				
+
 		return $object;
 	}
 }
