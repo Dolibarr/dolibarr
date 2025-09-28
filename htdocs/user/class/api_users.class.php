@@ -852,7 +852,9 @@ class Users extends DolibarrApi
 
 		if ($result) {
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$notifications[] = $obj;
 				$i++;

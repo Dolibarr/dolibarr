@@ -9427,54 +9427,6 @@ parameters:
 			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(ConferenceOrBooth\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(ConferenceOrBooth\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ConferenceOrBooth\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ConferenceOrBooth\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Method ConferenceOrBooth\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Method ConferenceOrBooth\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -9487,20 +9439,8 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
 
 		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
 
@@ -9513,12 +9453,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_document.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorbooth_document.php
 
