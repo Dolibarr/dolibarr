@@ -216,17 +216,17 @@ class Mailings extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
-	public function clone($fromid, $cloneContent = 1, $cloneRecipients = 1, $notrigger = 0)
+	public function clone($id, $cloneContent = 1, $cloneRecipients = 1, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('mailing', 'write')) {
 			throw new RestException(403, "Insufficient rights");
 		}
-		$result = $this->mailing->fetch($fromid);
+		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
-			throw new RestException(404, 'Mass mailing to clone not found, id='.$fromid);
+			throw new RestException(404, 'Mass mailing to clone not found, id='.$id);
 		}
 
-		$cloningResult = $this->mailing->createFromClone(DolibarrApiAccess::$user, ((int) $fromid), ((int) $cloneContent), ((int) $cloneRecipients), ((int) $notrigger));
+		$cloningResult = $this->mailing->createFromClone(DolibarrApiAccess::$user, ((int) $id), ((int) $cloneContent), ((int) $cloneRecipients), ((int) $notrigger));
 		if ($cloningResult < 0) {
 			throw new RestException(500, "Error cloning mass mailing", array_merge(array($this->mailing->error), $this->mailing->errors));
 		}
