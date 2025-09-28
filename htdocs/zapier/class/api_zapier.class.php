@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -157,32 +157,12 @@ class Zapier extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		// Set to 1 if there is a field socid in table of object
-		$restrictonsocid = 0;
-
-		// If the internal user must only see his customers, force searching by him
-		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
-			$search_sale = DolibarrApiAccess::$user->id;
-		}
-
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."hook_mytable as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."zapier_hook as t";
 		$sql .= " WHERE 1 = 1";
 		$tmpobject = new Hook($this->db);
 		if ($tmpobject->ismultientitymanaged) {
 			$sql .= ' AND t.entity IN ('.getEntity('hook').')';
-		}
-		if ($restrictonsocid && $socid) {
-			$sql .= " AND t.fk_soc = ".((int) $socid);
-		}
-		// Search on sale representative
-		if ($search_sale && $search_sale != '-1') {
-			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
-			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
-			}
 		}
 		if ($sqlfilters) {
 			$errormessage = '';

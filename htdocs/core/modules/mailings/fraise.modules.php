@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,9 +37,15 @@ class mailing_fraise extends MailingTargets
 	public $name = 'FundationMembers'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	public $desc = 'Foundation members with emails';
-	// Set to 1 if selector is available for admin users only
+
+	/**
+	 * @var int <0,1> Set to 1 if selector is available for admin users only
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
 	public $require_module = array('adherent');
 
 	/**

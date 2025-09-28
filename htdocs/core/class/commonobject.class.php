@@ -554,7 +554,7 @@ abstract class CommonObject
 	public $multicurrency_code;
 
 	/**
-	 * @var float|float[]               Multicurrency rate ("tx" = "taux" in French)
+	 * @var null|float|float[]               Multicurrency rate ("tx" = "taux" in French)
 	 *                                  Or, just for the Paiement object, an array: invoice ID => currency rate for that invoice.
 	 */
 	public $multicurrency_tx;
@@ -758,13 +758,13 @@ abstract class CommonObject
 	public $user_modification_id;
 
 	/**
-	 * @var int 		ID
+	 * @var int|null 		ID
 	 * @deprecated	Use $user_creation_id
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var ?int 		ID
+	 * @var int|null 		ID
 	 * @deprecated 	Use $user_modification_id
 	 */
 	public $fk_user_modif;
@@ -3076,7 +3076,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'supplier_proposal', 'commande_fournisseur', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -8263,9 +8263,9 @@ abstract class CommonObject
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= ' as main, ' . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . '_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
-							$sqlwhere .= " AND " . $InfoFieldList[4];
+							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " WHERE " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
@@ -11342,7 +11342,7 @@ abstract class CommonObject
 		$comment = new Comment($this->db);
 		$result = $comment->fetchAllFor($this->element, $this->id);
 		if ($result < 0) {
-			$this->errors = array_merge($this->errors, $comment->errors);
+			$this->setErrorsFromObject($comment);
 			return -1;
 		} else {
 			$this->comments = $comment->comments;
