@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2025		Jon Bendtsen
+/* Copyright (C) 2025		Cloned from htdocs/comm/propal/class/api_proposals.class.php then modified
+ * Copyright (C) 2025		Jon Bendtsen <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,6 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-dol_syslog("Mailing::api", LOG_DEBUG);
 
 /**
  * API class for mass mailings
@@ -89,7 +89,7 @@ class Mailings extends DolibarrApi
 
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
-			throw new RestException(404, 'mass mailing not found');
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -176,7 +176,7 @@ class Mailings extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve propal list : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieve list of mass mailings : '.$this->db->lasterror());
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -263,7 +263,7 @@ class Mailings extends DolibarrApi
 
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
-			throw new RestException(404, 'Mass mailing not found');
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -326,7 +326,7 @@ class Mailings extends DolibarrApi
 		}
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
-			throw new RestException(404, 'Mass mailing not found');
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -367,7 +367,7 @@ class Mailings extends DolibarrApi
 		}
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
-			throw new RestException(404, 'Mass mailing not found');
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -415,7 +415,7 @@ class Mailings extends DolibarrApi
 		}
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
-			throw new RestException(404, 'Mass mailing not found');
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -448,14 +448,14 @@ class Mailings extends DolibarrApi
 		if ($data === null) {
 			$data = array();
 		}
-		$propal = array();
-		foreach (Proposals::$FIELDS as $field) {
+		$mailing = array();
+		foreach (Mailings::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-			$propal[$field] = $data[$field];
+			$mailing[$field] = $data[$field];
 		}
-		return $propal;
+		return $mailing;
 	}
 
 
@@ -527,6 +527,8 @@ class Mailings extends DolibarrApi
 		unset($object->module);
 		unset($object->multicurrency_code);
 		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
 		unset($object->multicurrency_total_ttc);
 		unset($object->multicurrency_total_tva);
 		unset($object->multicurrency_tx);
