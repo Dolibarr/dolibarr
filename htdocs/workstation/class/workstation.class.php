@@ -297,7 +297,7 @@ class Workstation extends CommonObject
 
 		// Clear fields
 		$object->ref = "Copy_Of_".$object->ref;
-		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		$object->status = self::STATUS_DISABLED;
 		$object->date_creation = dol_now();
 		$object->date_modification = null;
