@@ -1472,7 +1472,21 @@ class BonPrelevement extends CommonObject
 						 * $fac[14] : rum
 						 * $fac[15] : soc_rib_id (id bank account preselected for direct debit or credit transfer)
 						 */
-						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype, $fac[10], $fac[11], $fac[14]);
+						$ri = $this->AddFacture(
+							$fac[0],
+							$fac[2],
+							$fac[8],
+							$fac[7],
+							$fac[3],
+							$fac[4],
+							$fac[5],
+							$fac[6],
+							$type,
+							$sourcetype,
+							$fac[10],
+							$fac[11],
+							$fac[14]
+						);
 
 						if ($ri != 0) {
 							$error++;
@@ -2973,10 +2987,10 @@ class BonPrelevement extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb' . $this->id . '" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="' . $this->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 		}
-		if (property_exists($this, 'date_echeance')) {
+		if (isset($this->date_echeance)) {
 			$return .= '<br><span class="opacitymedium">' . $langs->trans("Date") . '</span> : <span class="info-box-label">' . dol_print_date($this->db->jdate($this->date_echeance), 'day') . '</span>';
 		}
-		if (property_exists($this, 'total')) {
+		if (isset($this->total)) {
 			$return .= '<br><span class="opacitymedium">' . $langs->trans("Amount") . '</span> : <span class="amount">' . price($this->total) . '</span>';
 		}
 		$return .= '<br><div class="info-box-status">' . $this->getLibStatut(3) . '</div>';
