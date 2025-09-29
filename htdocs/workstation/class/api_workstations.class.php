@@ -47,7 +47,7 @@ class Workstations extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 
 		$this->db = $db;
 		$this->workstation = new Workstation($this->db);
@@ -185,8 +185,8 @@ class Workstations extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @param   Object	$object		Object to clean
+	 * @return  Object  			Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -283,8 +283,6 @@ class Workstations extends DolibarrApi
 		unset($object->lines);
 		unset($object->fk_bank);
 		unset($object->fk_account);
-
-		unset($object->supplierprices);
 
 		unset($object->stock_reel);
 		unset($object->stock_theorique);

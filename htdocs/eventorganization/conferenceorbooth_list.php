@@ -184,10 +184,7 @@ if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && $user->h
 		}
 	}
 }
-/*if ($action=='setaccept_conference_suggestions' && !empty(GETPOST('cancel', 'alpha'))) {
 
-}*/
-//setaccept_booth_suggestions
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
@@ -198,8 +195,6 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend'
 	&& $massaction != 'confirm_presend_attendees') {
 	$massaction = '';
 }
-
-
 
 
 $parameters = array();
@@ -407,10 +402,12 @@ if ($projectid > 0) {
 
 	// Date start - end of event
 	print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Event").')</td><td>';
-	$start = dol_print_date($project->date_start_event, 'day', 'tzuserrel');
+	$dateformat = (dol_print_date($project->date_start_event, '%H:%M:%S', 'tzuserrel') == '00:00:00' ? 'day' : 'dayhour');
+	$start = dol_print_date($project->date_start_event, $dateformat, 'tzuserrel');
 	print($start ? '<span title="'.dol_print_date($project->date_start_event, 'dayhour', 'tzuserrel').'">'.$start.'</span>' : '?');
-	$end = dol_print_date($project->date_end_event, 'day', 'tzuserrel');
 	print ' - ';
+	$dateformat = (dol_print_date($project->date_end_event, '%H:%M:%S', 'tzuserrel') == '00:00:00' ? 'day' : 'dayhour');
+	$end = dol_print_date($project->date_end_event, $dateformat, 'tzuserrel');
 	print($end ? '<span title="'.dol_print_date($project->date_end_event, 'dayhour', 'tzuserrel').'">'.$end.'</span>' : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
@@ -510,6 +507,9 @@ if ($projectid > 0) {
 	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
 	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&file='.urlencode('calendar-'.$project->ref.'.ics').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
+	if (empty($project->date_start_event) || empty($project->date_end_event)) {
+		print img_warning($langs->trans("EventStartOrEndDateNotDefined"), '', 'marginleftonlyshort');
+	}
 	print "</td></tr>";
 
 	// Link for ICS for conference or booth

@@ -465,7 +465,7 @@ if (!file_exists($conffile)) {
 
 		print '<br>';
 		print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/gear.svg" width="20" alt="Database"> ';
-		print '<span class="soustitre">'.$langs->trans("ChooseYourSetupMode").'</span></h3>';
+		print '<span class="soustitre valignmiddle">'.$langs->trans("ChooseYourSetupMode").'</span></h3>';
 
 		$foundrecommandedchoice = 0;
 

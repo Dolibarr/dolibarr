@@ -17,7 +17,6 @@ PHPMemoryOK=Your PHP max session memory is set to <b>%s</b>. This should be enou
 PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This is too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=Click here for a more detailed test
 ErrorPHPDoesNotSupportSessions=Your PHP installation does not support sessions. This feature is required to allow Dolibarr to work. Check your PHP setup and permissions of the sessions directory.
-ErrorPHPDoesNotSupport=Your PHP installation does not support %s functions.
 ErrorDirDoesNotExists=Directory %s does not exist.
 ErrorGoBackAndCorrectParameters=Go back and check/correct the parameters.
 ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
