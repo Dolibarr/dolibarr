@@ -236,8 +236,6 @@ class Mailings extends DolibarrApi
 		} else {
 			throw new RestException(500, $this->mailing->error);
 		}
-
-		return [];
 	}
 
 	/**
