@@ -1307,6 +1307,9 @@ td.wordbreak img, td.wordbreakimp img {
 .nopadding {
 	padding: 0;
 }
+.nopaddingimp {
+	padding: 0 !important;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0;
 }
@@ -4634,7 +4637,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 	padding: 8px 8px 8px 10px;			/* t r b l */
 }
 
-table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
+table.liste td, table.noborder > tr > td, table.noborder > tbody > tr > td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 8px 4px 10px;			/* t r b l */
 	height: 28px;
 }

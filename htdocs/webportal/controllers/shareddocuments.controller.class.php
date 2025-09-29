@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (c) 2025       Schaffhauser sébastien      <sebastien@webmaster67.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation.
@@ -82,10 +83,16 @@ class SharedDocumentsController extends AbstractDocumentController
 		$fileList = dol_dir_list($dir_ged_partage, 'files', 0, '', '', 'date', SORT_DESC);
 
 		// 2. Define the link builder function
-		/** @param array<string, mixed> $file */
-		$linkBuilder = function (array $file) use ($shared_dir_relative_path) {
-			return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($shared_dir_relative_path . '/' . $file['name']);
-		};
+		/**
+		 * Get url for file (anonymous function)
+		 *
+		 * @param	array<string, mixed> $file  File (array) to get url for
+		 * @return	string						Url for file
+		 */
+		$linkBuilder
+			= static function (array $file) use ($shared_dir_relative_path) {
+				return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($shared_dir_relative_path . '/' . $file['name']);
+			};
 
 		// 3. Call the parent method to display the table
 		$this->displayDocumentTable(

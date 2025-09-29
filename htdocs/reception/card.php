@@ -1285,7 +1285,7 @@ if ($action == 'create') {
 
 					if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 						print '<td>';
-						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
+						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.price($cost_price).'">';
 						print '</td>';
 					}
 
@@ -1783,7 +1783,7 @@ if ($action == 'create') {
 		if (!isModEnabled('stock')) {
 			$editColspan--;
 		}
-		if (empty($conf->productbatch->enabled)) {
+		if (!isModEnabled('productbatch')) {
 			$editColspan--;
 		}
 		print '<td class="center" colspan="'.$editColspan.'">';

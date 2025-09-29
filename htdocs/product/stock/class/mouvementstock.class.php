@@ -859,7 +859,7 @@ class MouvementStock extends CommonObject
 	{
 		global $conf;
 
-		$skip_batch = empty($conf->productbatch->enabled);
+		$skip_batch = !isModEnabled('productbatch');
 
 		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
 	}
@@ -887,7 +887,7 @@ class MouvementStock extends CommonObject
 	{
 		global $conf;
 
-		$skip_batch = empty($conf->productbatch->enabled);
+		$skip_batch = !isModEnabled('productbatch');
 
 		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, $disablestockchangeforsubproduct, $donotcleanemptylines);
 	}
