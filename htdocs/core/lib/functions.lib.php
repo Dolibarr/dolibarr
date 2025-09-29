@@ -1658,7 +1658,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  * @param	bool 	 	 				$addurlroot Add DOL_URL_ROOT
  * @return string									path
  */
-function dol_buildurl($path, $params = [], $addtoken = false, $addurlroot = true)
+function dolBuildUrl($path, $params = [], $addtoken = false, $addurlroot = true)
 {
 	global $db, $hookmanager;
 
