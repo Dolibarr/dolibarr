@@ -230,13 +230,14 @@ class BonPrelevement extends CommonObject
 	 * @var int|string
 	 */
 	public $datec;
+
 	/**
-	 * @var float
+	 * @var ?float
 	 */
 	public $amount;
 
 	/**
-	 * @var int	Status
+	 * @var int|null	Status
 	 * @deprecated Use $status
 	 */
 	public $statut;
@@ -253,8 +254,9 @@ class BonPrelevement extends CommonObject
 	 * @var string
 	 */
 	public $note;
+
 	/**
-	 * @var int|string
+	 * @var int|''|null
 	 */
 	public $date_trans;
 	/**
