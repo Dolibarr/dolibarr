@@ -486,8 +486,9 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
  *									'c_paiement', 'c_payment_term', ...
- * 	@param	int<0,1>	$shared		0=Return id of current entity only,
+ * 	@param	int<0,1,2>	$shared		0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
+ *  								2=Return id of current entity + shared entities (specific for "user" element with transverse mode)
  *  @param	?CommonObject			$currentobject	Current object if needed
  * 	@return	string					Entity id(s) to use ( eg. entity IN ('.getEntity(elementname).')' )
  */
