@@ -70,7 +70,7 @@ class Categorie extends CommonObject
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
 	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
-	const TYPE_PROPOSAL	= 'propal';
+	const TYPE_PROPOSAL	            = 'propal';
 
 
 	/**
