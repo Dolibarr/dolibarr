@@ -1986,7 +1986,6 @@ class Propal extends CommonObject
 				$line->id = $objp->rowid;
 				$line->fk_propal = $objp->fk_propal;
 				$line->fk_parent_line = $objp->fk_parent_line;
-				$line->product_type     = $objp->product_type;
 				$line->label            = $objp->custom_label;
 				$line->desc             = $objp->description; // Description ligne
 				$line->description      = $objp->description; // Description ligne
@@ -2022,15 +2021,16 @@ class Propal extends CommonObject
 
 				$line->product_ref = $objp->product_ref;
 				$line->product_label = $objp->product_label;
-				$line->product_desc     = $objp->product_desc; // Description produit
-				$line->product_tobatch  = $objp->product_tobatch;
-				$line->product_barcode  = $objp->product_barcode;
+				$line->product_desc = $objp->product_desc; // Description produit
+				$line->product_tobatch = $objp->product_tobatch;
+				$line->product_barcode = $objp->product_barcode;
 				$line->product_customcode = $objp->customcode;
 				$line->product_country_id = $objp->country_id;
 				$line->product_country_code = $objp->country_code;
-
+				$line->product_type = $objp->product_type;
 				$line->fk_product_type = $objp->fk_product_type; // deprecated
-				$line->fk_unit          = $objp->fk_unit;
+
+				$line->fk_unit = $objp->fk_unit;
 				$line->weight = $objp->weight;
 				$line->weight_units = $objp->weight_units;
 				$line->volume = $objp->volume;
