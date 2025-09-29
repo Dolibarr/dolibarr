@@ -1978,9 +1978,9 @@ class Propal extends CommonObject
 
 			$i = 0;
 			while ($i < $num) {
-				$objp                   = $this->db->fetch_object($result);
+				$objp = $this->db->fetch_object($result);
 
-				$line                   = new PropaleLigne($this->db);
+				$line = new PropaleLigne($this->db);
 
 				$line->rowid = $objp->rowid; //Deprecated
 				$line->id = $objp->rowid;
@@ -2044,10 +2044,10 @@ class Propal extends CommonObject
 				// Multicurrency
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
-				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
-				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+				$line->multicurrency_subprice = $objp->multicurrency_subprice;
+				$line->multicurrency_total_ht = $objp->multicurrency_total_ht;
+				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
+				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
 				$line->fetch_optionals();
 
