@@ -127,6 +127,9 @@ class BonPrelevement extends CommonObject
 	public $fetched;
 	public $labelStatus = array();
 
+	/**
+	 * @var array<int,mixed>
+	 */
 	public $factures = array();
 
 	/**
