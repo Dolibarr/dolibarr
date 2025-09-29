@@ -3324,7 +3324,7 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 		}
-		
+
 		// Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>';
@@ -3351,7 +3351,7 @@ if ($action == 'create') {
 			}
 			print "</td></tr>";
 		}
-		
+
 		// Other attributes
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
