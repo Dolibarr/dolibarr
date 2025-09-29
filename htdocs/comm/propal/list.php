@@ -773,6 +773,7 @@ if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
 }
 // Search on user
+$param = '';
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
 	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
