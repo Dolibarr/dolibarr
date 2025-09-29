@@ -2901,6 +2901,10 @@ class SupplierProposal extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+	public function setCategories($categories){
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_SUPPLIER_PROPOSAL);
+	}
 }
 
 
