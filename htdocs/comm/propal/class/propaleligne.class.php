@@ -596,8 +596,8 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this).'::insert', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
-			$this->id = $this->rowid;
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
+			$this->rowid = $this->id;
 			$result = $this->insertExtraFields();
 			if ($result < 0) {
 				$error++;
