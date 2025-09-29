@@ -214,7 +214,7 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 	if ($result < 0) {
 		$mesg = '<div class="error">'.$object->error.'</div>';
 	}
-} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
+} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
 	// Set incoterm
 	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 }

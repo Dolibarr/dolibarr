@@ -58,7 +58,6 @@ $socid  = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 

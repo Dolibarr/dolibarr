@@ -18,7 +18,7 @@
  */
 
 // Load Dolibarr environment
-require '../../../../../../main.inc.php';
+require '../../../../main.inc.php';
 
 /**
  * @var DoliDB      $db
@@ -40,17 +40,17 @@ $langs->load('uxdocumentation');
 
 //
 $documentation = new Documentation($db);
-$group = 'ExperimentalUx';
-$experimentName = 'ExperimentalUxIntuitiveSelect';
+$group = 'Content';
+$experimentName = 'TableRowIntuitiveSelect';
 
-$experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/intuitive-select/assets/';
+
 $js = [
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
 ];
 $css = [
-//	$experimentAssetsPath . '-01.css'
+
 ];
 
 // Output html head + body - Param is Title
@@ -76,7 +76,7 @@ $form = new Form($db);
 		<?php $documentation->showSummary(); ?>
 
 		<div class="documentation-section" >
-			<h2 class="documentation-title" >Select table lines by <kbd>Ctrl</kbd> + <kbd>Click</kbd>  (Experimental)</h2>
+			<h2 class="documentation-title" >Select table lines by <kbd>Ctrl</kbd> + <kbd>Click</kbd></h2>
 
 
 			<h2>Description</h2>
@@ -300,110 +300,8 @@ $form = new Form($db);
 					</table>
 
 				</div>
-				<style>
-					/* Remove text selection */
-					.row-with-select[data-is-last-changed] * {
-						-webkit-touch-callout: none; /* iOS Safari */
-						-webkit-user-select: none; /* Safari */
-						-khtml-user-select: none; /* Konqueror HTML */
-						-moz-user-select: none; /* Old versions of Firefox */
-						-ms-user-select: none; /* Internet Explorer/Edge */
-						user-select: none; /* Non-prefixed version, currently
-								  supported by Chrome, Edge, Opera and Firefox */
-					}
-				</style>
-				<script nonce="<?php echo getNonce(); ?>" >
-					/**
-					 * TODO : when include this code in core of Dolibarr, add it to a js file note directly in page
-					 * */
-					$(function() {
-
-						/**
-						 * @param {jQuery}  el
-						 * @param {Integer}  status
-						 */
-						let setLastClickedRowStatus = function (el, status = 1){
-							$('.row-with-select').attr('data-is-last-changed', 0);
-							el.attr('data-is-last-changed', status === 0 ? 0 : 1);
-						}
-
-						/**
-						 * Remove data-is-last-changed on double click
-						 * Because if data-is-last-changed is present the user can't select text
-						 */
-						$(document).on("dblclick", ".row-with-select", function(e) {
-							$('.row-with-select[data-is-last-changed]').removeAttr( 'data-is-last-changed' );
-						});
-
-						/**
-						 * DISABLE on click a and button
-						 * Because Ctrl + Click on link is also used for open ion a new tab
-						 * we need to block select tool
-						 */
-						$(document).on("click", ".row-with-select a, .row-with-select button", function (e) {
-							// we need to block select tool
-							if (e.ctrlKey) {
-								e.stopPropagation();
-							}
-						});
-
-						$(document).on("mousedown click", ".row-with-select input.checkforselect", function (e) {
-							// Prevents automatic change of “checked”
-							e.preventDefault();
-							e.stopPropagation(); // parent click trigger will be done below
-
-							let parentRow = $(this).closest(".row-with-select");
-
-							// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
-							// We simulate a click on the parent line
-							parentRow.trigger({
-								type: "click",
-								ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
-								metaKey: !e.shiftKey, // simulate metaKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
-								shiftKey: e.shiftKey,
-								originalEvent: e
-							});
-
-						});
-
-						$(document).on("click", ".row-with-select", function (e) {
-							let checkBox = $(this).find('.checkforselect');
-							let nextCheckStatus = !checkBox.is(':checked')
-
-							if (e.ctrlKey || e.metaKey) {
-								// Add line to selection
-								if(checkBox){
-									checkBox.prop('checked', nextCheckStatus).trigger('change');
-								}
-								setLastClickedRowStatus($(this), 1);
-							}
-
-							if (e.shiftKey) {
-								let lastLastChanged = $(this).closest('table').find('.row-with-select[data-is-last-changed="1"]');
-
-								if(lastLastChanged.length>0){
-									// Add all lines to selection betwin last selected line
-									if($(this).index() === lastLastChanged.index()) {
-										return null;
-									}
-
-									if($(this).index() < lastLastChanged.index()) {
-										$(this).nextUntil(lastLastChanged, ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
-									}else{
-										lastLastChanged.nextUntil($(this), ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
-									}
 
 
-									lastLastChanged.find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
-									checkBox.prop('checked', nextCheckStatus).trigger('change');
-
-									setLastClickedRowStatus($(this), 1);
-								}
-							}
-						});
-					});
-
-				</script>
 			</div>
 		</div>
 

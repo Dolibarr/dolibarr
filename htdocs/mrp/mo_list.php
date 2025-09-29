@@ -255,14 +255,14 @@ if (empty($reshook)) {
 					if ($objMo->fetch($idMo)) {
 						if ($objMo->status == Mo::STATUS_DRAFT) {
 							if (!empty($changeDate)) {
-								if ($action == 'changedatestart_confirm') {
+								if ($action == 'changedatestart_confirm') {			// Test on permission not required
 									if ($newDate < $objMo->date_end_planned) {
 										$objMo->date_start_planned = $newDate;
 									} else {
 										setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
 										break;
 									}
-								} elseif ($action == 'changedateend_confirm') {
+								} elseif ($action == 'changedateend_confirm') {		// Test on permission not required
 									if ($newDate > $objMo->date_start_planned) {
 										$objMo->date_end_planned = $newDate;
 									} else {

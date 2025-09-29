@@ -122,6 +122,7 @@ if (!$permissiontoread) {
 /*
  * Actions
  */
+
 $error = 0;
 
 $parameters = array();
@@ -150,7 +151,7 @@ if (empty($reshook)) {
 	$startyear = GETPOSTINT('startyear');
 	$starthour = GETPOSTINT('startHour');
 
-	if (GETPOST('startHour') == "" && ($action == 'add' || $action == 'update')) {
+	if (GETPOST('startHour') == "" && ($action == 'add' || $action == 'update')) {	// Test on permission not required
 		$error++;
 		setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors, 'errors');
 	}
@@ -162,7 +163,7 @@ if (empty($reshook)) {
 	$endyear = GETPOSTINT('endyear');
 	$endhour = GETPOSTINT('endHour');
 
-	if (GETPOST('endHour') == "" && ($action == 'add' || $action == 'update')) {
+	if (GETPOST('endHour') == "" && ($action == 'add' || $action == 'update')) {	// Test on permission not required
 		$error++;
 		setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors, 'errors');
 	}

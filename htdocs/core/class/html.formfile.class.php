@@ -2068,7 +2068,10 @@ class FormFile
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
-							if (!($result = $object_instance->fetch(0, $ref))) {
+							$result = $object_instance->fetch(0, $ref);
+							if ($result < 0) {
+								print $object_instance->error;
+							} elseif ($result == 0) {
 								// fetchOneLike looks for objects with wildcards in its reference.
 								// It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?

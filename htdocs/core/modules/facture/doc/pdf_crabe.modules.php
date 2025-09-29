@@ -1576,7 +1576,7 @@ class pdf_crabe extends ModelePDFFactures
 			}
 		}
 
-		if ($total_discount_on_lines > 0) {
+		if ($total_discount_on_lines > 0 && !$object->isSituationInvoice()) {	// This is false on situation invoice
 			// Show total NET before discount
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->SetXY($col1x, $tab2_top);
