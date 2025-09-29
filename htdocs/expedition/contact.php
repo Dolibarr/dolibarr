@@ -244,9 +244,12 @@ if ($id > 0 || !empty($ref)) {
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	$preselectedtypeofcontact = dol_getIdFromCode($db, 'SHIPPING', 'c_type_contact', 'code', 'rowid');
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

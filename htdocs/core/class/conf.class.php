@@ -935,7 +935,7 @@ class Conf extends stdClass
 			// conf->use_javascript_ajax
 			$this->use_javascript_ajax = 1;
 			if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) {
-				$this->use_javascript_ajax = (int) !$this->global->MAIN_DISABLE_JAVASCRIPT;
+				$this->use_javascript_ajax = (int) !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT');
 			}
 			// If no javascript_ajax, Ajax features are disabled.
 			if (empty($this->use_javascript_ajax)) {
