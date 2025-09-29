@@ -561,7 +561,6 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'settags' && isModEnabled('category')) {		// Set tags
-
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 	}
 
