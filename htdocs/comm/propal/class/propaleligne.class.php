@@ -373,7 +373,6 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
-		$sql .= ' p.customcode, p.fk_country as country_code,';
 		$sql .= ' p.packaging,';
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
