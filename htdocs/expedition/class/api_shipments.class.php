@@ -141,7 +141,7 @@ class Shipments extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'expedition', 'apimethod' => 'index');
+			$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'shipments', 'apimethod' => 'index');
 			$object = new stdClass();
 			$action = 'list';
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
