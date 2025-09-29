@@ -423,9 +423,9 @@ class PropaleLigne extends CommonObjectLine
 				$this->libelle = $objp->product_label; // deprecated
 				$this->product_label = $objp->product_label;
 				$this->product_desc = $objp->product_desc;
-				$this->product_customcode = $objp->customcode;
-				$this->product_country_id = $objp->country_id;
-				$this->product_country_code = $objp->country_code;
+				$this->product_custom_code = $objp->customcode;
+				$this->product_custom_country_id = $objp->country_id;
+				$this->product_custom_country_code = $objp->country_code;
 				$this->fk_unit          = $objp->fk_unit;
 
 				$this->packaging      	= $objp->packaging;

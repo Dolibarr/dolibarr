@@ -2024,9 +2024,9 @@ class Propal extends CommonObject
 				$line->product_desc = $objp->product_desc; // Description produit
 				$line->product_tobatch = $objp->product_tobatch;
 				$line->product_barcode = $objp->product_barcode;
-				$line->product_customcode = $objp->customcode;
-				$line->product_country_id = $objp->country_id;
-				$line->product_country_code = $objp->country_code;
+				$line->product_custom_code = $objp->customcode;
+				$line->product_custom_country_id = $objp->country_id;
+				$line->product_custom_country_code = $objp->country_code;
 				$line->product_type = $objp->product_type;
 				$line->fk_product_type = $objp->fk_product_type; // deprecated
 

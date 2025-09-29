@@ -193,17 +193,17 @@ abstract class CommonObjectLine extends CommonObject
 	/**
 	 * @var ?string Product custom code
 	 */
-	public $product_customcode;
+	public $product_custom_code;
 
 	/**
 	 * @var ?string Product custom country code
 	 */
-	public $product_country_code;
+	public $product_custom_country_code;
 
 	/**
 	 * @var ?int Product custom country id
 	 */
-	public $product_country_id;
+	public $product_custom_country_id;
 
 	/**
 	 * @var int type in product table
