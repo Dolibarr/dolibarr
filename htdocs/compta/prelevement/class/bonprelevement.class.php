@@ -63,7 +63,7 @@ class BonPrelevement extends CommonObject
 	public $picto = 'payment';
 
 	/**
-	 * @var int|string
+	 * @var int|''|null
 	 */
 	public $date_echeance;
 	/**
@@ -118,7 +118,7 @@ class BonPrelevement extends CommonObject
 	public $user_credit;
 
 	/**
-	 * @var float|int|string
+	 * @var float|int|string|null
 	 */
 	public $total;
 
