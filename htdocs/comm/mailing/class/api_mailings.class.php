@@ -417,7 +417,7 @@ class Mailings extends DolibarrApi
 		return array(
 			'success' => array(
 				'code' => 200,
-				'message' => 'Target receipients ('.$count.') of Mass mailing with id='.$id.' deleted'
+				'message' => 'Target recipients ('.$count.') of Mass mailing with id='.$id.' deleted'
 			)
 		);
 	}
