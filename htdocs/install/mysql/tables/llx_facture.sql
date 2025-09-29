@@ -114,5 +114,6 @@ create table llx_facture
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0
+  multicurrency_total_ttc	double(24,8) DEFAULT 0,
+  ip  varchar(250) --ip used to create record (for public submission page)
 )ENGINE=innodb;

@@ -147,22 +147,22 @@ class Context
 	public $object;
 
 	/**
-	 * @var CommonObject Logged user
+	 * @var User Logged user
 	 */
 	public $logged_user = null;
 
 	/**
-	 * @var CommonObject Logged third-party
+	 * @var Societe Logged third-party
 	 */
 	public $logged_thirdparty = null;
 
 	/**
-	 * @var CommonObject Logged member
+	 * @var WebPortalMember Logged member
 	 */
 	public $logged_member = null;
 
 	/**
-	 * @var CommonObject Logged partnership
+	 * @var WebPortalPartnership Logged partnership
 	 */
 	public $logged_partnership = null;
 

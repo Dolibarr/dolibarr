@@ -1055,7 +1055,9 @@ class ExpenseReport extends CommonObject
 					$author->fetch($objp->fk_user_author);
 
 					print '<tr>';
-					print '<td><a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$objp->rowid.'">'.$objp->ref_num.'</a></td>';
+					print '<td>';
+					print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$objp->rowid.'">'.$objp->ref_num.'</a>';
+					print '</td>';
 					print '<td class="center">'.dol_print_date($objp->date, 'day').'</td>';
 					print '<td>'.$author->getNomUrl(1).'</td>';
 					print '<td>'.$objp->comments.'</td>';

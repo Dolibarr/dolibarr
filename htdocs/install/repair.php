@@ -216,6 +216,10 @@ $sections = [
 		[
 			'name' => 'rebuild_product_thumbs',
 			'info' => 'Rebuild product thumbnails'
+		],
+		[
+			'name' => 'repair_mailing_path',
+			'info' => 'Repair path of mailing files.<br>Should be applied when using emailing module with > 99 mailings.<br>In that case, please also set MAILING_USE_NEW_PATH_FOR_FILES.'
 		]
 	],
 	'Clean tables and data' => [
@@ -316,7 +320,7 @@ $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_l
 	|| GETPOST('clean_perm_table', 'alpha') || GETPOST('clean_ecm_files_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
 	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha') || GETPOST('force_collation_from_conf_on_tables', 'alpha')
-	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha'));
+	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha')) || GETPOST('repair_mailing_path', 'alpha');
 
 if ($ok && $oneoptionset) {
 	// Show wait message
@@ -2057,6 +2061,84 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 	} else {
 		$db->rollback();
 	}
+}
+
+// Repair mailing path
+if ($ok && GETPOST('repair_mailing_path')) {
+	global $user;
+	$sav_user = is_object($user) ? clone $user : $user;
+
+	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+	print '<tr><td colspan="2"><br>*** Repair mailing path<br>';
+
+	/**
+	 * Migrate file from old path to new one for mailing $mailing
+	 *
+	 * @param 	Mailing $mailing		Object mailing
+	 * @return 	void
+	 */
+	function migrate_mailing_filespath($mailing)
+	{
+		global $db, $conf, $user;
+
+		$dir = $conf->mailing->dir_output;
+		$origin = $dir.'/'.get_exdir($mailing->id, 2, 0, 1, $mailing, 'mailing');
+		$destin = $dir.'/'.get_exdir($mailing->id, 0, 0, 1, $mailing, 'mailing');
+
+		$origin_osencoded = dol_osencode($origin);
+		$destin_osencoded = dol_osencode($destin);
+		dol_mkdir($destin);
+
+		$user = new User($db);
+		$user->fetch($mailing->user_creation_id);
+
+		if (dol_is_dir($origin)) {
+			$handle = opendir($origin_osencoded);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if ($file != '.' && $file != '..' && is_dir($origin_osencoded.'/'.$file)) {
+						$thumbs = opendir($origin_osencoded.'/'.$file);
+						if (is_resource($thumbs)) {
+							dol_mkdir($destin.'/'.$file);
+							while (($thumb = readdir($thumbs)) !== false) {
+								$res = dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
+								$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
+								print ($msg);
+							}
+							// dol_delete_dir($origin.'/'.$file);
+						}
+					} else {
+						if (dol_is_file($origin.'/'.$file)) {
+							$res = dol_move($origin.'/'.$file, $destin.'/'.$file);
+							$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
+							print ($msg);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	$mailing = new Mailing($db);
+
+	$sql = "SELECT rowid as mid from ".MAIN_DB_PREFIX."mailing"; // Get list of all mailing
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$mailing->fetch($obj->mid);
+			print "Migrating mailing id=".$mailing->id." ref=".$mailing->ref."<br>\n";
+			migrate_mailing_filespath($mailing);
+		}
+	} else {
+		$ok = 0;
+		dol_print_error($db);
+	}
+
+	$user = $sav_user;
+
+	print '</td></tr>';
 }
 
 print '</table>';

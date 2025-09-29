@@ -260,7 +260,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$user->hasRight('propal', 'read')
 			|| $user->hasRight('commande', 'lire')
 			|| $user->hasRight('supplier_proposal', 'lire')
-			|| $user->hasRight('fournisseur', 'lire')
 			|| $user->hasRight('fournisseur', 'commande', 'lire')
 			|| $user->hasRight('supplier_order', 'lire')
 			|| $user->hasRight('contrat', 'lire')

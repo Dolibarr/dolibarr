@@ -522,6 +522,7 @@ class Conf extends stdClass
 		$this->notification = new stdClass();
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
+		$this->api = new stdClass();
 
 		// Common arrays
 		$this->cache = array();
@@ -791,6 +792,10 @@ class Conf extends stdClass
 			$this->admin->dir_output = $rootfordata.'/admin';
 			$this->admin->dir_temp = $rootfortemp.'/admin/temp';
 
+			// For api storage
+			$this->api->dir_output = $rootfordata.'/api';
+			$this->api->dir_temp = $rootfortemp.'/api/temp';
+
 			// For user storage
 			$this->user->multidir_output = array($this->entity => $rootfordata."/users");
 			$this->user->multidir_temp = array($this->entity => $rootfortemp."/users/temp");
@@ -930,7 +935,7 @@ class Conf extends stdClass
 			// conf->use_javascript_ajax
 			$this->use_javascript_ajax = 1;
 			if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) {
-				$this->use_javascript_ajax = (int) !$this->global->MAIN_DISABLE_JAVASCRIPT;
+				$this->use_javascript_ajax = (int) !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT');
 			}
 			// If no javascript_ajax, Ajax features are disabled.
 			if (empty($this->use_javascript_ajax)) {

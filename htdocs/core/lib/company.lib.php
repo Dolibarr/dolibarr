@@ -565,6 +565,13 @@ function societe_admin_prepare_head()
 	$head[$h][2] = 'attributes_contacts';
 	$h++;
 
+	if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
+		$head[$h][0] = DOL_URL_ROOT . '/societe/admin/public_interface.php';
+		$head[$h][1] = $langs->trans("PublicUrl");
+		$head[$h][2] = 'publicurl';
+		$h++;
+	}
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin', 'remove');
 
 	return $head;
@@ -1676,7 +1683,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
 				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
-				print '<td class="tdoverflowmax150" title="' . dolPrintHTMLForAttribute($addresstoshow) . '">';
+				print '<td class="tdoverflowmax150 classfortooltip" title="'.dolPrintHTMLForAttribute($addresstoshow).'">';
 				print $addresstoshow;
 				print '</td>';
 			}

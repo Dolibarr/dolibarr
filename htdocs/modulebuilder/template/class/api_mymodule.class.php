@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -160,20 +160,20 @@ class MyModuleApi extends DolibarrApi
 			}
 		}
 		// Add where from hooks and sqlfilters
-		$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'myobject', 'apimethod' => 'index');
+		$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'myobject', 'apimethod' => __METHOD__);
 		$action = 'list';
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook > 0) {
-			$sql .= $hookmanager->resPrint;
+			$sql = $hookmanager->resPrint;
 		} elseif ($reshook == 0) {
 			$sql .= $hookmanager->resPrint;
+		}
 
-			if ($sqlfilters) {
-				$errormessage = '';
-				$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-				if ($errormessage) {
-					throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
-				}
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
 
@@ -191,7 +191,8 @@ class MyModuleApi extends DolibarrApi
 		$i = 0;
 		if ($result) {
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new MyObject($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
