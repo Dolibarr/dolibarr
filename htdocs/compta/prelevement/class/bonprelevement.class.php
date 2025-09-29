@@ -139,8 +139,14 @@ class BonPrelevement extends CommonObject
 	 */
 	public $methodes_trans = array();
 
+	/**
+	 * @var array<int,mixed>
+	 */
 	public $invoice_in_error = array();
 
+	/**
+	 * @var array<int,mixed>
+	 */
 	public $thirdparty_in_error = array();
 
 	/**
