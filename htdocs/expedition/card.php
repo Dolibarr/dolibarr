@@ -2434,7 +2434,7 @@ if ($action == 'create' && $usercancreate) {
 
 										print '<!-- Show details of lot -->';
 										print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
-	
+
 										//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
 										print $langs->trans("Batch") . ': ';
 										$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
