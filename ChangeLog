@@ -14,8 +14,8 @@ FIX: #35407 After updating to version 22, local taxes were no longer applied (#3
 FIX: #35425 (#35426)
 FIX: accountancy general ledger: bad handling of hook return (#34029)
 FIX: Add security test for show terminal selection if no terminal selected when invoice.php is call (#34717)
-FIX: allow to create First Sutuation Invoice (#35228)
-FIX: api orders : forward database error on failure (backpot commit d9e81cb) (#35478)
+FIX: allow to create First Situation Invoice (#35228)
+FIX: api orders : forward database error on failure (backport commit d9e81cb) (#35478)
 FIX: Can't edit tags of a user.
 FIX: can't reset intracomm transport mode
 FIX: can't save setup of odt template for stock
@@ -31,7 +31,7 @@ FIX: Generation of member cards (file not found and substitution broken)
 FIX: invoice not set to closed when we add a credit note to close it
 FIX: missing check constant PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS (#33277)
 FIX: missing entity filter (#35461)
-FIX: missing quick edit for extrafields (baclport commit 4fc66c6) (#35160)
+FIX: missing quick edit for extrafields (backport commit 4fc66c6) (#35160)
 FIX: Missing sentence part (#35144)
 FIX: Remove perms to access commerce tab when the only active permission is fournisseur:lire (#35467)
 FIX: Restore decimal quantity for stock correction/transfer
