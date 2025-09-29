@@ -2564,6 +2564,7 @@ if ($action == 'create' && $usercancreate) {
 		} else {
 			dol_print_error($db);
 		}
+	}
 } elseif ($object->id > 0) {
 	'@phan-var-force Expedition $object';  // Need to force it (type overridden earlier)
 
