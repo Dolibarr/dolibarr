@@ -1666,7 +1666,9 @@ function dol_buildurl($path, $params = [], $addtoken = false, $addurlroot = true
 		include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
 	}
-
+	if ($addurlroot) {
+		$path .= DOL_URL_ROOT . $path;
+	}
 	$parameters = [
 		'path' => &$path,
 		'params' => &$params,
