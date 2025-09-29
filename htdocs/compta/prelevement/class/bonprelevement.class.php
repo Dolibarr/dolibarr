@@ -326,7 +326,7 @@ class BonPrelevement extends CommonObject
 	 * @param	int		$invoice_id 	ID of invoice to add or ID of salary to add
 	 * @param	int		$client_id  	id invoice customer
 	 * @param	string	$client_nom 	customer name
-	 * @param	int		$amount 		amount of invoice
+	 * @param	float	$amount 		amount of invoice
 	 * @param	string	$code_banque 	code of bank withdrawal
 	 * @param	string	$code_guichet 	code of bank's office
 	 * @param	string	$number bank 	account number
@@ -392,7 +392,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	int		$line_id 		ID of line added (returned parameter)
 	 *	@param	int		$client_id  	ID of thirdparty for invoices, ID of user for salaries
 	 *	@param	string	$client_nom 	customer name
-	 *	@param	int		$amount 		amount of invoice
+	 *	@param	float	$amount 		amount of invoice
 	 *	@param	string	$code_banque 	code of bank withdrawal (Deprecated, not used)
 	 *	@param	string	$code_guichet 	code of bank's office (Deprecated, not used)
 	 *	@param	string	$number 		bank account number (Deprecated, not used)
@@ -1216,7 +1216,7 @@ class BonPrelevement extends CommonObject
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);	// TODO Replace with fetch_object()
 				'@phan-var-force array<int<0,12>,string> $row';
-				/** @var array<int,array{0:int,1:int,2:int,3:string,4:string,5:string,6,string,7:float,8:string,9:string,10:string,11:string,12:string,13:string,14:string,15:int}> $row */
+				/** @var array{0:int,1:int,2:int,3:string,4:string,5:string,6,string,7:float,8:string,9:string,10:string,11:string,12:string,13:string,14:string,15:int} $row */
 
 				// All fields:
 				// 0=rowid, 1=pfdrowid, 2=$socOrUser, 3=code_banque, 4=code_guichet, 5=number, 6=key,
