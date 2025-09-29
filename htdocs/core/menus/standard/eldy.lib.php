@@ -77,7 +77,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	if (!empty($landingpage)) {
 		$landingpage = dol_buildpath($landingpage, 1);
 	} else {
-		$landingpage = '/index.php?mainmenu=home&leftmenu=home';
+		$landingpage = dol_buildurl('/index.php', ['mainmenu'=>'home', 'leftmenu'=>'home']);
 	}
 	$menu_arr[] = array(
 		'name' => 'Home',
@@ -106,7 +106,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Members',
-		'link' => '/adherents/index.php?mainmenu=members&amp;leftmenu=',
+		'link' => dol_buildurl('/adherents/index.php', ['mainmenu'=>'members', 'leftmenu'=> '']),
 		'title' => "MenuMembers",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),

@@ -1652,12 +1652,13 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 /**
  * Return path of url.
  *
- * @param	string						$path		Relative path to file without DOL_URL_ROOT
+ * @param	string						$path		Relative path to file
  * @param	array<string,int|string>	$params     params for query
  * @param	bool						$addtoken	does we add token
+ * @param	bool 	 	 				$addurlroot Add DOL_URL_ROOT
  * @return string									path
  */
-function dol_buildurl($path, $params = [], $addtoken = false)
+function dol_buildurl($path, $params = [], $addtoken = false, $addurlroot = true)
 {
 	global $db, $hookmanager;
 
