@@ -1650,6 +1650,40 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 }
 
 /**
+ * Return path of url.
+ *
+ * @param	string						$path		Relative path to file without DOL_URL_ROOT
+ * @param	array<string,int|string>	$params     params for query
+ * @param	bool						$addtoken	does we add token
+ * @return string									path
+ */
+function dol_buildurl($path, $params = [], $addtoken = false)
+{
+	global $db, $hookmanager;
+
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+
+	$parameters = [
+		'path' => &$path,
+		'params' => &$params,
+		'addtoken' => &$addtoken,
+	];
+	$hookmanager->executeHooks('buildurl', $parameters);
+	$url = dol_buildpath($path, 1);
+	if ($addtoken) {
+		$params = array_merge($params, ['token' => newToken()]);
+	}
+	if ($params) {
+		$url .= '?' . http_build_query($params);
+	}
+
+	return $url;
+}
+
+/**
  *	Get properties for an object - including magic properties when requested
  *
  *	Only returns properties that exist
