@@ -319,7 +319,7 @@ if (isModEnabled('category')) {
 	}
 	if ($mode == 'supplier') {
 		$cat_type = Categorie::TYPE_SUPPLIER_PROPOSAL;
- 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("SupplierProposals"));
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("SupplierProposals"));
 	}
 	print '<tr><td>'.$cat_label.'</td><td>';
 	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
@@ -327,7 +327,7 @@ if (isModEnabled('category')) {
 	print $form->multiselectarray('select_categ_propal_id', $cate_arbo, GETPOST('select_categ_propal_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
-}	
+}
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
