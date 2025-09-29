@@ -477,22 +477,23 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 /**
  * 	Get list of entity id to use.
  *
- * 	@param	string	$element		Current element
- *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
- *									'product', 'productprice', 'stock', 'bom', 'mo',
- *									'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
- *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
- *									'commande', 'supplier_order', 'expedition', 'intervention', 'survey',
- *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
- *									'email_template', 'event', 'donation'
- *									'c_paiement', 'c_payment_term', ...
- * 	@param	int<0,2>	$shared		0=Return id of current entity only,
- * 									1=Return id of current entity + shared entities (default)
- *  								2=Return id of current entity + shared entities (specific for "user" element with transverse mode)
- *  @param	?CommonObject			$currentobject	Current object if needed
- * 	@return	string					Entity id(s) to use ( eg. entity IN ('.getEntity(elementname).')' )
+ * 	@param	string		$element			Current element
+ *											'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
+ *											'product', 'productprice', 'stock', 'bom', 'mo',
+ *											'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
+ *											'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
+ *											'commande', 'supplier_order', 'expedition', 'intervention', 'survey',
+ *											'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
+ *											'email_template', 'event', 'donation'
+ *											'c_paiement', 'c_payment_term', ...
+ * 	@param	int<0,2>		$shared			0=Return id of current entity only,
+ * 											1=Return id of current entity + shared entities (default)
+ *  										2=Return id of current entity + shared entities (specific for "user" element with transverse mode)
+ *  @param	?CommonObject	$currentobject	Current object if needed
+ *  @param  int				$elementid		Current element id if needed (eg. in sql request)
+ * 	@return	string							Entity id(s) to use ( eg. entity IN ('.getEntity(elementname).')' )
  */
-function getEntity($element, $shared = 1, $currentobject = null)
+function getEntity($element, $shared = 1, $currentobject = null, $elementid = null)
 {
 	global $conf, $mc, $hookmanager, $object, $action, $db;
 
@@ -518,7 +519,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	}
 
 	if (is_object($mc)) {
-		$out = $mc->getEntity($element, $shared, $currentobject);
+		$out = $mc->getEntity($element, $shared, $currentobject, $elementid);
 	} else {
 		$out = '';
 		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans');
@@ -537,6 +538,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		'shared' => $shared,
 		'object' => $object,
 		'currentobject' => $currentobject,
+		'elementid' => $elementid,
 		'out' => $out
 	);
 	// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
