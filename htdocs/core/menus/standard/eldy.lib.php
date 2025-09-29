@@ -1180,23 +1180,23 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
-			$newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").$warnpicto, 1);
+			$newmenu->add(dol_buildurl("/admin/company.php", ['mainmenu' => 'home']), $langs->trans("MenuCompanySetup").$warnpicto, 1);
 			$warnpicto = '';
 			if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only user module enabled
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
-			$newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto, 1);
-			$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"), 1);
-			$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"), 1);
+			$newmenu->add(dol_buildurl("/admin/modules.php", ['mainmenu' => 'home']), $langs->trans("Modules").$warnpicto, 1);
+			$newmenu->add(dol_buildurl("/admin/ihm.php", ['mainmenu' => 'home']), $langs->trans("GUISetup"), 1);
+			$newmenu->add(dol_buildurl("/admin/menus.php", ['mainmenu' => 'home']), $langs->trans("Menus"), 1);
 
-			$newmenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"), 1);
-			$newmenu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"), 1);
-			$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"), 1);
-			$newmenu->add("/admin/delais.php?mainmenu=home", $langs->trans("MenuWarnings"), 1);
-			$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"), 1);
-			$newmenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"), 1);
-			$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
+			$newmenu->add(dol_buildurl("/admin/translation.php", ['mainmenu' => 'home']), $langs->trans("Translation"), 1);
+			$newmenu->add(dol_buildurl("/admin/defaultvalues.php", ['mainmenu' => 'home']), $langs->trans("DefaultValues"), 1);
+			$newmenu->add(dol_buildurl("/admin/boxes.php", ['mainmenu' => 'home']), $langs->trans("Boxes"), 1);
+			$newmenu->add(dol_buildurl("/admin/delais.php", ['mainmenu' => 'home']), $langs->trans("MenuWarnings"), 1);
+			$newmenu->add(dol_buildurl("/admin/security_other.php", ['mainmenu' => 'home']), $langs->trans("Security"), 1);
+			$newmenu->add(dol_buildurl("/admin/limits.php", ['mainmenu' => 'home']), $langs->trans("MenuLimits"), 1);
+			$newmenu->add(dol_buildurl("/admin/pdf.php", ['mainmenu' => 'home']), $langs->trans("PDF"), 1);
 
 			$warnpicto = '';
 			/* No warning into menu entry, the message in Email setup page is enough
@@ -1211,14 +1211,14 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$warnpicto = img_warning($langs->trans("ErrorSetupOfEmailsNotComplete"));
 			}
 
-			$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails").$warnpicto, 1);
-			$newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"), 1);
-			$newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("Dictionary"), 1);
-			$newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"), 1);
+			$newmenu->add(dol_buildurl("/admin/mails.php", ['mainmenu' => 'home']), $langs->trans("Emails").$warnpicto, 1);
+			$newmenu->add(dol_buildurl("/admin/sms.php", ['mainmenu' => 'home']), $langs->trans("SMS"), 1);
+			$newmenu->add(dol_buildurl("/admin/dict.php", ['mainmenu' => 'home']), $langs->trans("Dictionary"), 1);
+			$newmenu->add(dol_buildurl("/admin/const.php", ['mainmenu' => 'home']), $langs->trans("OtherSetup"), 1);
 		}
 
 		// System tools
-		$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("AdminTools"), 0, $user->admin, '', $mainmenu, 'admintools', 0, '', '', '', '<i class="fa fa-server fa-fw paddingright pictofixedwidth"></i>');
+		$newmenu->add(dol_buildurl('/admin/tools/index.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("AdminTools"), 0, $user->admin, '', $mainmenu, 'admintools', 0, '', '', '', '<i class="fa fa-server fa-fw paddingright pictofixedwidth"></i>');
 		if ($usemenuhider || empty($leftmenu) || preg_match('/^admintools/', $leftmenu)) {
 			// Load translation files required by the page
 			$langs->loadLangs(array('admin', 'help'));
@@ -1230,30 +1230,30 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$newmenu->add('/admin/system/filecheck.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('FileCheck'), 2);
 				$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('ExternalResources'), 2);
 			}
-			$newmenu->add('/admin/system/browser.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoBrowser'), 1);
-			$newmenu->add('/admin/system/os.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoOS'), 1);
-			$newmenu->add('/admin/system/web.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoWebServer'), 1);
-			$newmenu->add('/admin/system/phpinfo.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoPHP'), 1);
-			$newmenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
-			$newmenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"), 1);
-			$newmenu->add("/admin/system/security.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoSecurity"), 1);
-			$newmenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"), 1);
-			$newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"), 1);
-			$newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"), 1);
-			$newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"), 1);
-			$newmenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"), 1);
-			$newmenu->add("/admin/tools/purge.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Purge"), 1);
+			$newmenu->add(dol_buildurl('/admin/system/browser.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans('InfoBrowser'), 1);
+			$newmenu->add(dol_buildurl('/admin/system/os.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans('InfoOS'), 1);
+			$newmenu->add(dol_buildurl('/admin/system/web.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans('InfoWebServer'), 1);
+			$newmenu->add(dol_buildurl('/admin/system/phpinfo.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans('InfoPHP'), 1);
+			$newmenu->add(dol_buildurl('/admin/system/database.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans('InfoDatabase'), 1);
+			$newmenu->add(dol_buildurl('/admin/system/perf.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("InfoPerf"), 1);
+			$newmenu->add(dol_buildurl('/admin/system/security.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("InfoSecurity"), 1);
+			$newmenu->add(dol_buildurl('/admin/tools/listevents.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("Audit"), 1);
+			$newmenu->add(dol_buildurl('/admin/tools/listsessions.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("Sessions"), 1);
+			$newmenu->add(dol_buildurl('/admin/tools/dolibarr_export.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("Backup"), 1);
+			$newmenu->add(dol_buildurl('/admin/tools/dolibarr_import.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("Restore"), 1);
+			$newmenu->add(dol_buildurl('/admin/tools/update.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("MenuUpgrade"), 1);
+			$newmenu->add(dol_buildurl('/admin/tools/purge.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("Purge"), 1);
 
 			/* Already into menu Tools
 			if (isModEnabled('blockedlog')) {
 				$langs->load("blockedlog");
-				$newmenu->add("/blockedlog/admin/blockedlog_list.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("BrowseBlockedLog"), 1, $user->admin);
+				$newmenu->add(dol_buildurl('/blockedlog/admin/blockedlog_list.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("BrowseBlockedLog"), 1, $user->admin);
 			}
 			*/
 
 			if (isModEnabled('product') || isModEnabled('service')) {
 				$langs->load("products");
-				$newmenu->add("/product/admin/product_tools.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
+				$newmenu->add(dol_buildurl('/product/admin/product_tools.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("ProductVatMassChange"), 1, $user->admin);
 			}
 		}
 
