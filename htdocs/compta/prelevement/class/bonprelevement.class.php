@@ -1216,7 +1216,7 @@ class BonPrelevement extends CommonObject
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);	// TODO Replace with fetch_object()
 				'@phan-var-force array<int<0,12>,string> $row';
-				/** @var array<int<0,12>,string> $row */
+				/** @var array<int,array{0:int,1:int,2:int,3:string,4:string,5:string,6,string,7:float,8:string,9:string,10:string,11:string,12:string,13:string,14:string,15:int}> $row */
 
 				// All fields:
 				// 0=rowid, 1=pfdrowid, 2=$socOrUser, 3=code_banque, 4=code_guichet, 5=number, 6=key,
