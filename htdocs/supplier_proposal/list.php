@@ -754,7 +754,7 @@ if ($resql) {
 	$i = 0;
 
 	$moreforfilter = '';
- 	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_PROPOSAL, $searchCategorySupplierPropalList, 'minwidth300', $searchCategorySupplierPropalOperator ? $searchCategorySupplierPropalOperator : 0);
