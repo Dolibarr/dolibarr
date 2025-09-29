@@ -322,16 +322,6 @@ class Mailings extends DolibarrApi
 			$this->mailing->$field = $this->_checkValForAPI($field, $value, $this->mailing);
 		}
 
-		// update end of validity date
-		if (empty($this->mailing->fin_validite) && !empty($this->mailing->duree_validite) && !empty($this->mailing->date_creation)) {
-			$this->mailing->fin_validite = $this->mailing->date_creation + ($this->mailing->duree_validite * 24 * 3600);
-		}
-		if (!empty($this->mailing->fin_validite)) {
-			if ($this->mailing->set_echeance(DolibarrApiAccess::$user, $this->mailing->fin_validite) < 0) {
-				throw new RestException(500, $this->mailing->error);
-			}
-		}
-
 		if ($this->mailing->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
