@@ -138,7 +138,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	$menu_arr[] = array(
 		'name' => 'Companies',
-		'link' => '/societe/index.php?mainmenu=companies&amp;leftmenu=',
+		'link' => dol_buildurl('/societe/index.php', ['mainmenu'=>'companies', 'leftmenu'=>'']),
 		'title' => "ThirdParties",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
