@@ -50,6 +50,10 @@ include_once 'inc.php';
  * @var string $lockfile
  * @var string $lockfile2
  */
+'
+@phan-var-force string $lockfile
+@phan-var-force string $lockfile2
+';
 
 $err = 0;
 $allowinstall = 0;
