@@ -9427,108 +9427,6 @@ parameters:
 			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(ConferenceOrBooth\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(ConferenceOrBooth\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ConferenceOrBooth\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ConferenceOrBooth\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Method ConferenceOrBooth\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Method ConferenceOrBooth\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ConferenceOrBoothAttendee\) and ''fk_soc'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with ConferenceOrBoothAttendee and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with ConferenceOrBoothAttendee and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with ConferenceOrBoothAttendee and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with ConferenceOrBoothAttendee and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Property ConferenceOrBoothAttendee\:\:\$lastname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Property ConferenceOrBoothAttendee\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -9541,20 +9439,8 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
 
 		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
 
@@ -9567,12 +9453,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_document.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorbooth_document.php
 
@@ -9613,12 +9493,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
 		-
-			message: '#^Property ConferenceOrBoothAttendee\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
-
-		-
 			message: '#^Variable \$withproject in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -9649,33 +9523,9 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 5
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Variable \$extrafields in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
+			count: 1
 			path: ../../../htdocs/expedition/card.php
 
 		-
@@ -17587,12 +17437,6 @@ parameters:
 			path: ../../../htdocs/user/class/usergroup.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$lastname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/user/class/usergroup.class.php
-
-		-
 			message: '#^Property UserGroup\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -18269,84 +18113,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/website/websiteaccount_card.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Workstation\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Workstation\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Workstation\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Workstation\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Method Workstation\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/workstation/workstation_card.php
 
 		-
 			message: '#^Variable \$upload_dir might not be defined\.$#'

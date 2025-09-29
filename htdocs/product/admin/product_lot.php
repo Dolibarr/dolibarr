@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 $langs->loadLangs(array("admin", "products", "productbatch"));
 
 // Security check
-if (!$user->admin || (empty($conf->productbatch->enabled))) {
+if (!$user->admin || (!isModEnabled('productbatch'))) {
 	accessforbidden();
 }
 
