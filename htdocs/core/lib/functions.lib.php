@@ -15172,6 +15172,7 @@ function getNonce()
 	global $conf;
 
 	if (empty($conf->cache['nonce'])) {
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/security.lib.php';
 		$conf->cache['nonce'] = dolGetRandomBytes(8);
 	}
 
