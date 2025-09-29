@@ -19,6 +19,7 @@
  * Copyright (C) 2023		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Charlene Benke				<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -819,7 +820,11 @@ if (empty($reshook)) {
 
 				$oldstatus = $object->status;
 
-				$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOST('note_private'));
+				if (!getDolGlobalString('PROPALE_KEEP_CLOSE_NOTE_INFO_ON_PUBLIC')) {
+					$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOST('note_private'));
+				} else {
+					$result = $object->closeProposal($user, GETPOSTINT('statut'), "", 0, GETPOST('note_private'));
+				}
 
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
