@@ -2912,7 +2912,7 @@ class SupplierProposal extends CommonObject
 	 * @param  int[]|int 	$categories 	Category or categories IDs
 	 * @return int<-1,1>					Return integer <0 if KO, >0 if OK
 	 */
-	public function setCategories($categories){
+	public function setCategories($categories) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_SUPPLIER_PROPOSAL);
 	}
