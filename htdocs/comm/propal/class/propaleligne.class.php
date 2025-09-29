@@ -373,10 +373,12 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.packaging,';
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_country';
 		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
@@ -419,8 +421,11 @@ class PropaleLigne extends CommonObjectLine
 				$this->ref = $objp->product_ref; // deprecated
 				$this->product_ref = $objp->product_ref;
 				$this->libelle = $objp->product_label; // deprecated
-				$this->product_label	= $objp->product_label;
-				$this->product_desc		= $objp->product_desc;
+				$this->product_label = $objp->product_label;
+				$this->product_desc = $objp->product_desc;
+				$this->product_customcode = $objp->customcode;
+				$this->product_country_id = $objp->country_id;
+				$this->product_country_code = $objp->country_code;
 				$this->fk_unit          = $objp->fk_unit;
 
 				$this->packaging      	= $objp->packaging;
