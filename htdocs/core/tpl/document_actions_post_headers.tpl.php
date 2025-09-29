@@ -214,9 +214,9 @@ $formfile->list_of_documents(
 if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
 	print '</div>';
 	print '<div class="fichehalfright">';
-} else
+} else {
 	print "<br>";
-
+}
 
 //List of links
 $formfile->listOfLinks(
