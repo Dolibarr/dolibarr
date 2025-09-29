@@ -112,6 +112,7 @@ CREATE TABLE llx_accounting_analytic_distribution (
 ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_analytic_distribution_fk_analytic_account FOREIGN KEY (fk_analytic_account) REFERENCES llx_accounting_analytic_account (rowid);
 
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
+ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
@@ -179,4 +180,3 @@ ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 
 -- end of migration
-
