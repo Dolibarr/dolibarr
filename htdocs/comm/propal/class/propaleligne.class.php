@@ -372,7 +372,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.fk_unit,';
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,p.barcode as product_barcode,';
 		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.packaging,';
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
@@ -423,6 +423,7 @@ class PropaleLigne extends CommonObjectLine
 				$this->libelle = $objp->product_label; // deprecated
 				$this->product_label = $objp->product_label;
 				$this->product_desc = $objp->product_desc;
+				$this->product_barcode = $objp->product_barcode;
 				$this->product_custom_code = $objp->customcode;
 				$this->product_custom_country_id = $objp->country_id;
 				$this->product_custom_country_code = $objp->country_code;
