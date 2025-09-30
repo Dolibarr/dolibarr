@@ -2645,7 +2645,7 @@ class BonPrelevement extends CommonObject
 			$RefBon = $obj->ref;
 			$localInstrument = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_LOCAL_INSTRUMENT', 'CORE');
 
-			if (!empty(getDolGlobalString('SEPA_FORCE_TWO_DECIMAL'))) {
+			if (getDolGlobalString('SEPA_FORCE_TWO_DECIMAL')) {
 				$total = number_format((float) price2num($total, 'MT'), 2, ".", "");
 			}
 
