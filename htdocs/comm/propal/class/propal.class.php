@@ -3874,8 +3874,8 @@ class Propal extends CommonObject
 		}
 
 		$baseurl = '';
+		$query = [];
 		if ($user->hasRight('propal', 'lire')) {
-			$query = [];
 			parse_str($get_params, $query);
 			$query = array_merge($query, ['id' => $this->id]);
 			if ($option == '') {
