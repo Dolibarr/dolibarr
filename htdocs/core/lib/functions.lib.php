@@ -1660,7 +1660,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  */
 function dolBuildUrl($path, $params = [], $addtoken = false, $addurlroot = false)
 {
-	global $db, $hookmanager;
+	global $conf, $db, $hookmanager;
 
 	if (!is_object($hookmanager)) {
 		include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
@@ -1674,6 +1674,9 @@ function dolBuildUrl($path, $params = [], $addtoken = false, $addurlroot = false
 	}
 	if ((!isset($params['leftmenu'])/*  || empty($params['leftmenu']) */) && GETPOSTISSET('leftmenu')) { // do not fill leftmenu if we have leftmenu=
 		$params = array_merge($params, ['leftmenu' => (GETPOST('leftmenu', 'restricthtml'))]);
+	}
+	if (isModEnabled('multicompany') && !isset($params['entity'])) {
+		$params = array_merge($params, ['entity' => $conf->entity]);
 	}
 	$parameters = [
 		'path' => &$path,

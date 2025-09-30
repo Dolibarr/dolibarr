@@ -1564,8 +1564,7 @@ class Contact extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
-
+		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -1576,6 +1575,7 @@ class Contact extends CommonObject
 				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl('/contact/card.php', $query);
 
 		$url .= $moreparam;
 
