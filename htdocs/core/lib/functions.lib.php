@@ -1672,6 +1672,9 @@ function dolBuildUrl($path, $params = [], $addtoken = false, $addurlroot = false
 	if (!isset($params['mainmenu']) || empty($params['mainmenu']) && GETPOSTISSET('mainmenu')) {
 		$params = array_merge($params, ['mainmenu' => (GETPOST('mainmenu', 'restricthtml'))]);
 	}
+	if (!isset($params['leftmenu']) || empty($params['leftmenu']) && GETPOSTISSET('leftmenu')) {
+		$params = array_merge($params, ['leftmenu' => (GETPOST('leftmenu', 'restricthtml'))]);
+	}
 	$parameters = [
 		'path' => &$path,
 		'params' => &$params,
