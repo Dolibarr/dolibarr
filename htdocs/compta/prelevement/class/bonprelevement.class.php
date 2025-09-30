@@ -412,7 +412,7 @@ class BonPrelevement extends CommonObject
 	public function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype = '', $bic = '', $iban = '', $rum = '')
 	{
 		$result = -1;
-		$concat = 0;	// ??? what is this for. Seems not used.
+		$concat = getDolGlobalInt('MAIN_MODULE_PRELEVEMENT_CONCAT');	// ??? what is this for. Seems not used.
 
 		if ($concat == 1) {
 			/*
