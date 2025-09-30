@@ -12037,12 +12037,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
 
 		-
-			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -12147,12 +12141,6 @@ parameters:
 		-
 			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
 			identifier: include.fileNotFound
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/myobject_card.php
 

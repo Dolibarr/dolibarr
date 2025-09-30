@@ -179,7 +179,7 @@ class MyObject extends CommonObject
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
-	 * @var int Status
+	 * @var ?int Status
 	 */
 	public $status;
 
@@ -189,7 +189,7 @@ class MyObject extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_modif;
 
