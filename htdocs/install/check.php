@@ -46,6 +46,8 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_encrypted_pass
  * @var	string $dolibarr_main_document_root
  * @var string $dolibarr_main_db_type
+ * @var int $dolibarr_main_db_encryption
+ * @var string $dolibarr_main_db_cryptkey
  * @var string $force_install_nophpinfo
  * @var string $lockfile
  * @var string $lockfile2
