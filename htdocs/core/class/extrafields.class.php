@@ -1139,11 +1139,29 @@ class ExtraFields
 	 */
 	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
 	{
-		global $conf, $langs, $form;
+		global $conf, $langs, $form, $hookmanager;
 
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
+		}
+
+		$parameters = array(
+			'key'                  => $key,
+			'value'                => &$value,
+			'moreparam'            => $moreparam,
+			'keysuffix'            => $keysuffix,
+			'keyprefix'            => $keyprefix,
+			'morecss'              => $morecss,
+			'object'               => $object,
+			'extrafieldsobjectkey' => $extrafieldsobjectkey,
+			'mode'                 => $mode
+		);
+		$action = '';
+
+		$reshook = $hookmanager->executeHooks('showInputExtraField', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
 		}
 
 		$objectid = (is_numeric($object) ? $object : $object->id);
@@ -2067,7 +2085,7 @@ class ExtraFields
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (is_null($outputlangs) || !is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -2076,6 +2094,21 @@ class ExtraFields
 		if (empty($extrafieldsobjectkey)) {
 			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_ERR);
 			return 'BadValueForParamExtraFieldsObjectKey';
+		}
+
+		$parameters = array(
+			'key'                  => $key,
+			'value'                => &$value,
+			'moreparam'            => $moreparam,
+			'extrafieldsobjectkey' => $extrafieldsobjectkey,
+			'outputlangs'          => $outputlangs,
+			'object'               => $object
+		);
+		$action = '';
+
+		$reshook = $hookmanager->executeHooks('showOutputExtraField', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
 		}
 
 		$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];

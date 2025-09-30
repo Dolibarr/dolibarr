@@ -4,8 +4,9 @@
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 	2024-2025 Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 	2025	  MDW				  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 	2025	  Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,6 +180,11 @@ if (is_array($tmparray) && !empty($tmparray)) {
 }
 
 
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	// We use a table with 2 columns
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+}
 // List of document
 $formfile->list_of_documents(
 	$filearray,
@@ -205,9 +211,12 @@ $formfile->list_of_documents(
 	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
 );
 
-
-print "<br>";
-
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	print '</div>';
+	print '<div class="fichehalfright">';
+} else {
+	print "<br>";
+}
 
 //List of links
 $formfile->listOfLinks(
@@ -219,5 +228,10 @@ $formfile->listOfLinks(
 	'formaddlink',
 	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
 );
+
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	print '</div>';
+	print '</div>';
+}
 
 print "<br>";

@@ -9069,6 +9069,9 @@ table.jPicker {
 		width: 1.5em;
 		/* padding-right: 0; */
 	}
+	table.titlemodulehelp tr td img.widthpictotitle {
+		width: 1.5em;
+	}
 
 	.ai_dropdown{
 		min-width : 280px !important;
@@ -9143,6 +9146,11 @@ table.jPicker {
 		margin: 0 5px 0 1px;
 		transform: scale(1.1);
 	}
+
+	pre {
+		white-space: normal;
+		word-break: break-word;
+	}
 }
 
 @media only screen and (max-width: 320px)
@@ -9210,5 +9218,4 @@ div.extra_inline_chkbxlst, div.extra_inline_checkbox {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
-
 }
