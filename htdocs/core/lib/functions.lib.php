@@ -1653,8 +1653,8 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  * Return path of url.
  *
  * @param	string						$path		Relative path to file
- * @param	array<string,int|string>	$params     params for query
- * @param	bool						$addtoken	does we add token
+ * @param	array<string,int|string>	$params     params for the http query
+ * @param	bool						$addtoken	does we need to add token
  * @param	bool 	 	 				$addurlroot Add DOL_URL_ROOT
  * @return string									path
  */
