@@ -138,10 +138,11 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// Call the new display method
 		$this->displayFileBrowser(
-			html_entity_decode($langs->trans('SharedDocuments')),
-			$itemList,
-			$langs->trans('ThisDirectoryIsEmpty'),
-			$linkBuilder
+			$this->displayFileBrowser(
+				$langs->transnoentities('SharedDocuments'),
+				$itemList,
+				$langs->trans('ThisDirectoryIsEmpty'),
+				$linkBuilder
 		);
 
 		print '</main>';
