@@ -329,7 +329,7 @@ print load_fiche_titre($titre, $linkback, 'title_accountancy');
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.urlencode((string) ($page)).'&' : '').'sortfield='.urlencode((string) ($sortfield)).'&sortorder='.urlencode((string) ($sortorder)).'&rowid='.urlencode((string) ($rowid)).'&code='.urlencode((string) ($code)).'&id='.urlencode((string) ($id)), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm(dolBuildurl($_SERVER["PHP_SELF"], ['page'=> $page, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'rowid' => $rowid, 'code' => $code, 'id' => $id]), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 
