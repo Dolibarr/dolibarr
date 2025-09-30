@@ -108,12 +108,12 @@ class DocumentListController extends AbstractDocumentController
 				};
 
 			// 3. Call the parent method to display the table
-			$this->displayDocumentTable(
+			$this->displayFileBrowser(
 				$langs->trans('MyDocuments'),
 				$fileList,
 				$langs->trans('NoDocumentAvailable'),
 				$linkBuilder
-			);
+				);
 		}
 
 		print '</main>';
