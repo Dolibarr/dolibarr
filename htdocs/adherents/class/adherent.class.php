@@ -2546,6 +2546,10 @@ class Adherent extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
+		$baseurl = '/adherents/card.php';
+		if ($option == 'subscription') {
+			$baseurl = '/adherents/subscription.php';
+		}
 		$query = ['rowid' => $this->id];
 
 		if ($option != 'nolink') {
@@ -2558,11 +2562,7 @@ class Adherent extends CommonObject
 				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
-		if ($option == 'subscription') {
-			$url = dolBuildUrl('/adherents/subscription.php', $query);
-		} else {
-			$url = dolBuildUrl('/adherents/card.php', $query);
-		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart .= '<a href="'.$url.'"';
 		$linkclose = "";
