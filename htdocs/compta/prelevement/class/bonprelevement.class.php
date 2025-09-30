@@ -531,17 +531,17 @@ class BonPrelevement extends CommonObject
 				$this->method_trans   = $obj->method_trans;
 				$this->user_trans     = $obj->fk_user_trans;
 
-				$this->date_credit    = $this->db->jdate($obj->date_credit);
-				$this->user_credit    = $obj->fk_user_credit;
+				$this->date_credit = $this->db->jdate($obj->date_credit);
+				$this->user_credit = $obj->fk_user_credit;
 
-				$this->type           = $obj->type;
+				$this->type = $obj->type;
 				$this->fk_bank_account = $obj->fk_bank_account;
 
-				$this->status         = $obj->status;
+				$this->status = $obj->status;
 				if (empty($this->status)) {		// Value is sometimes null in database
 					$this->status = 0;
 				}
-				$this->statut         = $this->status; // For backward compatibility
+				$this->statut = $this->status; // For backward compatibility
 
 				$this->fetched = 1;
 
@@ -3018,23 +3018,21 @@ class BonPrelevement extends CommonObject
 		} else {
 			return 0;
 		}
-		if ($id) {
-			$sql = "SELECT COUNT(*) AS nb FROM " . MAIN_DB_PREFIX . "prelevement_lignes";
-			$sql .= " WHERE fk_prelevement_bons = " . ((int) $id);
-			$sql .= " AND fk_soc = 0";	// fk_soc can't be NULL
-			$sql .= " AND fk_user IS NOT NULL";
+		$sql = "SELECT COUNT(*) AS nb FROM " . MAIN_DB_PREFIX . "prelevement_lignes";
+		$sql .= " WHERE fk_prelevement_bons = " . ((int) $id);
+		$sql .= " AND fk_soc = 0";	// fk_soc can't be NULL
+		$sql .= " AND fk_user IS NOT NULL";
 
-			$num = 0;
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$obj = $this->db->fetch_object($resql);
-				$num = $obj->nb;
-			}
-			if ($num > 0) {
-				return 1;
-			}
+		$num = 0;
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			$num = $obj->nb;
 		} else {
 			dol_print_error($this->db);
+		}
+		if ($num > 0) {
+			return 1;
 		}
 
 		return 0;
