@@ -75,9 +75,8 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		print '<main class="container">';
 
-		// 1. Manage the current subfolder from the URL
+		// Manage the current subfolder from the URL
 		$current_subdir = GETPOST('subdir', 'alpha');
-		// Security: Clear the path to avoid attacks (eg: ../../)
 		$sanitized_subdir = '';
 		if (!empty($current_subdir)) {
 			$parts = explode('/', $current_subdir);
@@ -90,7 +89,7 @@ class SharedDocumentsController extends AbstractDocumentController
 			$sanitized_subdir = implode('/', $safe_parts);
 		}
 
-		// 2. Prepare the paths
+		// Prepare the paths
 		$shared_dir_name = getDolGlobalString('WEBPORTAL_SHARED_DOCS_DIR', 'Documentscomptes');
 		$base_dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
 		// The full path now includes the visited subdirectory
@@ -108,7 +107,7 @@ class SharedDocumentsController extends AbstractDocumentController
 				}
 			}
 		}
-		// 4. Build the Breadcrumb
+		// the Breadcrumb
 		$baseUrl = $_SERVER['PHP_SELF'].'?controller=shareddocuments';
 		$breadcrumbs = '<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="'.$baseUrl.'">'.dol_htmlentities($langs->trans("Home")).'</a></li>';
 		$path_so_far = '';
@@ -123,7 +122,7 @@ class SharedDocumentsController extends AbstractDocumentController
 		// Show breadcrumbs
 		print $breadcrumbs;
 
-		// 5. Define functions to build navigation and download links
+		// Define functions to build navigation and download links
 		$linkBuilder = array(
 			/** @param array{name: string, type: string, size: int|string, date: int} $dir */
 			'dir' => function (array $dir) use ($baseUrl, $sanitized_subdir) {
@@ -137,7 +136,7 @@ class SharedDocumentsController extends AbstractDocumentController
 			}
 		);
 
-		// 6. Call the new display method
+		// Call the new display method
 		$this->displayFileBrowser(
 			html_entity_decode($langs->trans('SharedDocuments')),
 			$itemList,
