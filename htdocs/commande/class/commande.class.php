@@ -3910,6 +3910,7 @@ class Commande extends CommonOrder
 			}
 		}
 		$url = dolBuildUrl($baseurl, $query);
+
 		if ($short) {
 			return $url;
 		}

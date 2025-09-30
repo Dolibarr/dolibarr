@@ -929,6 +929,7 @@ class AdherentType extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
+		$baseurl = '/adherents/type.php';
 		$query = ['rowid' => $this->id];
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -938,7 +939,7 @@ class AdherentType extends CommonObject
 		if ($add_save_lastsearch_values) {
 			$query = array_merge($query, ['save_lastsearch_values' => 1]);
 		}
-		$url = dolBuildUrl('/adherents/type.php', $query);
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
