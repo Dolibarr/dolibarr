@@ -218,7 +218,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	if (!$idprof2) {
 		$langs->load('errors');
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentities("MarketPlaceBusinessNumber"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentities("companyBusinessNumber"))."<br>\n";
 	}
 	if (!$address) {
 		$langs->load('errors');
@@ -228,7 +228,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	if (!$zipcode) {
 		$langs->load('errors');
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentities("ZipCode"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentities("Zip"))."<br>\n";
 	}
 	if (!$town) {
 		$langs->load('errors');
@@ -528,10 +528,10 @@ if (!$action || $action == 'create') {
 	print '</td></tr>';
 
 	//Idprof2 (siret...)
-	print '<tr id="trsiret"><td class="fieldrequired">'.$langs->trans("MarketPlaceBusinessNumber").'</td><td><input type="text" name="idprof2" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('idprof2')).'"></td></tr>'."\n";
+	print '<tr id="trsiret"><td class="fieldrequired">'.$langs->trans("companyBusinessNumber").'</td><td><input type="text" name="idprof2" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('idprof2')).'"></td></tr>'."\n";
 
 	//Tva_intra
-	print '<tr id="trtva"><td>'.$langs->trans("MarketPlaceTIN").'</td><td><input type="text" name="tva_intra" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('tva_intra')).'"></td></tr>'."\n";
+	print '<tr id="trtva"><td>'.$langs->trans("companyTIN").'</td><td><input type="text" name="tva_intra" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('tva_intra')).'"></td></tr>'."\n";
 
 	print '<tr><td colspan="2"><hr></td></tr>';
 

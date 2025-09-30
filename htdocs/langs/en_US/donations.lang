@@ -59,3 +59,5 @@ publicDonationFieldHelp=%s can publish my donation in the public register
 listOfPublicDonations=List of public donations
 donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
 descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number
