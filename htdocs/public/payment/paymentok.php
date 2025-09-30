@@ -1073,6 +1073,18 @@ if ($ispaymentok) {
 				$paiement->ext_payment_site = $service;
 
 				if (!$error) {
+					// Validate invoice if not already validated (this can happen for automatically generated invoices with a free amount)
+					if ($object->status == Facture::STATUS_DRAFT) {
+						$result = $object->validate($user);
+						if ($result < 0) {
+							$postactionmessages[] = $object->error;
+							$ispostactionok = -1;
+							$error++;
+						} else {
+							$postactionmessages[] = 'Invoice validated';
+							$ispostactionok = 1;
+						}
+					}
 					$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
 					if ($paiement_id < 0) {
 						$postactionmessages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
