@@ -1270,7 +1270,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				}
 				$newmenu->add("", $langs->trans("Groups"), 1, (int) (($user->hasRight('user', 'user', 'read') || $user->admin) && !(isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))));
 				$newmenu->add("/user/group/card.php?leftmenu=users&action=create", $langs->trans("NewGroup"), 2, (int) (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight("user", "group_advance", "write") : $user->hasRight("user", "user", "write")) || $user->admin) && !(isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))));
-				$newmenu->add("/user/group/list.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, (int) ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('user', 'group_advance', 'read') : $user->hasRight('user', 'user', 'read')) || $user->admin));
+				$newmenu->add(dolBuildUrl('/user/group/list.php', ['leftmenu' => 'users']), $langs->trans("ListOfGroups"), 2, (int) ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('user', 'group_advance', 'read') : $user->hasRight('user', 'user', 'read')) || $user->admin));
 			}
 		}
 	}
@@ -2610,8 +2610,8 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			// Load translation files required by the page
 			$langs->loadLangs(array("members", "compta"));
 
-			$newmenu->add("/adherents/index.php?leftmenu=members&mainmenu=members", $langs->trans("Members"), 0, $user->hasRight('adherent', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'member', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/adherents/card.php?leftmenu=members&action=create", $langs->trans("NewMember"), 1, $user->hasRight('adherent', 'write'));
+			$newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'members', 'mainmenu' => 'members']), $langs->trans("Members"), 0, $user->hasRight('adherent', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'member', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/adherents/card.php', ['leftmenu' => 'members', 'action' => 'create']), $langs->trans("NewMember"), 1, $user->hasRight('adherent', 'write'));
 			$newmenu->add("/adherents/list.php?leftmenu=members", $langs->trans("List"), 1, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/list.php?leftmenu=members&statut=-1", $langs->trans("MenuMembersToValidate"), 2, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1", $langs->trans("MenuMembersValidated"), 2, $user->hasRight('adherent', 'read'));
