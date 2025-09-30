@@ -1669,10 +1669,10 @@ function dolBuildUrl($path, $params = [], $addtoken = false, $addurlroot = false
 	if ($addurlroot) {
 		$path .= DOL_URL_ROOT . $path;
 	}
-	if (!isset($params['mainmenu']) || empty($params['mainmenu']) && GETPOSTISSET('mainmenu')) {
+	if ((!isset($params['mainmenu']) || empty($params['mainmenu'])) && GETPOSTISSET('mainmenu')) {
 		$params = array_merge($params, ['mainmenu' => (GETPOST('mainmenu', 'restricthtml'))]);
 	}
-	if (!isset($params['leftmenu']) || empty($params['leftmenu']) && GETPOSTISSET('leftmenu')) {
+	if ((!isset($params['leftmenu'])/*  || empty($params['leftmenu']) */) && GETPOSTISSET('leftmenu')) { // do not fill leftmenu if we have leftmenu=
 		$params = array_merge($params, ['leftmenu' => (GETPOST('leftmenu', 'restricthtml'))]);
 	}
 	$parameters = [

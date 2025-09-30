@@ -163,7 +163,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Products',
-		'link' => '/product/index.php?mainmenu=products&amp;leftmenu=',
+		'link' => dolBuildUrl('/product/index.php', ['mainmenu' => 'products', 'leftmenu' => '']),
 		'title' => (isModEnabled('product') && isModEnabled('service'))
 		? (array("TMenuProducts", " | ", "TMenuServices"))
 		: (isModEnabled('product') ? "TMenuProducts" : "TMenuServices"),

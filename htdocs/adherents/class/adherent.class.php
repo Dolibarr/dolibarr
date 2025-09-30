@@ -2546,10 +2546,7 @@ class Adherent extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dolBuildUrl('/adherents/card.php', ['rowid' => $this->id]);
-		if ($option == 'subscription') {
-			$url = dolBuildUrl('/adherents/subscription.php', ['rowid' => $this->id]);
-		}
+		$query = ['rowid' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -2558,8 +2555,13 @@ class Adherent extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
+		}
+		if ($option == 'subscription') {
+			$url = dolBuildUrl('/adherents/subscription.php', $query);
+		} else {
+			$url = dolBuildUrl('/adherents/card.php', $query);
 		}
 
 		$linkstart .= '<a href="'.$url.'"';
