@@ -272,6 +272,9 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	// Start of transaction
 	$db->begin();
 
+	// Create invoice for this donation
+	$invoice = new Facture($db);
+
 	if (!$error && $companyId <= 0) {
 		// create company
 		$company = new Societe($db);
@@ -307,9 +310,6 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	if (!$error && $companyId > 0) {
-		// Create invoice for this donation
-		$invoice = new Facture($db);
-
 		$invoice->socid = $companyId;
 		$invoice->type = Facture::TYPE_STANDARD;
 		$invoice->cond_reglement_id = 1;
@@ -376,13 +376,12 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		} else {
 			$desc = $product->label;
 			$productId = $product->id;
-		}
-
-		// Add line for the invoice
-		$result = $invoice->addline($desc, $amount, 1, $tva_tx, 0, 0, $productId, 0, "", "", 0, 0, 0, 'TTC', $amount);
-		if ($result <= 0) {
-			$error++;
-			$errmsg .= $invoice->error."<br>\n";
+			// Add line for the invoice
+			$result = $invoice->addline($desc, $amount, 1, $tva_tx, 0, 0, $productId, 0, "", "", 0, 0, 0, 'TTC', $amount);
+			if ($result <= 0) {
+				$error++;
+				$errmsg .= $invoice->error."<br>\n";
+			}
 		}
 
 		// Fill array 'array_options' with data from add form
@@ -394,7 +393,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		}*/
 	}
 
-	if (!$error && $companyId > 0 && $invoice->ref) {
+	if (!$error) {
 		$urlback = getOnlinePaymentUrl(0, 'invoice', (string) $invoice->ref, 0, '');
 		if ($ws) {
 			$urlback .= (strpos($urlback, '?') ? '&' : '?').'ws='.urlencode($ws);
