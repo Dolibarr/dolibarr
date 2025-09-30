@@ -128,7 +128,7 @@ $user->loadDefaultValues();
  * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = 0)  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -373,10 +373,13 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		if ($result < 0) {
 			$error++;
 			$errmsg .= $product->error."<br>\n";
+		} else {
+			$desc = $product->label;
+			$productId = $product->id;
 		}
 
 		// Add line for the invoice
-		$result = $invoice->addline($product->label, $amount, 1, $tva_tx, 0, 0, $product->id, 0, "", "", 0, 0, 0, 'TTC', $amount);
+		$result = $invoice->addline($desc, $amount, 1, $tva_tx, 0, 0, $productId, 0, "", "", 0, 0, 0, 'TTC', $amount);
 		if ($result <= 0) {
 			$error++;
 			$errmsg .= $invoice->error."<br>\n";
@@ -391,7 +394,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		}*/
 	}
 
-	if (!$error && $invoice->ref) {
+	if (!$error && $companyId > 0 && $invoice->ref) {
 		$urlback = getOnlinePaymentUrl(0, 'invoice', (string) $invoice->ref, 0, '');
 		if ($ws) {
 			$urlback .= (strpos($urlback, '?') ? '&' : '?').'ws='.urlencode($ws);
