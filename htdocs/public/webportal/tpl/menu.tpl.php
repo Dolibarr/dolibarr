@@ -141,6 +141,7 @@ $navGroupMenu = array(
 $parameters = array(
 	'controller' => $context->controller,
 	'Tmenu' => & $navMenu,
+	'TUserMenu' => & $navUserMenu,
 	'TGroupMenu' => & $navGroupMenu,
 	'maxTopMenu' => & $maxTopMenu
 );
