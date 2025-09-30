@@ -125,7 +125,7 @@ $user->loadDefaultValues();
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
- * @param 	int    		$ws					Website identifier if we are called from a website
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = 0)  // @phan-suppress-current-line PhanRedefineFunction
@@ -196,9 +196,9 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	$zipcode = GETPOST("zipcode", "aZ09");
 	$town = GETPOST("town", "aZ09");
 	$country_id = GETPOSTINT("country_id");
-	$amount = GETPOST("amount", "int");
+	$amount = (float) GETPOST("amount", "int");
 	$companyId = 0;
-	$productIdForFreeAmountInvoice = getDolGlobalString('PRODUCT_ID_FOR_FREE_AMOUNT_INVOICE');
+	$productIdForFreeAmountInvoice = (int) getDolGlobalString('PRODUCT_ID_FOR_FREE_AMOUNT_INVOICE');
 
 	if (!$email || !isValidEmail($email)) {
 		$langs->load('errors');
@@ -255,9 +255,9 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$errmsg .= $langs->trans("donationErrorMessageContactEmail", $mysoc->email)."<br>\n";
 		}
 	}
-	if (!$amount || $amount <= getDolGlobalString("DONATION_INVOICE_MIN_AMOUNT", "int")) {
+	if (!$amount || $amount <= (float) getDolGlobalString("DONATION_INVOICE_MIN_AMOUNT")) {
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldMinimumAmount", (float) getDolGlobalString("DONATION_INVOICE_MIN_AMOUNT", "int"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorFieldMinimumAmount", (float) getDolGlobalString("DONATION_INVOICE_MIN_AMOUNT"))."<br>\n";
 	}
 
 	// Check Captcha code if is enabled
@@ -391,7 +391,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		}*/
 	}
 
-	if (!$error) {
+	if (!$error && $invoice->ref) {
 		$urlback = getOnlinePaymentUrl(0, 'invoice', (string) $invoice->ref, 0, '');
 		if ($ws) {
 			$urlback .= (strpos($urlback, '?') ? '&' : '?').'ws='.urlencode($ws);
@@ -536,7 +536,7 @@ if (!$action || $action == 'create') {
 	print '<tr><td colspan="2"><hr></td></tr>';
 
 	// Amount
-	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+	$amount = (float) (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 
 	// - If a min is set, we take it into account
 	$amount = max(0, (float) $amount, (float) getDolGlobalInt("DONATION_INVOICE_MIN_AMOUNT"));
