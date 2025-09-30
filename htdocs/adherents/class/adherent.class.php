@@ -2546,9 +2546,9 @@ class Adherent extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
+		$url = dolBuildUrl('/adherents/card.php', ['rowid' => $this->id]);
 		if ($option == 'subscription') {
-			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.((int) $this->id);
+			$url = dolBuildUrl('/adherents/subscription.php', ['rowid' => $this->id]);
 		}
 
 		if ($option != 'nolink') {

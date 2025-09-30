@@ -1669,6 +1669,9 @@ function dolBuildUrl($path, $params = [], $addtoken = false, $addurlroot = false
 	if ($addurlroot) {
 		$path .= DOL_URL_ROOT . $path;
 	}
+	if (!isset($params['mainmenu']) || empty($params['mainmenu']) && GETPOSTISSET('mainmenu')) {
+		$params = array_merge($params, ['mainmenu' => (GETPOST('mainmenu', 'restricthtml'))]);
+	}
 	$parameters = [
 		'path' => &$path,
 		'params' => &$params,
