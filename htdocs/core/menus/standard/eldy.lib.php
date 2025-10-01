@@ -2501,16 +2501,16 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 		// Expense report
 		if (isModEnabled('expensereport')) {
 			$langs->loadLangs(array("trips", "bills"));
-			$newmenu->add("/expensereport/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->hasRight('expensereport', 'lire'), '', $mainmenu, 'expensereport', 0, '', '', '', img_picto('', 'expensereport', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/expensereport/card.php?action=create&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("New"), 1, $user->hasRight('expensereport', 'creer'));
-			$newmenu->add("/expensereport/list.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->hasRight('expensereport', 'lire'));
+			$newmenu->add(dolBuildUrl('/expensereport/index.php', ['leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("TripsAndExpenses"), 0, $user->hasRight('expensereport', 'lire'), '', $mainmenu, 'expensereport', 0, '', '', '', img_picto('', 'expensereport', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/expensereport/card.php', ['action' => 'create', 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("New"), 1, $user->hasRight('expensereport', 'creer'));
+			$newmenu->add(dolBuildUrl('/expensereport/list.php', ['leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("List"), 1, $user->hasRight('expensereport', 'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "expensereport") {
-				$newmenu->add("/expensereport/list.php?search_status=0&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Draft"), 2, $user->hasRight('expensereport', 'lire'));
-				$newmenu->add("/expensereport/list.php?search_status=2&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Validated"), 2, $user->hasRight('expensereport', 'lire'));
-				$newmenu->add("/expensereport/list.php?search_status=5&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Approved"), 2, $user->hasRight('expensereport', 'lire'));
-				$newmenu->add("/expensereport/list.php?search_status=6&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Paid"), 2, $user->hasRight('expensereport', 'lire'));
-				$newmenu->add("/expensereport/list.php?search_status=4&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Canceled"), 2, $user->hasRight('expensereport', 'lire'));
-				$newmenu->add("/expensereport/list.php?search_status=99&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Refused"), 2, $user->hasRight('expensereport', 'lire'));
+				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 0, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Draft"), 2, $user->hasRight('expensereport', 'lire'));
+				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 2, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Validated"), 2, $user->hasRight('expensereport', 'lire'));
+				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 5, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Approved"), 2, $user->hasRight('expensereport', 'lire'));
+				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 6, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Paid"), 2, $user->hasRight('expensereport', 'lire'));
+				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 4, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Canceled"), 2, $user->hasRight('expensereport', 'lire'));
+				$newmenu->add(dolBuildUrl('/expensereport/list.php', ['search_status' => 99, 'leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Refused"), 2, $user->hasRight('expensereport', 'lire'));
 			}
 			$newmenu->add(dolBuildUrl('/expensereport/payment/list.php', ['leftmenu' => 'expensereport_payments', 'mainmenu' => 'hrm']), $langs->trans("Payments"), 1, (int) (int) ($user->hasRight('expensereport', 'lire') && isModEnabled('bank')));
 			$newmenu->add(dolBuildUrl('/expensereport/stats/index.php', ['leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Statistics"), 1, $user->hasRight('expensereport', 'lire'));
