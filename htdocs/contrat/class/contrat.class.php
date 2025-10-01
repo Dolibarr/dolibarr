@@ -2073,7 +2073,7 @@ class Contrat extends CommonObject
 
 		$result = '';
 
-		$baseurl = '/contrat/card.php';
+		$baseurl = DOL_URL_ROOT . '/contrat/card.php';
 		$query = ['id' => $this->id];
 
 		//if ($option !== 'nolink')
