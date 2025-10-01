@@ -1143,9 +1143,10 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	$db->begin();
+	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
-		$objecttmp = new $objectclass($db);
+		$objecttmp->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			$outputlangs = $langs;

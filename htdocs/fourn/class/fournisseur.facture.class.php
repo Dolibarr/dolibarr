@@ -1006,6 +1006,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->extraparams = isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->socid  = $obj->socid;
+				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 				$this->socnom = $obj->socnom;
 
 				// Retrieve all extrafield
