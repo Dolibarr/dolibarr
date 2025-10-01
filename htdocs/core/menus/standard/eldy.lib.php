@@ -2387,7 +2387,7 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 
 			// Project assigned to user
 			$newmenu->add(dolBuildUrl('/projet/index.php', ['leftmenu' => 'projects', 'search_project_user' => ($search_project_user ? $search_project_user : '')]), $titleboth, 0, $user->hasRight('projet', 'lire'), '', $mainmenu, 'projects', 0, '', '', '', img_picto('', 'project', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titlenew, 1, $user->hasRight('projet', 'creer'));
+			$newmenu->add(dolBuildUrl('/projet/card.php', ['leftmenu' => 'projects', 'action' => 'create', 'search_project_user' => ($search_project_user ? $search_project_user : '')]), $titlenew, 1, $user->hasRight('projet', 'creer'));
 
 			if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				$newmenu->add("/projet/list.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');

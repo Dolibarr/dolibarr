@@ -1689,6 +1689,8 @@ function dolBuildUrl($path, $params = [], $addtoken = false, $addurlroot = false
 	if ($addtoken) {
 		$params = array_merge($params, ['token' => newToken()]);
 	}
+	// TODO TO REMOVE
+	$params = array_merge($params, ['debug' => 'debug']);
 	if ($params) {
 		$url .= '?' . http_build_query($params);
 	}
@@ -7469,6 +7471,11 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	}
 	// Show navigation bar
 	$pagelist = '';
+	$query = [];
+	parse_str($options, $query);
+	if (!isset($query['page'])) {
+		$query = array_merge($query, ['page' => '']);
+	}
 	if ($savlimit != 0 && ($page > 0 || $num > $limit)) {
 		if ($totalnboflines) {	// If we know total nb of lines
 			// Define nb of extra page links before and after selected page + ... + first or last
@@ -7486,11 +7493,13 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt >= 1) {
 				if (empty($pagenavastextinput)) {
-					$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=0' . $options . '">1</a></li>';
+					$query['page'] = 0;
+					$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">1</a></li>';
 					if ($cpt > 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == 2) {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=1' . $options . '">2</a></li>';
+						$query['page'] = 0;
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">2</a></li>';
 					}
 				}
 			}
@@ -7505,7 +7514,8 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 					if ($cpt == $page) {
 						$pagelist .= '<li class="pagination"><span class="active">' . ($page + 1) . '</span></li>';
 					} else {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . $cpt . $options . '">' . ($cpt + 1) . '</a></li>';
+						$query['page'] = $cpt;
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . ($cpt + 1) . '</a></li>';
 					}
 				}
 				$cpt++;
@@ -7516,13 +7526,16 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 					if ($cpt < $nbpages - 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == $nbpages - 2) {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 2) . $options . '">' . ($nbpages - 1) . '</a></li>';
+						$query['page'] = ($nbpages - 2);
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . ($nbpages - 1) . '</a></li>';
 					}
-					$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 1) . $options . '">' . $nbpages . '</a></li>';
+					$query['page'] = ($nbpages - 1);
+					$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 				}
 			} else {
 				//var_dump($page.' '.$cpt.' '.$nbpages);
-				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 1) . $options . '">' . $nbpages . '</a></li>';
+				$query['page'] = ($nbpages - 1);
+				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 			}
 		} else {
 			$pagelist .= '<li class="pagination"><span class="active">' . ($page + 1) . "</li>";
@@ -7541,7 +7554,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	print '</td>';
 	print '</tr>';
 
-	print '</table>' . "\n";
+	print "</table>\n";
 
 	// Center
 	if ($morehtmlcenter && !empty($conf->dol_optimize_smallscreen)) {
@@ -7632,10 +7645,10 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
 						<script>
 						jQuery(document).ready(function () {
-					  		jQuery(".selectlimit").change(function() {
+							jQuery(".selectlimit").change(function() {
 								console.log("We change limit so we submit the form");
 								$(this).parents(\'form:first\').submit();
-					  		});
+							});
 						});
 						</script>
 					';

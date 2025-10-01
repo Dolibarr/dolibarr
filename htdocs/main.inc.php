@@ -175,11 +175,11 @@ if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 		if (session_id() && isset($_SESSION["dol_login"]) && !in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 			print 'Sorry, your application is offline.'."\n";
 			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
-			$nexturl = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
+			$nexturl = dolBuildUrl('/user/logout.php', true);
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
 			print 'Sorry, your application is offline. Only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
-			$nexturl = DOL_URL_ROOT.'/';
+			$nexturl = dolBuildUrl('/');
 			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
 		}
 		exit;
@@ -536,14 +536,23 @@ if (!defined('NOLOGIN')) {
 		if (!empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php') {  // We ask index page
 			if (empty($_SERVER['HTTP_REFERER']) || !preg_match('/public/', $_SERVER['HTTP_REFERER'])) {
 				dol_syslog("Call index page from another url than demo page (call is done from page ".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER']).")");
-				$url = '';
-				$url .= ($url ? '&' : '').($dol_hide_topmenu ? 'dol_hide_topmenu='.$dol_hide_topmenu : '');
-				$url .= ($url ? '&' : '').($dol_hide_leftmenu ? 'dol_hide_leftmenu='.$dol_hide_leftmenu : '');
-				$url .= ($url ? '&' : '').($dol_optimize_smallscreen ? 'dol_optimize_smallscreen='.$dol_optimize_smallscreen : '');
-				$url .= ($url ? '&' : '').($dol_no_mouse_hover ? 'dol_no_mouse_hover='.$dol_no_mouse_hover : '');
-				$url .= ($url ? '&' : '').($dol_use_jmobile ? 'dol_use_jmobile='.$dol_use_jmobile : '');
-				$url = DOL_URL_ROOT.'/public/demo/index.php'.($url ? '?'.$url : '');
-				header("Location: ".$url);
+				$query = [];
+				if ($dol_hide_topmenu) {
+					$query += ['dol_hide_topmenu' => $dol_hide_topmenu];
+				}
+				if ($dol_hide_leftmenu) {
+					$query += ['dol_hide_leftmenu' => $dol_hide_leftmenu];
+				}
+				if ($dol_optimize_smallscreen) {
+					$query += ['dol_optimize_smallscreen' => $dol_optimize_smallscreen];
+				}
+				if ($dol_no_mouse_hover) {
+					$query += ['dol_no_mouse_hover='.$dol_no_mouse_hover];
+				}
+				if ($dol_use_jmobile) {
+					$query += ['dol_use_jmobile='.$dol_use_jmobile];
+				}
+				header("Location: " . dolBuildUrl('/public/demo/index.php', $query));
 				exit;
 			}
 		}
@@ -840,17 +849,17 @@ if (!defined('NOLOGIN')) {
 				$error++;
 			}
 
-			$paramsurl = array();
+			$paramsurl = [];
 			if (GETPOSTINT('textbrowser')) {
-				$paramsurl[] = 'textbrowser='.GETPOSTINT('textbrowser');
+				$paramsurl += ['textbrowser' => GETPOSTINT('textbrowser')];
 			}
 			if (GETPOSTINT('nojs')) {
-				$paramsurl[] = 'nojs='.GETPOSTINT('nojs');
+				$paramsurl += ['nojs' => GETPOSTINT('nojs')];
 			}
 			if (GETPOST('lang', 'aZ09')) {
-				$paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
+				$paramsurl += ['lang' => GETPOST('lang', 'aZ09')];
 			}
-			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
+			header('Location: '.dolBuildUrl('/index.php', $paramsurl));
 			exit;
 		} else {
 			// User is loaded, we may need to change language for him according to its choice
