@@ -1206,7 +1206,8 @@ if ($action == 'create') {
 			// $objectsrc is Commande|Facture
 			$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
 			$object = $expe;
-			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
+			$object->array_options = array_merge($object->array_options, $objectsav->array_options);
+			$parameters = array('objectsrc' => isset($objectsav) ? $objectsav : '', 'cols' => '3', 'socid' => $socid);
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 			$object = $objectsav;
 
