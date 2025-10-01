@@ -202,7 +202,6 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	$conf->global->MAIN_HTML_HEADER .= $renderer->renderHead();
 
 	'@phan-var-force array{time:DebugBar\DataCollector\TimeDataCollector} $debugbar';
-	/** @var array{time:DebugBar\DataCollector\TimeDataCollector} $debugbar */
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
 }
 
