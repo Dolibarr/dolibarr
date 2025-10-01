@@ -476,7 +476,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
-	} elseif ($action == 'settags' && isModEnabled('category')) {		// Set tags
+	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {		// Set tags
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'add' && $usercancreate) {
 		// Create proposal
