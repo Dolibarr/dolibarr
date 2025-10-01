@@ -16,6 +16,11 @@ on:
     branches:
       - "18.0"
 
+
+permissions:
+  pull-requests: write
+
+  
 jobs:
   pr18:
     runs-on: ubuntu-latest
@@ -39,5 +44,4 @@ jobs:
         echo "env.url=${{env.url}}"
         gh pr edit "${{env.url}}" --add-reviewer rycks
         gh pr edit "${{env.url}}" --add-reviewer lvessiller-opendsi
-        gh pr edit "${{env.url}}" --add-reviewer eldy
-
+        #gh pr edit "${{env.url}}" --add-reviewer eldy
