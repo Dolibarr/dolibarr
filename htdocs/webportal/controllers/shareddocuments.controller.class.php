@@ -2,11 +2,11 @@
 /*
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (c) 2025       Schaffhauser sébastien      <sebastien@webmaster67.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation.
  */
+
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -23,6 +23,8 @@ require_once __DIR__ . '/abstractdocument.controller.class.php';
  */
 class SharedDocumentsController extends AbstractDocumentController
 {
+	public $sanitized_subdir = '';
+
 	/**
 	 * Check access rights for this page.
 	 *
@@ -37,7 +39,7 @@ class SharedDocumentsController extends AbstractDocumentController
 	/**
 	 * Action method is called before html output.
 	 *
-	 * @return  int     Returns > 0 on success, < 0 on error.
+	 * @return  int     <0 if KO, >0 if OK
 	 */
 	public function action()
 	{
@@ -47,8 +49,22 @@ class SharedDocumentsController extends AbstractDocumentController
 			return -1;
 		}
 
-		$langs->loadLangs(array('other', 'webportal@webportal'));
+		$current_subdir = GETPOST('subdir', 'alpha');
+        // Security: Clear the path to avoid attacks (eg: ../../)
+        if (!empty($current_subdir)) {
+            $parts = explode('/', $current_subdir);
+            $safe_parts = array();
+            foreach ($parts as $part) {
+                if ($part !== '.' && $part !== '..') {
+                    $safe_parts[] = dol_sanitizeFileName($part);
+                }
+            }
+            $this->sanitized_subdir = implode('/', $safe_parts);
+        }
+
 		$context->title = html_entity_decode($langs->trans('SharedDocuments'));
+		$context->desc = $langs->trans('ListOfSharedDocuments');
+		$context->title = $langs->trans('SharedDocuments');
 		$context->desc = $langs->trans('ListOfSharedDocuments');
 		$context->menu_active[] = 'shared_documents';
 
@@ -75,39 +91,29 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		print '<main class="container">';
 
-		// Manage the current subfolder from the URL
-		$current_subdir = GETPOST('subdir', 'alpha');
-		$sanitized_subdir = '';
-		if (!empty($current_subdir)) {
-			$parts = explode('/', $current_subdir);
-			$safe_parts = array();
-			foreach ($parts as $part) {
-				if ($part !== '.' && $part !== '..') {
-					$safe_parts[] = dol_sanitizeFileName($part);
-				}
-			}
-			$sanitized_subdir = implode('/', $safe_parts);
-		}
+		// 1. Manage the current subfolder from the class property
+		$sanitized_subdir = $this->sanitized_subdir;
 
-		// Prepare the paths
+		// 2. Prepare the paths
 		$shared_dir_name = getDolGlobalString('WEBPORTAL_SHARED_DOCS_DIR', 'Documentscomptes');
 		$base_dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
-		// The full path now includes the visited subdirectory
+        // Le chemin complet inclut maintenant le sous-dossier visité
 		$current_dir_ged_partage = $base_dir_ged_partage . '/' . $sanitized_subdir;
 
 		// 3. List ALL contents (files AND folders) of the current directory
 		$itemList = dol_dir_list($current_dir_ged_partage, 'all', 0, '', '', 'name', SORT_ASC);
-		if (is_array($itemList)) {
-			foreach ($itemList as $key => $item) {
-				// If the item is a file and its size is empty...
-				if ($item['type'] === 'file' && empty($item['size'])) {
-					$full_file_path = $current_dir_ged_partage . '/' . $item['name'];
-					// ... we recalculate its size and update the array.
-					$itemList[$key]['size'] = @filesize($full_file_path);
-				}
-			}
-		}
-		// the Breadcrumb
+			if (is_array($itemList)) {
+            foreach ($itemList as $key => $item) {
+                // If the item is a file and its size is empty...
+                if ($item['type'] === 'file' && empty($item['size'])) {
+                    $full_file_path = $current_dir_ged_partage . '/' . $item['name'];
+                    // ... on recalcule sa taille et on met à jour le tableau.
+                    // Le @ évite une erreur si le fichier est illisible.
+                    $itemList[$key]['size'] = @filesize($full_file_path);
+                }
+            }
+        }
+		// 4. Build the Breadcrumb
 		$baseUrl = $_SERVER['PHP_SELF'].'?controller=shareddocuments';
 		$breadcrumbs = '<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="'.$baseUrl.'">'.dol_htmlentities($langs->trans("Home")).'</a></li>';
 		$path_so_far = '';
@@ -122,23 +128,21 @@ class SharedDocumentsController extends AbstractDocumentController
 		// Show breadcrumbs
 		print $breadcrumbs;
 
-		// Define functions to build navigation and download links
+		// 5. Define functions to build navigation and download links
 		$linkBuilder = array(
-			/** @param array{name: string, type: string, size: int|string, date: int} $dir */
 			'dir' => function (array $dir) use ($baseUrl, $sanitized_subdir) {
 				$new_subdir = (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $dir['name'];
 				return $baseUrl . '&subdir=' . urlencode($new_subdir);
 			},
-			/** @param array{name: string, type: string, size: int|string, date: int} $file */
 			'file' => function (array $file) use ($shared_dir_name, $sanitized_subdir) {
 				$file_path = $shared_dir_name . '/' . (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $file['name'];
 				return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($file_path);
 			}
 		);
 
-		// Call the new display method
+		// 6. Call the new display method
 		$this->displayFileBrowser(
-			$langs->transnoentities('SharedDocuments'),
+			html_entity_decode($langs->trans('SharedDocuments')),
 			$itemList,
 			$langs->trans('ThisDirectoryIsEmpty'),
 			$linkBuilder
