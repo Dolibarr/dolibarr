@@ -2612,35 +2612,35 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 
 			$newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'members', 'mainmenu' => 'members']), $langs->trans("Members"), 0, $user->hasRight('adherent', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'member', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add(dolBuildUrl('/adherents/card.php', ['leftmenu' => 'members', 'action' => 'create']), $langs->trans("NewMember"), 1, $user->hasRight('adherent', 'write'));
-			$newmenu->add("/adherents/list.php?leftmenu=members", $langs->trans("List"), 1, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&statut=-1", $langs->trans("MenuMembersToValidate"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1", $langs->trans("MenuMembersValidated"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1&filter=waitingsubscription", $langs->trans("WaitingSubscription"), 3, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1&filter=uptodate", $langs->trans("UpToDate"), 3, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1&filter=outofdate", $langs->trans("OutOfDate"), 3, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&statut=0", $langs->trans("MenuMembersResiliated"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&statut=-2", $langs->trans("MenuMembersExcluded"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/stats/index.php?leftmenu=members", $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members']), $langs->trans("List"), 1, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => -1]), $langs->trans("MenuMembersToValidate"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 1]), $langs->trans("MenuMembersValidated"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 1, 'filter' => 'waitingsubscription']), $langs->trans("WaitingSubscription"), 3, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 1, 'filter' => 'uptodate']), $langs->trans("UpToDate"), 3, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 1, 'filter' => 'outofdate']), $langs->trans("OutOfDate"), 3, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 0]), $langs->trans("MenuMembersResiliated"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => -2]), $langs->trans("MenuMembersExcluded"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 
-			$newmenu->add("/adherents/cartes/carte.php?leftmenu=export", $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
+			$newmenu->add(dolBuildUrl('/adherents/cartes/carte.php', ['leftmenu' => 'export']), $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
 
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=3", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'read'), '', $mainmenu, 'cat');
+				$newmenu->add(dolBuildUrl('/categories/categorie_list.php', ['leftmenu'=> 'cat', 'type' => 3]), $langs->trans("Categories"), 1, $user->hasRight('categorie', 'read'), '', $mainmenu, 'cat');
 			}
 
-			$newmenu->add("/adherents/index.php?leftmenu=members&amp;mainmenu=members", $langs->trans("Subscriptions"), 0, $user->hasRight('adherent', 'cotisation', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=-1,1&amp;mainmenu=members", $langs->trans("NewMembership"), 1, $user->hasRight('adherent', 'cotisation', 'write'));
-			$newmenu->add("/adherents/subscription/list.php?leftmenu=members", $langs->trans("List"), 1, $user->hasRight('adherent', 'cotisation', 'read'));
-			$newmenu->add("/adherents/stats/index.php?leftmenu=members", $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'members', 'mainmenu'=> 'members']), $langs->trans("Subscriptions"), 0, $user->hasRight('adherent', 'cotisation', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => '-1,1', 'mainmenu' => 'members']), $langs->trans("NewMembership"), 1, $user->hasRight('adherent', 'cotisation', 'write'));
+			$newmenu->add(dolBuildUrl('/adherents/subscription/list.php', ['leftmenu' => 'members']), $langs->trans("List"), 1, $user->hasRight('adherent', 'cotisation', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 
-			//$newmenu->add("/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Tools"),0,$user->hasRight('adherent',  'export'), '', $mainmenu, 'export');
-			//if (isModEnabled('export') && ($usemenuhider || empty($leftmenu) || $leftmenu=="export")) $newmenu->add("/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->hasRight('adherent',  'export'));
+			//$newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'export', 'mainmenu'=>'members']),$langs->trans("Tools"),0,$user->hasRight('adherent',  'export'), '', $mainmenu, 'export');
+			//if (isModEnabled('export') && ($usemenuhider || empty($leftmenu) || $leftmenu=="export")) $newmenu->add(dolBuildurl('/exports/index.php', ['leftmenu' => 'export']),$langs->trans("Datas"),1,$user->hasRight('adherent',  'export'));
 
 			// Type
-			$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members", $langs->trans("MembersTypes"), 0, $user->hasRight('adherent', 'configurer'), '', $mainmenu, 'setup', 0, '', '', '', img_picto('', 'members', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members&action=create", $langs->trans("New"), 1, $user->hasRight('adherent', 'configurer'));
-			$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members", $langs->trans("List"), 1, $user->hasRight('adherent', 'configurer'));
+			$newmenu->add(dolBuildUrl('/adherents/type.php', ['leftmenu' => 'setup', 'mainmenu' => 'members']), $langs->trans("MembersTypes"), 0, $user->hasRight('adherent', 'configurer'), '', $mainmenu, 'setup', 0, '', '', '', img_picto('', 'members', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/adherents/type.php', ['leftmenu' => 'setup', 'mainmenu' => 'members', 'action' => 'create']), $langs->trans("New"), 1, $user->hasRight('adherent', 'configurer'));
+			$newmenu->add(dolBuildUrl('/adherents/type.php', ['leftmenu' => 'setup', 'mainmenu' => 'members']), $langs->trans("List"), 1, $user->hasRight('adherent', 'configurer'));
 		}
 	}
 }
