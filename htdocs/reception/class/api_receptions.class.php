@@ -448,6 +448,12 @@ class Receptions extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->reception->array_options[$index] = $this->_checkValForAPI($field, $val, $this->reception);
+				}
+				continue;
+			}
 			$this->reception->$field = $value;
 		}
 

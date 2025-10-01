@@ -125,6 +125,7 @@ class Conf
 	public $notification;
 	public $expensereport;
 	public $productbatch;
+	public $api;
 
 
 
@@ -257,6 +258,7 @@ class Conf
 		$this->notification = new stdClass();
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
+		$this->api = new stdClass();
 
 		// Common arrays
 		$this->cache = array();
@@ -503,6 +505,10 @@ class Conf
 			// For admin storage
 			$this->admin->dir_output = $rootfordata.'/admin';
 			$this->admin->dir_temp = $rootfortemp.'/admin/temp';
+
+			// For api storage
+			$this->api->dir_output = $rootfordata.'/api';
+			$this->api->dir_temp = $rootfortemp.'/api/temp';
 
 			// For user storage
 			$this->user->multidir_output = array($this->entity => $rootfordata."/users");

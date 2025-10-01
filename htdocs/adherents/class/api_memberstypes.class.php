@@ -193,6 +193,12 @@ class MembersTypes extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$membertype->array_options[$index] = $this->_checkValForAPI($field, $val, $membertype);
+				}
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class AdherentType.
 			$membertype->$field = $value;

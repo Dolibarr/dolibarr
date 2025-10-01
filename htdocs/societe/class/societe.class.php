@@ -889,7 +889,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
-		$this->name = $this->name ?trim($this->name) : trim($this->nom);
+		$this->name = $this->name ? trim($this->name) : trim((string) $this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client)) {
@@ -898,12 +898,12 @@ class Societe extends CommonObject
 		if (empty($this->fournisseur)) {
 			$this->fournisseur = 0;
 		}
-		$this->import_key = trim($this->import_key);
+		$this->import_key = trim((string) $this->import_key);
 
-		$this->accountancy_code_customer = trim($this->code_compta);
-		$this->accountancy_code_supplier = trim($this->code_compta_fournisseur);
-		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
-		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
+		$this->accountancy_code_customer = trim((string) $this->code_compta);
+		$this->accountancy_code_supplier = trim((string) $this->code_compta_fournisseur);
+		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
+		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
 
 		if (!empty($this->multicurrency_code)) {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
@@ -1288,34 +1288,34 @@ class Societe extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->id = $id;
-		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name = $this->name ? trim($this->name) : trim($this->nom);
-		$this->nom = $this->name; // For backward compatibility
-		$this->name_alias = trim($this->name_alias);
-		$this->ref_ext		= trim($this->ref_ext);
-		$this->address		= $this->address ?trim($this->address) : trim($this->address);
-		$this->zip = $this->zip ?trim($this->zip) : trim($this->zip);
-		$this->town = $this->town ?trim($this->town) : trim($this->town);
-		$this->state_id = trim($this->state_id);
-		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
-		$this->phone		= trim($this->phone);
+		$this->id 			= $id;
+		$this->entity 		= ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+		$this->name 		= $this->name ? trim($this->name) : trim((string) $this->nom);
+		$this->nom 			= $this->name; // For backward compatibility
+		$this->name_alias 	= trim((string) $this->name_alias);
+		$this->ref_ext		= (empty($this->ref_ext) ? '' : trim($this->ref_ext));
+		$this->address		= trim((string) $this->address);
+		$this->zip 			= trim((string) $this->zip);
+		$this->town 		= trim((string) $this->town);
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim($this->state_id) : 0;
+		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
+		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
 		$this->phone		= preg_replace("/\./", "", $this->phone);
-		$this->fax			= trim($this->fax);
+		$this->fax			= trim((string) $this->fax);
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
-		$this->email		= trim($this->email);
-		$this->url			= $this->url ?clean_url($this->url, 0) : '';
-		$this->note_private = trim($this->note_private);
-		$this->note_public  = trim($this->note_public);
-		$this->idprof1		= trim($this->idprof1);
-		$this->idprof2		= trim($this->idprof2);
-		$this->idprof3		= trim($this->idprof3);
-		$this->idprof4		= trim($this->idprof4);
-		$this->idprof5		= (!empty($this->idprof5) ?trim($this->idprof5) : '');
-		$this->idprof6		= (!empty($this->idprof6) ?trim($this->idprof6) : '');
-		$this->prefix_comm = trim($this->prefix_comm);
+		$this->email		= trim((string) $this->email);
+		$this->url			= $this->url ? clean_url($this->url, 0) : '';
+		$this->note_private = (empty($this->note_private) ? '' : trim($this->note_private));
+		$this->note_public  = (empty($this->note_public) ? '' : trim($this->note_public));
+		$this->idprof1		= trim((string) $this->idprof1);
+		$this->idprof2		= trim((string) $this->idprof2);
+		$this->idprof3		= trim((string) $this->idprof3);
+		$this->idprof4		= trim((string) $this->idprof4);
+		$this->idprof5		= (!empty($this->idprof5) ? trim($this->idprof5) : '');
+		$this->idprof6		= (!empty($this->idprof6) ? trim($this->idprof6) : '');
+		$this->prefix_comm 	= trim((string) $this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);

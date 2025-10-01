@@ -1,0 +1,21 @@
+name: "Set label for v18"
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "18.0"
+  push:
+    branches:
+      - "18.0"
+
+jobs:
+  changed-lines-count-labeler:
+    runs-on: ubuntu-latest
+    name: An action for automatically labelling pull requests based on the changed lines count
+    steps:
+    - name: Set a label
+      uses: vkirilichev/changed-lines-count-labeler@v0.2
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        configuration-path: .github/changed-lines-count-labeler.yml
+      continue-on-error: true

@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kennzeichne die verkn
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang freigegeben wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Lieferantenbestellung übereinstimmt)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang geschlossen wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Bestellung übereinstimmt)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Wareneingänge als „abgerechnet“ klassifizieren, wenn eine verknüpfte Einkaufsrechnung freigegeben wird (und wenn der Rechnungsbetrag mit dem Gesamtbetrag der verknüpften Wareneingänge übereinstimmt)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Wareneingänge als „abgerechnet“ klassifizieren, wenn eine verknüpfte Einkaufsrechnung freigegeben wird (und wenn der Rechnungsbetrag mit dem Gesamtbetrag der verknüpften Wareneingänge übereinstimmt)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Verknüpfen Sie beim Erstellen eines Tickets verfügbare Verträge passender Geschäftspartner
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Beim Verknüpfen von Verträgen unter denen der Mutterunternehmen suchen

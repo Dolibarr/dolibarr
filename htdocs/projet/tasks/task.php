@@ -65,7 +65,10 @@ if ($reshook < 0) {
 }
 
 if ($id > 0 || $ref) {
-	$object->fetch($id, $ref);
+	$ret = $object->fetch($id, $ref);
+	if ($ret > 0) {
+		$projectstatic->fetch($object->fk_project);
+	}
 }
 
 // Security check
@@ -204,14 +207,14 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$langs->load("other");
-	$upload_dir = $conf->project->dir_output;
+	$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 	$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
 
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
-		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 	}
 }
 
@@ -222,7 +225,6 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$result = $projectstatic->fetch($object->fk_project);
 
 $title = $object->ref;
 if (!empty($withproject)) {
@@ -692,7 +694,7 @@ if ($id > 0 || !empty($ref)) {
 		/*
 		 * Generated documents
 		 */
-		$filename = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$filename = '';
 		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->rights->projet->lire);

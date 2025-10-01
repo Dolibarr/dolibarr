@@ -461,6 +461,12 @@ class Tasks extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->task->array_options[$index] = $this->_checkValForAPI($field, $val, $this->task);
+				}
+				continue;
+			}
 			$this->task->$field = $value;
 		}
 

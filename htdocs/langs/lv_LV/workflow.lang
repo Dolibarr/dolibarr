@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasificēt saistīto
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Klasificēt saistītā avota pirkuma pasūtījumu kā saņemtu, kad saņemšana ir apstiprināta (un ja visu pieņemšanu saņemtais daudzums ir tāds pats kā atjaunināmajā pirkuma pasūtījumā)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Saistītā avota pirkuma pasūtījuma klasificēšana kā saņemta, kad pieņemšana ir slēgta (un ja visu pieņemšanu saņemtais daudzums ir tāds pats kā atjaunināmajā pirkuma pasūtījumā)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Klasificējiet pieņemšanas kā "rēķins", kad ir apstiprināts saistītais pirkuma rēķins (un ja rēķina summa ir tāda pati kā saistīto pieņemšanu kopējā summa)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Klasificējiet pieņemšanas kā "rēķins", kad ir apstiprināts saistītais pirkuma rēķins (un ja rēķina summa ir tāda pati kā saistīto pieņemšanu kopējā summa)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Veidojot biļeti, saistiet pieejamos atbilstošās trešās puses līgumus
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Saistot līgumus, meklējiet starp mātesuzņēmumu līgumiem

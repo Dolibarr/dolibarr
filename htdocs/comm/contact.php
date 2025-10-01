@@ -37,7 +37,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "p.name";
+	$sortfield = "p.lastname";
 }
 if ($page < 0) {
 	$page = 0;
@@ -81,7 +81,7 @@ if ($type == "f") {
  */
 
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";
-$sql .= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
+$sql .= ", p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
@@ -106,7 +106,7 @@ if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 if (!empty($search_lastname)) {
-	$sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
+	$sql .= " AND p.lastname LIKE '%".$db->escape($search_lastname)."%'";
 }
 if (!empty($search_firstname)) {
 	$sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
@@ -115,8 +115,8 @@ if (!empty($search_company)) {
 	$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 if (!empty($contactname)) { // acces a partir du module de recherche
-	$sql .= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
-	$sortfield = "p.name";
+	$sql .= " AND (p.lastname LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
+	$sortfield = "p.lastname";
 	$sortorder = "ASC";
 }
 
@@ -136,7 +136,7 @@ if ($resql) {
 
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.lastname", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Email");

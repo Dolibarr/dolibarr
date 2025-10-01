@@ -158,12 +158,13 @@ abstract class DoliDB implements Database
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
-	 * @param	string	$allowsequals		1=Allow equals sign
+	 * @param	int		$allowsequals		1=Allow equals sign
+	 * @param	int		$allowsspace		1=Allow space char
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0)
 	{
-		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').']/i', '', $stringtosanitize);
+		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
 	}
 
 	/**
