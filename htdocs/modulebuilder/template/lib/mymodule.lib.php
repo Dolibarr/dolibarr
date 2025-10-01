@@ -40,13 +40,13 @@ function mymoduleAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dolBuildUrl("/mymodule/admin/setup.php");
+	$head[$h][0] = dolBuildUrl("/mymodule/admin/setup.php", [], false, true);
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
 	/*
-	$head[$h][0] = dolBuildUrl("/mymodule/admin/myobject_extrafields.php");
+	$head[$h][0] = dolBuildUrl("/mymodule/admin/myobject_extrafields.php", [], false, true);
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = (isset($extrafields->attributes['myobject']['label']) && is_countable($extrafields->attributes['myobject']['label'])) ? count($extrafields->attributes['myobject']['label']) : 0;
 	if ($nbExtrafields > 0) {
@@ -55,7 +55,7 @@ function mymoduleAdminPrepareHead()
 	$head[$h][2] = 'myobject_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl("/mymodule/admin/myobjectline_extrafields.php");
+	$head[$h][0] = dolBuildUrl("/mymodule/admin/myobjectline_extrafields.php", [], false, true);
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = (isset($extrafields->attributes['myobjectline']['label']) && is_countable($extrafields->attributes['myobjectline']['label'])) ? count($extrafields->attributes['myobject']['label']) : 0;
 	if ($nbExtrafields > 0) {
@@ -65,7 +65,7 @@ function mymoduleAdminPrepareHead()
 	$h++;
 	*/
 
-	$head[$h][0] = dolBuildUrl("/mymodule/admin/about.php");
+	$head[$h][0] = dolBuildUrl("/mymodule/admin/about.php", [], false, true);
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'about';
 	$h++;

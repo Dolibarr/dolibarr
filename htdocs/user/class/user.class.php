@@ -3161,9 +3161,9 @@ class User extends CommonObject
 			$label = '';
 		}
 
-		$baseurl = '/user/card.php';
+		$baseurl = DOL_URL_ROOT . '/user/card.php';
 		if ($option == 'leave') {
-			$baseurl = '/holiday/list.php';
+			$baseurl = DOL_URL_ROOT . '/holiday/list.php';
 		}
 		$query = ['id' => $this->id];
 		if ($option != 'nolink') {
