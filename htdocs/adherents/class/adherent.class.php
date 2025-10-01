@@ -2546,7 +2546,7 @@ class Adherent extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$baseurl = '/adherents/card.php';
+		$baseurl = DOL_URL_ROOT . '/adherents/card.php';
 		if ($option == 'subscription') {
 			$baseurl = '/adherents/subscription.php';
 		}
