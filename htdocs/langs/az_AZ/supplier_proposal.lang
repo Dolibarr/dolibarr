@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=Qəbul edildi
 SupplierProposalStatusNotSignedShort=İmtina etdi
 CopyAskFrom=Mövcud sorğunu kopyalayaraq qiymət sorğusu yaradın
 CreateEmptyAsk=Boş sorğu yaradın
-ConfirmCloneAsk=Qiymət sorğusunu <b>%s</b> klonlamaq istədiyinizə əminsiniz?
 ConfirmReOpenAsk=Qiymət sorğusunu geri açmaq istədiyinizə əminsiniz <b>%s</b> ?
 SendAskByMail=Qiymət sorğusunu poçtla göndərin
 SendAskRef=Qiymət sorğusu göndərilir %s

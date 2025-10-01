@@ -3,6 +3,8 @@
  * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2021      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,14 +43,21 @@ if (GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha')) {
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $langs->loadLangs(array("admin", "cashdesk", "printing", "receiptprinter"));
-
-global $db;
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql .= " WHERE entity IN (".getEntity('c_paiement').")";
@@ -68,6 +77,8 @@ $terminaltouse = $terminal;
 /*
  * Actions
  */
+
+$error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
@@ -241,17 +252,17 @@ if (isModEnabled("bank")) {
 		print '<td>';
 		$service = 'StripeTest';
 		$servicestatus = 0;
-		if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+		if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 			$service = 'StripeLive';
 			$servicestatus = 1;
 		}
 		global $stripearrayofkeysbyenv;
 		$site_account = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 		\Stripe\Stripe::setApiKey($site_account);
-		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
-			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 		} else {
 			$service = 'StripeLive';
 			$servicestatus = '1';
@@ -259,9 +270,9 @@ if (isModEnabled("bank")) {
 		$stripe = new Stripe($db);
 		$stripeacc = $stripe->getStripeAccount($service);
 		if ($stripeacc) {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
+			$readers = \Stripe\Terminal\Reader::all(null, array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
 		} else {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION')));
+			$readers = \Stripe\Terminal\Reader::all(null, array("location" => getDolGlobalString('STRIPE_LOCATION')));
 		}
 
 		$reader = array();
@@ -313,7 +324,7 @@ if (isModEnabled('stock')) {
 	print '</td></tr>';
 
 
-	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
+	$disabled = getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
 	print '<tr class="oddeven"><td>';
@@ -324,7 +335,7 @@ if (isModEnabled('stock')) {
 	if (!$disabled) {
 		print '</span>';
 	}
-	if (!getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
+	if (!$disabled && !getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
 		print img_warning($langs->trans("DisableStockChange").' - '.$langs->trans("NoWarehouseDefinedForTerminal"));
 	}
 	print '</td>'; // Force warehouse (this is not a default value)
@@ -354,8 +365,79 @@ if (isModEnabled('project')) {
 	print img_picto('', 'project', 'class="pictofixedwidth"');
 	// select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '', $morefilter = '')
 	$projectid = getDolGlobalInt('CASHDESK_ID_PROJECT'.$terminaltouse);
-	print $formproject->select_projects(-1, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 1, 'maxwidth500 widthcentpercentminusxx');
+	print $formproject->select_projects(-1, (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 1, 'maxwidth500 widthcentpercentminusxx');
 	print '</td></tr>';
+}
+
+print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';
+print '<td>';
+print '<input type="text" class="width50" name="CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse).'" />';
+print '</td></tr>';
+
+// Numbering module (TODO When this is used ?)
+if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BillsNumberingModule");
+	print '<td colspan="2">';
+	$array = array(0 => $langs->trans("Default"));
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$dir = dol_buildpath($reldir."core/modules/facture/");
+		if (is_dir($dir)) {
+			$handle = opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
+						$filebis = $file;
+						$classname = preg_replace('/\.php$/', '', $file);
+						// For compatibility
+						if (!is_file($dir.$filebis)) {
+							$filebis = $file."/".$file.".modules.php";
+							$classname = "mod_facture_".$file;
+						}
+						// Check if there is a filter on country
+						$reg = array();
+						preg_match('/\-(.*)_(.*)$/', $classname, $reg);
+						if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
+							continue;
+						}
+
+						$classname = preg_replace('/\-.*$/', '', $classname);
+						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
+							// Charging the numbering class
+							require_once $dir.$filebis;
+
+							$module = new $classname($db);
+							'@phan-var-force ModeleNumRefFactures $module';
+
+							// Show modules according to features level
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+								continue;
+							}
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+								continue;
+							}
+
+							if ($module->isEnabled()) {
+								$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))] = preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
+							}
+						}
+					}
+				}
+				closedir($handle);
+			}
+		}
+	}
+	print $form->selectarray('TAKEPOS_ADDON'.$terminaltouse, $array, getDolGlobalString('TAKEPOS_ADDON'.$terminaltouse, '0'), 0);
+	print "</td></tr>\n";
+}
+
+
+// Options when using a special printer in TakePOS
+$customprinterallowed = true;
+$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
+if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
+	$customprinterallowed = false;
 }
 
 if (isModEnabled('receiptprinter')) {
@@ -372,8 +454,13 @@ if (isModEnabled('receiptprinter')) {
 	print ' <span class="opacitymedium">('.$langs->trans("MainPrinterToUseMore").')</span>';
 	print '</td>';
 	print '<td>';
-	print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
+	if (!$customprinterallowed) {
+		print '<span class="opacitymedium">'.$langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name')).'</span>';
+	} else {
+		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
+	}
 	print '</td></tr>';
+
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
 		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
 		print '<td>';
@@ -403,7 +490,11 @@ if (isModEnabled('receiptprinter') || getDolGlobalString('TAKEPOS_PRINT_METHOD')
 	print ' <span class="opacitymedium">('.$langs->trans("MainTemplateToUseMore").')</span>';
 	print ' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
 	print '<td>';
-	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1);
+	if (!$customprinterallowed) {
+		print '<span class="opacitymedium">'.$langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name')).'</span>';
+	} else {
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1);
+	}
 	print '</td></tr>';
 	if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
 		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
@@ -413,74 +504,13 @@ if (isModEnabled('receiptprinter') || getDolGlobalString('TAKEPOS_PRINT_METHOD')
 	}
 }
 
-print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';
-print '<td>';
-print '<input type="text" class="width50" name="CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse).'" />';
-print '</td></tr>';
-
-// Numbering module
-if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BillsNumberingModule");
-	print '<td colspan="2">';
-	$array = array(0 => $langs->trans("Default"));
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
-		$dir = dol_buildpath($reldir."core/modules/facture/");
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
-						$filebis = $file;
-						$classname = preg_replace('/\.php$/', '', $file);
-						// For compatibility
-						if (!is_file($dir.$filebis)) {
-							$filebis = $file."/".$file.".modules.php";
-							$classname = "mod_facture_".$file;
-						}
-						// Check if there is a filter on country
-						preg_match('/\-(.*)_(.*)$/', $classname, $reg);
-						if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
-							continue;
-						}
-
-						$classname = preg_replace('/\-.*$/', '', $classname);
-						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
-							// Charging the numbering class
-							require_once $dir.$filebis;
-
-							$module = new $classname($db);
-
-							// Show modules according to features level
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								continue;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								continue;
-							}
-
-							if ($module->isEnabled()) {
-								$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))] = preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
-							}
-						}
-					}
-				}
-				closedir($handle);
-			}
-		}
-	}
-	print $form->selectarray('TAKEPOS_ADDON'.$terminaltouse, $array, getDolGlobalString('TAKEPOS_ADDON'.$terminaltouse, '0'), 0);
-	print "</td></tr>\n";
-	print '</table>';
-	print '</div>';
-}
 
 print '</table>';
 
 print $form->buttonsSaveCancel("Save", '');
 
 print '</div>';
+
 
 // add free text on each terminal of cash desk
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);

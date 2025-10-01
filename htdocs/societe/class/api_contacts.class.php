@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,8 @@ use Luracast\Restler\RestException;
 /**
  * API class for contacts
  *
+ * @since	3.8.0	Initial implementation
+ *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -33,7 +36,7 @@ class Contacts extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'lastname',
@@ -59,14 +62,16 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a contact object
+	 * Get a contact
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int    $id                  ID of contact
-	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
-	 * @param   int    $includeroles        Includes roles of the contact
-	 * @return 	object 						data without useless information
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of contact
+	 * @param	int		$includecount		Include count of elements the contact is used as a link for
+	 * @param	int		$includeroles		Includes roles of the contact
+	 * @return	object 						Cleaned contact object
 	 *
 	 * @throws	RestException
 	 */
@@ -106,17 +111,19 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a contact object by Email
+	 * Get a contact by Email
 	 *
-	 * @param	string	$email					Email of contact
-	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
-	 * @param   int    $includeroles        Includes roles of the contact
-	 * @return	array|mixed data without useless information
+	 * @since	13.0.0		Initial implementation
+	 *
+	 * @param	string		$email			Email of contact
+	 * @param	int			$includecount	Include count of elements the contact is used as a link for
+	 * @param	int			$includeroles	Includes roles of the contact
+	 * @return	array|mixed					Cleaned contact object
 	 *
 	 * @url GET email/{email}
 	 *
-	 * @throws RestException 401     Insufficient rights
-	 * @throws RestException 404     User or group not found
+	 * @throws	RestException	401 Insufficient rights
+	 * @throws	RestException	404 User or group not found
 	 */
 	public function getByEmail($email, $includecount = 0, $includeroles = 0)
 	{
@@ -127,7 +134,7 @@ class Contacts extends DolibarrApi
 		if (empty($email)) {
 			$result = $this->contact->initAsSpecimen();
 		} else {
-			$result = $this->contact->fetch('', '', '', $email);
+			$result = $this->contact->fetch(0, null, '', $email);
 		}
 
 		if (!$result) {
@@ -158,21 +165,24 @@ class Contacts extends DolibarrApi
 	 *
 	 * Get a list of contacts
 	 *
-	 * @param string	$sortfield			Sort field
-	 * @param string	$sortorder			Sort order
-	 * @param int		$limit				Limit for list
-	 * @param int		$page				Page number
-	 * @param string	$thirdparty_ids		Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param int		$category   Use this param to filter list by category
-	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
-	 * @param int		$includeroles        Includes roles of the contact
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return Contact[]                        Array of contact objects
+	 * @since	3.8.0		Initial implementation
 	 *
-	 * @throws RestException
+	 * @param	string		$sortfield			Sort field
+	 * @param	string		$sortorder			Sort order
+	 * @param	int			$limit				Limit for list
+	 * @param	int			$page				Page number
+	 * @param	string		$thirdparty_ids		Third party ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param	int			$category			Use this param to filter list by category
+	 * @param	string		$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	int			$includecount		Include count of elements the contact is used as a link for
+	 * @param	int			$includeroles		Includes roles of the contact
+	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool		$pagination_data	If this parameter is set to true, the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	Contact[]						Array of contact objects
+	 *
+	 * @throws	RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0, $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0, $properties = '', $pagination_data = false)
 	{
 		global $db, $conf;
 
@@ -183,7 +193,7 @@ class Contacts extends DolibarrApi
 		}
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -192,12 +202,7 @@ class Contacts extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		if ($category > 0) {
-			$sql .= " FROM (".MAIN_DB_PREFIX."socpeople as t";
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c)";
-		} else {
-			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
-		}
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('contact').')';
@@ -214,8 +219,37 @@ class Contacts extends DolibarrApi
 		}
 		// Select contacts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category);
-			$sql .= " AND c.fk_socpeople = t.rowid ";
+			// Search Contact Categories
+			$searchCategoryContactList = $category ? array($category) : array();
+			// $searchCategoryContactOperator = 0;
+			// Search for tag/category ($searchCategoryContactList is an array of ID)
+			if (!empty($searchCategoryContactList)) {
+				$searchCategoryContactSqlList = array();
+				// $listofcategoryid = '';
+				foreach ($searchCategoryContactList as $searchCategoryContact) {
+					if (intval($searchCategoryContact) == -2) {
+						$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople)";
+					} elseif (intval($searchCategoryContact) > 0) {
+						// if ($searchCategoryContactOperator == 0) {
+							$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+						// } else {
+						// 	$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+						// }
+					}
+				}
+				// if ($listofcategoryid) {
+				// 	$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople AND ck.fk_categorie IN (".$this->db->sanitize($listofcategoryid)."))";
+				// }
+				// if ($searchCategoryContactOperator == 1) {
+				// 	if (!empty($searchCategoryContactSqlList)) {
+				// 		$sql .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
+				// 	}
+				// } else {
+				if (!empty($searchCategoryContactSqlList)) {
+					$sql .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
+				}
+				// }
+			}
 		}
 
 		// Add sql filters
@@ -226,6 +260,9 @@ class Contacts extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -265,17 +302,36 @@ class Contacts extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve contacts : '.$sql);
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'Contacts not found');
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
+
 		return $obj_ret;
 	}
 
 	/**
-	 * Create contact object
+	 * Create a contact
 	 *
-	 * @param   array   $request_data   Request datas
-	 * @return  int     ID of contact
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param			array	$request_data	Request data
+	 * @phan-param		?array<string,string>	$request_data
+	 * @phpstan-param	?array<string,string>	$request_data
+	 * @return			int						ID of contact
 	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
 	 */
@@ -312,11 +368,15 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Update contact
+	 * Update a contact
 	 *
-	 * @param 	int   	$id             	Id of contact to update
-	 * @param 	array 	$request_data   	Datas
-	 * @return 	Object|false				Updated object, false when issue toupdate
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param			int		$id				ID of contact to update
+	 * @param			array 	$request_data	Request data
+	 * @phan-param		?array<string,string>	$request_data
+	 * @phpstan-param	?array<string,string>	$request_data
+	 * @return			Object|false			Updated object, false when error updating contact
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -368,10 +428,14 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Delete contact
+	 * Delete a contact
 	 *
-	 * @param   int     $id Contact ID
-	 * @return  array[]
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	int		$id		Contact ID
+	 * @return	array[]
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 */
 	public function delete($id)
 	{
@@ -386,7 +450,7 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->contact->oldcopy = clone $this->contact;
+		$this->contact->oldcopy = clone $this->contact; // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
@@ -401,11 +465,15 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Create an user account object from contact (external user)
+	 * Create a user account object from contact (external user)
 	 *
-	 * @param   int		$id   Id of contact
-	 * @param   array   $request_data   Request datas
-	 * @return  int     ID of user
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of contact
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return	int		ID of user
 	 *
 	 * @url	POST {id}/createUser
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
@@ -455,15 +523,17 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Get categories for a contact
+	 * Get categories of a contact
 	 *
-	 * @param int		$id         ID of contact
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
+	 * @since	5.0.0	Initial implementation
 	 *
-	 * @return mixed
+	 * @param	int		$id				ID of contact
+	 * @param	string	$sortfield		Sort field
+	 * @param	string	$sortorder		Sort order
+	 * @param	int		$limit			Limit for list
+	 * @param	int		$page			Page number
+	 *
+	 * @return	mixed
 	 *
 	 * @url GET {id}/categories
 	 */
@@ -487,15 +557,17 @@ class Contacts extends DolibarrApi
 	/**
 	 * Add a category to a contact
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of contact
+	 * @param	int		$category_id	ID of category
+	 *
+	 * @return	mixed
+	 *
 	 * @url PUT {id}/categories/{category_id}
 	 *
-	 * @param   int		$id             Id of contact
-	 * @param   int     $category_id    Id of category
-	 *
-	 * @return  mixed
-	 *
-	 * @throws RestException 401 Insufficient rights
-	 * @throws RestException 404 Category or contact not found
+	 * @throws	RestException	401 Insufficient rights
+	 * @throws	RestException	404 Category or contact not found
 	 */
 	public function addCategory($id, $category_id)
 	{
@@ -528,14 +600,16 @@ class Contacts extends DolibarrApi
 	/**
 	 * Remove the link between a category and a contact
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of contact
+	 * @param	int		$category_id	ID of category
+	 * @return	mixed
+	 *
 	 * @url DELETE {id}/categories/{category_id}
 	 *
-	 * @param   int		$id				Id of contact
-	 * @param   int		$category_id	Id of category
-	 * @return  mixed
-	 *
-	 * @throws  RestException 401     Insufficient rights
-	 * @throws  RestException 404     Category or contact not found
+	 * @throws	RestException	401 Insufficient rights
+	 * @throws	RestException	404 Category or contact not found
 	 */
 	public function deleteCategory($id, $category_id)
 	{
@@ -567,10 +641,10 @@ class Contacts extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensible object data
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @param	Object	$object		Object to clean
+	 * @return	Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -593,9 +667,9 @@ class Contacts extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   string[]|null     $data   Data to validate
-	 * @return  string[]
-	 * @throws  RestException
+	 * @param	string[]|null	$data	Data to validate
+	 * @return	string[]
+	 * @throws	RestException
 	 */
 	private function _validate($data)
 	{

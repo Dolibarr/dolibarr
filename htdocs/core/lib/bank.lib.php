@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
- * Copyright (C) 2019	    Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2006-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
+ * Copyright (C) 2019	    Nicolas ZABOURI     	<info@inovea-conseil.com>
+ * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +34,12 @@
  * Prepare array with list of tabs
  *
  * @param   Account	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bank_prepare_head(Account $object)
 {
-	global $db, $langs, $conf;
+	global $db, $langs, $conf, $user;
+
 	$h = 0;
 	$head = array();
 
@@ -52,23 +53,44 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'journal';
 	$h++;
 
-	//    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
-	//    {
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$object->id;
-	$head[$h][1] = $langs->trans("PlannedTransactions");
-	$head[$h][2] = 'cash';
-	$h++;
-	//    }
+	if ($object->canBeConciliated() > 0) {
+		$allowautomaticconciliation = getDolGlobalBool('MAIN_ALLOW_AUTOMATIC_CONCILIATION'); // TODO
+		$titletoconciliatemanual = $langs->trans("Conciliate");
+		$titletoconciliateauto = $langs->trans("Conciliate");
+		if ($allowautomaticconciliation) {
+			$titletoconciliatemanual .= ' ('.$langs->trans("Manual").')';
+			$titletoconciliateauto .= ' ('.$langs->trans("Auto").')';
+		}
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
-	$head[$h][1] = $langs->trans("IOMonthlyReporting");
-	$head[$h][2] = 'annual';
-	$h++;
+		$param = '';
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
-	$head[$h][1] = $langs->trans("Graph");
-	$head[$h][2] = 'graph';
-	$h++;
+		// If not cash account and can be reconciliate
+		if ($user->hasRight('banque', 'consolidate')) {
+			$head[$h][0] = DOL_URL_ROOT."/compta/bank/bankentries_list.php?id=".$object->id.'&action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$object->id.$param;
+			$head[$h][1] = $titletoconciliatemanual;
+			$head[$h][2] = 'reconcile';
+			$h++;
+		}/* else {
+			$buttonreconcile = '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
+		}*/
+
+		if ($allowautomaticconciliation) {
+			// If not cash account and can be reconciliate
+			if ($user->hasRight('banque', 'consolidate')) {
+				$newparam = $param;
+				$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
+
+				$head[$h][0] = DOL_URL_ROOT."/compta/bank/bankentries_list.php?id=".$object->id.'&action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$object->id.$newparam;
+				$head[$h][1] = $titletoconciliateauto;
+				$head[$h][2] = 'reconcileauto';
+				$h++;
+
+				//$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
+			}/* else {
+				$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
+			}*/
+		}
+	}
 
 	if ($object->type != Account::TYPE_CASH || getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 		$nbReceipts = 0;
@@ -110,6 +132,16 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'document';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
+	$head[$h][1] = $langs->trans("Reports");
+	$head[$h][2] = 'annual';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$object->id;
+	$head[$h][1] = $langs->trans("PlannedTransactions");
+	$head[$h][2] = 'cash';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -125,11 +157,37 @@ function bank_prepare_head(Account $object)
 
 	return $head;
 }
+
+/**
+ * Prepare array with list of tabs for bank report
+ *
+ * @param   Account	$object		Object related to tabs
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function bank_report_prepare_head(Account $object)
+{
+	global $db, $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
+	$head[$h][1] = $langs->trans("IOMonthlyReporting");
+	$head[$h][2] = 'annual';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
+	$head[$h][1] = $langs->trans("Graph");
+	$head[$h][2] = 'graph';
+	$h++;
+
+	return $head;
+}
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   ?CommonObject	$object						Object related to tabs
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bank_admin_prepare_head($object)
 {
@@ -140,6 +198,7 @@ function bank_admin_prepare_head($object)
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
 	$extrafields->fetch_name_optionals_label('bank');
+	$extrafields->fetch_name_optionals_label('paiement');
 
 	$h = 0;
 	$head = array();
@@ -179,8 +238,16 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
+	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_payments_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("Payments").')';
+	$nbExtrafields = $extrafields->attributes['paiement']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'bank_payments_extrafields';
+	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
 
 	return $head;
 }
@@ -189,9 +256,9 @@ function bank_admin_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @param   string	$num		val to account statement
- * @return  array				Array of tabs to shoc
+ * @param   CommonObject					$object		Object related to tabs
+ * @param   string							$num		val to account statement
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function account_statement_prepare_head($object, $num)
 {
@@ -231,7 +298,7 @@ function account_statement_prepare_head($object, $num)
  * Prepare array with list of tabs
  *
  * @param   CommonObject	$object		Object related to tabs
- * @return  array						Array of tabs to shoc
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function various_payment_prepare_head($object)
 {
@@ -281,7 +348,7 @@ function various_payment_prepare_head($object)
  *      @param	?string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
  *      @return boolean                 True if information are valid, false otherwise
  */
-function checkSwiftForAccount(Account $account = null, $swift = null)
+function checkSwiftForAccount($account = null, $swift = null)
 {
 	if ($account == null && $swift == null) {
 		return false;
@@ -302,7 +369,7 @@ function checkSwiftForAccount(Account $account = null, $swift = null)
  *      @param	?string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
  *      @return boolean                 	True if information are valid, false otherwise
  */
-function checkIbanForAccount(Account $account = null, $ibantocheck = null)
+function checkIbanForAccount($account = null, $ibantocheck = null)
 {
 	if ($account == null && $ibantocheck == null) {
 		return false;
@@ -342,7 +409,7 @@ function getIbanHumanReadable(Account $account)
 /**
  * 		Check account number information for a bank account
  *
- * 		@param	Account		$account    A bank account
+ * 		@param	Account|CompanyBankAccount	$account    A bank account
  * 		@return boolean           		True if information are valid, false otherwise
  */
 function checkBanForAccount($account)
@@ -353,7 +420,7 @@ function checkBanForAccount($account)
 	// account of type CompanyBankAccount class (we use number, cle_rib)
 	// account of type Account class (we use num_compte, cle)
 	if (empty($account->number)) {
-		$account->number = $account->num_compte;
+		$account->number = $account->num_compte;  // @phan-suppress-current-line PhanUndeclaredProperty
 	}
 	if (empty($account->cle)) {
 		$account->cle = $account->cle_rib;
@@ -383,8 +450,10 @@ function checkBanForAccount($account)
 		return false;
 	}
 
-	if ($country_code == 'BE') { // Belgium rules
+	/*
+	if ($country_code == 'BE') { // Belgian rules
 	}
+	*/
 
 	if ($country_code == 'ES') { // Spanish rules
 		$CCC = strtolower(trim($account->number));

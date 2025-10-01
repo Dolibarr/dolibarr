@@ -9,3 +9,4 @@ ProductStatusNotOnBuyShort=Fuera compra
 ExportDataset_produit_1=Productos
 PriceExpressionEditorHelp2=Puede acceder a los atributos adicionales con variables como <b>#extrafield_myextrafieldkey#</b> y variables globales con <b>#global_mycode#</b>
 NbProducts=Numero de productos
+PMPValue=Valor (PMP)

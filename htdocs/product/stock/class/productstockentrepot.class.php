@@ -59,8 +59,17 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public $fk_entrepot;
 
+	/**
+	 * @var null|float|string
+	 */
 	public $seuil_stock_alerte;
+	/**
+	 * @var null|float|string
+	 */
 	public $desiredstock;
+	/**
+	 * @var string
+	 */
 	public $import_key;
 
 
@@ -235,9 +244,9 @@ class ProductStockEntrepot extends CommonObject
 	 * @param string 		$sortfield  	Sort field
 	 * @param int    		$limit      	Limit
 	 * @param int    		$offset     	Offset limit
-	 * @param string|array  $filter     	Filter USF.
+	 * @param string|array<string,mixed>	$filter		Filter USF.
 	 * @param string 		$filtermode 	Filter mode (AND or OR)
-	 * @return int|array 					Return integer <0 if KO, array if OK
+	 * @return int<-1,-1>|array<int,array{id:int,fk_product:int,fk_entrepot:int,seuil_stock_alerte:float,desiredstock:float}>		Return integer <0 if KO, array if OK
 	 */
 	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -354,7 +363,7 @@ class ProductStockEntrepot extends CommonObject
 		// Update request
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
+		$sql .= ' tms = '.(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
 		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").',';
 		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? $this->seuil_stock_alerte : "null").',';

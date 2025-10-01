@@ -20,24 +20,26 @@ CREATE TABLE llx_societe_account(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity	integer DEFAULT 1,
-	
-	login             varchar(128) NOT NULL,    -- a login string into website or external system 
+
+	login             varchar(128) NOT NULL,    -- a login string into website or external system
 	pass_encoding     varchar(24),
 	pass_crypted      varchar(128),             -- the hashed password
 	pass_temp         varchar(128),			    -- temporary password when asked for forget password
 	fk_soc            integer,                  -- if entry is linked to a thirdparty
 	fk_website        integer,					-- id of local web site (if dk_website is filled, site is empty)
 	site              varchar(128) NOT NULL,	-- name of external web site (if site is filled, fk_website is empty)
-	site_account      varchar(128),				-- a key to identify the account on external web site (for example: 'stripe', 'paypal', 'myextapp') 
+	site_account      varchar(128),				-- a key to identify the account on external web site (for example: 'stripe', 'paypal', 'myextapp')
 	key_account       varchar(128),				-- the id of an account in external web site (for site_account if site_account defined. some sites needs both an account name and a login that is different)
 	note_private      text,
 	date_last_login   datetime,
 	date_previous_login datetime,
-	date_creation datetime NOT NULL, 
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
-	status integer 
+	date_last_reset_password datetime,
+	date_creation     datetime NOT NULL,
+	tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat     integer NOT NULL,
+	fk_user_modif     integer,
+	ip                varchar(250),				-- ip of the user that add the entry (For DOS Protection)
+	import_key        varchar(14),
+	status            integer
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

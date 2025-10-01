@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +24,14 @@
  */
 
 // This script is called with a POST method or as an include.
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+'@phan-var-force ?int<0,1> $usedbyinclude';
 
 if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 	if (!defined('NOTOKENRENEWAL')) {
@@ -60,7 +70,6 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 	}
 }
 
-include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
 $hookmanager->initHooks(array('searchform'));
 
@@ -112,6 +121,9 @@ if (isModEnabled('shipping') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_SH
 if (isModEnabled('invoice') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED') && $user->hasRight('facture', 'lire')) {
 	$arrayresult['searchintoinvoice'] = array('position' => 90, 'img' => 'object_bill', 'label' => $langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'text' => img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url' => DOL_URL_ROOT.'/compta/facture/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
+if (isModEnabled('invoice') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_REC_DISABLED') && $user->hasRight('facture', 'lire')) {
+	$arrayresult['searchintoinvoicerec'] = array('position' => 90, 'img' => 'object_bill', 'label' => $langs->trans("SearchIntoCustomerInvoicesRec", $search_boxvalue), 'text' => img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoicesRec", $search_boxvalue), 'url' => DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
+}
 
 if (isModEnabled('supplier_proposal') && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED') && $user->hasRight('supplier_proposal', 'lire')) {
 	$arrayresult['searchintosupplierpropal'] = array('position' => 100, 'img' => 'object_supplier_proposal', 'label' => $langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'text' => img_picto('', 'object_supplier_proposal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url' => DOL_URL_ROOT.'/supplier_proposal/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
@@ -120,7 +132,7 @@ if (((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERM
 	$arrayresult['searchintosupplierorder'] = array('position' => 110, 'img' => 'object_supplier_order', 'label' => $langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'text' => img_picto('', 'object_supplier_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url' => DOL_URL_ROOT.'/fourn/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('reception') && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_RECEPTION_DISABLED') && $user->hasRight('reception', 'lire')) {
-	$arrayresult['searchintoreception'] = array('position'=>115, 'img'=>'object_reception', 'label'=>$langs->trans("SearchIntoSupplierReceptions", $search_boxvalue), 'text'=>img_picto('', 'object_reception', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierReceptions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/reception/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintoreception'] = array('position' => 115, 'img' => 'object_reception', 'label' => $langs->trans("SearchIntoSupplierReceptions", $search_boxvalue), 'text' => img_picto('', 'object_reception', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierReceptions", $search_boxvalue), 'url' => DOL_URL_ROOT.'/reception/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED')) {
 	$arrayresult['searchintosupplierinvoice'] = array('position' => 120, 'img' => 'object_supplier_invoice', 'label' => $langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'text' => img_picto('', 'object_supplier_invoice', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url' => DOL_URL_ROOT.'/fourn/facture/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));

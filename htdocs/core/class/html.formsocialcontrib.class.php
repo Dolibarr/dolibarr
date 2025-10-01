@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,16 +54,16 @@ class FormSocialContrib
 	 *  Return list of social contributions.
 	 *  Use mysoc->country_id or mysoc->country_code so they must be defined.
 	 *
-	 *	@param	string	$selected       Preselected type
-	 *	@param  string	$htmlname       Name of field in form
-	 * 	@param	int		$useempty		Set to 1 if we want an empty value
-	 * 	@param	int		$maxlen			Max length of text in combo box
-	 * 	@param	int		$help			Add or not the admin help picto
-	 *  @param	string	$morecss		Add more CSS on select
-	 *  @param	int		$noerrorifempty	No print error if list is empty for the country
+	 *	@param	int			$selected       Preselected type
+	 *	@param  string		$htmlname       Name of field in form
+	 * 	@param	int<0,1>	$useempty		Set to 1 if we want an empty value
+	 * 	@param	int			$maxlen			Max length of text in combo box
+	 * 	@param	int<0,1>	$help			Add or not the admin help picto
+	 *  @param	string		$morecss		Add more CSS on select
+	 *  @param	int<0,1>	$noerrorifempty	No print error if list is empty for the country
 	 * 	@return	void
 	 */
-	public function select_type_socialcontrib($selected = '', $htmlname = 'actioncode', $useempty = 0, $maxlen = 40, $help = 1, $morecss = 'minwidth300', $noerrorifempty = 0)
+	public function select_type_socialcontrib($selected = 0, $htmlname = 'actioncode', $useempty = 0, $maxlen = 40, $help = 1, $morecss = 'minwidth300', $noerrorifempty = 0)
 	{
 		// phpcs:enable
 		global $conf, $db, $langs, $user, $mysoc;

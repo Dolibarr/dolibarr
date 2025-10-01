@@ -58,24 +58,29 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->blockedlog) || empty($conf->blockedlog->enabled)) {
+		if (!isModEnabled('blockedlog')) {
 			return 0; // Module not active, we do nothing
 		}
 
+		// List of mandatory logged actions
+		$listofqualifiedelement = array('invoice', 'facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
+
+		// Add custom actions to log
+		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
+			$listofqualifiedelement = array_merge($listofqualifiedelement, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')));
+		}
+
 		// Test if event/record is qualified
-		if (!getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') || !in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')))) {
-			// If custom actions are not set or if action not into custom actions, we can exclude action if object->elementis not valid
-			$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
-			if (!is_object($object) || !property_exists($object, 'element') || !in_array($object->element, $listofqualifiedelement)) {
-				return 1;
-			}
+		// If custom actions are not set or if action not into custom actions, we can exclude action if object->element is not valid
+		if (!is_object($object) || !property_exists($object, 'element') || !in_array($object->element, $listofqualifiedelement)) {
+			return 1;
 		}
 
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
-		$b->loadTrackedEvents();
+		$b->loadTrackedEvents();			// Get the list of tracked events into $b->trackedevents
 
 		// Tracked events
 		if (!in_array($action, array_keys($b->trackedevents))) {

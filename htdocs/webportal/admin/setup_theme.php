@@ -28,10 +28,18 @@ require_once "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webportalthemesetup', 'globalsetup'));
 
 // Parameters
@@ -124,8 +132,6 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = webportalAdminPrepareHead();
 print dol_get_fiche_head($head, 'themesettings', $langs->trans($title), -1, "webportal");
 
-// Setup page goes here
-//print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

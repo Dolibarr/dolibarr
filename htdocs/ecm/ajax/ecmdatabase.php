@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Regis Houssin	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +37,27 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $element = GETPOST('element', 'alpha');
+
+$permissiontoread = $user->hasRight('ecm', 'read');
+
+$error = 0;
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -51,9 +70,7 @@ top_httphead();
 
 // Load original field value
 if (isset($action) && !empty($action)) {
-	$error = 0;
-
-	if ($action == 'build' && !empty($element)) {
+	if ($action == 'build' && !empty($element) && $permissiontoread) {
 		require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 		$ecmdirstatic = new EcmDirectory($db);
@@ -65,11 +82,13 @@ if (isset($action) && !empty($action)) {
 		$diroutputslash = str_replace('\\', '/', $conf->$element->dir_output);
 		$diroutputslash .= '/';
 
-		// Scan directory tree on disk
-		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', '', 0);
+		// Scan directory tree on disk to get list of all directories
+		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', 0, 0);
+		//dol_syslog("Found ".count($disktree)." directories on disk");
 
 		// Scan directory tree in database
 		$sqltree = $ecmdirstatic->get_full_arbo(0);
+		//dol_syslog("Found ".count($sqltree)." directories in database");
 
 		$adirwascreated = 0;
 

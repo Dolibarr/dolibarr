@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017-2020  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    core/triggers/interface_99_modZapier_ZapierTriggers.class.php
+ * \file    htdocs/core/triggers/interface_99_modZapier_ZapierTriggers.class.php
  * \ingroup zapier
  * \brief   File for Zappier Triggers.
  */
@@ -458,7 +458,6 @@ function cleanObjectDatas($toclean)
 	unset($toclean->ref_previous);
 	unset($toclean->ref_next);
 
-	unset($toclean->projet); // Should be fk_project
 	unset($toclean->project); // Should be fk_project
 	unset($toclean->author); // Should be fk_user_author
 	unset($toclean->timespent_old_duration);

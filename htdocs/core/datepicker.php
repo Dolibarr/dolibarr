@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -53,6 +54,14 @@ if (!defined('NOREQUIREHTML')) {
 
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -142,10 +151,11 @@ print '</body></html>'."\n";
  */
 function xyzToUnixTimestamp($mysqldate)
 {
-	$year = substr($mysqldate, 0, 4);
-	$month = substr($mysqldate, 4, 2);
-	$day = substr($mysqldate, 6, 2);
+	$year = (int) substr($mysqldate, 0, 4);
+	$month = (int) substr($mysqldate, 4, 2);
+	$day = (int) substr($mysqldate, 6, 2);
 	$unixtimestamp = dol_mktime(12, 0, 0, $month, $day, $year);
+
 	return $unixtimestamp;
 }
 
@@ -223,7 +233,8 @@ function displayBox($selectedDate, $month, $year)
 	//print "x ".$thedate." y";			// $thedate = first day of month
 	$firstdate = dol_getdate($thedate);
 	//var_dump($firstdateofweek);
-	$mydate = dol_get_first_day_week(1, $month, $year, true); // mydate = cursor date
+	$mydate_tmp = dol_get_first_day_week(1, $month, $year, true); // mydate = cursor date
+	$mydate = dol_getdate(dol_mktime(12, 0, 0, $mydate_tmp['first_month'], $mydate_tmp['first_day'], $mydate_tmp['first_year']));
 
 	// Loop on each day of month
 	$stoploop = 0;
@@ -231,7 +242,7 @@ function displayBox($selectedDate, $month, $year)
 	$cols = 0;
 	while (!$stoploop) {
 		//print_r($mydate);
-		if ($mydate < $firstdate) {	// At first run
+		if ($mydate[0] < $firstdate[0]) {	// At first run
 			echo "<tr class=\"dpWeek\">";
 			//echo $conf->global->MAIN_START_WEEK.' '.$firstdate["wday"].' '.$startday;
 			$cols = 0;
@@ -281,7 +292,7 @@ function displayBox($selectedDate, $month, $year)
 			$stoploop = 1;
 		} else {
 			$mydate = dol_getdate($thedate);
-			if ($firstdate["month"] != $mydate["month"]) {
+			if ($firstdate["mon"] != $mydate["mon"]) {
 				$stoploop = 1;
 			}
 		}

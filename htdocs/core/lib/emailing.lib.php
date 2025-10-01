@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * Prepare array with list of tabs
  *
  * @param   Mailing	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function emailing_prepare_head(Mailing $object)
 {
@@ -40,7 +41,7 @@ function emailing_prepare_head(Mailing $object)
 	$h++;
 
 	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mailing', 'mailing_advance', 'recipient'))) {
-		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/targetemailing.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("MailRecipients");
 		if ($object->nbemail > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$object->nbemail.'</span>';

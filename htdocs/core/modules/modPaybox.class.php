@@ -76,7 +76,7 @@ class modPaybox extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2, 6); // Minimum version of Dolibarr required by module
-		$this->langfiles = array("paybox");
+		$this->langfiles = array("stripe");
 
 		// Constants
 		$this->const = array(); // List of particular constants to add when module is enabled

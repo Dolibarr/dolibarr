@@ -46,7 +46,13 @@ class LoanSchedule extends CommonObject
 	 */
 	public $fk_loan;
 
+	/**
+	 * @var int
+	 */
 	public $bank_account;
+	/**
+	 * @var int
+	 */
 	public $bank_line;
 
 	/**
@@ -59,9 +65,21 @@ class LoanSchedule extends CommonObject
 	 */
 	public $datep;
 
+	/**
+	 * @var float[]
+	 */
 	public $amounts = array(); // Array of amounts
-	public $amount_capital; // Total amount of payment
+	/**
+	 * @var null|float|string  Total amount of payment
+	 */
+	public $amount_capital;
+	/**
+	 * @var null|float|string
+	 */
 	public $amount_insurance;
+	/**
+	 * @var null|float|string
+	 */
 	public $amount_interest;
 
 	/**
@@ -102,12 +120,19 @@ class LoanSchedule extends CommonObject
 	public $lines = array();
 
 	/**
-	 * @deprecated
+	 * @deprecated	Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $total;
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+	/**
+	 * @var string
+	 */
 	public $type_label;
 
 
@@ -333,7 +358,7 @@ class LoanSchedule extends CommonObject
 
 		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount_capital=".(isset($this->amount_capital) ? $this->amount_capital : "null").",";
 		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? $this->amount_insurance : "null").",";
@@ -565,9 +590,9 @@ class LoanSchedule extends CommonObject
 	/**
 	 *  paimenttorecord
 	 *
-	 *  @param  int        $loanid     Loan id
-	 *  @param  int        $datemax    Date max
-	 *  @return array                  Array of id
+	 *  @param  int		$loanid		Loan id
+	 *  @param  int		$datemax	Date max
+	 *  @return int[]				Array of id
 	 */
 	public function paimenttorecord($loanid, $datemax)
 	{

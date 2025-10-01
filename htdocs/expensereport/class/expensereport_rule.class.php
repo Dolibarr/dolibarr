@@ -110,7 +110,7 @@ class ExpenseReportRule extends CommonObject
 
 	/**
 	 * Attribute object linked with database
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'index' => 1, 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'position' => 10),
@@ -118,7 +118,7 @@ class ExpenseReportRule extends CommonObject
 		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'amount' => array('type' => 'double', 'label' => 'Amount', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'restrictive' => array('type' => 'integer', 'label' => 'Restrictive', 'enabled' => 1, 'visible' => -1, 'position' => 50),
-		'fk_user' => array('type' => 'integer', 'label' => 'User', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'User', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'fk_usergroup' => array('type' => 'integer', 'label' => 'Usergroup', 'enabled' => 1, 'visible' => -1, 'position' => 70),
 		'fk_c_type_fees' => array('type' => 'integer', 'label' => 'Type fees', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'code_expense_rules_type' => array('type' => 'string', 'label' => 'Expense rule code', 'enabled' => 1, 'visible' => -1, 'position' => 90),
@@ -199,7 +199,7 @@ class ExpenseReportRule extends CommonObject
 	 * @param int	     $fk_c_type_fees	type of expense
 	 * @param int|string $date			    date of expense
 	 * @param int        $fk_user		    user of expense
-	 * @return array                        Array with ExpenseReportRule
+	 * @return ExpenseReportRule[]          Array with ExpenseReportRule
 	 */
 	public function getAllRule($fk_c_type_fees = 0, $date = '', $fk_user = 0)
 	{

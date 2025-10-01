@@ -1,8 +1,9 @@
 <?php
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
- *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@ class box_last_modified_ticket extends ModeleBoxes
 {
 	public $boxcode = "box_last_modified_ticket";
 	public $boximg  = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 
@@ -57,7 +61,7 @@ class box_last_modified_ticket extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$this->max = $max;
 
@@ -75,10 +79,12 @@ class box_last_modified_ticket extends ModeleBoxes
 		);
 
 		if ($user->hasRight('ticket', 'read')) {
-			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut as status, t.type_code, t.category_code, t.severity_code, t.datec, t.tms as datem, t.date_read, t.date_close, t.origin_email ";
+			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut as status";
+			$sql .= ", t.type_code, t.category_code, t.severity_code, t.datec, GREATEST(t.tms, tef.tms) as datem, t.date_read, t.date_close, t.origin_email ";
 			$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
 			$sql .= ", s.nom as company_name, s.email as socemail, s.client, s.fournisseur";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as tef ON tef.fk_object=t.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
@@ -91,7 +97,7 @@ class box_last_modified_ticket extends ModeleBoxes
 				$sql .= " AND t.fk_soc = ".((int) $user->socid);
 			}
 
-			$sql .= " ORDER BY t.tms DESC, t.rowid DESC";
+			$sql .= " ORDER BY datem DESC, t.rowid DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			$resql = $this->db->query($sql);
@@ -112,8 +118,6 @@ class box_last_modified_ticket extends ModeleBoxes
 					$ticket->subject = $objp->subject;
 					$ticket->date_creation = $datec;
 					$ticket->date_modification = $datem;
-					//$ticket->fk_statut = $objp->status;
-					//$ticket->fk_statut = $objp->status;
 					$ticket->status = $objp->status;
 					$ticket->statut = $objp->status;
 					if ($objp->fk_soc > 0) {
@@ -175,7 +179,7 @@ class box_last_modified_ticket extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$i][0] = array(
 						'td' => '',
-						'text'=>'<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>'
+						'text' => '<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>'
 					);
 				}
 			} else {
@@ -189,13 +193,15 @@ class box_last_modified_ticket extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *     Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *     @param  array $head     Array with properties of box title
-	 *     @param  array $contents Array with properties of box lines
-	 *     @param  int   $nooutput No print, only return string
-	 *     @return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
+	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

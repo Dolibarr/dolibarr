@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +21,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/ajaxstatusprospect.php
- *       \brief      File to return Ajax response on third parties request
+ *       \file      htdocs/core/ajax/ajaxstatusprospect.php
+ *       \brief     File of service to update prospect status of a third party
+ *       			TODO Rename into updatestatusprospect.php
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -42,6 +45,14 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $idstatus = GETPOSTINT('id');
 $idprospect = GETPOSTINT('prospectid');
@@ -77,8 +88,8 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 	$response = '';
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-	$sql .= "fk_stcomm=".(int) $db->escape($idstatus);
-	$sql .= " WHERE rowid = ".(int) $db->escape($idprospect);
+	$sql .= "fk_stcomm = ".((int) $idstatus);
+	$sql .= " WHERE rowid = ".((int) $idprospect);
 
 	$resql = $db->query($sql);
 

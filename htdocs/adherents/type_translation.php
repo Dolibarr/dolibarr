@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012 Destailleur Laurent <eldy@users.sourceforge.net>
- * Copyright (C) 2014 	   Henry Florian <florian.henry@open-concept.pro>
+/* Copyright (C) 2005-2018	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2007		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2012	Destailleur Laurent			<eldy@users.sourceforge.net>
+ * Copyright (C) 2014		Henry Florian				<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('members', 'languages'));
@@ -154,10 +164,9 @@ $help_url = '';
 $shortlabel = dol_trunc($object->label, 16);
 
 $title = $langs->trans('MemberType')." ".$shortlabel." - ".$langs->trans('Translation');
-
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-type_translation');
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
@@ -213,7 +222,7 @@ if ($action == 'edit') {
 
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
-			$s = picto_from_langcode($key);
+			$s = picto_from_langcode((string) $key);
 			print '<br>';
 			print '<div class="inline-block marginbottomonly">';
 			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
@@ -240,7 +249,7 @@ if ($action == 'edit') {
 } elseif ($action != 'create') {
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
-			$s = picto_from_langcode($key);
+			$s = picto_from_langcode((string) $key);
 			print '<div class="inline-block marginbottomonly">';
 			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';

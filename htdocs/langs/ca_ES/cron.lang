@@ -77,6 +77,7 @@ CronType=Tipus de tasca
 CronType_method=Mètode de crida d'una classe PHP
 CronType_command=Ordre Shell
 CronCannotLoadClass=Impossible carregar el fitxer de la classe %s (per a utilitzar la classe %s)
+CronModuleNotEnabledInThisEntity=Mòdul Cron no habilitat en aquesta entitat (per utilitzar el mètode %s de l'objecte %s)
 CronCannotLoadObject=El "class file" %s s'ha carregat, però l'objecte %s no s'ha trobat dins d'ell
 UseMenuModuleToolsToAddCronJobs=Aneu al menú "<a href="%s"> Inici - Eines d'administració - Tasques programades </a>" per a veure i editar les tasques programades.
 JobDisabled=Tasca desactivada

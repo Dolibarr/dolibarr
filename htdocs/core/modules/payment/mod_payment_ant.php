@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -42,16 +43,21 @@ class mod_payment_ant extends ModeleNumRefPayments
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of sub-module
 	 * @deprecated
 	 * @see $name
 	 */
 	public $nom = 'Ant';
 
 	/**
-	 * @var string model name
+	 * @var string Sub-module name
 	 */
 	public $name = 'Ant';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
 
 
 	/**
@@ -73,10 +79,15 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstpayment" value="PAYMENT_ANT_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
@@ -84,9 +95,9 @@ class mod_payment_ant extends ModeleNumRefPayments
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpayment" value="'.getDolGlobalString('PAYMENT_ANT_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpayment" value="'.getDolGlobalString('PAYMENT_ANT_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -103,15 +114,15 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
-			$numExample = $langs->trans('NotConfigured');
+			$numExample = 'NotConfigured';
 		}
 		return $numExample;
 	}
@@ -120,12 +131,12 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 * 	Return next free value
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
-	 *  @param  Object			$object		Object we need next value for
-	 *  @return string|int      			Value if OK, 0 if KO
+	 *  @param  ?Paiement		$object		Object we need next value for
+	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -147,9 +158,9 @@ class mod_payment_ant extends ModeleNumRefPayments
 	/**
 	 *  Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string|0      			Next free value, 0 if KO
+	 *  @param	Societe			$objsoc     Object third party
+	 * 	@param	?Paiement		$objforref	Object for number to search
+	 *  @return string|int<-1,0>  			Next free value, <=0 if KO
 	 */
 	public function commande_get_num($objsoc, $objforref)
 	{

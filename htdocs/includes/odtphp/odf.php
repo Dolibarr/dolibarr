@@ -19,7 +19,7 @@ class OdfExceptionSegmentNotFound extends Exception
 /**
  * Templating class for odt file
  * You need PHP 5.2 at least
- * You need Zip Extension or PclZip library
+ * You need Zip Extension for ZIP_PROXY=PhpZipProxy, or PclZip library for ZIP_PROXY=PclZipProxy (bugged)
  *
  * @copyright  2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
@@ -36,21 +36,59 @@ class Odf
 		'DELIMITER_RIGHT' => '}',
 		'PATH_TO_TMP' => '/tmp'
 	);
+	/**
+	 * @var PclZipProxy|PhpZipProxy
+	 */
 	protected $file;
-	protected $contentXml;			// To store content of content.xml file
-	protected $metaXml;			    // To store content of meta.xml file
-	protected $stylesXml;			// To store content of styles.xml file
-	protected $manifestXml;			// To store content of META-INF/manifest.xml file
+
+	/**
+	 * @var string To store content of content.xml file
+	 */
+	protected $contentXml;
+
+	/**
+	 * @var string To store content of meta.xml file
+	 */
+	protected $metaXml;
+
+	/**
+	 * @var string To store content of styles.xml file
+	 */
+	protected $stylesXml;
+
+	/**
+	 * @var string To store content of META-INF/manifest.xml file
+	 */
+	protected $manifestXml;
+
+	/**
+	 * @var string
+	 */
 	protected $tmpfile;
-	protected $tmpdir='';
+
+	/**
+	 * @var string
+	 */
+	protected $tmpdir = '';
 	protected $images = array();
 	protected $vars = array();
 	protected $segments = array();
 
+	/**
+	 * @var string
+	 */
 	public $creator;
+
+	/**
+	 * @var string
+	 */
 	public $title;
+
+	/**
+	 * @var string
+	 */
 	public $subject;
-	public $userdefined=array();
+	public $userdefined = array();
 
 	const PIXEL_TO_CM = 0.026458333;
 	const FIND_TAGS_REGEX = '/<([A-Za-z0-9]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(((?!<\1(\s.*)?>).)*)<\/\1>))/s';
@@ -61,7 +99,7 @@ class Odf
 	 * Class constructor
 	 *
 	 * @param string $filename     The name of the odt file
-	 * @param string $config       Array of config data
+	 * @param array $config       Array of config data
 	 * @throws OdfException
 	 */
 	public function __construct($filename, $config = array())
@@ -87,20 +125,27 @@ class Odf
 			throw new OdfException('Temporary directory '.$this->config['PATH_TO_TMP'].' must exists');
 		}
 
-		// Create tmp direcoty (will be deleted in destructor)
+		// Create tmp direcoty (will be deleted in destructor __destruct() if code not commented)
 		if (!file_exists($this->tmpdir)) {
 			$result = mkdir($this->tmpdir);
 		}
 
+		// Fix because PclZipProxy is corrupting the zip file when updating one file inside the existing ODT file.
+		if ($this->config['ZIP_PROXY'] == 'PclZipProxy') {
+			$this->config['ZIP_PROXY'] = 'PhpZipProxy';
+		}
+
 		// Load zip proxy
 		$zipHandler = $this->config['ZIP_PROXY'];
+
 		if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $this->tmpdir);
+
 		include_once 'zip/'.$zipHandler.'.php';
 		if (! class_exists($this->config['ZIP_PROXY'])) {
 			throw new OdfException($this->config['ZIP_PROXY'] . ' class not found - check your php settings');
 		}
-		$this->file = new $zipHandler($this->tmpdir);
 
+		$this->file = new $zipHandler($this->tmpdir);
 
 		if ($this->file->open($filename) !== true) {	// This also create the tmpdir directory
 			throw new OdfException("Error while Opening the file '$filename' - Check your odt filename");
@@ -117,6 +162,7 @@ class Odf
 		if (($this->stylesXml = $this->file->getFromName('styles.xml')) === false) {
 			throw new OdfException("Nothing to parse - Check that the styles.xml file is correctly formed in source file '$filename'");
 		}
+
 		$this->file->close();
 
 
@@ -124,6 +170,8 @@ class Odf
 		//print "filename=".$filename;
 		//print "tmpfile=".$tmpfile;
 
+		// Copy the ODT file into a temporary file so we will work from a safe stable source
+		//dol_copy($filename, $this->tmpfile);
 		copy($filename, $this->tmpfile);
 
 		// Now file has been loaded, we must move the [!-- BEGIN and [!-- END tags outside the
@@ -367,6 +415,7 @@ class Odf
 
 		while (strlen($tempHtml) > 0) {
 			// Check if the string includes a html tag
+			$matches = array();
 			if (preg_match_all(self::FIND_TAGS_REGEX, $tempHtml, $matches)) {
 				$tagOffset = strpos($tempHtml, $matches[0][0]);
 				// Check if the string starts with the html tag
@@ -379,6 +428,7 @@ class Odf
 					$tempHtml = substr($tempHtml, $tagOffset);
 				}
 				// Extract the attribute data from the html tag
+				$explodedAttributes = array();
 				preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s\,\;\#]*")?)+/', $matches[2][0], $explodedAttributes);
 				$explodedAttributes = array_filter($explodedAttributes[0]);
 				$attributes = array();
@@ -489,10 +539,11 @@ class Odf
 	 *
 	 * @param string $key name of the variable within the template
 	 * @param string $value path to the picture
+	 * @param float $ratio   Ratio for image
 	 * @throws OdfException
 	 * @return odf
 	 */
-	public function setImage($key, $value)
+	public function setImage($key, $value, float $ratio=1)
 	{
 		$filename = strtok(strrchr($value, '/'), '/.');
 		$file = substr(strrchr($value, '/'), 1);
@@ -501,8 +552,8 @@ class Odf
 			throw new OdfException("Invalid image");
 		}
 		list ($width, $height) = $size;
-		$width *= self::PIXEL_TO_CM;
-		$height *= self::PIXEL_TO_CM;
+		$width *= self::PIXEL_TO_CM * $ratio;
+		$height *= self::PIXEL_TO_CM * $ratio;
 		$xml = <<<IMG
 			<draw:frame draw:style-name="fr1" draw:name="$filename" text:anchor-type="aschar" svg:width="{$width}cm" svg:height="{$height}cm" draw:z-index="3"><draw:image xlink:href="Pictures/$file" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame>
 IMG;
@@ -566,13 +617,11 @@ IMG;
 		$matches = array();
 		preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 
-		//var_dump($this->vars);exit;
 		foreach ($matches as $match) {   // For each match, if there is no entry into this->vars, we add it
 			if (! empty($match[1]) && ! isset($this->vars[$match[1]])) {
 				$this->vars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
 			}
 		}
-		//var_dump($this->vars);exit;
 
 		// Conditionals substitution
 		// Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
@@ -717,6 +766,7 @@ IMG;
 	private function _save()
 	{
 		$res=$this->file->open($this->tmpfile);    // tmpfile is odt template
+
 		$this->_parse('content');
 		$this->_parse('styles');
 		$this->_parse('meta');
@@ -727,6 +777,9 @@ IMG;
 		if (! $this->file->addFromString('content.xml', $this->contentXml)) {
 			throw new OdfException('Error during file export addFromString content');
 		}
+
+		// NOTE: After the first addFromString() that do the first $this->pclzip->delete, when using pclzip handler, the zip/oft file is corrupted (no way to edit it with Fileroller).
+
 		if (! $this->file->addFromString('meta.xml', $this->metaXml)) {
 			throw new OdfException('Error during file export addFromString meta');
 		}
@@ -796,7 +849,10 @@ IMG;
 	public function exportAsAttachedFile($name = "")
 	{
 		$this->_save();
-		if (headers_sent($filename, $linenum)) {
+
+		$filename = '';
+		$linenum = 0;
+		if (headers_sent($filename, $linenum)) {	// this fills $filename and $linenum variables
 			throw new OdfException("headers already sent ($filename at $linenum)");
 		}
 
@@ -814,11 +870,12 @@ IMG;
 	 * Convert the ODT file to PDF and export the file as attached file by HTTP
 	 * Note: you need to have JODConverter and OpenOffice or LibreOffice installed and executable on the same system as where this php script will be executed. You also need to chmod +x odt2pdf.sh
 	 *
-	 * @param 	string 	$name 	Name of ODT file to generate before generating PDF
+	 * @param 	string 	$name 					Name of ODT file to generate before generating PDF
+	 * @param	int		$dooutputfordownload	Output the file content to make the download
 	 * @throws OdfException
 	 * @return void
 	 */
-	public function exportAsAttachedPDF($name = "")
+	public function exportAsAttachedPDF($name = "", $dooutputfordownload = 1)
 	{
 		global $conf;
 
@@ -827,7 +884,7 @@ IMG;
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
 		$this->saveToDisk($name);
 
-		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
+		$execmethod = (getDolGlobalString('MAIN_EXEC_USE_POPEN') ? 2 : 1);	// 1 or 2
 		// Method 1 sometimes hang the server.
 
 
@@ -836,7 +893,8 @@ IMG;
 			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
 
 			// We delete and recreate a subdir because the soffice may have change pemrissions on it
-			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf');
+			$countdeleted = 0;
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 0, 0, $countdeleted, 0, 1);
 			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
 
 			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
@@ -920,20 +978,22 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
 
-			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
-				if (headers_sent($filename, $linenum)) {
-					throw new OdfException("headers already sent ($filename at $linenum)");
-				}
+			if ($dooutputfordownload) {
+				if (php_sapi_name() != 'cli') {    // If we are in a web context (not into CLI context)
+					if (headers_sent($filename, $linenum)) {
+						throw new OdfException("headers already sent ($filename at $linenum)");
+					}
 
-				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					$name=preg_replace('/\.od(x|t)/i', '', $name);
-					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
-					readfile($name.".pdf");
+					if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$name = preg_replace('/\.od(x|t)/i', '', $name);
+						header('Content-type: application/pdf');
+						header('Content-Disposition: attachment; filename="' . basename($name) . '.pdf"');
+						readfile($name . ".pdf");
+					}
 				}
 			}
 
-			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
+			if (getDolGlobalString('MAIN_ODT_AS_PDF_DEL_SOURCE')) {
 				unlink($name);
 			}
 		} else {
@@ -980,6 +1040,9 @@ IMG;
 	 */
 	public function __destruct()
 	{
+		// uncomment this when making debug
+		// return
+
 		if (file_exists($this->tmpfile)) {
 			unlink($this->tmpfile);
 		}

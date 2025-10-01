@@ -3,6 +3,7 @@
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,8 @@
  */
 class BankCateg // extends CommonObject
 {
-	//public $element='bank_categ';			//!< Id that identify managed objects
-	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
+	//public $element='category_bank';			//!< Id that identify managed objects
+	//public $table_element='category_bank';	//!< Name of table without prefix where object is stored
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -57,12 +58,12 @@ class BankCateg // extends CommonObject
 	public $error;
 
 	/**
-	 * @var array errors
+	 * @var string[] errors
 	 */
 	public $errors;
 
 	/**
-	 * @var array context
+	 * @var array<string,string> context
 	 */
 	public $context;
 
@@ -89,6 +90,10 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
+		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$cats = new Categorie($this->db);
+		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
+
 		$error = 0;
 
 		// Clean parameters
@@ -97,12 +102,14 @@ class BankCateg // extends CommonObject
 		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql .= "label";
 		$sql .= ", entity";
+		$sql .= ", type";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'");
 		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $catTypeID);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -115,7 +122,7 @@ class BankCateg // extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_categ");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."categorie");
 		}
 
 		// Commit or rollback
@@ -143,12 +150,16 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
+		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$cats = new Categorie($this->db);
+		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
-		$sql .= " AND t.entity = ".$conf->entity;
+		$sql .= " AND t.entity = ".$conf->entity." AND t.type = " . ((int) $catTypeID);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -171,11 +182,11 @@ class BankCateg // extends CommonObject
 	/**
 	 * Update database
 	 *
-	 * @param  User|null	$user 		User that modify
-	 * @param  int 			$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @param  ?User		$user 		User that modify
+	 * @param  int<0,1>		$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return int          	        Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf;
 		$error = 0;
@@ -189,7 +200,7 @@ class BankCateg // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie SET";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
@@ -245,7 +256,7 @@ class BankCateg // extends CommonObject
 
 		// Delete link between tag and bank lines
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline";
 			$sql .= " WHERE fk_categ = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
@@ -257,7 +268,7 @@ class BankCateg // extends CommonObject
 
 		// Delete bank categ
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
 			$sql .= " WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
@@ -332,9 +343,13 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
+		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$cats = new Categorie($this->db);
+		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
+
 		$return = array();
 
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ WHERE entity = ".$conf->entity." ORDER BY label";
+		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie WHERE entity = ".$conf->entity." AND type = ".((int) $catTypeID)." ORDER BY label";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

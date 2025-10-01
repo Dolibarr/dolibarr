@@ -23,7 +23,10 @@ AllPropals=所有報價
 SearchAProposal=搜索報價
 NoProposal=沒有報價單
 ProposalsStatistics=報價統計
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=按月數
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=每月金額（不含稅）
 NbOfProposals=報價數量
 ShowPropal=顯示報價
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1週
 AvailabilityTypeAV_2W=2週
 AvailabilityTypeAV_3W=3週
 AvailabilityTypeAV_1M=1個月
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=跟進報價代表
 TypeContact_propal_external_BILLING=客戶發票聯絡方式
 TypeContact_propal_external_CUSTOMER=客戶聯絡跟進報價
@@ -122,3 +125,5 @@ Signed=已簽署
 SignedOnly=僅限已簽署
 ExpeditionSigned=貨件已簽收
 SignExpedition=簽收貨件
+PROPOSAL_SHOW_SHIPPING_ADDRESS=顯示送貨地址
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=在某些國家（如法國）為強制性指示

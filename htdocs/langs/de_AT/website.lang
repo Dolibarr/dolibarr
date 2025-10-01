@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - website
-WebPortalInvoiceListMenu=Rechnungen
+WebPortalMemberCardTitle=Mitglied Kartei
+unitPrice=Bruttopreis (Stk.)
+contactFormMessageLabel =Nachricht

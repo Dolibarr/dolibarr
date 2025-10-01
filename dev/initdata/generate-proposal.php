@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -43,11 +44,27 @@ require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
 require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
+// Global variables
+$version = DOL_VERSION;
+
+
 /*
- * Parameters
+ * Main
  */
 
-define('GEN_NUMBER_PROPAL', $argv[1] ?? 10);
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
+
+if (empty($argv[1])) {
+	print "Usage:  $script_file  nbofrecord\n";
+	print "Usage:  $script_file  100\n";
+	print "\n";
+	exit(1);
+}
+
+define('GEN_NUMBER_PROPAL', ((int) $argv[1]) ?? 10);
+
 $year = 2016;
 $dates = array(mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),
@@ -101,12 +118,12 @@ $dates = array(mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 12, 13, $year),
 );
 
-$ret=$user->fetch('', 'admin');
+$ret = $user->fetch('', 'admin');
 if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 $socids = array();
@@ -170,7 +187,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0) {
 
 	$fuser = new User($db);
 	$fuser->fetch(mt_rand(1, 2));
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$object->contactid = $contids[$socids[$socid]][0];
 	$object->socid = $socids[$socid];

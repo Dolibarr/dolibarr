@@ -1,8 +1,36 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+}
+include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+
+/**
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinepair1
+ * @var string $colortextbackhmenu
+ * @var string $colortextlink
+ * @var int<0,1> $disableimages
+ * @var string $left
+ * @var string $right
+ */
+'
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colortextbackhmenu
+@phan-var-force string $colortextlink
+@phan-var-force int<0,1> $disableimages
+@phan-var-force string $left
+@phan-var-force string $right
+';
+
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+$WIDTHMENUDROPDOWN = 370;
+?>
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */
@@ -21,8 +49,9 @@ button.dropdown-item.global-search-item {
 }
 
 #topmenu-bookmark-dropdown .dropdown-menu {
-	min-width: 360px;
-	max-width: 400px;
+	min-width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
+	max-width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
+	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 }
 
 
@@ -46,7 +75,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-bookmark {
@@ -69,7 +97,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-quickadd {
@@ -92,7 +119,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-menu {
@@ -105,14 +131,13 @@ button.dropdown-item.global-search-item {
 	min-width: 160px;
 	margin: 2px 0 0;
 	font-size: 14px;
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	list-style: none;
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
-	border: 1px solid rgba(0,0,0,.15);
+	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
@@ -123,9 +148,6 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	padding-right: 5px;
-}
 div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	display: none;
 }
@@ -168,7 +190,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
 	position: absolute;
-	right: 2px;
+	right: 1px;
 	<?php echo $left; ?>: auto;
 	line-height:1.3em;
 }
@@ -183,9 +205,8 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 	border-top-right-radius: 0;
 	border-top-left-radius: 0;
 	padding: 0 0 0 0;
-	margin-top: 2px !important;
 	border-top-width: 0;
-	width: 360px;
+	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 }
 .topnav .user-menu .dropdown-menu {
 	top: 50px;
@@ -204,7 +225,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 
 #topmenu-global-search-dropdown .dropdown-menu{
-	width: 300px;
+	width: 310px;
 	max-width: 100%;
 }
 
@@ -231,11 +252,14 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: var(--colorbackhmenu1);
+	/* background: var(--colorbackhmenu1);
+	color: var(--colortextbackhmenu); */
+	background: #f9f9f9;
+	color: #000;
 }
 
 .dropdown-menu .dropdown-header{
-	padding: 8px 8px 8px 8px;
+	padding: 8px 12px 8px 16px;
 }
 
 .dropdown-menu > .user-footer {
@@ -270,7 +294,7 @@ a.top-menu-dropdown-link {
 	white-space: normal;
 }
 #topmenu-quickadd-dropdown .dropdown-menu > .bookmark-body, #topmenu-quickadd-dropdown .dropdown-body,
-#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
+#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body {
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
 }
@@ -292,7 +316,11 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-global-search-dropdown,
+#topmenu-quickadd-dropdown,
+#topmenu-bookmark-dropdown,
+#topmenu-uploadfile-dropdown,
+#topmenu-login-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -335,14 +363,11 @@ a.dropdown-item {
 	user-select: none;
 	background-image: none;
 	border: 1px solid transparent;
-	border-radius: 4px;
+	border-radius: 3px;
 }
 
 .user-footer .button-top-menu-dropdown {
 	color: #666666;
-	border-radius: 0;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	border-width: 1px;
 	background-color: #f4f4f4;
@@ -351,8 +376,6 @@ a.dropdown-item {
 
 .dropdown-menu a.top-menu-dropdown-link {
 	color: rgb(<?php print $colortextlink; ?>) !important;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	display: block;
 	margin: 5px 0px;
@@ -369,11 +392,17 @@ a.dropdown-item {
 	text-align: inherit;
 	background-color: transparent;
 	border: 0;
-
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 }
+.dropdown-item.bookmark-item {
+	padding-left: 0;
+	padding-right: 0;
+}
+.dropdown-item.bookmark-item:before {
+	width: 20px;
+	padding-left: 2px;
+}
+
 
 .dropdown-item::before {
 	/* font part */
@@ -404,56 +433,17 @@ a.dropdown-item {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
+
 /*
- * SEARCH
+ * SELECT FIELDS
  */
 
-.dropdown-search-input {
-	width: 100%;
-	padding: 10px 35px 10px 20px;
-
-	background-color: transparent;
-	/*font-size: 14px;
-	line-height: 16px;*/
-	box-sizing: border-box;
-
-	color: #575756;
-	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
-	background-repeat: no-repeat;
-	background-size: 16px 16px;
-	background-position: 95% center;
-	border-radius: 20px;
-	border: 1px solid #c4c4c2 !important;
-	transition: all 250ms ease-in-out;
-	backface-visibility: hidden;
-	transform-style: preserve-3d;
-}
-
-.dropdown-search-input::placeholder {
-	color: color(#575756);
-	letter-spacing: 1.5px;
-}
-
-.hidden-search-result{
-	display: none !important;
-}
-
-.search-dropdown-body {
-	padding: unset;
-}
-
-.global-search-item {
-	font-size: 1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
-}
-
-.global-search-item:before {
-	content: none;
-}
-
-.global-search-header {
-	color: #444 !important;
+li.liinputsearch {
+	position: sticky;
+	display: block;
+	top: 0;
+	background: var(--colorbackbody);
+	z-index: 1;
 }
 
 
@@ -463,18 +453,18 @@ a.dropdown-item {
  */
 
 #topmenu-quickadd-dropdown .dropdown-menu {
-	width: 310px !important;
+	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 	color: #444;
 }
 
 .quickadd-body.dropdown-body {
 	padding: unset;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .quickadd-item {
-	font-size: 1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
+	font-size: 1.1em;
 }
 
 .quickadd-item:before {
@@ -522,12 +512,12 @@ div.quickaddblock {
 div.quickaddblock:hover,
 div.quickaddblock:active,
 div.quickaddblock:focus {
-	background: <?php print $colorbacklinepair1; ?>;
+	background: <?php print "#".colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
 
 /* for the dropdown on action buttons */
-dropdown-holder {
+.dropdown-holder {
 	position: relative;
 	display: inline-block;
 }
@@ -535,13 +525,31 @@ dropdown-holder {
 .dropdown-content {
 	display: none;
 	position: absolute;
-	z-index: 1;
+	z-index: 5;
 	width: 300px;
-	right:10px;	/* will be set with js */
+	right:0;	/* will be set with js */
+	bottom: 0;
+	transform: translateY(100%);
+
 	background: #fff;
 	border: 1px solid #bbb;
-	text-align: <?php echo $left; ?>
+	text-align: <?php echo $left; ?>;
+	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 }
+
+/* dropdown --up variant */
+.dropdown-holder.--up .dropdown-content{
+	bottom: auto;
+	top: 0;
+	transform: translateY(-100%);
+}
+
+/* dropdown --left variant */
+.dropdown-holder.--left .dropdown-content{
+	right: auto;
+	left: 12px;
+}
+
 
 .dropdown-content a {
 	margin-right: auto !important;
@@ -549,15 +557,31 @@ dropdown-holder {
 }
 .dropdown-content .butAction {
 	background: none;
-	color: #000 !important;
+	color: #333 !important;
 }
-.dropdown-content a.butAction {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
+	border-radius: 0;
 }
+
 .dropdown-content .butAction:hover {
 	box-shadow: none;
-	text-decoration: underline;
+	background-color: var(--butactionbg);
+	color: var(--textbutaction) !important;
+	text-decoration: none;
 }
+
+.dropdown-content .butActionDelete{
+	background-color: transparent !important;
+	color: #633 !important;
+}
+.dropdown-content .butActionDelete:hover {
+	box-shadow: none;
+	background-color: var(--butactiondeletebg) !important;
+	color: #633 !important;
+	text-decoration: none;
+}
+
 .dropdown-content .butActionRefused {
 	margin-left: 0;
 	margin-right: 0;
@@ -568,12 +592,43 @@ dropdown-holder {
 	display: block;
 }
 
+/** dropdown arrow used to clearly identify parent button of dropdown*/
+.dropdown-holder.open .dropdown-content::before {
+	--triangleBorderSize : 5px;
+	position: absolute;
+	content: "";
+	top: calc(var(--triangleBorderSize) * -1);
+	right: 12px;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	border-color: transparent transparent #ffff transparent;
+	transform: rotate(0deg);
+}
 
+/* dropdown --up variant*/
+.dropdown-holder.--up.open .dropdown-content::before{
+	top: auto;
+	bottom: calc(var(--triangleBorderSize) * -1);
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	transform: rotate(180deg);
+}
+
+/* dropdown --left variant*/
+.dropdown-holder.--left.open .dropdown-content::before{
+	right: auto;
+	left: 12px;
+}
+
+.dropdown-search-input {
+	border-radius: <?php print $borderradius; ?>px;
+}
 
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
-	.dropdown-search-input {
+	.dropdown-search-input,.search-tool-input {
 		width: 100%;
 	}
 
@@ -582,11 +637,7 @@ dropdown-holder {
 		right: 0;
 	}
 
-	#topmenu-quickadd-dropdown .dropdown-menu {
-		min-width: 220px;
-		max-width: 270px;
-	}
-	#topmenu-bookmark-dropdown .dropdown-menu {
+	#topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
 		min-width: 220px;
 		max-width: 360px;
 	}
@@ -594,10 +645,10 @@ dropdown-holder {
 	.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 		width: 300px;
 	}
-	.dropdown-menu {
+	.dropdown-menu:not(.ai_dropdown) {
 		border: none;
-		-webkit-box-shadow: none;
 		box-shadow: none;
+		border-bottom: 1px solid #888;
 	}
 
 }

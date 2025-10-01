@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,10 +32,13 @@ class mod_expedition_safor extends ModelNumRefExpedition
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'SH';
 
 	/**
@@ -121,7 +124,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@param	Societe		$objsoc     Third party object
 	 *	@param	Expedition	$shipment	Shipment object
-	 *	@return string|-1      			Value if OK, -1 if KO
+	 *	@return string|int<-1,0> 		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $shipment)
 	{

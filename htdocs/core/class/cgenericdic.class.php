@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,15 +48,15 @@ class CGenericDic extends CommonDict
 	 */
 	public $lines = array();
 
+	/**
+	 * @var string
+	 */
 	public $code;
 
 	/**
 	 * @var string Label
 	 */
 	public $label;
-
-	public $active;
-
 
 	/**
 	 * Constructor
@@ -344,9 +344,9 @@ class CGenericDic extends CommonDict
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
 		$sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
-		$sql .= " ".$fieldlabel." = ".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
+		$sql .= " ".$this->db->sanitize($fieldlabel)." = ".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= " active = ".(isset($this->active) ? $this->active : "null");
-		$sql .= " WHERE ".$fieldrowid." = ".((int) $this->id);
+		$sql .= " WHERE ".$this->db->sanitize($fieldrowid)." = ".((int) $this->id);
 
 		$this->db->begin();
 

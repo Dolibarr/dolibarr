@@ -5,6 +5,8 @@
  * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +28,21 @@
  *    \brief      Page to manage Bank Categories
  */
 
+// TODO Remove this file, this page is replaced by standard view categorie page
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
@@ -44,7 +55,7 @@ $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $bankcateg = new BankCateg($db);
 
 
@@ -70,7 +81,7 @@ if (GETPOST('add')) {
 if ($categid) {
 	$bankcateg = new BankCateg($db);
 
-	if ($bankcateg->fetch($categid) > 0) {
+	if ($bankcateg->fetch((int) $categid) > 0) {
 		//Update category
 		if (GETPOST('update') && $label) {
 			$bankcateg->label = $label;
@@ -126,10 +137,14 @@ if ($action != 'edit') {
 	print '</tr>';
 }
 
+// Get bank line categorie ID
+include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+$cats = new Categorie($db);
+$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
 
 $sql = "SELECT rowid, label";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ";
-$sql .= " WHERE entity = ".$conf->entity;
+$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
+$sql .= " WHERE entity = ".$conf->entity." AND type = " . ((int) $catTypeID);
 $sql .= " ORDER BY rowid";
 
 $result = $db->query($sql);

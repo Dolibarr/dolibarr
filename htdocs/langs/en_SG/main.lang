@@ -25,9 +25,9 @@ TotalTTC=Total (incl GST)
 TotalVAT=Total GST
 HT=Excl GST
 TTC=Incl GST
-INCVATONLY=Incl GST
+INCVATONLY=Inc. GST
 VAT=GST
 VATs=GST
 VATRate=GST Rate
 VATCode=GST Rate
-SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <=, >= or != before the value to filter using a mathematical comparison
+ContactDefault_commande=Sales Order

@@ -78,7 +78,7 @@ class PaymentLoan extends CommonObject
 	public $amount_insurance;
 
 	/**
-	 * @var float|int
+	 * @var null|float|int
 	 */
 	public $amount_interest;
 
@@ -116,6 +116,9 @@ class PaymentLoan extends CommonObject
 	 * @var string
 	 */
 	public $type_label;
+	/**
+	 * @var int
+	 */
 	public $chid;
 	/**
 	 * @var string
@@ -157,8 +160,6 @@ class PaymentLoan extends CommonObject
 	 */
 	public function create($user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -255,7 +256,6 @@ class PaymentLoan extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.fk_loan,";
@@ -328,7 +328,6 @@ class PaymentLoan extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -372,7 +371,7 @@ class PaymentLoan extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET";
 		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount_capital=".(isset($this->amount_capital) ? $this->amount_capital : "null").",";
 		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? $this->amount_insurance : "null").",";
@@ -514,8 +513,6 @@ class PaymentLoan extends CommonObject
 	 */
 	public function addPaymentToBank($user, $fk_loan, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $conf;
-
 		$error = 0;
 		$this->db->begin();
 
@@ -537,7 +534,7 @@ class PaymentLoan extends CommonObject
 				$label,
 				$total,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque
@@ -628,7 +625,7 @@ class PaymentLoan extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with eventually a picto)
+	 *  Return clickable name (with eventually a picto)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=No picto
 	 * 	@param	int		$maxlen						Max length label

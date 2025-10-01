@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ abstract class DolibarrTriggers
 
 	/**
 	 * Version of the trigger
-	 * @var string
+	 * @var ''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version;
 
@@ -67,7 +68,7 @@ abstract class DolibarrTriggers
 
 	/**
 	 * Errors reported by the trigger
-	 * @var array
+	 * @var string[]
 	 */
 	public $errors;
 
@@ -93,7 +94,7 @@ abstract class DolibarrTriggers
 	const VERSION_DOLIBARR = 'dolibarr';
 
 	/**
-	 * @var array dictionary of possible module states
+	 * @var array<string,string> dictionary of possible module states
 	 */
 	const VERSIONS = [
 		'dev' => 'development',

@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
 /**
  * Create a redirect form to paybox form
  *
- * @param	int   	$PRICE		Price
+ * @param	float  	$PRICE		Price
  * @param   string	$CURRENCY	Currency
  * @param   string	$EMAIL		EMail
  * @param   string	$urlok		Url to go back if payment is OK
@@ -65,10 +66,10 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	}
 
 	$URLPAYBOX = "";
-	if ($conf->global->PAYBOX_CGI_URL_V1) {
+	if (getDolGlobalString('PAYBOX_CGI_URL_V1')) {
 		$URLPAYBOX = getDolGlobalString('PAYBOX_CGI_URL_V1');
 	}
-	if ($conf->global->PAYBOX_CGI_URL_V2) {
+	if (getDolGlobalString('PAYBOX_CGI_URL_V2')) {
 		$URLPAYBOX = getDolGlobalString('PAYBOX_CGI_URL_V2');
 	}
 

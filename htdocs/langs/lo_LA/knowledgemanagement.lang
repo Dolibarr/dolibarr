@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = ລະບົບການຈັດການຄວາມຮູ້
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=ຈັດການການຈັດການຄວາມຮູ້ (KM) ຫຼືພື້ນຖານ Help-Desk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = ການຕັ້ງຄ່າລະບົບການຈັດການຄວາມຮູ້
 KnowledgeManagementSetupPage = ໜ້າ ຕິດຕັ້ງລະບົບການຈັດການຄວາມຮູ້
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = ກ່ຽວກັບການຈັດການຄວາມຮູ້
 KnowledgeManagementAboutPage = ການຈັດການຄວາມຮູ້ກ່ຽວກັບ ໜ້າ
-
 KnowledgeManagementArea = ການຈັດການຄວາມຮູ້
 MenuKnowledgeRecord = ພື້ນຖານຄວາມຮູ້
 MenuKnowledgeRecordShort = ພື້ນຖານຄວາມຮູ້
@@ -46,8 +33,7 @@ KnowledgeRecord = ມາດຕາ
 KnowledgeRecordExtraFields = Extrafields ສໍາລັບບົດຄວາມ
 GroupOfTicket=ກຸ່ມຂອງປີ້
 YouCanLinkArticleToATicketCategory=ທ່ານ​ສາ​ມາດ​ເຊື່ອມ​ຕໍ່​ບົດ​ຄວາມ​ກັບ​ກຸ່ມ​ປີ້ (ສະ​ນັ້ນ​ບົດ​ຄວາມ​ຈະ​ໄດ້​ຮັບ​ການ​ເນັ້ນ​ໃສ່​ໃນ​ປີ້​ໃດ​ຫນຶ່ງ​ໃນ​ກຸ່ມ​ນີ້​)
-SuggestedForTicketsInGroup=ແນະນຳໃນການສ້າງປີ້
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=ຕັ້ງເປັນລ້າສະໄຫມ
 ConfirmCloseKM=ເຈົ້າຢືນຢັນການປິດບົດຄວາມນີ້ວ່າລ້າສະໄໝບໍ?
 ConfirmReopenKM=ທ່ານ​ຕ້ອງ​ການ​ທີ່​ຈະ​ຟື້ນ​ຟູ​ບົດ​ຄວາມ​ນີ້​ກັບ​ສະ​ຖາ​ນະ "Validated​"​?

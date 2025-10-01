@@ -71,7 +71,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->eventorganization) || empty($conf->eventorganization->enabled)) {
+		if (!isModEnabled('eventorganization')) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -95,6 +95,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 						if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
 							require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
 							$modTask = new $classnamemodtask();
+							'@phan-var-force ModeleNumRefTask $modTask';
 							$defaultref = $modTask->getNextValue($object->thirdparty, $task);
 						}
 						if (is_numeric($defaultref) && $defaultref <= 0) {

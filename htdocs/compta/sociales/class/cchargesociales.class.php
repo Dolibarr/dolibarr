@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2016       Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +28,21 @@
 
 // Put here all includes required by your class file
 //require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
 
 /**
  * Class Cchargesociales
  */
 class Cchargesociales
 {
+	/**
+	 * @var DoliDB
+	 */
 	public $db;
 
+	/**
+	 * @var int
+	 */
 	public $id;
 
 	/**
@@ -51,7 +57,7 @@ class Cchargesociales
 
 	/**
 	 * @var string Label
-	 * @deprecated
+	 * @deprecated Use $label
 	 */
 	public $libelle;
 
@@ -60,12 +66,21 @@ class Cchargesociales
 	 */
 	public $label;
 
+	/**
+	 * @var string
+	 */
 	public $deductible;
+	/**
+	 * @var ?int<0,1>
+	 */
 	public $active;
+	/**
+	 * @var string
+	 */
 	public $code;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_pays;
 
@@ -73,10 +88,13 @@ class Cchargesociales
 	 * @var string module
 	 */
 	public $module;
+	/**
+	 * @var string
+	 */
 	public $accountancy_code;
 
 	/**
-	 * @var array array of errors
+	 * @var string[] array of errors
 	 */
 	public $errors = array();
 
@@ -108,13 +126,17 @@ class Cchargesociales
 			array(
 				'libelle',
 				'deductible',
-				'active',
 				'code',
-				'fk_pays',
 				'module',
 				'accountancy_code',
 			)
 		);
+		if (isset($this->fk_pays)) {
+			$this->fk_pays = (int) $this->fk_pays;
+		}
+		if (isset($this->active)) {
+			$this->active = (int) $this->active;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -131,7 +153,7 @@ class Cchargesociales
 		$sql .= ') VALUES (';
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(!isset($this->deductible) ? 'NULL' : $this->deductible).',';
-		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active).',';
+		$sql .= ' ' . (int) $this->active . ',';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->fk_pays) ? 'NULL' : $this->fk_pays).',';
 		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'").',';
@@ -151,13 +173,13 @@ class Cchargesociales
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
+			//// Call triggers
+			//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//if ($result < 0) $error++;
+			//// End call triggers
 			//}
 		}
 
@@ -252,14 +274,17 @@ class Cchargesociales
 			array(
 				'libelle',
 				'deductible',
-				'active',
 				'code',
-				'fk_pays',
 				'module',
 				'accountancy_code',
 			)
 		);
-
+		if (isset($this->fk_pays)) {
+			$this->fk_pays = (int) $this->fk_pays;
+		}
+		if (isset($this->active)) {
+			$this->active = (int) $this->active;
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -523,7 +548,7 @@ class Cchargesociales
 		$this->libelle = '';
 		$this->label = '';
 		$this->deductible = '';
-		$this->active = '';
+		$this->active = 0;
 		$this->code = '';
 		$this->fk_pays = 0;
 		$this->module = '';

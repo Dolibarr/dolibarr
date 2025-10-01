@@ -32,6 +32,7 @@ CheckToForceHttps=Marque esta opción para forzar conexiones seguras (https). <b
 DatabaseType=Tipo de base de datos
 ServerAddressDescription=Nombre o dirección IP para el servidor de base de datos. Normalmente, 'localhost' cuando el servidor de la base de datos está alojado en el mismo servidor que el servidor web.
 ServerPortDescription=Puerto del servidor de base de datos. Manténgase vacío si es desconocido.
+DatabaseServer=Servidor de base de datos
 DatabasePrefix=Prefijo de tabla de base de datos
 AdminLogin=Cuenta de usuario para el propietario de la base de datos Dolibarr.
 AdminPassword=Contraseña para el propietario de la base de datos de Dolibarr.

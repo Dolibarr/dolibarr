@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  *  Return array head with list of tabs to view object information
  *
  *  @param	Object	$object         Holiday
- *  @return array           		head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function holiday_prepare_head($object)
 {
@@ -43,7 +44,7 @@ function holiday_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->holiday->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
@@ -76,7 +77,7 @@ function holiday_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object information
  *
- *  @return array           		head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function holiday_admin_prepare_head()
 {

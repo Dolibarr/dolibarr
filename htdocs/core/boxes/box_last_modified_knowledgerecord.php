@@ -1,8 +1,9 @@
 <?php
 /*
- * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public $boxlabel;
 
 	/**
-	 * @var array box dependencies
+	 * @var string[] box dependencies
 	 */
 	public $depends = array("knowledgemanagement");
 
@@ -90,17 +91,18 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 		);
 
 		if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-			$sql = 'SELECT k.rowid as id, k.date_creation, k.ref, k.lang, k.question, k.status as status';
+			$sql = 'SELECT k.rowid as id, k.date_creation, GREATEST(k.tms, kef.tms) as date_modification, k.ref, k.lang, k.question, k.status as status';
 			$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord_extrafields as kef ON kef.fk_object = k.rowid";
 			$sql .= " WHERE k.entity IN (".getEntity('knowledgemanagement').")";
 
 			if ($user->socid) {
 				$sql .= " AND k.fk_soc= ".((int) $user->socid);
 			}
 
-			$sql.= " AND k.status > 0";
+			$sql .= " AND k.status > 0";
 
-			$sql .= " ORDER BY k.tms DESC, k.rowid DESC ";
+			$sql .= " ORDER BY date_modification DESC, k.rowid DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
 			$resql = $this->db->query($sql);
@@ -113,10 +115,12 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 					$objp = $this->db->fetch_object($resql);
 
 					$datec = $this->db->jdate($objp->date_creation);
+					$datem = $this->db->jdate($objp->date_modification);
 
 					$knowledgerecord = new KnowledgeRecord($this->db);
 					$knowledgerecord->id = $objp->id;
 					$knowledgerecord->date_creation = $objp->date_creation;
+					$knowledgerecord->date_modification = $objp->date_modification;
 					$knowledgerecord->ref = $objp->ref;
 					$knowledgerecord->status = $objp->status;
 					$knowledgerecord->question = $objp->question;
@@ -150,8 +154,8 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateCreation").': '.dol_print_date($datec, 'dayhour', 'tzuserrel')).'"',
-						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'dayhour', 'tzuserrel'),
 					);
 					$r++;
 
@@ -182,13 +186,15 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *     Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *     @param  array $head     Array with properties of box title
-	 *     @param  array $contents Array with properties of box lines
-	 *     @param  int   $nooutput No print, only return string
-	 *     @return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
+	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

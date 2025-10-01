@@ -5,7 +5,7 @@
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2020       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("categories");
 
@@ -54,9 +62,17 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
 $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
-$position = GETPOSTINT('position');
+$position = GETPOSTISSET('position') ? GETPOSTINT('position') : 1;
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
+
+$idProdOrigin = 0;
+$idSupplierOrigin = 0;
+$idCompanyOrigin = 0;
+$idMemberOrigin = 0;
+$idContactOrigin = 0;
+$idProjectOrigin = 0;
+$idProdOrigin = 0;
 
 if ($origin) {
 	if ($type == Categorie::TYPE_PRODUCT) {
@@ -91,7 +107,7 @@ $object = new Categorie($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
 $error = 0;
@@ -138,7 +154,7 @@ if (empty($reshook)) {
 				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 				exit;
 			} else {
-				header("Location: ".DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
+				header("Location: ".DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type);
 				exit;
 			}
 		}
@@ -239,7 +255,7 @@ if ($user->hasRight('categorie', 'creer')) {
 			print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 		}
 
-		print load_fiche_titre($langs->trans("CreateCat"));
+		print load_fiche_titre($langs->trans("CreateCat"), '', 'category');
 
 		print dol_get_fiche_head();
 
@@ -247,7 +263,8 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		// Ref
 		print '<tr>';
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="minwidth100" name="label" value="'.dol_escape_htmltag($label).'">';
+		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td>';
+		print '<td><input id="label" class="minwidth100" name="label" value="'.dol_escape_htmltag($label).'" placeholder="'.$langs->trans("MyTag").'">';
 		print'</td></tr>';
 
 		// Description
@@ -267,12 +284,16 @@ if ($user->hasRight('categorie', 'creer')) {
 		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" type="number" class="minwidth50 maxwidth50" name="position" value="'.$position.'">';
 		print'</td></tr>';
 
+		$htmlselect = $form->select_all_categories($type, $parent, 'parent');
+
 		// Parent category
-		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-		print img_picto($langs->trans("ParentCategory"), 'category', 'class="pictofixedwidth"');
-		print $form->select_all_categories($type, $parent, 'parent');
-		print ajax_combobox('parent');
-		print '</td></tr>';
+		if ($form->num > 0) {
+			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+			print img_picto($langs->trans("ParentCategory"), 'category', 'class="pictofixedwidth"');
+			print $htmlselect;
+			print ajax_combobox('parent');
+			print '</td></tr>';
+		}
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

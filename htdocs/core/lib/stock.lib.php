@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function stock_prepare_head($object)
 {
@@ -54,8 +55,7 @@ function stock_prepare_head($object)
 	*/
 
 	/* Disabled because will never be implemented. Table always empty.
-	if (!empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
-	{
+	if (getDolGlobalString('STOCK_USE_WAREHOUSE_BY_USER')) {
 		// Should not be enabled by default because does not work yet correctly because
 		// personal stocks are not tagged into table llx_entrepot
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$object->id;
@@ -86,7 +86,7 @@ function stock_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function stock_admin_prepare_head()
 {

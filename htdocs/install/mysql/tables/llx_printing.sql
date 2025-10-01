@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2013   Florian HENRY     <florian.henry@open-concept.pro>
--- Copyright (C) 2014   Frederic France   <frederic.france@free.fr>
+-- Copyright (C) 2014   Frédéric France   <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 --
 -- ============================================================================
 
-CREATE TABLE llx_printing 
+CREATE TABLE llx_printing
 (
  rowid integer AUTO_INCREMENT PRIMARY KEY,
  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  datec datetime,
- printer_name text NOT NULL, 
+ printer_name text NOT NULL,
  printer_location text NOT NULL,
  printer_id varchar(255) NOT NULL,
  copy integer NOT NULL DEFAULT '1',

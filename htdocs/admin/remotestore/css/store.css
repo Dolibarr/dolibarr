@@ -1,0 +1,229 @@
+
+table#list_of_modules {
+	border-spacing: 0px;
+}
+.imgstore {
+	max-height:120px;
+	width: 120px;
+	/* box-shadow: 3px 3px 20px #ddd; */
+}
+
+div.divsearchfield {
+    margin: 4px 12px 4px 2px;
+    padding-left: 2px;
+}
+
+.margeCoteGauche,.margeCote{
+    padding-right: 20px!important;
+}
+.margeCote,.margeCoteDroite{
+    padding-left: 20px!important;
+}
+.margeCote {
+	padding-bottom: 10px;
+}
+.nomargesupinf{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#category-tree-left{
+    display: none;
+    vertical-align: top;
+    width: 24%;
+}
+#category-tree-left .active{
+    background: var(--colorbacktitle1);
+    color: #999 !important;
+    border-radius: 3px;
+    padding: 0 10px;
+}
+#listing-content{
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+}
+.tree{
+    margin: 0px 0px 0px 0px;
+    padding:0px;
+    list-style: none; line-height: 2em; font-family: Arial;
+    margin-left: 15px;
+}
+.tree li{
+    font-size: 16px;
+    position: relative;list-style: none;
+}
+.tree li:before{
+    position: absolute;
+    left: -15px;
+    top: -4px;
+    content: '';
+    display: block;
+    border-left: 1px solid #ddd;
+    height: 1em;
+    border-bottom: 1px solid #ddd;
+    width: 10px;
+}
+.tree li:after{
+    position: absolute;
+    left: -15px;
+    bottom: -7px;
+    content: '';
+    display: block;
+    border-left: 1px solid #ddd;
+    height: 100%;
+}
+
+.tree li.root{
+    margin: 0px 0px 0px 0px;
+}
+.tree li.root:before{
+    display: none;
+}
+
+.tree li.root:after{
+    display: none;
+}
+.tree li:last-child:after{
+    display: none
+}
+.newAppParent{
+    position: relative;
+    overflow: hidden;
+    padding: 10px;
+    /* min-height: 100px; */
+    box-shadow: 1px 1px 6px #bbb;
+}
+.newApp, .updatedApp{
+    background-color: orange;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+    color: white;
+    display: block;
+    font-size: 0.8em;
+    left: -25px;
+    padding: 5px 20px 5px 20px;
+    position: absolute;
+    text-align: center;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.35);
+    top: 20px;
+    transform: rotate(-45deg);
+    width: 120px;
+}
+.updatedApp{
+    background-color: #25a580;
+}
+.notcompatible {
+    color: red;
+}
+.compatibleafterupdate {
+    color: orange;
+}
+.compatible {
+    color: #25a580;
+}
+tr.app {
+    height: 200px;
+}
+tr.app td {
+	border-bottom: 1px solid #888;
+}
+div#newsDoli.tabBar {
+    margin-top: 50px;
+    margin-right: 30px;
+}
+.selected {
+    text-decoration: underline!important;
+}
+.searchDolistore, .searchDolistore:hover {
+    padding-left: 30px;
+    padding-right: 30px;
+    font-weight: bold;
+}
+.searchDolistore:hover {
+    text-decoration: underline!important;
+}
+
+.score{
+    font-size: 16px;
+    font-weight: bold;
+}
+.formReviewArea{
+    display:none;
+}
+.formReview div.divsearchfield{
+    float: none;
+}
+.input100{
+    box-sizing: border-box;
+    width: 100%;
+}
+.input50{
+    box-sizing: border-box;
+    width: 49%;
+}
+textarea.row4{
+    min-height: 100px;
+}
+
+
+.reviewList {
+    max-height: 150px;
+    overflow-y: scroll;
+}
+
+.reviewRow{
+    margin-bottom: 20px;
+}
+.reviewRow .reviewMarge {
+    float:left;
+    width: 220px;
+    padding: 0 20px 20px 0;
+}
+.reviewRow .score {
+    font-size: 48px;
+    display: block;
+    text-align: center;
+}
+.reviewRow .reviewDate {
+    color:grey;
+}
+.reviewRow:after{
+    clear: both;
+    content:'';
+    display: block;
+}
+h2.appTitle small{
+    font-weight: normal;
+}
+tr.NotCompatible{
+    opacity: 0.5;
+}
+tr.NotCompatible:hover{
+    opacity: 0.7;
+}
+span.details{
+    font-size: 12px;
+    margin-left: 10px;
+    vertical-align: super;
+}
+
+
+@media only screen and (min-width: 1150px) {
+    #categorieArea{
+        display:none;
+    }
+    #category-tree-left{
+        display:inline-block;
+    }
+    #listing-content{
+        width: 75%;
+        float: right;
+    }
+}
+
+@media only screen and (max-width: 724px) {
+    .imgstore {
+    	max-height: 50px;
+    	width: 50px;
+    }
+}

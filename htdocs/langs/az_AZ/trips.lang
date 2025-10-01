@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=tərəfindən qeydə alınıb
 AUTHORPAIEMENT=tərəfindən ödənilir
 AddTrip=Xərc hesabatı yaradın
@@ -13,6 +13,8 @@ byEX_EXP=sətir üzrə (%s ilə məhdudiyyət)
 byEX_MON=aya görə (məhdudiyyət %s)
 byEX_YEA=il üzrə (məhdudiyyət %s)
 CANCEL_USER=tərəfindən silindi
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Xərc hesabatlarında "istifadəçilər" üçün defolt olaraq istifadə edilən hesab (Hesab Planından).
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=İstifadəçi kartında müəyyən edilmiş xüsusi hesab yalnız Subledger uçotu üçün istifadə olunacaq. Bu, Baş Mühasibat Kitabı üçün, həmçinin istifadəçidə heç bir xüsusi mühasibat hesabı müəyyən edilmədikdə, Subledger uçotunun standart dəyəri kimi istifadə ediləcək.
 CarCategory=Avtomobil kateqoriyası
 ClassifyRefunded='Geri qaytarıldı' təsnifatı
 CompanyVisited=Şirkət/təşkilat ziyarət edildi
@@ -70,7 +72,8 @@ ExpenseReportRulesDesc=Xərc hesabatları üçün maksimum məbləğ qaydaların
 ExpenseReportWaitingForApproval=Yeni xərc hesabatı təsdiq üçün təqdim edilib
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=Xərc hesabatı yenidən təsdiq üçün təqdim edilib
-ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Doğrulamaq üçün bura klikləyin: %s
 ExpenseReportsIk=Yürüş ödənişlərinin konfiqurasiyası
 ExpenseReportsRules=Xərc hesabatı qaydaları
 ExpenseReportsToApprove=Təsdiq üçün xərc hesabatları
@@ -106,7 +109,7 @@ TripId=Id xərc hesabatı
 TripNDF=Məlumat xərcləri hesabatı
 TripSociete=İnformasiya şirkəti
 Trips=Xərc hesabatları
-TripsAndExpenses=Xərclər haqqında hesabat
+TripsAndExpenses=Xərc hesabatları
 TripsAndExpensesStatistics=Xərc hesabatlarının statistikası
 TypeFees=Ödəniş növləri
 UploadANewFileNow=İndi yeni sənəd yükləyin
@@ -115,6 +118,10 @@ VALIDOR=tərəfindən təsdiq edilmişdir
 ValidateAndSubmit=Təsdiq edin və təsdiq üçün təqdim edin
 ValidatedWaitingApproval=Təsdiq edildi (təsdiq gözlənilir)
 ValideTrip=Xərc hesabatını təsdiqləyin
+ExpenseReportPayments=Xərc hesabatı ödənişləri
+TaxUndefinedForThisCategory = Bu kateqoriya üçün vergi müəyyən edilməyib
+errorComputeTtcOnMileageExpense=Yürüş xərclərinin hesablanması zamanı xəta
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Kütləvi fəaliyyətdə yalnız qaralama statusunda olan elementlər silinə bilər
 
 ## Dictionary
 EX_BRE=Səhər yeməyi
@@ -150,3 +157,5 @@ TF_PEAGE=Ödəniş
 TF_TAXI=taksi
 TF_TRAIN=Qatar
 TF_TRIP=Nəqliyyat
+FailedToSetPaid=Ödənişli olaraq təyin etmək alınmadı
+FailedToSetToCancel=Ləğv etmək alınmadı

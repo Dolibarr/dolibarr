@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
 use OAuth\Common\Storage\DoliStorage;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
@@ -58,6 +67,7 @@ if (!$user->admin) {
 /*
  * Action
  */
+$error = 0;
 
 if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
@@ -66,9 +76,9 @@ if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 }
 
 if ($action == 'setconst' && $user->admin) {
-	$error = 0;
 	$db->begin();
 	foreach ($_POST['setupdriver'] as $setupconst) {
+		'@phan-var-force array<string,string> $setupconst';
 		//print '<pre>'.print_r($setupconst, true).'</pre>';
 		$result = dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
 		if (!($result > 0)) {
@@ -113,13 +123,13 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("PrintingSetup"));
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("PrintingSetup"), $linkback, 'title_setup');
 
 $head = printingAdminPrepareHead($mode);
 
 if ($mode == 'setup' && $user->admin) {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&driver='.urlencode($driver).'" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setconst">';
 
@@ -130,7 +140,7 @@ if ($mode == 'setup' && $user->admin) {
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("Parameters").'</th>';
-	print '<th>'.$langs->trans("Value").'</th>';
+	print '<th></th>';
 	print '<th>&nbsp;</th>';
 	print "</tr>\n";
 	$submit_enabled = 0;
@@ -150,8 +160,7 @@ if ($mode == 'setup' && $user->admin) {
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
-		$printer = new $classname($db);
-		$langs->load('printing');
+		$printer = new $classname($db);		// Example: new printing_printgcp(). This run the construct that load the token. TODO Move this into another load function().
 
 		$i = 0;
 		$submit_enabled = 0;
@@ -185,7 +194,16 @@ if ($mode == 'setup' && $user->admin) {
 						print $langs->trans($key['varname']);
 					}
 					print '</td>';
-					print '<td>'.$langs->trans($key['info']).'</td>';
+					print '<td>';
+					// Example $key['info'] = $langs->trans("GoogleAuthNotConfigured");
+					if ($key['info'] == 'GoogleAuthNotConfigured') {
+						$keyforprovider = 'googleprint';
+						print $langs->trans($key['info']);
+						print '. You must use Label "'.$keyforprovider.'" with scope "cloud_print"';
+					} else {
+						print $langs->trans($key['info']);
+					}
+					print '</td>';
 					print '<td>';
 					//var_dump($key);
 					if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
@@ -210,7 +228,7 @@ if ($mode == 'setup' && $user->admin) {
 			$i++;
 
 			if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
-				$keyforprovider = '';	// @BUG This must be set
+				$keyforprovider = 'googleprint';
 
 				// Token
 				print '<tr class="oddeven">';
@@ -334,6 +352,7 @@ if ($mode == 'test' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
 		$printer = new $classname($db);
+		'@phan-var-force PrintingDriver $printer';
 		$langs->load($driver);
 		$langs->load('printing');
 

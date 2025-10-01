@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Kuajiri
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Simamia na ufuate kampeni za kuajiri nafasi mpya za kazi
-
-#
 # Admin page
-#
 RecruitmentSetup = Mpangilio wa kuajiri
 RecruitmentSetupPage = Ingiza hapa usanidi wa chaguo kuu za moduli ya kuajiri
 RecruitmentArea=Eneo la kuajiri
 PublicInterfaceRecruitmentDesc=Kurasa za umma za kazi ni URL za umma za kuonyesha na kujibu ili kufungua kazi. Kuna kiungo kimoja tofauti kwa kila kazi iliyo wazi, inayopatikana kwenye kila rekodi ya kazi.
 EnablePublicRecruitmentPages=Washa kurasa za umma za kazi zilizo wazi
 
-#
-# About page
-#
-RecruitmentAbout = Kuhusu Kuajiri
-RecruitmentAboutPage = Kuajiri kuhusu ukurasa
 NbOfEmployeesExpected=Nb inayotarajiwa ya wafanyikazi
 JobLabel=Lebo ya nafasi ya kazi
 WorkPlace=Mahali pa kazi
@@ -47,7 +34,6 @@ PositionToBeFilled=Nafasi ya kazi
 PositionsToBeFilled=Nafasi za kazi
 ListOfPositionsToBeFilled=Orodha ya nafasi za kazi
 NewPositionToBeFilled=Nafasi mpya za kazi
-
 JobOfferToBeFilled=Nafasi ya kazi kujazwa
 ThisIsInformationOnJobPosition=Taarifa ya nafasi ya kazi ya kujazwa
 ContactForRecruitment=Wasiliana kwa kuajiri

@@ -3,6 +3,8 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2016  Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('categories', 'languages'));
 
@@ -40,6 +50,7 @@ $id     = GETPOSTINT('id');
 $label  = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$langtodelete = GETPOST('langtodelete', 'alpha');
 
 if ($id == '' && $label == '') {
 	dol_print_error(null, 'Missing parameter id');
@@ -55,7 +66,7 @@ if ($result <= 0) {
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type];   // For backward compatibility
+	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
 // Security check
@@ -75,6 +86,17 @@ if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
+// delete a translation
+if ($action == 'delete' && $langtodelete && $user->hasRight('categorie', 'creer')) {
+	$res = $object->delMultiLangs($langtodelete, $user);
+	if ($res < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	} else {
+		unset($object->multilangs[$langtodelete]);
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+	}
+	$action = '';
+}
 
 // validation of addition
 if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
@@ -102,6 +124,8 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd)
 			if ($forcelangprod == $current_lang) {
 				$object->label = $libelle;
 				$object->description = dol_htmlcleanlastbr($desc);
+
+				$object->update($user);
 			} else {
 				$object->multilangs[$forcelangprod]["label"] = $libelle;
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);
@@ -172,7 +196,8 @@ $formother = new FormOther($db);
 
 llxHeader("", "", $langs->trans("Translation"));
 
-$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
+$title = $langs->trans("Categories");
+$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
 
 $head = categories_prepare_head($object, $type);
 
@@ -186,11 +211,11 @@ if (!empty($object->multilangs)) {
 
 print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
-$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = 'type:=:'.((int) $object->type);
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 foreach ($ways as $way) {
 	$morehtmlref .= $way."<br>\n";
@@ -287,7 +312,7 @@ if ($action == 'edit') {
 
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
-			$s = picto_from_langcode($key);
+			$s = picto_from_langcode((string) $key);
 			print '<table class="border centpercent">';
 			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.($object->multilangs[$key]["label"] ?? '').'</td></tr>';

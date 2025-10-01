@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022   J-F Bouculat     <jfbouculat@gmail.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,8 @@ class MultiCurrencies extends DolibarrApi
 	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
 	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array					Array of warehouse objects
+	 * @phan-return MultiCurrency[]
+	 * @phpstan-return MultiCurrency[]
 	 *
 	 * @throws RestException
 	 */
@@ -65,7 +68,7 @@ class MultiCurrencies extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".$this->db->prefix()."multicurrency as t";
-		$sql .= ' WHERE 1 = 1';
+		$sql .= " WHERE t.entity IN (".getEntity('multicurrency').")";
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -144,7 +147,7 @@ class MultiCurrencies extends DolibarrApi
 	public function getByCode($code)
 	{
 		$multicurrency = new MultiCurrency($this->db);
-		if (!$multicurrency->fetch('', $code)) {
+		if (!$multicurrency->fetch(0, $code)) {
 			throw new RestException(404, 'Currency not found');
 		}
 
@@ -193,6 +196,8 @@ class MultiCurrencies extends DolibarrApi
 	 * Create Currency object
 	 *
 	 * @param array $request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int					ID of Currency
 	 *
 	 * @throws RestException
@@ -231,7 +236,7 @@ class MultiCurrencies extends DolibarrApi
 
 		// Add default rate if defined
 		if (isset($request_data['rate']) && $request_data['rate'] > 0) {
-			if ($multicurrency->addRate($request_data['rate']) < 0) {
+			if ($multicurrency->addRate((float) $request_data['rate']) < 0) {
 				throw new RestException(500, "Error adding currency rate", array_merge(array($multicurrency->error), $multicurrency->errors));
 			}
 
@@ -245,7 +250,9 @@ class MultiCurrencies extends DolibarrApi
 	 * Update Currency
 	 *
 	 * @param 	int   $id             	Id of Currency to update
-	 * @param 	array $request_data   	Datas
+	 * @param 	array $request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object					The updated Currency
 	 *
 	 * @throws RestException
@@ -286,6 +293,8 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param   int     $id	Currency ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException
 	 */
@@ -319,6 +328,8 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param	int		$id				Currency ID
 	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object|false			Object with cleaned properties
 	 *
 	 * @throws RestException
@@ -340,7 +351,7 @@ class MultiCurrencies extends DolibarrApi
 		}
 
 		// Add rate
-		if ($multicurrency->addRate($request_data['rate']) < 0) {
+		if ($multicurrency->addRate((float) $request_data['rate']) < 0) {
 			throw new RestException(500, "Error updating currency rate", array_merge(array($multicurrency->error), $multicurrency->errors));
 		}
 

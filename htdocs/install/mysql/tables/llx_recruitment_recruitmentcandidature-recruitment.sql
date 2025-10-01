@@ -25,7 +25,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	note_private text, 
 	date_creation datetime NOT NULL,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-	fk_user_creat integer NOT NULL, 
+	fk_user_creat integer, 
 	fk_user_modif integer, 
 	fk_user integer, 						-- Id of user created from the job application
 	import_key varchar(14), 
@@ -40,6 +40,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	remuneration_proposed integer,
 	email_msgid varchar(175),				-- Do not use a too large value, it generates trouble with unique index
 	email_date datetime,
-	fk_recruitment_origin INTEGER NULL
+	fk_recruitment_origin INTEGER NULL,
+  	ip varchar(250)                              --ip used to create record (for public submission page)
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

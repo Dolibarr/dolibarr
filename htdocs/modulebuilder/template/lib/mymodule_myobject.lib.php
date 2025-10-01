@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 /**
  * Prepare array of tabs for MyObject
  *
- * @param	MyObject	$object		MyObject
- * @return 	array					Array of tabs
+ * @param	MyObject	$object					MyObject
+ * @return 	array<array{string,string,string}>	Array of tabs
  */
 function myobjectPrepareHead($object)
 {

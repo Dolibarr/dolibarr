@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2015-2024  Alexandre Spangaro	<alexandre@inovea-conseil.com>
- * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
- * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
+/* Copyright (C) 2015-2025  Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2022  		Lionel Vessiller			<lvessiller@open-dsi.fr>
+ * Copyright (C) 2016       Charlie Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2022  		Progiseize					<a.bisotti@progiseize.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +23,23 @@
 // $formatexportset must be defined
 // $downloadMode 	=0 for direct download or =1 to download after writing files or =-1 not to download files
 
+'
+@phan-var-force int $formatexportset
+@phan-var-force string $type_export
+@phan-var-force string $filename
+@phan-var-force int<-1,1> $downloadMode
+';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var int $formatexportset
+ * @var string $type_export
+ * @var string $filename
+ * @var int<-1,1> $downloadMode
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -35,6 +54,7 @@ $siren = getDolGlobalString('MAIN_INFO_SIREN');
 
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
+
 
 if (empty($downloadMode)) {
 	header('Content-Type: text/csv');
@@ -68,6 +88,38 @@ if ((substr($accountancyexport->getFormatCode($formatexportset), 0, 3) == 'fec')
 	$completefilename = "XIMPORT.TXT";
 } else {
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
+}
+
+// --- Hook: allow external modules to override export filename ---
+if (is_object($hookmanager)) {
+	// Dedicated context (non-blocking if other hooks are already initialized)
+	$hookmanager->initHooks(array('accountancyexportfilename'));
+
+	$parameters = array(
+		'type_export'       => $type_export ?? '',
+		'format'            => $format ?? '',
+		'format_code'       => $accountancyexport->getFormatCode($formatexportset),
+		'code'              => $code ?? '',
+		'prefix'            => $prefix ?? '',
+		'filename'          => $filename ?? '',
+		'period_start'      => $startaccountingperiod ?? '',
+		'period_end'        => $endaccountingperiod ?? '',
+		'siren'             => $siren ?? '',
+		'ndate_in_filename' => $nodateexport ?? 0,
+		'now_datetime'      => $date_export,
+		// Value by default
+		'defaultfilename'   => $completefilename
+	);
+
+	// Hook called by modules: setExportFilename
+	$reshook = $hookmanager->executeHooks('setExportFilename', $parameters, $accountancyexport, $action);
+	if ($reshook > 0) {
+		if (!empty($hookmanager->resArray['filename'])) {
+			$completefilename = $hookmanager->resArray['filename'];
+		} elseif ($hookmanager->resPrint !== '') {
+			$completefilename = $hookmanager->resPrint;
+		}
+	}
 }
 
 if (empty($downloadMode)) {

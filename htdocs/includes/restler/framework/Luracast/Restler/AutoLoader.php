@@ -446,6 +446,7 @@ namespace Luracast\Restler {
 			if (false !== $includeReference = $this->discover($className))
 			return $includeReference;
 
+			// @CHANGE LDR Reduce cases of conflicts with the messy autoload
 			//static::thereCanBeOnlyOne();
 
 			if (false !== $includeReference = $this->loadAliases($className))

@@ -23,12 +23,12 @@ AddLoan=vytvoření úvěru
 FinancialCommitment=Finanční závazek
 InterestAmount=Zájem
 CapitalRemain=Zůstatek kapitálu
-TermPaidAllreadyPaid = Tento termín je již zaplacen
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+TermPaidAllreadyPaid = Tento termín je již zaplacený
+CantUseScheduleWithLoanStartedToPaid = Nelze vygenerovat časový harmonogram pro půjčku se zahájenou splátkou
 CantModifyInterestIfScheduleIsUsed = Pokud používáte plán, nemůžete změnit zájem
 # Admin
 ConfigLoan=Konfigurace modulu úvěru
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Účet (z účtového rozvrhu), který se má standardně používat pro kapitál (modul úvěrů)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Účet (z účtového rozvrhu), který se má standardně použít pro úroky (modul Úvěr)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Účet (z účtového rozvrhu), který se má standardně používat pro pojištění (modul Úvěr)
 CreateCalcSchedule=Úprava finančního závazku

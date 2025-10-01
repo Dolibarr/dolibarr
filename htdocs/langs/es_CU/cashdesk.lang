@@ -40,7 +40,6 @@ PrintCustomerOnReceipts=Imprimir cliente en tickets|recibos
 EnableBarOrRestaurantFeatures=Habilitar funciones para bar o restaurante
 ConfirmDeletionOfThisPOSSale=¿Confirma la eliminación de esta venta actual?
 ConfirmDiscardOfThisPOSSale=¿Quieres descartar esta venta actual?
-History=Historia
 TerminalSelect=Seleccione la terminal que desea utilizar:
 POSTicket=Boleto de punto de venta
 POSTerminal=TPV
