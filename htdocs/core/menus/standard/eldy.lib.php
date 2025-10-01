@@ -2440,32 +2440,32 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 		if (isModEnabled('hrm')) {
 			$langs->load("hrm");
 
-			$newmenu->add(dolBuildurl('/user/list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm', 'contextpage' => 'employeelist']), $langs->trans("Employees"), 0, $user->hasRight('user', 'user', 'read'), '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add(dolBuildurl('/user/card.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm', 'action' => 'create', 'employee' => 1]), $langs->trans("NewEmployee"), 1, $user->hasRight('user', 'user', 'write'));
-			$newmenu->add(dolBuildurl('/user/list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm', 'contextpage' => 'employeelist']), $langs->trans("List"), 1, $user->hasRight('user', 'user', 'read'));
+			$newmenu->add(dolBuildUrl('/user/list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm', 'contextpage' => 'employeelist']), $langs->trans("Employees"), 0, $user->hasRight('user', 'user', 'read'), '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/user/card.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm', 'action' => 'create', 'employee' => 1]), $langs->trans("NewEmployee"), 1, $user->hasRight('user', 'user', 'write'));
+			$newmenu->add(dolBuildUrl('/user/list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm', 'contextpage' => 'employeelist']), $langs->trans("List"), 1, $user->hasRight('user', 'user', 'read'));
 
-			$newmenu->add(dolBuildurl('/hrm/skill_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("SkillsManagement"), 0, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/hrm/skill_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("SkillsManagement"), 0, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="paddingright pictofixedwidth"'));
 
 			// Skills
-			$newmenu->add(dolBuildurl('/hrm/skill_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("Skills"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/hrm/skill_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("Skills"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="paddingright pictofixedwidth"'));
 			//$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewSkill"), 1, $user->hasRight('hrm',  'all', 'write'));
 			//$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->hasRight('hrm',  'all', 'read'));
 
 			// Job (Description of work to do and skills required)
-			$newmenu->add(dolBuildurl('/hrm/job_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("JobsProfiles"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/hrm/job_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("JobsProfiles"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
 			//$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->hasRight('hrm',  'all', 'write'));
 			//$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->hasRight('hrm',  'all', 'read'));
 
 			// Position = Link job - user
-			$newmenu->add(dolBuildurl('/hrm/position_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("EmployeePositions"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user-cog', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/hrm/position_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("EmployeePositions"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user-cog', 'class="paddingright pictofixedwidth"'));
 			//$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->hasRight('hrm',  'all', 'write'));
 			//$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->hasRight('hrm',  'all', 'read'));
 
 			// Evaluation
-			$newmenu->add(dolBuildurl('/hrm/evaluation_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("Evals"), 1, $user->hasRight('hrm', 'evaluation', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/hrm/evaluation_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("Evals"), 1, $user->hasRight('hrm', 'evaluation', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));
 			//$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewEval"), 1, $user->hasRight('hrm',  'evaluation', 'write'));
 			//$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->hasRight('hrm', 'evaluation', 'read'));
-			$newmenu->add(dolBuildurl('/hrm/compare.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("SkillComparison"), 1, (int) ($user->hasRight('hrm', 'evaluation', 'read') || $user->hasRight('hrm', 'compare_advance', 'read')));
+			$newmenu->add(dolBuildUrl('/hrm/compare.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("SkillComparison"), 1, (int) ($user->hasRight('hrm', 'evaluation', 'read') || $user->hasRight('hrm', 'compare_advance', 'read')));
 		}
 
 		// Leave/Holiday/Vacation module
@@ -2473,20 +2473,20 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			// Load translation files required by the page
 			$langs->loadLangs(array("holiday", "trips"));
 
-			$newmenu->add(dolBuildurl('/holiday/list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("CPTitreMenu"), 0, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday', 0, '', '', '', img_picto('', 'holiday', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add(dolBuildurl('/holiday/card.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday', 'action' => 'create']), $langs->trans("New"), 1, $user->hasRight('holiday', 'write'), '', $mainmenu);
-			$newmenu->add(dolBuildurl('/holiday/card_group.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday', 'action' => 'create']), $langs->trans("NewHolidayForGroup"), 1, (int) ($user->hasRight('holiday', 'writeall') && $user->hasRight('holiday', 'readall')), '', $mainmenu, 'holiday_sm');
-			$newmenu->add(dolBuildurl('/holiday/list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("List"), 1, $user->hasRight('holiday', 'read'), '', $mainmenu);
+			$newmenu->add(dolBuildUrl('/holiday/list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("CPTitreMenu"), 0, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday', 0, '', '', '', img_picto('', 'holiday', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/holiday/card.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday', 'action' => 'create']), $langs->trans("New"), 1, $user->hasRight('holiday', 'write'), '', $mainmenu);
+			$newmenu->add(dolBuildUrl('/holiday/card_group.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday', 'action' => 'create']), $langs->trans("NewHolidayForGroup"), 1, (int) ($user->hasRight('holiday', 'writeall') && $user->hasRight('holiday', 'readall')), '', $mainmenu, 'holiday_sm');
+			$newmenu->add(dolBuildUrl('/holiday/list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("List"), 1, $user->hasRight('holiday', 'read'), '', $mainmenu);
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "holiday") {
-				$newmenu->add(dolBuildurl('/holiday/list.php', ['search_status' => 1, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("DraftCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
-				$newmenu->add(dolBuildurl('/holiday/list.php', ['search_status' => 2, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("ToReviewCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
-				$newmenu->add(dolBuildurl('/holiday/list.php', ['search_status' => 3, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("ApprovedCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
-				$newmenu->add(dolBuildurl('/holiday/list.php', ['search_status' => 4, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("CancelCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
-				$newmenu->add(dolBuildurl('/holiday/list.php', ['search_status' => 5, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("RefuseCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
+				$newmenu->add(dolBuildUrl('/holiday/list.php', ['search_status' => 1, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("DraftCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
+				$newmenu->add(dolBuildUrl('/holiday/list.php', ['search_status' => 2, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("ToReviewCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
+				$newmenu->add(dolBuildUrl('/holiday/list.php', ['search_status' => 3, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("ApprovedCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
+				$newmenu->add(dolBuildUrl('/holiday/list.php', ['search_status' => 4, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("CancelCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
+				$newmenu->add(dolBuildUrl('/holiday/list.php', ['search_status' => 5, 'mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("RefuseCP"), 2, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
 			}
-			$newmenu->add(dolBuildurl('/holiday/define_holiday.php', ['mainmenu' => 'hrm']), $langs->trans("MenuConfCP"), 1, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
-			$newmenu->add(dolBuildurl('/holiday/month_report.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuReportMonth"), 1, $user->hasRight('holiday', 'readall'), '', $mainmenu, 'holiday_sm');
-			$newmenu->add(dolBuildurl('/holiday/view_log.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuLogCP"), 1, $user->hasRight('holiday', 'define_holiday'), '', $mainmenu, 'holiday_sm');
+			$newmenu->add(dolBuildUrl('/holiday/define_holiday.php', ['mainmenu' => 'hrm']), $langs->trans("MenuConfCP"), 1, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
+			$newmenu->add(dolBuildUrl('/holiday/month_report.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuReportMonth"), 1, $user->hasRight('holiday', 'readall'), '', $mainmenu, 'holiday_sm');
+			$newmenu->add(dolBuildUrl('/holiday/view_log.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuLogCP"), 1, $user->hasRight('holiday', 'define_holiday'), '', $mainmenu, 'holiday_sm');
 		}
 
 		// Trips and expenses (old module)
