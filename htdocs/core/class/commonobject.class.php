@@ -2631,21 +2631,21 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		// @phan-suppress-next-line PhanTypeMismatchProperty
-		if (!empty($this->fields['fk_project'])) {		// Common case
-			if ($projectid) {
-				$sql .= " SET fk_project = ".((int) $projectid);
-			} else {
-				$sql .= " SET fk_project = NULL";
-			}
-			$sql .= ' WHERE rowid = '.((int) $this->id);
-		} elseif ($this->table_element == 'actioncomm') {	// Special case for actioncomm
+		if ($this->table_element == 'actioncomm') {	// Special case for actioncomm
 			if ($projectid) {
 				$sql .= " SET fk_project = ".((int) $projectid);
 			} else {
 				$sql .= " SET fk_project = NULL";
 			}
 			$sql .= ' WHERE id = '.((int) $this->id);
+			// @phan-suppress-next-line PhanTypeMismatchProperty
+		} elseif (!empty($this->fields['fk_project'])) {		// Common case
+			if ($projectid) {
+				$sql .= " SET fk_project = ".((int) $projectid);
+			} else {
+				$sql .= " SET fk_project = NULL";
+			}
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 		} else { // Special case for old architecture objects
 			if ($projectid) {
 				$sql .= ' SET fk_projet = '.((int) $projectid);
@@ -9314,6 +9314,7 @@ abstract class CommonObject
 
 		$parameters = array('mode' => $mode, 'params' => $params, 'keysuffix' => $keysuffix, 'keyprefix' => $keyprefix, 'display_type' => $display_type);
 		$reshook = $hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
+		$hookResPrint = $hookmanager->resPrint;
 
 		if (empty($reshook)) {
 			if (is_array($extrafields->attributes[$this->table_element]) && array_key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
@@ -9629,7 +9630,7 @@ abstract class CommonObject
 			}
 		}
 
-		$out .= $hookmanager->resPrint;
+		$out .= $hookResPrint;
 
 		return $out;
 	}

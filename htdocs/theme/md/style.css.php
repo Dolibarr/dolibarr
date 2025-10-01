@@ -8885,6 +8885,10 @@ table.jPicker {
 
 @media only screen and (max-width: 767px)
 {
+	td.widthpictotitle,	table.titlemodulehelp tr td img.widthpictotitle {
+		width: 30px;
+	}
+
 	.ai_dropdown{
 		min-width : 280px !important;
 	}
@@ -8903,8 +8907,6 @@ table.jPicker {
 		border-right: none;
 		border-left: none;
 	}
-
-	td.widthpictotitle { width: 30px; }
 
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
@@ -8943,6 +8945,11 @@ table.jPicker {
 
 	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 		padding: 10px 3px 10px;
+	}
+
+	pre {
+		white-space: normal;
+		word-break: break-word;
 	}
 }
 
