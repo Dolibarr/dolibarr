@@ -3890,9 +3890,9 @@ class Commande extends CommonOrder
 		$result = '';
 
 		if (isModEnabled("shipping") && ($option == '1' || $option == '2')) {
-			$baseurl = '/expedition/shipment.php';
+			$baseurl = DOL_URL_ROOT . '/expedition/shipment.php';
 		} else {
-			$baseurl = '/commande/card.php';
+			$baseurl = DOL_URL_ROOT . '/commande/card.php';
 		}
 		$query = ['id' => $this->id];
 		if (!$user->hasRight('commande', 'lire')) {

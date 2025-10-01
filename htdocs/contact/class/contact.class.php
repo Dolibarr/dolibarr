@@ -1564,7 +1564,7 @@ class Contact extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$baseurl = '/contact/card.php';
+		$baseurl = DOL_URL_ROOT . '/contact/card.php';
 		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not

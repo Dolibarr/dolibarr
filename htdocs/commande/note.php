@@ -106,7 +106,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Order card
 
-	$linkback = '<a href="'.dolBuildUrl('/commande/list.php', ['restore_lastsearch_values' => 1, 'socid' => (!empty($socid) ? $socid : '')]).'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT . '/commande/list.php', ['restore_lastsearch_values' => 1, 'socid' => (!empty($socid) ? $socid : '')]).'">'.$langs->trans("BackToList").'</a>';
 
 
 	$morehtmlref = '<div class="refidno">';
