@@ -2314,11 +2314,15 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			if (!isset($param['options'][$value])) {
+			if ($required && !isset($param['options'][$value])) {
 				$outputlangs->load('errors');
-				$value = $outputlangs->trans('ErrorNoValueForRadioType');
+				$value = '<span class="opacitymedium">'.$outputlangs->trans('ErrorNoValueForRadioType').'</span>';
 			} else {
-				$value = $outputlangs->trans($param['options'][$value]);
+				if (isset($param['options'][$value])) {
+					$value = $outputlangs->trans($param['options'][$value]);
+				} else {
+					$value = '';
+				}
 			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
