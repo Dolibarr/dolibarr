@@ -1675,10 +1675,6 @@ function dolBuildUrl($url, $params = [], $addtoken = false, $scanalsomoduledirs 
 	if ((!isset($params['leftmenu'])/*  || empty($params['leftmenu']) */) && GETPOSTISSET('leftmenu')) { // do not fill leftmenu if we have leftmenu=
 		$params = array_merge($params, ['leftmenu' => (GETPOST('leftmenu', 'restricthtml'))]);
 	}
-	// TODO check this with multicompany
-	// if (isModEnabled('multicompany') && !isset($params['entity'])) {
-	// 	$params = array_merge($params, ['entity' => $conf->entity]);
-	// }
 	$parameters = [
 		'path' => &$url,
 		'params' => &$params,

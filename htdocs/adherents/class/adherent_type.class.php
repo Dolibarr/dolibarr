@@ -929,7 +929,7 @@ class AdherentType extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$baseurl = '/adherents/type.php';
+		$baseurl = DOL_URL_ROOT . '/adherents/type.php';
 		$query = ['rowid' => $this->id];
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);

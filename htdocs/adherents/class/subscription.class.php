@@ -443,6 +443,7 @@ class Subscription extends CommonObject
 		if (!empty($this->datef)) {
 			$label .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->datef, 'day');
 		}
+		$baseurl = DOL_URL_ROOT . '/adherents/subscription/card.php';
 		$query = ['rowid' => $this->id];
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -454,7 +455,7 @@ class Subscription extends CommonObject
 				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
-		$url = dolBuildUrl('/adherents/subscription/card.php', $query);
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
 		$linkend = '</a>';

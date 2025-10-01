@@ -2548,7 +2548,7 @@ class Adherent extends CommonObject
 
 		$baseurl = DOL_URL_ROOT . '/adherents/card.php';
 		if ($option == 'subscription') {
-			$baseurl = '/adherents/subscription.php';
+			$baseurl = DOL_URL_ROOT . '/adherents/subscription.php';
 		}
 		$query = ['rowid' => $this->id];
 
