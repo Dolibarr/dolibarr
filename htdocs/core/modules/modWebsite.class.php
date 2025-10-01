@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,18 +115,20 @@ class modWebsite extends DolibarrModules
 
 		// Main menu entries
 		$r = 0;
-		$this->menu[$r] = array('fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'top', // This is a Left menu entry
-								'titre'=>'WebSites',
-								'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
-								'mainmenu'=>'website',
-								'url'=>'/website/index.php',
-								'langs'=>'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>100,
-								'enabled'=>'$conf->website->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'$user->rights->website->read', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r] = [
+			'fk_menu' => '0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'top', // This is a Left menu entry
+			'titre' => 'WebSites',
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
+			'mainmenu' => 'website',
+			'url' => '/website/index.php',
+			'langs' => 'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 100,
+			'enabled' => 'isModEnabled("website")', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("website","read")', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
+		];
 		$r++;
 
 		// Exports

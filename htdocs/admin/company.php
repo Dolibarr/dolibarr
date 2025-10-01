@@ -470,7 +470,7 @@ print '<input name="name" id="name" maxlength="'.$mysoc->fields['nom']['length']
 // Main currency
 print '<tr class="oddeven"><td class="fieldrequired"><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
 print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
-print $form->selectCurrency($conf->currency, "currency");
+print $form->selectCurrency($conf->currency, "currency", 2);
 print '</td></tr>'."\n";
 
 // Country
