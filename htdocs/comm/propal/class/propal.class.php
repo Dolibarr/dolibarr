@@ -3879,13 +3879,13 @@ class Propal extends CommonObject
 			parse_str($get_params, $query);
 			$query = array_merge($query, ['id' => $this->id]);
 			if ($option == '') {
-				$baseurl = '/comm/propal/card.php';
+				$baseurl = DOL_URL_ROOT . '/comm/propal/card.php';
 			} elseif ($option == 'compta') {  // deprecated
-				$baseurl = '/comm/propal/card.php';
+				$baseurl = DOL_URL_ROOT . '/comm/propal/card.php';
 			} elseif ($option == 'expedition') {
-				$baseurl = '/expedition/propal.php';
+				$baseurl = DOL_URL_ROOT . '/expedition/propal.php';
 			} elseif ($option == 'document') {
-				$baseurl = '/comm/propal/document.php';
+				$baseurl = DOL_URL_ROOT . '/comm/propal/document.php';
 			}
 
 			if ($option != 'nolink') {
