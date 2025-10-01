@@ -19,13 +19,16 @@ on:
 
 permissions:
   pull-requests: write
-
+  issues: write
   
 jobs:
-  pr18:
+  assign-and-label-v18:
     runs-on: ubuntu-latest
 
     steps:
+    #- name: Install GitHub CLI
+    #  run: sudo apt-get install gh
+
     - name: Generate a token
       id: generate-token
       uses: actions/create-github-app-token@v2
@@ -45,3 +48,11 @@ jobs:
         gh pr edit "${{env.url}}" --add-reviewer rycks
         gh pr edit "${{env.url}}" --add-reviewer lvessiller-opendsi
         #gh pr edit "${{env.url}}" --add-reviewer eldy
+        gh pr edit "${{env.url}}" -add-label "Pending analysis of PR (maintenance team)"
+
+    - name: Set a label
+      uses: vkirilichev/changed-lines-count-labeler@v0.2
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        configuration-path: .github/changed-lines-count-labeler.yml
+      continue-on-error: true
