@@ -2513,7 +2513,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 				$newmenu->add("/expensereport/list.php?search_status=99&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Refused"), 2, $user->hasRight('expensereport', 'lire'));
 			}
 			$newmenu->add("/expensereport/payment/list.php?leftmenu=expensereport_payments&amp;mainmenu=hrm", $langs->trans("Payments"), 1, (int) (int) ($user->hasRight('expensereport', 'lire') && isModEnabled('bank')));
-			$newmenu->add("/expensereport/stats/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->hasRight('expensereport', 'lire'));
+			$newmenu->add(dolBuildurl('/expensereport/stats/index.php', ['leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Statistics"), 1, $user->hasRight('expensereport', 'lire'));
 		}
 
 		if (isModEnabled('project')) {
@@ -2522,7 +2522,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 
 				$search_project_user = GETPOSTINT('search_project_user');
 
-				$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("TimeEntry"), 0, $user->hasRight('projet', 'lire'), '', $mainmenu, 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="paddingright pictofixedwidth"'));
+				$newmenu->add(dolBuildUrl('/projet/activity/perweek.php', ['leftmenu' => 'tasks', 'search_project_user' => ($search_project_user ? $search_project_user : '')]), $langs->trans("TimeEntry"), 0, $user->hasRight('projet', 'lire'), '', $mainmenu, 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="paddingright pictofixedwidth"'));
 			}
 		}
 	}
@@ -2546,12 +2546,12 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 	if ($mainmenu == 'tools') {
 		if (isModEnabled('category')) {
 			$titleindex = $langs->trans("Categories");
-			$newmenu->add("/categories/index.php?leftmenu=category", $titleindex, 0, $user->hasRight('category', 'read'), '', $mainmenu, 'category', 5, '', '', '', img_picto('', 'category', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/categories/index.php', ['leftmenu' => 'category']), $titleindex, 0, $user->hasRight('category', 'read'), '', $mainmenu, 'category', 5, '', '', '', img_picto('', 'category', 'class="paddingright pictofixedwidth"'));
 		}
 
 		if (empty($user->socid)) { // limit to internal users
 			$langs->load("mails");
-			$newmenu->add("/admin/mails_templates.php?leftmenu=email_templates", $langs->trans("EMailTemplates"), 0, 1, '', $mainmenu, 'email_templates', 10, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/admin/mails_templates.php', ['leftmenu' => 'email_templates']), $langs->trans("EMailTemplates"), 0, 1, '', $mainmenu, 'email_templates', 10, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
 		}
 
 		if (isModEnabled('mailing')) {
@@ -2562,9 +2562,9 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 				$titleindex .= ' | '.$langs->trans("SMSings");
 				$titlenew .= ' | '.$langs->trans("NewSMSing");
 			}
-			$newmenu->add("/comm/mailing/index.php?leftmenu=mailing", $titleindex, 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 15, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/comm/mailing/card.php?leftmenu=mailing&action=create", $titlenew, 1, $user->hasRight('mailing', 'creer'));
-			$newmenu->add("/comm/mailing/list.php?leftmenu=mailing", $titlelist, 1, $user->hasRight('mailing', 'lire'));
+			$newmenu->add(dolBuildUrl('/comm/mailing/index.php', ['leftmenu' => 'mailing']), $titleindex, 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 15, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/comm/mailing/card.php', ['leftmenu' => 'mailing', 'action' => 'create']), $titlenew, 1, $user->hasRight('mailing', 'creer'));
+			$newmenu->add(dolBuildUrl('/comm/mailing/list.php', ['leftmenu' => 'mailing']), $titlelist, 1, $user->hasRight('mailing', 'lire'));
 		}
 
 		$title = "ImportExportArea";
@@ -2576,9 +2576,9 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 		}
 		if (isModEnabled('import') || isModEnabled('export')) {
 			$langs->load("exports");
-			$newmenu->add("/imports/index.php?leftmenu=import", $langs->trans($title), 0, (int) ($user->hasRight('import', 'run') || $user->hasRight('export', 'lire')), '', $mainmenu, 'import', 20, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/imports/import.php?leftmenu=import", $langs->trans("NewImport"), 1, $user->hasRight('import', 'run'));
-			$newmenu->add("/exports/export.php?leftmenu=export", $langs->trans("NewExport"), 1, $user->hasRight('export', 'lire'));
+			$newmenu->add(dolBuildUrl('/imports/index.php', ['leftmenu' => 'import']), $langs->trans($title), 0, (int) ($user->hasRight('import', 'run') || $user->hasRight('export', 'lire')), '', $mainmenu, 'import', 20, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/imports/import.php', ['leftmenu' => 'import']), $langs->trans("NewImport"), 1, $user->hasRight('import', 'run'));
+			$newmenu->add(dolBuildUrl('/exports/export.php', ['leftmenu' => 'export']), $langs->trans("NewExport"), 1, $user->hasRight('export', 'lire'));
 		}
 		/*
 		if (isModEnabled('export')) {
@@ -2587,7 +2587,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 			$newmenu->add("/exports/export.php?leftmenu=export", $langs->trans("NewExport"), 1, $user->hasRight('export', 'lire'));
 		} */
 
-		$newmenu->add("/core/customreports.php?leftmenu=customreports", $langs->trans("BICustomReports"), 0, 1, '', $mainmenu, 'customreports', 100, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
+		$newmenu->add(dolBuildUrl('/core/customreports.php', ['leftmenu' => 'customreports']), $langs->trans("BICustomReports"), 0, 1, '', $mainmenu, 'customreports', 100, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
 	}
 }
 
