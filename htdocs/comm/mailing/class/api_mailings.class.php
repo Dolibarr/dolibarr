@@ -204,13 +204,11 @@ class Mailings extends DolibarrApi
 	 *
 	 * @since	23.0.0	Initial implementation
 	 *
-	 *	@param  int		$id     		Id of object to clone
-	 *	@param	int		$cloneContent		1=Clone content (default), 0=Forget content
-	 *	@param	int		$cloneRecipients	1=Clone recipients (default), 0=Forget recipients
-	 * 	@param	int		$notrigger			1=Disable triggers, 0=Active triggers if any (default)
-	 * @return  array
-	 * @phan-return array{success:array{code:int,message:string}}
-	 * @phpstan-return array{success:array{code:int,message:string}}
+	 * @param  	int		$id     			Id of object to clone
+	 * @param	int		$cloneContent		1=Clone content (default), 0=Forget content
+	 * @param	int		$cloneRecipients	1=Clone recipients (default), 0=Forget recipients
+	 * @param	int		$notrigger			1=Disable triggers, 0=Active triggers if any (default)
+	 * @return 	Object 						Object with cleaned properties
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
