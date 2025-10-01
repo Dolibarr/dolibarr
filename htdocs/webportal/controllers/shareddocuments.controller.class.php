@@ -107,8 +107,8 @@ class SharedDocumentsController extends AbstractDocumentController
                 // If the item is a file and its size is empty...
                 if ($item['type'] === 'file' && empty($item['size'])) {
                     $full_file_path = $current_dir_ged_partage . '/' . $item['name'];
-                    // ... on recalcule sa taille et on met à jour le tableau.
-                    // Le @ évite une erreur si le fichier est illisible.
+                    // ... we recalculate its size and update the table.
+                    // The @ avoids an error if the file is unreadable.
                     $itemList[$key]['size'] = @filesize($full_file_path);
                 }
             }
