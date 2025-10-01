@@ -48,20 +48,19 @@ class SharedDocumentsController extends AbstractDocumentController
 		if (!$context->controllerInstance->checkAccess()) {
 			return -1;
 		}
-
+		
 		$current_subdir = GETPOST('subdir', 'alpha');
-        // Security: Clear the path to avoid attacks (eg: ../../)
-        if (!empty($current_subdir)) {
+		if (!empty($current_subdir)) {
             $parts = explode('/', $current_subdir);
             $safe_parts = array();
             foreach ($parts as $part) {
-                if ($part !== '.' && $part !== '..') {
-                    $safe_parts[] = dol_sanitizeFileName($part);
-                }
-            }
+        if ($part !== '.' && $part !== '..') {
+			$safe_parts[] = dol_sanitizeFileName($part);
+			}
+        }
             $this->sanitized_subdir = implode('/', $safe_parts);
         }
-
+		
 		$context->title = html_entity_decode($langs->trans('SharedDocuments'));
 		$context->desc = $langs->trans('ListOfSharedDocuments');
 		$context->title = $langs->trans('SharedDocuments');
