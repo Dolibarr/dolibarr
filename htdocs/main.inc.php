@@ -175,7 +175,7 @@ if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 		if (session_id() && isset($_SESSION["dol_login"]) && !in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 			print 'Sorry, your application is offline.'."\n";
 			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
-			$nexturl = dolBuildUrl('/user/logout.php', true);
+			$nexturl = dolBuildUrl('/user/logout.php', [], true);
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
 			print 'Sorry, your application is offline. Only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
@@ -202,6 +202,7 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	$conf->global->MAIN_HTML_HEADER .= $renderer->renderHead();
 
 	'@phan-var-force array{time:DebugBar\DataCollector\TimeDataCollector} $debugbar';
+	/** @var array{time:DebugBar\DataCollector\TimeDataCollector} $debugbar */
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
 }
 
@@ -857,7 +858,7 @@ if (!defined('NOLOGIN')) {
 				$paramsurl += ['nojs' => GETPOSTINT('nojs')];
 			}
 			if (GETPOST('lang', 'aZ09')) {
-				$paramsurl += ['lang' => GETPOST('lang', 'aZ09')];
+				$paramsurl += ['lang' => (string) GETPOST('lang', 'aZ09')];
 			}
 			header('Location: '.dolBuildUrl('/index.php', $paramsurl));
 			exit;
