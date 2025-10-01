@@ -36,9 +36,8 @@ jobs:
         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         url: ${{ github.event.pull_request.html_url }}
       run: |
-        echo "url=$url""
         echo "env.url=${{env.url}}"
-        gh pr edit "$url" --add-reviewer rycks
-        gh pr edit "$url" --add-reviewer lvessiller-opendsi
-        gh pr edit "$url" --add-reviewer eldy
+        gh pr edit "${{env.url}}" --add-reviewer rycks
+        gh pr edit "${{env.url}}" --add-reviewer lvessiller-opendsi
+        gh pr edit "${{env.url}}" --add-reviewer eldy
 
