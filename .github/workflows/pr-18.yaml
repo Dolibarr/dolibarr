@@ -6,7 +6,7 @@
 # Go on Organisation - Secret and variables and create a variable PR18_APP_ID and copy the ID of the previously create ID. Choose the repository access to "Repository Dolibarr".
 #
 
-name: Set reviewer for v18
+name: Set reviewer and label for v18
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
@@ -16,11 +16,19 @@ on:
     branches:
       - "18.0"
 
+
+permissions:
+  pull-requests: write
+  issues: write
+  
 jobs:
-  pr18:
+  assign-and-label-v18:
     runs-on: ubuntu-latest
 
     steps:
+    #- name: Install GitHub CLI
+    #  run: sudo apt-get install gh
+
     - name: Generate a token
       id: generate-token
       uses: actions/create-github-app-token@v2
@@ -39,5 +47,5 @@ jobs:
         echo "env.url=${{env.url}}"
         gh pr edit "${{env.url}}" --add-reviewer rycks
         gh pr edit "${{env.url}}" --add-reviewer lvessiller-opendsi
-        gh pr edit "${{env.url}}" --add-reviewer eldy
-
+        #gh pr edit "${{env.url}}" --add-reviewer eldy
+        gh pr edit "${{env.url}}" --add-label "Assigned to v18 maintenance Team"
