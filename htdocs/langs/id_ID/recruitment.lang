@@ -64,3 +64,7 @@ NoPositionOpen=Tidak ada posisi yang terbuka saat ini
 ConfirmClose=Konfirmasikan pembatalan
 ConfirmCloseAsk=Apakah Anda yakin ingin membatalkan pencalonan rekrutmen ini?
 Recruitment=Perekrutan
+ApplyJobCandidature=Lamar pekerjaan ini
+ErrorRecruitmmentCandidatureAlreadyExists= Kandidat rekrutmen sudah ada dengan email %s
+RecruitmentCandidatureSaved=Kandidat rekrutmen berhasil disimpan
+NoOpenJobOffer=Tidak ada lowongan pekerjaan yang tersedia saat ini

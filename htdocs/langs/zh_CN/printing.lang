@@ -32,6 +32,7 @@ PRINTIPP_HOST=打印服务器
 PRINTIPP_PORT=端口
 PRINTIPP_USER=登陆
 PRINTIPP_PASSWORD=密码
+PRINTIPP_SSL=使用 SSL
 NoDefaultPrinterDefined=未设定默认打印机
 DefaultPrinter=默认打印机
 Printer=打印机
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=配置可用的谷歌云打印机驱动
 PrintingDriverDescprintipp=打印驱动程序杯的配置变量。
 PrintTestDescprintgcp=谷歌云打印机列表
 PrintTestDescprintipp=杯子打印机清单。
+Testbbbb

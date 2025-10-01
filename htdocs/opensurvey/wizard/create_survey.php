@@ -139,7 +139,7 @@ $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
+print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)', '', 'poll');
 
 
 print '<form name="formulaire" action="" method="POST">'."\n";

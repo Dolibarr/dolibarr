@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrUser', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -561,7 +562,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$sql = "SELECT rowid";
 					$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 					$sql .= " WHERE active = 1";
-					$sql .= " AND code='".$db->escape($thirdparty->country_code)."'";
+					$sql .= " AND code = '".$db->escape($thirdparty->country_code)."'";
 
 					$resql = $db->query($sql);
 					if ($resql) {
@@ -575,13 +576,12 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->fax = $thirdpartywithuser['fax'];
 					$thirdparty->email = $thirdpartywithuser['email'];
 					$thirdparty->url = $thirdpartywithuser['url'];
-					$thirdparty->ape = $thirdpartywithuser['ape'];
-					$thirdparty->idprof1 = $thirdpartywithuser['prof1'];
-					$thirdparty->idprof2 = $thirdpartywithuser['prof2'];
-					$thirdparty->idprof3 = $thirdpartywithuser['prof3'];
-					$thirdparty->idprof4 = $thirdpartywithuser['prof4'];
-					$thirdparty->idprof5 = $thirdpartywithuser['prof5'];
-					$thirdparty->idprof6 = $thirdpartywithuser['prof6'];
+					$thirdparty->idprof1 = $thirdpartywithuser['profid1'];
+					$thirdparty->idprof2 = $thirdpartywithuser['profid2'];
+					$thirdparty->idprof3 = $thirdpartywithuser['profid3'];
+					$thirdparty->idprof4 = $thirdpartywithuser['profid4'];
+					$thirdparty->idprof5 = $thirdpartywithuser['profid5'];
+					$thirdparty->idprof6 = $thirdpartywithuser['profid6'];
 
 					$thirdparty->client = (int) $thirdpartywithuser['client'];
 					$thirdparty->fournisseur = (int) $thirdpartywithuser['fournisseur'];
@@ -607,6 +607,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						$contact->phone_pro = $thirdparty->phone;
 						$contact->phone_mobile = $thirdpartywithuser['phone_mobile'];
 						$contact->fax = $thirdparty->fax;
+						$contact->status = 1;
 						$contact->statut = 1;
 						$contact->country_id = $thirdparty->country_id;
 						$contact->country_code = $thirdparty->country_code;

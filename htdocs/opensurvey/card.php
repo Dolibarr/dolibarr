@@ -63,8 +63,7 @@ $object = new Opensurveysondage($db);
 
 $result = $object->fetch('', $numsondage);
 if ($result <= 0) {
-	dol_print_error($db, $object->error);
-	exit;
+	accessforbidden("Record not found");
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -232,7 +231,7 @@ print '<input type="hidden" name="action" value="update">';
 $head = opensurvey_prepare_head($object);
 
 
-print dol_get_fiche_head($head, 'general', $langs->trans("Survey"), -1, 'poll');
+print dol_get_fiche_head($head, 'general', $langs->trans("Survey"), -1, $object->picto);
 
 $morehtmlref = '';
 

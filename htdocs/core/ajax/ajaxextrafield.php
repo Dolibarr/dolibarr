@@ -18,8 +18,8 @@
 
 /**
  *      \file       htdocs/core/ajax/ajaxextrafield.php
- *      \ingroup    extrafield
- *      \brief      This script returns content of extrafield
+ *      \ingroup    core
+ *      \brief      This script returns content of extrafield. See extrafield to update value.
  */
 
 if (!defined('NOTOKENRENEWAL')) {

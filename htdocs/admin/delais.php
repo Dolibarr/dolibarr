@@ -98,6 +98,14 @@ $modules = array(
 		array(
 			'code' => 'MAIN_DELAY_SUPPLIER_BILLS_TO_PAY',
 			'img' => 'bill'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE',
+			'img' => 'propal'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL',
+			'img' => 'propal'
 		)
 	),
 	'service' => array(

@@ -159,3 +159,4 @@ TF_TRAIN=Train
 TF_TRIP=Transportation
 FailedToSetPaid=Failed to set as paid
 FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

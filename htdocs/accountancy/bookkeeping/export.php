@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Progiseize              <a.bisotti@progiseize.fr>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  *
@@ -52,13 +52,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
-$socid = GETPOSTINT('socid');
-
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
+
+$socid = GETPOSTINT('socid');
 $search_mvt_num = GETPOST('search_mvt_num', 'alpha');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
@@ -250,6 +250,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
  */
 
 $param = '';
+$filter = array();
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -332,7 +333,6 @@ if (empty($reshook)) {
 	}
 
 	// Must be after the remove filter action, before the export.
-	$filter = array();
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
 		$tmp = dol_getdate($search_date_start);
@@ -364,7 +364,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['account_number'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
@@ -548,10 +548,6 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.doc_date >= '".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date<=') {
 			$sqlwhere[] = "t.doc_date <= '".$db->idate($value)."'";
-		} elseif ($key == 't.doc_date>') {
-			$sqlwhere[] = "t.doc_date > '".$db->idate($value)."'";
-		} elseif ($key == 't.doc_date<') {
-			$sqlwhere[] = "t.doc_date < '".$db->idate($value)."'";
 		} elseif ($key == 't.numero_compte>=') {
 			$sqlwhere[] = "t.numero_compte >= '".$db->escape($value)."'";
 		} elseif ($key == 't.numero_compte<=') {
@@ -560,12 +556,12 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.subledger_account >= '".$db->escape($value)."'";
 		} elseif ($key == 't.subledger_account<=') {
 			$sqlwhere[] = "t.subledger_account <= '".$db->escape($value)."'";
-		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-			$sqlwhere[] = $db->sanitize($key).'='.((int) $value);
+			// } elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') { // these fields doesn't exists
+			// 	$sqlwhere[] = $db->sanitize($key).'='.((int) $value);
 		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 			$sqlwhere[] = $db->sanitize($key)." LIKE '".$db->escape($db->escapeforlike($value))."%'";
-		} elseif ($key == 't.subledger_account') {
-			$sqlwhere[] = natural_search($key, $value, 0, 1);
+			// } elseif ($key == 't.subledger_account') { // this code is unreachable, test is always false
+			// 	$sqlwhere[] = natural_search($key, $value, 0, 1);
 		} elseif ($key == 't.tms>=') {
 			$sqlwhere[] = "t.tms >= '".$db->idate($value)."'";
 		} elseif ($key == 't.tms<=') {
@@ -768,7 +764,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -869,8 +865,8 @@ if ($action == 'export_file') {
 // Print form confirm
 print $formconfirm;
 
-//$param='';	param started before
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+//$param='';	param started in action part
+if ($contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {

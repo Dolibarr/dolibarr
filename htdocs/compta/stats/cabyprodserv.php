@@ -296,12 +296,6 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '';
 }
 
-$builddate = 0;
-$calcmode = '';
-$name = '';
-$period = '';
-$periodlink = '';
-
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -351,7 +345,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 
 	// Search for tag/category ($searchCategoryProductList is an array of ID)
-	$searchCategoryProductOperator = -1;
+	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	$searchCategoryProductList = array($selected_cat);
 	if ($subcat) {
 		$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
@@ -389,7 +383,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 
 	// Search for tag/category ($searchCategorySocieteList is an array of ID)
-	$searchCategorySocieteOperator = -1;
+	$searchCategorySocieteOperator = GETPOSTINT('search_category_societe_operator');
 	$searchCategorySocieteList = array($selected_catsoc);
 	if (!empty($searchCategorySocieteList)) {
 		$searchCategorySocieteSqlList = array();

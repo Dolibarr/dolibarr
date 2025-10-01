@@ -1,0 +1,24 @@
+# See syntax file on https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: "Check tag branch"
+
+on:
+  push:
+    tags:
+      - "18.*"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is on main
+        run: |
+          TAG_COMMIT=$(git rev-list -n 1 $GITHUB_REF)
+          if ! git branch --contains $TAG_COMMIT | grep -q "18.0"; then
+            echo "The tag must be on branch 18.0"
+            exit 1
+          fi

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Exports
 ImportArea=នាំចូល
 NewExport=ការនាំចេញថ្មី។
@@ -31,10 +32,10 @@ ExportCsvSeparator=សញ្ញាបំបែកតួអក្សរ csv
 ImportCsvSeparator=សញ្ញាបំបែកតួអក្សរ csv
 Step=ជំហាន
 FormatedImport=នាំចូលជំនួយការ
-FormatedImportDesc1=ម៉ូឌុលនេះអនុញ្ញាតឱ្យអ្នកធ្វើបច្ចុប្បន្នភាពទិន្នន័យដែលមានស្រាប់ ឬបន្ថែមវត្ថុថ្មីទៅក្នុងមូលដ្ឋានទិន្នន័យពីឯកសារដោយគ្មានចំណេះដឹងបច្ចេកទេស ដោយប្រើជំនួយការ។
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=ជំហានដំបូងគឺជ្រើសរើសប្រភេទទិន្នន័យដែលអ្នកចង់នាំចូល បន្ទាប់មកទម្រង់ឯកសារប្រភព បន្ទាប់មកវាលដែលអ្នកចង់នាំចូល។
 FormatedExport=នាំចេញជំនួយការ
-FormatedExportDesc1=ឧបករណ៍ទាំងនេះអនុញ្ញាតឱ្យនាំចេញទិន្នន័យផ្ទាល់ខ្លួនដោយប្រើជំនួយការ ដើម្បីជួយអ្នកក្នុងដំណើរការដោយមិនទាមទារចំណេះដឹងបច្ចេកទេស។
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=ជំហានដំបូងគឺជ្រើសរើសសំណុំទិន្នន័យដែលបានកំណត់ជាមុន បន្ទាប់មកវាលណាមួយដែលអ្នកចង់នាំចេញ ហើយនៅក្នុងលំដាប់ណា។
 FormatedExportDesc3=នៅពេលដែលទិន្នន័យដែលត្រូវនាំចេញត្រូវបានជ្រើសរើស អ្នកអាចជ្រើសរើសទម្រង់ឯកសារលទ្ធផល។
 Sheet=សន្លឹក

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -409,15 +409,15 @@ if ($id > 0 || !empty($ref)) {
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
 
-			// Ligne ajout pour contact interne
+			// Line to add an internal contact
 			print '<tr class="oddeven nohover">';
 
-			print '<td class="nowrap">';
+			print '<td class="nowraponall">';
 			print img_object('', 'user').' '.$langs->trans("Users");
 			print '</td>';
 
 			print '<td>';
-			print $conf->global->MAIN_INFO_SOCIETE_NOM;
+			print getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 			print '</td>';
 
 			print '<td>';
@@ -427,36 +427,36 @@ if ($id > 0 || !empty($ref)) {
 			} else {
 				$contactsofproject = $projectstatic->getListContactId('internal');
 			}
-			print $form->select_dolusers((GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id), 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
+			print $form->select_dolusers((GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id), 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"), 'minwidth200imp maxwidth300');
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'position');
+			print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'position', 0, 'minwidth200imp maxwidth300', 0);
 			print '</td>';
-			print '<td class="right" colspan="3" ><input type="submit" class="button button-add small" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
+			print '<td class="right" colspan="3"><input type="submit" class="button button-add small" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
 			print '</tr>';
 
 			// Line to add an external contact. Only if project linked to a third party.
 			if ($projectstatic->socid) {
 				print '<tr class="oddeven">';
 
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts");
 				print '</td>';
 
 				print '<td>';
 				$thirdpartyofproject = $projectstatic->getListContactId('thirdparty');
 				$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany") : $projectstatic->socid;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject, 'minwidth200imp maxwidth300');
 				print '</td>';
 
 				print '<td>';
 				$contactofproject = $projectstatic->getListContactId('external');
 				//print $form->selectcontacts($selectedCompany, '', 'contactid', 0, '', $contactofproject, 0, '', false, 0, 0);
-				print $form->select_contact($selectedCompany, '', 'contactid', 0, '', ''/* arg not used - $contactofproject */, 0, 'maxwidth300 widthcentpercentminusx', true);
+				print $form->select_contact($selectedCompany, '', 'contactid', 0, '', ''/* arg not used - $contactofproject */, 0, 'minwidth200imp maxwidth300', true);
 				$nbofcontacts = $form->num;
 				print '</td>';
 				print '<td>';
-				$formcompany->selectTypeContact($object, '', 'typecontact', 'external', 'position');
+				print $formcompany->selectTypeContact($object, '', 'typecontact', 'external', 'position', 0, 'minwidth200imp maxwidth300', 0);
 				print '</td>';
 				print '<td class="right" colspan="3" ><input type="submit" class="button button-add small" id="add-customer-contact" name="addsourceexternal" value="'.$langs->trans("Add").'"';
 				if (!$nbofcontacts) {
@@ -505,7 +505,7 @@ if ($id > 0 || !empty($ref)) {
 					print $companystatic->getNomUrl(1);
 				}
 				if ($tab[$i]['socid'] < 0) {
-					print $conf->global->MAIN_INFO_SOCIETE_NOM;
+					print getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				}
 				if (!$tab[$i]['socid']) {
 					print '&nbsp;';
@@ -513,7 +513,7 @@ if ($id > 0 || !empty($ref)) {
 				print '</td>';
 
 				// Contact
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				if ($tab[$i]['source'] == 'internal') {
 					$userstatic->id = $tab[$i]['id'];
 					$userstatic->lastname = $tab[$i]['lastname'];
@@ -531,6 +531,7 @@ if ($id > 0 || !empty($ref)) {
 					$contactstatic->lastname = $tab[$i]['lastname'];
 					$contactstatic->firstname = $tab[$i]['firstname'];
 					$contactstatic->email = $tab[$i]['email'];
+					$contactstatic->status = $tab[$i]['statuscontact'];
 					$contactstatic->statut = $tab[$i]['statuscontact'];
 					print $contactstatic->getNomUrl(1);
 				}

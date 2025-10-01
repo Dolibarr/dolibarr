@@ -21,8 +21,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/ajaxstatusprospect.php
- *       \brief      File to return Ajax response on third parties request
+ *       \file      htdocs/core/ajax/ajaxstatusprospect.php
+ *       \brief     File of service to update prospect status of a third party
+ *       			TODO Rename into updatestatusprospect.php
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -87,7 +88,7 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 	$response = '';
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-	$sql .= "fk_stcomm=".((int) $idstatus);
+	$sql .= "fk_stcomm = ".((int) $idstatus);
 	$sql .= " WHERE rowid = ".((int) $idprospect);
 
 	$resql = $db->query($sql);

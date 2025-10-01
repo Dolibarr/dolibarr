@@ -23,7 +23,10 @@ AllPropals=Barcha takliflar
 SearchAProposal=Taklifni qidiring
 NoProposal=Taklif yo'q
 ProposalsStatistics=Tijorat takliflarining statistikasi
+NumberOfProposals=Takliflar soni
 NumberOfProposalsByMonth=Oy bo'yicha raqam
+AmountOfProposals=Takliflar miqdori
+AmountOfProposalsHT=Takliflar miqdori (soliqdan tashqari)
 AmountOfProposalsByMonthHT=Oy bo'yicha miqdori (soliqdan tashqari)
 NbOfProposals=Tijorat takliflari soni
 ShowPropal=Taklifni ko'rsatish
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 hafta
 AvailabilityTypeAV_2W=2 hafta
 AvailabilityTypeAV_3W=3 hafta
 AvailabilityTypeAV_1M=1 oy
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Vakilning keyingi taklifi
 TypeContact_propal_external_BILLING=Mijozlarning hisob-fakturasi bilan aloqa qilish
 TypeContact_propal_external_CUSTOMER=Keyingi taklif bilan mijozlar bilan bog'lanish
@@ -120,5 +123,5 @@ SignSociete_rib=Mandatni imzolash
 SignPropal=Taklifni qabul qiling
 Signed=imzolangan
 SignedOnly=Faqat imzolangan
-ExpeditionSigned=Shipment signed
-SignExpedition=Sign shipment
+ExpeditionSigned=Yetkazib berish imzolangan
+SignExpedition=Yetkazib berishni imzolash

@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	    <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -44,6 +44,12 @@ class ProductFournisseur extends Product
 	 * @var DoliDB		Database handler.
 	 */
 	public $db;
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'SUPPLIER_PRODUCT';
 
 	/**
 	 * @var string		Error code (or message)
@@ -144,15 +150,24 @@ class ProductFournisseur extends Product
 	 */
 	public $fourn_charges;	// when getDolGlobalString('PRODUCT_CHARGES') is set
 
+
+	/* Properties found into product_fournisseur_price */
+
 	/**
 	 * @var int		product-supplier id
 	 */
 	public $product_fourn_id;
 
 	/**
-	 * @var string
+	 * @var string	product-supplier entity
 	 */
 	public $product_fourn_entity;
+
+	/**
+	 * @var float	product-supplier step to floor quantities to next multiple for Purchases
+	 */
+	public $product_fourn_packaging;
+
 
 	/**
 	 * @var int ID user_id - user who created/updated supplier price
@@ -245,11 +260,6 @@ class ProductFournisseur extends Product
 	public $supplier_fk_barcode_type;
 
 	/**
-	 * @var float
-	 */
-	public $packaging;
-
-	/**
 	 * @var array<int,string>
 	 */
 	public $labelStatusShort;
@@ -320,7 +330,7 @@ class ProductFournisseur extends Product
 	public function remove_product_fournisseur_price($rowid)
 	{
 		// phpcs:enable
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
@@ -412,7 +422,7 @@ class ProductFournisseur extends Product
 		$options = array()
 	) {
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf;
 		//global $mysoc;
 
 		// Clean parameter
@@ -469,8 +479,7 @@ class ProductFournisseur extends Product
 		$unitBuyPrice = (float) price2num($buyprice / $qty, 'MU');
 
 		// We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
-		//$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
-		$packaging = price2num((empty($this->packaging) ? $qty : $this->packaging), 'MS');
+		$packaging = price2num((empty($this->product_fourn_packaging) ? $qty : $this->product_fourn_packaging), 'MS');
 
 		$error = 0;
 		$now = dol_now();
@@ -726,8 +735,6 @@ class ProductFournisseur extends Product
 	public function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.info_bits as fourn_tva_npr, pfp.fk_availability,";
 		$sql .= " pfp.fk_soc, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product, pfp.charges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
 		$sql .= " pfp.supplier_reputation, pfp.fk_user, pfp.datec,";
@@ -782,7 +789,7 @@ class ProductFournisseur extends Product
 					$this->supplier_barcode = $obj->barcode;
 					$this->supplier_fk_barcode_type = $obj->fk_barcode_type;
 				}
-				$this->packaging = $obj->packaging;
+				$this->packaging = (float) $obj->packaging;
 
 				if (isModEnabled('dynamicprices') && empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
 					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
@@ -826,8 +833,6 @@ class ProductFournisseur extends Product
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, ";
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
@@ -888,7 +893,7 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_multicurrency_id          = $record["fk_multicurrency"];
 				$prodfourn->fourn_multicurrency_code        = $record["multicurrency_code"];
 
-				$prodfourn->packaging = $record["packaging"];
+				$prodfourn->packaging = (float) $record["packaging"];
 				$prodfourn->status = $record["pfstatus"];
 
 				if (isModEnabled('barcode')) {
@@ -1072,8 +1077,6 @@ class ProductFournisseur extends Product
 	 */
 	public function setSupplierPriceExpression($expression_id)
 	{
-		global $conf;
-
 		// Clean parameters
 		$this->db->begin();
 		$expression_id = $expression_id != 0 ? $expression_id : 'NULL';
@@ -1302,7 +1305,7 @@ class ProductFournisseur extends Product
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
 	{
-		global $db, $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1311,7 +1314,7 @@ class ProductFournisseur extends Product
 		$result = '';
 		$label = '';
 
-		$newref = $this->ref;
+		$newref = (string) $this->ref;
 		if ($maxlength) {
 			$newref = dol_trunc($newref, $maxlength, 'middle');
 		}
@@ -1396,7 +1399,7 @@ class ProductFournisseur extends Product
 			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
 		}
 
-		$logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
+		$logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC', getDolGlobalInt('MAIN_TOOLTIP_PRICELOG_HISTORY_LIMIT', 10)); // set sort order here
 		if (is_array($logPrices) && count($logPrices) > 0) {
 			$label .= '<br><br>';
 			$label .= '<u>'.$langs->trans("History").'</u>';
@@ -1416,13 +1419,14 @@ class ProductFournisseur extends Product
 			}
 		}
 
+		$allowothertags = array('table', 'tr', 'td');
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SupplierRef");
-				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label, 0, $allowothertags).'"';
 			}
-			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label, 0, $allowothertags).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1434,7 +1438,7 @@ class ProductFournisseur extends Product
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1, $allowothertags);
 		}
 		if ($withpicto != 2) {
 			$result .= $newref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');

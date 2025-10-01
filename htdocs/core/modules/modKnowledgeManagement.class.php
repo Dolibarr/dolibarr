@@ -352,7 +352,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'ticket',
-			'url' => '/categories/index.php?type=13',
+			'url' => '/categories/categorie_list.php?type=13',
 			'langs' => 'knowledgemanagement',
 			'position' => 112,
 			'enabled' => '$conf->knowledgemanagement->enabled',

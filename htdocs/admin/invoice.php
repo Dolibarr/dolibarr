@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
 
 $error = 0;
+$reg = array();
 
 
 /*
@@ -125,6 +126,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		/** @var ModelePDFFactures $module */
 		'@phan-var-force ModelePDFFactures $module';
 
 		if ($module->write_file($facture, $langs) > 0) {
@@ -293,15 +295,14 @@ llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configur
 $form = new Form($db);
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
 $head = invoice_admin_prepare_head();
-print dol_get_fiche_head($head, 'general', $langs->trans("Invoices"), -1, 'invoice');
+print dol_get_fiche_head($head, 'general', $langs->trans("Invoices"), -1, 'bill');
 
-/*
- *  Numbering module
- */
+// Numbering module
 
 print load_fiche_titre($langs->trans("BillsNumberingModule"), '', '');
 
@@ -316,6 +317,8 @@ print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
+
+$arrayofmodules = array();
 
 foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/facture/");
@@ -332,6 +335,7 @@ foreach ($dirmodels as $reldir) {
 						$classname = "mod_facture_".$file;
 					}
 					// Check if there is a filter on country
+					$reg = array();
 					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
 					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
 						continue;
@@ -343,131 +347,144 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.$filebis;
 
 						$module = new $classname($db);
-
+						/** @var ModeleNumRefFactures $module */
 						'@phan-var-force ModeleNumRefFactures $module';
 
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-						if ($module->isEnabled()) {
-							print '<tr class="oddeven"><td width="100">';
-							echo preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
-							print "</td><td>\n";
-
-							print $module->info($langs);
-
-							print '</td>';
-
-							// Show example of numbering module
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) {
-								$langs->load("errors");
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							//print "> ".$conf->global->FACTURE_ADDON." - ".$file;
-							if ($conf->global->FACTURE_ADDON == $file || getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-							}
-							print '</td>';
-
-							$facture = new Facture($db);
-							$facture->initAsSpecimen();
-
-							$htmltooltip = '';
-
-							// Example for standard invoice
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-							$facture->type = 0;
-							$nextval = $module->getNextValue($mysoc, $facture);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= $langs->trans("NextValueForInvoices").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-							// Example for replacement invoice
-							if (!getDolGlobalString('INVOICE_DISABLE_REPLACEMENT')) {
-								$facture->type = 1;
-								$nextval = $module->getNextValue($mysoc, $facture);
-								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-									$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
-									if ($nextval) {
-										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-											$nextval = $langs->trans($nextval);
-										}
-										$htmltooltip .= $nextval.'<br>';
-									} else {
-										$htmltooltip .= $langs->trans($module->error).'<br>';
-									}
-								}
-							}
-							// Example for credit invoice
-							$facture->type = 2;
-							$nextval = $module->getNextValue($mysoc, $facture);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= $langs->trans("NextValueForCreditNotes").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-							// Example for deposit invoice
-							$facture->type = 3;
-							$nextval = $module->getNextValue($mysoc, $facture);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= $langs->trans("NextValueForDeposit").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval;
-								} else {
-									$htmltooltip .= $langs->trans($module->error);
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-
-							if (getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {  // If module is the one used, we show existing errors
-								if (!empty($module->error)) {
-									dol_htmloutput_mesg($module->error, array(), 'error', 1);
-								}
-							}
-
-							print '</td>';
-
-							print "</tr>\n";
-						}
+						$arrayofmodules[] = $module;
 					}
 				}
 			}
 			closedir($handle);
 		}
+	}
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+/** @var ModeleNumRefFactures[] $arrayofmodules */
+'@phan-var-force ModeleNumRefFactures[] $arrayofmodules';
+
+foreach ($arrayofmodules as $module) {
+	$file = strtolower($module->getName($langs));
+	if (!preg_match('/^mod_facture_/', $file)) {
+		$file = 'mod_facture_'.$file;
+	}
+
+	// Show modules according to features level
+	if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+		continue;
+	}
+	if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+		continue;
+	}
+	if ($module->version == 'dolibarr_deprecated' && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 0 && getDolGlobalString('FACTURE_ADDON') != $file) {
+		continue;
+	}
+
+	if ($module->isEnabled()) {
+		print '<tr class="oddeven"><td width="100">';
+		print preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', $module->getName($langs)));
+		print "</td><td>\n";
+		print $module->info($langs);
+		print '</td>';
+
+		// Show example of numbering module
+		print '<td class="nowrap">';
+		$tmp = $module->getExample();
+		if (preg_match('/^Error/', $tmp)) {
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans($tmp).'</div>';
+		} elseif ($tmp == 'NotConfigured') {
+			print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+		} else {
+			print $tmp;
+		}
+		print '</td>'."\n";
+
+		print '<td class="center">';
+		if (getDolGlobalString('FACTURE_ADDON') == $file || getDolGlobalString('FACTURE_ADDON').'.php' == $file) {
+			print img_picto($langs->trans("Activated"), 'switch_on');
+		} else {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+		}
+		print '</td>';
+
+		$facture = new Facture($db);
+		$facture->initAsSpecimen();
+
+		$htmltooltip = '';
+
+		// Example for standard invoice
+		$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+		$facture->type = 0;
+		$nextval = $module->getNextValue($mysoc, $facture);
+		if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+			$htmltooltip .= $langs->trans("NextValueForInvoices").': ';
+			if ($nextval) {
+				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$nextval = $langs->trans($nextval);
+				}
+				$htmltooltip .= $nextval.'<br>';
+			} else {
+				$htmltooltip .= $langs->trans($module->error).'<br>';
+			}
+		}
+		// Example for replacement invoice
+		if (!getDolGlobalString('INVOICE_DISABLE_REPLACEMENT')) {
+			$facture->type = 1;
+			$nextval = $module->getNextValue($mysoc, $facture);
+			if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+				$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
+				if ($nextval) {
+					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+						$nextval = $langs->trans($nextval);
+					}
+					$htmltooltip .= $nextval.'<br>';
+				} else {
+					$htmltooltip .= $langs->trans($module->error).'<br>';
+				}
+			}
+		}
+		// Example for credit invoice
+		$facture->type = 2;
+		$nextval = $module->getNextValue($mysoc, $facture);
+		if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+			$htmltooltip .= $langs->trans("NextValueForCreditNotes").': ';
+			if ($nextval) {
+				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$nextval = $langs->trans($nextval);
+				}
+				$htmltooltip .= $nextval.'<br>';
+			} else {
+				$htmltooltip .= $langs->trans($module->error).'<br>';
+			}
+		}
+		// Example for deposit invoice
+		$facture->type = 3;
+		$nextval = $module->getNextValue($mysoc, $facture);
+		if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+			$htmltooltip .= $langs->trans("NextValueForDeposit").': ';
+			if ($nextval) {
+				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$nextval = $langs->trans($nextval);
+				}
+				$htmltooltip .= $nextval;
+			} else {
+				$htmltooltip .= $langs->trans($module->error);
+			}
+		}
+
+		print '<td class="center">';
+		print $form->textwithpicto('', $htmltooltip, 1, 'info');
+
+		if (getDolGlobalString('FACTURE_ADDON').'.php' == $file) {  // If module is the one used, we show existing errors
+			if (!empty($module->error)) {
+				dol_htmloutput_mesg($module->error, array(), 'error', 1);
+			}
+		}
+
+		print '</td>';
+
+		print "</tr>\n";
 	}
 }
 
@@ -544,6 +561,7 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							'@phan-var-force ModelePDFFactures $module';
+							/** @var ModelePDFFactures $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

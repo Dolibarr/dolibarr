@@ -102,6 +102,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$outref = $object->ref;
 		$outlabel = $object->label;
 		$outlabel_trans = '';
+		$default_unit = $object->fk_unit;
 		$outdesc = $object->description;
 		$outdesc_trans = '';
 		$outtype = $object->type;
@@ -184,7 +185,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$sql .= " WHERE fk_product = ".((int) $id);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
 			$sql .= " AND price_level = ".((int) $price_level);
-			$sql .= " ORDER BY date_price";
+			$sql .= " ORDER BY date_price DESC, rowid";
 			$sql .= " DESC LIMIT 1";
 
 			$result = $db->query($sql);
@@ -294,7 +295,9 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
-			'array_options' => $object->array_options
+			'array_options' => $object->array_options,
+
+			'default_unit'=>$default_unit
 		);
 	}
 
@@ -335,7 +338,7 @@ if ($action == 'fetch' && !empty($id)) {
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
 		$arrayresult = $form->select_produits_list(0, $htmlname, $type, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
 	} elseif ($mode == 2) {            // mode=2: supplier
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice, '', getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'));
 	}
 
 	$db->close();

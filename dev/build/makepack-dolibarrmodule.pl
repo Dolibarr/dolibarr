@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #----------------------------------------------------------------------------
-# \file         build/makepack-dolibarrmodule.pl
+# \file         dev/build/makepack-dolibarrmodule.pl
 # \brief        Package builder (tgz, zip, rpm, deb, exe)
 # \author       (c)2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 # \contributor  (c)2017 Nicolas ZABOURI <info@inovea-conseil.com>
@@ -81,7 +81,7 @@ for (0..@ARGV-1) {
     }
 }
 $SOURCE="$DIR/../..";
-$DESTI="$SOURCE/build";
+$DESTI="$SOURCE/dev/build";
 if ($ENV{"DESTIMODULES"}) { $DESTI = $ENV{"DESTIMODULES"}; }		# Force output dir if env DESTIMODULES is defined
 $NEWDESTI=$DESTI;
 
@@ -287,13 +287,12 @@ foreach my $PROJECT (@PROJECTLIST) {
 
 				@timearray=localtime(time());
 				$fulldate=($timearray[5]+1900).'-'.($timearray[4]+1).'-'.$timearray[3].' '.$timearray[2].':'.$timearray[1];
-				open(VF,">$BUILDROOT/$PROJECTLC/dev/build/version-".$PROJECTLC.".txt");
-
-				print "Create version file $BUILDROOT/$PROJECTLC/dev/build/version-".$PROJECTLC.".txt with date ".$fulldate."\n";
-				$ret=`mkdir -p "$BUILDROOT/$PROJECTLC/dev/build"`;
-				print VF "Version: ".$MAJOR.".".$MINOR.($BUILD ne ''?".$BUILD":"")."\n";
-				print VF "Build  : ".$fulldate."\n";
-				close VF;
+				#open(VF,">$BUILDROOT/$PROJECTLC/dev/build/version-".$PROJECTLC.".txt");
+				#print "Create version file $BUILDROOT/$PROJECTLC/dev/build/version-".$PROJECTLC.".txt with date ".$fulldate."\n";
+				#$ret=`mkdir -p "$BUILDROOT/$PROJECTLC/dev/build"`;
+				#print VF "Version: ".$MAJOR.".".$MINOR.($BUILD ne ''?".$BUILD":"")."\n";
+				#print VF "Build  : ".$fulldate."\n";
+				#close VF;
 		    }
 		    print "Clean $BUILDROOT\n";
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/.cache`;
@@ -308,11 +307,11 @@ foreach my $PROJECT (@PROJECTLIST) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.old`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.postgres`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf*sav*`;
-		    if($custom){
-                        $ret=`cp -r $BUILDROOT/$PROJECTLC/htdocs/custom/* $BUILDROOT/$PROJECTLC/htdocs/.`;
+		    if ($custom) {
+				$ret=`cp -r $BUILDROOT/$PROJECTLC/htdocs/custom/* $BUILDROOT/$PROJECTLC/htdocs/.`;
 		    }
-		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom`;
-	            $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom2`;
+			$ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom`;
+			$ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom2`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/test`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/Thumbs.db $BUILDROOT/$PROJECTLC/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/*/*/Thumbs.db`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/CVS* $BUILDROOT/$PROJECTLC/*/CVS* $BUILDROOT/$PROJECTLC/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/*/*/CVS*`;
@@ -363,7 +362,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 
 	            print "Move $FILENAMEZIP.zip to $NEWDESTI/$FILENAMEZIP.zip\n";
 	            $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$NEWDESTI/$FILENAMEZIP.zip"`;
-	            $ret=`chown $OWNER.$GROUP "$NEWDESTI/$FILENAMEZIP.zip"`;
+	            $ret=`chown $OWNER:$GROUP "$NEWDESTI/$FILENAMEZIP.zip"`;
 	    		next;
 	    	}
 
@@ -374,11 +373,11 @@ foreach my $PROJECT (@PROJECTLIST) {
 	    		print "Remove target $FILENAMEEXE.exe...\n";
 	    		unlink "$NEWDESTI/$FILENAMEEXE.exe";
 	    		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
-	    		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
+	    		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\dev\\build\\exe\\$FILENAME.nsi\"";
 	            print "$command\n";
 	    		$ret=`$command`;
 	    		print "Move $FILENAMEEXE.exe to $NEWDESTI\n";
-	    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$NEWDESTI/$FILENAMEEXE.exe");
+	    		rename("$SOURCE\\dev\\build\\exe\\$FILENAMEEXE.exe","$NEWDESTI/$FILENAMEEXE.exe");
 	    		next;
 	    	}
 

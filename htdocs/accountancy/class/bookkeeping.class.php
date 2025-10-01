@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Jose MARTINEZ	    <jose.martinez@pichinov.com>
+/* Copyright (C) 2014-2017	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2015-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2020	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Jose MARTINEZ	    	<jose.martinez@pichinov.com>
+ * Copyright (C) 2025		Nicolas Barrouillet 	<nicolas@pragma-tech.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,11 +50,6 @@ class BookKeeping extends CommonObject
 	public $table_element = 'accounting_bookkeeping';
 
 	/**
-	 * @var int 	Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var BookKeepingLine[] Lines
 	 */
 	public $lines = array();
@@ -74,27 +70,27 @@ class BookKeeping extends CommonObject
 	public $date_lim_reglement;
 
 	/**
-	 * @var string 	Doc type
+	 * @var ?string 	Doc type
 	 */
 	public $doc_type;
 
 	/**
-	 * @var string 	Doc ref
+	 * @var ?string 	Doc ref
 	 */
 	public $doc_ref;
 
 	/**
-	 * @var int 	ID
+	 * @var ?int 	ID
 	 */
 	public $fk_doc;
 
 	/**
-	 * @var int 	ID
+	 * @var ?int 	ID
 	 */
 	public $fk_docdet;
 
 	/**
-	 * @var string 	Thirdparty code
+	 * @var ?string 	Thirdparty code
 	 */
 	public $thirdparty_code;
 
@@ -109,69 +105,69 @@ class BookKeeping extends CommonObject
 	public $subledger_label;
 
 	/**
-	 * @var string  doc_type
+	 * @var ?string  doc_type
 	 */
 	public $numero_compte;
 
 	/**
-	 * @var string label compte
+	 * @var ?string label compte
 	 */
 	public $label_compte;
 
 	/**
-	 * @var string label operation
+	 * @var ?string label operation
 	 */
 	public $label_operation;
 
 	/**
-	 * @var float FEC:Debit
+	 * @var ?float FEC:Debit
 	 */
 	public $debit;
 
 	/**
-	 * @var float FEC:Credit
+	 * @var ?float FEC:Credit
 	 */
 	public $credit;
 
 	/**
-	 * @var float FEC:Amount (Not necessary)
+	 * @var ?float FEC:Amount (Not necessary)
 	 * @deprecated No more used (we have info into debit/credit and sens)
 	 */
 	public $montant;
 
 	/**
-	 * @var float FEC:Amount (Not necessary)
+	 * @var ?float FEC:Amount (Not necessary)
 	 * @deprecated No more used (we have info into debit/credit and sens)
 	 */
 	public $amount;
 
 	/**
-	 * @var string FEC:Sens (Not necessary)
+	 * @var ?string FEC:Sens (Not necessary)
 	 */
 	public $sens;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var string key for import
+	 * @var ?string key for import
 	 */
 	public $import_key;
 
 	/**
-	 * @var string code journal
+	 * @var ?string code journal
 	 */
 	public $code_journal;
 
 	/**
-	 * @var string label journal
+	 * @var ?string label journal
 	 */
 	public $journal_label;
 
 	/**
-	 * @var int accounting transaction id
+	 * @var ?int accounting transaction id
 	 */
 	public $piece_num;
 
@@ -205,6 +201,11 @@ class BookKeeping extends CommonObject
 	 */
 	public static $can_modify_bookkeeping_sql_cached;
 
+	/**
+	 * @var string[]	Array of warnings
+	 */
+	public $warnings = array();
+
 
 	/**
 	 * Constructor
@@ -237,6 +238,7 @@ class BookKeeping extends CommonObject
 		}
 		if (isset($this->doc_ref)) {
 			$this->doc_ref = trim($this->doc_ref);
+			$this->doc_ref = dol_trunc($this->doc_ref, 300); // We limit to 300 chars to avoid problems with too long ref in DB
 		}
 		if (isset($this->fk_doc)) {
 			$this->fk_doc = (int) $this->fk_doc;
@@ -296,7 +298,7 @@ class BookKeeping extends CommonObject
 			$this->credit = 0.0;
 		}
 
-		$result = $this->validBookkeepingDate($this->doc_date);
+		$result = $this->validBookkeepingDate($this->doc_date);	// Check date according to ACCOUNTANCY_FISCAL_PERIOD_MODE.
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -500,6 +502,68 @@ class BookKeeping extends CommonObject
 			$this->db->commit();
 			return $result;
 		}
+	}
+
+	/**
+	 *	Create a line in database from values as parameters
+	 *
+	 * 	@param		int 			$doc_date				Date of source document, in db date NOT NULL
+	 * 	@param		string 			$doc_ref				Doc ref
+	 * 	@param 		string 			$doc_type				Doc type
+	 * 	@param 		int 			$fk_doc					Doc id
+	 * 	@param 		int 			$fk_docdet				Doc line id
+	 * 	@param 		string 			$numero_compte			Account number
+	 * 	@param 		string 			$label_compte			Account label
+	 * 	@param 		string 			$label_operation		Operation label
+	 * 	@param 		double 			$amount					Amount
+	 * 	@param 		string 			$code_journal			Journal code
+	 * 	@param 		string 			$journal_label			Journal label
+	 * 	@param 		string 			$subledger_account		Sub ledger account
+	 * 	@return		int				Return integer <0 if KO, O nothing done, created object id if OK
+	 */
+	public function createFromValues($doc_date, $doc_ref, $doc_type, $fk_doc, $fk_docdet, $numero_compte, $label_compte, $label_operation, $amount, $code_journal, $journal_label, $subledger_account)
+	{
+		global $conf, $langs, $user;
+
+		$result = 0;
+
+		if (!empty($amount)) {
+			$this->doc_date = $doc_date;
+			$this->doc_ref = $doc_ref;
+			$this->doc_type = $doc_type;
+			$this->fk_doc = $fk_doc;
+			$this->fk_docdet = $fk_docdet;
+
+			$this->numero_compte = $numero_compte;
+			$this->label_compte = $label_compte;
+
+			$this->label_operation = $label_operation;
+			$this->subledger_account = $subledger_account;
+
+			$this->montant = $amount;
+			$this->sens = ($amount >= 0) ? 'D' : 'C';
+			$this->debit = ($amount >= 0 ? $amount : 0);
+			$this->credit = ($amount < 0 ? -$amount : 0);
+
+			$this->code_journal = $code_journal;
+			$this->journal_label = $journal_label;
+
+			$this->fk_user_author = $user->id;
+			$this->entity = $conf->entity;
+
+			$result = $this->create($user);
+			if ($result < 0) {
+				if ($this->error == 'BookkeepingRecordAlreadyExists') {
+					$warning = $langs->trans('WarningBookkeepingRecordAlreadyExists', $this->doc_type, $this->fk_doc, $this->fk_docdet);
+					$this->warnings[] = $warning;
+					dol_syslog(__METHOD__.' '.$warning, LOG_WARNING);
+				} else {
+					dol_syslog(__METHOD__.' '.$this->errorsToString(), LOG_ERR);
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -724,7 +788,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
 		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape((string) $this->piece_num)).',';
-		$sql .= ' '.(empty($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").',';
+		$sql .= ' '.(empty($this->ref) ? "''" : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
@@ -947,23 +1011,23 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 					$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-					$sqlwhere[] = $this->db->sanitize($key).' LIKE \''.$this->db->escape($this->db->escapeforlike($value)).'%\'';
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '".$this->db->escape($this->db->escapeforlike($value))."%'";
 				} elseif ($key == 't.date_creation>=') {
-					$sqlwhere[] = 't.date_creation >= \''.$this->db->idate((int) $value).'\'';
+					$sqlwhere[] = "t.date_creation >= '".$this->db->idate((int) $value)."'";
 				} elseif ($key == 't.date_creation<=') {
-					$sqlwhere[] = 't.date_creation <= \''.$this->db->idate((int) $value).'\'';
+					$sqlwhere[] = "t.date_creation <= '".$this->db->idate((int) $value)."'";
 				} elseif ($key == 't.date_export>=') {
-					$sqlwhere[] = 't.date_export >= \''.$this->db->idate((int) $value).'\'';
+					$sqlwhere[] = "t.date_export >= '".$this->db->idate((int) $value)."'";
 				} elseif ($key == 't.date_export<=') {
-					$sqlwhere[] = 't.date_export <= \''.$this->db->idate((int) $value).'\'';
+					$sqlwhere[] = "t.date_export <= '".$this->db->idate((int) $value)."'";
 				} elseif ($key == 't.date_validated>=') {
-					$sqlwhere[] = 't.date_validated >= \''.$this->db->idate((int) $value).'\'';
+					$sqlwhere[] = "t.date_validated >= '".$this->db->idate((int) $value)."'";
 				} elseif ($key == 't.date_validated<=') {
-					$sqlwhere[] = 't.date_validated <= \''.$this->db->idate((int) $value).'\'';
+					$sqlwhere[] = "t.date_validated <= '".$this->db->idate((int) $value)."'";
 				} elseif ($key == 't.date_lim_reglement>=') {
-					$sqlwhere[] = 't.date_lim_reglement>=\''.$this->db->idate((int) $value).'\'';
+					$sqlwhere[] = "t.date_lim_reglement>='".$this->db->idate((int) $value)."'";
 				} elseif ($key == 't.date_lim_reglement<=') {
-					$sqlwhere[] = 't.date_lim_reglement<=\''.$this->db->idate((int) $value).'\'';
+					$sqlwhere[] = "t.date_lim_reglement<='".$this->db->idate((int) $value)."'";
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.reconciled_option') {
@@ -975,7 +1039,7 @@ class BookKeeping extends CommonObject
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
 				} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
-					$sqlwhere[] = 't.numero_compte IN ('.$this->db->sanitize($value, 1).')';
+					$sqlwhere[] = "t.numero_compte IN (".$this->db->sanitize($value, 1).")";
 				} else {
 					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}
@@ -991,7 +1055,7 @@ class BookKeeping extends CommonObject
 			$sql .= " AND t.subledger_account IS NOT NULL";
 			$sql .= " AND t.subledger_account <> ''";
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
-			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		} else {
 			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
@@ -1039,7 +1103,7 @@ class BookKeeping extends CommonObject
 					$line->multicurrency_amount = $obj->multicurrency_amount;
 					$line->multicurrency_code = $obj->multicurrency_code;
 					$line->lettering_code = $obj->lettering_code;
-					$line->date_lettering = $obj->date_lettering;
+					$line->date_lettering = $this->db->jdate($obj->date_lettering);
 					$line->fk_user_author = $obj->fk_user_author;
 					$line->import_key = $obj->import_key;
 					$line->code_journal = $obj->code_journal;
@@ -1117,7 +1181,6 @@ class BookKeeping extends CommonObject
 		$sql .= " t.date_export,";
 		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
-
 		$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if ($showAlreadyExportMovements == 0) {
 			$sql .= " AND t.date_export IS NULL";
@@ -1125,12 +1188,12 @@ class BookKeeping extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
-			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter must be an USF string now.", LOG_WARNING);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if ($key == 't.doc_date') {
-						$sqlwhere[] = $this->db->sanitize($key).' = \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.doc_date>=') {
 						$sqlwhere[] = "t.doc_date >= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.doc_date<=') {
@@ -1150,23 +1213,23 @@ class BookKeeping extends CommonObject
 					} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 						$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
 					} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-						$sqlwhere[] = $this->db->sanitize($key).' LIKE \''.$this->db->escape($value).'%\'';
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '".$this->db->escape($value)."%'";
 					} elseif ($key == 't.date_creation>=') {
-						$sqlwhere[] = 't.date_creation >= \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = "t.date_creation >= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.date_creation<=') {
-						$sqlwhere[] = 't.date_creation <= \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = "t.date_creation <= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.tms>=') {
-						$sqlwhere[] = 't.tms >= \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = "t.tms >= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.tms<=') {
-						$sqlwhere[] = 't.tms <= \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = "t.tms <= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.date_export>=') {
-						$sqlwhere[] = 't.date_export >= \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = "t.date_export >= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.date_export<=') {
-						$sqlwhere[] = 't.date_export <= \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = "t.date_export <= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.date_validated>=') {
-						$sqlwhere[] = 't.date_validated >= \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = "t.date_validated >= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.date_validated<=') {
-						$sqlwhere[] = 't.date_validated <= \''.$this->db->idate((int) $value).'\'';
+						$sqlwhere[] = "t.date_validated <= '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 't.credit' || $key == 't.debit') {
 						$sqlwhere[] = natural_search($key, $value, 1, 1);
 					} elseif ($key == 't.code_journal' && !empty($value)) {
@@ -1183,7 +1246,7 @@ class BookKeeping extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND '.implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
+				$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 			}
 
 			$filter = '';
@@ -1233,7 +1296,7 @@ class BookKeeping extends CommonObject
 				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->lettering_code = $obj->lettering_code;
-				$line->date_lettering = $obj->date_lettering;
+				$line->date_lettering = $this->db->jdate($obj->date_lettering);
 				$line->fk_user_author = $obj->fk_user_author;
 				$line->import_key = $obj->import_key;
 				$line->code_journal = $obj->code_journal;
@@ -1353,16 +1416,15 @@ class BookKeeping extends CommonObject
 			$sql .= " AND t.subledger_account <> ''";
 			$sql .= " GROUP BY t.numero_compte, t.subledger_account, t.subledger_label";
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
-			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		} else {
 			$sql .= ' GROUP BY t.numero_compte';
 			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
 
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield, $sortorder);
-		}
+		$sql .= $this->db->order($sortfield, $sortorder);
+
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
@@ -1546,6 +1608,7 @@ class BookKeeping extends CommonObject
 	 */
 	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
 	{
+		global $conf;
 		$error = 0;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
@@ -1558,6 +1621,7 @@ class BookKeeping extends CommonObject
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element.$mode;
 		$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
 		$sql .= " WHERE piece_num = ".((int) $piece_num);
+		$sql .= " AND entity = " . ((int) $conf->entity);
 		$sql .= $sql_filter;
 
 		$resql = $this->db->query($sql);
@@ -1758,7 +1822,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		// Call triggers
-		if (! $error && ! $notrigger) {
+		if (!$notrigger) {
 			$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
 			if ($result < 0) {
 				$error++;
@@ -1937,7 +2001,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Return next movement number
+	 * Return next bookkeeping piece number
 	 *
 	 * @param	string	$mode		Mode
 	 * @return	int<1, max>|-1		Return next movement number or -1 if error
@@ -1946,7 +2010,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT MAX(piece_num)+1 as max FROM ".$this->db->prefix().$this->table_element.$mode;
+		$sql = "SELECT MAX(piece_num) + 1 as max FROM ".$this->db->prefix().$this->table_element.$mode;
 		$sql .= " WHERE entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 		dol_syslog(get_class($this)."::getNextNumMvt", LOG_DEBUG);
@@ -2231,14 +2295,12 @@ class BookKeeping extends CommonObject
 				}
 			}
 		} elseif ($direction == 1) {
-			if (!$error) {
-				$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-				}
+			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			}
 
 			if (!$error) {
@@ -2427,7 +2489,7 @@ class BookKeeping extends CommonObject
 		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = '';
+			$obj = (object) array('label' => '');
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 			}
@@ -2542,42 +2604,55 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Generate label operation when operation is transferred into accounting
+	 * Generate label operation when operation is transferred into accounting according to ACCOUNTING_LABEL_OPERATION_ON_TRANSFER
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 0, we concat thirdparty name, ref and label.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 1, we concat thirdparty name, ref.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 2, we return just thirdparty name
 	 *
 	 * @param 	string  $thirdpartyname         Thirdparty name
 	 * @param 	string  $reference              Reference of the element
 	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @param	int<0,1> $full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
 	 * @return	string                          Label of the operation
 	 */
-	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount)
+	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount, $full = 0)
 	{
-		global $conf;
-
 		$accountingLabelOperation = '';
 
-		if (!getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') || getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 0) {
+		if (!getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER')) {
 			$truncThirdpartyName = 16;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
 			if (!empty($labelaccount)) {
 				$accountingLabelOperation .= ' - '. $labelaccount;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
 			$truncThirdpartyName = 32;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
 			$truncThirdpartyName = 64;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 		}
-		dol_syslog('label'.$accountingLabelOperation, LOG_ERR);
 
 		return $accountingLabelOperation;
 	}
@@ -3095,7 +3170,7 @@ class BookKeeping extends CommonObject
 								$error++;
 							}
 							$objtmp = $this->db->fetch_object($result);
-							$bookkeeping->subledger_label = $objtmp->subledger_label; // latest subledger label used
+							$bookkeeping->subledger_label = $objtmp->subledger_label ?? null; // latest subledger label used
 						} else {
 							$bookkeeping->subledger_account = null;
 							$bookkeeping->subledger_label = null;
@@ -3277,6 +3352,404 @@ class BookKeeping extends CommonObject
 			return 1;
 		}
 	}
+
+	/**
+	 *  Mass account assignment
+	 *
+	 * @param 	int[]		$toselect				Array of BookkeepingId
+	 * @param 	int			$accounting_account		ID of accounting account define for mass action
+	 * @return	int						int Return integer -1 if KO, 1 if OK
+	 */
+	public function assignAccountMass($toselect, $accounting_account = 0)
+	{
+		global $langs, $user;
+
+		$error = 0;
+
+		$this->db->begin();
+
+		$bookkeeping = new BookKeeping($this->db);
+		$accountingaccount = new AccountingAccount($this->db);
+		$nb = 0;
+
+		if ((int) $accounting_account > 0) {
+			$accountingaccount->fetch($accounting_account);
+			$echecT = [];
+			foreach ($toselect as $id) {
+				if ($bookkeeping->fetch($id)) {
+					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
+						$accountcustcode = '411';
+					} else $accountcustcode = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+
+					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) {
+						$accountsuppcode = '401';
+					} else $accountsuppcode = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
+
+					if (strpos($bookkeeping->numero_compte, $accountcustcode) === 0 || strpos($bookkeeping->numero_compte, $accountsuppcode) === 0) {
+						$echecT[]=$bookkeeping->numero_compte;
+						continue;
+					}
+
+					$bookkeeping->numero_compte = $accountingaccount->account_number;
+					$bookkeeping->label_compte = $accountingaccount->label;
+
+					$result = $bookkeeping->update($user);
+
+					if ($result > 0) {
+						$nb++;
+					} else {
+						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						$error++;
+						break;
+					}
+				}
+			}
+
+			$echecImplode = implode(",", $echecT);
+		} else {
+			setEventMessages($langs->trans('NoAccountSelected'), null, 'errors');
+			$error++;
+			$this->db->rollback();
+		}
+
+		if ($nb > 1) {
+			setEventMessages($nb ." " . $langs->trans('AssignAccountsSuccess'), null, 'mesgs');
+		} elseif ($nb > 0) {
+			setEventMessages($nb ." " . $langs->trans('AssignAccountSuccess'), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans('AssignAccountError'), null, 'errors');
+			$error++;
+		}
+
+		if (!empty($echecImplode)) {
+			$nbEchec = count(explode(',', $echecImplode));
+			setEventMessages($nbEchec == 1 ? $langs->trans('NoAccountChangedWithAccountNumber') . ' ' . $echecImplode : $langs->trans('NoAccountsChangedWithAccountNumber') . ' ' . $echecImplode, null, 'errors'
+			);
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
+	 * Clone accounting entry
+	 *
+	 * @param	string	$piecenum		Piece number to clone
+	 * @param	string	$code_journal	Accounting journal code
+	 * @param	int		$docdate		Date of the document
+	 * @return	int						int Return integer -1 if KO, 1 if OK
+	 */
+	public function newClone($piecenum, $code_journal, $docdate)
+	{
+		global $langs;
+
+		$error = 0;
+
+		$accountingJournal = new AccountingJournal($this->db);
+		$accountingJournal->fetch(0, $code_journal);
+
+		$bookKeepingValid = new BookKeeping($this->db);
+
+		$periodeFiscal = $bookKeepingValid->validBookkeepingDate($docdate);
+		if ($periodeFiscal < 0) {
+			$error++;
+			return -1;
+		} elseif ($periodeFiscal == 0) {
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				setEventMessages($langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod'), null, 'errors');
+			} else {
+				setEventMessages($langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod'), null, 'errors');
+				header("Location: " . $_SERVER['HTTP_REFERER']);
+			}
+			$error++;
+			return -1;
+		}
+
+		$this->db->begin();
+		$bookKeepingInstance = new BookKeeping($this->db);
+		$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
+
+		$cloneId = [];
+		$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $piecenum);
+		$resqlRowidClone = $this->db->query($sqlRowidClone);
+
+		if ($resqlRowidClone) {
+			while ($objRowidClone = $this->db->fetch_object($resqlRowidClone)) {
+				$cloneId[] = $objRowidClone->rowid;
+			}
+
+			foreach ($cloneId as $toselectid) {
+				$bookKeeping = new BookKeeping($this->db);
+				if ($bookKeeping->fetch($toselectid)) {
+					$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $code_journal : $bookKeeping->code_journal;
+					$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
+
+					$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref,";
+					$sql .= " fk_doc, fk_docdet, debit, credit, journal_label, sens, montant";
+					$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+					$sql .= " WHERE rowid = " . ((int) $toselectid);
+					$resql = $this->db->query($sql);
+
+					if ($resql) {
+						while ($obj = $this->db->fetch_object($resql)) {
+							$docRef = $langs->trans('CloneOf', $obj->doc_ref);
+
+							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
+							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
+							$sql_insert .= " VALUES";
+							$sql_insert .= " (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
+							$sql_insert .= " ". ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($docdate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
+
+							$resqlInsert = $this->db->query($sql_insert);
+
+							if ($resqlInsert) {
+								setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
+							} else {
+								setEventMessages($langs->trans('CloningFailed') . $this->db->lasterror(), null, 'errors');
+								$error++;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
+	 *  Mass clone
+	 *
+	 * @param 	int[]		$toselect		array of BookkeepingId
+	 * @param	string		$code_journal	Accounting journal code
+	 * @param	int			$docdate		Date of the document
+	 * @return	int							Return integer -1 if KO, 1 if OK
+	 */
+	public function newCloneMass($toselect, $code_journal, $docdate)
+	{
+		global $langs;
+
+		$error = 0;
+		$this->db->begin();
+
+		$now = dol_now();
+		if (empty($docdate)) {
+			$docdate = $now;
+		}
+
+		$idImplodeSelect = implode(',', $toselect);
+		$pieceNumT = [];
+
+		$sqlPieceNum = "SELECT DISTINCT(piece_num) FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid IN (".$this->db->sanitize($idImplodeSelect).")";
+		$resqlPieceNum = $this->db->query($sqlPieceNum);
+
+		if ($resqlPieceNum) {
+			while ($objPieceNum = $this->db->fetch_object($resqlPieceNum)) {
+				$pieceNumT[] = $objPieceNum->piece_num;
+			}
+
+			foreach ($pieceNumT as $pieceNum) {
+				$accountingJournal = new AccountingJournal($this->db);
+				$accountingJournal->fetch(0, $code_journal);
+				$bookKeepingValid = new BookKeeping($this->db);
+				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($docdate);
+				if ($periodeFiscal < 0) {
+					$error++;
+				} elseif ($periodeFiscal == 0) {
+					if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+						setEventMessages($langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod'), null, 'errors');
+					} else {
+						setEventMessages($langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod'), null, 'errors');
+						header("Location: " . $_SERVER['HTTP_REFERER']);
+					}
+					$error++;
+				}
+
+				$bookKeepingInstance = new BookKeeping($this->db);
+				$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
+				$cloneId = [];
+				$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $pieceNum";
+				$resqlRowidClone = $this->db->query($sqlRowidClone);
+
+				if ($resqlRowidClone) {
+					while ($objRowidClone = $this->db->fetch_object($resqlRowidClone)) {
+						$cloneId[] = $objRowidClone->rowid;
+					}
+
+					foreach ($cloneId as $toselectid) {
+						$bookKeeping = new BookKeeping($this->db);
+						if ($bookKeeping->fetch($toselectid)) {
+							$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $code_journal : $bookKeeping->code_journal;
+							$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
+							$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant ";
+							$sql .= "FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid = " . ((int) $toselectid);
+
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								while ($obj = $this->db->fetch_object($resql)) {
+									$docRef = $langs->trans("CloneOf", $obj->doc_ref);
+
+									$sql_insert = "INSERT INTO ".$this->db->prefix()."accounting_bookkeeping";
+									$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date,";
+									$sql_insert .= " fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant";
+									$sql_insert .= ")";
+									$sql_insert .= " VALUES (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "',";
+									$sql_insert .= " '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate)."',";
+									$sql_insert .= " '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', " . ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ",";
+									$sql_insert .= " " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant;
+									$sql_insert .= ")";
+
+									$resqlInsert = $this->db->query($sql_insert);
+
+									if ($resqlInsert) {
+										setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
+									} else {
+										setEventMessages($langs->trans('CloningFailed'), null, 'errors');
+										$error++;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
+	 * Mass ReturnAccount
+	 *
+	 * @param 	int[]		$toselect		BookkeepingId
+	 * @param	string		$code_journal	Accounting journal code
+	 * @param	int			$docdate		Date of the document
+	 * @return	int							int Return integer -1 if KO, 1 if OK
+	 *
+	 */
+	public function newReturnAccount(array $toselect, $code_journal, $docdate)
+	{
+		global $langs, $user;
+
+		$error = 0;
+
+		$now = dol_now();
+		if (empty($docdate)) {
+			$docdate = $now;
+		}
+
+		$accountingJournal = new AccountingJournal($this->db);
+		$accountingJournal->fetch(0, $code_journal);
+
+		$this->db->begin();
+		$sqlAlreadyExtourne = "SELECT DISTINCT(piece_num) FROM " .MAIN_DB_PREFIX. "accounting_bookkeeping WHERE label_operation LIKE '%Extourne%'";
+		$resqlAlreadyExtourne = $this->db->query($sqlAlreadyExtourne);
+		$alreadyExtourneT = array();
+		if ($resqlAlreadyExtourne) {
+			while ($obj4 = $this->db->fetch_object($resqlAlreadyExtourne)) {
+				$alreadyExtourneT []= $obj4->piece_num;
+			}
+		}
+
+		$idImplode = implode(',', $toselect);
+		$sql1 = "SELECT DISTINCT(piece_num) from " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid IN (".$this->db->sanitize($idImplode).")";
+		$resql1 = $this->db->query($sql1);
+		$pieceNumT = [];
+
+		if ($resql1) {
+			while ($obj1 = $this->db->fetch_object($resql1)) {
+				$pieceNumT [] = $obj1->piece_num;
+			}
+
+			$i = mt_rand(0, 100);
+			foreach ($pieceNumT as $pieceNum) {
+				$newBookKeepingInstance = new BookKeeping($this->db);
+				$pieceNumNext = $newBookKeepingInstance->getNextNumMvt();
+				$extourneIds = [];
+				$sql2 = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $pieceNum);
+				$resql2 = $this->db->query($sql2);
+
+				if ($resql2) {
+					while ($obj2 = $this->db->fetch_object($resql2)) {
+						$extourneIds [] = $obj2->rowid;
+					}
+
+					foreach ($extourneIds as $extourneId) {
+						$newBookKeeping = new BookKeeping($this->db);
+						$bookKeeping = new BookKeeping($this->db);
+
+						if ($bookKeeping->fetch($extourneId)) {
+							if (in_array($bookKeeping->piece_num, $alreadyExtourneT)) {
+								setEventMessages($langs->trans("AlreadyReturnedAccount", $bookKeeping->piece_num), null, 'errors');
+							} else {
+								$newBookKeeping->debit = $bookKeeping->credit;
+								$newBookKeeping->credit = $bookKeeping->debit;
+								if ($bookKeeping->sens == 'D') {
+									$newBookKeeping->sens = 'C';
+								} else {
+									$newBookKeeping->sens = 'D';
+								}
+
+								$newBookKeeping->label_operation = "Extourne " . $bookKeeping->piece_num . " - " . $bookKeeping->numero_compte . " - " . date('d/m/Y', dol_now()) . " - " . $i;
+
+								$newBookKeeping->numero_compte = $bookKeeping->numero_compte;
+								$newBookKeeping->label_compte = $bookKeeping->label_compte;
+								$newBookKeeping->doc_type = $bookKeeping->doc_type;
+								$newBookKeeping->code_journal = $bookKeeping->code_journal;
+								$newBookKeeping->doc_date = $docdate;
+								$newBookKeeping->fk_user_author = $user->id;
+								$newBookKeeping->doc_ref = $bookKeeping->doc_ref;
+								$newBookKeeping->montant = $bookKeeping->montant;
+								$newBookKeeping->journal_label = $bookKeeping->journal_label;
+								$newBookKeeping->subledger_account = $bookKeeping->subledger_account;
+								$newBookKeeping->subledger_label = $bookKeeping->subledger_label;
+							}
+							$createResult = $newBookKeeping->create($user);
+
+							if ($createResult > 0) {
+								$newBookKeeping->piece_num = $pieceNumNext;
+								$newBookKeeping->fk_doc = $bookKeeping->fk_doc;
+								$newBookKeeping->fk_docdet = $bookKeeping->fk_docdet;
+								$result = $newBookKeeping->update($user);
+								setEventMessages($langs->trans("SuccessReturnedAccount", $bookKeeping->piece_num), null, 'mesgs');
+							} else {
+								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error), null, 'errors');
+								$error++;
+							}
+						}
+
+						$i++;
+					}
+				}
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
 }
 
 /**
@@ -3423,4 +3896,9 @@ class BookKeepingLine extends CommonObjectLine
 	 * @var int|string
 	 */
 	public $date_lim_reglement;
+
+	/**
+	 * @var string
+	 */
+	public $code_tiers;
 }

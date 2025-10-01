@@ -61,10 +61,12 @@ class Contracts extends DolibarrApi
 	 * Return an array with contract information
 	 *
 	 * @param   int         $id         ID of contract
+	 * @param 	string 		$properties Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param 	bool 		$withLines 	true or false to display or hide lines
 	 * @return  Object					Object with cleaned properties
 	 * @throws	RestException
 	 */
-	public function get($id)
+	public function get($id, $properties = '', $withLines = true)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
 			throw new RestException(403);
@@ -80,7 +82,12 @@ class Contracts extends DolibarrApi
 		}
 
 		$this->contract->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->contract);
+
+		if (!$withLines) {
+			unset($this->contract->lines);
+		}
+
+		return $this->_filterObjectProperties($this->_cleanObjectDatas($this->contract), $properties);
 	}
 
 	/**
@@ -96,6 +103,7 @@ class Contracts extends DolibarrApi
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param bool 			   $withLines 			true or false to display or hide lines
 	 * @return  array                               Array of order objects
 	 * @phan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
@@ -103,7 +111,7 @@ class Contracts extends DolibarrApi
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $withLines = true)
 	{
 		global $db, $conf;
 
@@ -114,7 +122,7 @@ class Contracts extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -123,7 +131,9 @@ class Contracts extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."contrat AS t LEFT JOIN ".MAIN_DB_PREFIX."contrat_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."contrat AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('contrat').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
@@ -169,6 +179,9 @@ class Contracts extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$contrat_static = new Contrat($this->db);
 				if ($contrat_static->fetch($obj->rowid)) {
+					if (!$withLines) {
+						unset($contrat_static->lines);
+					}
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($contrat_static), $properties);
 				}
 				$i++;
@@ -450,12 +463,97 @@ class Contracts extends DolibarrApi
 		);
 
 		if ($updateRes > 0) {
-			$result = $this->get($id);
-			unset($result->line);
+			if (getDolGlobalInt('API_CONTRAT_PUTLINE_OUTPUT_LINE_ONLY')) {
+				$result = new ContratLigne($this->db);
+				$result->fetch($lineid);
+				foreach (array(
+					'array_languages',
+					'contacts_ids',
+					'linked_objects',
+					'linkedObjectsIds',
+					'actiontypecode',
+					'module',
+					'canvas',
+					'user',
+					'origin',
+					'origin_id',
+					'ref_ext',
+					'status',
+					'country_id',
+					'country_code',
+					'state_id',
+					'region_id',
+					'barcode_type',
+					'barcode_type_coder',
+					'mode_reglement_id',
+					'cond_reglement_id',
+					'demand_reason_id',
+					'transport_mode_id',
+					'shipping_method',
+					'shipping_method_id',
+					'model_pdf',
+					'last_main_doc',
+					'fk_bank',
+					'fk_account',
+					'lines',
+					'name',
+					'firstname',
+					'lastname',
+					'date_creation',
+					'date_validation',
+					'date_modification',
+					'date_cloture',
+					'user_author',
+					'user_creation',
+					'user_creation_id',
+					'user_valid',
+					'user_validation',
+					'user_validation_id',
+					'user_modification',
+					'user_modification_id',
+					'cond_reglement_supplier_id',
+					'deposit_percent',
+					'retained_warranty_fk_cond_reglement',
+					'date_commande',
+					'fk_user_creat',
+					'fk_user_modif',
+					'specimen',
+					'fk_unit',
+					'date_debut_prevue',
+					'date_debut_reel',
+					'date_fin_prevue',
+					'date_fin_reel',
+					'weight',
+					'weight_units',
+					'width',
+					'width_units',
+					'length',
+					'length_units',
+					'height',
+					'height_units',
+					'surface',
+					'surface_units',
+					'volume',
+					'volume_units',
+					'multilangs',
+					'desc',
+					'product',
+					'fk_product_type',
+					'warehouse_id',
+					'totalpaid',
+					'type',
+					'libelle'
+						 ) as $fieldToUnset) {
+					unset($result->{$fieldToUnset});
+				}
+			} else {
+				$result = $this->get($id);
+				unset($result->line);
+			}
 			return $this->_cleanObjectDatas($result);
+		} else {
+			throw new RestException(500, implode(';', $this->contract->errors));
 		}
-
-		return false;
 	}
 
 	/**

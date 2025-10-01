@@ -305,6 +305,8 @@ INSERT INTO llx_c_accounting_report (code, label, active) VALUES ('REP', 'Report
 ALTER TABLE llx_accounting_system ADD COLUMN date_creation datetime;
 ALTER TABLE llx_accounting_system ADD COLUMN fk_user_author integer;
 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 1, 'PCG25-DEV', 'The developed accountancy french plan 2025', 1);
+
 
 ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFAULT 1 AFTER entity;
 

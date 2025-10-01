@@ -188,6 +188,20 @@ if (isModEnabled('member')) {
 	}
 }
 
+if (isModEnabled('don')) {
+	print '<br>';
+	print $langs->trans("UseCaptchaCode").' - Donation public form';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_DONATION', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_DONATION&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_DONATION&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+
 // Set if a captcha is used on at least one place
 $showavailablecaptcha = 0;
 if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
@@ -200,6 +214,9 @@ if (isModEnabled('ticket') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TI
 	$showavailablecaptcha = 1;
 }
 if (isModEnabled('member') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
+	$showavailablecaptcha = 1;
+}
+if (isModEnabled('don') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
 	$showavailablecaptcha = 1;
 }
 

@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s ha compilato una riga.\nTrovi l'indagine all'indirizzo: \n%
 ShowSurvey=Mostra indagine
 UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment
 ListOfOpenSurveys=Elenco di aperto sondaggi
+AddTheVote=Clicca per aggiungere il voto

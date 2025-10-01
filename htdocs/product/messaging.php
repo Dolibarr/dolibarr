@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2007 	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005      	Brice Davoleau      	<brice.davoleau@gmail.com>
+ * Copyright (C) 2005-2012 	Regis Houssin       	<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2019 	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2007      	Patrick Raguin  		<patrick.raguin@gmail.com>
+ * Copyright (C) 2010      	Juanjo Menent       	<jmenent@2byte.es>
+ * Copyright (C) 2015      	Marcos García       	<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  */
 
 /**
- *  \file       htdocs/societe/messaging.php
+ *  \file       htdocs/product/messaging.php
  *  \ingroup    societe
  *  \brief      Page of third party events
  */
@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);

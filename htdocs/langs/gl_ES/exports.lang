@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Importacións / Exportacións
 ExportsArea=Área exportación
 ImportArea=Área importación
 NewExport=Nova exportación
@@ -31,10 +32,10 @@ ExportCsvSeparator=Separador de caracteres en CSV
 ImportCsvSeparator=Separador de caracteres Csv
 Step=Paso
 FormatedImport=Asistente de importación
-FormatedImportDesc1=Esta área permitelle realizar importacións persoalizadas de datos mediante un axudante que evita ter coñecementos técnicos de Dolibarr.
+FormatedImportDesc1=Prema aquí e usar o asistente para actualizar os datos existentes ou engadir novos obxectos á base de datos desde un ficheiro.
 FormatedImportDesc2=O primeiro paso consiste na escolla do tipo de dato que debe importarse, despois o ficheiro e a continuación escoller os campos que desexa importar.
 FormatedExport=Asistente de exportación
-FormatedExportDesc1=Esta área permitelle realizar exportacións persoalizadas dos datos mediante un axudante que evita ter coñecementos técnicos de Dolibarr.
+FormatedExportDesc1=Prema aquí e usar o asistente para exportar datos nun formato compatible
 FormatedExportDesc2=O primeiro paso consiste na escolla dun dos conxuntos de datos predefinidos, despois escoller os campos que quere exportar ao ficheiro e en que orde.
 FormatedExportDesc3=Unha vez seleccionados os datos, é posible escoller o formato do ficheiro de exportación xerado.
 Sheet=Folla

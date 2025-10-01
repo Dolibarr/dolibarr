@@ -151,7 +151,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	const KEY_ENABLED = 7;
 
 	/**
-	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
+	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,positionfull:int|string,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
 	 */
 	public $menu = array();
 
@@ -602,7 +602,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$ignoreerror = 0;
 				if (is_array($val)) {
 					$sql = $val['sql'];
-					$ignoreerror = $val['ignoreerror'];
+					$ignoreerror = $val['ignoreerror'] ?? 0;
 				}
 				// Add current entity id
 				$sql = str_replace('__ENTITY__', (string) $conf->entity, $sql);
@@ -2463,7 +2463,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						dol_delete_file($dest.'.zip');
 
 						// Compress it
-						global $errormsg;
+						global $errormsg;	// Used by dol_compress_dir
 						$errormsg = '';
 						$result = dol_compress_dir($src, $dest.'.zip', 'zip');
 						if ($result < 0) {

@@ -3,6 +3,7 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.cla
 
 /**
  * API class for products
+ *
+ * @since	4.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -67,9 +70,11 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a product object by id
+	 * Get a product
 	 *
-	 * Return an array with product information.
+	 * Return an array with product information
+	 *
+	 * @since	4.0.0	Initial implementation
 	 *
 	 * @param  int    $id                  ID of product
 	 * @param  int    $includestockdata    Load also information about stock (slower)
@@ -88,9 +93,11 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a product object by ref
+	 * Get product by ref
 	 *
-	 * Return an array with product information.
+	 * Return an array with product information
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $ref                Ref of element
 	 * @param  int    $includestockdata   Load also information about stock (slower)
@@ -112,9 +119,11 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a product object by ref_ext
+	 * Get product by ref_ext
 	 *
-	 * Return an array with product information.
+	 * Return an array with product information
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $ref_ext            Ref_ext of element
 	 * @param  int    $includestockdata   Load also information about stock (slower)
@@ -136,9 +145,11 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a product object by barcode
+	 * Get product by barcode
 	 *
-	 * Return an array with product information.
+	 * Return an array with product information
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $barcode            Barcode of element
 	 * @param  int    $includestockdata   Load also information about stock (slower)
@@ -164,6 +175,8 @@ class Products extends DolibarrApi
 	 *
 	 * Get a list of products
 	 *
+	 * @since	4.0.0	Initial implementation
+	 *
 	 * @param  string $sortfield			Sort field
 	 * @param  string $sortorder			Sort order
 	 * @param  int    $limit				Limit for list
@@ -179,18 +192,18 @@ class Products extends DolibarrApi
 	 * @return array						Array of product objects
 	 * @phan-return Product[]|array{data:Product[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Product[]|array{data:Product[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @throws RestException
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0, $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext";
 		$sql .= " FROM ".$this->db->prefix()."product as t";
@@ -201,14 +214,14 @@ class Products extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
 		if ($variant_filter == 1) {
-			$sql .= ' AND t.rowid not in (select distinct fk_product_parent from '.$this->db->prefix().'product_attribute_combination)';
-			$sql .= ' AND t.rowid not in (select distinct fk_product_child from '.$this->db->prefix().'product_attribute_combination)';
+			$sql .= ' AND NOT EXISTS (select pac.rowid FROM '.$this->db->prefix().'product_attribute_combination as pac WHERE pac.fk_product_parent = t.rowid)';
+			$sql .= ' AND NOT EXISTS (select pac.rowid FROM '.$this->db->prefix().'product_attribute_combination as pac WHERE pac.fk_product_child = t.rowid)';
 		}
 		if ($variant_filter == 2) {
-			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.$this->db->prefix().'product_attribute_combination)';
+			$sql .= ' AND EXISTS (select pac.rowid FROM '.$this->db->prefix().'product_attribute_combination as pac WHERE pac.fk_product_parent = t.rowid)';
 		}
 		if ($variant_filter == 3) {
-			$sql .= ' AND t.rowid in (select distinct fk_product_child from '.$this->db->prefix().'product_attribute_combination)';
+			$sql .= ' AND EXISTS (select pac.rowid FROM '.$this->db->prefix().'product_attribute_combination as pac WHERE pac.fk_product_child = t.rowid)';
 		}
 
 		// Select products of given category
@@ -303,12 +316,16 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Create product object
+	 * Create a product
+	 *
+	 * @since	4.0.0	Initial implementation
 	 *
 	 * @param  array $request_data Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int     ID of product
+	 *
+	 * @throws RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -357,10 +374,13 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Update product.
+	 * Update a product
+	 *
 	 * Price will be updated by this API only if option is set on "One price per product" or
 	 * if PRODUIT_MULTIPRICES is set (1 price per segment)
 	 * See other APIs for other price modes.
+	 *
+	 * @since	4.0.0	Initial implementation
 	 *
 	 * @param  	int   	$id           		Id of product to update
 	 * @param  	array 	$request_data 		Data
@@ -430,8 +450,10 @@ class Products extends DolibarrApi
 				if ($this->product->tva_npr != $oldproduct->tva_npr) {
 					$pricemodified = true;
 				}
-				if ($this->product->default_vat_code != $oldproduct->default_vat_code) {
-					$pricemodified = true;
+				if (!empty($this->product->default_vat_code)) {
+					if ($this->product->default_vat_code != $oldproduct->default_vat_code) {
+						$pricemodified = true;
+					}
 				}
 
 				if ($this->product->price_base_type == 'TTC') {
@@ -521,12 +543,16 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Delete product
+	 * Delete a product
+	 *
+	 * @since	4.0.0	Initial implementation
 	 *
 	 * @param  int		$id			Product ID
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -562,9 +588,11 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get the list of subproducts of the product.
+	 * Get the list of subproducts of a product
 	 *
-	 * @param  int $id      Id of parent product/service
+	 * @since	11.0.0	Initial implementation
+	 *
+	 * @param  int $id      ID of parent product/service
 	 * @return array
 	 * @phan-return array<array{rowid:int,qty:float,fkproduct_type:int,label:string,incdec:int,ref:string,fk_association:int,rang:int}>
 	 * @phpstan-return array<array{rowid:int,qty:float,fkproduct_type:int,label:string,incdec:int,ref:string,fk_association:int,rang:int}>
@@ -597,14 +625,16 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Add subproduct.
+	 * Add a subproduct
 	 *
 	 * Link a product/service to a parent product/service
 	 *
-	 * @param  int $id            Id of parent product/service
-	 * @param  int $subproduct_id Id of child product/service
+	 * @since	11.0.0	Initial implementation
+	 *
+	 * @param  int $id            ID of parent product/service
+	 * @param  int $subproduct_id ID of child product/service
 	 * @param  float $qty         Quantity
-	 * @param  int $incdec        1=Increase/decrease stock of child when parent stock increase/decrease
+	 * @param  int $incdec        1=Increase/decrease stock of child when parent stock increases/decreases
 	 * @return int
 	 *
 	 * @throws RestException
@@ -631,11 +661,14 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Remove subproduct.
+	 * Remove a subproduct
+	 *
 	 * Unlink a product/service from a parent product/service
 	 *
-	 * @param  int $id             Id of parent product/service
-	 * @param  int $subproduct_id  Id of child product/service
+	 * @since	11.0.0	Initial implementation
+	 *
+	 * @param  int $id             ID of parent product/service
+	 * @param  int $subproduct_id  ID of child product/service
 	 * @return int
 	 *
 	 * @throws RestException 401
@@ -664,6 +697,8 @@ class Products extends DolibarrApi
 	/**
 	 * Get categories for a product
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param int    $id        ID of product
 	 * @param string $sortfield Sort field
 	 * @param string $sortorder Sort order
@@ -673,6 +708,8 @@ class Products extends DolibarrApi
 	 * @return mixed
 	 *
 	 * @url GET {id}/categories
+	 *
+	 * @throws RestException
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -694,11 +731,15 @@ class Products extends DolibarrApi
 	/**
 	 * Get prices per segment for a product
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param int $id ID of product
 	 *
 	 * @return mixed
 	 *
 	 * @url GET {id}/selling_multiprices/per_segment
+	 *
+	 * @throws RestException
 	 */
 	public function getCustomerPricesPerSegment($id)
 	{
@@ -735,12 +776,16 @@ class Products extends DolibarrApi
 	/**
 	 * Get prices per customer for a product
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param int		$id					ID of product
 	 * @param string	$thirdparty_id		Thirdparty id to filter orders of (example '1') {@pattern /^[0-9,]*$/i}
 	 *
 	 * @return mixed
 	 *
 	 * @url GET {id}/selling_multiprices/per_customer
+	 *
+	 * @throws RestException
 	 */
 	public function getCustomerPricesPerCustomer($id, $thirdparty_id = '')
 	{
@@ -754,7 +799,7 @@ class Products extends DolibarrApi
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0 && $socid != $thirdparty_id) {
 			throw new RestException(403, 'Getting prices for all customers or for the customer ID '.$thirdparty_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -785,11 +830,15 @@ class Products extends DolibarrApi
 	/**
 	 * Get prices per quantity for a product
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param int $id ID of product
 	 *
 	 * @return mixed
 	 *
 	 * @url GET {id}/selling_multiprices/per_quantity
+	 *
+	 * @throws RestException
 	 */
 	public function getCustomerPricesPerQuantity($id)
 	{
@@ -819,7 +868,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Add/Update purchase prices for a product.
+	 * Add/Update purchase prices for a product
+	 *
+	 * @since	12.0.0	Initial implementation
 	 *
 	 * @param   int         $id                             ID of Product
 	 * @param	float		$qty							Min quantity for which price is valid
@@ -868,7 +919,7 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0 && $socid != $fourn_id) {
 			throw new RestException(403, 'Adding purchase price for the supplier ID '.$fourn_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -898,7 +949,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Delete purchase price for a product
+	 * Delete a purchase price for a product
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id Product ID
 	 * @param  int $priceid purchase price ID
@@ -935,6 +988,8 @@ class Products extends DolibarrApi
 	/**
 	 * Get a list of all purchase prices of products
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param  string $sortfield  Sort field
 	 * @param  string $sortorder  Sort order
 	 * @param  int    $limit      Limit for list
@@ -948,6 +1003,8 @@ class Products extends DolibarrApi
 	 * @phpstan-return array<ProductFournisseur[]|int>
 	 *
 	 * @url GET purchase_prices
+	 *
+	 * @throws RestException
 	 */
 	public function getSupplierProducts($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $supplier = 0, $sqlfilters = '')
 	{
@@ -960,7 +1017,7 @@ class Products extends DolibarrApi
 		$obj_ret = array();
 
 		// Force id of company for external users
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0) {
 			if ($supplier != $socid || empty($supplier)) {
 				throw new RestException(403, 'As an external user, you can request only for your supplier id = '.$socid);
@@ -1045,6 +1102,8 @@ class Products extends DolibarrApi
 	 * Return an array with product information.
 	 * TODO implement getting a product by ref or by $ref_ext
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param  int    $id               ID of product
 	 * @param  string $ref              Ref of element
 	 * @param  string $ref_ext          Ref ext of element
@@ -1071,7 +1130,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
 		if (!$result) {
@@ -1097,7 +1156,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get attributes.
+	 * Get attributes
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $sortfield  Sort field
 	 * @param  string $sortorder  Sort order
@@ -1167,7 +1228,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get attribute by ID.
+	 * Get attribute by ID
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param	int			$id			ID of Attribute
 	 * @return	Object					Object with cleaned properties
@@ -1210,7 +1273,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get attributes by ref.
+	 * Get attributes by ref
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $ref Reference of Attribute
 	 * @return array
@@ -1262,7 +1327,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get attributes by ref_ext.
+	 * Get attributes by ref_ext
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $ref_ext External reference of Attribute
 	 * @return array
@@ -1314,7 +1381,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Add attributes.
+	 * Add attributes
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $ref   Reference of Attribute
 	 * @param  string $label Label of Attribute
@@ -1346,7 +1415,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Update attributes by id.
+	 * Update attributes by ID
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of Attribute
 	 * @param	array	$request_data	Data
@@ -1402,7 +1473,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Delete attributes by id.
+	 * Delete attributes by ID
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id	ID of Attribute
 	 * @return int		Result of deletion
@@ -1430,7 +1503,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get attribute value by id.
+	 * Get attribute value by ID
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id ID of Attribute value
 	 * @return array
@@ -1472,7 +1547,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get attribute value by ref.
+	 * Get attribute value by ref
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id ID of Attribute value
 	 * @param  string $ref Ref of Attribute value
@@ -1517,7 +1594,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Delete attribute value by ref.
+	 * Delete attribute value by ref
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id ID of Attribute
 	 * @param  string $ref Ref of Attribute value
@@ -1560,7 +1639,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get all values for an attribute id.
+	 * Get all values for an attribute ID
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id ID of an Attribute
 	 * @return array
@@ -1594,7 +1675,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get all values for an attribute ref.
+	 * Get all values for an attribute ref
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $ref Ref of an Attribute
 	 * @return array
@@ -1635,7 +1718,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Add attribute value.
+	 * Add attribute value
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int    $id    ID of Attribute
 	 * @param  string $ref   Reference of Attribute value
@@ -1669,7 +1754,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Update attribute value.
+	 * Update attribute value
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of Attribute
 	 * @param	array	$request_data	Data
@@ -1724,7 +1811,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Delete attribute value by id.
+	 * Delete attribute value by ID
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id ID of Attribute value
 	 * @return int
@@ -1750,7 +1839,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get product variants.
+	 * Get product variants
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int	$id				ID of Product
 	 * @param  int  $includestock   Default value 0. If parameter is set to 1 the response will contain stock data of each variant
@@ -1789,7 +1880,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get product variants by Product ref.
+	 * Get product variants by Product ref
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $ref Ref of Product
 	 * @return array
@@ -1825,9 +1918,11 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Add variant.
+	 * Add variant
 	 *
 	 * "features" is a list of attributes pairs id_attribute=>id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id ID of Product
 	 * @param  float $weight_impact Weight impact of variant
@@ -1892,9 +1987,11 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Add variant by product ref.
+	 * Add variant by product ref
 	 *
 	 * "features" is a list of attributes pairs id_attribute=>id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  string $ref                      Ref of Product
 	 * @param  float  $weight_impact            Weight impact of variant
@@ -1956,7 +2053,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Put product variants.
+	 * Update product variants
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id ID of Variant
 	 * @param  array $request_data Data
@@ -1999,7 +2098,9 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Delete product variants.
+	 * Delete product variants
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param  int $id	ID of Variant
 	 * @return int		Result of deletion
@@ -2025,8 +2126,11 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get stock data for the product id given.
-	 * Optionally with $selected_warehouse_id parameter user can get stock of specific warehouse
+	 * Get stock data for a product
+	 *
+	 * Optionally with $selected_warehouse_id parameter user can get stock of a specific warehouse
+	 *
+	 * @since	14.0.0	Initial implementation
 	 *
 	 * @param  int $id ID of Product
 	 * @param  int $selected_warehouse_id ID of warehouse
@@ -2126,8 +2230,6 @@ class Products extends DolibarrApi
 		unset($object->lines);
 		unset($object->fk_bank);
 		unset($object->fk_account);
-
-		unset($object->supplierprices);	// Must use another API to get them
 
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			unset($object->stock_reel);
