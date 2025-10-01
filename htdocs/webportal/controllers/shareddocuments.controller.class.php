@@ -139,7 +139,6 @@ class SharedDocumentsController extends AbstractDocumentController
 				return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($file_path);
 			}
 		);
-
 		// 6. Call the new display method
 		$this->displayFileBrowser(
 			html_entity_decode($langs->trans('SharedDocuments')),
