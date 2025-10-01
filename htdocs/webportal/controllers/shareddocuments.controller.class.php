@@ -71,10 +71,10 @@ class SharedDocumentsController extends AbstractDocumentController
 	}
 
 	/**
-	 * Build and display the page.
-	 *
-	 * @return  void
-	 */
+	* Build and display the page.
+	*
+	* @return  void
+	*/
 	public function display()
 	{
 		global $conf, $langs;
@@ -101,8 +101,7 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// 3. List ALL contents (files AND folders) of the current directory
 		$itemList = dol_dir_list($current_dir_ged_partage, 'all', 0, '', '', 'name', SORT_ASC);
-			if (is_array($itemList))
-			{
+			if (is_array($itemList)) {
             foreach ($itemList as $key => $item) {
                 // If the item is a file and its size is empty...
                 if ($item['type'] === 'file' && empty($item['size'])) {
