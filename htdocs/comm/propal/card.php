@@ -821,9 +821,9 @@ if (empty($reshook)) {
 				$oldstatus = $object->status;
 
 				if (!getDolGlobalString('PROPALE_KEEP_CLOSE_NOTE_INFO_ON_PUBLIC')) {
-					$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOST('note_private'));
+					$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOST('close_note'));
 				} else {
-					$result = $object->closeProposal($user, GETPOSTINT('statut'), "", 0, GETPOST('note_private'));
+					$result = $object->closeProposal($user, GETPOSTINT('statut'), "", 0, GETPOST('close_note'));
 				}
 
 				if ($result < 0) {
@@ -2749,7 +2749,7 @@ if ($action == 'create') {
 		if (!getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE')) {
 			$formquestion[] = array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">' . $langs->trans("CloseAs") . '</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED)));
 		}
-		$formquestion[] = array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '');				// Field to complete private note (not replace)
+		$formquestion[] = array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Note"), 'value' => '');				// Field to complete private note (not replace)
 
 		if (getDolGlobalInt('PROPOSAL_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
 			// This is a hidden option:
