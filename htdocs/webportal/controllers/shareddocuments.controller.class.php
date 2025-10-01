@@ -151,3 +151,4 @@ class SharedDocumentsController extends AbstractDocumentController
 		$this->loadTemplate('footer');
 	}
 }
+
