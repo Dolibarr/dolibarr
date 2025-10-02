@@ -15915,7 +15915,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		} elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Commande', 'CommandeFournisseur', 'Product', 'Ticket', 'BOM', 'Contrat', 'Facture', 'FactureFournisseur', 'Propal', 'Expedition'))) {
 			$sql .= ", o.ref";
 		} else {
-			if (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id)) {
+			if (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id) && array_key_exists('ref', $filterobj->fields)) {
 				$sql .= ", o.ref";
 			}
 		}
