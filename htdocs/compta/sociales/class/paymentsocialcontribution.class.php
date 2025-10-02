@@ -215,6 +215,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
+			$this->error = 'ErrorPaymentAmountMustNotBeNull';
 			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 		}
 
@@ -503,6 +504,7 @@ class PaymentSocialContribution extends CommonObject
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->statut = 0;
+		$object->status = 0;
 
 		// Clear fields
 		// ...

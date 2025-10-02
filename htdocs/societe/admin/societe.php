@@ -138,27 +138,17 @@ if ($action == 'set') {
 	$scandir = GETPOST('scan_dir', 'alpha');
 
 	$type = 'company';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql .= " VALUES ('".$db->escape($value)."', '".$db->escape($type)."', ".((int) $conf->entity).", ";
-	$sql .= ($label ? "'".$db->escape($label)."'" : 'null').", ";
-	$sql .= (!empty($scandir) ? "'".$db->escape($scandir)."'" : "null");
-	$sql .= ")";
 
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
 
 // Disable a document generator module
 if ($action == 'del') {
 	$type = 'company';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql .= " WHERE nom='".$db->escape($value)."' AND type='".$db->escape($type)."' AND entity=".((int) $conf->entity);
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-	}
+	$ret = delDocumentModel($value, $type);
 }
 
 // Define default generator
@@ -172,21 +162,12 @@ if ($action == 'setdoc') {
 
 	// On active le modele
 	$type = 'company';
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del .= " WHERE nom = '".$db->escape(GETPOST('value', 'alpha'))."'";
-	$sql_del .= " AND type = '".$db->escape($type)."'";
-	$sql_del .= " AND entity = ".((int) $conf->entity);
-	dol_syslog("societe.php ".$sql);
-	$result1 = $db->query($sql_del);
+	$ret = delDocumentModel(GETPOST('value', 'alpha'), $type);
+	if ($ret > 0) {
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
 
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql .= " VALUES ('".$db->escape($value)."', '".$db->escape($type)."', ".((int) $conf->entity).", ";
-	$sql .= ($label ? "'".$db->escape($label)."'" : 'null').", ";
-	$sql .= (!empty($scandir) ? "'".$db->escape($scandir)."'" : "null");
-	$sql .= ")";
-	dol_syslog("societe.php", LOG_DEBUG);
-	$result2 = $db->query($sql);
-	if ($result1 && $result2) {
+	if ($ret) {
 		$db->commit();
 	} else {
 		$db->rollback();
@@ -543,6 +524,7 @@ print load_fiche_titre($langs->trans("ModelModules"), '', '');
 
 // Load array def with activated templates
 $def = array();
+// TODO Replace with $def = getListOfModels($db, $type);
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = 'company'";

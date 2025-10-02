@@ -43,6 +43,7 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_T
 
 -- V23 migration
 
+ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_ticket ADD COLUMN note_public text after resolution;
 ALTER TABLE llx_ticket ADD COLUMN note_private text after resolution;

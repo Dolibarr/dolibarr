@@ -347,12 +347,14 @@ print "<br>";
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+
 // Defined model definition table
 $def = array();
+// TODO Replace with $def = getListOfModels($db, $type);
 $sql = "SELECT nom as name";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;

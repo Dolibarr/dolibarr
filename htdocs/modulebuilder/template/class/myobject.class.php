@@ -835,7 +835,7 @@ class MyObject extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$baseurl = '/mymodule/myobject_card.php';
+		$baseurl = dol_buildpath('/mymodule/myobject_card.php', 1);
 		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
