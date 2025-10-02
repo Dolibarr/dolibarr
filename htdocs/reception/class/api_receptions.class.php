@@ -123,7 +123,9 @@ class Receptions extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception AS t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."reception_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = t.rowid AND el.targettype = 'reception' AND el.sourcetype = 'order_supplier'";
+		if (preg_match("/(?<!:')\(el\.(?:rowid|fk_source|sourcetype|fk_target|targettype|relationtype)\:(?:=|<|>|<=|>=|!=|in|notin|like|notlike|is|isnot):.+\)/", $sqlfilters)) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = t.rowid AND el.targettype = 'reception' AND el.sourcetype = 'order_supplier'";
+		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('reception').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
