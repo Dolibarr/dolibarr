@@ -175,11 +175,11 @@ if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 		if (session_id() && isset($_SESSION["dol_login"]) && !in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 			print 'Sorry, your application is offline.'."\n";
 			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
-			$nexturl = dolBuildUrl('/user/logout.php', [], true);
+			$nexturl = dolBuildUrl(DOL_URL_ROOT . '/user/logout.php', [], true);
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
 			print 'Sorry, your application is offline. Only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
-			$nexturl = dolBuildUrl('/');
+			$nexturl = dolBuildUrl(DOL_URL_ROOT . '/');
 			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
 		}
 		exit;
@@ -552,7 +552,7 @@ if (!defined('NOLOGIN')) {
 				if ($dol_use_jmobile) {
 					$query += ['dol_use_jmobile='.$dol_use_jmobile];
 				}
-				header("Location: " . dolBuildUrl('/public/demo/index.php', $query));
+				header("Location: " . dolBuildUrl(DOL_URL_ROOT . '/public/demo/index.php', $query));
 				exit;
 			}
 		}
@@ -859,7 +859,7 @@ if (!defined('NOLOGIN')) {
 			if (GETPOST('lang', 'aZ09')) {
 				$paramsurl += ['lang' => (string) GETPOST('lang', 'aZ09')];
 			}
-			header('Location: '.dolBuildUrl('/index.php', $paramsurl));
+			header('Location: '.dolBuildUrl(DOL_URL_ROOT . '/index.php', $paramsurl));
 			exit;
 		} else {
 			// User is loaded, we may need to change language for him according to its choice
@@ -2186,7 +2186,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Link to module builder
 		if (isModEnabled('modulebuilder')) {
-			$text = '<a href="' . dolBuildUrl('/modulebuilder/index.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']) .'" target="modulebuilder">';
+			$text = '<a href="' . dolBuildUrl(DOL_URL_ROOT . '/modulebuilder/index.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']) .'" target="modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text .= '</a>';
@@ -2466,7 +2466,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	}
 
 	if (empty($urllogout)) {
-		$urllogout = dolBuildUrl('/user/logout.php', [], true);
+		$urllogout = dolBuildUrl(DOL_URL_ROOT . '/user/logout.php', [], true);
 	}
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
