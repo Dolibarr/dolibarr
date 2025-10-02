@@ -228,7 +228,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	$menu_arr[] = array(
 		'name' => 'Project',
-		'link' => '/projet/index.php?mainmenu=project&amp;leftmenu=',
+		'link' => dolBuildUrl('/projet/index.php', ['mainmenu' => 'project', 'leftmenu' => '']),
 		'title' => $titleboth,
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -278,7 +278,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	$menu_arr[] = array(
 		'name' => 'Commercial',
-		'link' => ($onlysupplierorder ? '/fourn/commande/index.php?mainmenu=commercial&amp;leftmenu=' : '/comm/index.php?mainmenu=commercial&amp;leftmenu='),
+		'link' => dolBuildUrl(($onlysupplierorder ? '/fourn/commande/index.php' : '/comm/index.php'), ['mainmenu' => 'commercial', 'leftmenu' => '']),
 		'title' => "Commercial",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -313,7 +313,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Compta',
-		'link' => '/compta/index.php?mainmenu=billing&amp;leftmenu=',
+		'link' => dolBuildUrl('/compta/index.php', ['mainmenu' => 'billing', 'leftmenu' => '']),
 		'title' =>  "MenuFinancial",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -338,7 +338,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Bank',
-		'link' => '/compta/bank/list.php?mainmenu=bank&amp;leftmenu=&amp;search_status=opened',
+		'link' => dolBuildUrl('/compta/bank/list.php', ['mainmenu' => 'bank', 'leftmenu' => '', 'search_status' => 'opened']),
 		'title' =>  "MenuBankCash",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -363,7 +363,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Accounting',
-		'link' => '/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=',
+		'link' => dolBuildUrl('/accountancy/index.php', ['mainmenu' => 'accountancy', 'leftmenu' => '']),
 		'title' =>  "MenuAccountancy",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -389,7 +389,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	$menu_arr[] = array(
 		'name' => 'HRM',
-		'link' => '/hrm/index.php?mainmenu=hrm&amp;leftmenu=',
+		'link' => dolBuildUrl('/hrm/index.php', ['mainmenu' => 'hrm', 'leftmenu' => '']),
 		'title' =>  "HRM",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -414,9 +414,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$link = '';
 	if (isModEnabled('ticket')) {
-		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
+		$link = dolBuildUrl('/ticket/index.php', ['mainmenu' => 'ticket', 'leftmenu' => '']);
 	} else {
-		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
+		$link = dolBuildUrl('/knowledgemanagement/knowledgerecord_list.php', ['mainmenu' => 'ticket', 'leftmenu' => '']);
 	}
 	$menu_arr[] = array(
 		'name' => 'Ticket',
@@ -445,7 +445,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Tools',
-		'link' => '/core/tools.php?mainmenu=tools&amp;leftmenu=',
+		'link' => dolBuildUrl('/core/tools.php', ['mainmenu' => 'tools', 'leftmenu' => '']),
 		'title' =>  "Tools",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -585,13 +585,13 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		}
 
 		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+			$urllogo = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['cache' => 1, 'modulepart' => 'mycompany', 'file' => 'logos/thumbs/'.$mysoc->logo_squarred_mini]);
 			/*} elseif (!empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 			{
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
 			}*/
 		} else {
-			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png';
+			$urllogo = dolBuildUrl(DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png');
 			$logoContainerAdditionalClass = '';
 		}
 		$title = $langs->trans("GoIntoSetupToChangeLogo");
@@ -1223,12 +1223,12 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			// Load translation files required by the page
 			$langs->loadLangs(array('admin', 'help'));
 
-			$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
+			$newmenu->add(dolBuildUrl('/admin/system/dolibarr.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('InfoDolibarr'), 1);
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == 'admintools_info') {
-				$newmenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
-				$newmenu->add('/admin/triggers.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Triggers'), 2);
-				$newmenu->add('/admin/system/filecheck.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('FileCheck'), 2);
-				$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('ExternalResources'), 2);
+				$newmenu->add(dolBuildUrl('/admin/system/modules.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('Modules'), 2);
+				$newmenu->add(dolBuildUrl('/admin/triggers.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('Triggers'), 2);
+				$newmenu->add(dolBuildUrl('/admin/system/filecheck.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('FileCheck'), 2);
+				$newmenu->add(dolBuildUrl('/admin/system/about.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('ExternalResources'), 2);
 			}
 			$newmenu->add(dolBuildUrl('/admin/system/browser.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans('InfoBrowser'), 1);
 			$newmenu->add(dolBuildUrl('/admin/system/os.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans('InfoOS'), 1);
@@ -1257,11 +1257,11 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			}
 		}
 
-		$newmenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, $user->hasRight('user', 'user', 'read'), '', $mainmenu, 'users', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));
+		$newmenu->add(dolBuildUrl('/user/home.php', ['leftmenu' => 'users']), $langs->trans("MenuUsersAndGroups"), 0, $user->hasRight('user', 'user', 'read'), '', $mainmenu, 'users', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));
 		if ($user->hasRight('user', 'user', 'read')) {
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "users") {
 				$newmenu->add("", $langs->trans("Users"), 1, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
-				$newmenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"), 2, (int) (($user->hasRight("user", "user", "write") || $user->admin) && !(isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))), '', 'home');
+				$newmenu->add(dolBuildUrl('/user/card.php', ['leftmenu' => 'users', 'action' => 'create']), $langs->trans("NewUser"), 2, (int) (($user->hasRight("user", "user", "write") || $user->admin) && !(isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))), '', 'home');
 				$newmenu->add("/user/list.php?leftmenu=users", $langs->trans("ListOfUsers"), 2, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
 				$newmenu->add("/user/hierarchy.php?leftmenu=users", $langs->trans("HierarchicView"), 2, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
 				if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
