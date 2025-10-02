@@ -104,7 +104,9 @@ if ($action == "set") {
 		if (!($res > 0)) {
 			$error++;
 		}
-	} elseif (!$error) {
+	}
+
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {

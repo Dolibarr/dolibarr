@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,14 +175,6 @@ class DolibarrApi
 		unset($object->stats_mrptoconsume);
 		unset($object->stats_mrptoproduce);
 
-		unset($object->element);
-		unset($object->element_for_permission);
-		unset($object->fk_element);
-		unset($object->table_element);
-		unset($object->table_element_line);
-		unset($object->class_element_line);
-		unset($object->picto);
-
 		unset($object->fieldsforcombobox);
 		unset($object->regeximgext);
 
@@ -202,9 +195,17 @@ class DolibarrApi
 
 		unset($object->prefix_comm);
 
-		if (!isset($object->table_element) || $object->table_element != 'ticket') {
+		if (!isset($object->table_element) || ! in_array($object->table_element, array('expensereport_det', 'ticket'))) {
 			unset($object->comments);
 		}
+
+		unset($object->element);
+		unset($object->element_for_permission);
+		unset($object->fk_element);
+		unset($object->table_element);
+		unset($object->table_element_line);
+		unset($object->class_element_line);
+		unset($object->picto);
 
 		// Remove the $oldcopy property because it is not supported by the JSON
 		// encoder. The following error is generated when trying to serialize

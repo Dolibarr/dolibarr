@@ -579,7 +579,6 @@ class PaymentSocialContribution extends CommonObject
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
 					$error++;
-					dol_print_error($this->db);
 				}
 
 				// Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
@@ -591,7 +590,7 @@ class PaymentSocialContribution extends CommonObject
 					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
 					if ($result <= 0) {
 						$error++;
-						dol_print_error($this->db);
+						$this->setErrorsFromObject($acc);
 					}
 				}
 
@@ -603,7 +602,8 @@ class PaymentSocialContribution extends CommonObject
 						$socialcontrib->fetch($key);
 						$result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
 						if ($result <= 0) {
-							dol_print_error($this->db);
+							$this->setErrorsFromObject($acc);
+							$error++;
 						}
 
 						if ($socialcontrib->fk_user) {
@@ -620,14 +620,14 @@ class PaymentSocialContribution extends CommonObject
 							);
 
 							if ($result <= 0) {
-								$this->error = $acc->error;
+								$this->setErrorsFromObject($acc);
 								$error++;
 							}
 						}
 					}
 				}
 			} else {
-				$this->error = $acc->error;
+				$this->setErrorsFromObject($acc);
 				$error++;
 			}
 		}
