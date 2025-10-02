@@ -3209,7 +3209,7 @@ class ContratLigne extends CommonObjectLine
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param	string	$ref		Ref of contract line
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		<0 if KO, >0 if OK, 0 if not found
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -3330,6 +3330,9 @@ class ContratLigne extends CommonObjectLine
 				$this->rang = $obj->rang;
 
 				$this->fetch_optionals();
+			} else {
+				$this->db->free($resql);
+				return 0;
 			}
 
 			$this->db->free($resql);
@@ -3761,15 +3764,13 @@ class ContratLigne extends CommonObjectLine
 
 		$error = 0;
 
-		// statut actif : 4
-
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) ContratLigne::STATUS_CLOSED).",";
 		$sql .= " date_cloture = '".$this->db->idate($date_end_real)."',";
 		$sql .= " fk_user_cloture = ".((int) $user->id).",";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
-		$sql .= " WHERE rowid = ".((int) $this->id)." AND statut = ".((int) ContratLigne::STATUS_OPEN);
+		$sql .= " WHERE rowid = ".((int) $this->id)." AND statut <> ".((int) ContratLigne::STATUS_CLOSED);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

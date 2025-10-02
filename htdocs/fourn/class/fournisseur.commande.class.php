@@ -427,7 +427,10 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->ref = $obj->ref;
 			$this->ref_supplier = $obj->ref_supplier;
+
 			$this->socid = $obj->fk_soc;
+			$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
+
 			$this->fourn_id = $obj->fk_soc;
 			$this->statut = $obj->fk_statut;
 			$this->status = $obj->fk_statut;
@@ -3026,6 +3029,8 @@ class CommandeFournisseur extends CommonOrder
 				$this->db->commit();
 				return $result;
 			} else {
+				$this->errors[] = $this->line->error;
+				$this->errors = array_merge($this->errors, $this->line->errors);
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;

@@ -14,18 +14,18 @@ jobs:
         run: sudo apt-get update && sudo apt-get install cppcheck
         if: false
 
+      # Checkout git sources to analyze
+      - uses: actions/checkout@v4
+
       # The next uses the git API because there is no clone yet.
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php
-        uses: tj-actions/changed-files@v42
-        if: github.event_name == 'pull_request'
-        with:
-          files: |
-            **.php
+        if: env.gh_event == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/scripts/get_changed_php.sh
 
-      # Checkout git sources to analyze
-      - uses: actions/checkout@v4
       # Action setup-python needs a requirements.txt or pyproject.toml
       # This ensures one of them exists.
       - name: Create requirements.txt if no requirements.txt or pyproject.toml

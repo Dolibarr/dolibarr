@@ -76,27 +76,28 @@ class RejetPrelevement
 	}
 
 	/**
-	 * Create
+	 * Create a reject
 	 *
 	 * @param 	User		$user				User object
 	 * @param 	int			$id					Id
 	 * @param 	string		$motif				Motif
-	 * @param 	int	$date_rejet			Date rejet
+	 * @param 	int			$date_rejet			Date reject
 	 * @param 	int			$bonid				Bon id
-	 * @param 	int			$facturation		Facturation
-	 * @return	void
+	 * @param 	int			$facturation		1=Bill the reject
+	 * @return	int								Return >=0 if OK, <0 if KO
 	 */
 	public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 		$this->id = $id;
 		$this->bon_id = $bonid;
 		$now = dol_now();
 
-		dol_syslog("RejetPrelevement::Create id $id");
-		$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		dol_syslog("RejetPrelevement::Create id ".$id);
+
+		$bankaccount = ($this->type == 'bank-transfer' ? getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalString('PRELEVEMENT_ID_BANKACCOUNT'));
 		$facs = $this->getListInvoices(1);
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -152,17 +153,16 @@ class RejetPrelevement
 
 			$fac->fetch($facs[$i][0]);
 
-			// Make a negative payment
-			//$pai = new Paiement($this->db);
+			$amountrejected = $facs[$i][1];
 
+			// Make a negative payment
+			// Amount must be an array (id of invoice -> amount)
 			$pai->amounts = array();
 
-			/*
-			 * We replace the comma with a point otherwise some
-			 * PHP installs sends only the part integer negative
-			*/
+			//var_dump($this->type);exit;
 
-			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * ($this->type == 'bank-transfer' ? 1 : -1));
+			$pai->amounts[$facs[$i][0]] = price2num($amountrejected * -1);		// The payment must be negative because it is a refund
+
 			$pai->datepaye = $date_rejet;
 			$pai->paiementid = 3; // type of payment: withdrawal
 			$pai->num_paiement = $fac->ref;
@@ -175,7 +175,13 @@ class RejetPrelevement
 				$error++;
 				dol_syslog("RejetPrelevement::Create Error creation payment invoice ".$facs[$i][0]);
 			} else {
-				$result = $pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
+				// We record entry into bank
+				$mode = 'payment';
+				if ($this->type == 'bank-transfer') {
+					$mode = 'payment_supplier';
+				}
+
+				$result = $pai->addPaymentToBank($user, $mode, '(InvoiceRefused)', $bankaccount, '', '');
 				if ($result < 0) {
 					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
 					$error++;
@@ -200,9 +206,13 @@ class RejetPrelevement
 		if ($error == 0) {
 			dol_syslog("RejetPrelevement::Create Commit");
 			$this->db->commit();
+
+			return 1;
 		} else {
 			dol_syslog("RejetPrelevement::Create Rollback");
 			$this->db->rollback();
+
+			return -1;
 		}
 	}
 

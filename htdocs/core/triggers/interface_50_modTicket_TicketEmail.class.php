@@ -1,8 +1,8 @@
 <?php
 /*
  * Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
- * 				 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2023		Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2023-2025	Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -427,9 +427,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		}
 		$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 
-		$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
-		$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
-		$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
+		if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
+			$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
+			$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
+			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
+		} else {
+			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmailNoInterface').'</p>';
+		}
 
 		$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 
