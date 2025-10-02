@@ -361,15 +361,26 @@ class Mailing extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
+		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.entity, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
 		$sql .= ", m.note_public, m.note_private";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut as status, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
+		$sql .= ", m.tms as date_modification";
 		$sql .= ", m.date_creat";
 		$sql .= ", m.date_valid";
 		$sql .= ", m.date_envoi";
 		$sql .= ", m.extraparams";
+		$sql .= ", m.tag";
+		$sql .= ", m.name_from";
+		$sql .= ", m.fk_user_modif";
+		$sql .= ", m.fk_user_appro";
+		$sql .= ", m.date_appro";
+		$sql .= ", m.cible";
+		$sql .= ", m.joined_file1";
+		$sql .= ", m.joined_file2";
+		$sql .= ", m.joined_file3";
+		$sql .= ", m.joined_file4";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 		$sql .= " WHERE entity IN (".getEntity('mailing').")";
 		if ($ref) {
@@ -385,6 +396,7 @@ class Mailing extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref = $obj->rowid;
 				$this->title = $obj->title;
 				$this->messtype = $obj->messtype;
@@ -417,8 +429,20 @@ class Mailing extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->date_creat);
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
+				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
+
+				$this->tag = $obj->tag;
+				$this->name_from = $obj->name_from;
+				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->fk_user_appro = $obj->fk_user_appro;
+				$this->date_appro = $obj->date_appro;
+				$this->cible = $obj->cible;
+				$this->joined_file1 = $obj->joined_file1;
+				$this->joined_file2 = $obj->joined_file2;
+				$this->joined_file3 = $obj->joined_file3;
+				$this->joined_file4 = $obj->joined_file4;
 
 				if ($this->messtype == 'sms') {
 					$this->picto = 'phone';
@@ -443,9 +467,10 @@ class Mailing extends CommonObject
 	 *	@param  int		$fromid     	Id of object to clone
 	 *	@param	int		$option1		1=Clone content, 0=Forget content
 	 *	@param	int		$option2		1=Clone recipients
+	 * 	@param	int		$notrigger		Disable triggers
 	 *	@return	int						New id of clone
 	 */
-	public function createFromClone(User $user, $fromid, $option1, $option2)
+	public function createFromClone(User $user, $fromid, $option1, $option2, $notrigger = 0)
 	{
 		global $langs;
 
@@ -488,7 +513,7 @@ class Mailing extends CommonObject
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result = $object->create($user);
+		$result = $object->create($user, $notrigger);
 
 		// Other options
 		if ($result < 0) {
@@ -577,6 +602,28 @@ class Mailing extends CommonObject
 		}
 	}
 
+	/**
+	 *  SetDraft emailing
+	 *
+	 *  @param	User	$user      	Object user that makes it draft
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setDraft($user)
+	{
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
+		$sql .= " SET statut = 0, fk_user_modif=".$user->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog("Mailing::valid", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Delete emailing
@@ -726,7 +773,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Count number of target with status
 	 *
-	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error, 'alreadysentok' = Sent success, 'alreadysentko' = Sent error)
+	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error, 'alreadysentok' = Sent success, 'alreadysentko' = Sent error, 'all' = Just return all no matter status)
 	 *  @return int        		Nb of target with status
 	 */
 	public function countNbOfTargets($mode)
@@ -739,6 +786,8 @@ class Mailing extends CommonObject
 			$sql .= " AND statut > 0";
 		} elseif ($mode == 'alreadysentko') {
 			$sql .= " AND statut = -1";
+		} elseif ($mode == 'all') {
+			// just want to return all possible recipients
 		} else {
 			$this->error = 'BadValueForParameterMode';
 			return -2;

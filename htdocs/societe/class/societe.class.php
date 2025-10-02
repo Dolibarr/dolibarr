@@ -4948,8 +4948,8 @@ class Societe extends CommonObject
 	/**
 	 *  Check if we must use localtax feature or not according to country (country of $mysoc in most cases).
 	 *
-	 *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
-	 *  @return		boolean					true or false
+	 *	@param		int<-1,2>		$localTaxNum	Use 1 or 2 to get info for only localtax1 or localtax2, 0 to get both a boolean using a OR, -1 to get array for each case.
+	 *  @return		boolean|array<int,boolean>		true or false or array of 2 booleans if $localTaxNum == -1
 	 */
 	public function useLocalTax($localTaxNum = 0)
 	{
@@ -4958,7 +4958,7 @@ class Societe extends CommonObject
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND t.active = 1";
 		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
-		if (empty($localTaxNum)) {
+		if (empty($localTaxNum) || $localTaxNum == -1) {
 			$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
 		} elseif ($localTaxNum == 1) {
 			$sql .= " AND t.localtax1_type <> '0'";
@@ -4968,7 +4968,15 @@ class Societe extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			return ($this->db->num_rows($resql) > 0);
+			if ($localTaxNum == -1) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					return array(1 => ($obj->localtax1 ? true : false), 2 => ($obj->localtax2 ? true : false));
+				}
+				return array(1 => false, 2 => false);
+			} else {
+				return ($this->db->num_rows($resql) > 0);
+			}
 		} else {
 			return false;
 		}

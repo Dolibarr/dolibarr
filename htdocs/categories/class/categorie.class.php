@@ -69,6 +69,8 @@ class Categorie extends CommonObject
 	const TYPE_INVOICE				= 'invoice';
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
+	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
+	const TYPE_PROPOSAL	            = 'propal';
 
 
 	/**
@@ -99,7 +101,9 @@ class Categorie extends CommonObject
 		'order'					=> 16,
 		'invoice'				=> 17,
 		'supplier_order'		=> 20,
-		'supplier_invoice'		=> 21
+		'supplier_invoice'		=> 21,
+		'supplier_proposal'		=> 22,
+		'propal'				=> 23
 	);
 
 	/**

@@ -3881,7 +3881,7 @@ abstract class CommonObject
 						$triggerName = 'EXPENSE_REPORT_MODIFY';
 						break;
 					default:
-						$triggerName = strtoupper($this->element) . '_MODIFY';
+						$triggerName = (!empty($this->TRIGGER_PREFIX) ? $this->TRIGGER_PREFIX : strtoupper($this->element)) . '_MODIFY';
 				}
 				$ret = $this->call_trigger($triggerName, $user);
 				if ($ret < 0) {
