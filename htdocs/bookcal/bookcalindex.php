@@ -54,7 +54,7 @@ if (!empty($user->socid) && $user->socid > 0) {
 }
 
 $now = dol_now();
-$NBMAX = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+$NBMAX = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT, 5');
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
