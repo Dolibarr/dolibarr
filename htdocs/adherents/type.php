@@ -709,7 +709,7 @@ if ($rowid > 0) {
 		}
 
 		if ($user->hasRight('adherent', 'configurer') && !empty($object->status)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolbuildUrl('card.php', ['action' => 'create', 'typeid' => $object->id, 'morphy' => ($morphy ? $morphy : ''), 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.$langs->trans("AddMember").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl('card.php', ['action' => 'create', 'typeid' => $object->id, 'morphy' => ($morphy ? $morphy : ''), 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
