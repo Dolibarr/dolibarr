@@ -161,6 +161,7 @@ class MailingTarget extends CommonObject
 	 */
 	public function create($user)
 	{
+		return -2;
 	}
 
 	/**
@@ -171,6 +172,7 @@ class MailingTarget extends CommonObject
 	 */
 	public function update($user)
 	{
+		return -2;
 	}
 
 	/**
