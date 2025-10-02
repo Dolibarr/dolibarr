@@ -232,6 +232,7 @@ AccountingAccountReportsDesc=You can define here some reports of accounting acco
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
+ByProject=By project
 ByPersonalizedAccountGroups=By personalized groups
 Personalized=Personalized
 NoReportDefined=No personalized reports defined
