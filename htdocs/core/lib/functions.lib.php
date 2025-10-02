@@ -10609,7 +10609,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 		$mysocuselocaltax1 = false;
 		$mysocuselocaltax2 = false;
-		if ($mysoc instanceof Societe && !empty(country_code)) {
+		if ($mysoc instanceof Societe && !empty($mysoc->country_code)) {
 			$tmparray = $mysoc->useLocalTax(-1);
 			$mysocuselocaltax1 = $tmparray[1];
 			$mysocuselocaltax2 = $tmparray[2];
