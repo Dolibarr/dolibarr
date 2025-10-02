@@ -65,7 +65,7 @@ if (isModEnabled('ficheinter')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'banks'));
+$langs->loadLangs(array('companies', 'banks', 'commercial'));
 
 if (isModEnabled('contrat')) {
 	$langs->load("contracts");

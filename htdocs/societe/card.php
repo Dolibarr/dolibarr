@@ -1406,7 +1406,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				placeholder: "' . $langs->trans('Name of the new third party. In the meantime we check if it already exists...') . '",
 				allowClear: true,
 				minimumInputLength: 3,
-				language: select2arrayoflanguage,
+				language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 				containerCssClass: ":all:",
 				selectionCssClass: ":all:",
 				tags: true,

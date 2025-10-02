@@ -133,7 +133,7 @@ if ($result) {
 
 			print '<td>';
 			print $line->LibStatut($obj->statut, 2).'&nbsp;';
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.($type == 'bank-transfer' ? '&type=bank-transfer' : '').'">';
 			print substr('000000'.$obj->rowid, -6)."</a></td>";
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->nom."</a></td>\n";
