@@ -54,7 +54,7 @@ $rowid  = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$toselect 	= GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -172,7 +172,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->label = trim($label);
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
-	$object->subscription = (int) $subscription;
+	$object->subscription = (string) (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
@@ -233,7 +233,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->label = trim($label);
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
-	$object->subscription = (int) $subscription;
+	$object->subscription = (string) (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
@@ -639,7 +639,7 @@ if ($rowid > 0) {
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
-		print yn($object->subscription);
+		print yn((int) $object->subscription);
 		print '</tr>';
 
 		// Amount

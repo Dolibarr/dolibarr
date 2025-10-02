@@ -384,7 +384,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'User not found');
 			}
 
-			$upload_dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
+			$upload_dir = getMultidirOutput($object) . '/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -398,7 +398,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Member not found');
 			}
 
-			$upload_dir = $conf->adherent->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'member');
+			$upload_dir = getMultidirOutput($object) . "/".get_exdir(0, 0, 0, 1, $object, 'member');
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
@@ -440,7 +440,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Order not found');
 			}
 
-			$upload_dir = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
+			$upload_dir = getMultidirOutput($object). "/".get_exdir(0, 0, 0, 1, $object, 'commande');
 		} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
 			$modulepart = 'supplier_order';
 
@@ -456,7 +456,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Purchase order not found');
 			}
 
-			$upload_dir = $conf->fournisseur->dir_output."/commande/".dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . "/commande/".dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -470,7 +470,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Shipment not found');
 			}
 
-			$upload_dir = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
+			$upload_dir = getMultidirOutput($object) . "/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -484,7 +484,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Invoice not found');
 			}
 
-			$upload_dir = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
+			$upload_dir = getMultidirOutput($object) . "/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice') {
 			$modulepart = 'supplier_invoice';
 
@@ -500,7 +500,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Invoice not found');
 			}
 
-			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . "/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service') {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -530,7 +530,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Event not found');
 			}
 
-			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
@@ -544,7 +544,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Expense report not found');
 			}
 
-			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'ticket') {
 			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 
@@ -572,7 +572,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'KM article not found');
 			}
 
-			$upload_dir = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/knowledgerecord/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -613,7 +613,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Contract not found');
 			}
 
-			$upload_dir = $conf->contract->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
+			$upload_dir = getMultidirOutput($object) . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
 		} elseif ($modulepart == 'intervention' || $modulepart == 'ficheinter') {
 			$modulepart = 'ficheinter';
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
@@ -635,7 +635,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Project not found');
 			}
 
-			$upload_dir = $conf->project->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
+			$upload_dir = getMultidirOutput($object) . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
 		} elseif ($modulepart == 'mrp') {
 			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
@@ -646,7 +646,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'MO not found');
 			}
 
-			$upload_dir = $conf->mrp->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
+			$upload_dir = getMultidirOutput($object) . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
 		} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
 			$modulepart = 'contact';
 			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

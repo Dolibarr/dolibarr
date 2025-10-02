@@ -45,7 +45,7 @@ $id				= GETPOSTINT('id');
 $action			= GETPOST('action', 'alpha');
 $massaction		= GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm		= GETPOST('confirm', 'alpha');
-$toselect		= GETPOST('toselect', 'array');
+$toselect		= GETPOST('toselect', 'array:int');
 $contextpage	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
 
 $lineid			= GETPOSTINT('lineid');
@@ -605,7 +605,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->max_users = $obj->max_users;
 	$objectstatic->url = $obj->url;
 
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven row-with-select">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

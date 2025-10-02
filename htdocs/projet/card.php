@@ -80,7 +80,6 @@ $location = GETPOST('location', 'alphanohtml');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
@@ -274,7 +273,7 @@ if (empty($reshook)) {
 			}
 			if (!$error && !empty($object->id) > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$langs->load("errors");
@@ -376,7 +375,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$error++;

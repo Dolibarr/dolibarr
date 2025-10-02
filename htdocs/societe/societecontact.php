@@ -51,7 +51,9 @@ $langs->loadLangs(array('companies', 'orders'));
 $id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 $massaction = GETPOST('massaction', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -76,7 +78,7 @@ if ($user->socid) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
+$hookmanager->initHooks(array('thirdpartycontact', 'thirdpartycontactcard', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $id, '');
 
@@ -88,43 +90,50 @@ $object = new Societe($db);
  * Actions
  */
 
-if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
-	$result = $object->fetch($id);
+$parameters = array('id' => $id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
+		$result = $object->fetch($id);
 
-	if ($result > 0 && $id > 0) {
-		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
-		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-	}
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
-		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
+		if ($result > 0 && $id > 0) {
+			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
+			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
-	}
-} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
-	// bascule du statut d'un contact
-	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-	} else {
-		dol_print_error($db);
-	}
-} elseif ($action == 'deletecontact' && $user->hasRight('societe', 'creer')) {
-	// Efface un contact
-	$object->fetch($id);
-	$result = $object->delete_contact(GETPOSTINT("lineid"));
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		dol_print_error($db);
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			} else {
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
+		// bascule du statut d'un contact
+		if ($object->fetch($id)) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		} else {
+			dol_print_error($db);
+		}
+	} elseif ($action == 'deletecontact' && $user->hasRight('societe', 'creer')) {
+		// Efface un contact
+		$object->fetch($id);
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			dol_print_error($db);
+		}
 	}
 }
 
@@ -133,15 +142,18 @@ if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
  * View
  */
 
-$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $langs->trans("ThirdParty"), $help_url);
-
-
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
+
+$title = $langs->trans("ContactAddress", $object->name);
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
+	$title = $object->name." - ".$title;
+}
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('', $title, $help_url);
 
 
 // View and edit

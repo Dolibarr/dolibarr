@@ -166,7 +166,7 @@ if (isModEnabled('supplier_invoice')) {
 	$uploadform .= '<br>';
 
 	$uploadform .= '<br>
-	<small>('.$langs->trans("OrClickToSelectAFile").')</small>
+	<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
 	</div>
 	</div>';
 }
@@ -186,7 +186,7 @@ if (isModEnabled('expensereport')) {
 	$uploadform .= '<br>';
 
 	$uploadform .= '<br>
-	<small>('.$langs->trans("OrClickToSelectAFile").')</small>
+	<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
 	</div>
 	</div>';
 }
@@ -208,7 +208,7 @@ if (isModEnabled('salaries')) {
 	$uploadform .= '<br>';
 
 	$uploadform .= '<br>
-	<small>('.$langs->trans("OrClickToSelectAFile").')</small>
+	<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
 	</div>
 	</div>';
 }
@@ -239,7 +239,7 @@ print '<input type="hidden" name="action" value="uploadfile">';
 print '<input type="hidden" name="sendit" value="1">';
 print '<input type="hidden" name="modulepart" id="modulepart" value="">';
 
-print '<div class="center"><div class="center" style="padding: 30px;">';
+print '<div class="center"><div class="center" style="padding: 10px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockupload" class="center">'."\n";
 //print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';

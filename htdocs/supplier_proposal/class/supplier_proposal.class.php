@@ -189,6 +189,14 @@ class SupplierProposal extends CommonObject
 	public $mode_reglement;
 
 	/**
+	 * @var float|string	Deposit percent for payment terms.
+	 *						Populated by $CommonObject->setPaymentTerms().
+	 * @see setPaymentTerms()
+	 */
+	public $deposit_percent;
+
+
+	/**
 	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
@@ -226,7 +234,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public $multicurrency_code;
 	/**
-	 * @var float
+	 * @var ?float
 	 */
 	public $multicurrency_tx;
 	/**
@@ -322,7 +330,7 @@ class SupplierProposal extends CommonObject
 			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $this->thirdparty, $tva_npr);
 
 			// multiprix
-			if ($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') && $this->thirdparty->price_level) {
 				$price = $prod->multiprices[$this->thirdparty->price_level];
 			} else {
 				$price = $prod->price;
@@ -534,15 +542,13 @@ class SupplierProposal extends CommonObject
 							return -1;
 						}
 						if ($result < -1) {
-							$this->error = $productsupplier->error;
-							$this->errors = $productsupplier->errors;
+							$this->setErrorsFromObject($productsupplier);
 							$this->db->rollback();
 							dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
 							return -1;
 						}
 					} else {
-						$this->error = $productsupplier->error;
-						$this->errors = $productsupplier->errors;
+						$this->setErrorsFromObject($productsupplier);
 						$this->db->rollback();
 						return -1;
 					}
@@ -570,7 +576,23 @@ class SupplierProposal extends CommonObject
 				$pu = 0;
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total(
+				$qty,
+				$pu,
+				(float) $remise_percent,
+				$txtva,
+				(float) $txlocaltax1,
+				(float) $txlocaltax2,
+				0,
+				$price_base_type,
+				$info_bits,
+				$type,
+				$this->thirdparty,
+				$localtaxes_type,
+				100,
+				(float) $this->multicurrency_tx,
+				$pu_ht_devise
+			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -761,7 +783,23 @@ class SupplierProposal extends CommonObject
 				$pu = 0;
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total(
+				$qty,
+				$pu,
+				(float) $remise_percent,
+				$txtva,
+				(float) $txlocaltax1,
+				(float) $txlocaltax2,
+				0,
+				$price_base_type,
+				$info_bits,
+				$type,
+				$this->thirdparty,
+				$localtaxes_type,
+				100,
+				(float) $this->multicurrency_tx,
+				$pu_ht_devise
+			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -967,6 +1005,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", note_public";
 		$sql .= ", model_pdf";
 		$sql .= ", fk_cond_reglement";
+		$sql .= ", deposit_percent";
 		$sql .= ", fk_mode_reglement";
 		$sql .= ", fk_account";
 		$sql .= ", date_livraison";
@@ -989,6 +1028,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'" . $this->db->escape($this->deposit_percent) . "'" : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".(isDolTms($delivery_date) ? "'".$this->db->idate($delivery_date)."'" : "null");
@@ -1087,7 +1127,7 @@ class SupplierProposal extends CommonObject
 				}
 
 				if (!$error) {
-					// Mise a jour infos denormalisees
+					// Update denormalized data
 					$resql = $this->update_price(1);
 					if ($resql) {
 						$action = 'update';
@@ -1164,6 +1204,7 @@ class SupplierProposal extends CommonObject
 			if ($objsoc->fetch($fromid) > 0) {
 				$this->socid = $objsoc->id;
 				$this->cond_reglement_id = (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->deposit_percent = (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
 				$this->mode_reglement_id = (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				unset($this->fk_project);
 			}
@@ -1251,7 +1292,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", p.last_main_doc";
 		$sql .= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
 		$sql .= ", c.label as statut_label";
-		$sql .= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
+		$sql .= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc, p.deposit_percent";
 		$sql .= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."supplier_proposal as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."supplier_proposal_extrafields as pef ON pef.fk_object=p.rowid";
@@ -1301,6 +1342,7 @@ class SupplierProposal extends CommonObject
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
 				$this->mode_reglement_code  = $obj->mode_reglement_code;
 				$this->mode_reglement       = $obj->mode_reglement;
+				$this->deposit_percent		= $obj->deposit_percent;
 				$this->fk_account           = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->cond_reglement_id    = $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
@@ -2858,6 +2900,22 @@ class SupplierProposal extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param  int[]|int 	$categories 	Category or categories IDs
+	 * @return int<-1,1>					Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_SUPPLIER_PROPOSAL);
 	}
 }
 

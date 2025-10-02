@@ -31,7 +31,6 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
-
 /**
  * @var string $conffile
  * @var string $conffiletoshow
@@ -45,7 +44,18 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_encrypted_pass
+ * @var	string $dolibarr_main_document_root
+ * @var string $dolibarr_main_db_type
+ * @var int $dolibarr_main_db_encryption
+ * @var string $dolibarr_main_db_cryptkey
+ * @var string $force_install_nophpinfo
+ * @var string $lockfile
+ * @var string $lockfile2
  */
+'
+@phan-var-force string $lockfile
+@phan-var-force string $lockfile2
+';
 
 $err = 0;
 $allowinstall = 0;
@@ -55,7 +65,7 @@ $checksok = 1;
 $setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : $langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
-$langs->load("install");
+$langs->loadLangs(array("install", "errors"));
 
 // Now we load forced/pre-set values from install.forced.php file.
 $useforcedwizard = false;
@@ -78,10 +88,7 @@ dolibarr_install_syslog("- check: Dolibarr install/upgrade process started");
 pHeader('', ''); // No next step for navigation buttons. Next step is defined by click on links.
 
 
-//print "<br>\n";
-//print $langs->trans("InstallEasy")."<br><br>\n";
-
-print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Database"> ';
+print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/gear.svg" width="20" alt="Database"> ';
 print '<span class="inline-block valignmiddle">'.$langs->trans("MiscellaneousChecks")."</span></h3>\n";
 
 // Check browser
@@ -91,7 +98,9 @@ if (!empty($useragent)) {
 	$browserversion = $tmp['browserversion'];
 	$browsername = $tmp['browsername'];
 	if ($browsername == 'ie' && $browserversion < 7) {
-		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("WarningBrowserTooOld")."<br>\n";
+		//print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> ';
+		print img_picto('', 'warning', 'class="pictofixedwidth warning"');
+		print $langs->trans("WarningBrowserTooOld")."<br>\n";
 	}
 }
 
@@ -100,23 +109,34 @@ if (!empty($useragent)) {
 $arrayphpminversionerror = array(7, 0, 0);
 $arrayphpminversionwarning = array(7, 1, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
-	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
+	//print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	print img_picto('', 'warning', 'class="pictofixedwidth error"');
+	print $langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning
 } elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0) {    // Minimum supported (warning if lower)
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
+	//print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	print img_picto('', 'warning', 'class="pictofixedwidth warning"');
+	print $langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
 	$checksok = 1; // 0=error, 1=warning
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+	print $langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
-if (empty($force_install_nophpinfo)) {
-	print ' (<a href="phpinfo.php" target="_blank" rel="noopener noreferrer">'.$langs->trans("MoreInformation").'</a>)';
+if (empty($force_install_nophpinfo) && (!file_exists($lockfile) && !file_exists($lockfile2))) {		// Do not show sensible information in update process, only in install process.
+	print ' (<a href="phpinfo.php" target="_blank" rel="noopener noreferrer">';
+	$conf->use_javascript_ajax = 1;		// We suppose javascript is on for install process
+	print dolButtonToOpenUrlInDialogPopup('phpinfo', $langs->trans("MoreInformation"), $langs->trans("MoreInformation"), '/install/phpinfo.php', '', '');
+	print '</a>)';
 }
 print "<br>\n";
 
 // Check PHP version max
 $arrayphpmaxversionwarning = array(8, 4, 0);
 if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
-	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
+	print img_picto('', 'warning', 'class="pictofixedwidth error"');
+	//print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	print $langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
 	$checksok = 1; // 0=error, 1=warning
 	print "<br>\n";
 }
@@ -124,115 +144,127 @@ if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && version
 
 // Check PHP support for $_GET and $_POST
 if (!isset($_GET["testget"]) && !isset($_POST["testpost"])) {	// We must keep $_GET and $_POST here
-	print '<img src="../theme/eldy/img/warning.png" alt="Warning" class="valignmiddle"> '.$langs->trans("PHPSupportPOSTGETKo");
+	print img_picto('', 'warning', 'class="pictofixedwidth warning"');
+	//print '<img src="../theme/eldy/img/warning.png" alt="Warning" class="valignmiddle pictofixedwidth"> ';
+	print $langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 	print "<br>\n";
 	$checksok = 0;
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupportPOSTGETOk")."<br>\n";
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+	print $langs->trans("PHPSupportPOSTGETOk")."<br>\n";
 }
 
 
 // Check if session_id is enabled
 if (!function_exists("session_id")) {
-	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
+	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	print $langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
 	$checksok = 0;
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupportSessions")."<br>\n";
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+	print $langs->trans("PHPSupportSessions")."<br>\n";
 }
 
+$extensionok = array();
+$extensionko = array();
 
 // Check for mbstring extension
 if (!extension_loaded("mbstring")) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "MBString")."<br>\n";
+	$extensionko[] = 'MBString';
 	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "MBString")."<br>\n";
+	$extensionok[] = 'MBString';
 }
 
 // Check for json extension
 if (!extension_loaded("json")) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "JSON")."<br>\n";
+	$extensionko[] = 'JSON';
 	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "JSON")."<br>\n";
+	$extensionok[] = 'JSON';
 }
 
 // Check if GD is supported (we need GD for image conversion)
 if (!function_exists("imagecreate")) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "GD")."<br>\n";
+	$extensionko[] = 'GD';
 	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
+	$extensionok[] = 'GD';
 }
 
 // Check if Curl is supported
 if (!function_exists("curl_init")) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "Curl")."<br>\n";
+	$extensionko[] = 'Curl';
 	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Curl")."<br>\n";
+	$extensionok[] = 'Curl';
 }
 
 // Check if PHP calendar extension is available
 if (!function_exists("easter_date")) {
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "Calendar")."<br>\n";
+	$extensionko[] = 'Calendar';
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Calendar")."<br>\n";
+	$extensionok[] = 'Calendar';
 }
 
 // Check if Xml is supported
 if (!function_exists("simplexml_load_string")) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "Xml")."<br>\n";
+	$extensionko[] = 'Xml';
 	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Xml")."<br>\n";
+	$extensionok[] = 'Xml';
 }
 
 // Check if UTF8 is supported
 if (!function_exists("utf8_encode")) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8")."<br>\n";
+	$extensionko[] = 'UTF8';
 	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
+	$extensionok[] = 'UTF8';
 }
 
 // Check if intl methods are supported if install is not from DoliWamp. TODO Why ?
 if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
 	if (!function_exists("locale_get_primary_language") || !function_exists("locale_get_region")) {
-		$langs->load("errors");
-		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "Intl")."<br>\n";
+		$extensionko[] = 'Intl';
 		// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 	} else {
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Intl")."<br>\n";
+		$extensionok[] = 'Intl';
 	}
 }
 
 // Check if Imap is supported
 if (PHP_VERSION_ID <= 80300) {
 	if (!function_exists("imap_open")) {
-		$langs->load("errors");
-		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
+		$extensionko[] = 'IMAP';
 		// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 	} else {
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
+		$extensionok[] = 'IMAP';
 	}
 }
 
 // Check if Zip is supported
 if (!class_exists('ZipArchive')) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "ZIP")."<br>\n";
+	$extensionko[] = 'ZIP';
 	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "ZIP")."<br>\n";
+	$extensionok[] = 'ZIP';
 }
+
+if (!empty($extensionok)) {
+	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+	print $langs->trans("PHPSupport", '<b>'.implode(', ', $extensionok).'</b>')."<br>\n";
+}
+if (!empty($extensionko)) {
+	//print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	print img_picto('', 'warning', 'class="pictofixedwidth error"');
+	print $langs->trans("ErrorPHPDoesNotSupport", '<b>'.implode(', ', $extensionko).'</b>')."<br>\n";
+}
+
 
 // Check memory
 $memrequiredorig = '64M';
@@ -254,12 +286,15 @@ if ($memmaxorig != '') {
 		}
 	}
 	if ($memmax >= $memrequired || $memmax == -1) {
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPMemoryOK", $memmaxorig, $memrequiredorig)."<br>\n";
+		print img_picto('', 'tick', 'class="pictofixedwidth"');
+		//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+		print $langs->trans("PHPMemoryOK", $memmaxorig, $memrequiredorig)."<br>\n";
 	} else {
-		print '<img src="../theme/eldy/img/warning.png" alt="Warning" class="valignmiddle paddingright"> '.$langs->trans("PHPMemoryTooLow", $memmaxorig, $memrequiredorig)."<br>\n";
+		print img_picto('', 'warning', 'class="pictofixedwidth warning"');
+		//print '<img src="../theme/eldy/img/warning.png" alt="Warning" class="valignmiddle pictofixedwidth"> ';
+		print $langs->trans("PHPMemoryTooLow", $memmaxorig, $memrequiredorig)."<br>\n";
 	}
 }
-
 
 // If that config file is present and filled
 clearstatcache();
@@ -303,10 +338,10 @@ if (is_readable($conffile) && filesize($conffile) > 8) {
 }
 
 
-
 // File is missing and cannot be created
 if (!file_exists($conffile)) {
-	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated", $conffiletoshow);
+	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	print $langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated", $conffiletoshow);
 	print '<br><br><div class="error">';
 	print $langs->trans("YouMustCreateWithPermission", $conffiletoshow);
 	print '</div><br><br>'."\n";
@@ -315,30 +350,44 @@ if (!file_exists($conffile)) {
 	$err++;
 } else {
 	if (dol_is_dir($conffile)) {
-		print '<img src="../theme/eldy/img/error.png" alt="Warning"> '.$langs->trans("ConfFileMustBeAFileNotADir", $conffiletoshow);
+		print img_picto('', 'warning', 'class="pictofixedwidth error"');
+		//print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+		print $langs->trans("ConfFileMustBeAFileNotADir", $conffiletoshow);
 
 		$allowinstall = 0;
 	} elseif (!is_writable($conffile)) {
 		// File exists but cannot be modified
 		if ($confexists) {
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("ConfFileExists", $conffiletoshow);
+			print img_picto('', 'tick', 'class="pictofixedwidth"');
+			//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+			print $langs->trans("ConfFileExists", $conffiletoshow);
 		} else {
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("ConfFileCouldBeCreated", $conffiletoshow);
+			print img_picto('', 'tick', 'class="pictofixedwidth"');
+			//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+			print $langs->trans("ConfFileCouldBeCreated", $conffiletoshow);
 		}
 		print "<br>";
-		print '<img src="../theme/eldy/img/tick.png" alt="Warning" class="valignmiddle paddingright"> '.$langs->trans("ConfFileIsNotWritable", $conffiletoshow);
+		print img_picto('', 'tick', 'class="pictofixedwidth warning"');
+		//print '<img src="../theme/eldy/img/tick.png" alt="Warning" class="valignmiddle pictofixedwidth"> ';
+		print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
 		print "<br>\n";
 
 		$allowinstall = 0;
 	} else {
 		// File exists and can be modified
 		if ($confexists) {
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("ConfFileExists", $conffiletoshow);
+			print img_picto('', 'tick', 'class="pictofixedwidth"');
+			//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+			print $langs->trans("ConfFileExists", $conffiletoshow);
 		} else {
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("ConfFileCouldBeCreated", $conffiletoshow);
+			print img_picto('', 'tick', 'class="pictofixedwidth"');
+			//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+			print $langs->trans("ConfFileCouldBeCreated", $conffiletoshow);
 		}
 		print "<br>";
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("ConfFileIsWritable", $conffiletoshow);
+		print img_picto('', 'tick', 'class="pictofixedwidth"');
+		//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
+		print $langs->trans("ConfFileIsWritable", $conffiletoshow);
 		print "<br>\n";
 
 		$allowinstall = 1;
@@ -416,8 +465,8 @@ if (!file_exists($conffile)) {
 
 		// Show title
 		if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
-			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> - ';
-			print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
+			print $langs->trans("VersionLastUpgrade").' <b><span class="okinversed">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> &nbsp; - &nbsp; ';
+			print $langs->trans("VersionProgram").' <b><span class="okinversed">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';
 			print '<br>';
@@ -425,8 +474,9 @@ if (!file_exists($conffile)) {
 			print "<br>\n";
 		}
 
-		//print $langs->trans("InstallEasy")." ";
-		print '<h3><span class="soustitre">'.$langs->trans("ChooseYourSetupMode").'</span></h3>';
+		print '<br>';
+		print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/gear.svg" width="20" alt="Database"> ';
+		print '<span class="soustitre valignmiddle">'.$langs->trans("ChooseYourSetupMode").'</span></h3>';
 
 		$foundrecommandedchoice = 0;
 

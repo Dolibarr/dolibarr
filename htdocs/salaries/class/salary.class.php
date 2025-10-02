@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,11 +253,9 @@ class Salary extends CommonObject
 		}
 
 		// Update extrafield
-		if (!$error) {
-			$result = $this->insertExtraFields();
-			if ($result < 0) {
-				$error++;
-			}
+		$result = $this->insertExtraFields();
+		if ($result < 0) {
+			$error++;
 		}
 
 		if (!$notrigger) {
@@ -340,7 +338,7 @@ class Salary extends CommonObject
 				$this->status 			= $obj->paye;
 				$this->fk_bank          = $obj->fk_bank;
 				$this->fk_user_author   = $obj->fk_user_author;
-				$this->fk_user_modif    = $obj->fk_user_modif;
+				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
 				$this->accountid = $obj->fk_account;
 
@@ -485,11 +483,9 @@ class Salary extends CommonObject
 
 			if ($this->id > 0) {
 				// Update extrafield
-				if (!$error) {
-					$result = $this->insertExtraFields();
-					if ($result < 0) {
-						$error++;
-					}
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
 				}
 
 				// Call trigger
@@ -656,7 +652,7 @@ class Salary extends CommonObject
 	 * 	Return amount of payments already done
 	 *
 	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
-	 *	@return		float|int|array						Amount of payment already done, <0 and set ->error if KO
+	 *	@return		float|int|array{}					Amount of payment already done, <0 and set ->error if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -873,33 +869,31 @@ class Salary extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(1) . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
 			$user = $arraydata['user'];
 			'@phan-var-force User $user';
+			/** @var User $user */
 			$return .= '<br><span class="info-box-label">'.$user->getNomUrl(empty($arraydata['user']->photo) ? 1 : -1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
-			if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
-				$return .= ' <span class="info-box-label opacitymedium small">';
-				if ($langs->trans("PaymentTypeShort".$this->type_payment) != "PaymentTypeShort".$this->type_payment) {
-					$return .= $langs->trans("PaymentTypeShort".$this->type_payment);
-				} elseif ($langs->trans("PaymentType".$this->type_payment) != "PaymentType".$this->type_payment) {
-					$return .= $langs->trans("PaymentType".$this->type_payment);
-				}
-				$return .= '</span>';
+		$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
+		if (!empty($this->type_payment)) {
+			$return .= ' <span class="info-box-label opacitymedium small">';
+			if ($langs->trans("PaymentTypeShort".$this->type_payment) != "PaymentTypeShort".$this->type_payment) {
+				$return .= $langs->trans("PaymentTypeShort".$this->type_payment);
+			} elseif ($langs->trans("PaymentType".$this->type_payment) != "PaymentType".$this->type_payment) {
+				$return .= $langs->trans("PaymentType".$this->type_payment);
 			}
+			$return .= '</span>';
 		}
-		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 

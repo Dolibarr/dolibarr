@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ $permissiontoadd = $user->hasRight('accounting', 'fiscalyear', 'write');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$permissiontoadd) {
+if (!$permissiontoadd) { // after this test $permissiontoadd is always true
 	accessforbidden();
 }
 
@@ -97,7 +97,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
+if ($action == 'confirm_delete' && $confirm == "yes" /* && $permissiontoadd // always true */) {
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: fiscalyear.php");
@@ -105,7 +105,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'add' && $permissiontoadd) {
+} elseif ($action == 'add' /* && $permissiontoadd // always true */) {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -147,7 +147,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		header("Location: ./fiscalyear.php");
 		exit();
 	}
-} elseif ($action == 'update' && $permissiontoadd) {
+} elseif ($action == 'update' /* && $permissiontoadd // always true */) {
 	// Update record
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
@@ -169,7 +169,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 		exit();
 	}
-} elseif ($action == 'reopen' && $permissiontoadd && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
+} elseif ($action == 'reopen' /* && $permissiontoadd // always true */ && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
 	$result = $object->fetch($id);
 
 	$object->status = GETPOSTINT('status');

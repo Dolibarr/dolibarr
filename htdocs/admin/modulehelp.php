@@ -364,8 +364,9 @@ if ($mode == 'desc') {
 		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', (string) $dirofmodule);
 		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $tmpdirofmoduletoshow);
 
+		$installmoduleslock = DOL_DATA_ROOT.'/installmodules.lock';
 		global $dolibarr_allow_download_external_modules;
-		if (!empty($dolibarr_allow_download_external_modules) && preg_match('/\/custom\//', (string) $dirofmodule)) {
+		if ((!file_exists($installmoduleslock) || !empty($dolibarr_allow_download_external_modules)) && preg_match('/\/custom\//', (string) $dirofmodule)) {
 			// Add a link to download a zip of the module
 			$textexternal .= ' <a href="'.DOL_URL_ROOT.'/admin/tools/export_files.php?export_type=externalmodule&what='.urlencode($moduledir).'&compression=zip&zipfilename_template=module_'.$moduledir.'-'.$version.'.notorig" target="_blank" rel="noopener">'.img_picto('', 'download').'</a>';
 		} else {

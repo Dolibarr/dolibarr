@@ -32,7 +32,6 @@
  *		\brief      Tab of payment modes for the customer
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -648,7 +647,7 @@ if (empty($reshook)) {
 
 			$tmpservice = 'StripeTest';
 			$tmpservicestatus = 0;
-			if ($action == 'setkey_account') {
+			if ($action == 'setkey_account') {	// Test on permission not required
 				$tmpservice = 'StripeLive';
 				$tmpservicestatus = 1;
 			}
@@ -657,7 +656,7 @@ if (empty($reshook)) {
 			global $stripearrayofkeysbyenv;
 			$tmpsite_account = $stripearrayofkeysbyenv[$tmpservicestatus]['publishable_key'];
 
-			if ($action == 'setkey_account') {
+			if ($action == 'setkey_account') {	// Test on permission not required
 				$newcu = GETPOST('key_account', 'alpha');
 			} else {
 				$newcu = GETPOST('key_accounttest', 'alpha');
@@ -717,7 +716,7 @@ if (empty($reshook)) {
 
 			$tmpservice = 'StripeTest';
 			$tmpservicestatus = 0;
-			if ($action == 'setkey_account_supplier') {
+			if ($action == 'setkey_account_supplier') {		// Test on permission not required
 				$tmpservice = 'StripeLive';
 				$tmpservicestatus = 1;
 			}
@@ -726,7 +725,7 @@ if (empty($reshook)) {
 			global $stripearrayofkeysbyenv;
 			$tmpsite_account = $stripearrayofkeysbyenv[$tmpservicestatus]['publishable_key'];
 
-			if ($action == 'setkey_account_supplier') {
+			if ($action == 'setkey_account_supplier') {		// Test on permission not required
 				$newsup = GETPOST('key_account_supplier', 'alpha');
 			} else {
 				$newsup = GETPOST('key_account_suppliertest', 'alpha');
@@ -931,7 +930,7 @@ if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddup
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'update';
-	if ($action == 'editcard') {
+	if ($action == 'editcard') {		// Test on permission not required
 		$actionforadd = 'updatecard';
 	}
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
@@ -941,7 +940,7 @@ if ($socid && ($action == 'create' || $action == 'createcard') && $permissiontoa
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'add';
-	if ($action == 'createcard') {
+	if ($action == 'createcard') {		// Test on permission not required
 		$actionforadd = 'addcard';
 	}
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';

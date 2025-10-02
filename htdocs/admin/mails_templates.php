@@ -64,7 +64,7 @@ if (isModEnabled('eventorganization')) {
 
 $langs->loadLangs($langsArray);
 
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
@@ -73,7 +73,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $backtopage = GETPOST('backtopage');
 $contextpage = GETPOST('contextpage', 'aZ09');
 
-$id = $rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
+$rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
 $search_label = GETPOST('search_label', 'alphanohtml'); // Must allow value like 'Abc Def' or '(MyTemplateName)'
 $search_type_template = GETPOST('search_type_template', 'alpha');
 $search_lang = GETPOST('search_lang', 'alpha');
@@ -219,7 +219,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 }
 if (isModEnabled("shipping")) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
-	$elementList['reception_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendReception'));
+	$elementList['delivery_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendDelivery'));
 }
 if (isModEnabled("reception")) {
 	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendReception'));
@@ -254,7 +254,7 @@ if (isModEnabled('eventorganization') && $user->hasRight('eventorganization', 'r
 if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
-if (isModEnabled('product') && !empty($user->rights->produit->lire)) {
+if (isModEnabled('product') && $user->hasRight('produit', 'lire')) {
 	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
 }
 
@@ -1159,7 +1159,7 @@ if ($num) {
 					$fieldsforcontent[] = 'content_lines';
 				}
 
-				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[$id]);
+				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[25]);
 				$hookmanager->executeHooks('editEmailTemplateFieldsForContent', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				foreach ($fieldsforcontent as $tmpfieldlist) {

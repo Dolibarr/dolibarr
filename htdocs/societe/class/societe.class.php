@@ -206,7 +206,7 @@ class Societe extends CommonObject
 		'email' => array('type' => 'varchar(128)', 'label' => 'Email', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 120),
 		'fk_effectif' => array('type' => 'integer', 'label' => 'Workforce', 'enabled' => 1, 'visible' => -1, 'position' => 170),
-		'fk_typent' => array('type' => 'integer', 'label' => 'TypeOfCompany', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
+		'fk_typent' => array('type' => 'integer', 'label' => 'ThirdPartyType', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
 		'fk_forme_juridique' => array('type' => 'integer', 'label' => 'JuridicalStatus', 'enabled' => 1, 'visible' => -1, 'position' => 180),
 		'birth' => array('type' => 'date', 'label' => 'CompnanyBirthDate', 'enabled' => 1, 'visible' => -1, 'position' => 182),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
@@ -894,6 +894,13 @@ class Societe extends CommonObject
 	 * @var Account|string Default BAN account
 	 */
 	public $bank_account;
+
+	/**
+	 * @deprecated
+	 * Accounting code for client
+	 * @var ?string
+	 */
+	public $code_compta;
 
 
 	const STATUS_CEASED = 0;
@@ -4421,29 +4428,33 @@ class Societe extends CommonObject
 	/**
 	 *  Check if third party is a company (Business) or an end user (Consumer)
 	 *
-	 *  @return		boolean		if a company: true || if a user: false
+	 *  @return		int		if a company > 0, if an individual = 0
 	 */
 	public function isACompany()
 	{
+		//global $mysoc;
+
 		// Define if third party is treated as company (or not) when nature is unknown
-		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES', 1);	// default if not set is 1 because it was like this in all past versions
+		//$defaultvalue = in_array($mysoc->country_code, array('FR')) ? 0 : 1;	// TODO On old version, default was 1 for everybody, move this to defaultvalue = 0 for everybody
+		$defaultvalue = 1;
+		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES', $defaultvalue);
 
 		// Now try to guess using different tips
 		if (!empty($this->tva_intra)) {
-			$isACompany = 1;
+			$isACompany = 2;
 		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
-			$isACompany = 1;
+			$isACompany = 3;
 		} else {
 			if (!getDolGlobalString('MAIN_CUSTOMERS_ARE_COMPANIES_EVEN_IF_SET_AS_INDIVIDUAL')) {	// never or rarely set
 				if (preg_match('/^TE_PRIVATE/', $this->typent_code)) {	// TODO Add a field is_a_company into dictionary
 					$isACompany = 0;
 				}
 			} else {
-				$isACompany = 1;
+				$isACompany = 4;
 			}
 		}
 
-		return (bool) $isACompany;
+		return $isACompany;
 	}
 
 	/**
@@ -4531,7 +4542,7 @@ class Societe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
 			$this->db->free($resql);
 			return $nb;
@@ -4937,8 +4948,8 @@ class Societe extends CommonObject
 	/**
 	 *  Check if we must use localtax feature or not according to country (country of $mysoc in most cases).
 	 *
-	 *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
-	 *  @return		boolean					true or false
+	 *	@param		int<-1,2>		$localTaxNum	Use 1 or 2 to get info for only localtax1 or localtax2, 0 to get both a boolean using a OR, -1 to get array for each case.
+	 *  @return		boolean|array<int,boolean>		true or false or array of 2 booleans if $localTaxNum == -1
 	 */
 	public function useLocalTax($localTaxNum = 0)
 	{
@@ -4947,7 +4958,7 @@ class Societe extends CommonObject
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND t.active = 1";
 		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
-		if (empty($localTaxNum)) {
+		if (empty($localTaxNum) || $localTaxNum == -1) {
 			$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
 		} elseif ($localTaxNum == 1) {
 			$sql .= " AND t.localtax1_type <> '0'";
@@ -4957,7 +4968,15 @@ class Societe extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			return ($this->db->num_rows($resql) > 0);
+			if ($localTaxNum == -1) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					return array(1 => ($obj->localtax1 ? true : false), 2 => ($obj->localtax2 ? true : false));
+				}
+				return array(1 => false, 2 => false);
+			} else {
+				return ($this->db->num_rows($resql) > 0);
+			}
 		} else {
 			return false;
 		}
@@ -5231,10 +5250,12 @@ class Societe extends CommonObject
 		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
+		$today = dol_get_first_hour(dol_now('tzuser')); // Returns today at 00:00 in the user's time zone
+
 		$sql = "SELECT rowid, ref, total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
 		if (!empty($late)) {
-			$sql .= " AND date_lim_reglement < '".$this->db->idate(dol_now())."'";
+			$sql .= " AND date_lim_reglement < '".$this->db->idate($today)."'";
 		}
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";

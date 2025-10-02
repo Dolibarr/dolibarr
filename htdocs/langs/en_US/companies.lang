@@ -473,3 +473,5 @@ NewSocNameForClone=New company name
 ConfirmCloneThirdparties=Are you sure that you want to clone <b>%s</b> company ?
 SocialNetworksBusiness=Social networks for company
 ErrorCommercialNotAllowedForThirdparty=The user %s has not the permission to see all thirdparties and is not an allowed sale representative of the company.
+EnablePublicCompanyPages=Enable the public contact page
+PublicInterfaceCompanyDesc=This option offer a public page to offer an online contact form to allow any anonymous visitor to send you a message (creating also a thirdparty and/or contact, automatically).

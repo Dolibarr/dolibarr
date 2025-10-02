@@ -50,6 +50,13 @@ $includeconstants = array();
 $buildzip = 0;
 
 if (empty($argv[1])) {
+	print '***** '.$script_file.' *****'."\n";
+	print "Generate the file filelist-x.y.z[-mybuild].xml with signature of files. ";
+	print "This includes the 3 sections:\n";
+	print "- dolibarr_htdocs_dir\n";
+	print "- dolibarr_scripts_dir\n";
+	print "- dolibarr_unalterable_files (only files inside the scope of the unalterable module)\n";
+	print "\n";
 	print "Usage:   ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
 	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
 	exit(1);
@@ -78,7 +85,7 @@ while ($i < $argc) {
 		$tmp = explode(':', $result['includeconstant'], 3);			// $includeconstant has been set with previous parse_str()
 		if (count($tmp) != 3) {
 			print "Error: Bad parameter includeconstant=".$result['includeconstant'] ."\n";
-			exit -1;
+			exit(1);
 		}
 		$includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
 	}
@@ -97,7 +104,7 @@ $savrelease = $release;
 $tmpver = explode('-', $release, 2);
 if ($tmpver[0] == 'auto') {
 	$release = DOL_VERSION;
-	if ($tmpver[1] && $tmpver[0] == 'auto') {
+	if (!empty($tmpver[1]) && $tmpver[0] == 'auto') {
 		$release .= '-'.$tmpver[1];
 	}
 }
@@ -126,10 +133,10 @@ if (empty($includecustom)) {
 	}
 }
 
-print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
-print "Release                        : ".$release."\n";
-print "Include custom in signature    : ".$includecustom."\n";
-print "Include constants in signature : ";
+print "Working on files into           : ".DOL_DOCUMENT_ROOT."\n";
+print "Release                         : ".$release."\n";
+print "Include custom dir in signature : ".(empty($includecustom) ? 'no' : 'yes')."\n";
+print "Include constants in signature  : ".(empty($includeconstants) ? 'none' : '');
 foreach ($includeconstants as $countrycode => $tmp) {
 	foreach ($tmp as $constname => $constvalue) {
 		print $constname.'='.$constvalue." ";
@@ -155,9 +162,12 @@ $gitcommit = 'seetag';
 $branchname = preg_replace('/^(\d+\.\d+)\..*$/', '\1', $release);	// Keep only x.y into x.y.z
 $fileforgit = dirname(dirname(dirname(__FILE__))).'/.git/refs/heads/'.$branchname;
 print "Try to get last commit ID from file ".$fileforgit."\n";
-$fileforgitcontent = file_get_contents($fileforgit);
+$fileforgitcontent = '';
+if (file_exists($fileforgit)) {
+	$fileforgitcontent = file_get_contents($fileforgit);
+}
 if (empty($fileforgitcontent)) {
-	print "Failed to get the last commit ID. Are you on the branch for the release (branch name '.$branchname.') ?\n";
+	print "Failed to get the last commit ID. Are you on the branch for the release (branch name ".$branchname.") ?\n";
 }
 $gitcommit = trim($fileforgitcontent);
 
@@ -180,7 +190,7 @@ fputs($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
 
 // Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
 $regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 
 $dir = '';
@@ -350,7 +360,7 @@ if ($newdir != $dir) {
 	}
 	fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 	$dir = $newdir;
-	$needtoclose = 1;
+	//$needtoclose = 1;		// close will be done in next filethat is in same dir
 }
 if (filetype($file) == "file") {
 	$md5 = md5_file($file);
@@ -361,7 +371,7 @@ if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
 	$needtoclose = 0;
 }
-// Add the interfaces.class.php file
+// Add the commontrigger.class.php file
 $file = dirname(__FILE__).'/../../htdocs/core/class/commontrigger.class.php';
 $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
 $newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
@@ -374,6 +384,8 @@ if ($newdir != $dir) {
 	$dir = $newdir;
 	$needtoclose = 1;
 }
+
+$needtoclose = 1;	// This is the last file
 if (filetype($file) == "file") {
 	$md5 = md5_file($file);
 	$checksumconcat[] = $md5;

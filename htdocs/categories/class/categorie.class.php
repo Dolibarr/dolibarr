@@ -69,6 +69,8 @@ class Categorie extends CommonObject
 	const TYPE_INVOICE				= 'invoice';
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
+	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
+	const TYPE_PROPOSAL	            = 'propal';
 
 
 	/**
@@ -99,7 +101,9 @@ class Categorie extends CommonObject
 		'order'					=> 16,
 		'invoice'				=> 17,
 		'supplier_order'		=> 20,
-		'supplier_invoice'		=> 21
+		'supplier_invoice'		=> 21,
+		'supplier_proposal'		=> 22,
+		'propal'				=> 23
 	);
 
 	/**
@@ -1118,7 +1122,11 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+			if (($limit >= (int) $nbtotalofrecords) && $page > 0) {
+				return [];
+			}
+
+			if (($page * $limit) >= (int) $nbtotalofrecords) {	// if total resultset is smaller or equal then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
@@ -2052,7 +2060,7 @@ class Categorie extends CommonObject
 		$filename = preg_replace('/'.preg_quote($dir, '/').'/i', '', $file); // Nom du fichier
 
 		// On efface l'image d'origine
-		dol_delete_file($file, 1);
+		dol_delete_file($file, 0); // do not use disableglob, ecmfiles will not be deleted
 
 		// Si elle existe, on efface la vignette
 		$regs = array();

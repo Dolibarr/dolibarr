@@ -192,91 +192,91 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFullname").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_FULLNAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldFullnameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FULLNAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_FULLNAME ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FULLNAME"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_FULLNAME') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_NAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_NAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_NAME ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_NAME"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_NAME') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Firstname
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_FIRSTNAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FIRSTNAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_FIRSTNAME ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FIRSTNAME"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_FIRSTNAME') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Company
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCompany").'</td><td>';
 print '<input size="25" type="text" name="fieldcompany" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_COMPANY').'">';
 print '</td><td>'.$langs->trans("LDAPFieldCompanyExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COMPANY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_COMPANY ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COMPANY"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_COMPANY') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Mail
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
 print '<input size="25" type="text" name="fieldmail" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_MAIL').'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value=">LDAP_CONTACT_FIELD_MAIL"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_MAIL ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value=">LDAP_CONTACT_FIELD_MAIL"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_MAIL') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Phone pro
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_PHONE').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_PHONE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_PHONE ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_PHONE"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_PHONE') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Phone home
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldHomePhone").'</td><td>';
 print '<input size="25" type="text" name="fieldhomephone" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_HOMEPHONE').'">';
 print '</td><td>'.$langs->trans("LDAPFieldHomePhoneExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_HOMEPHONE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_HOMEPHONE ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_HOMEPHONE"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_HOMEPHONE') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Mobile
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_MOBILE').'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_MOBILE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_MOBILE ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_MOBILE"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_MOBILE') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Fax
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_FAX').'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FAX"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_FAX ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FAX"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_FAX') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Address
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldAddress").'</td><td>';
 print '<input size="25" type="text" name="fieldaddress" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS').'">';
 print '</td><td>'.$langs->trans("LDAPFieldAddressExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ADDRESS"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_ADDRESS ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ADDRESS"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // ZIP
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldZip").'</td><td>';
 print '<input size="25" type="text" name="fieldzip" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_ZIP').'">';
 print '</td><td>'.$langs->trans("LDAPFieldZipExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ZIP"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_ZIP ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ZIP"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_ZIP') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // TOWN
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldTown").'</td><td>';
 print '<input size="25" type="text" name="fieldtown" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_TOWN').'">';
 print '</td><td>'.$langs->trans("LDAPFieldTownExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_TOWN"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_TOWN ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_TOWN"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_TOWN') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // COUNTRY
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
 print '<input size="25" type="text" name="fieldcountry" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY').'">';
 print '</td><td>&nbsp;</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COUNTRY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_COUNTRY ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COUNTRY"'.(getDolGlobalString('LDAP_KEY_CONTACTS') && getDolGlobalString('LDAP_KEY_CONTACTS') == getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY') ? ' checked' : '')."></td>";
 print '</tr>';
 
 print '</table>';

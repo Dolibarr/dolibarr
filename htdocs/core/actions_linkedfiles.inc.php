@@ -295,7 +295,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 						$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 						setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
 					} elseif (!file_exists($destpath)) {
-						$result = dol_move($srcpath, $destpath, '0', 1, 0, 1);
+						$result = dol_move($srcpath, $destpath, '0', 1, 0, 1, [], $object->entity ?? 0);
 						if ($result) {
 							// Define if we have to generate thumbs or not
 							$generatethumbs = 1;

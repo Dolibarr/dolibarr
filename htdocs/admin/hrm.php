@@ -359,7 +359,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		$sql = "SELECT nom";
 		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 		$sql .= " WHERE type = '".$db->escape($type)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -504,7 +504,7 @@ if (!getDolGlobalString('HRM_MAXRANK')) {
 	$conf->global->HRM_MAXRANK = Skill::DEFAULT_MAX_RANK_PER_SKILL;
 }
 
-if ($action == 'edit') {
+if ($action != 'editxxx') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';

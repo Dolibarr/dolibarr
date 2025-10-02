@@ -186,7 +186,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$form->textwithpicto($langs->trans("RESTRICT_ON_IP"), $langs->trans("Example").': '.$langs->trans("IPListExample"));
 print '</td>';
-print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag(getDolGlobalString('API_RESTRICT_ON_IP')).'"></td>';
+print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag(getDolGlobalString('API_RESTRICT_ON_IP')).'" spellcheck="false"></td>';
 print '<td>';
 print '<input type="submit" class="button button-save smallpaddingimp" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
 print '</td>';
@@ -208,7 +208,7 @@ $message = '';
 //$url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $url = $urlwithroot.'/api/index.php/login?login=auserlogin&password=thepassword[&reset=1]';
 $message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
-$message .= '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogettoken" value="'.$url.'"></div>';
+$message .= '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogettoken" value="'.$url.'" spellcheck="false"></div>';
 print $message;
 print ajax_autoselect("urltogettoken");
 print '<br>';
@@ -223,7 +223,7 @@ if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/e
 	print '<div class="opacitymediumxxx"><br><span class="opacitymedium">'.$langs->trans("SwaggerDescriptionFile").':</span><br>';
 	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
 	//$urlswaggerreal = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY='.$user->api_key;
-	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogetapidesc" value="'.$urlswagger.'"></div>';
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogetapidesc" value="'.$urlswagger.'" spellcheck="false"></div>';
 	print '</div>';
 	print ajax_autoselect("urltogetapidesc");
 } else {

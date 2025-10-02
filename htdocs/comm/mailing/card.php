@@ -103,7 +103,7 @@ if (empty($action) && empty($object->id)) {
 	accessforbidden('Object not found');
 }
 
-$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 //$permissiontoread = $user->hasRight('maling', 'read');
 $permissiontocreate = $user->hasRight('mailing', 'creer');
@@ -482,7 +482,7 @@ if (empty($reshook)) {
 	if ($action == 'send' && ! $cancel && $permissiontovalidatesend) {
 		$error = 0;
 
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		$object->sendto = GETPOST("sendto", 'alphawithlgt');
 		if (!$object->sendto) {
@@ -595,7 +595,7 @@ if (empty($reshook)) {
 
 	// Action update description of emailing
 	if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail_replyto' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontovalidatesend) {
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		if ($action == 'settitle') {					// Test on permission already done
 			$object->title = trim(GETPOST('title', 'alpha'));
@@ -630,7 +630,7 @@ if (empty($reshook)) {
 	 * Action of adding a file in email form
 	 */
 	if (GETPOST('addfile') && $permissiontocreate) {
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -642,7 +642,7 @@ if (empty($reshook)) {
 
 	// Action of file remove
 	if (GETPOSTINT("removedfile") && $permissiontocreate) {
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -909,7 +909,7 @@ if ($action == 'create') {	// aaa
 	print '</form>';
 } else {
 	if ($object->id > 0) {
-		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 		$head = emailing_prepare_head($object);
 
@@ -1038,13 +1038,15 @@ if ($action == 'create') {	// aaa
 			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
-			$email = CMailFile::getValidAddress($object->email_from, 2);
-			if ($email && !isValidEmail($email)) {
-				$langs->load("errors");
-				print img_warning($langs->trans("ErrorBadEMail", $email));
-			} elseif ($email && !isValidMailDomain($email)) {
-				$langs->load("errors");
-				print img_warning($langs->trans("ErrorBadMXDomain", $email));
+			if ($action != 'editemail_from') {
+				$email = CMailFile::getValidAddress($object->email_from, 2);
+				if ($email && !isValidEmail($email)) {
+					$langs->load("errors");
+					print img_warning($langs->trans("ErrorBadEMail", $email));
+				} elseif ($email && !isValidMailDomain($email)) {
+					$langs->load("errors");
+					print img_warning($langs->trans("ErrorBadMXDomain", $email));
+				}
 			}
 			print '</td></tr>';
 
@@ -1057,17 +1059,19 @@ if ($action == 'create') {	// aaa
 				$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
 				foreach ($emailarray as $email => $name) {
 					if ($name != $email) {
-						print dol_escape_htmltag((string) $name).' &lt;'.$email;
-						print '&gt;';
-						if ($email && !isValidEmail($email)) {
-							$langs->load("errors");
-							print img_warning($langs->trans("ErrorBadEMail", $email));
-						} elseif ($email && !isValidMailDomain($email)) {
-							$langs->load("errors");
-							print img_warning($langs->trans("ErrorBadMXDomain", $email));
+						if ($action != 'editemail_errorsto') {
+							if ($email && !isValidEmail($email)) {
+								$langs->load("errors");
+								print img_warning($langs->trans("ErrorBadEMail", $email));
+							} elseif ($email && !isValidMailDomain($email)) {
+								$langs->load("errors");
+								print img_warning($langs->trans("ErrorBadMXDomain", $email));
+							}
 						}
 					} else {
-						print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+						if ($object->email_errorsto) {
+							print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+						}
 					}
 				}
 				print '</td></tr>';

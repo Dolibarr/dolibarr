@@ -2231,8 +2231,6 @@ class Products extends DolibarrApi
 		unset($object->fk_bank);
 		unset($object->fk_account);
 
-		unset($object->supplierprices);	// Must use another API to get them
-
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			unset($object->stock_reel);
 			unset($object->stock_theorique);

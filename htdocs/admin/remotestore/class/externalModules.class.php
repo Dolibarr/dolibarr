@@ -426,7 +426,7 @@ class ExternalModules
 
 				if ($product['source'] === 'githubcommunity') {
 					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Sources").'"  href="'.$product["link"].'">';
-					$download_link .= img_picto('', 'file-code', 'class="size2x paddingright"');
+					$download_link .= img_picto('', 'file-code', 'class="size2x paddingright colorgrey"');
 					$download_link .= '</a>';
 
 					$urlview = $product["dolistore-download"];		// In a future, we will have the download to the zip file

@@ -715,7 +715,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						}
 					}
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+					if (((int) $object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
 
@@ -820,6 +820,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

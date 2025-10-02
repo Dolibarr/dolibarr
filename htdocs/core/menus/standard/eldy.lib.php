@@ -56,7 +56,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$id = 'mainmenu';
 	$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
-	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null, array('system', 'mycompany', 'date', 'user'));
 
 	global $usemenuhider;
 	$usemenuhider = 1;
@@ -260,7 +260,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$user->hasRight('propal', 'read')
 			|| $user->hasRight('commande', 'lire')
 			|| $user->hasRight('supplier_proposal', 'lire')
-			|| $user->hasRight('fournisseur', 'lire')
 			|| $user->hasRight('fournisseur', 'commande', 'lire')
 			|| $user->hasRight('supplier_order', 'lire')
 			|| $user->hasRight('contrat', 'lire')
@@ -792,7 +791,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		print "<!-- End Bookmarks -->\n";
 	}
 
-	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null, array('system', 'mycompany', 'date', 'user'));
 
 	$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
@@ -967,6 +966,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	// Force the typing at this point to get useful analysis below:
 	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $menu_array';
+	/** @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $menu_array */
 
 
 	// Show menu
@@ -1918,6 +1918,10 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
 				$newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report", $langs->trans("MenuReportInOut"), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report", $langs->trans("ByPredefinedAccountGroups"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+				
+				if (isModEnabled('comptabilite')) {
+					$newmenu->add("/compta/resultat/projects.php?leftmenu=accountancy_report", $langs->trans("ByProject"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+				}
 
 				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 					global $mysoc;
@@ -2018,6 +2022,9 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			if ($usemenuhider || empty($leftmenu) || preg_match('/report/', $leftmenu)) {
 				$newmenu->add("/compta/resultat/index.php?leftmenu=report", $langs->trans("MenuReportInOut"), 1, $user->hasRight('compta', 'resultat', 'lire'));
 				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=report", $langs->trans("ByPredefinedAccountGroups"), 2, $user->hasRight('compta', 'resultat', 'lire'));
+				if (isModEnabled('comptabilite')) {
+    				$newmenu->add("/compta/resultat/projects.php?leftmenu=accountancy_report", $langs->trans("ByProject"), 2, $user->hasRight('compta', 'resultat', 'lire'));
+				}
 				/* On verra ca avec module compabilite expert
 				 $newmenu->add("/compta/resultat/compteres.php?leftmenu=report","Compte de resultat",2,$user->hasRight('compta',  'resultat', 'lire'));
 				 $newmenu->add("/compta/resultat/bilan.php?leftmenu=report","Bilan",2,$user->hasRight('compta',  'resultat', 'lire'));

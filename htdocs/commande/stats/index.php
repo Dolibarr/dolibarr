@@ -76,7 +76,7 @@ if ($mode == 'supplier') {
 
 $typent_id = GETPOSTINT('typent_id');
 $categ_id = GETPOSTINT('categ_id');
-
+$select_categ_comande_id=GETPOST('select_categ_comande_id', 'array');
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
 // Security check
@@ -130,10 +130,18 @@ if ($mode == 'customer') {
 	if ($object_status != '' && $object_status >= -1) {
 		$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
+	if (is_array($select_categ_comande_id) && !empty($select_categ_comande_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_order as cat ON (c.rowid = cat.fk_order)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_comande_id)).')';
+	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
+	}
+	if (is_array($select_categ_comande_id) && !empty($select_categ_comande_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_supplier_order as cat ON (c.rowid = cat.fk_supplier_order)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_comande_id)).')';
 	}
 }
 
@@ -345,7 +353,7 @@ if ($user->admin) {
 	print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 }
 print '</td></tr>';
-// Category
+// Category societe
 $cat_type = 0;
 $cat_label = '';
 if ($mode == 'customer') {
@@ -360,6 +368,25 @@ print '<tr><td>'.$cat_label.'</td><td>';
 print img_picto('', 'category', 'class="pictofixedwidth"');
 print $formother->select_categories($cat_type, $categ_id, 'categ_id', 0, 1, 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
+// Category commande
+if (isModEnabled('category')) {
+	$cat_type = '';
+	$cat_label = '';
+	if ($mode == 'customer') {
+		$cat_type = Categorie::TYPE_ORDER;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("CustomersOrders"));
+	}
+	if ($mode == 'supplier') {
+		$cat_type = Categorie::TYPE_SUPPLIER_ORDER;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("SuppliersOrders"));
+	}
+	print '<tr><td>'.$cat_label.'</td><td>';
+	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
+	print img_picto('', 'category', 'class="pictofixedwidth"');
+	print $form->multiselectarray('select_categ_comande_id', $cate_arbo, GETPOST('select_categ_comande_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
+	print '</td></tr>';
+}
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
