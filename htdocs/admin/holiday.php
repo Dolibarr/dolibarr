@@ -305,7 +305,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$sql = "SELECT nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$i = 0;

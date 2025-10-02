@@ -348,7 +348,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = 'order_supplier'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 
 $resql = $db->query($sql);
 if ($resql) {
