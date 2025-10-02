@@ -1655,19 +1655,15 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  * @param	string							$url				Relative path to file
  * @param	array<string,int|float|string>	$params     		params for the http query
  * @param	bool							$addtoken			does we need to add token
- * @param	bool 	 	 					$scanalsomoduledirs Scan dir with dol_buildpath
  * @return string												path
  */
-function dolBuildUrl($url, $params = [], $addtoken = false, $scanalsomoduledirs = false)
+function dolBuildUrl($url, $params = [], $addtoken = false)
 {
 	global $db, $hookmanager;
 
 	if (!is_object($hookmanager)) {
 		include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
-	}
-	if ($scanalsomoduledirs) {
-		$url = dol_buildpath($url, 1);
 	}
 	if ((!isset($params['mainmenu']) || empty($params['mainmenu'])) && GETPOSTISSET('mainmenu')) {
 		$params = array_merge($params, ['mainmenu' => (GETPOST('mainmenu', 'restricthtml'))]);
