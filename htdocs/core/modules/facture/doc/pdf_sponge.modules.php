@@ -1745,7 +1745,7 @@ class pdf_sponge extends ModelePDFFactures
 		$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 
 		// Total remise
-		$total_line_remise = 0;
+		$total_line_remise_print = $total_line_remise = 0;
 		foreach ($object->lines as $i => $line) {
 			$resdiscount = pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2);
 			$total_line_remise += (is_numeric($resdiscount) ? $resdiscount : 0);
