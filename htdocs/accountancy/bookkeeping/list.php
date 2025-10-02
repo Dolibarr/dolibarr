@@ -332,7 +332,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['account_number'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
@@ -932,7 +932,7 @@ if (!empty($arrayfields['t.tms']['checked'])) {
 	print $form->selectDate($search_date_modification_start, 'search_date_modification_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $form->selectDate($search_date_modification_end, 'search_date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($search_date_modification_end, 'search_date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }

@@ -296,33 +296,45 @@ class ODFTest extends PHPUnit\Framework\TestCase
 				'charset' => null,
 				'expected' => utf8_encode('text with <text:span text:style-name="boldText">intricated<text:span text:style-name="underlineText">tags</text:span></text:span>'),
 			],
+			24 => [
+				'to_convert' => "text with <strong>two</strong> (strong) <strong>tags</strong>",
+				'encode' => true,
+				'charset' => null,
+				'expected' => utf8_encode('text with <text:span text:style-name="boldText">two</text:span> (strong) <text:span text:style-name="boldText">tags</text:span>'),
+			],
+			25 => [
+				'to_convert' => "text with <strong class=\"whatever\">two</strong> (strong) <strong class=\"the weather\">tags and <u>intricated</u> underline </strong>",
+				'encode' => true,
+				'charset' => null,
+				'expected' => utf8_encode('text with <text:span text:style-name="boldText">two</text:span> (strong) <text:span text:style-name="boldText">tags and <text:span text:style-name="underlineText">intricated</text:span> underline </text:span>'),
+			],
 
 			// One can also pass html-encoded string to the method
-			24 => [
+			26 => [
 				'to_convert' => 'One&amp;two',
 				'encode' => true,
 				'charset' => null,
 				'expected' => 'One&amp;two',
 			],
-			25 => [
+			27 => [
 				'to_convert' => "text with &lt;strong&gt;strong, &lt;/strong&gt;&lt;em&gt;emphasis&lt;/em&gt; and &lt;u&gt;underlined&lt;/u&gt; words with &lt;i&gt;it@lic sp&amp;ciàlchärs éè l'&lt;/i&gt;",
 				'encode' => false,
 				'charset' => 'UTF-8',
 				'expected' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
 			],
-			26 => [
+			28 => [
 				'to_convert' => "text with &lt;strong&gt;strong, &lt;/strong&gt;&lt;em&gt;emphasis&lt;/em&gt; and &lt;u&gt;underlined&lt;/u&gt; words with &lt;i&gt;it@lic sp&amp;ciàlchärs éè l'&lt;/i&gt;",
 				'encode' => true,
 				'charset' => 'UTF-8',
 				'expected' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>',
 			],
-			27 => [
+			29 => [
 				'to_convert' => "text with &lt;strong&gt;strong, &lt;/strong&gt;&lt;em&gt;emphasis&lt;/em&gt; and &lt;u&gt;underlined&lt;/u&gt; words with &lt;i&gt;it@lic sp&amp;ciàlchärs éè l'&lt;/i&gt;",
 				'encode' => false,
 				'charset' => null,
 				'expected' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>'),
 			],
-			28 => [
+			30 => [
 				'to_convert' => "text with &lt;strong&gt;strong, &lt;/strong&gt;&lt;em&gt;emphasis&lt;/em&gt; and &lt;u&gt;underlined&lt;/u&gt; words with &lt;i&gt;it@lic sp&amp;ciàlchärs éè l'&lt;/i&gt;",
 				'encode' => true,
 				'charset' => null,
@@ -341,20 +353,20 @@ class ODFTest extends PHPUnit\Framework\TestCase
 			// Following tests reflect the current behavior. They may evolve if the method behavior changes.
 
 			// The method removes hyperlinks and tags that are not dealt with.
-			29 => [
+			31 => [
 				'to_convert' => '123 <a href="/test.php">trucmachin > truc < troc > trac</a>bla bla',
 				'encode' => true,
 				'charset' => null,
 				'expected' => "123 trucmachin &gt; truc &lt; troc &gt; tracbla bla",
 			],
-			30 => [
+			32 => [
 				'to_convert' => '123 <h3>Title</h3> bla',
 				'encode' => true,
 				'charset' => null,
 				'expected' => "123 Title bla",
 			],
 			// HTML should not take \n into account, but only <br />.
-			31 => [
+			33 => [
 				'to_convert' => "text with <strong>strong text </strong>, a line\nbreak and <u>underlined</u> words with <i>it@lic sp&ciàlchärs éè l'</i>",
 				'encode' => false,
 				'charset' => 'UTF-8',
@@ -371,7 +383,7 @@ class ODFTest extends PHPUnit\Framework\TestCase
 			} else {
 				$res = $odf->convertVarToOdf($case['to_convert'], $case['encode']);
 			}
-			$this->assertEquals($res, $case['expected']);
+			$this->assertEquals($case['expected'], $res);
 		}
 
 		print __METHOD__." result=".$result."\n";

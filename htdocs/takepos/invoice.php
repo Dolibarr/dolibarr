@@ -78,6 +78,23 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 	}
 }
 
+// When session has expired (selected terminal has been lost from session), redirect to the terminal selection.
+if (empty($_SESSION["takeposterminal"])) {
+	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
+		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+	} elseif (!empty($_COOKIE["takeposterminal"])) {
+		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
+	} else {
+		print <<<SCRIPT
+<script language="javascript">
+	$( document ).ready(function() {
+		ModalBox('ModalTerminal');
+	});
+</script>
+SCRIPT;
+		exit;
+	}
+}
 
 /**
  * Abort invoice creationg with a given error message
@@ -472,7 +489,10 @@ if (empty($reshook)) {
 	// If we add a line and no invoice yet, we create the invoice
 	if (($action == "addline" || $action == "freezone") && $placeid == 0) {
 		$invoice->socid = getDolGlobalString($constforcompanyid);
-		$invoice->date = dol_now('tzuserrel');		// We use the local date, only the day will be saved.
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$invoice->date = dol_get_first_hour(dol_now('tzuserrel'));		// Invoice::create() needs a date with no hours
+
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 		$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;

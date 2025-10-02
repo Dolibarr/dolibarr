@@ -453,7 +453,7 @@ function activitytrim($product_type)
 	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
 
 	// breakdown by quarter
-	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
+	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as mnttot";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= " , ".MAIN_DB_PREFIX."paiement as p,".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
@@ -515,19 +515,19 @@ function activitytrim($product_type)
 			}
 
 			if ($objp->mois == "01" || $objp->mois == "02" || $objp->mois == "03") {
-				$trim1 += $objp->Mnttot;
+				$trim1 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "04" || $objp->mois == "05" || $objp->mois == "06") {
-				$trim2 += $objp->Mnttot;
+				$trim2 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "07" || $objp->mois == "08" || $objp->mois == "09") {
-				$trim3 += $objp->Mnttot;
+				$trim3 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "10" || $objp->mois == "11" || $objp->mois == "12") {
-				$trim4 += $objp->Mnttot;
+				$trim4 += $objp->mnttot;
 			}
 
 			$i++;

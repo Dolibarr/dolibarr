@@ -553,14 +553,16 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/project_task_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
-	$nbExtrafields = $extrafields->attributes['projet_task']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		$head[$h][0] = DOL_URL_ROOT . '/projet/admin/project_task_extrafields.php';
+		$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
+		$nbExtrafields = $extrafields->attributes['projet_task']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+		}
+		$head[$h][2] = 'attributes_task';
+		$h++;
 	}
-	$head[$h][2] = 'attributes_task';
-	$h++;
 
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		$langs->load("members");

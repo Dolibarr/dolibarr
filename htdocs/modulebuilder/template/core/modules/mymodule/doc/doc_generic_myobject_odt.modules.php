@@ -233,7 +233,12 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		}
 
 		// Add odtgeneration hook
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
 		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -473,7 +478,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (getDolGlobalInt('MAIN_ODT_AS_PDF')) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

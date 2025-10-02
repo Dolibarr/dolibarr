@@ -263,10 +263,16 @@ class SupplierInvoices extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+				}
+				continue;
+			}
 			$this->invoice->$field = $value;
 		}
 
-		if ($this->invoice->update($id, DolibarrApiAccess::$user)) {
+		if ($this->invoice->update(DolibarrApiAccess::$user)) {
 			return $this->get($id);
 		}
 

@@ -82,7 +82,7 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
 		} else {
-			setEventMessages($loan->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -95,7 +95,7 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit;
 		} else {
-			setEventMessages($loan->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 

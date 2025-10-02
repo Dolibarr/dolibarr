@@ -146,7 +146,6 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
 if (empty($reshook)) {
 	$backurlforlist = DOL_URL_ROOT.'/comm/propal/list.php';
 
@@ -1614,7 +1613,20 @@ if (empty($reshook)) {
 		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id', 'int'));
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		// Terms of payment
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
+		$sql = "SELECT code ";
+		$sql .= "FROM " . $db->prefix() . "c_payment_term";
+		$sql .= " WHERE rowid = " . ((int) GETPOST('cond_reglement_id', 'int'));
+		$result = $db->query($sql);
+		if ($result) {
+			$obj = $db->fetch_object($result);
+			if ($obj->code == 'DEP30PCTDEL') {
+				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
+			} else {
+				$object->deposit_percent = 0;
+				$object->update($user);
+				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), $object->deposit_percent);
+			}
+		}
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), '', 2));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
@@ -3125,7 +3137,7 @@ if ($action == 'create') {
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
+			print showOnlineSignatureUrl('proposal', $object->ref, $object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';

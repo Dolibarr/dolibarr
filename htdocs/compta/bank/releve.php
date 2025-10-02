@@ -125,6 +125,7 @@ $foundnext = '';
 $sql = "SELECT b.num_releve as num";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+$sql .= " AND b.num_releve <> ''";
 $sql .= " AND b.fk_account = ".((int) $object->id);
 $sql .= " ORDER BY b.num_releve DESC";
 $sql .= $db->plimit(1);
@@ -380,6 +381,7 @@ if (empty($numref)) {
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
+				$sql .= " AND b.num_releve <> ''";
 				$sql .= " AND b.fk_account = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -464,6 +466,7 @@ if (empty($numref)) {
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+	$sql .= " AND b.num_releve <> ''";
 	$sql .= " AND b.fk_account = ".((int) $object->id);
 
 	$resql = $db->query($sql);

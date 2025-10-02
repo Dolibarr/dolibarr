@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -481,7 +482,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->expensereport->read && !DolibarrApiAccess::$user->rights->expensereport->read) {
+			if (!DolibarrApiAccess::$user->rights->expensereport->lire) {
 				throw new RestException(401);
 			}
 
@@ -580,8 +581,10 @@ class Documents extends DolibarrApi
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
 					$count = count($filearray);
 					for ($i = 0 ; $i < $count ; $i++) {
-						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) {
-							$filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+						foreach ($ecmfile->lines as $line) {
+							if ($filearray[$i]['name'] == $line->filename) {
+								$filearray[$i] = array_merge($filearray[$i], (array) $line);
+							}
 						}
 					}
 				}
@@ -888,7 +891,7 @@ class Documents extends DolibarrApi
 		// Move the temporary file at its final emplacement
 		$result = dol_move($destfiletmp, $dest_file, 0, $overwriteifexists, 1, 1, $moreinfo);
 		if (!$result) {
-			throw new RestException(500, "Failed to move file into '".$destfile."'");
+			throw new RestException(500, "Failed to move file into '".$dest_file."'");
 		}
 
 		return dol_basename($destfile);

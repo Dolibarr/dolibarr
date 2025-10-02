@@ -278,10 +278,12 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 		$error++;
 	}
 
+	//If timespent date is not provided in POST (for eg, because in list the column date is hidden) we keep the actual date
+	$timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+
 	if (!$error) {
 		if (GETPOST('taskid', 'int') != $id) {        // GETPOST('taskid') is id of new task
 			$id_temp = GETPOST('taskid', 'int'); // should not overwrite $id
-
 
 			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
 
@@ -296,11 +298,14 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_old_duration = GETPOST("old_duration", "int");
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
-			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
+			if (GETPOST("timelinehour") != ''
+				&& GETPOST("timelinehour") >= 0
+				&& !empty($timespent_date)) {
+				// If hour was entered
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 				$object->timespent_withhour = 1;
-			} else {
-				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+			} elseif (!empty($timespent_date)) {
+				$object->timespent_date = $timespent_date;
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$object->timespent_fk_product = GETPOST("fk_product", 'int');
@@ -320,16 +325,20 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 		} else {
 			$object->fetch($id, $ref);
 
+			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
+
 			$object->timespent_id = GETPOST("lineid", 'int');
 			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
 			$object->timespent_old_duration = GETPOST("old_duration", "int");
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
-			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
+			if (GETPOST("timelinehour") != ''
+				&& GETPOST("timelinehour") >= 0
+				&& !empty($timespent_date)) {    // If hour was entered
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour", 'int'), GETPOST("timelinemin", 'int'), 0, GETPOST("timelinemonth", 'int'), GETPOST("timelineday", 'int'), GETPOST("timelineyear", 'int'));
 				$object->timespent_withhour = 1;
-			} else {
-				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth", 'int'), GETPOST("timelineday", 'int'), GETPOST("timelineyear", 'int'));
+			} elseif (!empty($timespent_date)) {
+				$object->timespent_date = $timespent_date;
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$object->timespent_fk_product = GETPOST("fk_product", 'int');
@@ -499,8 +508,9 @@ if ($action == 'confirm_generateinvoice') {
 						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
 							// We set unit price to 0 to force the use of the rate saved during recording
 							$pu_ht = 0;
-						} else {
+						} elseif ($idprod <= 0) {
 							// We want to sell all the time spent with the last hourly rate of user
+							// -> but what about choice user selected ? add idprod test
 							$pu_ht = $fuser->thm;
 						}
 
@@ -520,7 +530,7 @@ if ($action == 'confirm_generateinvoice') {
 						$localtax2line = $localtax2;
 
 						// If a particular product/service was defined for the task
-						if (!empty($fk_product) && $fk_product !== $idprod) {
+						if (!empty($fk_product) && ($fk_product > 0) && ($fk_product !== $idprod)) {
 							if (!array_key_exists($fk_product, $product_data_cache)) {
 								$result = $tmpproduct->fetch($fk_product);
 								if ($result < 0) {
@@ -661,7 +671,7 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
-					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).') AND fk_user = '.((int) $userid);
+					$sql .= ' WHERE rowid = '.((int) $timespent_id).' AND fk_user = '.((int) $userid);
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;

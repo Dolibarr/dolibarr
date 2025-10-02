@@ -143,7 +143,7 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component
 			?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">

@@ -212,7 +212,7 @@ if ($action == 'getProducts') {
 							if (isset($barcode_value_list['qd'])) {
 								$qty_str .= '.' . $barcode_value_list['qd'];
 							}
-							$qty = floatval($qty_str);
+							$qty = (float) $qty_str;
 						}
 
 						$objProd = new Product($db);
@@ -241,7 +241,7 @@ if ($action == 'getProducts') {
 							'label' => $obj->label,
 							'tosell' => $obj->tosell,
 							'tobuy' => $obj->tobuy,
-							'barcode' => $obj->barcode,
+							'barcode' => $term, // there is only one product matches the barcode rule and so the term is considered as the barcode of this product,
 							'price' => empty($objProd->multiprices[$pricelevel]) ? $obj->price : $objProd->multiprices[$pricelevel],
 							'price_ttc' => empty($objProd->multiprices_ttc[$pricelevel]) ? $obj->price_ttc : $objProd->multiprices_ttc[$pricelevel],
 							'object' => 'product',

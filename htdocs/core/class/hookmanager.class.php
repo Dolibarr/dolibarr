@@ -153,7 +153,7 @@ class HookManager
 	 *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
 	 *                                      $this->error or this->errors are also defined by class called by this function if error.
 	 */
-	public function executeHooks($method, $parameters = array(), &$object = '', &$action = '')
+	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{
 		if (!is_array($this->hooks) || empty($this->hooks)) {
 			return 0; // No hook available, do nothing.
@@ -208,6 +208,7 @@ class HookManager
 
 		// Init return properties
 		$localResPrint = '';
+		$localResArray = array();
 		$this->resArray = array();
 		$this->resNbOfHooks = 0;
 
@@ -263,9 +264,9 @@ class HookManager
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
 							if ($resactiontmp > 0) {
-								$this->resArray = $actionclassinstance->results;
+								$localResArray = $actionclassinstance->results;
 							} else {
-								$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+								$localResArray = array_merge($localResArray, $actionclassinstance->results);
 							}
 						}
 						if (!empty($actionclassinstance->resprints)) {
@@ -291,7 +292,7 @@ class HookManager
 						$resaction += $resactiontmp;
 
 						if (!empty($actionclassinstance->results) && is_array($actionclassinstance->results)) {
-							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							$localResArray = array_merge($localResArray, $actionclassinstance->results);
 						}
 						if (!empty($actionclassinstance->resprints)) {
 							$localResPrint .= $actionclassinstance->resprints;
@@ -321,6 +322,7 @@ class HookManager
 		}
 
 		$this->resPrint = $localResPrint;
+		$this->resArray = $localResArray;
 
 		return ($error ? -1 : $resaction);
 	}

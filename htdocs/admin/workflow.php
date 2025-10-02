@@ -161,7 +161,7 @@ $workflowcodes = array(
 	),
 
 	// Automatic classification reception
-	'WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE'=>array(
+	'WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE'=>array(
 		'family'=>'classify_reception',
 		'position'=>95,
 		'enabled'=>(isModEnabled("reception") && (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),

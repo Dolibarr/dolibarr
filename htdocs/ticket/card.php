@@ -212,7 +212,8 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$getRef = GETPOST("ref", 'alphanohtml');
-			if ($object->fetch('', $getRef) > 0) {
+			$refcheck_object = new Ticket($db);
+			if ($refcheck_object->fetch('', $getRef) > 0) {
 				$object->ref = $object->getDefaultRef();
 				$object->track_id = null;
 				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref));
@@ -457,7 +458,7 @@ if (empty($reshook)) {
 	// Action to add a message (private or not, with email or not).
 	// This may also send an email (concatenated with email_intro and email footer if checkbox was selected)
 	if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $permissiontoread) {
-		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0), 0);
+		$ret = $object->newMessage($user, $action, GETPOSTINT('private_message'), 0);
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {

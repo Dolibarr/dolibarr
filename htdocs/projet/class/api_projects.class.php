@@ -461,6 +461,12 @@ class Projects extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->project->array_options[$index] = $this->_checkValForAPI($field, $val, $this->project);
+				}
+				continue;
+			}
 			$this->project->$field = $value;
 		}
 

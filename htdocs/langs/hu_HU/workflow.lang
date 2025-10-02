@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=A kapcsolt forrás be
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=A kapcsolt forrásból származó beszerzési rendelés besorolása beérkezettként, amikor egy fogadás érvényesül (és ha az összes fogadás által beérkezett mennyiség megegyezik a frissítendő beszerzési rendelésben szereplő mennyiséggel)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=A kapcsolt forrásból származó beszerzési rendelés besorolása a fogadás lezárásakor (és ha az összes fogadás által kapott mennyiség megegyezik a frissítendő beszerzési rendelésben szereplő mennyiséggel)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Jegy létrehozásakor kapcsolja össze a megfelelő harmadik fél elérhető szerződéseit
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=A szerződések összekapcsolásakor keressen az anyavállalatok szerződései között

@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificați comanda 
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Clasifică comanda de achiziție sursă asociată ca primită atunci când o recepție este validată (și dacă cantitatea primită de toate recepțiile este aceeași cu cea din comanda de achiziţie pentru actualizare)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Clasifică comanda de achiziție sursă asociată ca primită atunci când o recepție este închisă (și dacă cantitatea primită de toate recepțiile este aceeași cu cea din comanda de achiziţie pentru actualizare)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Clasifică recepțiile ca "facturate" atunci când o factură de achiziție asociată este validată (și dacă suma facturii este aceeași cu suma totală a recepțiilor asociate)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Clasifică recepțiile ca "facturate" atunci când o factură de achiziție asociată este validată (și dacă suma facturii este aceeași cu suma totală a recepțiilor asociate)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=La crearea unui tichet , asociază contractele disponibile ale terților care se potrivesc
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Când se asociază contracte, caută printre cele ale companiilor-mamă

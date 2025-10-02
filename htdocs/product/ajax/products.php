@@ -166,7 +166,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$sql .= " WHERE fk_product = ".((int) $id);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
 			$sql .= " AND price_level = ".((int) $price_level);
-			$sql .= " ORDER BY date_price";
+			$sql .= " ORDER BY date_price DESC, rowid";
 			$sql .= " DESC LIMIT 1";
 
 			$result = $db->query($sql);

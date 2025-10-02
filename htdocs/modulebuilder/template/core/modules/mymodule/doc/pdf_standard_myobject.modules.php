@@ -944,7 +944,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("PdfTitle");
-		if (getDolGlobalInt('MAIN_ODT_AS_PDF') && is_object($outputlangsbis)) {
+		if (getDolGlobalString('MAIN_ODT_AS_PDF') && is_object($outputlangsbis)) {
 			$title .= ' - ';
 			$title .= $outputlangsbis->transnoentities("PdfTitle");
 		}
@@ -1019,7 +1019,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $langs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 

@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Märk länkad inköps
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Märk länkad inköpsorder som mottagen när en mottagning bekräftas (och om antalet som tas emot i alla mottagningar är densamma som i inköpsordern som ska uppdateras)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Märk länkad inköpsorder som mottagen när en mottagning stängs (och om antalet som tas emot i alla mottagningar är densamma som i inköpsordern som ska uppdateras)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Märk mottagningar som "fakturerade" när en länkad inköpsfaktura bekräftas (och om fakturabeloppet är detsamma som det totala beloppet för de länkade mottagningarna)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Märk mottagningar som "fakturerade" när en länkad inköpsfaktura bekräftas (och om fakturabeloppet är detsamma som det totala beloppet för de länkade mottagningarna)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=När du skapar ett ärende, länka tillgängliga kontrakt från matchande tredjepart
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=När du kopplar kontrakt sök bland moderbolagens

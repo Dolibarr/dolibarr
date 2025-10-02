@@ -902,12 +902,29 @@ class Notify
 					$mimefilename_list[] = $ref.".pdf";
 				}
 
-				$message = '';
-				$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
-				$message .= "\n";
-				$message .= $mesg;
+				// if an e-mail template is configured for this notification code (for instance
+				// 'SHIPPING_VALIDATE_TEMPLATE'), we fetch this template by its label. Otherwise, a default message
+				// content will be sent.
+				$mailTemplateLabel = isset($conf->global->{$notifcode.'_TEMPLATE'}) ? $conf->global->{$notifcode.'_TEMPLATE'} : '';
+				$emailTemplate = null;
+				if (!empty($mailTemplateLabel)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($this->db);
+					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $langs, 0, 1, $labeltouse);
+				}
+				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
+					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $langs, $object);
+					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $langs);
+					$message = make_substitutions($emailTemplate->content, $substitutionarray, $langs);
+				} else {
+					$message = '';
+					$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
+					$message .= "\n";
+					$message .= $mesg;
 
-				$message = nl2br($message);
+					$message = nl2br($message);
+				}
 
 				// Replace keyword __SUPERVISOREMAIL__
 				if (preg_match('/__SUPERVISOREMAIL__/', $sendto)) {

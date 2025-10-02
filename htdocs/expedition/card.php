@@ -1370,9 +1370,42 @@ if ($action == 'create') {
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty; // To get a numeric
 									$deliverableQty = min($quantityToBeDelivered, $batchStock);
+
+									// Now we will check if we have to reduce the deliverableQty by taking into account the qty already suggested in previous line
+									if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+										$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
+									} else {
+										if (!isset($alreadyQtyBatchSetted[$line->fk_product])) {
+											$alreadyQtyBatchSetted[$line->fk_product] = array();
+										}
+
+										if (!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])) {
+											$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch] = array();
+										}
+
+										$deliverableQty = min($quantityToBeDelivered, $batchStock);
+									}
+
+									if ($deliverableQty < 0) $deliverableQty = 0;
+
+									$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
+									if (GETPOSTISSET($inputName)) {
+										$deliverableQty = GETPOST($inputName, 'int');
+									}
+
+									$tooltipClass = $tooltipTitle = '';
+									if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+										$tooltipClass = ' classfortooltip';
+										$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+									} else {
+										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = 0 ;
+									}
+									$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center">';
-									print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+
+									print '<input class="qtyl '.$tooltipClass.'" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
 
 									print '<!-- Show details of lot -->';
@@ -1457,9 +1490,10 @@ if ($action == 'create') {
 
 										if ($deliverableQty < 0) $deliverableQty = 0;
 
-										$tooltip = '';
+										$tooltipClass = $tooltipTitle = '';
 										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)].'" ';
+											$tooltipClass = ' classfortooltip';
+											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
 										} else {
 											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
 										}
@@ -1471,7 +1505,7 @@ if ($action == 'create') {
 											$deliverableQty = GETPOST($inputName, 'int');
 										}
 
-										print '<input '.$tooltip.' class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										print '<input class="qtyl'.$tooltipClass.'" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
 										if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {

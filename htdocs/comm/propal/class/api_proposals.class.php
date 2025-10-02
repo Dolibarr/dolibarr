@@ -695,6 +695,12 @@ class Proposals extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+				}
+				continue;
+			}
 			$this->propal->$field = $value;
 		}
 

@@ -1303,17 +1303,15 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 		}
 	}
-	// Show page nb only on iso languages (so default Helvetica font)
+
+	// Show page nb and apply correction for some font.
 	$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
-
-	if (getDolGlobalString('PDF_USE_GETALIASNBPAGE_FOR_TOTAL')) {
-		// $pagination = $pdf->getAliasNumPage().' / '.$pdf->getAliasNbPages(); 	// works with $pdf->Cell
-		$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();	// seems to not works with all fonts like ru_UK
-	} else {
-		$pagination = $pdf->PageNo().' / '.$pdf->getNumPages();		// seems to always work even with $pdf->Cell. But some users has reported wrong nb (no way to reproduce)
+	$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();
+	$fontRenderCorrection = 0;
+	if (in_array(pdf_getPDFFont($outputlangs), array('freemono',  'DejaVuSans'))) {
+		$fontRenderCorrection = 10;
 	}
-
-	$pdf->MultiCell(18, 2, $pagination, 0, 'R', 0);
+	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', 0);
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {
@@ -1427,12 +1425,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 {
 	global $db, $conf, $langs;
 
-	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
-	$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
-	$desc = (!empty($object->lines[$i]->desc) ? $object->lines[$i]->desc : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
-	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
-	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
-	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
+	$multilangsactive = getDolGlobalInt('MAIN_MULTILANGS');
 
 	if ($issupplierline) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -1446,10 +1439,54 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		}
 	}
 
+	//id
+	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
 	if ($idprod) {
 		$prodser->fetch($idprod);
+		//load multilangs
+		if ($multilangsactive) {
+			$prodser->getMultiLangs();
+			$object->lines[$i]->multilangs = $prodser->multilangs;
+		}
+	}
+	//label
+	if (!empty($object->lines[$i]->label)) {
+		$label = $object->lines[$i]->label;
+	} else {
+		if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang]['label']) && $multilangsactive) {
+			$label = $object->lines[$i]->multilangs[$outputlangs->defaultlang]['label'];
+		} else {
+			if (!empty($object->lines[$i]->product_label)) {
+				$label = $object->lines[$i]->product_label;
+			} else {
+				$label = '';
+			}
+		}
+	}
+	//description
+	if (!empty($object->lines[$i]->desc)) {
+		$desc = $object->lines[$i]->desc;
+	} else {
+		if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang]['description']) && $multilangsactive) {
+			$desc = $object->lines[$i]->multilangs[$outputlangs->defaultlang]['description'];
+		} else {
+			if (!empty($object->lines[$i]->description)) {
+				$desc = $object->lines[$i]->description;
+			} else {
+				$desc = '';
+			}
+		}
+	}
+	//ref supplier
+	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
+	//note
+	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
+	//dbatch
+	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
+
+	if ($idprod) {
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if (getDolGlobalInt('MAIN_MULTILANGS') && ($outputlangs->defaultlang != $langs->defaultlang)) {
+		if ($multilangsactive && ($outputlangs->defaultlang != $langs->defaultlang)) {
 			$translatealsoifmodified = (!empty($conf->global->MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED)); // By default if value was modified manually, we keep it (no translation because we don't have it)
 
 			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation
@@ -1864,7 +1901,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 
 			$tmpresult .= vatrate($object->lines[$i]->tva_tx, 0, $object->lines[$i]->info_bits, -1);
 			if (empty($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX)) {
-				if ($object->lines[$i]->total_localtax1 != 0) {
+				if (price2num($object->lines[$i]->localtax1_tx)) {
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
 						$tmpresult .= '/';
 					} else {
@@ -1874,7 +1911,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 				}
 			}
 			if (empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) {
-				if ($object->lines[$i]->total_localtax2 != 0) {
+				if (price2num($object->lines[$i]->localtax2_tx)) {
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
 						$tmpresult .= '/';
 					} else {

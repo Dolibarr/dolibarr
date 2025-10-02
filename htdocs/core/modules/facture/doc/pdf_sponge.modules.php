@@ -2152,7 +2152,7 @@ class pdf_sponge extends ModelePDFFactures
 			$title = $outputlangs->transnoentities("InvoiceProForma");
 		}
 		if ($this->situationinvoice) {
-			$langs->loadLangs(array("other"));
+			$outputlangs->loadLangs(array("other"));
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation") . " " . $outputlangs->transnoentities("NumberingShort") . $object->situation_counter . " -";
 		}
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
@@ -2297,7 +2297,7 @@ class pdf_sponge extends ModelePDFFactures
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $langs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 

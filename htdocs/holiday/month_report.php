@@ -39,7 +39,7 @@ $action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
 $optioncss   = GETPOST('optioncss', 'aZ');
-$socid = 0;
+
 $id = GETPOST('id', 'int');
 
 $search_ref         = GETPOST('search_ref', 'alphanohtml');
@@ -73,7 +73,11 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-$result = restrictedArea($user, 'holiday', $id, '');
+$result = restrictedArea($user, 'holiday', $id);
+
+if (!$user->hasRight('holiday', 'readall')) {
+	accessforbidden();
+}
 
 
 /*
@@ -152,7 +156,7 @@ $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
-$sql .= " WHERE cp.rowid > 0";
+$sql .= " WHERE cp.entity IN (".getEntity('holiday').") AND cp.rowid > 0";
 $sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
 $sql .= " AND (";
 $sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";

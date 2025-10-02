@@ -427,7 +427,10 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->ref = $obj->ref;
 			$this->ref_supplier = $obj->ref_supplier;
+
 			$this->socid = $obj->fk_soc;
+			$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
+
 			$this->fourn_id = $obj->fk_soc;
 			$this->statut = $obj->fk_statut;
 			$this->status = $obj->fk_statut;
@@ -532,7 +535,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
 		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
-		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
+		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit,";
 		$sql .= " l.date_start, l.date_end,";
@@ -633,6 +636,7 @@ class CommandeFournisseur extends CommonOrder
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
+				$line->info_bits      	   = $objp->info_bits;
 				$line->special_code        = $objp->special_code;
 				$line->fk_parent_line      = $objp->fk_parent_line;
 
@@ -1454,6 +1458,8 @@ class CommandeFournisseur extends CommonOrder
 
 		// We set order into draft status
 		$this->brouillon = 1;
+		$this->statut = self::STATUS_DRAFT;	// deprecated
+		$this->status = self::STATUS_DRAFT;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
 		$sql .= "ref";
@@ -1607,8 +1613,13 @@ class CommandeFournisseur extends CommonOrder
 						// End call triggers
 					}
 
-					$this->db->commit();
-					return $this->id;
+					if (!$error) {
+						$this->db->commit();
+						return $this->id;
+					} else {
+						$this->db->rollback();
+						return -4;
+					}
 				} else {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
@@ -2299,9 +2310,9 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		$main = MAIN_DB_PREFIX.'commande_fournisseurdet';
+		$main = $this->db->prefix().'commande_fournisseurdet';
 		$ef = $main."_extrafields";
-		$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
+		$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
 		dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
@@ -2309,7 +2320,17 @@ class CommandeFournisseur extends CommonOrder
 			$error++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
+		if (!$error) {
+			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
+			dol_syslog(__METHOD__." linked order lines", LOG_DEBUG);
+			if (!$this->db->query($sql1)) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
@@ -2317,7 +2338,7 @@ class CommandeFournisseur extends CommonOrder
 			$error++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid =".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if ($resql = $this->db->query($sql)) {
 			if ($this->db->affected_rows($resql) < 1) {
@@ -3008,6 +3029,8 @@ class CommandeFournisseur extends CommonOrder
 				$this->db->commit();
 				return $result;
 			} else {
+				$this->errors[] = $this->line->error;
+				$this->errors = array_merge($this->errors, $this->line->errors);
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
@@ -3046,7 +3069,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= $this->db->order("rowid", "ASC");
 		$sql .= $this->db->plimit(1);
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql && $this->db->num_rows($resql)) {
 			$obj = $this->db->fetch_object($resql);
 			$prodid = $obj->rowid;
 		}
@@ -4134,7 +4157,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			return -1;
 		}
 
-		$sql1 = 'UPDATE '.MAIN_DB_PREFIX."commandedet SET fk_commandefourndet = NULL WHERE rowid=".((int) $this->id);
+		$sql1 = "UPDATE ".MAIN_DB_PREFIX."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet=".((int) $this->id);
 		$resql = $this->db->query($sql1);
 		if (!$resql) {
 			$this->db->rollback();

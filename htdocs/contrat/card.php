@@ -604,7 +604,7 @@ if (empty($reshook)) {
 				$info_bits |= 0x01;
 			}
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance))
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('produit', 'ignore_price_min_advance'))
 				|| empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
 				$object->error = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				$result = -1;
@@ -756,10 +756,11 @@ if (empty($reshook)) {
 
 			$price_ht =  price2num(GETPOST('elprice'), 'MU');
 			$remise_percent = price2num(GETPOST('elremise_percent'), 2);
-			if ($remise_percent > 0) {
+			// Discount applied 2 times => see line 803
+			/*if ($remise_percent > 0) {
 				$remise = round(($price_ht * $remise_percent / 100), 2);
 				$price_ht = ($price_ht - $remise);
-			}
+			}*/
 
 			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
@@ -802,6 +803,8 @@ if (empty($reshook)) {
 			$result = $objectline->update($user);
 			if ($result < 0) {
 				$error++;
+				$action = 'editline';
+				$_GET['rowid'] = GETPOST('elrowid');
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 			}
 		}
@@ -1711,7 +1714,7 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'view', array('class'=>'oddeven', 'style'=>$moreparam, 'colspan'=>$colspan), '', '', 1);
+						print $line->showOptionals($extrafields, 'view', array('class'=>'oddeven', 'style'=>$moreparam, 'colspan'=>$colspan, 'tdclass' => 'notitlefieldcreate'), '', '', 1);
 					}
 				} else {
 					// Line in mode update
@@ -1815,7 +1818,7 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
+						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan, 'tdclass' => 'notitlefieldcreate'), '', '', 1);
 					}
 				}
 
@@ -1834,7 +1837,7 @@ if ($action == 'create') {
 				if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 					$colspan++;
 				}
-				if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+				if (isModEnabled('margin') && getDolGlobalString('MARGIN_SHOW_ON_CONTRACT')) {
 					$colspan++;
 				}
 
@@ -1967,7 +1970,9 @@ if ($action == 'create') {
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);
 						$product->fetch($objp->fk_product);
-						$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+						if (!empty($product->duration_value) && !empty($product->duration_unit)) {
+							$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+						}
 					}
 				}
 
@@ -2061,7 +2066,7 @@ if ($action == 'create') {
 		print '</div>';
 
 		// Form to add new line
-		if ($user->rights->contrat->creer && ($object->statut == 0)) {
+		if ($user->hasRight('contrat', 'creer') && ($object->statut == 0)) {
 			$dateSelector = 1;
 
 			print "\n";
@@ -2125,7 +2130,7 @@ if ($action == 'create') {
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut == 1) {
-						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->contrat->creer)) {
+						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('contrat', 'creer'))) {
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
@@ -2134,7 +2139,7 @@ if ($action == 'create') {
 				}
 
 				if ($object->statut == 0 && $nbofservices) {
-					if ($user->rights->contrat->creer) {
+					if ($user->hasRight('contrat', 'creer')) {
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
@@ -2142,7 +2147,7 @@ if ($action == 'create') {
 					}
 				}
 				if ($object->statut == 1) {
-					if ($user->rights->contrat->creer) {
+					if ($user->hasRight('contrat', 'creer')) {
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
@@ -2202,7 +2207,7 @@ if ($action == 'create') {
 				}
 
 				// Clone
-				if ($user->rights->contrat->creer) {
+				if ($user->hasRight('contrat', 'creer')) {
 					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
 				}
 
@@ -2238,7 +2243,7 @@ if ($action == 'create') {
 				print '<br><!-- Link to sign -->';
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
-				print showOnlineSignatureUrl('contract', $object->ref).'<br>';
+				print showOnlineSignatureUrl('contract', $object->ref, $object).'<br>';
 			}
 
 			print '</div><div class="fichehalfright">';

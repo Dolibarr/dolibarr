@@ -317,7 +317,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$desc = dol_htmlentitiesbr($text, 1);
 				//print $outputlangs->convToOutputCharset($desc); exit;
 
-				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 5, $outputlangs->convToOutputCharset($desc), 0, 1);
+				$pdf->writeHTMLCell(180, 3, $this->posxdesc - 1, $tab_top + 5, $outputlangs->convToOutputCharset($desc), 0, 1);
 				$nexY = $pdf->GetY();
 
 				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);

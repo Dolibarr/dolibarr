@@ -55,7 +55,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "p.name";
+	$sortfield = "p.lastname";
 }
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
@@ -85,12 +85,12 @@ if (dol_strlen($stcomm)) {
 }
 
 if (dol_strlen($begin)) {
-	$sql .= " AND p.name LIKE '$begin%'";
+	$sql .= " AND p.lastname LIKE '$begin%'";
 }
 
 if ($contactname) {
-	$sql .= " AND p.name LIKE '%".strtolower($contactname)."%'";
-	$sortfield = "p.name";
+	$sql .= " AND p.lastname LIKE '%".strtolower($contactname)."%'";
+	$sortfield = "p.lastname";
 	$sortorder = "ASC";
 }
 
@@ -110,7 +110,7 @@ if ($result) {
 
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.lastname", $begin, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Email");

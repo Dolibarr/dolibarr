@@ -116,6 +116,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if ($ret < 0) {
 					$this->error = $newobject->error;
 					$this->errors[] = $newobject->error;
+				} else {
+					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
+						$res = $newobject->setBankAccount($object->thirdparty->fk_account, true, $user);
+						if ($ret < 0) {
+							$this->error = $newobject->error;
+							$this->errors[] = $newobject->error;
+						}
+					}
 				}
 
 				$object->clearObjectLinkedCache();
@@ -272,8 +280,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if ($totalonlinkedelements == $object->total_ht) {
+					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".((string) $totalonlinkedelements == (string) $object->total_ht), LOG_DEBUG);
+					if ( (string) $totalonlinkedelements == (string) $object->total_ht) {
 						foreach ($object->linkedObjects['reception'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {
@@ -451,45 +459,42 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 		if ($action == 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			// Auto link contract
-			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('ficheinter') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
+			// Auto link ticket to contract
+			if (isModEnabled('contract') && isModEnabled('ticket') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
-				$company_ids = (empty($conf->global->WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS)) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
+				$company_ids = (!getDolGlobalString('WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS')) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
 
 				$contrat = new Contrat($this->db);
 				$number_contracts_found = 0;
 				foreach ($company_ids as $company_id) {
 					$contrat->socid = $company_id;
-					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
-					if (is_array($list) && !empty($list)) {
-						$number_contracts_found = count($list);
-						if ($number_contracts_found == 1) {
-							foreach ($list as $linked_contract) {
-								$object->setContract($linked_contract->id);
-							}
-							break;
-						} elseif ($number_contracts_found > 1) {
-							foreach ($list as $linked_contract) {
-								$object->setContract($linked_contract->id);
-								// don't set '$contractid' so it is not used when creating an intervention.
-							}
-							if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
-							break;
-						}
+					$list = $contrat->getListOfContracts('all', array(Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED), array(getDolGlobalString('TICKET_PRODUCT_CATEGORY')), array(ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN));
+					if (!is_array($list) || empty($list)) {
+						continue;
+					}
+					$number_contracts_found = count($list);
+
+					foreach ($list as $linked_contract) {
+						$object->setContract($linked_contract->id);
+						// don't set '$contractid' so it is not used when creating an intervention.
+					}
+
+					if ($number_contracts_found > 1 && !defined('NOLOGIN')) {
+						setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
 					}
 				}
-				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+				if ($number_contracts_found == 0 && !defined('NOLOGIN')) {
+					setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
 				}
 			}
 			// Automatically create intervention
-			if (isModEnabled('ficheinter') && isModEnabled('ticket') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
+			if (isModEnabled('ficheinter') && isModEnabled('ticket') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_TICKET_CREATE_INTERVENTION')) {
 				$fichinter = new Fichinter($this->db);
 				$fichinter->socid = (int) $object->fk_soc;
-				$fichinter->fk_project = $projectid;
+				$fichinter->fk_project = (int) $object->fk_project;
 				$fichinter->fk_contrat = (int) $object->fk_contract;
 				$fichinter->author = $user->id;
-				$fichinter->model_pdf = (!empty($conf->global->FICHEINTER_ADDON_PDF)) ? $conf->global->FICHEINTER_ADDON_PDF : 'soleil';
+				$fichinter->model_pdf = getDolGlobalString('FICHEINTER_ADDON_PDF', 'soleil');
 				$fichinter->origin = $object->element;
 				$fichinter->origin_id = $object->id;
 

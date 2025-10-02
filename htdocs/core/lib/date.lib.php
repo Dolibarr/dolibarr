@@ -34,31 +34,32 @@
 function get_tz_array()
 {
 	$tzarray = array(
-		-11=>"Pacific/Midway",
-		-10=>"Pacific/Fakaofo",
-		-9=>"America/Anchorage",
-		-8=>"America/Los_Angeles",
-		-7=>"America/Dawson_Creek",
-		-6=>"America/Chicago",
-		-5=>"America/Bogota",
-		-4=>"America/Anguilla",
-		-3=>"America/Araguaina",
-		-2=>"America/Noronha",
-		-1=>"Atlantic/Azores",
-		0=>"Africa/Abidjan",
-		1=>"Europe/Paris",
-		2=>"Europe/Helsinki",
-		3=>"Europe/Moscow",
-		4=>"Asia/Dubai",
-		5=>"Asia/Karachi",
-		6=>"Indian/Chagos",
-		7=>"Asia/Jakarta",
-		8=>"Asia/Hong_Kong",
-		9=>"Asia/Tokyo",
-		10=>"Australia/Sydney",
-		11=>"Pacific/Noumea",
-		12=>"Pacific/Auckland",
-		13=>"Pacific/Enderbury"
+		-11 => "Pacific/Pago_Pago",
+		-10 => "Pacific/Honolulu",
+		-9 => "America/Anchorage",
+		-8 => "America/Los_Angeles",
+		-7 => "America/Dawson_Creek",
+		-6 => "America/Chicago",
+		-5 => "America/Bogota",
+		-4 => "America/Asuncion",
+		-3 => "America/Araguaina",
+		-2 => "America/Noronha",
+		-1 => "Atlantic/Azores",
+		0 => "Europe/London",
+		1 => "Europe/Paris",
+		2 => "Europe/Helsinki",
+		3 => "Europe/Moscow",
+		4 => "Asia/Dubai",
+		5 => "Asia/Karachi",
+		6 => "Indian/Chagos",
+		7 => "Asia/Jakarta",
+		8 => "Asia/Hong_Kong",
+		9 => "Asia/Tokyo",
+		10 => "Australia/Sydney",
+		11 => "Pacific/Noumea",
+		12 => "Pacific/Auckland",
+		13 => "Pacific/Fakaofo",
+		14 => "Pacific/Kiritimati"
 	);
 	return $tzarray;
 }
@@ -1032,16 +1033,35 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		return 'ErrorBadParameter_num_open_day';
 	}
 
-	//print 'num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday;
 	if ($timestampStart < $timestampEnd) {
-		$numdays = num_between_day($timestampStart, $timestampEnd, $lastday);
+		// --- 1. Calculate Gross Working Days ---
+		// Gross working days = total days in range - non-working days (weekends & public holidays).
+		$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $lastday) - num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
 
-		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
-		$nbOpenDay = ($numdays - $numholidays);
-		if ($inhour == 1 && $nbOpenDay <= 3) {
-			$nbOpenDay = ($nbOpenDay * 24);
+		// --- 2. Apply Contextual Half-Day Deductions ---
+		$halfday = (int) $halfday; // Ensure $halfday is an integer for reliable comparisons.
+
+		// Check if start/end days are working days just ONCE to optimize performance
+		// by avoiding redundant calls to the potentially slow num_public_holiday() function.
+		$isStartDayWorking = (num_public_holiday($timestampStart, $timestampStart, $country_code, 1) == 0);
+		$isEndDayWorking   = (num_public_holiday($timestampEnd, $timestampEnd, $country_code, 1) == 0);
+
+		// Deduct 0.5 if the leave starts in the afternoon of a working day.
+		if (($halfday == -1 || $halfday == 2) && $isStartDayWorking) {
+			$nbOpenDay -= 0.5;
 		}
-		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
+
+		// Deduct 0.5 if the leave ends in the morning of a different, working day.
+		if (($halfday == 1 || $halfday == 2) && date('Y-m-d', $timestampStart) != date('Y-m-d', $timestampEnd) && $isEndDayWorking) {
+			$nbOpenDay -= 0.5;
+		}
+
+		// --- 3. Return Final Value ---
+		if ($inhour == 1) {
+			return $nbOpenDay * 24;
+		}
+
+		return $nbOpenDay;
 	} elseif ($timestampStart == $timestampEnd) {
 		$numholidays = 0;
 		if ($lastday) {

@@ -95,7 +95,7 @@ if (isModEnabled('mrp') && $user->hasRight('mrp', 'read') && empty($conf->global
 if (isModEnabled('project') && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->hasRight('projet', 'lire')) {
 	$arrayresult['searchintoprojects'] = array('position'=>40, 'shortcut'=>'Q', 'img'=>'object_project', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('', 'object_project', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('project') && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLED) && $user->hasRight('projet', 'lire')) {
+if (isModEnabled('project') && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLED) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->hasRight('projet', 'lire')) {
 	$arrayresult['searchintotasks'] = array('position'=>45, 'img'=>'object_projecttask', 'label'=>$langs->trans("SearchIntoTasks", $search_boxvalue), 'text'=>img_picto('', 'object_projecttask', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoTasks", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/tasks/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 

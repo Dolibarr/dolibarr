@@ -131,7 +131,7 @@ $cancel != $langs->trans("Cancel") &&
 
 	foreach ($object->multilangs as $key => $value) {     // recording of new values in the object
 		$libelle = GETPOST('libelle-'.$key, 'alpha');
-		$desc = GETPOST('desc-'.$key);
+		$desc = GETPOST('desc-'.$key, 'restricthtml');
 
 		if (empty($libelle)) {
 			$error++;
