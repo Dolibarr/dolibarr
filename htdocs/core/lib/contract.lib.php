@@ -99,7 +99,7 @@ function contract_prepare_head(Contrat $object)
 	$h++;
 
 
-	$head[$h][0] = dolBuildUrl('/contrat/agenda.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/contrat/agenda.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
