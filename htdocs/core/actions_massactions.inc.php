@@ -1275,8 +1275,6 @@ EOPHAN;
 			} else {
 				$nbok++;
 			}
-
-			unset($objecttmp);
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			$error++;
