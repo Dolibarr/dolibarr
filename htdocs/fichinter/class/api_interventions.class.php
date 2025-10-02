@@ -768,7 +768,7 @@ class Interventions extends DolibarrApi
 		return $this->_cleanObjectDatas($contacts);
 	}
 
-	
+
 	/**
 	 * Delete a contact type of given interventional
 	 *
