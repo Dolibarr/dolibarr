@@ -391,12 +391,6 @@ parameters:
 			path: ../../../htdocs/adherents/card.php
 
 		-
-			message: '#^Variable \$public in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/adherents/card.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
