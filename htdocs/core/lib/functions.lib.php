@@ -7454,19 +7454,21 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	// Right
 	print '<td class="nobordernopadding valignmiddle right col-right">';
 	print '<input type="hidden" name="pageplusoneold" value="' . ((int) $page + 1) . '">';
+	$query = [];
+	parse_str($options, $query);
 	if ($sortfield) {
-		$options .= "&sortfield=" . urlencode($sortfield);
+		$query += ['sortfield' => $sortfield];
 	}
 	if ($sortorder) {
-		$options .= "&sortorder=" . urlencode($sortorder);
+		$query += ['sortorder' => $sortorder];
+	}
+
+	$options = '&'.http_build_query($query);
+	if ($page) {
+		$query = array_merge($query, ['page' => $page]);
 	}
 	// Show navigation bar
 	$pagelist = '';
-	$query = [];
-	parse_str($options, $query);
-	if (!isset($query['page'])) {
-		$query = array_merge($query, ['page' => '']);
-	}
 	if ($savlimit != 0 && ($page > 0 || $num > $limit)) {
 		if ($totalnboflines) {	// If we know total nb of lines
 			// Define nb of extra page links before and after selected page + ... + first or last
