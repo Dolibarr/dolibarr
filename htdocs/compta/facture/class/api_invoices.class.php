@@ -952,7 +952,41 @@ class Invoices extends DolibarrApi
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
+	/**
+	 * Get contacts of given invoice
+	 *
+	 * Return an array with contact information
+	 *
+	 * @param	int		$id			ID of invoice
+	 * @param	string	$type		Type of the invoice 
+	 * @return	Object				Object with cleaned properties
+	 *
+	 * @url	GET {id}/contacts
+	 *
+	 * @throws	RestException
+	 */
+	public function getContacts($id, $type = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
+			throw new RestException(403);
+		}
 
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$contacts = $this->invoice->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $this->invoice->liste_contact(-1, 'internal', 0, $type);
+
+		$contacts = array_merge($contacts, $socpeoples);
+
+		return $this->_cleanObjectDatas($contacts);
+	}
 
 	/**
 	 * Sets an invoice as draft
