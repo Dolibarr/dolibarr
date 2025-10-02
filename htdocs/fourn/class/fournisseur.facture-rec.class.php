@@ -754,8 +754,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->total_localtax2          = $objp->total_localtax2;
 				$line->total_ttc                = $objp->total_ttc;
 				$line->product_type             = $objp->product_type;
-				$line->date_start               = $objp->date_start;
-				$line->date_end                 = $objp->date_end;
+				$line->date_start               = $this->db->jdate($objp->date_start);
+				$line->date_end                 = $this->db->jdate($objp->date_end);
 				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;
@@ -2122,8 +2122,8 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 			$this->total_localtax2          = $objp->total_localtax2;
 			$this->total_ttc                = $objp->total_ttc;
 			$this->product_type             = $objp->product_type;
-			$this->date_start               = $objp->date_start;
-			$this->date_end                 = $objp->date_end;
+			$this->date_start               = $this->db->jdate($objp->date_start);
+			$this->date_end                 = $this->db->jdate($objp->date_end);
 			$this->info_bits                = $objp->info_bits;
 			$this->special_code             = $objp->special_code;
 			$this->rang                     = $objp->rang;

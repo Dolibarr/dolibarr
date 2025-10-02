@@ -1205,7 +1205,7 @@ class Commande extends CommonOrder
 
 			return 0;
 		} else {
-			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}

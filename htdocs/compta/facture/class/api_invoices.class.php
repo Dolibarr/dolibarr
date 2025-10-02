@@ -1568,13 +1568,13 @@ class Invoices extends DolibarrApi
 				$amount = price2num($amountarray["multicurrency_amount"], 'MT');
 			}
 
-			if ($amount > $remainstopay && !$accepthigherpayment) {
+			if (abs($amount) > abs($remainstopay) && !$accepthigherpayment) {
 				$this->db->rollback();
 				throw new RestException(400, 'Payment amount on invoice ID '.$id.' ('.$amount.') is higher than remain to pay ('.$remainstopay.')');
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = -$amount;
+				$amount = - abs($amount);
 			}
 
 			if ($is_multicurrency) {
