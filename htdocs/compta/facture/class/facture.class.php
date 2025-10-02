@@ -1272,7 +1272,7 @@ class Facture extends CommonInvoice
 				$object->socid = $objsoc->id;
 				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
 				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$object->fk_project = '';
+				$object->fk_project = null;
 				$object->fk_delivery_address = '';
 			}
 
@@ -1289,8 +1289,8 @@ class Facture extends CommonInvoice
 		$object->user_valid         = null; // deprecated
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
-		$object->fk_fac_rec_source  = null;
 		$object->fk_facture_source  = 0;
+		$object->fk_fac_rec_source  = null;
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';
@@ -3240,7 +3240,7 @@ class Facture extends CommonInvoice
 			$this->date = dol_now();
 			$this->date_lim_reglement = $this->calculate_date_lim_reglement();
 		}
-		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
+		if (!empty($conf->global->INVOICE_CHECK_POSTERIOR_DATE)) {
 			$last_of_type = $this->willBeLastOfSameType(true);
 			if (!$last_of_type[0]) {
 				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref, dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
@@ -5836,7 +5836,7 @@ class Facture extends CommonInvoice
 						}
 
 						// Errors Recipient
-						$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+						$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');;
 
 						$trackid = 'inv'.$tmpinvoice->id;
 						$sendcontext = 'standard';

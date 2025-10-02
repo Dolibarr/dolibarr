@@ -2,6 +2,36 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 18.0.8 compared to 18.0.7 *****
+35 files changed, 647 insertions(+), 298 deletions(-)
+
+FIX: #34746 - More complete fix for CVE-2024-40137
+FIX: Correct the calculation of the amount of the current period between the period provided (#35083)
+FIX: Add security test for show terminal selection if no terminal selected when invoice.php is call (#34717)
+FIX: Add security test for show terminal selection if no terminal selected when invoice.php is call
+FIX: missing quick edit for extrafields (baclport commit 4fc66c6) (#35160)
+FIX: Missing sentence part (#35144)
+FIX: set global mysoc and load langs in API access (#35041)
+FIX: set global mysoc and load langs in API access
+FIX: reset mysoc and langs only if entity of API has changed
+FIX: accountancy general ledger: bad handling of hook return (#34029)
+FIX: accountancy general ledger: bad handling of hook return
+FIX: accountancy balance: bad handling of hook return
+FIX: - Fix missing token for disable custom group category for compta report (page /htdocs/accountancy/admin/categories_list.php) (#35084)
+FIX: The combo of custom groups has disappeared (backport v19) (#35016)
+FIX: #34893 (#34897)
+FIX: #34893
+FIX: change error code to USERNOTALLOWEDTOCHANGEPASS
+FIX: asset: could not select invoice in disposal pop-in (#34725)
+FIX: 17.0 SQL syntax error and/or constraint error when calling Facture::update() after a clone (e.g. in a trigger) (#34778)
+FIX: 17.0: when you clone an invoice that was created from a template invoice, the clone should not be linked to the template invoice (#34777)
+FIX: pre-send mail mass action: keep __EMAIL__ substitution (#34522)
+FIX: pre-send mail mass action: keep __EMAIL__ substitution
+FIX: comment
+FIX: massaction email tpl: keep preset
+FIX: loop interrupt if an error occurs in sendEmailsRemindersOnInvoiceDueDate (#34657)
+FIX: #34654
+
 ***** ChangeLog for 18.0.7 compared to 18.0.6 *****
 138 files changed, 1622 insertions(+), 530 deletions(-)
 
