@@ -144,7 +144,7 @@ function contact_prepare_head(Contact $object)
 
 	// Log
 	/*
-	$head[$tab][0] = dolBuildUrl('/contact/info.php', ['id' => $object->id]);
+	$head[$tab][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/info.php', ['id' => $object->id]);
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
 	$tab++;*/
