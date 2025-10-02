@@ -899,14 +899,16 @@ if ($action == 'create') {
 		 * Action bar
 		 */
 		print '<div class="tabsAction">';
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			if($user->hasRight('banque', 'configurer')) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+			}
 
-		if ($user->hasRight('banque', 'configurer')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
-		}
-
-		$canbedeleted = $object->can_be_deleted(); // Return true if account without movements
-		if ($user->hasRight('banque', 'configurer') && $canbedeleted) {
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+			$canbedeleted = $object->can_be_deleted(); // Return true if account without movements
+			if($user->hasRight('banque', 'configurer') && $canbedeleted) {
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+			}
 		}
 
 		print '</div>';
