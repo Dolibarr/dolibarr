@@ -1220,9 +1220,13 @@ EOPHAN;
 
 	$db->begin();
 	$nbok = 0;
+
+	$objecttmp = new $objectclass($db);
+
 	foreach ($toselect as $toselectid) {
-		$objecttmp = new $objectclass($db);
+		$objecttmp->thirdparty = null; // Clear if another value was already set by fetch_thirdparty later
 		$result = $objecttmp->fetch($toselectid);
+
 		if ($result > 0) {
 			$outputlangs = $langs;
 			$newlang = '';
