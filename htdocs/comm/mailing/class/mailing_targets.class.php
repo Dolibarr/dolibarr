@@ -46,12 +46,12 @@ class MailingTarget extends CommonObject
 	public $picto = 'contact';
 
 	/**
-	 * @var int Mailing id that this mailing_target is related to. 
+	 * @var int Mailing id that this mailing_target is related to.
 	 */
 	public $fk_mailing;
 
 	/**
-	 * @var int Contact id that this mailing_target is related to. 
+	 * @var int Contact id that this mailing_target is related to.
 	 */
 	public $fk_contact;
 
@@ -120,7 +120,7 @@ class MailingTarget extends CommonObject
 	public $tms;
 
 	/**
-	 * @var string error_text from trying to send email 
+	 * @var string error_text from trying to send email
 	 */
 	public $error_text;
 
@@ -197,7 +197,7 @@ class MailingTarget extends CommonObject
 		$sql .= ", t.tms as date_modification";
 		$sql .= ", t.error_text";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
-//		$sql .= " WHERE entity IN (".getEntity('mailing_target').")";
+		// $sql .= " WHERE entity IN (".getEntity('mailing_target').")";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -206,7 +206,7 @@ class MailingTarget extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
-//				$this->entity = $obj->entity;
+				// $this->entity = $obj->entity;
 				$this->fk_mailing = $obj->fk_mailing;
 				$this->fk_contact = $obj->fk_contact;
 				$this->lastname = $obj->lastname;
