@@ -1146,6 +1146,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
+		$objecttmp->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			$outputlangs = $langs;
@@ -1160,7 +1161,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->default_lang)) {
 				$newlang = $objecttmp->default_lang; // for thirdparty
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
 				$objecttmp->fetch_thirdparty();
 				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
