@@ -1710,40 +1710,62 @@ class FormTicket
 
 				$sendto = array();
 
-				// Build array to display recipient list
+				// Build array of recipients for multiselect
 				if (is_array($contacts) && count($contacts) > 0) {
 					foreach ($contacts as $key => $info_sendto) {
 						if ($info_sendto['email'] != '') {
-							$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">").' <small class="opacitymedium">('.dol_escape_htmltag($info_sendto['libelle']).")</small>";
+							$label = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".trim($info_sendto['email']).">";
+							// Add contact type tag if available (e.g. "Externer Mitarbeiter")
+							if (!empty($info_sendto['libelle'])) {
+								$label .= ' <small class="opacitymedium">('.dol_escape_htmltag($info_sendto['libelle']).')</small>';
+							}
+							$sendto[trim($info_sendto['email'])] = $label;
 						}
 					}
 				}
 
-				if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
-					$sendto[] = dol_escape_htmltag($ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
-				} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
-					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+				if (!empty($ticketstat->origin_replyto)) {
+					$sendto[$ticketstat->origin_replyto] = $ticketstat->origin_replyto.' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+				} elseif ($ticketstat->origin_email) {
+					$sendto[$ticketstat->origin_email] = $ticketstat->origin_email.' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				}
 
 				if ($ticketstat->fk_soc > 0) {
 					$ticketstat->socid = $ticketstat->fk_soc;
 					$ticketstat->fetch_thirdparty();
 
-					if (!empty($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
-						$sendto[] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
+					if (!empty($ticketstat->thirdparty->email)) {
+						$sendto[$ticketstat->thirdparty->email] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
 					}
 				}
 
 				if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) {
-					$sendto[] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').' <small class="opacitymedium">(generic email)</small>';
+					$generic = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+					if ($generic) {
+						$sendto[$generic] = $generic.' <small class="opacitymedium">(generic email)</small>';
+					}
 				}
 
-				// Print recipient list
-				if (is_array($sendto) && count($sendto) > 0) {
-					print img_picto('', 'email', 'class="pictofixedwidth"');
-					print implode(', ', $sendto);
-				} else {
-					print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
+				// Free text input field
+				print img_picto('', 'email', 'class="pictofixedwidth"');
+				print '<input class="minwidth300" id="sendto" name="sendto" spellcheck="false" value="'.(GETPOSTISSET("sendto") ? GETPOST("sendto", "restricthtml") : "").'" placeholder="email@example.com, other@example.com" />';
+
+				// "and/or" separator + multiselect
+				if (!empty($sendto) && is_array($sendto)) {
+					print ' '.$langs->trans("and").'/'.$langs->trans("or").' ';
+
+					// Pre-select all recipients by default (unless form was submitted)
+					$selected_receivers = GETPOST('receiver', 'array');
+					if (!GETPOSTISSET('receiver')) {
+						// First load - pre-select all
+						$selected_receivers = array_keys($sendto);
+					}
+
+					print $form->multiselectarray('receiver', $sendto, $selected_receivers, null, null, 'inline-block minwidth200', null);
+
+					if (empty($sendto)) {
+						print '<div class="warning" style="margin-top: 5px;">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
+					}
 				}
 			}
 			print '</td></tr>';

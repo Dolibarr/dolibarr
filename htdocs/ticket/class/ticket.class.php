@@ -2864,23 +2864,61 @@ class Ticket extends CommonObject
 							$message .= !empty($object->thirdparty->town) ? '<br>'.$langs->trans('Town')." : ".$object->thirdparty->town : '';
 							$message .= !empty($object->thirdparty->phone) ? '<br>'.$langs->trans('Phone')." : ".$object->thirdparty->phone : '';
 
-							// Build array to display recipient list
-							foreach ($internal_contacts as $key => $info_sendto) {
-								// Check if recipient email is current user, if yes, we avoid to send email to him.
-								if ($info_sendto['id'] == $user->id) {
-									dol_syslog("We cancel sending email to internal user ".$info_sendto['email']." because it is current user", LOG_DEBUG);
-									continue;
+							// Check for manually entered recipients (free text field)
+							$manual_sendto = GETPOST('sendto', 'restricthtml');
+							if (!empty($manual_sendto)) {
+								// Parse comma-separated email addresses from free text input
+								$manual_emails = explode(',', $manual_sendto);
+								foreach ($manual_emails as $email) {
+									$email = trim($email);
+									if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+										$sendto[$email] = $email;
+									}
 								}
+							}
 
-								if ($info_sendto['email'] != '') {
-									$email = $info_sendto['email'];
-									if ($email != null) {
-										$sendto[$email] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
+							// Check for recipients selected from multiselect
+							$selected_receivers = GETPOST('receiver', 'array');
+							if (!empty($selected_receivers) && is_array($selected_receivers)) {
+								foreach ($selected_receivers as $receiver_email) {
+									if (!empty($receiver_email) && filter_var($receiver_email, FILTER_VALIDATE_EMAIL)) {
+										// Find the contact info for this email
+										$found = false;
+										foreach ($internal_contacts as $key => $info_sendto) {
+											if ($info_sendto['email'] == $receiver_email) {
+												$sendto[$receiver_email] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$receiver_email.">";
+												$found = true;
+												break;
+											}
+										}
+										// If not found in contacts, just use email
+										if (!$found) {
+											$sendto[$receiver_email] = $receiver_email;
+										}
+									}
+								}
+							}
+
+							// If neither manual nor multiselect used, fall back to default (all contacts)
+							if (empty($sendto)) {
+								// Build array to display recipient list from contacts (default behavior)
+								foreach ($internal_contacts as $key => $info_sendto) {
+									// Check if recipient email is current user, if yes, we avoid to send email to him.
+									if ($info_sendto['id'] == $user->id) {
+										dol_syslog("We cancel sending email to internal user ".$info_sendto['email']." because it is current user", LOG_DEBUG);
+										continue;
 									}
 
-									// Contact type
-									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower((string) $info_sendto['libelle']).')';
-									$message .= (!empty($recipient) ? '<br>'.$langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
+									if ($info_sendto['email'] != '') {
+										$email = $info_sendto['email'];
+										if ($email != null) {
+											$sendto[$email] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
+										}
+
+										// Contact type
+										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower((string) $info_sendto['libelle']).')';
+										$message .= (!empty($recipient) ? '<br>'.$langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
+									}
 								}
 							}
 							$message .= '<br>';
