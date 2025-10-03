@@ -82,7 +82,7 @@ class modCaptchaStandard extends ModeleCaptcha
 		global $db, $conf, $langs, $user;
 
 		$generator = new modGeneratePassStandard($db, $conf, $langs, $user);
-		$generator->length = 5;
+		$generator->length = '5';
 		$example = $generator->getExample();
 
 		if (function_exists("imagecreate") && function_exists("imagepng")) {
