@@ -762,7 +762,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Max nb of elements in lists
-	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 	// Link summary/status board
 	$boxstat .= '<div class="box divboxtable box-halfright">';

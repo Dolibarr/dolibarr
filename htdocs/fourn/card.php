@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Jean Heimburger				<jean@tiaris.info>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -490,7 +490,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 	print '<br>';
@@ -611,7 +611,7 @@ if ($object->id > 0) {
 	print $boxstat;
 
 
-	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 	/*

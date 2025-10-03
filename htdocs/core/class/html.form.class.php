@@ -7532,7 +7532,7 @@ class Form
 					$key = $rate['rowid'];
 				}
 
-				$return .= '<option value="' . $key . '"';
+				$return .= '<option value="' . $key . '" data-vatid="'.$rate['rowid'].'"';
 				if (!$selectedfound) {
 					if ($defaultcode) { // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
 						if ($defaultcode == $rate['code']) {

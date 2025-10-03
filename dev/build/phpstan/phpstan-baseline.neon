@@ -391,12 +391,6 @@ parameters:
 			path: ../../../htdocs/adherents/card.php
 
 		-
-			message: '#^Variable \$public in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/adherents/card.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -437,12 +431,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/adherents/messaging.php
-
-		-
-			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/adherents/partnership.php
 
 		-
 			message: '#^Variable \$bankline in empty\(\) always exists and is not falsy\.$#'
@@ -11965,18 +11953,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
-			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
 			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -12087,12 +12063,6 @@ parameters:
 		-
 			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
 			identifier: include.fileNotFound
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/myobject_card.php
 
@@ -12571,12 +12541,6 @@ parameters:
 			path: ../../../htdocs/partnership/class/partnership.class.php
 
 		-
-			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/partnership/class/partnership.class.php
-
-		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 1
@@ -12609,12 +12573,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/partnership/partnership_card.php
-
-		-
-			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/partnership/partnership_card.php
 
@@ -16177,12 +16135,6 @@ parameters:
 			path: ../../../htdocs/societe/admin/societe.php
 
 		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/admin/societe.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -17836,12 +17788,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 2
-			path: ../../../htdocs/webportal/class/webportalpartnership.class.php
-
-		-
-			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/webportal/class/webportalpartnership.class.php
 
 		-
