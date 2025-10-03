@@ -172,7 +172,75 @@ class MailingTarget extends CommonObject
 	 */
 	public function update($user)
 	{
-		return -2;
+		global $langs;
+
+		// Check properties
+		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
+			return -1;
+		}
+
+		if (empty($this->fk_mailing)) {
+			return -2;
+			// we probably should also check that this number actually exists in ".MAIN_DB_PREFIX."mailing";
+		}
+		if (empty($this->email)) {
+			return -3;
+		}
+		if (empty($this->statut)) {
+			$statut = 0;
+		}
+		if (empty($this->status)) {
+			$status = 0;
+		}
+		if ($status != $statut) {
+			return -4;
+		}
+		if (empty($this->fk_contact)) {
+			$fk_contact = 0;
+		}
+
+		$error = 0;
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target";
+		$sql .= " SET fk_mailing = '".$this->db->escape($this->fk_mailing)."'";
+		$sql .= ", fk_contact = '".$this->db->escape($this->fk_contact)."'";
+		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
+		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
+		$sql .= ", email = '".$this->db->escape($this->email)."'";
+		$sql .= ", other = '".$this->db->escape($this->other)."'";
+		$sql .= ", tag = '".$this->db->escape($this->tag)."'";
+		$sql .= ", statut = '".$this->db->escape($this->statut)."'";
+		$sql .= ", source_url = '".$this->db->escape($this->source_url)."'";
+		$sql .= ", source_id = '".($this->source_id ? $this->db->escape($this->source_id) : null)."'";
+		$sql .= ", source_type = '".$this->db->escape($this->source_type)."'";
+		$sql .= ", date_envoi = '".($this->date_envoi ? $this->db->escape($this->date_envoi) : null)."'";
+		$sql .= ", tms = '".$this->db->idate($now)."'";
+		$sql .= ", error_text = '".($this->error_text ? $this->db->escape($this->error_text) : null)."'";
+		$sql .= " WHERE rowid = ".(int) $this->id;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if (!$error) {
+				dol_syslog(__METHOD__ . ' success');
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+				return -5;
+			}
+		} else {
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->trans("ErrorTargetAlreadyExists", $this->email);
+			} else {
+				$this->error = $this->db->lasterror();
+			}
+			$this->db->rollback();
+			return -6;
+		}
 	}
 
 	/**
