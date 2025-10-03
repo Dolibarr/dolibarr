@@ -494,12 +494,19 @@ class Expedition extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
 
+			// update ref
+			$initialref = '(PROV'.$this->id.')';
+			if (!empty($this->ref)) {
+				$initialref = $this->ref;
+			}
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
-			$sql .= " SET ref = '(PROV".$this->id.")'";
+			$sql .= " SET ref = '".$this->db->escape($initialref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql)) {
+				$this->ref = $initialref;
 				// Insert of lines
 				$num = count($this->lines);
 				$kits_list = array();
@@ -894,8 +901,8 @@ class Expedition extends CommonObject
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method 		= $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin_type == 'commande' ? 'commande' : 'shipping'); // For compatibility
-				$this->origin_type          = ($obj->origin_type == 'commande' ? 'commande' : 'shipping');
+				$this->origin               = ($obj->origin_type ? $obj->origin_type : 'commande'); // For compatibility
+				$this->origin_type          = ($obj->origin_type ? $obj->origin_type : 'commande');
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
 				$this->fk_project 			= $obj->fk_project;
