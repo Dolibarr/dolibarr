@@ -656,17 +656,6 @@ class Expedition extends CommonObject
 					}
 				}
 
-				// update ref
-				$initialref = '(PROV'.$this->id.')';
-				if (!empty($this->ref)) {
-					$initialref = $this->ref;
-				}
-
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
-				if ($this->db->query($sql)) {
-					$this->ref = $initialref;
-				}
-
 				if (!$error && $this->id && $this->origin_id) {
 					$ret = $this->add_object_linked();
 					if (!$ret) {
