@@ -113,7 +113,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	
+
 	if ($id > 0 || !empty($ref)) {
 		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 			$object->fetchComments();
@@ -122,16 +122,16 @@ if (empty($reshook)) {
 		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 			$projectstatic->fetchComments();
 		}
-	
+
 		if (!empty($projectstatic->socid)) {
 			$projectstatic->fetch_thirdparty();
 		}
-	
+
 		$object->project = clone $projectstatic;
-	
+
 		$upload_dir = $conf->project->multidir_output[$projectstatic->entity].'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 	}
-	
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
