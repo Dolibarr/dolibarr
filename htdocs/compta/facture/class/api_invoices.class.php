@@ -952,6 +952,8 @@ class Invoices extends DolibarrApi
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
+
+
 	/**
 	 * Sets an invoice as draft
 	 *
