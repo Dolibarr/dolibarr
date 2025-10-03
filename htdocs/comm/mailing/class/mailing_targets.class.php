@@ -297,7 +297,7 @@ class MailingTarget extends CommonObject
 			}
 		} else {
 			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				$this->error = $langs->trans("ErrorTargetAlreadyExists", $this->email);
+				$this->error = $langs->trans("ErrorRecordAlreadyExists", $this->email);
 			} else {
 				$this->error = $this->db->lasterror();
 			}
