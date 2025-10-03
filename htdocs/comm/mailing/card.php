@@ -837,7 +837,7 @@ if ($action == 'create') {	// aaa
 	print '<table class="border centpercent">';
 
 	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailFrom").'</td>';
-	print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').'<input class="flat minwidth200" name="from" value="'.(GETPOSTISSET('from') ? GETPOST('from') : getDolGlobalString('MAILING_EMAIL_FROM')).'"></td></tr>';
+	print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').'<input class="flat minwidth200" name="from" value="'.(GETPOSTISSET('from') ? GETPOST('from') : getDolGlobalString('MAILING_EMAIL_FROM')).'" spellcheck="false"></td></tr>';
 
 	print '<tr class="fieldsforsms hidden"><td class="fieldrequired titlefieldcreate">'.$langs->trans("PhoneFrom").'</td>';
 	print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').'<input class="flat minwidth200" name="fromphone" value="'.(GETPOSTISSET('fromphone') ? GETPOST('fromphone') : getDolGlobalString('MAILING_SMS_FROM')).'" placeholder="+123..."></td></tr>';
