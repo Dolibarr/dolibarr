@@ -384,6 +384,7 @@ class Categorie extends CommonObject
 			$reshook = $hookmanager->executeHooks('constructCategory', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
 				foreach ($hookmanager->resArray as $mapList) {
+					/** @var array{id:int,code:string,cat_fk:string|null,cat_table:string|null,obj_class:string,obj_table:string,label:string|null} $mapList */
 					$mapId = $mapList['id'];
 					$mapCode = $mapList['code'];
 					//self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
