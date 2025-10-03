@@ -410,7 +410,15 @@ class modAdherent extends DolibarrModules
 			'c.fk_adherent' => 'MemberRef*',
 			'c.note'=>'Note', 'c.dateadh'=>'SubscriptionStart', 'c.datef'=>'SubscriptionEnd', 'c.subscription'=>'Amount', 'c.fk_type' => 'MemberType', 'c.fk_bank' => 'Bank'
 		);
-		$this->import_convertvalue_array[$r]['c.fk_adherent'] = array('rule'=>'fetchidfromref', 'classfile'=>'/adherents/class/adherent.class.php', 'class'=>'Adherent', 'method'=>'fetch', 'element'=>'member');
+		$this->import_convertvalue_array[$r] = array(
+			'c.fk_adherent' => array(
+				'rule'=>'fetchidfromref',
+				'classfile'=>'/adherents/class/adherent.class.php',
+				'class'=>'Adherent',
+				'method'=>'fetch',
+				'element'=>'member'
+			)
+		);
 		$this->import_examplevalues_array[$r] = array(
 			'c.fk_adherent' => 'member ref',
 			'c.note'=>'Subscription #33', 'c.dateadh'=>'2025-09-01', 'c.datef'=>'2026-08-31', 'c.subscription'=>'50'
