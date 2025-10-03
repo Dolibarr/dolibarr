@@ -184,4 +184,18 @@ ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFA
 ALTER TABLE llx_subscription ADD COLUMN import_key varchar(14) NULL;
 
 
+create table llx_categorie_propal
+(
+  fk_categorie      integer NOT NULL,
+  fk_propal integer NOT NULL,
+  import_key        varchar(14)
+)ENGINE=innodb;
+
+create table llx_categorie_supplier_proposal
+(
+  fk_categorie        integer NOT NULL,
+  fk_supplier_proposal integer NOT NULL,
+  import_key          varchar(14)
+)ENGINE=innodb;
+
 -- end of migration
