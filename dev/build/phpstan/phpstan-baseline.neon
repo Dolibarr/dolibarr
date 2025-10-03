@@ -11965,18 +11965,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
-			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
 			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -12017,12 +12005,6 @@ parameters:
 			identifier: include.fileNotFound
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/js/mymodule.js.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 4
-			path: ../../../htdocs/modulebuilder/template/lib/mymodule_myobject.lib.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -12087,12 +12069,6 @@ parameters:
 		-
 			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
 			identifier: include.fileNotFound
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/myobject_card.php
 
@@ -16172,12 +16148,6 @@ parameters:
 
 		-
 			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/admin/societe.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/societe/admin/societe.php
