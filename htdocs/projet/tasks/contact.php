@@ -53,6 +53,8 @@ $project_ref = GETPOST('project_ref', 'alpha');
 $object = new Task($db);
 $projectstatic = new Project($db);
 
+$hookmanager->initHooks(array('projecttaskcontact', 'globalcard'));
+
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
@@ -62,6 +64,11 @@ $socid = 0;
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
+$parameters = array('projectid' => $object->fk_project);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 /*
  * Actions
