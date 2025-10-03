@@ -140,7 +140,7 @@ print '<td>'.$langs->trans("Captcha").'</td>';
 print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
-print '<tr><td>' . $langs->trans("UseCaptchaCode").' - Login</td><td class="right" width="100">';
+print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Login</td><td class="right" width="100">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA', array(), null, 0, 0, 1);
 } else {
@@ -153,7 +153,7 @@ if (!empty($conf->use_javascript_ajax)) {
 print '</td></tr>';
 
 if (isModEnabled('societe')) {
-	print '<tr><td>' . $langs->trans("UseCaptchaCode").' - Thirdparty public contact form</td><td class="right" width="100">';
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Thirdparty public contact form</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY', array(), null, 0, 0, 1);
 	} else {
@@ -167,7 +167,7 @@ if (isModEnabled('societe')) {
 print '</td></tr>';
 
 if (isModEnabled('ticket')) {
-	print '<tr><td>' . $langs->trans("UseCaptchaCode").' - Public ticket creation</td><td class="right" width="100">';
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Public ticket creation</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_TICKET', array(), null, 0, 0, 1);
 	} else {
@@ -181,7 +181,7 @@ if (isModEnabled('ticket')) {
 print '</td></tr>';
 
 if (isModEnabled('member')) {
-	print '<tr><td>' . $langs->trans("UseCaptchaCode").' - Membership public subscription</td><td class="right" width="100">';
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Membership public subscription</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_MEMBER', array(), null, 0, 0, 1);
 	} else {
@@ -195,7 +195,7 @@ if (isModEnabled('member')) {
 print '</td></tr>';
 
 if (isModEnabled('don')) {
-	print '<tr><td>' . $langs->trans("UseCaptchaCode").' - Donation public form</td><td class="right" width="100">';
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Donation public form</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_DONATION', array(), null, 0, 0, 1);
 	} else {
