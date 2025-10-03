@@ -161,8 +161,71 @@ class MailingTarget extends CommonObject
 	 */
 	public function create($user)
 	{
-		return -2;
+		global $conf, $langs;
+
+		// Check properties
+		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
+			return -1;
+		}
+
+		if (empty($this->fk_mailing)) {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Mailing"));
+			return -2;
+			// we probably should also check that this number actually exists in ".MAIN_DB_PREFIX."mailing";
+		}
+		if (empty($this->email)) {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"));
+			return -3;
+		}
+		if (empty($this->statut)) {
+			$statut = 0;
+		}
+		if (empty($this->status)) {
+			$status = 0;
+		}
+		if ($status != $statut) {
+			return -4;
+		}
+		if (empty($this->fk_contact)) {
+			$fk_contact = 0;
+		}
+
+		$error = 0;
+		$now = dol_now();
+
+		$this->db->begin();
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_target";
+		$sql .= " (fk_mailing, fk_contact, email, statut)";
+		$sql .= " VALUES ('".$this->db->escape($this->fk_mailing)."', "((int) $this->fk_contact).", '".$this->db->escape($this->email)."', ".((int) $conf->statut).")";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing_target");
+
+			$result = $this->update($user, 1);
+			if ($result < 0) {
+				$error++;
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			} else {
+				$this->db->rollback();
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+				return -2;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
 	}
+
 
 	/**
 	 *  Update an Mailing Target
