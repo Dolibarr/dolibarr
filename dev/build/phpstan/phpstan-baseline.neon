@@ -11947,15 +11947,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
 
 		-
-<<<<<<< HEAD
-=======
-			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
->>>>>>> upstream/develop
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
