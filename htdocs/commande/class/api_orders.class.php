@@ -585,7 +585,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @param	int		$id			ID of order
 	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
-	 * @return	Object				Object with cleaned properties
+     * @return	array				array of contact associated
 	 *
 	 * @url	GET {id}/contacts
 	 *
