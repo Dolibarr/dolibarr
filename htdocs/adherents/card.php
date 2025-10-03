@@ -543,18 +543,18 @@ if (empty($reshook)) {
 			}
 		}
 
-		$object->email       = $email;
-		$object->url       	 = $url;
-		$object->login       = $login;
-		$object->pass        = $pass;
-		$object->birth       = $birthdate;
-		$object->photo       = $photo;
-		$object->typeid      = $typeid;
-		//$object->note        = $comment;
-		$object->morphy      = $morphy;
-		$object->user_id     = $userid;
+		$object->email = $email;
+		$object->url = $url;
+		$object->login = $login;
+		$object->pass = $pass;
+		$object->birth = $birthdate;
+		$object->photo = $photo;
+		$object->typeid = $typeid;
+		//$object->note = $comment;
+		$object->morphy = $morphy;
+		$object->user_id = $userid;
 		$object->socid = $socid;
-		$object->public      = $public;
+		$object->public = $public;
 		$object->default_lang = $default_lang;
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -617,10 +617,6 @@ if (empty($reshook)) {
 		if (!empty($object->url) && !isValidUrl($object->url)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
-		}
-		$public = 0;
-		if (isset($public)) {
-			$public = 1;
 		}
 
 		if (!$error) {

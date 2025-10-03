@@ -11,6 +11,7 @@ For users:
 
 For developers:
 ---------------
+* Introducing the TRIGGER_PREFIX property to force developers to use unique triggerkey per business object, limit also code to business CRUD events and identity when it is not.
 
 
 
@@ -28,6 +29,7 @@ The following changes may create regressions for some external modules, but were
   same path than the core path without using a mymodule directory is now forbidden.
 * The directory theme/common/octicons has been removed
 * The library timepicker.js has been removed. Was not used by Dolibarr.
+* Because of new TRIGGER_PREFIX property triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed to PRODUCT_BUYPRICE_XXX.
 
 
 ***** ChangeLog for 22.0.2 compared to 22.0.1 *****
