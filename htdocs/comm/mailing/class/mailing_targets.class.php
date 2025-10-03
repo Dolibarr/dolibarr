@@ -199,7 +199,7 @@ class MailingTarget extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing_target");
 
-			$result = $this->update($user, 1);
+			$result = $this->update($user);
 			if ($result < 0) {
 				$error++;
 			}
