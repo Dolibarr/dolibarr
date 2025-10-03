@@ -314,6 +314,11 @@ class Adherent extends CommonObject
 	 */
 	public $invoice;
 
+	/**
+	 * @var string 	Import ID
+	 */
+	public $import_key;
+
 
 	/**
 	 *  'type' field format:

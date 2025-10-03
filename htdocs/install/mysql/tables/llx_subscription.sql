@@ -29,5 +29,6 @@ create table llx_subscription
   fk_bank         integer DEFAULT NULL,     -- id of bank transaction in llx_bank
   fk_user_creat   integer DEFAULT NULL,
   fk_user_valid   integer DEFAULT NULL,
-  note            text
+  note            text,
+  import_key       varchar(14)                    -- Import key
 )ENGINE=innodb;
