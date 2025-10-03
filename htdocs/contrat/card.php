@@ -2352,7 +2352,7 @@ if ($action == 'create') {
 				}
 
 				// Sign
-				if ($object->status > Contrat::STATUS_DRAFT) {
+				if (getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS') && $object->status > Contrat::STATUS_DRAFT) {
 					if ($object->signed_status != Contrat::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("ContractSign") . '</a></div>';
 					} else {
