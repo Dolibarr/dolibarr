@@ -83,9 +83,9 @@ if (empty($reshook)) {
 		if (GETPOST("addsourceexternal")) {
 			$source = 'external';
 		}
-	
+
 		$result = $object->fetch($id, $ref);
-	
+
 		if ($result > 0 && $id > 0) {
 			if ($source == 'internal') {
 				$idfortaskuser = ((GETPOST("userid") != 0 && GETPOST('userid') != -1) ? GETPOST("userid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
@@ -108,7 +108,7 @@ if (empty($reshook)) {
 				$result = $object->add_contact($idfortaskuser, $typeid, $source);
 			}
 		}
-	
+
 		if ($result >= 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 			exit;
@@ -121,7 +121,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	
+
 	// bascule du statut d'un contact
 	if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
 		if ($object->fetch($id, $ref)) {
@@ -130,7 +130,7 @@ if (empty($reshook)) {
 			dol_print_error($db);
 		}
 	}
-	
+
 	// Efface un contact
 	if ($action == 'deleteline' && $user->hasRight('projet', 'creer')) {
 		$object->fetch($id, $ref);
@@ -143,7 +143,7 @@ if (empty($reshook)) {
 			dol_print_error($db);
 		}
 	}
-	
+
 	// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 	if (!empty($project_ref) && !empty($withproject)) {
 		if ($projectstatic->fetch(0, $project_ref) > 0) {
