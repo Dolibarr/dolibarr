@@ -180,4 +180,19 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 
+
+create table llx_categorie_propal
+(
+  fk_categorie      integer NOT NULL,
+  fk_propal integer NOT NULL,
+  import_key        varchar(14)
+)ENGINE=innodb;
+
+create table llx_categorie_supplier_proposal
+(
+  fk_categorie        integer NOT NULL,
+  fk_supplier_proposal integer NOT NULL,
+  import_key          varchar(14)
+)ENGINE=innodb;
+
 -- end of migration

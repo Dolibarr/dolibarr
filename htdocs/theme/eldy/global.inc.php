@@ -9172,6 +9172,23 @@ table.jPicker {
 	}
 }
 
+
+/* Test to have 2 columns for invoice type selection */
+/*
+@media only screen and (min-width: 1024px)
+{
+	.listofinvoicetypetable {
+		display: inline-grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px
+	}
+	.listofinvoicetype {
+		display: block;
+	}
+}
+*/
+
+
 /** For toggle Display of customer/Supplyer Invoices and Credit Notes on Payment Page */
 :where(#fourn-invoices-paiments-list,#customer-invoices-paiments-list)[data-display-all-invoices="1"] tr[data-row-type="2"]{
 	font-weight: bold;
