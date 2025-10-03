@@ -315,12 +315,6 @@ class Adherent extends CommonObject
 	public $invoice;
 
 	/**
-	 * @var string 	Import ID
-	 */
-	public $import_key;
-
-
-	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
