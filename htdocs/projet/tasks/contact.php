@@ -135,7 +135,7 @@ if (empty($reshook)) {
 	if ($action == 'deleteline' && $user->hasRight('projet', 'creer')) {
 		$object->fetch($id, $ref);
 		$result = $object->delete_contact(GETPOSTINT("lineid"));
-	
+
 		if ($result >= 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 			exit;
