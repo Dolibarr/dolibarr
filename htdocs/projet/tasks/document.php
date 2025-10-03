@@ -89,53 +89,57 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 $permissiontoadd = $user->hasRight('projet', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
+/*
+ * Actions
+ */
+
 $parameters = array('projectid' => $object->fk_project);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-/*
- * Actions
- */
 
-// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
-if (!empty($project_ref) && !empty($withproject)) {
-	if ($projectstatic->fetch(0, $project_ref) > 0) {
-		$tasksarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
-		if (count($tasksarray) > 0) {
-			$id = $tasksarray[0]->id;
-			$object->fetch($id);
-		} else {
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
-			exit;
+if (empty($reshook)) {
+	// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
+	if (!empty($project_ref) && !empty($withproject)) {
+		if ($projectstatic->fetch(0, $project_ref) > 0) {
+			$tasksarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
+			if (count($tasksarray) > 0) {
+				$id = $tasksarray[0]->id;
+				$object->fetch($id);
+			} else {
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
+				exit;
+			}
 		}
 	}
+	
+	if ($id > 0 || !empty($ref)) {
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+			$object->fetchComments();
+		}
+		$projectstatic->fetch($object->fk_project);
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
+			$projectstatic->fetchComments();
+		}
+	
+		if (!empty($projectstatic->socid)) {
+			$projectstatic->fetch_thirdparty();
+		}
+	
+		$object->project = clone $projectstatic;
+	
+		$upload_dir = $conf->project->multidir_output[$projectstatic->entity].'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
+	}
+	
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
-
-if ($id > 0 || !empty($ref)) {
-	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
-		$object->fetchComments();
-	}
-	$projectstatic->fetch($object->fk_project);
-	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
-		$projectstatic->fetchComments();
-	}
-
-	if (!empty($projectstatic->socid)) {
-		$projectstatic->fetch_thirdparty();
-	}
-
-	$object->project = clone $projectstatic;
-
-	$upload_dir = $conf->project->multidir_output[$projectstatic->entity].'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
-}
-
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
  * View
  */
+
 $form = new Form($db);
 
 $title = $object->ref . ' - ' . $langs->trans("Documents");
