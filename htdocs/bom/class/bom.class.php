@@ -174,12 +174,12 @@ class BOM extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var int Id User modifying
+	 * @var int Id User validating
 	 */
 	public $fk_user_valid;
 
 	/**
-	 * @var int Id User modifying
+	 * @var ?int Id of warehouse
 	 */
 	public $fk_warehouse;
 

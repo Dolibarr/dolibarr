@@ -344,7 +344,7 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$buyer = $object->thirdparty;
 		}
 
-		if ($mysoc->useLocalTax(1)) {
+		if ($mysoc->useLocalTax(1, 1, $mysoc)) {
 			if (($seller->country_code == $buyer->country_code) || $line->total_localtax1 || $seller->useLocalTax(1)) {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'='.price($line->total_localtax1, 0, '', 0, 0);
 				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'='.price($line->multicurrency_total_localtax1, 0, '', 0, 0);
@@ -353,7 +353,7 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
 			}
 		}
-		if ($mysoc->useLocalTax(2)) {
+		if ($mysoc->useLocalTax(2, 1, $mysoc)) {
 			if ((isset($seller->country_code) && isset($buyer->thirdparty->country_code) && $seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->total_localtax2, 0, '', 0, 0);
 				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->multicurrency_total_localtax2, 0, '', 0, 0);

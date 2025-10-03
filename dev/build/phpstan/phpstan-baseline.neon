@@ -11995,12 +11995,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/js/mymodule.js.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 4
-			path: ../../../htdocs/modulebuilder/template/lib/mymodule_myobject.lib.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -12175,12 +12169,6 @@ parameters:
 			path: ../../../htdocs/mrp/class/api_mos.class.php
 
 		-
-			message: '#^Property MoLine\:\:\$fk_warehouse \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/mrp/class/api_mos.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -12224,12 +12212,6 @@ parameters:
 
 		-
 			message: '#^Property Mo\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$fk_warehouse \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/mrp/class/mo.class.php
@@ -14323,12 +14305,6 @@ parameters:
 			path: ../../../htdocs/projet/tasks/contact.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Task and ''fetchComments'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/tasks/contact.php
-
-		-
 			message: '#^Property Project\:\:\$budget_amount \(float\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -14342,12 +14318,6 @@ parameters:
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/tasks/document.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Task and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/projet/tasks/document.php
