@@ -163,12 +163,6 @@ class MailingTarget extends CommonObject
 	{
 		global $conf, $langs;
 
-		// Check properties
-		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
-			$this->error = 'InvalidHTMLStringCantBeCleaned';
-			return -1;
-		}
-
 		if (empty($this->fk_mailing)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Mailing"));
 			return -2;
@@ -235,12 +229,6 @@ class MailingTarget extends CommonObject
 	public function update($user)
 	{
 		global $langs;
-
-		// Check properties
-		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
-			$this->error = 'InvalidHTMLStringCantBeCleaned';
-			return -1;
-		}
 
 		if (empty($this->fk_mailing)) {
 			return -2;
