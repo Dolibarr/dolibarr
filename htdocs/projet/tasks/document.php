@@ -72,6 +72,8 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
+$hookmanager->initHooks(array('projecttaskdocument', 'globalcard'));
+
 $object = new Task($db);
 $projectstatic = new Project($db);
 
@@ -86,7 +88,11 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 $permissiontoadd = $user->hasRight('projet', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
-
+$parameters = array('projectid' => $object->fk_project);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 /*
  * Actions
  */
