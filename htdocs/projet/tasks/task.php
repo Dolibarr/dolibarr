@@ -27,6 +27,13 @@
  */
 
 require "../../main.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -36,14 +43,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadlangs(array('projects', 'companies'));
@@ -206,6 +205,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet'
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
+	// $object is task to delete
 	if ($object->delete($user) > 0) {
 		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
 		exit;
@@ -219,13 +219,11 @@ if ($action == 'confirm_close' && $confirm == "yes" && $user->hasRight('projet',
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
-	if ($object->setStatusCommon($user, Task::STATUS_CLOSED) > 0) {
-		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
-		exit;
-	} else {
+	// $object is task to close
+	if ($object->setStatusCommon($user, Task::STATUS_CLOSED) <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		$action = '';
 	}
+	$action = '';
 }
 
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
@@ -779,7 +777,7 @@ if ($id > 0 || !empty($ref)) {
 				//}
 
 				if ($object->status != $object::STATUS_CLOSED) {
-					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
+					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
 				}
 
 				print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
