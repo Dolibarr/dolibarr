@@ -192,7 +192,6 @@ class MailingTarget extends CommonObject
 		}
 
 		$error = 0;
-		$now = dol_now();
 
 		$this->db->begin();
 
@@ -263,22 +262,23 @@ class MailingTarget extends CommonObject
 			$fk_contact = 0;
 		}
 
+		$now = dol_now();
 		$error = 0;
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target";
-		$sql .= " SET fk_mailing = '".$this->db->escape($this->fk_mailing)."'";
-		$sql .= ", fk_contact = '".$this->db->escape($this->fk_contact)."'";
+		$sql .= " SET fk_mailing = '".((int) $this->fk_mailing)."'";
+		$sql .= ", fk_contact = '".((int) $this->fk_contact)."'";
 		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
 		$sql .= ", other = '".$this->db->escape($this->other)."'";
 		$sql .= ", tag = '".$this->db->escape($this->tag)."'";
-		$sql .= ", statut = '".$this->db->escape($this->statut)."'";
+		$sql .= ", statut = '".((int) $this->statut)."'";
 		$sql .= ", source_url = '".$this->db->escape($this->source_url)."'";
-		$sql .= ", source_id = '".($this->source_id ? $this->db->escape($this->source_id) : null)."'";
+		$sql .= ", source_id = '".((int) $this->source_id)."'";
 		$sql .= ", source_type = '".$this->db->escape($this->source_type)."'";
-		$sql .= ", date_envoi = '".($this->date_envoi ? $this->db->escape($this->date_envoi) : null)."'";
+		$sql .= ", date_envoi = '".((int) $this->date_envoi)."'";
 		$sql .= ", tms = '".$this->db->idate($now)."'";
 		$sql .= ", error_text = '".($this->error_text ? $this->db->escape($this->error_text) : null)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;
