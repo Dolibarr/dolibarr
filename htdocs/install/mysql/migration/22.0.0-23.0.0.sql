@@ -193,14 +193,6 @@ ALTER TABLE llx_categorie_propal ADD INDEX idx_categorie_propal_fk_propal (fk_pr
 ALTER TABLE llx_categorie_propal ADD CONSTRAINT fk_categorie_propal_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_propal ADD CONSTRAINT fk_categorie_propal_fk_propal_rowid FOREIGN KEY (fk_propal) REFERENCES llx_projet (rowid);
 
-
-create table llx_categorie_propal
-(
-  fk_categorie      integer NOT NULL,
-  fk_propal integer NOT NULL,
-  import_key        varchar(14)
-)ENGINE=innodb;
-
 create table llx_categorie_supplier_proposal
 (
   fk_categorie        integer NOT NULL,
