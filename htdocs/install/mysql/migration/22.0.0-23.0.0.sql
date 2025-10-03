@@ -180,4 +180,10 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('propal', 'external',  'SALESREPSIGN',   'Contact client signataire propale', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'SALESREPSIGN',  'Representative signing shipping', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'external', 'SALESREPSIGN',  'Contact client signataire l''intervention', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('societe', 'external', 'SALESREPSIGN',  'Representative signing', 1);
+
+
 -- end of migration

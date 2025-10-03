@@ -48,6 +48,7 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('propal',  'external', 'BILLING',       'Contact client facturation propale', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('propal',  'external', 'CUSTOMER',      'Contact client suivi propale', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('propal',  'external', 'SHIPPING',      'Contact client livraison propale', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('propal', 'external',  'SALESREPSIGN',   'Contact client signataire propale', 1);
 
 -- Customer Invoice / Facture
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
@@ -79,12 +80,14 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'CUSTOMER',      'Customer shipping contact', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'SHIPPING',      'Loading facility', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'DELIVERY',      'Delivery facility', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'SALESREPSIGN',  'Representative signing shipping', 1);
 
 -- Intervention / Fichinter
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'internal', 'INTERREPFOLL',  'Responsable suivi de l''intervention', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'internal', 'INTERVENING',   'Intervenant', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'external', 'BILLING',       'Contact client facturation intervention', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'external', 'CUSTOMER',      'Contact client suivi de l''intervention', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'external', 'SALESREPSIGN',  'Contact client signataire l''intervention', 1);
 
 -- Supplier Order
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('order_supplier', 'internal', 'SALESREPFOLL',  'Responsable suivi de la commande', 1);
@@ -128,3 +131,4 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 
 -- Thirdparty
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('societe', 'external', 'SALESREPTHIRD',  'Sales Representative', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('societe', 'external', 'SALESREPSIGN',  'Representative signing', 1);
