@@ -49,7 +49,7 @@ class ProductFournisseur extends Product
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
 	 * @see CommonTrigger::call_trigger()
 	 */
-	public $TRIGGER_PREFIX = 'SUPPLIER_PRODUCT';
+	public $TRIGGER_PREFIX = 'PRODUCT'; // We use parent because parent method can still have the parent prefix
 
 	/**
 	 * @var string		Error code (or message)
@@ -337,7 +337,7 @@ class ProductFournisseur extends Product
 		$this->db->begin();
 
 		// Call trigger
-		$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_DELETE', $user);
+		$result = $this->call_trigger('PRODUCT_BUYPRICE_DELETE', $user);
 		if ($result < 0) {
 			$error++;
 		}
@@ -589,7 +589,7 @@ class ProductFournisseur extends Product
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Call trigger
-				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_MODIFY', $user);
+				$result = $this->call_trigger('PRODUCT_BUYPRICE_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -698,7 +698,7 @@ class ProductFournisseur extends Product
 
 				if (!$error) {
 					// Call trigger
-					$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_CREATE', $user);
+					$result = $this->call_trigger('PRODUCT_BUYPRICE_CREATE', $user);
 					if ($result < 0) {
 						$error++;
 					}

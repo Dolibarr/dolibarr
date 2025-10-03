@@ -132,11 +132,6 @@ class modZapier extends DolibarrModules
 		$this->warnings_activation = array();
 		// Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array();
-		// $this->automatic_activation = array(
-		//     'FR'=>'ZapierWasAutomaticallyActivatedBecauseOfYourCountryChoice',
-		// );
-		// If true, can't be disabled
-		// $this->always_enabled = true;
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example: $this->const=array(
