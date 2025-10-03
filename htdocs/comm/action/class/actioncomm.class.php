@@ -2725,6 +2725,7 @@ class ActionComm extends CommonObject
 
 							//Topic
 							$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+							$sendTopic = make_substitutions($sendTopic, $substitutionarray);
 
 							// Recipient
 							$recipient = new User($this->db);
