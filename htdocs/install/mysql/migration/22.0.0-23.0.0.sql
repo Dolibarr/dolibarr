@@ -180,4 +180,17 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 
+
+CREATE TABLE llx_c_product_price_type (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  code varchar(20) NOT NULL,
+  label varchar(128) NOT NULL,
+  active tinyint DEFAULT 1  NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_product_price_type ADD UNIQUE INDEX uk_c_product_price_type(code);
+ALTER TABLE llx_product_price ADD COLUMN fk_price_type integer DEFAULT NULL AFTER price_label;
+ALTER TABLE llx_product_price ADD CONSTRAINT fk_product_price_price_type FOREIGN KEY (fk_price_type) REFERENCES llx_c_product_price_type(rowid);
+
+
 -- end of migration

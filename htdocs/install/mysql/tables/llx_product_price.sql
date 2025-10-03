@@ -43,6 +43,7 @@ create table llx_product_price
   localtax2_type        varchar(10)  NOT NULL DEFAULT '0',
   fk_user_author	    integer,
   price_label           varchar(255),
+  fk_price_type 		integer DEFAULT NULL,           -- see dictionary c_product_price_type
   tosell			    tinyint DEFAULT 1,
   price_by_qty		    integer NOT NULL DEFAULT 0,
   fk_price_expression   integer,                     -- Link to the rule for dynamic price calculation

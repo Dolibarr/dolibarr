@@ -20,4 +20,6 @@ ALTER TABLE llx_product_price ADD INDEX idx_product_price_fk_user_author (fk_use
 ALTER TABLE llx_product_price ADD INDEX idx_product_price_fk_product (fk_product);
 
 ALTER TABLE llx_product_price ADD CONSTRAINT fk_product_price_user_author FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
+ALTER TABLE llx_product_price ADD CONSTRAINT fk_product_price_price_type FOREIGN KEY (fk_price_type) REFERENCES llx_c_product_price_type(rowid);
+
 --ALTER TABLE llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_user_author) REFERENCES  llx_user (rowid);
