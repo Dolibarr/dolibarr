@@ -28,6 +28,8 @@ create table llx_product_price
   tms				    timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product    		integer NOT NULL,
   date_price	    	datetime NOT NULL,
+  date_price_start    	datetime NULL,
+  date_price_end    	datetime NULL,
   price_level		    smallint NULL DEFAULT 1,
   price				    double(24,8) DEFAULT NULL,		-- price without tax
   price_ttc			    double(24,8) DEFAULT NULL,		-- price inc vat (but not localtax1 nor localtax2)
