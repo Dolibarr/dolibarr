@@ -607,8 +607,10 @@ class Orders extends DolibarrApi
 		}
 
 		$contacts = $this->commande->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $this->commande->liste_contact(-1, 'internal', 0, $type);
 
-		return $this->_cleanObjectDatas($contacts);
+		$contacts = array_merge($contacts, $socpeoples);
+		return $contacts;
 	}
 
 	/**
