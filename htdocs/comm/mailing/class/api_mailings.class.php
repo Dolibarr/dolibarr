@@ -280,7 +280,7 @@ class Mailings extends DolibarrApi
 				continue;
 			}
 			if ($field === 'fk_project') {
-				if (!DolibarrApi::_checkAccessToResource('project', ((int) $fk_project))) {
+				if (!DolibarrApi::_checkAccessToResource('project', ((int) $value))) {
 					throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 				}
 			}
