@@ -1292,30 +1292,28 @@ if (empty($reshook)) {
 			}
 			$desc = dol_htmlcleanlastbr($desc);
 
-			if (!$error) {
-				// Insert line
-				$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options);
+			// Insert line
+			$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options);
 
-				if ($result > 0) {
-					$ret = $object->fetch($object->id); // Reload to get new records
-					$object->fetch_thirdparty();
-					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-						// Define output language
-						$outputlangs = $langs;
-						$newlang = GETPOST('lang_id', 'alpha');
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
-						}
-						if (!empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-						}
-						$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result > 0) {
+				$ret = $object->fetch($object->id); // Reload to get new records
+				$object->fetch_thirdparty();
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+					// Define output language
+					$outputlangs = $langs;
+					$newlang = GETPOST('lang_id', 'alpha');
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
 					}
-				} else {
-					header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
-					exit();
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
+			} else {
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
+				exit();
 			}
 		}
 	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $permissiontoadd) {
@@ -3442,7 +3440,7 @@ if ($action == 'create' && $usercancreate) {
 							print '<td></td>';
 							print '</tr>';
 						}
-					} elseif (!isModEnabled('stock') && !isModEnabled('productbatch')) { // both product batch and stock are not activated.
+					} else { // both product batch and stock are not activated.
 						print '<!-- case edit 7 -->';
 						print '<tr>';
 						// Qty to ship or shipped
