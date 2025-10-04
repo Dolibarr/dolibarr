@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -237,21 +237,23 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 			}
 
 			if ($fk_parent >= 0) {
-				$ecmdirtmp->ref                = 'NOTUSEDYET';
-				$ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
-				$ecmdirtmp->description        = '';
-				$ecmdirtmp->fk_parent          = $fk_parent;
+				$ecmdirtmp->ref = 'NOTUSEDYET';
+				$ecmdirtmp->label = dol_basename($dirdesc['fullname']);
+				$ecmdirtmp->description = '';
+				$ecmdirtmp->fk_parent = $fk_parent;
 
 				$txt = "We create directory ".$ecmdirtmp->label." with parent ".$fk_parent;
 				dol_syslog($txt);
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id' => $id,
-									 'id_mere' => $ecmdirtmp->fk_parent,
-									 'label' => $ecmdirtmp->label,
-									 'description' => $ecmdirtmp->description,
-									 'fullrelativename' => $relativepathmissing);
+					$newdirsql = array(
+						'id' => $id,
+						'id_mere' => $ecmdirtmp->fk_parent,
+						'label' => $ecmdirtmp->label,
+						'description' => $ecmdirtmp->description,
+						'fullrelativename' => $relativepathmissing,
+					);
 					$sqltree[] = $newdirsql; // We complete fulltree for following loops
 					//var_dump($sqltree);
 					$adirwascreated = 1;
