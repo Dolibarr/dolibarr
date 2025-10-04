@@ -463,11 +463,6 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		}
 	}
 
-	//var_dump($relativedir);
-	//var_dump($filearray);
-	//var_dump($filearrayindatabase);
-	//var_dump($object->entity);
-
 	// Complete filearray with properties found into $filearrayindatabase
 	foreach ($filearray as $key => $val) {
 		$tmpfilename = preg_replace('/\.noexe$/', '', $filearray[$key]['name']);
