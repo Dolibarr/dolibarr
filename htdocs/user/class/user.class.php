@@ -452,7 +452,7 @@ class User extends CommonObject
 	public $default_range;
 
 	/**
-	 *@var int id of warehouse
+	 *@var ?int id of warehouse
 	 */
 	public $fk_warehouse;
 

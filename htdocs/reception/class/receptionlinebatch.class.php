@@ -586,6 +586,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
+		$object->status = 0;
 		$object->statut = 0;
 
 		// Clear fields
@@ -597,7 +598,7 @@ class ReceptionLineBatch extends CommonObjectLine
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 

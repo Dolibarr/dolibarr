@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +34,10 @@ function myobjectPrepareHead($object)
 
 	$langs->load("mymodule@mymodule");
 
-	$showtabofpagecontact = 1;
-	$showtabofpagenote = 1;
-	$showtabofpagedocument = 1;
-	$showtabofpageagenda = 1;
+	$showtabofpagecontact = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_CONTACT');
+	$showtabofpagenote = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_NOTE');
+	$showtabofpagedocument = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_DOCUMENT');
+	$showtabofpageagenda = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_AGENDA');
 
 	$h = 0;
 	$head = array();

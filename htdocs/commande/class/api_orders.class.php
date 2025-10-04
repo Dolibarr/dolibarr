@@ -579,13 +579,13 @@ class Orders extends DolibarrApi
 	}
 
 	/**
-	 * Get contacts of given order
+	 * Get contacts of a given order
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of order
-	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
-	 * @return	array				array of contact associated
+	 * @param	int					$id			ID of order
+	 * @param	string				$type		Type of the contact ('BILLING', 'SHIPPING', 'CUSTOMER', ...)
+	 * @return	array<int,mixed>				Array of contacts
 	 *
 	 * @url	GET {id}/contacts
 	 *
@@ -609,8 +609,10 @@ class Orders extends DolibarrApi
 		$contacts = $this->commande->liste_contact(-1, 'external', 0, $type);
 		$socpeoples = $this->commande->liste_contact(-1, 'internal', 0, $type);
 
+
 		$contacts = array_merge($contacts, $socpeoples);
-		return $contacts;
+
+    return $contacts;
 	}
 
 	/**

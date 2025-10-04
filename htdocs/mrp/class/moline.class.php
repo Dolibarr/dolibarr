@@ -141,7 +141,7 @@ class MoLine extends CommonObjectLine
 	 */
 	public $fk_product;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $fk_warehouse;
 
