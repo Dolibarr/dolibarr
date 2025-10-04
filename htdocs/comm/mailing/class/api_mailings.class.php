@@ -134,7 +134,7 @@ class Mailings extends DolibarrApi
 		}
 
 		foreach ($fk_projects as $project => $value) {
-			if (!DolibarrApi::_checkAccessToResource('project', sanitizeVal($value, '09'))) {
+			if (!DolibarrApi::_checkAccessToResource('project', ((int) $value))) {
 				throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 			}
 		}
@@ -280,7 +280,7 @@ class Mailings extends DolibarrApi
 				continue;
 			}
 			if ($field === 'fk_project') {
-				if (!DolibarrApi::_checkAccessToResource('project', sanitizeVal($request_data['caller'], '09'))) {
+				if (!DolibarrApi::_checkAccessToResource('project', ((int) $fk_project))) {
 					throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 				}
 			}
