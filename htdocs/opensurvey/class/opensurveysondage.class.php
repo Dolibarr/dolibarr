@@ -175,8 +175,9 @@ class Opensurveysondage extends CommonObject
 	 * @var int|'' end date of survey
 	 */
 	public $date_fin = '';
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
@@ -186,17 +187,17 @@ class Opensurveysondage extends CommonObject
 	public $format;
 
 	/**
-	 * @var int to allow send mail
+	 * @var ?int to allow send mail
 	 */
 	public $mailsonde;
 
 	/**
-	 * @var int		Allow comments on this poll
+	 * @var ?int		Allow comments on this poll
 	 */
 	public $allow_comments;
 
 	/**
-	 * @var int		Allow users see others vote
+	 * @var ?int		Allow users see others vote
 	 */
 	public $allow_spy;
 
