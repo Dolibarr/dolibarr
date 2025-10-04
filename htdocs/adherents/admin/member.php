@@ -120,7 +120,6 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force ModeleMember $module';
 
 		if ($module->write_file($adherentspecimen, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=member&file=SPECIMEN.pdf");
