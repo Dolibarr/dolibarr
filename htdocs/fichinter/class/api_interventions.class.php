@@ -772,10 +772,10 @@ class Interventions extends DolibarrApi
 	/**
 	 * Delete a contact type of given interventional
 	 *
-	 * @param	int    $id             Id of interventional to update
-	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
-	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
-	 * @return	array				array of contact associated
+	 * @param	int    				$id             Id of interventional to update
+	 * @param	int    				$contactid      Row key of the contact in the array contact_ids.
+	 * @param	string 				$type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @return	array<int,mixed>					array of contacts
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
@@ -829,7 +829,6 @@ class Interventions extends DolibarrApi
 	 */
 	public function updateInterventionalLine($id, $lineid, $request_data)
 	{
-
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Interventional not found');
