@@ -1342,20 +1342,73 @@ class MouvementStock extends CommonObject
 		if ($this->inventorycode == $formattedDate) {
 			return -1;
 		}
+		$error = 0;
+		$fk_product = $this->product_id;
+		$entrepot_id = $this->warehouse_id;
+		$product = new Product($this->db);
+		$result = $product->fetch($fk_product);
+		if ($result < 0) {
+			$this->error = $product->error;
+			$this->errors = $product->errors;
+			dol_print_error(null, "Failed to fetch product");
+			return -1;
+		}
 
-		$sql = "UPDATE ".$this->db->prefix()."stock_mouvement SET";
-		$sql .= " label = 'Annulation movement ID ".((int) $this->id)."',";
-		$sql .= "inventorycode = '".($formattedDate)."'";
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
+		$this->db->begin();
+		$sql = "SELECT rowid, reel FROM ".$this->db->prefix()."product_stock";
+		$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product); // This is a unique key
 		$resql = $this->db->query($sql);
-
 		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$oldqtywarehouse = $obj->reel;
+				$fk_product_stock = $obj->rowid;
+			} else $error = -2;
+			$this->db->free($resql);
+		} else {
+			$this->errors[] = $this->db->lasterror();
+			$error = -2;
+		}
+		if ($error == 0) {
+			dol_syslog(get_class($this)."::reverse (=cancel) stock_mouvement #$fk_product_stock", LOG_DEBUG);
+
+			$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = " . ((float) $oldqtywarehouse - (float) $this->qty);
+			$sql .= " WHERE rowid =".(int) $fk_product_stock;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->lasterror();
+				$error = -3;
+			}
+
+			$sql = "UPDATE ".$this->db->prefix()."product as p SET ";
+			$sql .= " stock=(SELECT SUM(ps.reel) FROM ".$this->db->prefix()."product_stock as ps WHERE ps.fk_product = p.rowid)";
+			$sql .= " WHERE rowid = ".((int) $fk_product);
+
+			dol_syslog(get_class($this)."::reverseMouvement update product stock", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->lasterror();
+				$error = -4;
+			}
+
+			$sql = "UPDATE ".$this->db->prefix()."stock_mouvement SET ";
+			$sql .= " label = 'Annulation movement ID ".((int) $this->id)."', ";
+			$sql .= " inventorycode = '".($formattedDate)."', ";
+			$sql .= " value=0 ";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->lasterror();
+				$error = -5;
+			}
+		}
+
+		if ($error == 0) {
 			$this->db->commit();
 			return 1;
 		} else {
 			$this->db->rollback();
-			return -1;
+			return $error;
 		}
 	}
 
