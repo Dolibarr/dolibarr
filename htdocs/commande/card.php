@@ -391,11 +391,9 @@ if (empty($reshook)) {
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$object->multicurrency_tx = GETPOSTFLOAT('originmulticurrency_tx');
 			// Fill array 'array_options' with data from add form
-			if (!$error) {
-				$ret = $extrafields->setOptionalsFromPost(null, $object);
-				if ($ret < 0) {
-					$error++;
-				}
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) {
+				$error++;
 			}
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
@@ -2044,7 +2042,7 @@ if (empty($reshook)) {
 
 
 	if (!$error && getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
-		if ($action == 'addcontact' && $usercancreate) {
+		if ($action == 'addcontact') {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -2062,14 +2060,14 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut' && $usercancreate) {
+		} elseif ($action == 'swapstatut') {
 			// bascule du statut d'un contact
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		} elseif ($action == 'deletecontact' && $usercancreate) {
+		} elseif ($action == 'deletecontact') {
 			// Efface un contact
 			$result = $object->delete_contact($lineid);
 
