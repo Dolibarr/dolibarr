@@ -2520,13 +2520,12 @@ if ($action == 'create' && $usercancreate) {
 				$objectsrc->update_price(1);
 			}
 
-			print "\n<!-- " . $classname . " info -->";
-			print "\n";
-			print '<input type="hidden" name="amount"         value="' . $objectsrc->total_ht . '">' . "\n";
-			print '<input type="hidden" name="total"          value="' . $objectsrc->total_ttc . '">' . "\n";
-			print '<input type="hidden" name="tva"            value="' . $objectsrc->total_tva . '">' . "\n";
-			print '<input type="hidden" name="origin"         value="' . $objectsrc->element . '">';
-			print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
+			print "\n<!-- " . $classname . " info -->\n";
+			print '<input type="hidden" name="amount"   value="' . $objectsrc->total_ht . '">' . "\n";
+			print '<input type="hidden" name="total"    value="' . $objectsrc->total_ttc . '">' . "\n";
+			print '<input type="hidden" name="tva"      value="' . $objectsrc->total_tva . '">' . "\n";
+			print '<input type="hidden" name="origin"   value="' . $objectsrc->element . '">';
+			print '<input type="hidden" name="originid" value="' . $objectsrc->id . '">';
 
 			switch ($classname) {
 				case 'Propal':
@@ -2751,7 +2750,6 @@ if ($action == 'create' && $usercancreate) {
 							);
 						}
 
-
 						$paymentTermsSelect = $form->getSelectConditionsPaiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
 
 						$formquestion[] = array(
@@ -2818,12 +2816,17 @@ if ($action == 'create' && $usercancreate) {
 				if ($conf->browser->name == 'ie') {
 					$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
 				}
-				$formquestion = array(
+				$formquestion = [
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-				);
+					[
+						'type' => 'other',
+						'name' => 'idwarehouse',
+						'label' => $langs->trans("SelectWarehouseForStockIncrease"),
+						'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo)
+					]
+				];
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
