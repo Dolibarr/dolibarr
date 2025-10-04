@@ -1353,7 +1353,8 @@ class MouvementStock extends CommonObject
 			dol_print_error(null, "Failed to fetch product");
 			return -1;
 		}
-
+		$oldqtywarehouse = 0;
+		$fk_product_stock = 0;
 		$this->db->begin();
 		$sql = "SELECT rowid, reel FROM ".$this->db->prefix()."product_stock";
 		$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product); // This is a unique key
@@ -1363,7 +1364,9 @@ class MouvementStock extends CommonObject
 			if ($obj) {
 				$oldqtywarehouse = $obj->reel;
 				$fk_product_stock = $obj->rowid;
-			} else $error = -2;
+			} else {
+				$error = -2;
+			}
 			$this->db->free($resql);
 		} else {
 			$this->errors[] = $this->db->lasterror();
