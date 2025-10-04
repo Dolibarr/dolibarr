@@ -119,7 +119,7 @@ abstract class CommonObject
 	public $table_element;
 
 	/**
-	 * @var string Name of id column
+	 * @var ?string Name of id column
 	 */
 	public $table_rowid;
 
