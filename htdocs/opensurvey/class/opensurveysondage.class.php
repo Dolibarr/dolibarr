@@ -278,10 +278,10 @@ class Opensurveysondage extends CommonObject
 		$sql .= "'".$this->db->escape($this->id_sondage)."',";
 		$sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
 		$sql .= " ".(int) $user->id.",";
-		$sql .= " '".$this->db->escape($this->title)."',";
+		$sql .= " '".$this->db->escape((string) $this->title)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".(int) $this->status.",";
-		$sql .= " '".$this->db->escape($this->format)."',";
+		$sql .= " '".$this->db->escape((string) $this->format)."',";
 		$sql .= " ".((int) $this->mailsonde).",";
 		$sql .= " ".((int) $this->allow_comments).",";
 		$sql .= " ".((int) $this->allow_spy).",";
