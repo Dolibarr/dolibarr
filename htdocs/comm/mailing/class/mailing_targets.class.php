@@ -178,7 +178,7 @@ class MailingTarget extends CommonObject
 		if (empty($this->status)) {
 			$status = 0;
 		}
-		if ($status != $statut) {
+		if ($this->status !== $this->statut) {
 			return -4;
 		}
 		if (empty($this->fk_contact)) {
@@ -243,7 +243,7 @@ class MailingTarget extends CommonObject
 		if (empty($this->status)) {
 			$status = 0;
 		}
-		if ($status != $statut) {
+		if ($this->status !== $this->statut) {
 			return -4;
 		}
 		if (empty($this->fk_contact)) {
@@ -274,15 +274,9 @@ class MailingTarget extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				dol_syslog(__METHOD__ . ' success');
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->db->rollback();
-				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
-				return -5;
-			}
+			dol_syslog(__METHOD__ . ' success');
+			$this->db->commit();
+			return 1;
 		} else {
 			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$this->error = $langs->trans("ErrorRecordAlreadyExists", $this->email);
