@@ -2900,12 +2900,12 @@ if ($action == 'create' && $usercancreate) {
 			$langs->load('subtotals');
 			$type = 'title';
 			$depth_array = $object->getPossibleLevels($langs);
-			require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+			include DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_create.tpl.php';
 		} elseif ($action == 'add_subtotal_line') {
 			$langs->load('subtotals');
 			$type = 'subtotal';
 			$titles = $object->getPossibleTitles();
-			require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+			include DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_create.tpl.php';
 		}
 
 		// Call Hook formConfirm
@@ -2957,7 +2957,6 @@ if ($action == 'create' && $usercancreate) {
 			}
 		}
 		$morehtmlref .= '</div>';
-
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
