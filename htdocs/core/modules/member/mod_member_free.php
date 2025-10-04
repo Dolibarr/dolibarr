@@ -145,11 +145,7 @@ class mod_member_free extends ModeleNumRefMembers
 			return 0;
 		}
 
-		$date = $object->date_valid; // $object->date does not exists
-		if (empty($date)) {
-			$this->error = 'Date valid not defined';
-			return 0;
-		}
+		$date = dol_now();
 
 		$fuser = null;
 		if ($object->fk_user_author > 0) {
@@ -157,7 +153,7 @@ class mod_member_free extends ModeleNumRefMembers
 			$fuser->fetch($object->fk_user_author);
 		}
 
-		$numFinal = get_next_value($db, $mask, 'member', 'ref', '', null, $date, 'next', true, $fuser);
+		$numFinal = get_next_value($db, $mask, 'adherent', 'ref', '', null, $date, 'next', true, $fuser);
 
 		return $numFinal;
 	}
