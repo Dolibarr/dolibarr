@@ -145,12 +145,6 @@ class MailingTarget extends CommonObject
 		$this->labelStatus[2] = 'TargetStatusRead';
 		$this->labelStatus[3] = 'TargetStatusReadAndUnsubscribed';
 		$this->labelStatus[-1] = 'TargetStatusError';
-
-		$this->statut_dest[0] = 'TargetStatusNotSent';
-		$this->statut_dest[1] = 'TargetStatusSent';
-		$this->statut_dest[2] = 'TargetStatusRead';
-		$this->statut_dest[3] = 'TargetStatusReadAndUnsubscribe'; // Read but unsubscribed
-		$this->statut_dest[-1] = 'TargetStatusError';
 	}
 
 	/**
