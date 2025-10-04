@@ -737,9 +737,9 @@ class Interventions extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of interventional
-	 * @param	string	$type		Type of the interventional
-	 * @return	Object				Object with cleaned properties
+	 * @param	int					$id			ID of interventional
+	 * @param	string				$type		Type of the interventional
+	 * @return	array<int,mixed>				Object with cleaned properties
 	 *
 	 * @url	GET {id}/contacts
 	 *
