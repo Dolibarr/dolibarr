@@ -119,6 +119,11 @@ abstract class CommonObject
 	public $table_element;
 
 	/**
+	 * @var string Name of id column
+	 */
+	public $table_rowid;
+
+	/**
 	 * @var string 		Name of subtable line
 	 */
 	public $table_element_line = '';
@@ -6948,6 +6953,7 @@ abstract class CommonObject
 			}
 		}
 
+		// Set array $sqlColumnValues (SQL field name in extrafield table => value)
 		$sqlColumnValues = ['fk_object' => (int) $this->id]; // key-value pairs for the SQL INSERT or UPDATE query
 
 		foreach ($new_array_options as $key => $newValue) {
@@ -7049,6 +7055,7 @@ abstract class CommonObject
 		if (!$error && !empty($this->fields['fk_user_modif'])) {
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET fk_user_modif = ".(int) $user->id;
+			$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 			$this->db->query($sql);
 		}
 
@@ -7473,6 +7480,7 @@ abstract class CommonObject
 			if (!$error && !empty($this->fields['fk_user_modif'])) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 				$sql .= " SET fk_user_modif = ".(int) $user->id;
+				$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 				$this->db->query($sql);
 			}
 

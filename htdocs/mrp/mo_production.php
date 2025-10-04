@@ -55,11 +55,11 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
 
 // Get parameters
-$id          = GETPOSTINT('id');
-$ref         = GETPOST('ref', 'alpha');
-$action      = GETPOST('action', 'aZ09');
-$confirm     = GETPOST('confirm', 'alpha');
-$cancel      = GETPOST('cancel', 'aZ09');
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $lineid = GETPOSTINT('lineid');
@@ -557,8 +557,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $object->fk_warehouse > 0) {
-		$tmpwarehouse->fetch($object->fk_warehouse);
-		$fk_default_warehouse = $object->fk_warehouse;
+		$tmpwarehouse->fetch((int) $object->fk_warehouse);
+		$fk_default_warehouse = (int) $object->fk_warehouse;
 	}
 
 	$head = moPrepareHead($object);

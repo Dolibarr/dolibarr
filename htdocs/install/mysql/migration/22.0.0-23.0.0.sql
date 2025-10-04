@@ -179,14 +179,19 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 -- default deposit % if payment term needs it on supplier
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
-
-
-create table llx_categorie_propal
+CREATE TABLE llx_categorie_propal
 (
-  fk_categorie      integer NOT NULL,
+  fk_categorie integer NOT NULL,
   fk_propal integer NOT NULL,
-  import_key        varchar(14)
-)ENGINE=innodb;
+  import_key varchar(14)
+) ENGINE=innodb;
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_propal ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_propal);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_propal ADD INDEX idx_categorie_propal_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_propal ADD INDEX idx_categorie_propal_fk_propal (fk_propal);
+ALTER TABLE llx_categorie_propal ADD CONSTRAINT fk_categorie_propal_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_propal ADD CONSTRAINT fk_categorie_propal_fk_propal_rowid FOREIGN KEY (fk_propal) REFERENCES llx_propal (rowid);
 
 create table llx_categorie_supplier_proposal
 (

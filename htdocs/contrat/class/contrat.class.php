@@ -584,14 +584,14 @@ class Contrat extends CommonObject
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'contract/".$this->db->escape($this->newref)."'";
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'contract/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
 						$this->error = $this->db->lasterror();
 					}
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'contract/".$this->db->escape($this->newref)."'";
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filepath = 'contract/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -1069,7 +1069,7 @@ class Contrat extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 
 			// Load object modContract
-			$module = (getDolGlobalString('CONTRACT_ADDON') ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
+			$module = getDolGlobalString('CONTRACT_ADDON', 'mod_contract_serpis');
 			if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}
@@ -1763,7 +1763,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description = '".$this->db->escape($desc)."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET description = '".$this->db->escape($desc)."'";
 		$sql .= ",subprice = ".((float) price2num($subprice));
 		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
 		$sql .= ",qty = ".((float) $qty);

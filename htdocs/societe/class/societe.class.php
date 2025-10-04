@@ -872,7 +872,7 @@ class Societe extends CommonObject
 
 	// Warehouse
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_warehouse;
 
