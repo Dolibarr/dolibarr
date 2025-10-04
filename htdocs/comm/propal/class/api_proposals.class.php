@@ -660,9 +660,9 @@ class Proposals extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of proposal
-	 * @param	string	$type		Type of the proposal
-	 * @return	array				array of contact associated
+	 * @param	int					$id			ID of proposal
+	 * @param	string				$type		Type of the proposal
+	 * @return	array<int,mixed>				Array of contacts associated
 	 *
 	 * @url	GET {id}/contacts
 	 *
