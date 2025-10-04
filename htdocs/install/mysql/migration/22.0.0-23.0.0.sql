@@ -200,4 +200,6 @@ create table llx_categorie_supplier_proposal
   import_key          varchar(14)
 )ENGINE=innodb;
 
+ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
+
 -- end of migration
