@@ -579,13 +579,13 @@ class Orders extends DolibarrApi
 	}
 
 	/**
-	 * Get contacts of given order
+	 * Get contacts of a given order
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of order
-	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
-	 * @return	Object				Object with cleaned properties
+	 * @param	int					$id			ID of order
+	 * @param	string				$type		Type of the contact ('BILLING', 'SHIPPING', 'CUSTOMER', ...)
+	 * @return	array<int,mixed>				Array of contacts
 	 *
 	 * @url	GET {id}/contacts
 	 *
@@ -608,7 +608,7 @@ class Orders extends DolibarrApi
 
 		$contacts = $this->commande->liste_contact(-1, 'external', 0, $type);
 
-		return $this->_cleanObjectDatas($contacts);
+		return $contacts;
 	}
 
 	/**
