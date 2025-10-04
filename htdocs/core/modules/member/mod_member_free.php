@@ -128,7 +128,8 @@ class mod_member_free extends ModeleNumRefMembers
 	/**
 	 *  Return next free value
 	 *
-	 *  @param  Member	$object     Object we need next value for
+	 *  @param  ?Societe	$objsoc		Object third party
+	 *  @param  ?Adherent	$object		Object we need next value for
 	 *  @return string|int<-1,0>   			Next value if OK, -1 or 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
