@@ -775,7 +775,7 @@ class Interventions extends DolibarrApi
 	 * @param	int    				$id             Id of interventional to update
 	 * @param	int    				$contactid      Row key of the contact in the array contact_ids.
 	 * @param	string 				$type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
-	 * @return	array<int,mixed>					array of contacts
+	 * @return	Object								Object deleted
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
