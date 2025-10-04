@@ -45,6 +45,11 @@ class Opensurveysondage extends CommonObject
 	public $table_element = 'opensurvey_sondage';
 
 	/**
+	 * @var string
+	 */
+	public $table_rowid = 'id_sondage';
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'poll';
@@ -141,12 +146,12 @@ class Opensurveysondage extends CommonObject
 	public $commentaires;
 
 	/**
-	 * @var string admin mail
+	 * @var ?string admin mail
 	 */
 	public $mail_admin;
 
 	/**
-	 * @var string admin name
+	 * @var ?string admin name
 	 */
 	public $nom_admin;
 
