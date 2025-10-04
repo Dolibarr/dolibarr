@@ -98,7 +98,7 @@ class Mailings extends DolibarrApi
 
 		$this->mailing->fetchObjectLinked();
 
-		if (!DolibarrApi::_checkAccessToResource('project', $this->mailing->fk_project)) {
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -133,7 +133,8 @@ class Mailings extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		foreach ($fk_projects as $project => $value) {
+		$arrayProjects = explode(",", $fk_projects);
+		foreach ($arrayProjects as $project => $value) {
 			if (!DolibarrApi::_checkAccessToResource('project', ((int) $value))) {
 				throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 			}
@@ -237,7 +238,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing to clone not found, id='.$id);
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('project', $result->fk_project)) {
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -319,7 +320,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('project', $result->fk_project)) {
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -376,7 +377,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('project', $result->fk_project)) {
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -422,7 +423,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('project', $result->fk_project)) {
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -469,7 +470,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('project', $result->fk_project)) {
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -515,7 +516,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('project', $result->fk_project)) {
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -567,7 +568,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('project', $result->fk_project)) {
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
