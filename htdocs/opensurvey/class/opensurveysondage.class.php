@@ -161,13 +161,13 @@ class Opensurveysondage extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var string title of survey
+	 * @var ?string title of survey
 	 * @deprecated Rename the field titre into title into the table to allow to change this in fields and remove this declaration.
 	 */
 	public $titre;
 
 	/**
-	 * @var string title of survey
+	 * @var ?string title of survey
 	 */
 	public $title;
 
@@ -182,7 +182,7 @@ class Opensurveysondage extends CommonObject
 	public $status;
 
 	/**
-	 * @var string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
+	 * @var ?string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
 	 */
 	public $format;
 
