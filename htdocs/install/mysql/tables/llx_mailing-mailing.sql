@@ -53,5 +53,5 @@ create table llx_mailing
   statut			smallint       DEFAULT 0,            -- status (draft:0, valid: 1, approved: 2, sent: 3)
   note_private    text,
   note_public     text,
-  fk_project	integer DEFAULT 0
+  fk_project	integer DEFAULT NULL
 )ENGINE=innodb;
