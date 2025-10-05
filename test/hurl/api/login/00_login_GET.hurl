@@ -1,5 +1,5 @@
 # GET Login should fail
-GET http://localhost:8080/api/index.php/login?login=foo&password=bar
+GET http://{{hostnport}}/api/index.php/login?login=foo&password=bar
 HTTP 403
 [Asserts]
 jsonpath "$.error.code" == 403
