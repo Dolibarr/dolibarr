@@ -520,7 +520,7 @@ class PaymentDonation extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 

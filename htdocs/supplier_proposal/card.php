@@ -38,6 +38,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
@@ -489,6 +490,12 @@ if (empty($reshook)) {
 				}
 
 				if ($id > 0) {
+					if (isModEnabled('category')) {
+						$categories = GETPOST('categories', 'array');
+						if (method_exists($object, 'setCategories')) {
+							$object->setCategories($categories);
+						}
+					}
 					if (!$error) {
 						$db->commit();
 
@@ -553,6 +560,8 @@ if (empty($reshook)) {
 				$object->cloture($user, GETPOSTINT('statut'), GETPOST('note', 'restricthtml'));
 			}
 		}
+	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
 	}
 
 	// Actions when printing a doc from card
@@ -1455,6 +1464,12 @@ if ($action == 'create') {
 			print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 			print '</td></tr>';
 		}
+		// Categories
+		if (isModEnabled('category')) {
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->selectCategories(Categorie::TYPE_SUPPLIER_PROPOSAL, 'categories', $object);
+			print "</td></tr>";
+		}
 
 		// Other attributes
 		$parameters = array('colspan' => ' colspan="3"', 'cols' => 3);
@@ -1825,7 +1840,32 @@ if ($action == 'create') {
 			print '</td>';
 			print '</tr>';
 		}
-
+		// Categories
+		if (isModEnabled('category')) {
+			print '<tr><td>';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans("Categories");
+			print '<td><td class="right">';
+			if ($usercancreate) {
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td>';
+			if ($action == 'edittags') {
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				print '<input type="hidden" name="action" value="settags">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print $form->selectCategories(Categorie::TYPE_SUPPLIER_PROPOSAL, 'categories', $object);
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER_PROPOSAL, 1);
+			}
+			print "</td></tr>";
+		}
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 

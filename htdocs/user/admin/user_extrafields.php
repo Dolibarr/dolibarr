@@ -68,7 +68,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("Users");
+$textobject = $langs->transnoentitiesnoconv("Users");	// Used into files core/tpl/admin_extrafields_xxx.tpl.php
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
 llxHeader('', $langs->trans("UsersSetup"), $help_url, '', 0, 0, '', '', '', 'mod-user page-admin_user_extrafields');

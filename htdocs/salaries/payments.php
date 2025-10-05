@@ -255,8 +255,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
+if (!$user->hasRight('salaries', 'readchild')) {
+	$sql .= " AND s.fk_user = ".(int) $user->id;
+}
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND sal.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
 }
 
 // Search criteria

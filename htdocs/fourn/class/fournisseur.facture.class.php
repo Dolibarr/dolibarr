@@ -1017,6 +1017,8 @@ class FactureFournisseur extends CommonInvoice
 
 				$this->socid  = $obj->socid;
 
+				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
+
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();

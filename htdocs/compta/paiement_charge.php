@@ -122,7 +122,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 				$paymentid = $paiement->create($user, (GETPOST('closepaidcontrib') == 'on' ? 1 : 0));
 				if ($paymentid < 0) {
 					$error++;
-					setEventMessages($paiement->error, null, 'errors');
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
 				}
 			}

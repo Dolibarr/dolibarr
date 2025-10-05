@@ -1905,7 +1905,7 @@ class Contact extends CommonObject
 	 * Get thirdparty contact roles of a given contact
 	 *
 	 * @param  string 	$element 	Element type
-	 * @return array<array{fk_socpeople:int,type_contact:int}>|int<-1,-1>	Array of contact roles or -1
+	 * @return array<array{fk_socpeople:int,type_contact:int}>|int<-1,-1>	Array of contact roles or -1 if error
 	 * @throws Exception
 	 */
 	public function getContactRoles($element = '')
@@ -1921,20 +1921,19 @@ class Contact extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."societe_contacts sc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople sp";
 		$sql .= " ON sc.fk_socpeople = sp.rowid AND sp.statut = 1";
-		$sql .= " WHERE sc.fk_soc =".((int) $this->socid);
+		$sql .= " WHERE sc.fk_soc = ".((int) $this->socid);
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
 		$sql .= " AND sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND tc.active = 1";
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$tab[] = array('fk_socpeople' => $obj->id, 'type_contact' => $obj->fk_c_type_contact);
+				$tab[$obj->id] = array('fk_socpeople' => $obj->id, 'type_contact' => $obj->fk_c_type_contact);
 
 				$i++;
 			}
