@@ -5738,7 +5738,7 @@ class Societe extends CommonObject
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-					$tab[$i] = array(
+					$tab[$obj->id] = array(
 						'source' => $obj->source,
 						'socid' => $obj->socid,
 						'id' => $obj->id,
@@ -5758,7 +5758,7 @@ class Societe extends CommonObject
 						'fk_c_type_contact' => $obj->fk_c_type_contact
 					);
 				} else {
-					$tab[$i] = $obj->id;
+					$tab[$obj->id] = $obj->id;
 				}
 
 				$i++;

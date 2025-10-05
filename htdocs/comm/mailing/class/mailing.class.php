@@ -174,6 +174,12 @@ class Mailing extends CommonObject
 	 */
 	public $substitutionarrayfortest;
 
+	/**
+	 * @var ?int 			The related project ID
+	 * @see setProject(), project
+	 */
+	public $fk_project;
+
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_SENTPARTIALY = 2;
@@ -318,6 +324,7 @@ class Mailing extends CommonObject
 		$sql .= ", evenunsubscribe = ".((int) $this->evenunsubscribe);
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", note_private = '".$this->db->escape($this->note_private)."'";
+		$sql .= ", fk_project = '".((int) $this->fk_project)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -381,6 +388,7 @@ class Mailing extends CommonObject
 		$sql .= ", m.joined_file2";
 		$sql .= ", m.joined_file3";
 		$sql .= ", m.joined_file4";
+		$sql .= ", m.fk_project";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 		$sql .= " WHERE entity IN (".getEntity('mailing').")";
 		if ($ref) {
@@ -443,6 +451,7 @@ class Mailing extends CommonObject
 				$this->joined_file2 = $obj->joined_file2;
 				$this->joined_file3 = $obj->joined_file3;
 				$this->joined_file4 = $obj->joined_file4;
+				$this->fk_project = $obj->fk_project;
 
 				if ($this->messtype == 'sms') {
 					$this->picto = 'phone';

@@ -20,8 +20,8 @@ return [
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 6 occurrences
     // PhanTypeExpectedObjectPropAccess : 5 occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanParamTooMany : 3 occurrences
     // PhanPluginUndeclaredVariableIsset : 3 occurrences
@@ -41,7 +41,6 @@ return [
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/mailing/targetemailing.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
-        'htdocs/commande/class/api_orders.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/commande/class/commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanTypeInvalidDimOffset'],
@@ -176,7 +175,6 @@ return [
         'htdocs/fichinter/class/api_interventions.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/fichinter/class/fichinterrec.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/filefunc.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/fourn/class/api_supplier_orders.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/fourn/commande/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/fourn/facture/card-rec.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
