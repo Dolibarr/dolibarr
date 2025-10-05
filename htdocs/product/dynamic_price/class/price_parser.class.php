@@ -141,11 +141,8 @@ class PriceParser
 		global $user, $hookmanager, $extrafields;
 
 		$action = 'PARSEEXPRESSION';
-		if ($reshook = $hookmanager->executeHooks('doDynamiPrice', array(
-								'expression' => &$expression,
-								'product' => &$product,
-								'values' => &$values
-		), $this, $action)) {
+		$reshook = $hookmanager->executeHooks('doDynamicPrice', array('expression' => &$expression, 'product' => &$product, 'values' => &$values), $this, $action);
+		if ($reshook > 0) {
 			return $hookmanager->resArray['return'];
 		}
 		//Check if empty

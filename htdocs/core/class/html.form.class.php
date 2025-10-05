@@ -1665,7 +1665,7 @@ class Form
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Construct $out and $outarray
-			$out .= '<select id="' . $htmlname . '" class="flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($moreparam ? ' ' . $moreparam : '') . ' name="' . $htmlname . ($multiple ? '[]' : '') . '" ' . ($multiple ? 'multiple' : '') . '>' . "\n";
+			$out .= '<select id="' . $htmlname . '" class="flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($moreparam ? ' ' . $moreparam : '') . ' name="' . $htmlname . ($multiple ? '[]' : '') . '"' . ($multiple ? ' multiple' : '') . '>' . "\n";
 
 			$textifempty = (($showempty && !is_numeric($showempty)) ? $langs->trans($showempty) : '');
 			if (getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
