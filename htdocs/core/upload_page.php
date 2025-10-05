@@ -91,12 +91,14 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 	}
 	$forceFullTextIndexation = '0';												// Used by actions_linkedfiles
 
-	$_FILES['userfile']['name'] = $fileprefix.'-'.$_FILES['userfile']['name'];
+	if (!empty($_FILES['userfile']['name'])) {
+		$_FILES['userfile']['name'] = $fileprefix.'-'.$_FILES['userfile']['name'];
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+		include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-	header("Location: ".DOL_URL_ROOT.'/core/upload_page2.php?file='.urlencode($fileprefix));
-	exit;
+		header("Location: ".DOL_URL_ROOT.'/core/upload_page2.php?file='.urlencode($fileprefix));
+		exit;
+	}
 }
 
 
@@ -148,20 +150,16 @@ if (isModEnabled('supplier_invoice')) {
 	<div>'.$langs->trans("SupplierInvoice").'<br><br>';
 
 	$uploadform .= img_picto('', 'company', 'class="pictofixedwidth"');
-	//$uploadform .= '<span class="disableautoopen">';
 	$uploadform .= $form->select_company(GETPOSTINT('socid'), 'socid', '(statut:=:0)', $langs->transnoentitiesnoconv("Supplier"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
-	//$uploadform .= '</span>';
 
 	$uploadform .= '<br>';
 
-	$uploadform .= img_picto('', 'product', 'class="pictofixedwidth"');
 	$prodid = GETPOSTINT('prodid');
 	$prodtext = $langs->trans("RefOrLabel");
 
-	//$uploadform .= '<span class="disableautoopen">';
 	//$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', 0, 0, 1, 2, $prodtext, 0, array(), GETPOSTINT('socid'), '1', 0, 'maxwidth200 disableautoopen', 0, '', null, 1);
+	$uploadform .= img_picto('', 'product', 'class="pictofixedwidth"');
 	$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
-	//$uploadform .= '</span>';
 
 	$uploadform .= '<br>';
 
@@ -261,7 +259,7 @@ $out = '';
 if ($maxmin > 0) {
 	$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
-$out .= '<input class="hideobject" type="file" id="fileInput"';
+$out .= '<input class="hideobject" type="file" id="fileInput" value=""';
 // @phpstan-ignore-next-line
 $out .= ((getDolGlobalString('MAIN_DISABLE_MULTIPLE_FILEUPLOAD') || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
 // @phpstan-ignore-next-line
