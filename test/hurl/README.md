@@ -141,6 +141,6 @@ _ was chosen as separator, because it is more readable than .
 
 ## Translations and Number separator
 
-Given that Dolibarr may respond differently depending on the language configuration of Dolibarr and/or the language configuration of the webbrowser, we should have that in mind when writting out hurl test files, such that they **must** be able to be used on any Dolibarr language configuration.
+Given that Dolibarr may respond differently depending on the language configuration of Dolibarr and/or the language configuration of the webbrowser, we should have that in mind when writing out hurl test files, such that they **must** be able to be used on any Dolibarr language configuration.
 
 Thus the check in `public/payment/00_payment_newpayment.hurl` might fail on your Dolibarr installation, if so, please submit a PR with a fix.
