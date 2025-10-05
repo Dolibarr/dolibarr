@@ -229,8 +229,5 @@ ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeepin
 ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_valid (fk_user_valid);
 ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_closing (fk_user_closing);
 
-ALTER TABLE llx_accounting_bookkeeping_piece ADD CONSTRAINT fk_accounting_bookkeeping_piece_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
-ALTER TABLE llx_accounting_bookkeeping_piece ADD CONSTRAINT fk_accounting_bookkeeping_piece_fk_user_valid     FOREIGN KEY (fk_user_valid)  REFERENCES llx_user (rowid);
-
 ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
 -- end of migration
