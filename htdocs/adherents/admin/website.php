@@ -238,7 +238,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 
 	// Force nature of member (mor/phy)
 	$morphys = [
-		// "0" => $langs->trans("MorAndPhy"),
+		"" => $langs->trans("MorAndPhy"), // for empty choice
 		"phy" => $langs->trans("Physical"),
 		"mor" => $langs->trans("Moral"),
 	];
@@ -246,7 +246,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print $langs->trans("ForceMemberNature");
 	print '</td><td>';
 	$forcenature = getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY');
-	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
+	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature);
 	print "</td></tr>\n";
 
 	// Amount
