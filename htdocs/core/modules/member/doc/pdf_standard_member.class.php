@@ -272,7 +272,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 *  @param  string		$filename			Name of output file (without extension)
 	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = '', $filename = 'tmp_cards')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $mode = 'member', $nooutput = '', $filename = 'tmp_cards')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $mysoc;
