@@ -124,7 +124,7 @@ class PriceParser
 		} elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) { //Internal errors
 			return $langs->trans("ErrorPriceExpressionInternal", (string) $code);
 		} else { //Unknown errors
-			return $langs->trans("ErrorPriceExpressionUnknown", $code);
+			return $langs->trans("ErrorPriceExpressionUnknown", (string) $code);
 		}
 	}
 
