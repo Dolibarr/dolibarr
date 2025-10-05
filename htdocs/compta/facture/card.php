@@ -416,7 +416,7 @@ if (empty($reshook)) {
 		// We check invoice sign
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 			// If a credit note, the sign must be negative
-			if ($object->total_ht > 0) {
+			if ($object->total_ttc > 0) {
 				setEventMessages($langs->trans("ErrorInvoiceAvoirMustBeNegative"), null, 'errors');
 				$action = '';
 			}
