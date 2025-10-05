@@ -80,7 +80,11 @@ DoliStore modules must come with hurl tests.
 
    DOLIPORT="8080"
 
-   DOLISUBURL="/dolibarr" # if you're not just using / and no need to set /
+   DOLISUBURL="/dolibarr" # if your dolibarr is available at / - no need to set it
+
+   DOLIUSERNAME="foobar" # for GUI tests - if omitted, it will ask you
+
+   DOLIPASSWORD="topsecret" # for GUI tests - if omitted, it will ask you
 
 3. On Linux and mac execute ./run.sh
 
