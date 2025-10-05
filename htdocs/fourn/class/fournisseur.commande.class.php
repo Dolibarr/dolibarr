@@ -3160,7 +3160,7 @@ class CommandeFournisseur extends CommonOrder
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, (float) $this->multicurrency_tx, (float) $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -3199,14 +3199,14 @@ class CommandeFournisseur extends CommonOrder
 				} else {
 					// Ensure packaging is numeric, positive, and use fmod instead of %, to prevent error with decimal packaging values (resulting in division by zero)
 					if (
-							!empty($this->line->packaging)
-							&& is_numeric($this->line->packaging)
-							&& (float) $this->line->packaging > 0
-							&& fmod((float) $qty, (float) $this->line->packaging) > 0
-						) {
-							$coeff = intval($qty / $this->line->packaging) + 1;
-							$qty = $this->line->packaging * $coeff;
-							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						!empty($this->line->packaging)
+						&& is_numeric($this->line->packaging)
+						&& (float) $this->line->packaging > 0
+						&& fmod((float) $qty, (float) $this->line->packaging) > 0
+					) {
+						$coeff = intval($qty / $this->line->packaging) + 1;
+						$qty = $this->line->packaging * $coeff;
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 					}
 				}
 			}

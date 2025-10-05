@@ -202,24 +202,24 @@ create table llx_categorie_supplier_proposal
 
 CREATE TABLE llx_accounting_bookkeeping_piece
 (
-	rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	entity                integer DEFAULT 1 NOT NULL,
-	ref             		varchar(255),
+	rowid               integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	entity              integer DEFAULT 1 NOT NULL,
+	ref             	varchar(255),
 	tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	datec					datetime,
-	datep					date NOT NULL,
+	datec				datetime,
+	datep				date NOT NULL,
 	statut				smallint DEFAULT 0,
 
-	note_private			text,
+	note_private		text,
 	note_public			text,
 
 	fk_user_author		integer,
-	fk_user_modif			integer,
-	fk_user_valid			integer,
+	fk_user_modif		integer,
+	fk_user_valid		integer,
 	fk_user_closing		integer,
 
-	import_key            varchar(14),
-	extraparams           varchar(255)
+	import_key          varchar(14),
+	extraparams         varchar(255)
 ) ENGINE=innodb;
 
 ALTER TABLE llx_accounting_bookkeeping_piece ADD UNIQUE INDEX uk_accounting_bookkeeping_piece_ref (ref, entity);
@@ -232,5 +232,5 @@ ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeepin
 ALTER TABLE llx_accounting_bookkeeping_piece ADD CONSTRAINT fk_accounting_bookkeeping_piece_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
 ALTER TABLE llx_accounting_bookkeeping_piece ADD CONSTRAINT fk_accounting_bookkeeping_piece_fk_user_valid     FOREIGN KEY (fk_user_valid)  REFERENCES llx_user (rowid);
 
-
+ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
 -- end of migration

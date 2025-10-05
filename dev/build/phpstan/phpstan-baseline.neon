@@ -11641,12 +11641,6 @@ parameters:
 			path: ../../../htdocs/main.inc.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/main.inc.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 33
@@ -11950,12 +11944,6 @@ parameters:
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
-			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
 			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
 
 		-
@@ -12391,43 +12379,7 @@ parameters:
 			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
-			message: '#^Property Opensurveysondage\:\:\$format \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
 			message: '#^Property Opensurveysondage\:\:\$id_sondage \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$mail_admin \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$mailsonde \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$nom_admin \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$title \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php

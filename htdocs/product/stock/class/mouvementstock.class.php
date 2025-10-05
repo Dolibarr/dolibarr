@@ -309,8 +309,7 @@ class MouvementStock extends CommonObject
 
 		$result = $product->fetch($fk_product);
 		if ($result < 0) {
-			$this->error = $product->error;
-			$this->errors = $product->errors;
+			$this->setErrorsFromObject($product);
 			dol_print_error(null, "Failed to fetch product");
 			return -1;
 		}

@@ -5,7 +5,7 @@
  * Copyright (C) 2002-2003 	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2006-2013 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Francis Appels  		<francis.appels@yahoo.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 */
 	public function __construct($db)
 	{
-		global $langs;
+		global $langs, $_Avery_Labels;
 
 		// Translations
 		$langs->loadLangs(array("main", "admin"));
@@ -58,6 +58,7 @@ class pdf_standard_member extends CommonStickerGenerator
 		$this->name = "standard";
 		$this->description = $langs->trans('TemplateforBusinessCards');
 		//$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
+		$this->_Avery_Labels = $_Avery_Labels;
 
 		$this->type = 'pdf-various-sizes';
 	}
@@ -164,7 +165,6 @@ class pdf_standard_member extends CommonStickerGenerator
 			$pdf->SetXY($_PosX + $xleft, $_PosY + 1); // Only 1 mm and not ytop for top text
 			$pdf->Cell($this->_Width - 2 * $xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header), 0, 1, 'C');
 		}
-
 
 		$ytop += (empty($header) ? 0 : (1 + $this->_Line_Height));
 
@@ -275,7 +275,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = '', $filename = 'tmp_cards')
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
+		global $user, $conf, $langs, $mysoc;
 
 		$this->code = $srctemplatepath;
 
@@ -356,7 +356,7 @@ class pdf_standard_member extends CommonStickerGenerator
 			$textfooter = make_substitutions(getDolGlobalString("ADHERENT_CARD_FOOTER_TEXT"), $substitutionarray);
 			$textright = make_substitutions(getDolGlobalString("ADHERENT_CARD_TEXT_RIGHT"), $substitutionarray);
 
-			$nb = $_Avery_Labels[$this->code]['NX'] * $_Avery_Labels[$this->code]['NY'];
+			$nb = $this->_Avery_Labels[$this->code]['NX'] * $this->_Avery_Labels[$this->code]['NY'];
 			if ($nb <= 0) {
 				$nb = 1; // Protection to avoid empty page
 			}
@@ -380,7 +380,7 @@ class pdf_standard_member extends CommonStickerGenerator
 			$arrayofrecords = $object;
 		}
 
-		$this->Tformat = $_Avery_Labels[$this->code];
+		$this->Tformat = $this->_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
 			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
@@ -425,8 +425,6 @@ class pdf_standard_member extends CommonStickerGenerator
 			$dir = $outputdir;
 			$file = $dir.'/'.$filename;
 		}
-
-		//var_dump($file);exit;
 
 		if (!file_exists($dir)) {
 			if (dol_mkdir($dir) < 0) {
