@@ -163,17 +163,20 @@ if ($object->id) {
 	$morehtmlref .= $object->subject;
 	// Author
 	if ($object->fk_user_create > 0) {
-		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+		$morehtmlref .= '<br>';
+		//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_create);
 		$morehtmlref .= $fuser->getNomUrl(-1);
 	} elseif (!empty($object->email_msgid)) {
-		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+		$morehtmlref .= '<br>';
+		//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 		$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 		$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
 	} elseif (!empty($object->origin_email)) {
-		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+		$morehtmlref .= '<br>';
+		//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 		$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 		$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 	}
@@ -191,7 +194,7 @@ if ($object->id) {
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= '<br>';
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {

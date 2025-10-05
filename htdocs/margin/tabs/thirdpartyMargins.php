@@ -233,7 +233,8 @@ if ($socid > 0) {
 
 	print '<br>';
 
-	$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
+	// TODO Remove the DISTINCT
+	$sql = "SELECT DISTINCT s.nom, s.rowid as socid, s.code_client,";
 	$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 	$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
 	$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive

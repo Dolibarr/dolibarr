@@ -73,7 +73,7 @@ class FormResource
 	/**
 	 *  Output html form to select a resource
 	 *
-	 *	@param	int			$selected		Preselected resource id
+	 *	@param	int|int[]	$selected		Preselected resource id
 	 *	@param	string		$htmlname		Name of field in form
 	 *  @param	string		$filter			Optional filters criteria (example: 's.rowid <> x')
 	 *	@param	int<0,1>	$showempty		Add an empty field

@@ -5,7 +5,7 @@
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,7 +152,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch"));
 
 		if ($conf->expedition->dir_output) {
 			$object->fetch_thirdparty();
@@ -326,11 +326,15 @@ class pdf_merou extends ModelePdfExpedition
 					$pdf->SetFont('', 'B', $default_font_size - 3);
 					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'L', false);
 
-					$pdf->SetXY(140, $curY);
-					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked, 0, 'C', false);
+					if (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED')) {
+						$pdf->SetXY(140, $curY);
+						$pdf->MultiCell(30, 3, (string) $object->lines[$i]->qty_asked, 0, 'C', false);
+					}
 
-					$pdf->SetXY(170, $curY);
-					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', false);
+					if (!getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP')) {
+						$pdf->SetXY(170, $curY);
+						$pdf->MultiCell(30, 3, (string) $object->lines[$i]->qty_shipped, 0, 'C', false);
+					}
 
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
@@ -400,6 +404,8 @@ class pdf_merou extends ModelePdfExpedition
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -450,10 +456,14 @@ class pdf_merou extends ModelePdfExpedition
 			$pdf->MultiCell(20, 5, $outputlangs->transnoentities("Ref"), 0, 'C', true);
 			$pdf->SetXY(50, $tab_top);
 			$pdf->MultiCell(90, 5, $outputlangs->transnoentities("Description"), 0, 'L', true);
-			$pdf->SetXY(140, $tab_top);
-			$pdf->MultiCell(30, 5, $outputlangs->transnoentities("QtyOrdered"), 0, 'C', true);
-			$pdf->SetXY(170, $tab_top);
-			$pdf->MultiCell(30, 5, $outputlangs->transnoentities("QtyToShip"), 0, 'C', true);
+			if (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED')) {
+				$pdf->SetXY(140, $tab_top);
+				$pdf->MultiCell(30, 5, $outputlangs->transnoentities("QtyOrdered"), 0, 'C', true);
+			}
+			if (!getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP')) {
+				$pdf->SetXY(170, $tab_top);
+				$pdf->MultiCell(30, 5, $outputlangs->transnoentities("QtyToShip"), 0, 'C', true);
+			}
 		}
 		$pdf->RoundedRect(10, $tab_top, 190, $tab_height, $this->corner_radius, '1234', 'D');
 	}
@@ -525,8 +535,8 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetXY(11, 7);
 		if ($this->emetteur->logo) {
 			$logodir = $conf->mycompany->dir_output;
-			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-				$logodir = $conf->mycompany->multidir_output[$object->entity];
+			if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+				$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 			}
 			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -623,7 +633,7 @@ class pdf_merou extends ModelePdfExpedition
 			if (!empty($object->tracking_url)) {
 				if ($object->shipping_method_id > 0) {
 					// Get code using getLabelFromKey
-					$code = $outputlangs->getLabelFromKey($this->db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+					$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 
 					$label = '';
 					$label .= $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
@@ -633,7 +643,7 @@ class pdf_merou extends ModelePdfExpedition
 						$label .= $object->tracking_url;
 					}
 					$pdf->SetFont('', 'B', $default_font_size - 3);
-					$pdf->writeHTMLCell(50, 8, '', '', $label, 0, 1, false, true, 'L');
+					$pdf->writeHTMLCell(50, 8, null, null, $label, 0, 1, false, true, 'L');
 				}
 			}
 		} else {

@@ -2,6 +2,7 @@
 IdAgenda=ID događaja
 Actions=Događaji
 Agenda=Agenda
+AgendaEvents=Događaji dnevnog reda
 TMenuAgenda=Agenda
 Agendas=Agende
 LocalAgenda=Zadani kalendar
@@ -44,6 +45,7 @@ PropalClosedRefusedInDolibarr=Prijedlog %s odbijen
 PropalValidatedInDolibarr=Prijedlog %s potvrđen
 PropalBackToDraftInDolibarr=Prijedlog %s vrati se na status nacrta
 PropalClassifiedBilledInDolibarr=Prijedlog %s klasificiran kao fakturisan
+InvoiceCreatedInDolibarr=Faktura %s kreirana
 InvoiceValidatedInDolibarr=Faktura %s potvrđena
 InvoiceValidatedInDolibarrFromPos=Račun %s odobren na POSu
 InvoiceBackToDraftInDolibarr=Faktura %s vraćena u status izrade
@@ -134,14 +136,14 @@ AgendaModelModule=Predlošci dokumenata za događaj
 DateActionStart=Datum početka
 DateActionEnd=Datum završetka
 AgendaUrlOptions1=Također možete dodati sljedeće parametre za filtriranje prikazanog:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> za ograničavanje izlaza na radnje u vlasništvu korisnika <b>%s</b> (koristite <b>logina=!%s</b> za događaje koji nisu u vlasništvu korisnika).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> za dobijanje automatskih ili ručnih događaja
+AgendaUrlOptionsCode=<b>actioncode=%s</b> da biste dobili samo događaje sa datim kodom
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> da uključi događaje praznika.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>noolderthan=%s</b> za ograničavanje na događaje u posljednjih %s dana (zadano je %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> za ograničavanje na posljednjih 50 događaja (zadani maksimum i je %s).
 AgendaShowBirthdayEvents=Rođendani kontakata
 AgendaHideBirthdayEvents=Sakrij rođendane kontakata
 Busy=Zauzet
@@ -202,6 +204,9 @@ AppointmentDuration = Trajanje termina : %s
 BookingSuccessfullyBooked=Vaša rezervacija je sačuvana
 BookingReservationHourAfter=Potvrđujemo rezervaciju našeg sastanka na datum %s
 BookcalBookingTitle=Online termin
-Transparency = Transparency
-ReadMore = Read more
-ReadLess = Read less
+Transparency = Transparentnost
+ReadMore = Pročitajte više
+ReadLess = Čitaj manje
+RecurringEvent=Ponavljajući događaj
+EventPartOfARecurringSerie=Događaj je dio ponavljajuće serije s ID-om %s
+BookCalSystem=Online rezervacija

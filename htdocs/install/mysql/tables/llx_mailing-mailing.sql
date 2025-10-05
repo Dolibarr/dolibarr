@@ -52,5 +52,6 @@ create table llx_mailing
   joined_file4		varchar(255),
   statut			smallint       DEFAULT 0,            -- status (draft:0, valid: 1, approved: 2, sent: 3)
   note_private    text,
-  note_public     text
+  note_public     text,
+  fk_project	integer DEFAULT NULL
 )ENGINE=innodb;

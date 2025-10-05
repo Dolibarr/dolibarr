@@ -132,7 +132,6 @@ TimeAlreadyRecorded=Este es el tiempo gastado ya registrado para esta tarea/día
 NoUserAssignedToTheProject=No hay usuarios asignados a este proyecto.
 TimeSpentBy=Tiempo invertido por
 AssignTaskToUser=Asignar tarea a%s
-SelectTaskToAssign=Seleccione tarea para asignar ...
 ProjectOverview=Visión de conjunto
 ManageTasks=Usar proyectos para seguir tareas y/o informar el tiempo empleado (hojas de tiempo)
 ManageOpportunitiesStatus=Utilizar proyectos para seguir a clientes potenciales

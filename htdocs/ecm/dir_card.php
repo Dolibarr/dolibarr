@@ -412,7 +412,7 @@ if ($module == 'ecm') {
 	if ($ecmdir->fk_user_c > 0) {
 		$userecm = new User($db);
 		$userecm->fetch($ecmdir->fk_user_c);
-		print $userecm->getNomUrl(1);
+		print $userecm->getNomUrl(-1);
 	}
 	print '</td></tr>';
 }
@@ -448,7 +448,7 @@ print $object->showOptionals($extrafields, ($action == 'edit' ? 'edit' : 'view')
 print '</table>';
 
 if ($action == 'edit') {
-	print $form->buttonsSaveCancel();
+	print '<br>'.$form->buttonsSaveCancel();
 }
 
 print '</div>';
@@ -512,7 +512,7 @@ if ($user->hasRight('ecm', 'upload')) {
 // List of document
 if ($user->hasRight('ecm', 'read')) {
 	$param = '&amp;section=' . $section;
-	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload);
+	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->hasRight("ecm", "upload"));
 }
 */
 

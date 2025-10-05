@@ -47,7 +47,6 @@ $langs->loadLangs(array("main", "categories", "takepos", "printing"));
 
 $id = GETPOSTINT('id');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
-$catname = GETPOST('catname', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $printer1 = GETPOST('printer1', 'alpha');
 $printer2 = GETPOST('printer2', 'alpha');
@@ -106,34 +105,8 @@ if ($action == "SavePrinter3") {
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT) {
-	$title = $langs->trans("ProductsCategoriesArea");
-	$typetext = 'product';
-} elseif ($type == Categorie::TYPE_SUPPLIER) {
-	$title = $langs->trans("SuppliersCategoriesArea");
-	$typetext = 'supplier';
-} elseif ($type == Categorie::TYPE_CUSTOMER) {
-	$title = $langs->trans("CustomersCategoriesArea");
-	$typetext = 'customer';
-} elseif ($type == Categorie::TYPE_MEMBER) {
-	$title = $langs->trans("MembersCategoriesArea");
-	$typetext = 'member';
-} elseif ($type == Categorie::TYPE_CONTACT) {
-	$title = $langs->trans("ContactsCategoriesArea");
-	$typetext = 'contact';
-} elseif ($type == Categorie::TYPE_ACCOUNT) {
-	$title = $langs->trans("AccountsCategoriesArea");
-	$typetext = 'bank_account';
-} elseif ($type == Categorie::TYPE_PROJECT) {
-	$title = $langs->trans("ProjectsCategoriesArea");
-	$typetext = 'project';
-} elseif ($type == Categorie::TYPE_USER) {
-	$title = $langs->trans("UsersCategoriesArea");
-	$typetext = 'user';
-} else {
-	$title = $langs->trans("CategoriesArea");
-	$typetext = 'unknown';
-}
+$title = $langs->trans("Categories");
+$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
 
 $arrayofjs = array(
 	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
@@ -159,7 +132,7 @@ print '<div class="fichecenter"><br>';
 
 
 // Charge tableau des categories
-$cate_arbo = $categstatic->get_full_arbo($typetext);
+$cate_arbo = $categstatic->get_full_arbo($type);
 
 // Define fulltree array
 $fulltree = $cate_arbo;

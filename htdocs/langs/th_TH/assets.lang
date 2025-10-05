@@ -4,183 +4,143 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-NewAsset=New asset
-AccountancyCodeAsset=Accounting code (asset)
-AccountancyCodeDepreciationAsset=Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense=Accounting code (depreciation expense account)
-AssetsLines=Assets
+NewAsset=สินทรัพย์ใหม่
+AccountancyCodeAsset=รหัสบัญชี (สินทรัพย์)
+AccountancyCodeDepreciationAsset=รหัสบัญชี (บัญชีสินทรัพย์ค่าเสื่อมราคา)
+AccountancyCodeDepreciationExpense=รหัสบัญชี (บัญชีค่าเสื่อมราคา)
+AssetsLines=สินทรัพย์
+ConfirmValidateAsset=คุณแน่ใจหรือไม่ว่าต้องการตรวจสอบสินทรัพย์นี้ด้วยการอ้างอิง <b>%s</b>?
 DeleteType=ลบ
-DeleteAnAssetType=Delete an asset model
-ConfirmDeleteAssetType=Are you sure you want to delete this asset model?
-ShowTypeCard=Show model '%s'
-
+DeleteAnAssetType=ลบแบบจำลองสินทรัพย์
+ConfirmDeleteAssetType=คุณแน่ใจหรือไม่ว่าต้องการลบโมเดลสินทรัพย์นี้
+ShowTypeCard=แสดงโมเดล '%s'
 # Module label 'ModuleAssetsName'
-ModuleAssetsName=Assets
+ModuleAssetsName=สินทรัพย์
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc=Assets description
-
-#
+ModuleAssetsDesc=คำอธิบายสินทรัพย์
 # Admin page
-#
-AssetSetup=Assets setup
-AssetSetupPage=Assets setup page
-ExtraFieldsAssetModel=Complementary attributes (Asset's model)
-
-AssetsType=Asset model
-AssetsTypeId=Asset model id
-AssetsTypeLabel=Asset model label
-AssetsTypes=Assets models
-ASSET_ACCOUNTANCY_CATEGORY=Fixed asset accounting group
-
-#
+AssetSetup=การตั้งค่าสินทรัพย์
+AssetSetupPage=หน้าการตั้งค่าสินทรัพย์
+ExtraFieldsAssetModel=คุณลักษณะเสริม (แบบจำลองของสินทรัพย์)
+AssetsType=แบบจำลองสินทรัพย์
+AssetsTypeId=รหัสโมเดลสินทรัพย์
+AssetsTypeLabel=ป้ายชื่อแบบจำลองสินทรัพย์
+AssetsTypes=แบบจำลองสินทรัพย์
+ASSET_ACCOUNTANCY_CATEGORY=กลุ่มบัญชีสินทรัพย์ถาวร
+ASSET_DEPRECIATION_DURATION_PER_YEAR=ระยะเวลาตามสัดส่วนเป็นวันสำหรับการคำนวณการผ่อนชำระในหนึ่งปี
 # Menu
-#
-MenuAssets=Assets
-MenuNewAsset=New asset
-MenuAssetModels=Model assets
+MenuAssets=สินทรัพย์
+MenuNewAsset=สินทรัพย์ใหม่
+MenuAssetModels=สินทรัพย์โมเดล
 MenuListAssets=รายการ
-MenuNewAssetModel=New asset's model
+MenuNewAssetModel=รูปแบบของสินทรัพย์ใหม่
 MenuListAssetModels=รายการ
-
-#
 # Module
-#
-ConfirmDeleteAsset=Do you really want to remove this asset?
-
-#
+ConfirmDeleteAsset=คุณต้องการลบเนื้อหานี้จริง ๆ หรือไม่?
 # Tab
-#
-AssetDepreciationOptions=Depreciation options
+AssetDepreciationOptions=ตัวเลือกการคิดค่าเสื่อมราคา
 AssetAccountancyCodes=บัญชีการบัญชี
-AssetDepreciation=Depreciation
-
-#
+AssetDepreciation=ค่าเสื่อมราคา
 # Asset
-#
-Asset=Asset
-Assets=Assets
-AssetReversalAmountHT=Reversal amount (without taxes)
-AssetAcquisitionValueHT=Acquisition amount (without taxes)
-AssetRecoveredVAT=Recovered VAT
-AssetReversalDate=Reversal date
-AssetDateAcquisition=Acquisition date
-AssetDateStart=Date of start-up
-AssetAcquisitionType=Type of acquisition
+Asset=สินทรัพย์
+Assets=สินทรัพย์
+AssetReversalAmountHT=จำนวนเงินที่กลับรายการ (ไม่รวมภาษี)
+AssetAcquisitionValueHT=จำนวนการได้มา (ไม่รวมภาษี)
+AssetRecoveredVAT=ภาษีมูลค่าเพิ่มที่ขอคืน
+AssetReversalDate=วันที่กลับรายการ
+AssetDateAcquisition=วันที่ได้มา
+AssetDateStart=วันที่เริ่มต้น
+AssetAcquisitionType=ประเภทของการเข้าซื้อกิจการ
 AssetAcquisitionTypeNew=ใหม่
-AssetAcquisitionTypeOccasion=Used
-AssetType=Type of asset
-AssetTypeIntangible=Intangible
-AssetTypeTangible=Tangible
-AssetTypeInProgress=In progress
-AssetTypeFinancial=Financial
-AssetNotDepreciated=Not depreciated
-AssetDisposal=Disposal
-AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
-AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
-
-#
+AssetAcquisitionTypeOccasion=ใช้แล้ว
+AssetType=ประเภทของสินทรัพย์
+AssetTypeIntangible=จับต้องไม่ได้
+AssetTypeTangible=จับต้องได้
+AssetTypeInProgress=กำลังดำเนินการ
+AssetTypeFinancial=การเงิน
+AssetNotDepreciated=ไม่เสื่อมราคา
+AssetDisposal=การกำจัด
+AssetConfirmDisposalAsk=คุณแน่ใจหรือไม่ว่าต้องการกำจัดเนื้อหา <b> %s</b>
+AssetConfirmReOpenAsk=คุณแน่ใจหรือไม่ว่าต้องการเปิดเนื้อหา <b> %s</b> อีกครั้ง
 # Asset status
-#
-AssetInProgress=In progress
-AssetDisposed=Disposed
-AssetRecorded=Accounted
-
-#
+AssetInDraft=ร่าง
+AssetInProgress=กำลังดำเนินการ
+AssetDisposed=กำจัด
+AssetRecorded=บัญชีแล้ว
 # Asset disposal
-#
-AssetDisposalDate=Date of disposal
-AssetDisposalAmount=Disposal value
-AssetDisposalType=Type of disposal
-AssetDisposalDepreciated=Depreciate the year of transfer
-AssetDisposalSubjectToVat=Disposal subject to VAT
-
-#
+AssetDisposalDate=วันที่จำหน่าย
+AssetDisposalAmount=มูลค่าการกำจัด
+AssetDisposalType=ประเภทของการกำจัด
+AssetDisposalDepreciated=ค่าเสื่อมราคาปีที่โอน
+AssetDisposalSubjectToVat=การกำจัดต้องเสียภาษีมูลค่าเพิ่ม
 # Asset model
-#
-AssetModel=Asset's model
-AssetModels=Asset's models
-
-#
+AssetModel=แบบจำลองของสินทรัพย์
+AssetModels=แบบจำลองของสินทรัพย์
 # Asset depreciation options
-#
-AssetDepreciationOptionEconomic=Economic depreciation
-AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
-AssetDepreciationOptionDepreciationType=Depreciation type
-AssetDepreciationOptionDepreciationTypeLinear=Linear
-AssetDepreciationOptionDepreciationTypeDegressive=Degressive
-AssetDepreciationOptionDepreciationTypeExceptional=Exceptional
-AssetDepreciationOptionDegressiveRate=Degressive rate
-AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetDepreciationOptionEconomic=การเสื่อมถอยทางเศรษฐกิจ
+AssetDepreciationOptionAcceleratedDepreciation=ค่าเสื่อมราคาเร่ง (ภาษี)
+AssetDepreciationOptionDepreciationType=ประเภทค่าเสื่อมราคา
+AssetDepreciationOptionDepreciationTypeLinear=เชิงเส้น
+AssetDepreciationOptionDepreciationTypeDegressive=เสื่อมถอย
+AssetDepreciationOptionDepreciationTypeExceptional=ยอดเยี่ยม
+AssetDepreciationOptionDegressiveRate=อัตราเสื่อมถอย
 AssetDepreciationOptionDuration=ระยะเวลา
-AssetDepreciationOptionDurationType=Type duration
-AssetDepreciationOptionDurationTypeAnnual=Annual
-AssetDepreciationOptionDurationTypeMonthly=Monthly
-AssetDepreciationOptionDurationTypeDaily=Daily
-AssetDepreciationOptionRate=Rate (%%)
-AssetDepreciationOptionAmountBaseDepreciationHT=Depreciation base (excl. VAT)
-AssetDepreciationOptionAmountBaseDeductibleHT=Deductible base (excl. VAT)
-AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciation (excl. VAT)
-
-#
+AssetDepreciationOptionDurationType=ประเภทระยะเวลา
+AssetDepreciationOptionDurationTypeAnnual=ประจำปี
+AssetDepreciationOptionDurationTypeMonthly=รายเดือน
+AssetDepreciationOptionDurationTypeDaily=รายวัน
+AssetDepreciationOptionRate=อัตรา (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=ฐานค่าเสื่อมราคา (ไม่รวมภาษีมูลค่าเพิ่ม)
+AssetDepreciationOptionAmountBaseDeductibleHT=ฐานหักลดหย่อน (ไม่รวมภาษีมูลค่าเพิ่ม)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=ยอดรวมค่าเสื่อมราคาครั้งล่าสุด (ไม่รวม VAT)
 # Asset accountancy codes
-#
-AssetAccountancyCodeDepreciationEconomic=Economic depreciation
-AssetAccountancyCodeAsset=Asset
-AssetAccountancyCodeDepreciationAsset=Depreciation
-AssetAccountancyCodeDepreciationExpense=Depreciation expense
-AssetAccountancyCodeValueAssetSold=Value of asset disposed
-AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
-AssetAccountancyCodeProceedsFromSales=Proceeds from disposal
-AssetAccountancyCodeVatCollected=Collected VAT
-AssetAccountancyCodeVatDeductible=Recovered VAT on assets
-AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetAccountancyCodeDepreciationEconomic=การเสื่อมถอยทางเศรษฐกิจ
+AssetAccountancyCodeAsset=สินทรัพย์
+AssetAccountancyCodeDepreciationAsset=ค่าเสื่อมราคา
+AssetAccountancyCodeDepreciationExpense=ค่าเสื่อมราคา
+AssetAccountancyCodeValueAssetSold=มูลค่าของสินทรัพย์ที่จำหน่าย
+AssetAccountancyCodeReceivableOnAssignment=ลูกหนี้เมื่อจำหน่าย
+AssetAccountancyCodeProceedsFromSales=รายได้จากการกำจัด
+AssetAccountancyCodeVatCollected=ภาษีมูลค่าเพิ่มที่เรียกเก็บ
+AssetAccountancyCodeVatDeductible=ภาษีมูลค่าเพิ่มที่เรียกเก็บจากสินทรัพย์
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=ค่าเสื่อมราคาเร่ง (ภาษี)
 AssetAccountancyCodeAcceleratedDepreciation=บัญชี
-AssetAccountancyCodeEndowmentAcceleratedDepreciation=Depreciation expense
-AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossession/Provision
-
-#
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=ค่าเสื่อมราคา
+AssetAccountancyCodeProvisionAcceleratedDepreciation=การยึดคืน/บทบัญญัติ
 # Asset depreciation
-#
-AssetBaseDepreciationHT=Depreciation basis (excl. VAT)
-AssetDepreciationBeginDate=Start of depreciation on
+AssetBaseDepreciationHT=เกณฑ์ค่าเสื่อมราคา (ไม่รวมภาษีมูลค่าเพิ่ม)
+AssetDepreciationBeginDate=เริ่มเสื่อมราคาเมื่อ
 AssetDepreciationDuration=ระยะเวลา
-AssetDepreciationRate=Rate (%%)
-AssetDepreciationDate=Depreciation date
-AssetDepreciationHT=Depreciation (excl. VAT)
-AssetCumulativeDepreciationHT=Cumulative depreciation (excl. VAT)
-AssetResidualHT=Residual value (excl. VAT)
-AssetDispatchedInBookkeeping=Depreciation recorded
-AssetFutureDepreciationLine=Future depreciation
-AssetDepreciationReversal=Reversal
-
-#
+AssetDepreciationRate=อัตรา (%%)
+AssetDepreciationDate=วันที่คิดค่าเสื่อมราคา
+AssetDepreciationHT=ค่าเสื่อมราคา (ไม่รวมภาษีมูลค่าเพิ่ม)
+AssetCumulativeDepreciationHT=ค่าเสื่อมราคาสะสม (ไม่รวมภาษีมูลค่าเพิ่ม)
+AssetResidualHT=มูลค่าคงเหลือ (ไม่รวมภาษีมูลค่าเพิ่ม)
+AssetDispatchedInBookkeeping=บันทึกค่าเสื่อมราคาแล้ว
+AssetFutureDepreciationLine=ค่าเสื่อมราคาในอนาคต
+AssetDepreciationReversal=การกลับรายการ
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
-AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
-AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
-AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'
-AssetErrorFetchDepreciationOptionsForMode=Error when retrieving options for the '%s' depreciation mode
-AssetErrorDeleteDepreciationOptionsForMode=Error when deleting the '%s' depreciation mode options
-AssetErrorInsertDepreciationOptionsForMode=Error when inserting the '%s' depreciation mode options
-AssetErrorFetchDepreciationLines=Error when retrieving recorded depreciation lines
-AssetErrorClearDepreciationLines=Error when purging recorded depreciation lines (reversal and future)
-AssetErrorAddDepreciationLine=Error when adding a depreciation line
-AssetErrorCalculationDepreciationLines=Error when calculating the depreciation lines (recovery and future)
-AssetErrorReversalDateNotProvidedForMode=The reversal date is not provided for the '%s' depreciation method
-AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=The reversal date must be greater than or equal to the beginning of the current fiscal year for the '%s' depreciation method
-AssetErrorReversalAmountNotProvidedForMode=The reversal amount is not provided for the depreciation mode '%s'.
-AssetErrorFetchCumulativeDepreciation=Error when retrieving the accumulated depreciation amount from the depreciation line
-AssetErrorSetLastCumulativeDepreciation=Error when recording the last accumulated depreciation amount
+AssetErrorAssetOrAssetModelIDNotProvide=ไม่ได้ระบุรหัสของเนื้อหาหรือโมเดลที่พบ
+AssetErrorFetchAccountancyCodesForMode=ข้อผิดพลาดเมื่อดึงข้อมูลบัญชีการบัญชีสำหรับโหมดค่าเสื่อมราคา '%s'
+AssetErrorDeleteAccountancyCodesForMode=ข้อผิดพลาดเมื่อลบบัญชีการบัญชีจากโหมดค่าเสื่อมราคา '%s'
+AssetErrorInsertAccountancyCodesForMode=ข้อผิดพลาดเมื่อแทรกบัญชีการลงบัญชีของโหมดค่าเสื่อมราคา '%s'
+AssetErrorFetchDepreciationOptionsForMode=เกิดข้อผิดพลาดเมื่อเรียกตัวเลือกสำหรับโหมดค่าเสื่อมราคา '%s'
+AssetErrorDeleteDepreciationOptionsForMode=เกิดข้อผิดพลาดเมื่อลบตัวเลือกโหมดค่าเสื่อมราคา '%s'
+AssetErrorInsertDepreciationOptionsForMode=เกิดข้อผิดพลาดเมื่อแทรกตัวเลือกโหมดค่าเสื่อมราคา '%s'
+AssetErrorFetchDepreciationLines=เกิดข้อผิดพลาดเมื่อดึงข้อมูลบรรทัดค่าเสื่อมราคาที่บันทึกไว้
+AssetErrorClearDepreciationLines=ข้อผิดพลาดเมื่อล้างรายการค่าเสื่อมราคาที่บันทึกไว้ (กลับรายการและอนาคต)
+AssetErrorAddDepreciationLine=เกิดข้อผิดพลาดเมื่อเพิ่มบรรทัดค่าเสื่อมราคา
+AssetErrorCalculationDepreciationLines=ข้อผิดพลาดเมื่อคำนวณรายการค่าเสื่อมราคา (การกู้คืนและอนาคต)
+AssetErrorReversalDateNotProvidedForMode=ไม่ได้ระบุวันที่กลับรายการสำหรับวิธีการคิดค่าเสื่อมราคา '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=วันที่กลับรายการจะต้องมากกว่าหรือเท่ากับจุดเริ่มต้นของปีบัญชีปัจจุบันสำหรับวิธีการคิดค่าเสื่อมราคา '%s'
+AssetErrorReversalAmountNotProvidedForMode=ไม่ได้ระบุยอดเงินกลับรายการสำหรับโหมดการคิดค่าเสื่อมราคา '%s'
+AssetErrorFetchCumulativeDepreciation=เกิดข้อผิดพลาดเมื่อเรียกยอดเงินค่าเสื่อมราคาสะสมจากรายการค่าเสื่อมราคา
+AssetErrorSetLastCumulativeDepreciation=เกิดข้อผิดพลาดเมื่อบันทึกยอดค่าเสื่อมราคาสะสมครั้งล่าสุด

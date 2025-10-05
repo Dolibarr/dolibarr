@@ -59,6 +59,11 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 */
 	public $name = 'Cicada';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 30;
+
 
 	/**
 	 *  Return description of numbering module

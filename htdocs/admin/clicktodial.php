@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by the page
@@ -79,7 +81,8 @@ $user->fetch_clicktodial();
 $wikihelp = 'EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
 llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-clicktodial');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ClickToDialSetup"), $linkback, 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ClickToDialDesc")."</span><br>\n";
@@ -149,7 +152,7 @@ print '<span class="opacitymedium">'.$langs->trans("CIDLookupURL").'</span>';
 print '<br>'.$url;
 print '<br>';
 print '<br>';
-print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
+print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP')).'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -167,7 +170,7 @@ print '</form><br><br>';
 if (getDolGlobalString('CLICKTODIAL_URL')) {
 	$user->fetch_clicktodial();
 
-	$phonefortest = $mysoc->phone;
+	$phonefortest = $mysoc->phone ?? '';
 	if (GETPOST('phonefortest')) {
 		$phonefortest = GETPOST('phonefortest');
 	}
@@ -180,13 +183,13 @@ if (getDolGlobalString('CLICKTODIAL_URL')) {
 	print '</form>';
 
 	$setupcomplete = 1;
-	if (preg_match('/__LOGIN__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_login)) {
+	if (preg_match('/__LOGIN__/', getDolGlobalString('CLICKTODIAL_URL')) && empty($user->clicktodial_login)) {
 		$setupcomplete = 0;
 	}
-	if (preg_match('/__PASSWORD__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_password)) {
+	if (preg_match('/__PASSWORD__/', getDolGlobalString('CLICKTODIAL_URL')) && empty($user->clicktodial_password)) {
 		$setupcomplete = 0;
 	}
-	if (preg_match('/__PHONEFROM__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_poste)) {
+	if (preg_match('/__PHONEFROM__/', getDolGlobalString('CLICKTODIAL_URL')) && empty($user->clicktodial_poste)) {
 		$setupcomplete = 0;
 	}
 

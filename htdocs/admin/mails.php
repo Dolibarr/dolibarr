@@ -4,8 +4,8 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,12 +68,12 @@ $substitutionarrayfortest = array(
 	'__SENDEREMAIL_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
 	//'__ID__' => 'RecipientID',
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
-	'__LASTNAME__' => $langs->trans("Lastname").' ('.$langs->trans("Recipient").')',
-	'__FIRSTNAME__' => $langs->trans("Firstname").' ('.$langs->trans("Recipient").')',
-	//'__ADDRESS__'=> $langs->trans("Address").' ('.$langs->trans("Recipient").')',
-	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("Recipient").')',
-	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("Recipient").')',
-	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("Recipient").')',
+	'__LASTNAME__' => $langs->trans("Lastname").' ('.$langs->trans("MailRecipient").')',
+	'__FIRSTNAME__' => $langs->trans("Firstname").' ('.$langs->trans("MailRecipient").')',
+	//'__ADDRESS__'=> $langs->trans("Address").' ('.$langs->trans("MailRecipient").')',
+	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("MailRecipient").')',
+	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("MailRecipient").')',
+	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("MailRecipient").')',
 	'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
 	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 );
@@ -201,9 +201,7 @@ $head = email_admin_prepare_head();
 $listofmethods = array();
 $listofmethods['mail'] = 'PHP mail function';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
-if (version_compare(phpversion(), '7.0', '>=')) {
-	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
-}
+$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 
 // List of oauth services
 $oauthservices = array();
@@ -472,10 +470,13 @@ if ($action == 'edit') {
 		$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			// Note: Default value for MAIN_MAIL_SMTPS_AUTH_TYPE if not defined is 'LOGIN' (but login/pass may be empty and they won't be provided in such a case)
+			print '<input type="radio" id="radio_none" name="'.$vartosmtpstype.'" value="NONE"'.(getDolGlobalString($vartosmtpstype) == 'NONE' ? ' checked' : '').'> ';
+			print '<label for="radio_none" >'.$langs->trans("UseAUTHNONE").'</label>';
+			print '<br>';
 			print '<input type="radio" id="radio_pw" name="'.$vartosmtpstype.'" value="LOGIN"'.(getDolGlobalString($vartosmtpstype, 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
 			print '<label for="radio_pw" >'.$langs->trans("UseAUTHLOGIN").'</label>';
 			print '<br>';
-			print '<input type="radio" id="radio_plain" name="'.$vartosmtpstype.'" value="PLAIN"'.(getDolGlobalString($vartosmtpstype, 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
+			print '<input type="radio" id="radio_plain" name="'.$vartosmtpstype.'" value="PLAIN"'.(getDolGlobalString($vartosmtpstype) == 'PLAIN' ? ' checked' : '').'> ';
 			print '<label for="radio_plain" >'.$langs->trans("UseAUTHPLAIN").'</label>';
 			print '<br>';
 			print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'> ';
@@ -637,9 +638,16 @@ if ($action == 'edit') {
 	print '"></td></tr>';
 
 	// Default from type
-	$liste = array();
-	$liste['user'] = $langs->trans('UserEmail');
-	$liste['company'] = $langs->trans('CompanyEmail').' ('.(!getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $langs->trans("NotDefined") : getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')).')';
+	$liste = array(
+		'user' => array(
+			'label' => $langs->trans('UserEmail'),
+			'data-html' => $langs->trans('UserEmail')
+		),
+		'company' => array(
+			'label' => $langs->trans('CompanyEmail').' ('.getDolGlobalString('MAIN_INFO_SOCIETE_MAIL', $langs->trans("NotDefined")).')',
+			'data-html' => $langs->trans('CompanyEmail').' <span class="opacitymedium">('.getDolGlobalString('MAIN_INFO_SOCIETE_MAIL', $langs->trans("NotDefined")).')</span>'
+		)
+	);
 
 	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
 	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'), 0);
@@ -733,7 +741,9 @@ if ($action == 'edit') {
 		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
 			$authtype = getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
 			$text = '';
-			if ($authtype === "LOGIN") {
+			if ($authtype === "NONE") {
+				$text = $langs->trans("None");
+			} elseif ($authtype === "LOGIN") {
 				$text = $langs->trans("UseAUTHLOGIN");
 			} elseif ($authtype === "PLAIN") {
 				$text = $langs->trans("UseAUTHPLAIN");
@@ -946,7 +956,7 @@ if ($action == 'edit') {
 	} elseif (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') === 'company') {
 		print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
 	} else {
-		$id = preg_replace('/senderprofile_/', '', getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'));
+		$id = (int) preg_replace('/senderprofile_/', '', getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'));
 		if ($id > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
 			$emailsenderprofile = new EmailSenderProfile($db);
@@ -1020,6 +1030,10 @@ if ($action == 'edit') {
 	}
 
 	print '</div>';
+
+
+	print '<br>';
+
 
 	if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && !getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA')) {
 		/*
@@ -1103,34 +1117,39 @@ if ($action == 'edit') {
 		}
 
 		// Test DNS entry for emails
-		foreach (array('SPF', 'DMARC') as $dnstype) {
-			foreach ($domainstotest as $domaintotest => $listofemails) {
-				$dnsinfo = false;
-				$foundforemail = 0;
-				if (!empty($domaintotest) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
-					$domain = $domaintotest;
-					if ($dnstype == 'DMARC') {
-						$domain = '_dmarc.'.$domain;
+		if ($action == 'testsetup') {
+			foreach (array('SPF', 'DMARC') as $dnstype) {
+				foreach ($domainstotest as $domaintotest => $listofemails) {
+					$dnsinfo = false;
+					$foundforemail = 0;
+					if (!empty($domaintotest) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
+						$domain = $domaintotest;
+						if ($dnstype == 'DMARC') {
+							$domain = '_dmarc.'.$domain;
+						}
+						$dnsinfo = dns_get_record($domain, DNS_TXT);
 					}
-					$dnsinfo = dns_get_record($domain, DNS_TXT);
-				}
-				if (!empty($dnsinfo) && is_array($dnsinfo)) {
-					foreach ($dnsinfo as $info) {
-						if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
-							|| ($dnstype == 'DMARC' && stripos($info['txt'], 'v=dmarc') !== false)) {
-							$foundforemail++;
-							$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitylow">'.$info['txt'].'</span>');
+					if (!empty($dnsinfo) && is_array($dnsinfo)) {
+						foreach ($dnsinfo as $info) {
+							if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
+								|| ($dnstype == 'DMARC' && stripos($info['txt'], 'v=dmarc') !== false)) {
+								$foundforemail++;
+								$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitylow">'.$info['txt'].'</span>');
+							}
 						}
 					}
-				}
-				if (!$foundforemail) {
-					$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
+					if (!$foundforemail) {
+						$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
+					}
 				}
 			}
-		}
 
-		if ($text) {
-			print info_admin($langs->trans("SPFAndDMARCInformation").' :<br>'.$text, 0, 0, '1', '');
+			if ($text) {
+				print info_admin($langs->trans("SPFAndDMARCInformation").' :<br>'.$text, 0, 0, '1', '');
+			}
+		} else {
+			print img_picto('', 'info', 'class="pictofixedwidth"').'<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=testsetup">'.$langs->trans("ClickHereToCheckSPFDMARCForSetup").'...</a>';
+			print '<br><br>';
 		}
 	}
 
@@ -1183,6 +1202,7 @@ if ($action == 'edit') {
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
 
+		// Add editor assistants
 		$formmail->withlayout = 'emailing';		// Note: MAIN_EMAIL_USE_LAYOUT must be set
 		$formmail->withaiprompt = ($action == 'testhtml' ? 'html' : 'text');	// Note: Module AI must be enabled
 
@@ -1212,7 +1232,7 @@ if ($action == 'edit') {
 		// References
 		if (!empty($user->admin)) {
 			print '<br><br>';
-			print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+			print '<span class="opacitymedium wordwrap small">'.$langs->trans("EMailsWillHaveMessageID").': ';
 			print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
 			print '</span>';
 		}

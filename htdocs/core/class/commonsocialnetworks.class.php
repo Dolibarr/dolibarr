@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,8 @@ trait CommonSocialNetworks
 	public function showSocialNetwork($socialnetworks, $colspan = 4)
 	{
 		global $object, $form, $langs;
+
+		'@phan-var-force CommonSocialNetworks $object';
 
 		$nbofnetworks = count($socialnetworks);
 		$nbactive = 0;

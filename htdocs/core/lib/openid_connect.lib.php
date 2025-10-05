@@ -23,28 +23,6 @@
  */
 
 /**
- * Prepare array with list of tabs
- *
- * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
- */
-function openid_connect_prepare_head()
-{
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
-
-	$head[$h][0] = dol_buildpath("/admin/openid_connect.php", 1);
-	$head[$h][1] = $langs->trans("Parameters");
-	$head[$h][2] = 'settings';
-	$h++;
-
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'openid_connect_admin');
-
-	return $head;
-}
-
-
-/**
  * return the current state
  *
  * @return  string				String containing the state
@@ -73,5 +51,8 @@ function openid_connect_get_redirect_url()
  */
 function openid_connect_get_url()
 {
-	return getDolGlobalString('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL') . '?client_id=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') . '&redirect_uri=' . openid_connect_get_redirect_url() . '&scope=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_SCOPES') . '&response_type=code&state=' . openid_connect_get_state();
+	// Note: For the scope, we msut use rawurlencode instead of urlencode.
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL').'?client_id='.urlencode(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID')).'&redirect_uri='.urlencode(openid_connect_get_redirect_url()).'&scope='.rawurlencode(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_SCOPES')).'&response_type=code&state='.urlencode(openid_connect_get_state());
+
+	return $url;
 }

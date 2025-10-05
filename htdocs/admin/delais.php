@@ -98,6 +98,14 @@ $modules = array(
 		array(
 			'code' => 'MAIN_DELAY_SUPPLIER_BILLS_TO_PAY',
 			'img' => 'bill'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE',
+			'img' => 'propal'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL',
+			'img' => 'propal'
 		)
 	),
 	'service' => array(
@@ -143,6 +151,12 @@ $modules = array(
 			'img' => 'holiday'
 		),
 	),
+	'mrp' => array(
+		array(
+			'code' => 'MAIN_DELAY_MRP',
+			'img' => 'mrp'
+		),
+	),
 );
 
 $labelmeteo = array(0 => $langs->trans("No"), 1 => $langs->trans("Yes"), 2 => $langs->trans("OnMobileOnly"));
@@ -185,7 +199,6 @@ if ($action == 'update') {
 			}
 		}
 	}
-
 	dolibarr_set_const($db, "MAIN_DISABLE_METEO", GETPOST("MAIN_DISABLE_METEO"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_METEO_WITH_PERCENTAGE", GETPOST("MAIN_USE_METEO_WITH_PERCENTAGE"), 'chaine', 0, '', $conf->entity);
 

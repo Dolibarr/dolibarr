@@ -5,8 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ if (isModEnabled('stripe')) {
 
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha')*/) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -435,7 +435,7 @@ if (isModEnabled("bank")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td class="wordbreak">';
+print '<tr><td class="'.($user->hasRight('facture', 'paiement') ? 'tdtop' : '').'">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'string', '', 0, 0).'</td><td class="wordbreak">';
 print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
@@ -459,16 +459,31 @@ if (!empty($object->ext_payment_id)) {
 		if (!empty($stripeacc)) {
 			$connect = $stripeacc.'/';
 		}
-		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
-		if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
-			$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+
+		if ($stripecu) {
+			$url = 'https://dashboard.stripe.com/'.$connect.($object->ext_payment_site == 'Stripe' ? 'test/' : '').'customers/'.$stripecu;
+			if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
+				$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+			}
+		} else {
+			$url = 'https://dashboard.stripe.com/'.($object->ext_payment_site == 'Stripe' ? 'test/' : '').'payments/'.$object->ext_payment_id;
 		}
+
 		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account_payment, 'globe').'</a>';
 	} else {
 		print dol_escape_htmltag($object->ext_payment_id);
 	}
 	print '</td></tr>';
 }
+
+// Other attributes
+$cols = 2;
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+// Other attributes
+$parameters = array();
+$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print '</table>';
 
@@ -539,7 +554,7 @@ if ($resql) {
 			$paiement = $invoice->getSommePaiement();
 			$creditnotes = $invoice->getSumCreditNotesUsed();
 			$deposits = $invoice->getSumDepositsUsed();
-			$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
+			$alreadypaid = price2num($paiement + $creditnotes + $deposits, 'MT');
 			$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 			print '<tr class="oddeven">';
@@ -577,7 +592,7 @@ if ($resql) {
 			print '<td class="right"><span class="amount">'.price($remaintopay).'</span></td>';
 
 			// Status
-			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
+			print '<td class="right">'.$invoice->getLibStatut(5, (float) $alreadypaid).'</td>';
 
 			$parameters = array('fk_paiement' => (int) $object->id);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook

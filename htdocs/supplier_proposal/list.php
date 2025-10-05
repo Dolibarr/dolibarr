@@ -45,9 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 /**
  * @var Conf $conf
@@ -58,7 +56,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'bills', 'orders', 'products'));
+$langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'bills', 'orders', 'products', 'projects'));
 
 $socid = GETPOSTINT('socid');
 
@@ -66,7 +64,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierproposallist';
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -106,8 +104,16 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'int');
+$searchCategorySupplierPropalList = GETPOST('search_category_supplier_proposal_list', 'array:int');
+$searchCategorySupplierPropalOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategorySupplierPropalOperator = GETPOSTINT('search_category_supplier_proposal_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategorySupplierPropalOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 $object_statut = GETPOST('supplier_proposal_statut', 'intcomma');
@@ -126,7 +132,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'sp.date_livraison';
+	$sortfield = 'sp.ref';
 }
 if (!$sortorder) {
 	$sortorder = 'DESC';
@@ -166,12 +172,17 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	'sp.ref' => 'Ref',
-	's.nom' => 'Supplier',
-	'pd.description' => 'Description',
-	'sp.note_public' => 'NotePublic',
-);
+$fieldstosearchall = array();
+foreach ($object->fields as $key => $val) {
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['sp.'.$key] = $val['label'];
+	}
+}
+$fieldstosearchall['pd.description'] = 'Description';
+$fieldstosearchall['s.nom'] = "ThirdParty";
+$fieldstosearchall['s.name_alias'] = "AliasNameShort";
+$fieldstosearchall['s.zip'] = "Zip";
+$fieldstosearchall['s.town'] = "Town";
 if (empty($user->socid)) {
 	$fieldstosearchall["p.note_private"] = "NotePrivate";
 }
@@ -196,6 +207,7 @@ $arrayfields = array(
 	'sp.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'sp.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'sp.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'sp.fk_projet' => array('label' => $langs->trans("RefProject"), 'checked' => '1', 'enabled' => (!isModEnabled("project") ? '0' : '1')),
 	'u.login' => array('label' => $langs->trans("Author"), 'checked' => '1', 'position' => 10),
 	'sp.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'sp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
@@ -216,7 +228,7 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $permissiontoread = $user->hasRight('supplier_proposal', 'lire');
 $permissiontodelete = $user->hasRight('supplier_proposal', 'supprimer');
-
+$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
 
 /*
  * Actions
@@ -256,8 +268,10 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_ht = '';
 		$search_multicurrency_montant_vat = '';
 		$search_multicurrency_montant_ttc = '';
+		$search_project_ref = '';
 		$search_login = '';
 		$search_product_category = '';
+		$searchCategorySupplierPropalList = array();
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -331,7 +345,7 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' sp.rowid, sp.note_public, sp.note_private, sp.total_ht, sp.total_tva, sp.total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
 $sql .= ' sp.fk_multicurrency, sp.multicurrency_code, sp.multicurrency_tx, sp.multicurrency_total_ht, sp.multicurrency_total_tva as multicurrency_total_vat, sp.multicurrency_total_ttc,';
 $sql .= ' sp.datec as date_creation, sp.tms as date_modification,';
-$sql .= " p.rowid as project_id, p.ref as project_ref,";
+$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
 $sql .= " u.firstname, u.lastname, u.photo, u.login, u.statut as ustatus, u.admin, u.employee, u.email as uemail";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -417,6 +431,9 @@ if ($search_multicurrency_montant_vat != '') {
 if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('sp.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
+if ($search_project_ref != '') {
+	$sql .= natural_search("p.ref", $search_project_ref);
+}
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -453,8 +470,36 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+// Search for tag/category ($searchCategorySupplierInvoiceList is an array of ID)
+if (!empty($searchCategorySupplierPropalList)) {
+	$searchCategorySupplierPropalSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierPropalList as $searchCategorySupplierPropal) {
+		if (intval($searchCategorySupplierPropal) == -2) {
+			$searchCategorySupplierPropalSqlList[] = "NOT EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal)";
+		} elseif (intval($searchCategorySupplierPropal) > 0) {
+			if ($searchCategorySupplierPropalOperator == 0) {
+				$searchCategorySupplierPropalSqlList[] = " EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal AND ck.fk_categorie = ".((int) $searchCategorySupplierPropal).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplierPropal);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierPropalSqlList[] = " EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierPropalOperator == 1) {
+		if (!empty($searchCategorySupplierPropalSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierPropalSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierPropalSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierPropalSqlList).")";
+		}
+	}
+}
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -498,7 +543,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -622,6 +667,12 @@ if ($resql) {
 	if ($search_login) {
 		$param .= '&search_login='.urlencode($search_login);
 	}
+	if ($searchCategorySupplierPropalOperator == 1) {
+		$param .= "&search_category_supplier_propal_operator=".urlencode((string) ($searchCategorySupplierPropalOperator));
+	}
+	foreach ($searchCategorySupplierPropalList as $searchCategorySupplierPropal) {
+		$param .= "&search_category_supplier_invoice_list[]=".urlencode($searchCategorySupplierPropal);
+	}
 	if ($search_town) {
 		$param .= '&search_town='.urlencode($search_town);
 	}
@@ -633,6 +684,9 @@ if ($resql) {
 	}
 	if ($search_status != '') {
 		$param .= '&search_status='.urlencode($search_status);
+	}
+	if ($search_project_ref >= 0) {
+		$param .= "&search_project_ref=".urlencode($search_project_ref);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -649,6 +703,9 @@ if ($resql) {
 		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
+	if (isModEnabled('category') && $user->hasRight('supplier_proposal', 'lire')) {
+		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+	}
 	if ($user->hasRight('supplier_proposal', 'supprimer')) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
@@ -697,7 +754,11 @@ if ($resql) {
 	$i = 0;
 
 	$moreforfilter = '';
-
+	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_PROPOSAL, $searchCategorySupplierPropalList, 'minwidth300', $searchCategorySupplierPropalOperator ? $searchCategorySupplierPropalOperator : 0);
+	}
 	// If the user can view prospects other than his'
 	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
@@ -756,6 +817,12 @@ if ($resql) {
 	if (!empty($arrayfields['sp.ref']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '</td>';
+	}
+	// Project ref
+	if (!empty($arrayfields['sp.fk_projet']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat" name="search_project_ref" value="'.$search_project_ref.'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
@@ -914,6 +981,12 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['sp.ref']['label'], $_SERVER["PHP_SELF"], 'sp.ref', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
+
+	if (!empty($arrayfields['sp.fk_projet']['checked'])) {
+		print_liste_field_titre($arrayfields['sp.fk_projet']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
@@ -1016,10 +1089,13 @@ if ($resql) {
 	$i = 0;
 	$total = 0;
 	$subtotal = 0;
+
+	$userstatic = new User($db);
+	$objectstatic = new SupplierProposal($db);
+	$projectstatic = new Project($db);
+
 	$savnbfield = $totalarray['nbfield'];
-	$totalarray = array();
-	$totalarray['nbfield'] = 0;
-	$totalarray['val'] = array();
+	$totalarray = array('nbfield' => 0, 'val' => array(), 'pos' => array());
 	$totalarray['val']['sp.total_ht'] = 0;
 	$totalarray['val']['sp.total_tva'] = 0;
 	$totalarray['val']['sp.total_ttc'] = 0;
@@ -1056,7 +1132,7 @@ if ($resql) {
 				print '</td></tr>';
 			}
 		} else {
-			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? 'opacitymedium' : '').'">';
+			print '<tr class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
@@ -1094,6 +1170,21 @@ if ($resql) {
 				print '</td></tr></table>';
 
 				print "</td>\n";
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Project
+			if (!empty($arrayfields['sp.fk_projet']['checked'])) {
+				$projectstatic->id = $obj->project_id;
+				$projectstatic->ref = $obj->project_ref;
+				$projectstatic->title = $obj->project_title;
+				print '<td>';
+				if ($obj->project_id > 0) {
+					print $projectstatic->getNomUrl(1);
+				}
+				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

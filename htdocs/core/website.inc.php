@@ -99,7 +99,7 @@ if (!empty($pageid) && $pageid > 0) {
 
 	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
-	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'other')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
+	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'setup', 'other')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
 		$weblangs->load("website");
 
 		// Security options

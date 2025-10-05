@@ -17,16 +17,17 @@
 --
 -- ============================================================================
 
-CREATE TABLE llx_accounting_bookkeeping_tmp 
+CREATE TABLE llx_accounting_bookkeeping_tmp
 (
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  ref             		VARCHAR(30),				--
   entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
   doc_date              date NOT NULL,				-- FEC:PieceDate
   doc_type              varchar(30) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
   doc_ref               varchar(300) NOT NULL,		-- 					| facture_client/reglement_client/... reference number
   fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
   fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
-  thirdparty_code       varchar(32),				-- Third party code (customer or supplier) when record is saved (may help debug) 
+  thirdparty_code       varchar(32),				-- Third party code (customer or supplier) when record is saved (may help debug)
   subledger_account     varchar(32),				-- FEC:CompAuxNum	| account number of subledger account
   subledger_label       varchar(255),				-- FEC:CompAuxLib	| label of subledger account
   numero_compte         varchar(32),		        -- FEC:CompteNum	| account number
@@ -49,7 +50,7 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
   piece_num             integer NOT NULL,			-- FEC:EcritureNum
-  date_validated        datetime,					-- FEC:ValidDate	| if empty: movement not validated / if not empty: movement validated (No deleting / No modification) 
+  date_validated        datetime,					-- FEC:ValidDate	| if empty: movement not validated / if not empty: movement validated (No deleting / No modification)
   import_key            varchar(14),
   extraparams	        varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;

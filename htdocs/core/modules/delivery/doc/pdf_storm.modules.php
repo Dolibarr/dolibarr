@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2020      John BOTELLA
- * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -128,7 +128,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *  @param      int<0,1>	$hidedetails		Do not show line details
 	 *  @param      int<0,1>	$hidedesc			Do not show desc
 	 *  @param      int<0,1>	$hideref			Do not show ref
-	 *  @return     int<0,1>             			1=OK, 0=KO
+	 *  @return     int<-1,1>             			1=OK, <=0 => KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -144,7 +144,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings"));
 
 		if ($conf->expedition->dir_output) {
 			$object->fetch_thirdparty();
@@ -476,14 +476,14 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 					// Quantity
 					if ($this->getColumnStatus('qty_shipped')) {
-						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', $object->lines[$i]->qty_shipped);
+						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', (string) $object->lines[$i]->qty_shipped);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Remaining to ship
 					if ($this->getColumnStatus('qty_remaining')) {
 						$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
-						$this->printStdColumnContent($pdf, $curY, 'qty_remaining', $qtyRemaining);
+						$this->printStdColumnContent($pdf, $curY, 'qty_remaining', (string) $qtyRemaining);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -584,6 +584,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -694,7 +696,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -890,7 +892,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(
@@ -985,7 +987,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
 			'width' => 20, // in mm
-			'status' => true,
+			'status' => !getDolGlobalString('DELIVERY_PDF_HIDE_SHIPPED'),
 			'title' => array(
 				'textkey' => 'QtyShippedShort'
 			),
@@ -996,7 +998,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->cols['qty_remaining'] = array(
 			'rank' => $rank,
 			'width' => 20, // in mm
-			'status' => 1,
+			'status' => !getDolGlobalString('DELIVERY_PDF_HIDE_QTYTOSHIP'),
 			'title' => array(
 				'textkey' => 'KeepToShipShort'
 			),

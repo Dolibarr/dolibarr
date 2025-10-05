@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Janniaux <alexandre.janniaux@gmail.com>
  *
@@ -256,7 +256,7 @@ class AccountingJournal extends CommonObject
 		}
 		if ($withlabel == 2 && !empty($this->nature)) {
 			$key = $langs->trans("AccountingJournalType".$this->nature);
-			$transferlabel = ($key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
+			$transferlabel = ($key != "AccountingJournalType".strtoupper($langs->trans((string) $this->nature)) ? $key : $this->label);
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$transferlabel.($nourl ? '</span>' : '');
 		}
 
@@ -440,7 +440,7 @@ class AccountingJournal extends CommonObject
 		}
 		// Define begin binding date
 		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) . "'";
+			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) . "'";
 		}
 		$sql .= " ORDER BY ad.depreciation_date";
 

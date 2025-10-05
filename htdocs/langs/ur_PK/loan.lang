@@ -23,12 +23,12 @@ AddLoan=قرض بنائیں
 FinancialCommitment=مالی وابستگی
 InterestAmount=دلچسپی
 CapitalRemain=سرمایہ باقی ہے۔
-TermPaidAllreadyPaid = یہ اصطلاح پہلے سے ادا کی جاتی ہے۔
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+TermPaidAllreadyPaid = یہ اصطلاح پہلے ہی ادا کر دی گئی ہے۔
+CantUseScheduleWithLoanStartedToPaid = ادائیگی شروع ہونے کے ساتھ قرض کے لیے ٹائم لائن نہیں بنا سکتے
 CantModifyInterestIfScheduleIsUsed = اگر آپ شیڈول استعمال کرتے ہیں تو آپ دلچسپی میں ترمیم نہیں کر سکتے
 # Admin
 ConfigLoan=ماڈیول قرض کی ترتیب
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) بطور ڈیفالٹ سرمائے کے لیے استعمال کیا جائے گا (قرض ماڈیول)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) سود کے لیے بطور ڈیفالٹ استعمال کیا جائے گا (قرض ماڈیول)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) انشورنس کے لیے بطور ڈیفالٹ استعمال کیا جائے گا (قرض ماڈیول)
 CreateCalcSchedule=مالی وابستگی میں ترمیم کریں۔

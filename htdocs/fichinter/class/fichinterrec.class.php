@@ -325,7 +325,7 @@ class FichinterRec extends Fichinter
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
-				$this->user_author = $obj->fk_user_author;
+				$this->user_author_id = $obj->fk_user_author;
 				$this->model_pdf = empty($obj->model_pdf) ? "" : $obj->model_pdf;
 				$this->rang = !empty($obj->rang) ? $obj->rang : "";
 				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
@@ -372,7 +372,7 @@ class FichinterRec extends Fichinter
 		$sql .= ' l.price, l.qty, l.tva_tx, l.remise_percent, l.subprice, l.duree, l.date,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql .= ' l.rang, l.special_code,';
-		$sql .= ' l.fk_unit, p.ref as product_ref, p.fk_product_type as fk_product_type,';
+		$sql .= ' l.fk_unit, l.extraparams, p.ref as product_ref, p.fk_product_type as fk_product_type,';
 		$sql .= ' p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -412,6 +412,8 @@ class FichinterRec extends Fichinter
 				$line->rang = $objp->rang;
 				$line->special_code = $objp->special_code;
 				$line->fk_unit = $objp->fk_unit;
+
+				$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				$this->lines[$i] = $line;
 

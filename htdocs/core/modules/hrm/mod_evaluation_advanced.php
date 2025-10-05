@@ -71,10 +71,15 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstEvaluation" value="HRM_EVALUATION_ADVANCED_MASK">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Evaluation"), $langs->transnoentities("Evaluation"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Evaluation"), $langs->transnoentities("Evaluation"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
@@ -84,7 +89,7 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskEvaluation" value="'.getDolGlobalString('HRM_EVALUATION_ADVANCED_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edismallt reposition smallpaddingimp" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edismallt reposition smallpaddingimp" value="'.$langs->trans("Save").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 

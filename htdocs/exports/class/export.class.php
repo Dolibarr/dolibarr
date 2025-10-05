@@ -426,7 +426,6 @@ class Export
 				}
 				break;
 			case 'Duree':
-				break;
 			case 'Numeric':
 				// if there is a signe +
 				if (strpos($ValueField, "+") > 0) {
@@ -649,7 +648,6 @@ class Export
 				$szMsg = $langs->trans('ExportDateFilter');
 				break;
 			case 'Duree':
-				break;
 			case 'Numeric':
 				$szMsg = $langs->trans('ExportNumericFilter');
 				break;
@@ -803,10 +801,7 @@ class Export
 									$remaintopay = $tmpobjforcomputecall->getRemainToPay();
 								}
 								$obj->$alias = $remaintopay;
-							} elseif (is_array($item) &&
-								array_key_exists('rule', $item) &&
-								$item['rule'] == 'compute'
-							) {
+							} elseif (is_array($item) && array_key_exists('rule', $item) && $item['rule'] == 'compute') {
 								// Custom compute
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								$value = '';
@@ -853,11 +848,11 @@ class Export
 								// TODO FIXME
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
-								$computestring = is_string($item) ? $item : json_encode($item);
+								//$computestring = is_string($item) ? $item : json_encode($item);
 								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
-								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
+								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." extrafields is not yet supported, please remove field.";
 								return -1;
 							}
 						}
@@ -967,7 +962,6 @@ class Export
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."export_model";
@@ -1006,7 +1000,7 @@ class Export
 	public function list_export_model()
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$sql = "SELECT em.rowid, em.field, em.label, em.type, em.filter";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model as em";

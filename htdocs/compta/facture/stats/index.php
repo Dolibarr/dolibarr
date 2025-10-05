@@ -5,7 +5,7 @@
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,8 @@ $categ_id = GETPOSTINT('categ_id');
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
-$select_categ_categ_id = GETPOST('select_categ_categ_id', 'array');
+$select_categ_categ_id = GETPOST('select_categ_categ_id', 'array:int');
+$select_categ_invoice_id=GETPOST('select_categ_invoice_id', 'array:int');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -99,7 +100,6 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
-llxHeader();
 
 $picto = 'bill';
 $title = $langs->trans("BillsStatistics");
@@ -111,6 +111,7 @@ if ($mode == 'supplier') {
 	$dir = $conf->fournisseur->facture->dir_temp;
 }
 
+llxHeader('', $title);
 
 print load_fiche_titre($title, '', $picto);
 
@@ -125,6 +126,10 @@ if ($mode == 'customer') {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
+	if (is_array($select_categ_invoice_id) && !empty($select_categ_invoice_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_invoice as cat ON (f.rowid = cat.fk_invoice)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_invoice_id)).')';
+	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
@@ -133,6 +138,10 @@ if ($mode == 'supplier') {
 	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
+	}
+	if (is_array($select_categ_invoice_id) && !empty($select_categ_invoice_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_supplier_invoice as cat ON (f.rowid = cat.fk_supplier_invoice)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_invoice_id)).')';
 	}
 }
 
@@ -246,7 +255,7 @@ if (!$mesg) {
 	$px3->SetLegend($legend);
 	$px3->SetYLabel($langs->trans("AmountAverage"));
 	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetMinValue((int) $px3->GetFloorMinValue());
 	$px3->SetWidth($WIDTH);
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);
@@ -339,10 +348,32 @@ if (isModEnabled('category')) {
 	print '</td></tr>';
 }
 
+
+// Category facture
+if (isModEnabled('category')) {
+	$cat_type = '';
+	$cat_label = '';
+	if ($mode == 'customer') {
+		$cat_type = Categorie::TYPE_INVOICE;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("BillsCustomers"));
+	}
+	if ($mode == 'supplier') {
+		$cat_type = Categorie::TYPE_SUPPLIER_INVOICE;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("BillsSuppliers"));
+	}
+	print '<tr><td>'.$cat_label.'</td><td>';
+	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
+	print img_picto('', 'category', 'class="pictofixedwidth"');
+	print $form->multiselectarray('select_categ_invoice_id', $cate_arbo, GETPOST('select_categ_invoice_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
+	print '</td></tr>';
+}
+
+
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid ? $userid : -1, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers($userid ? $userid : -1, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Status
 print '<tr><td>'.$langs->trans("Status").'</td><td>';

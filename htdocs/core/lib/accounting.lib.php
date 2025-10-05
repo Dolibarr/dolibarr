@@ -281,7 +281,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
  */
 function getDefaultDatesForTransfer()
 {
-	global $db, $conf;
+	global $db;
 
 	$date_start = '';
 	$date_end = '';

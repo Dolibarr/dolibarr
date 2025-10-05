@@ -301,12 +301,12 @@ CurrencyThousandthSingTND=tysięczny
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Kampanie mailingowe
-DemandReasonTypeSRC_CAMP_EMAIL=Wysyłanie kampanię
+DemandReasonTypeSRC_CAMP_EMAIL=Kampania mailowa
 DemandReasonTypeSRC_CAMP_PHO=Telefon kampanii
 DemandReasonTypeSRC_CAMP_FAX=Kampania Fax
 DemandReasonTypeSRC_COMM=Handlowych kontakt
 DemandReasonTypeSRC_SHOP=Sklep kontakt
-DemandReasonTypeSRC_WOM=Word of mouth
+DemandReasonTypeSRC_WOM=Z polecenia
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Pracownik
 DemandReasonTypeSRC_SPONSORING=Sponsorowanie

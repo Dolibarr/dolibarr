@@ -840,7 +840,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 			} elseif ($data['item'] == 'ExpenseReport') {
 				$expensereport->id = (int) $data['id'];
 				$expensereport->ref = $data['ref'];
-				print $expensereport->getNomUrl(1, 0, 0, 0, 0, 0);
+				print $expensereport->getNomUrl(1, '0', 0, 0, '0', 0);
 			} elseif ($data['item'] == 'SalaryPayment') {
 				$salary_payment->id = (int) $data['id'];
 				$salary_payment->ref = $data['ref'];
@@ -852,7 +852,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 			} elseif ($data['item'] == 'SocialContributions') {
 				$charge_sociales->id = (int) $data['id'];
 				$charge_sociales->ref = $data['ref'];
-				print $charge_sociales->getNomUrl(1, 0, 0, 0, 0);
+				print $charge_sociales->getNomUrl(1, '0', 0, 0, 0);
 			} elseif ($data['item'] == 'VariousPayment') {
 				$various_payment->id = (int) $data['id'];
 				$various_payment->ref = $data['ref'];

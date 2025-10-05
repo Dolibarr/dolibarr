@@ -124,9 +124,8 @@ print $langs->trans("EnableBarOrRestaurantFeatures");
 print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
 print '</center>';
 
-print '<br>';
-
 if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
+	print '<br>';
 	print '<br>';
 	print '<a href="" onclick="Floors(); return false;"><span class="fa fa-glass-cheers"></span> '.$langs->trans("DefineTablePlan").'</a><br>';
 	print '<br><br>';
@@ -184,6 +183,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		print $langs->trans("SupplementCategory");
 		print '</td>';
 		print '<td class="nowrap">';
+		//print $form->selectCategories(Categorie::TYPE_PRODUCT, 'TAKEPOS_SUPPLEMENTS_CATEGORY', null);
 		print img_picto('', 'category', 'class="pictofixedwidth"');
 		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0, 0, 'minwidth 200 maxwidth500 widthcentpercentminusx');
 		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');

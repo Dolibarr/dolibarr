@@ -5,7 +5,7 @@
 -- Copyright (C) 2004		Guillaume Delecourt			<guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
 -- Copyright (C) 2007		Patrick Raguin				<patrick.raguin@gmail.com>
--- Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+-- Copyright (C) 2011-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
 -- Copyright (C) 2023		Udo Tamm					<dev@dolibit.de>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -335,7 +335,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5360,'PCG25-DEV','STOCK',  '397',5344,'Dépréciations des stocks de marchandises','1');
 
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5365,'PCG25-DEV','THIRDPARTY',   '40',5970,'Fournisseurs et comptes rattachés','1');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5367,'PCG25-DEV','THIRDPARTY',  '401',5365,'Fournisseurs','1');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active, centralized) VALUES (__ENTITY__, 5367,'PCG25-DEV','THIRDPARTY',  '401',5365,'Fournisseurs','1', '1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5368,'PCG25-DEV','THIRDPARTY', '4011',5367,'Fournisseurs - Achats de biens et prestations de services','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5369,'PCG25-DEV','THIRDPARTY', '4017',5367,'Fournisseurs - Retenues de garantie','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5370,'PCG25-DEV','THIRDPARTY',  '403',5365,'Fournisseurs - Effets à payer','1');
@@ -355,7 +355,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5384,'PCG25-DEV','THIRDPARTY','40974',5382,'Fournisseurs d''immobilisations','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5385,'PCG25-DEV','THIRDPARTY', '4098',5379,'Rabais, remises, ristournes à obtenir et autres avoirs non encore reçus','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5386,'PCG25-DEV','THIRDPARTY',   '41',5970,'Clients et comptes rattachés','1');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5388,'PCG25-DEV','THIRDPARTY',  '411',5386,'Clients','1');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active, centralized) VALUES (__ENTITY__, 5388,'PCG25-DEV','THIRDPARTY',  '411',5386,'Clients','1', '1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5389,'PCG25-DEV','THIRDPARTY', '4111',5388,'Clients - Ventes de biens ou de prestations de services','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5390,'PCG25-DEV','THIRDPARTY', '4117',5388,'Clients - Retenues de garantie','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5391,'PCG25-DEV','THIRDPARTY',  '413',5386,'Clients - Effets à recevoir','1');
@@ -369,7 +369,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5399,'PCG25-DEV','THIRDPARTY', '4197',5396,'Clients - Autres avoirs','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5400,'PCG25-DEV','THIRDPARTY', '4198',5396,'Rabais, remises, ristournes à accorder et autres avoirs à établir','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5401,'PCG25-DEV','THIRDPARTY',   '42',5970,'Personnel et comptes rattachés','1');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5402,'PCG25-DEV','THIRDPARTY',  '421',5401,'Personnel - Rémunérations dues','1');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active, centralized) VALUES (__ENTITY__, 5402,'PCG25-DEV','THIRDPARTY',  '421',5401,'Personnel - Rémunérations dues','1', '1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5403,'PCG25-DEV','THIRDPARTY',  '422',5401,'Comité social et économique','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5404,'PCG25-DEV','THIRDPARTY',  '424',5401,'Participation des salariés aux résultats','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5405,'PCG25-DEV','THIRDPARTY', '4246',5404,'Réserve spéciale','1');

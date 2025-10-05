@@ -21,6 +21,7 @@ CREATE TABLE llx_accounting_bookkeeping
 (
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
+  ref             		VARCHAR(30),				-- FEC:EcritureNum  | accounting transaction id. In future, will be not null and will replace piece_num that is an ID, not a ref.
   piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting transaction id
   doc_date              date NOT NULL,				-- FEC:PieceDate    | date of source document
   doc_type              varchar(30) NOT NULL,		-- 					| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur/import

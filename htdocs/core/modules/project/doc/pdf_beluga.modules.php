@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2018  Charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -217,11 +217,11 @@ class pdf_beluga extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->project->multidir_output[$object->entity]) {
+		if ($conf->project->multidir_output[$object->entity ?? $conf->entity]) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->project->multidir_output[$object->entity];
+			$dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -426,9 +426,9 @@ class pdf_beluga extends ModelePDFProjects
 						'title' => "ListExpenseReportsAssociatedProject",
 						'class' => 'ExpenseReport',
 						'table' => 'expensereport',
-						'datefieldname' => 'dated',
+						'datefieldname' => 'date_debut',
 						'margin' => 'minus',
-						'disableamount' => 1,
+						'disableamount' => 0,
 						'test' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
 						'lang' => 'trip'),
 					'agenda' => array(
@@ -521,7 +521,7 @@ class pdf_beluga extends ModelePDFProjects
 								$pageposbefore = $pdf->getPage();
 
 								// Description of line
-								$idofelement = $elementarray[$i];
+								$idofelement = (int) $elementarray[$i];
 								if ($classname == 'ExpenseReport') {
 									// We get id of expense report
 									$expensereportline = new ExpenseReportLine($this->db);
@@ -644,6 +644,9 @@ class pdf_beluga extends ModelePDFProjects
 									if (empty($date)) {
 										$date = $element->datev; // Intervention card
 									}
+									if (empty($date)) {
+										$date = $element->date_debut; // Expense report
+									}
 								}
 
 								$pdf->SetXY($this->posxdate, $curY);
@@ -682,7 +685,7 @@ class pdf_beluga extends ModelePDFProjects
 									$outputstatut = $element->getLibStatut(1);
 								}
 								$pdf->SetXY($this->posxstatut, $curY);
-								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
+								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, null, null, true, 0, true);
 
 								if ($qualifiedfortotal) {
 									$total_ht += $element->total_ht;
@@ -744,6 +747,8 @@ class pdf_beluga extends ModelePDFProjects
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

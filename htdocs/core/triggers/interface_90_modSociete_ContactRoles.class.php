@@ -6,7 +6,7 @@
  * Copyright (C) 2013 Cedric GROSS <c.gross@kreiz-it.fr>
  * Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2015 Bahfir Abbes <bafbes@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 			|| $action === 'CONTRACT_CREATE' || $action === 'FICHINTER_CREATE' || $action === 'PROJECT_CREATE' || $action === 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
+			'@phan-var-force Propal|Commande|Facture|CommandeFournisseur|FactureFournisseur|SupplierProposal|Contrat|Fichinter|Project|Ticket $object';
 			$socid = (property_exists($object, 'socid') ? $object->socid : $object->fk_soc);
 
 			if (!empty($socid) && $socid > 0) {

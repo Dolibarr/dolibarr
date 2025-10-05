@@ -131,7 +131,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte = str_replace(array('{s1}', '{s2}', '{s3}', '{s4}'), array($s1, $s2, $s3, $s4), $texte);
 		$texte .= "<br>\n";
 		// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
+		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL')) {
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
 		// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
@@ -154,7 +154,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
 		$texte .= "<br>\n";
-		$texte .= '<textarea class="flat" cols="60" name="value5">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value5">';
 		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
 			$texte .= $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS;
 		}
@@ -293,8 +293,6 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
 	{
-		global $conf;
-
 		if ($type == 'supplier') {
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$typethirdparty = 'accountancy_code_supplier';

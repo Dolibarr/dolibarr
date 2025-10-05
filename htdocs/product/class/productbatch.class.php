@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -335,8 +335,7 @@ class Productbatch extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
-			$this->errors = array_merge($this->errors, $object->errors);
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 

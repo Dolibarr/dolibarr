@@ -89,6 +89,21 @@ if (!empty($batchnumber)) {
 }
 $cost_price = GETPOST('cost_price', 'alpha');
 
+
+// Load variable for pagination
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -127,11 +142,13 @@ $error = 0;
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
+$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
 $usercanupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
 
 if ($object->isService()) {
 	$label = $langs->trans('Service');
 	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'lire');
+	$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
 }
 
 if ($object->id > 0) {
@@ -355,7 +372,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 		$error++;
 		$action = 'transfert';
 	}
-	if (!GETPOSTINT("nbpiece")) {
+	if (!GETPOST("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action = 'transfert';
@@ -432,7 +449,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
-						$pricesrc,
+						(float) $pricesrc,
 						$eatby,
 						$sellby,
 						$batch,
@@ -450,7 +467,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
-						$pricedest,
+						(float) $pricedest,
 						$eatby,
 						$sellby,
 						(string) $batch,
@@ -469,7 +486,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
-						$pricesrc,
+						(float) $pricesrc,
 						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result1 < 0) {
@@ -484,7 +501,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
-						$pricedest,
+						(float) $pricedest,
 						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result2 < 0) {
@@ -672,7 +689,7 @@ if ($id > 0 || $ref) {
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-			if (!$usercancreadprice) {
+			if (!$usercancreadsupplierprice) {
 				print $form->editfieldkey($text, 'cost_price', '', $object, 0, 'amount:6');
 				print '</td><td>';
 				print $form->editfieldval($text, 'cost_price', '', $object, 0, 'amount:6');
@@ -686,11 +703,11 @@ if ($id > 0 || $ref) {
 
 
 			// AWP
-			print '<tr><td class="titlefield">';
+			print '<tr><td class="titlefieldmiddle">';
 			print $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc"));
 			print '</td>';
 			print '<td>';
-			if ($object->pmp > 0 && $usercancreadprice) {
+			if ($object->pmp > 0 && $usercancreadsupplierprice) {
 				print price($object->pmp).' '.$langs->trans("HT");
 			}
 			print '</td>';
@@ -701,7 +718,7 @@ if ($id > 0 || $ref) {
 			print '<td>';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0) {
-				if ($product_fourn->product_fourn_price_id > 0 && $usercancreadprice) {
+				if ($product_fourn->product_fourn_price_id > 0 && $usercancreadsupplierprice) {
 					print $product_fourn->display_price_product_fournisseur();
 				} else {
 					print $langs->trans("NotDefined");
@@ -1085,7 +1102,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 			print '<td class="right nowraponall">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
 
 			// Value purchase
-			if ($usercancreadprice) {
+			if ($usercancreadsupplierprice) {
 				print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
 			} else {
 				print '<td class="right amount nowraponall"></td>';
@@ -1246,13 +1263,13 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 	print '<tr class="liste_total"><td class="right liste_total" colspan="4">'.$langs->trans("Total").':</td>';
 	print '<td class="liste_total right">'.price2num($total, 'MS').'</td>';
 	print '<td class="liste_total right">';
-	if ($usercancreadprice) {
+	if ($usercancreadsupplierprice) {
 		print($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
 	}
 	print '</td>';
 	// Value purchase
 	print '<td class="liste_total right">';
-	if ($usercancreadprice) {
+	if ($usercancreadsupplierprice) {
 		print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
 	}
 	print '</td>';

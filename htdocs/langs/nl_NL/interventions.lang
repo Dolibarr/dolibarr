@@ -86,4 +86,4 @@ TypeContact_fichinter_external_BILLING=Klant contact van interventiefacturering
 TypeContact_fichinter_external_CUSTOMER=Klant contact met follow-up interventie
 NotARecurringInterventionalTemplate=Geen terugkerend interventiesjabloon
 ShowInterventionModel=Interventiemodel tonen
-CreateRepeatableIntervention=Create recurring intervention
+CreateRepeatableIntervention=Maak terugkerende interventie
