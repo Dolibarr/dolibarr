@@ -238,6 +238,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 
 	// Force nature of member (mor/phy)
 	$morphys = [
+		// "0" => $langs->trans("MorAndPhy"),
 		"phy" => $langs->trans("Physical"),
 		"mor" => $langs->trans("Moral"),
 	];
