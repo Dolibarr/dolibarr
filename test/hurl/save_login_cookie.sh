@@ -28,4 +28,4 @@ if [[ -z ${COOKIEJAR+x} ]]; then
 	COOKIEJAR=/tmp/cookie.jar
 fi
 
-hurl --variable "hostnport=${hostnport}" --variable "username=${DOLIUSERNAME}" --secret "password=${DOLIPASSWORD}" --test gui/save_login_cookie.hurl --cookie-jar ${COOKIEJAR}
+hurl --variable "hostnport=${hostnport}" --variable "username=${DOLIUSERNAME}" --secret "password=${DOLIPASSWORD}" --test gui/save_login_cookie.hurl --cookie-jar "${COOKIEJAR}"
