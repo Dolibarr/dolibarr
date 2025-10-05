@@ -26,9 +26,6 @@
  */
 
 require_once '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -79,23 +79,24 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		$permlevel2 = 'read';
 		$fileprefix = 'upload_page-by'.$user->id.'-'.$modulepart.'-'.(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : 0).'-'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
 	} elseif ($modulepart == 'expensereport') {
-		$fileprefix = 'upload_page-by'.$user->id.'-'.$modulepart.'-'.(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : 0);
+		$fileprefix = 'upload_page-by'.$user->id.'-'.$modulepart.'-'.(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : 0).'-'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
 	} elseif ($modulepart == 'salaries') {
 		$fileprefix = 'upload_page-by'.$user->id.'-'.$modulepart.'-'.(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : 0);
 	}
 
 	if ($permlevel2) {
-		$permissiontoadd = $user->hasRight($module, $permlevel1, $permlevel2);
+		$permissiontoadd = $user->hasRight($module, $permlevel1, $permlevel2);	// Used by actions_linkedfiles
 	} else {
-		$permissiontoadd = $user->hasRight($module, $permlevel1);
+		$permissiontoadd = $user->hasRight($module, $permlevel1);				// Used by actions_linkedfiles
 	}
-	$forceFullTextIndexation = '1';
+	$forceFullTextIndexation = '0';												// Used by actions_linkedfiles
 
 	$_FILES['userfile']['name'] = $fileprefix.'-'.$_FILES['userfile']['name'];
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-	// Then ...
+	header("Location: ".DOL_URL_ROOT.'/core/upload_page2.php?file='.urlencode($fileprefix));
+	exit;
 }
 
 
@@ -106,6 +107,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 $form = new Form($db);
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+/*
 if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
 	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
@@ -116,19 +118,17 @@ if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
 	// HTTP/1.0
 	header('Cache-Control: no-cache');
 }
+*/
 
 $title = $langs->trans("UploadFile");
 $help_url = '';
 
-// URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Upload file -->'."\n";	// This is used by DoliDroid to know page is a search page
 $arrayofjs = array();
 $arrayofcss = array();
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-upload page-card');
-//top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre('', '', '', 0, '', '', '<h2>'.$title.'</h2>');
+print load_fiche_titre('', '', '', 0, '', '', '<h2>'.img_picto('', 'upload').' '.$title.'</h2>');
 
 
 // Instantiate hooks of thirdparty module
@@ -238,6 +238,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="uploadfile">';
 print '<input type="hidden" name="sendit" value="1">';
 print '<input type="hidden" name="modulepart" id="modulepart" value="">';
+print '<input type="hidden" name="overwritefile" value="1">';
 
 print '<div class="center"><div class="center" style="padding: 10px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
