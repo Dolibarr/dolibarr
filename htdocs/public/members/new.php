@@ -610,7 +610,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 	// Moral/Physic attribute
 	$morphys = [
-		// "0" => $langs->trans("MorAndPhy"),
+		// "" => $langs->trans("MorAndPhy"),
 		"phy" => $langs->trans("Physical"),
 		"mor" => $langs->trans("Moral"),
 	];
