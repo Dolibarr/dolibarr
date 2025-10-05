@@ -1,3 +1,3 @@
 # Check status
-GET http://localhost:8080/
+GET http://{{hostnport}}/
 HTTP 200
