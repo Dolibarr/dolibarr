@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ function accounting_prepare_head(AccountingAccount $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/accountancy/admin/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("AccountAccounting");
 	$head[$h][2] = 'card';
 	$h++;
@@ -110,7 +110,6 @@ function length_accountg($account)
 		if ($i >= 1) {
 			while ($i < $g) {
 				$account .= '0';
-
 				$i++;
 			}
 
@@ -149,7 +148,6 @@ function length_accounta($accounta)
 		if ($i >= 1) {
 			while ($i < $a) {
 				$accounta .= '0';
-
 				$i++;
 			}
 
