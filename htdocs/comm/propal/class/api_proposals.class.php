@@ -787,7 +787,7 @@ class Proposals extends DolibarrApi
 			foreach ($contacts as $contact) {
 				if ($contact['id'] == $contactid && $contact['code'] == $type) {
 					$result = $this->propal->delete_contact($contact['rowid']);
-	
+
 					if (!$result) {
 						throw new RestException(500, 'Error when deleted the contact');
 					}
