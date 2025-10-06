@@ -3666,21 +3666,30 @@ class Product extends CommonObject
 			// If stock decrease is on invoice validation, the theoretical stock continue to
 			// count the orders lines containing product in theoretical stock when some are already removed by invoice validation.
 			if ($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
+				// Do the request using an UNION instead of a OR in the JOIN that is very slow
 				if (getDolGlobalString('DECREASE_ONLY_UNINVOICEDPRODUCTS')) {
 					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation but only if order not yet invoice.
 					$adeduire = 0;
 					$sql = "SELECT SUM(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
 					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
-					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					//$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande' ";
 					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
 					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
 
-					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
+					$sql .= " UNION ";
+
+					$sql .= "SELECT SUM(".$this->db->ifsql('f.type=2', -1, 1)." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
+					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture' ";
+					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
+					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
+					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
+
 					$resql = $this->db->query($sql);
 					if ($resql) {
-						if ($this->db->num_rows($resql) > 0) {
-							$obj = $this->db->fetch_object($resql);
+						while ($obj = $this->db->fetch_object($resql)) {
 							$adeduire += $obj->count;
 						}
 					}
@@ -3694,7 +3703,17 @@ class Product extends CommonObject
 					$adeduire = 0;
 					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
 					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
-					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					//$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande' ";
+					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
+					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product = ".((int) $this->id);
+					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
+
+					$sql .= " UNION ";
+
+					$sql .= "SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
+					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture' ";
 					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product = ".((int) $this->id);
 					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
@@ -3702,8 +3721,7 @@ class Product extends CommonObject
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
 					if ($resql) {
-						if ($this->db->num_rows($resql) > 0) {
-							$obj = $this->db->fetch_object($resql);
+						while ($obj = $this->db->fetch_object($resql)) {
 							$adeduire += $obj->count;
 						}
 					} else {

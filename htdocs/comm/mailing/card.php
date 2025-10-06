@@ -793,7 +793,7 @@ if ($action == 'create') {	// aaa
 	$htmltext .= '</span></i>';
 
 
-	$availablelink = $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
+	$availablelink = $form->textwithpicto('<span class="opacitymedium hideonsmartphone small">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
 	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 
 
@@ -865,9 +865,12 @@ if ($action == 'create') {	// aaa
 	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td>';
 	print '<td><input id="subject" class="flat minwidth200 quatrevingtpercent" name="subject" id="subject" value="'.dol_escape_htmltag(GETPOST('subject', 'alphanohtml')).'"></td></tr>';
 
-	print '<tr class="fieldsforemail"><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
-	print '</td></tr>';
+	// Background color
+	/* if (getDolGlobalString('EMAILING_CAN_EDIT_BACKGROUND_COLOR')) {
+		print '<tr class="fieldsforemail"><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+		print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
+		print '</td></tr>';
+	} */
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
@@ -1330,9 +1333,11 @@ if ($action == 'create') {	// aaa
 			}
 
 			// Background color
-			/*print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-			print $htmlother->selectColor($object->bgcolor,'bgcolor','',0);
-			print '</td></tr>';*/
+			/* if (getDolGlobalString('EMAILING_CAN_EDIT_BACKGROUND_COLOR')) {
+				print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+				print $htmlother->selectColor($object->bgcolor,'bgcolor','',0);
+				print '</td></tr>';
+			}*/
 
 			print '</table>';
 

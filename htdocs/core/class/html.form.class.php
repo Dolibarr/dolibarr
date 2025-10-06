@@ -2902,7 +2902,7 @@ class Form
 				}
 			}
 
-			$out .= '<input type="text" class="minwidth100' . ($morecss ? ' ' . $morecss : '') . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . $placeholder . ' ' . (getDolGlobalString('PRODUCT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
+			$out .= '<input type="text" class="minwidth100' . ($morecss ? ' ' . $morecss : '') . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . $placeholder . ' ' . (getDolGlobalString('PRODUCT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' spellcheck="false" />';
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
