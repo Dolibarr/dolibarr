@@ -2075,8 +2075,8 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	flex:1;
 }
 .flex-item-uploadfile {
-	/* border: 2px solid #888; */
-	box-shadow: 2px 3px 10px #ccc;
+	border: 2px dashed #aaa;
+	/* box-shadow: 2px 3px 10px #ccc; */
 	border-radius: 5px;
 	cursor: pointer;
 	text-align: center;

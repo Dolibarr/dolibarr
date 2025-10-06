@@ -2359,28 +2359,10 @@ parameters:
 			path: ../../../htdocs/comm/propal/list.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../../htdocs/commande/card.php
-
-		-
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Orders\:\:_cleanObjectDatas\(\) expects object, array\<int, array\<string, int\|string\>\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
 
 		-
 			message: '#^Variable \$socid might not be defined\.$#'
@@ -9845,12 +9827,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fourn/card.php
-
-		-
-			message: '#^Parameter \#1 \$object of method SupplierOrders\:\:_cleanObjectDatas\(\) expects object, array\<mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
 
 		-
 			message: '#^Variable \$contact might not be defined\.$#'

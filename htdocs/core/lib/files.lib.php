@@ -431,6 +431,8 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 
 	if (is_null($object)) {
 		$object = new stdClass();
+		$object->id = null;
+		$object->element = null;
 	}
 
 	$filearrayindatabase = dol_dir_list_in_database(rtrim($relativedir, "/\\"), '', null, 'name', SORT_ASC, 0, '', $object);
@@ -460,11 +462,6 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 			}
 		}
 	}
-
-	//var_dump($relativedir);
-	//var_dump($filearray);
-	//var_dump($filearrayindatabase);
-	//var_dump($object->entity);
 
 	// Complete filearray with properties found into $filearrayindatabase
 	foreach ($filearray as $key => $val) {
