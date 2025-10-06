@@ -98,6 +98,10 @@ class Mailings extends DolibarrApi
 
 		$this->mailing->fetchObjectLinked();
 
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		return $this->_cleanObjectDatas($this->mailing);
 	}
 
@@ -112,6 +116,7 @@ class Mailings extends DolibarrApi
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
+	 * @param string    $fk_projects        Project ids to filter mass mailings (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'2016-01-01')"
 	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
@@ -122,10 +127,17 @@ class Mailings extends DolibarrApi
 	 *
 	 * @throws	RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_projects = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('mailing', 'read')) {
 			throw new RestException(403);
+		}
+
+		$arrayProjects = explode(",", $fk_projects);
+		foreach ($arrayProjects as $project => $value) {
+			if (!DolibarrApi::_checkAccessToResource('project', ((int) $value))) {
+				throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+			}
 		}
 
 		$obj_ret = array();
@@ -133,7 +145,9 @@ class Mailings extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing AS t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('mailing').')';
-		// Add sql filters
+		if ($fk_projects) {
+			$sql .= " AND t.fk_project IN (".$this->db->sanitize($fk_projects).")";
+		}		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
@@ -224,6 +238,10 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing to clone not found, id='.$id);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$cloningResult = $this->mailing->createFromClone(DolibarrApiAccess::$user, ((int) $id), ((int) $cloneContent), ((int) $cloneRecipients), ((int) $notrigger));
 		if ($cloningResult < 0) {
 			throw new RestException(500, "Error cloning mass mailing", array_merge(array($this->mailing->error), $this->mailing->errors));
@@ -262,9 +280,15 @@ class Mailings extends DolibarrApi
 				$this->mailing->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field === 'fk_project') {
+				if (!DolibarrApi::_checkAccessToResource('project', ((int) $value))) {
+					throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+				}
+			}
 
 			$this->mailing->$field = $this->_checkValForAPI($field, $value, $this->mailing);
 		}
+
 		if ($this->mailing->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating mass mailing", array_merge(array($this->mailing->error), $this->mailing->errors));
 		}
@@ -294,6 +318,10 @@ class Mailings extends DolibarrApi
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -349,6 +377,10 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -389,6 +421,10 @@ class Mailings extends DolibarrApi
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -434,6 +470,10 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -474,6 +514,10 @@ class Mailings extends DolibarrApi
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -522,6 +566,10 @@ class Mailings extends DolibarrApi
 		$result = $this->mailing->fetch($id);
 		if ($result < 0) {
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
@@ -614,7 +662,6 @@ class Mailings extends DolibarrApi
 		unset($object->fk_delivery_address);
 		unset($object->fk_element);
 		unset($object->fk_multicurrency);
-		unset($object->fk_project);
 		unset($object->fk_projet);
 		unset($object->import_key);
 		unset($object->isextrafieldmanaged);

@@ -1932,8 +1932,8 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	flex:1;
 }
 .flex-item-uploadfile {
-	/* border: 2px solid #888; */
-	box-shadow: 2px 3px 10px #ccc;
+	border: 2px dashed #aaa;
+	/* box-shadow: 2px 3px 10px #ccc; */
 	border-radius: 5px;
 	cursor: pointer;
 	text-align: center;
@@ -9171,6 +9171,23 @@ table.jPicker {
 		max-width: 230px;
 	}
 }
+
+
+/* Test to have 2 columns for invoice type selection */
+/*
+@media only screen and (min-width: 1024px)
+{
+	.listofinvoicetypetable {
+		display: inline-grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px
+	}
+	.listofinvoicetype {
+		display: block;
+	}
+}
+*/
+
 
 /** For toggle Display of customer/Supplyer Invoices and Credit Notes on Payment Page */
 :where(#fourn-invoices-paiments-list,#customer-invoices-paiments-list)[data-display-all-invoices="1"] tr[data-row-type="2"]{

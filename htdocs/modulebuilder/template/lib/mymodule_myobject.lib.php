@@ -34,10 +34,10 @@ function myobjectPrepareHead($object)
 
 	$langs->load("mymodule@mymodule");
 
-	$showtabofpagecontact = 1;
-	$showtabofpagenote = 1;
-	$showtabofpagedocument = 1;
-	$showtabofpageagenda = 1;
+	$showtabofpagecontact = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_CONTACT');
+	$showtabofpagenote = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_NOTE');
+	$showtabofpagedocument = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_DOCUMENT');
+	$showtabofpageagenda = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_AGENDA');
 
 	$h = 0;
 	$head = array();

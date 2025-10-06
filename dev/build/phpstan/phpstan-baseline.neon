@@ -2359,28 +2359,10 @@ parameters:
 			path: ../../../htdocs/comm/propal/list.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../../htdocs/commande/card.php
-
-		-
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Orders\:\:_cleanObjectDatas\(\) expects object, array\<int, array\<string, int\|string\>\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
 
 		-
 			message: '#^Variable \$socid might not be defined\.$#'
@@ -9847,12 +9829,6 @@ parameters:
 			path: ../../../htdocs/fourn/card.php
 
 		-
-			message: '#^Parameter \#1 \$object of method SupplierOrders\:\:_cleanObjectDatas\(\) expects object, array\<mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
 			message: '#^Variable \$contact might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -11983,12 +11959,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/js/mymodule.js.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 4
-			path: ../../../htdocs/modulebuilder/template/lib/mymodule_myobject.lib.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -12163,12 +12133,6 @@ parameters:
 			path: ../../../htdocs/mrp/class/api_mos.class.php
 
 		-
-			message: '#^Property MoLine\:\:\$fk_warehouse \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/mrp/class/api_mos.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -12212,12 +12176,6 @@ parameters:
 
 		-
 			message: '#^Property Mo\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$fk_warehouse \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/mrp/class/mo.class.php
@@ -12397,43 +12355,7 @@ parameters:
 			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
-			message: '#^Property Opensurveysondage\:\:\$format \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
 			message: '#^Property Opensurveysondage\:\:\$id_sondage \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$mail_admin \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$mailsonde \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$nom_admin \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$title \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
@@ -14311,12 +14233,6 @@ parameters:
 			path: ../../../htdocs/projet/tasks/contact.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Task and ''fetchComments'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/tasks/contact.php
-
-		-
 			message: '#^Property Project\:\:\$budget_amount \(float\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -14330,12 +14246,6 @@ parameters:
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/tasks/document.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Task and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/projet/tasks/document.php
