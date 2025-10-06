@@ -104,6 +104,7 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 
 		include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
+		// @phpstan-ignore-next-line $error may have been modified by actions_linkedfiles.inc.php
 		if (!$error) {
 			header("Location: ".DOL_URL_ROOT.'/core/upload_page2.php?file='.urlencode($fileprefix));
 			exit;
