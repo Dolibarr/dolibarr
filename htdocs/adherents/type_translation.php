@@ -90,9 +90,9 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->hasRight('
 
 	// update of object
 	if ($forcelangprod == $current_lang) {
-		$object->label		 = GETPOST("libelle", 'alphanohtml');
+		$object->label = GETPOST("libelle", 'alphanohtml');
 		$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
-		//$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+		//$object->other = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 	} else {
 		$object->multilangs[$forcelangprod]["label"] = GETPOST("libelle", 'alphanohtml');
 		$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
@@ -116,13 +116,13 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->hasRight(
 
 	foreach ($object->multilangs as $key => $value) { // saving new values in the object
 		if ($key == $current_lang) {
-			$object->label			= GETPOST("libelle-".$key, 'alphanohtml');
+			$object->label = GETPOST("libelle-".$key, 'alphanohtml');
 			$object->description = dol_htmlcleanlastbr(GETPOST("desc-".$key, 'restricthtml'));
-			$object->other			= dol_htmlcleanlastbr(GETPOST("other-".$key, 'restricthtml'));
+			$object->other = dol_htmlcleanlastbr(GETPOST("other-".$key, 'restricthtml'));
 		} else {
-			$object->multilangs[$key]["label"]			= GETPOST("libelle-".$key, 'alphanohtml');
+			$object->multilangs[$key]["label"] = GETPOST("libelle-".$key, 'alphanohtml');
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr(GETPOST("desc-".$key, 'restricthtml'));
-			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr(GETPOST("other-".$key, 'restricthtml'));
+			$object->multilangs[$key]["other"] = dol_htmlcleanlastbr(GETPOST("other-".$key, 'restricthtml'));
 		}
 	}
 
@@ -200,9 +200,9 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
 	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
+		print '<a class="butAction" href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/type_translation.php', ['action' => 'create', 'rowid' => $object->id], true).'">'.$langs->trans("Add").'</a>';
 		if ($cnt_trans > 0) {
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
+			print '<a class="butAction" href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/type_translation.php', ['action' => 'edit', 'rowid' => $object->id], true).'">'.$langs->trans("Update").'</a>';
 		}
 	}
 }
@@ -254,7 +254,7 @@ if ($action == 'edit') {
 			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';
 			print '<div class="inline-block marginbottomonly floatright">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
+			print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id, 'action' => 'delete', 'langtodelete' => $key], true).'">'.img_delete('', 'class="valigntextbottom"').'</a>';
 			print '</div>';
 
 
