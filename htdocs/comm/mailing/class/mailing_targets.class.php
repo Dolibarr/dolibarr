@@ -213,6 +213,33 @@ class MailingTarget extends CommonObject
 		}
 	}
 
+	/**
+	 *  Delete Mailing target
+	 *
+	 *  @param	User	$user		User that delete
+	 *  @return int         		>0 if OK, <0 if KO
+	 */
+	public function delete($user)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_target";
+		$sql .= " WHERE rowid = " . ((int) $this->id);
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			dol_syslog(__METHOD__ . ' success');
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Update an Mailing Target
