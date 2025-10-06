@@ -187,7 +187,7 @@ if ($object->id > 0) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 	if (isModEnabled('agenda')) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/comm/action/card.php', ['action' => 'create', 'backtopage' => dolBuildPath($_SERVER['PHP_SELF'], ['id' => $object->id, 'origin' => 'member', 'originid' => $id])]));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/comm/action/card.php', ['action' => 'create', 'backtopage' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'origin' => 'member', 'originid' => $id])]));
 	}
 
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
