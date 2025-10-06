@@ -7,7 +7,6 @@
  * the Free Software Foundation.
  */
 
-
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 require_once __DIR__ . '/abstractdocument.controller.class.php';
