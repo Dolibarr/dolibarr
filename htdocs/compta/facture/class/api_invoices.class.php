@@ -315,6 +315,7 @@ class Invoices extends DolibarrApi
 	  * @return int
 	  * @throws RestException 400
 	  * @throws RestException 401
+	  * @throws RestException 403		Access not allowed for login
 	  * @throws RestException 404
 	  * @throws RestException 405
 	  */
@@ -331,6 +332,9 @@ class Invoices extends DolibarrApi
 		}
 		if (empty($orderid)) {
 			throw new RestException(400, 'Order ID is mandatory');
+		}
+		if (!DolibarrApi::_checkAccessToResource('commande', $orderid)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$order = new Commande($this->db);
