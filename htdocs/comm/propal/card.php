@@ -43,6 +43,7 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formpropal.class.php';
@@ -475,6 +476,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
+	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'add' && $usercancreate) {
 		// Create proposal
 		$object->socid = $socid;
@@ -749,6 +752,12 @@ if (empty($reshook)) {
 						if ($result < 0) {
 							$error++;
 							setEventMessages($langs->trans("ErrorFailedToAddUserAsContact"), null, 'errors');
+						}
+					}
+					if (isModEnabled('category')) {
+						$categories = GETPOST('categories', 'array');
+						if (method_exists($object, 'setCategories')) {
+							$object->setCategories($categories);
 						}
 					}
 
@@ -2524,7 +2533,12 @@ if ($action == 'create') {
 			print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''));
 			print '</td></tr>';
 		}
-
+		if (isModEnabled('category')) {
+			// Categories
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->selectCategories(Categorie::TYPE_PROPOSAL, 'categories', $object);
+			print "</td></tr>";
+		}
 		// Template to use by default
 		print '<tr class="field_model">';
 		print '<td class="titlefieldcreate">' . $langs->trans("DefaultModel") . '</td>';
@@ -3309,6 +3323,33 @@ if ($action == 'create') {
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			print '</td></tr>';
+		}
+
+		// Categories
+		if (isModEnabled('category')) {
+			print '<tr><td>';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans("Categories");
+			print '<td><td class="right">';
+			if ($usercancreate) {
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td>';
+			if ($action == 'edittags') {
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				print '<input type="hidden" name="action" value="settags">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print $form->selectCategories(Categorie::TYPE_PROPOSAL, 'categories', $object);
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				print $form->showCategories($object->id, Categorie::TYPE_PROPOSAL, 1);
+			}
+			print "</td></tr>";
 		}
 
 		// Other attributes

@@ -480,6 +480,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 		// Load array def with activated templates
 		$def = array();
+		// TODO Replace with $def = getListOfModels($db, $type);
 		$sql = "SELECT nom";
 		$sql .= " FROM ".$db->prefix()."document_model";
 		$sql .= " WHERE type = '".$db->escape($type)."'";

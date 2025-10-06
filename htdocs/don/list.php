@@ -67,6 +67,14 @@ $search_company = GETPOST('search_company', 'alpha');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 $search_name = GETPOST('search_name', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
 
 // Load variable for pagination
@@ -177,6 +185,14 @@ if (empty($reshook)) {
 		$search_name = "";
 		$search_amount = "";
 		$search_status = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -256,6 +272,12 @@ if (trim($search_name) != '') {
 }
 if ($search_amount) {
 	$sql .= natural_search('d.amount', $search_amount, 1);
+}
+if ($search_date_start) {
+	$sql .= " AND d.datedon >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND d.datedon <= '".$db->idate($search_date_end)."'";
 }
 
 // Count total nb of records
@@ -355,12 +377,32 @@ if ($search_name) {
 if ($search_amount) {
 	$param .= '&search_amount='.urlencode($search_amount);
 }
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
+}
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
+}
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
+
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -473,8 +515,14 @@ if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 print '<td class="liste_titre">';
 print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
 print '</td>';
-print '<td class="liste_titre left">';
-print '&nbsp;';
+// Date invoice
+print '<td class="liste_titre center">';
+print '<div class="nowrapfordate">';
+print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print '</div>';
+print '<div class="nowrapfordate">';
+print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print '</div>';
 print '</td>';
 if (isModEnabled('project')) {
 	print '<td class="liste_titre right">';

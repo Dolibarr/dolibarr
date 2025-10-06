@@ -622,12 +622,12 @@ if ($object->id > 0) {
 		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $permissiontoadd);
 		print '</td><td>';
 		if ($action == 'editwarehouse') {
-			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_warehouse, 'fk_warehouse', 1);
 		} else {
 			if ($object->fk_warehouse > 0) {
 				print img_picto('', 'stock', 'class="paddingrightonly"');
 			}
-			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_warehouse, 'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -762,7 +762,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Max nb of elements in lists
-	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 	// Link summary/status board
 	$boxstat .= '<div class="box divboxtable box-halfright">';

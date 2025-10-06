@@ -80117,7 +80117,7 @@ INSERT INTO `llx_user_param` VALUES
 (12,1,'MAIN_BOXES_11','1'),
 (12,1,'MAIN_BOXES_2','1'),
 (12,1,'MAIN_BOXES_27','1'),
-(12,1,'MAIN_LANG_DEFAULT','fr_FR'),
+(12,1,'MAIN_LANG_DEFAULT','auto'),
 (12,1,'MAIN_SELECTEDFIELDS_/dolibarr_4.0/htdocs/adherents/list.php','d.zip,d.ref,d.lastname,d.firstname,d.company,d.login,d.morphy,t.libelle,d.email,d.datefin,d.statut,'),
 (12,1,'MAIN_SELECTEDFIELDS_accountancycustomerlist','l.rowid,f.ref,f.datef,p.ref,l.total_ht,l.tva_tx,s.nom,co.label,s.tva_intra,aa.data_suggest,aa.account_number,'),
 (12,1,'MAIN_SELECTEDFIELDS_accountancysupplierlines','l.rowid,f.ref,f.datef,p.ref,l.description,l.total_ht,l.tva_tx,s.nom,co.label,s.tva_intra,aa.account_number,'),
