@@ -6,7 +6,7 @@
  * Copyright (C) 2007		Patrick Raguin				<patrick.raguin@gmail.com>
  * Copyright (C) 2010		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -181,9 +181,9 @@ if ((!empty($objUser->id) || !empty($objcon->id)) && $permok) {
 
 $morehtmlright = '';
 
-$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
+$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/adherents/messaging.php', ['rowid' => $object->id]);
 $morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
-$messagingUrl = DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id;
+$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/adherents/agenda.php', ['id' => $object->id]);
 $morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
 
 if (isModEnabled('agenda')) {

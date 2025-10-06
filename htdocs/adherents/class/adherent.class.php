@@ -2779,10 +2779,10 @@ class Adherent extends CommonObject
 				$warning_delay = getWarningDelay('member', 'subscription') / 60 / 60 / 24;
 				$label = $langs->trans("MembersWithSubscriptionToReceive");
 				$labelShort = $langs->trans("MembersWithSubscriptionToReceiveShort");
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_VALIDATED.'&amp;filter=outofdate';
+				$url = dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['mainmenu' => 'members', 'statut' => self::STATUS_VALIDATED, 'filter' => 'outofdate']);
 			} elseif ($mode == 'shift') {
 				$warning_delay = getWarningDelay('member', 'subscription') / 60 / 60 / 24;
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_DRAFT;
+				$url = dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['mainmenu' => 'members', 'statut' => self::STATUS_DRAFT]);
 				$label = $langs->trans("MembersListToValid");
 				$labelShort = $langs->trans("ToValidate");
 			}
