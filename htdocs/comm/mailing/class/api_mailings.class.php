@@ -666,8 +666,6 @@ class Mailings extends DolibarrApi
 		unset($object->import_key);
 		unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
-		unset($object->labelStatus);
-		unset($object->labelStatusShort);
 		unset($object->last_main_doc);
 		unset($object->lastname);
 		unset($object->lines);
