@@ -1836,11 +1836,9 @@ class Commande extends CommonOrder
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON c.fk_availability = ca.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = dr.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
-
+		$sql .= " WHERE c.entity IN (".getEntity('commande').")"; // it's a security for API invoices create invoice from order (POST /createfromorder/{orderid})
 		if ($id) {
-			$sql .= " WHERE c.rowid=".((int) $id);
-		} else {
-			$sql .= " WHERE c.entity IN (".getEntity('commande').")"; // Dont't use entity if you use rowid
+			$sql .= " AND c.rowid=".((int) $id);
 		}
 
 		if ($ref) {
