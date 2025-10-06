@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions", "propal"));
+$langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions", "propal", "supplier_proposal"));
 $langs->loadLangs(array("knowledgemanagement", "members", "orders", "products", "stocks", "suppliers", "tickets", "website"));
 
 $mode = GETPOST('mode', 'aZ09');
