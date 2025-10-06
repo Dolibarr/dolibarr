@@ -356,7 +356,7 @@ for ($i = 1 ; $i < $MAXLINESFORTRANSFERT; $i++) {
 
 	// Number
 	print '<td><input name="'.$i.'_num_chq" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($number).'"></td>';
-	
+
 	// Description
 	print '<td><input name="'.$i.'_label" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($label).'"></td>';
 
