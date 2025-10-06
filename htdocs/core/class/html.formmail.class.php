@@ -1584,7 +1584,7 @@ class FormMail extends Form
 		$out .= '</div>';
 
 		if (isModEnabled('product') || isModEnabled('service')) {
-			include_once DOL_DOCUMENT_ROOT.'/htdocs/core/class/html.form.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
 			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
