@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2012	Destailleur Laurent			<eldy@users.sourceforge.net>
  * Copyright (C) 2014		Henry Florian				<florian.henry@open-concept.pro>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $user->hasRight('
 	$result = $object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 	if ($result > 0) {
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id);
+		header("Location: ".dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
 		exit;
 	}
 }
@@ -228,7 +228,7 @@ if ($action == 'edit') {
 			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';
 			print '<div class="inline-block marginbottomonly floatright">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
+			print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id, 'action' => 'delete', 'langtodelete' => $key], true).'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
 			print '</div>';
 
 			print '<div class="underbanner clearboth"></div>';
