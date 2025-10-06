@@ -1681,7 +1681,9 @@ function dolBuildUrl($url, $params = [], $addtoken = false)
 		$params = array_merge($params, ['token' => newToken()]);
 	}
 	// TODO TO REMOVE
-	$params = array_merge($params, ['debug' => 'debug']);
+	if (getDolGlobalString('MAIN_DEBUG_DOL_BUILDURL')) {
+		$params = array_merge($params, ['debug' => 'debug']);
+	}
 	if ($params) {
 		$url .= '?' . http_build_query($params);
 	}
