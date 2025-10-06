@@ -621,7 +621,7 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 0, fk_user_modif=".$user->id;
+		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
