@@ -69,7 +69,7 @@ function bank_prepare_head(Account $object)
 			$query = [
 				'id' => $object->id,
 				'action' => 'reconcile',
-				//'sortfield' => 'b.datev,b.dateo,b.rowid',
+				'sortfield' => 'b.datev,b.dateo,b.rowid',
 				'sortorder' => 'asc,asc,asc',
 				'search_conciliated' => 0,
 				'search_account' => $object->id,
