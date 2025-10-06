@@ -242,6 +242,116 @@ class MailingTarget extends CommonObject
 	}
 
 	/**
+	 *  Set notsent mailing target
+	 *
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setNotSent()
+	{
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql .= " SET statut = ".((int) STATUS_NOTSENT).", tms = '".$this->db->idate($now)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog("Mailing::valid", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Set sent mailing target
+	 *
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setSent()
+	{
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql .= " SET statut = ".((int) STATUS_SENT).", tms = '".$this->db->idate($now)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog("Mailing::valid", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Set read mailing target
+	 *
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setRead()
+	{
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql .= " SET statut = ".((int) STATUS_READ).", tms = '".$this->db->idate($now)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog("Mailing::valid", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Set read and unsubscribed mailing target
+	 *
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setReadAndUnsubscribed()
+	{
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql .= " SET statut = ".((int) STATUS_READANDUNSUBSCRIBED).", tms = '".$this->db->idate($now)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog("Mailing::valid", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Set error mailing target
+	 *
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setError()
+	{
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql .= " SET statut = ".((int) STATUS_ERROR).", tms = '".$this->db->idate($now)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog("Mailing::valid", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
 	 *  Update an Mailing Target
 	 *
 	 *  @param  User	$user 		Object of user making change
