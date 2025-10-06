@@ -36,9 +36,75 @@ jsonpath "$.pagination.page" >= 0
 jsonpath "$.pagination.page_count" >= 0
 jsonpath "$.pagination.limit" == 100
 
+# GET mailing with ID 0 - which should not exist
+GET http://{{hostnport}}/api/index.php/mailings/0
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing not found, id=0"}}
 
 # POST {}
 POST http://{{hostnport}}/api/index.php/mailings
 {}
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: title field missing"}}
+
+# DELETE
+DELETE http://{{hostnport}}/api/index.php/mailings/
+HTTP 405
+
+# DELETE mailing with ID 0 - which should not exist
+DELETE http://{{hostnport}}/api/index.php/mailings/0
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing not found, id=0"}}
+
+# PUT
+PUT http://{{hostnport}}/api/index.php/mailings/
+{}
+HTTP 405
+
+# PUT
+PUT http://{{hostnport}}/api/index.php/mailings/0
+{}
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing not found, id=0"}}
+
+DELETE http://{{hostnport}}/api/index.php/mailings//deleteTargets
+HTTP 400
+
+# DELETE targets of mailing with ID 0 - which should not exist
+DELETE http://{{hostnport}}/api/index.php/mailings/0/deleteTargets
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing not found, id=0"}}
+
+
+PUT http://{{hostnport}}/api/index.php/mailings//resetTargetsStatus
+HTTP 400
+
+# reset target status of mailing with ID 0 - which should not exist
+PUT http://{{hostnport}}/api/index.php/mailings/0/resetTargetsStatus
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing not found, id=0"}}
+
+
+PUT http://{{hostnport}}/api/index.php/mailings//settodraft
+HTTP 400
+
+# set mailing to draft with ID 0 - which should not exist
+PUT http://{{hostnport}}/api/index.php/mailings/0/settodraft
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing not found, id=0"}}
+
+
+PUT http://{{hostnport}}/api/index.php/mailings//validate
+HTTP 400
+
+# validate mailing with ID 0 - which should not exist
+PUT http://{{hostnport}}/api/index.php/mailings/0/validate
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing not found, id=0"}}
+
+GET http://{{hostnport}}/api/index.php/mailings/clone/
+HTTP 400
+
+GET http://{{hostnport}}/api/index.php/mailings/clone/0
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing to clone not found, id=0"}}
