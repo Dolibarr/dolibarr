@@ -2,7 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Charlene Benke	   <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -838,16 +838,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Move up/down
 		print '<td class="center linecolmove tdlineupdown">';
 		if ($i > 0) {
-			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$ruleaction['id'].'">'.img_up('default', 0, 'imgupforline').'</a>';
+			print '<a class="lineupdown" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'up', 'rowid' => $ruleaction['id']], true).'">'.img_up('default', 0, 'imgupforline').'</a>';
 		}
 		if ($i < count($object->actions) - 1) {
-			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$ruleaction['id'].'">'.img_down('default', 0, 'imgdownforline').'</a>';
+			print '<a class="lineupdown" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'down', 'rowid' => $ruleaction['id']], true).'">'.img_down('default', 0, 'imgdownforline').'</a>';
 		}
 		print '</td>';
 		// Delete
 		print '<td class="right nowraponall">';
 		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
+		print ' <a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'deleteoperation', 'operationid' => $ruleaction['id']], true).'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
 		$i++;
