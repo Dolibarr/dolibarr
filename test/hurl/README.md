@@ -72,6 +72,7 @@ DoliStore modules must come with hurl tests.
 ## Howto Usage
 
 1. Create the .settings/ directory
+
 2. Set these environment variables to know how to authenticate and where to reach your Dolibarr installation
 
    DOLAPIKEY="DOLAPIKEY: _replace_with_your_Dolibarr_Token_for_API_"
@@ -80,7 +81,11 @@ DoliStore modules must come with hurl tests.
 
    DOLIPORT="8080"
 
-   DOLISUBURL="/dolibarr" # if you're not just using / and no need to set /
+   DOLISUBURL="/dolibarr" # if your dolibarr is available at / - no need to set it
+
+   DOLIUSERNAME="foobar" # for GUI tests - if omitted, it will ask you
+
+   DOLIPASSWORD="topsecret" # for GUI tests - if omitted, it will ask you
 
 3. On Linux and mac execute ./run.sh
 

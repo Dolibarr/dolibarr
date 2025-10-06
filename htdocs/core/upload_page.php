@@ -51,6 +51,8 @@ $upload_dir = $conf->admin->dir_temp.'/import';
 // Delete the temporary files that are used when uploading files
 dol_delete_file($upload_dir.'/upload_page-by'.$user->id.'-*');
 
+$error = 0;
+
 
 /*
  * Actions
@@ -64,6 +66,11 @@ if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE') && !is_numeric(getDolGlo
 }
 
 if ($action == 'uploadfile') {	// Test on permission not required here. Done later
+	if (!$modulepart) {			// Should not happen
+		print 'Error, modulepart param is empty';
+		exit(1);
+	}
+
 	$arrayobject = getElementProperties($modulepart);
 
 	$module = $arrayobject['module'];
@@ -91,13 +98,16 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 	}
 	$forceFullTextIndexation = '0';												// Used by actions_linkedfiles
 
+
 	if (!empty($_FILES['userfile']['name'])) {
 		$_FILES['userfile']['name'] = $fileprefix.'-'.$_FILES['userfile']['name'];
 
 		include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-		header("Location: ".DOL_URL_ROOT.'/core/upload_page2.php?file='.urlencode($fileprefix));
-		exit;
+		if (!$error) {
+			header("Location: ".DOL_URL_ROOT.'/core/upload_page2.php?file='.urlencode($fileprefix));
+			exit;
+		}
 	}
 }
 
@@ -245,7 +255,7 @@ print '<div id="blockupload" class="center">'."\n";
 print $uploadform;
 
 
-$accept = '.pdf, image';
+$accept = '.pdf,image/*';
 $disablemulti = 1;
 $perm = 1;
 $capture = 1;
