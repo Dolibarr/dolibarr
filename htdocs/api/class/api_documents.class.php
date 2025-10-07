@@ -643,23 +643,23 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'task' || $modulepart == 'project_task') {
 			$modulepart = 'project_task';
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
-	
+
 			if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 				throw new RestException(403);
 			}
-	
+
 			$object = new Task($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
 				throw new RestException(404, 'Task not found');
 			}
-	
+
 			// Fetch the project to build the correct path
 			$project_result = $object->fetchProject();
 			if ($project_result < 0) {
 				throw new RestException(500, 'Error while fetching project for task');
 			}
-	
+
 			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . "/" . dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'mrp') {
 			$modulepart = 'mrp';
