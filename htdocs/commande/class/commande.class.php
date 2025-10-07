@@ -3890,11 +3890,11 @@ class Commande extends CommonOrder
 		$result = '';
 
 		if (isModEnabled("shipping") && ($option == '1' || $option == '2')) {
-			$url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT . '/expedition/shipment.php';
 		} else {
-			$url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT . '/commande/card.php';
 		}
-
+		$query = ['id' => $this->id];
 		if (!$user->hasRight('commande', 'lire')) {
 			$option = 'nolink';
 		}
@@ -3906,9 +3906,10 @@ class Commande extends CommonOrder
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		if ($short) {
 			return $url;

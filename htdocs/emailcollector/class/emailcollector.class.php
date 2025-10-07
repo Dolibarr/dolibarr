@@ -434,7 +434,6 @@ class EmailCollector extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -1002,7 +1001,6 @@ class EmailCollector extends CommonObject
 							$regexoptions = 'm'; // The m means ^ and $ char is valid at each new line.
 						}
 
-						//var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
 							// Overwrite param $tmpproperty
 							$valueextracted = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
@@ -1073,7 +1071,6 @@ class EmailCollector extends CommonObject
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
-						//var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
 						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of substitution key found without the __X__ syntax into the SET entry
 							foreach ($matcharray[1] as $keytoreplace) {
 								if ($keytoreplace) {
@@ -1090,8 +1087,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 						}
-						//var_dump($substitutionarray);
-						//dol_syslog('substitutionarray='.var_export($substitutionarray, true));
+						// dol_syslog('substitutionarray='.var_export($substitutionarray, true));
 
 						$valuetouse = make_substitutions($valuetouse, $substitutionarray);
 						if (preg_match('/^options_/', $tmpproperty)) {
@@ -1634,7 +1630,6 @@ class EmailCollector extends CommonObject
 			}
 
 			dol_syslog("IMAP search string = ".$search);
-			//var_dump($search);
 		}
 
 		$nbemailprocessed = 0;
@@ -1686,13 +1681,11 @@ class EmailCollector extends CommonObject
 
 			'@phan-var-force Webklex\PHPIMAP\Query\Query $Query';
 			try {
-				//var_dump($Query->count());
 				if ($mode > 0) {
 					$Query->leaveUnread();
 				}
 				$arrayofemail = $Query->limit($this->maxemailpercollect)->setFetchOrder("asc")->get();
 				dol_syslog("EmailCollector::doCollectOneCollector nb arrayofemail ".(is_array($arrayofemail) ? count($arrayofemail) : 'Not array'));	// @phpstan-ignore-line
-				//var_dump($arrayofemail);
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();
 				$this->errors[] = $this->error;
@@ -1797,8 +1790,6 @@ class EmailCollector extends CommonObject
 				} else {
 					$emailto = $this->decodeSMTPSubject($overview[0]->to);
 				}
-				//var_dump($headers);
-				//var_dump($overview);exit;
 
 				$operationslog .= '<br>** Process email #'.dol_escape_htmltag((string) $iforemailloop);
 
@@ -1979,9 +1970,7 @@ class EmailCollector extends CommonObject
 					$this->getmsg($connection, $imapemail);	// This set global var $charset, $htmlmsg, $plainmsg, $attachments
 				}
 				'@phan-var-force Webklex\PHPIMAP\Attachment[] $attachments';
-
-				//print $plainmsg;
-				//var_dump($plainmsg); exit;
+				/** @var Webklex\PHPIMAP\Attachment[] $attachments */
 
 				//$htmlmsg,$plainmsg,$charset,$attachments
 				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag((string) $htmlmsg, 0);
@@ -2005,13 +1994,6 @@ class EmailCollector extends CommonObject
 						}
 					}
 				}
-
-				//var_dump($plainmsg);
-				//var_dump($htmlmsg);
-				//var_dump($messagetext);
-				//var_dump($charset);
-				//var_dump($attachments);
-				//exit;
 
 				// Parse IMAP email structure
 				/*
@@ -2044,22 +2026,9 @@ class EmailCollector extends CommonObject
 				 }
 				 }
 				 }
-				 //var_dump($result);
-				 //var_dump($partplain);
-				 //var_dump($parthtml);
-
-				 //var_dump($structure);
-				 //var_dump($parthtml);
-				 //var_dump($partplain);
 
 				 $messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK|FTP_UID);
 				 */
-
-				//var_dump($messagetext);
-				//var_dump($structure->parts[0]->parts);
-				//print $header;
-				//print $messagetext;
-				//exit;
 
 				$fromstring = '';
 				$replytostring = '';
@@ -2098,7 +2067,6 @@ class EmailCollector extends CommonObject
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
 					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
 					$subject = $overview[0]->subject;
-					//var_dump($msgid);exit;
 				}
 
 				if (!empty($searchfilterexcludesubjectarray)) {
@@ -2155,8 +2123,6 @@ class EmailCollector extends CommonObject
 				if (!in_array('<'.$msgid.'>', $arrayofreferences)) {
 					$arrayofreferences = array_merge($arrayofreferences, array('<'.$msgid.'>'));
 				}
-				// var_dump($headers['References']);
-				// var_dump($arrayofreferences);
 
 				// We loop on References, but as soon as we found one that allow us to find an existing object,
 				// we do a break (See line with comment "Exit loop of references").
@@ -2583,9 +2549,7 @@ class EmailCollector extends CommonObject
 
 										if ($sourcestring) {
 											$regforval = array();
-											//var_dump($regexstring);var_dump($sourcestring);
 											if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval)) {
-												//var_dump($regforval[count($regforval)-1]);exit;
 												// Overwrite param $tmpproperty
 												if ($propertytooverwrite == 'id') {
 													$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
@@ -2619,7 +2583,6 @@ class EmailCollector extends CommonObject
 													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
 												}
 											}
-											//var_dump($object->$tmpproperty);exit;
 										} else {
 											// Nothing can be done for this param
 											$errorforactions++;
