@@ -55,6 +55,7 @@ $hookmanager->initHooks(array('propalstats', 'globalcard'));
 $object_status = GETPOST('object_status', 'intcomma');
 $typent_id = GETPOSTINT('typent_id');
 $categ_id = GETPOSTINT('categ_id');
+$select_categ_propal_id=GETPOST('select_categ_propal_id', 'array');
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
@@ -127,7 +128,18 @@ if ($object_status != '' && $object_status >= 0) {
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
-
+if ($mode == 'customer') {
+	if (is_array($select_categ_propal_id) && !empty($select_categ_propal_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_propal as cat ON (p.rowid = cat.fk_propal)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_propal_id)).')';
+	}
+}
+if ($mode == 'supplier') {
+	if (is_array($select_categ_propal_id) && !empty($select_categ_propal_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_supplier_proposal as cat ON (p.rowid = cat.fk_supplier_proposal)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_propal_id)).')';
+	}
+}
 
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
@@ -297,6 +309,25 @@ print '<tr><td>'.$cat_label.'</td><td>';
 print img_picto('', 'category', 'class="pictofixedwidth"');
 print $formother->select_categories($cat_type, $categ_id, 'categ_id', 0, 1, 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
+
+if (isModEnabled('category')) {
+	$cat_type = '';
+	$cat_label = '';
+	if ($mode == 'customer') {
+		$cat_type = Categorie::TYPE_PROPOSAL;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Proposals"));
+	}
+	if ($mode == 'supplier') {
+		$cat_type = Categorie::TYPE_SUPPLIER_PROPOSAL;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("SupplierProposals"));
+	}
+	print '<tr><td>'.$cat_label.'</td><td>';
+	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
+	print img_picto('', 'category', 'class="pictofixedwidth"');
+	print $form->multiselectarray('select_categ_propal_id', $cate_arbo, GETPOST('select_categ_propal_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
+	print '</td></tr>';
+}
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');

@@ -1130,6 +1130,9 @@ td.wordbreak img, td.wordbreakimp img {
 .nopadding {
 	padding: 0;
 }
+.nopaddingimp {
+	padding: 0 !important;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0;
 }
@@ -1929,8 +1932,8 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	flex:1;
 }
 .flex-item-uploadfile {
-	/* border: 2px solid #888; */
-	box-shadow: 2px 3px 10px #ccc;
+	border: 2px dashed #aaa;
+	/* box-shadow: 2px 3px 10px #ccc; */
 	border-radius: 5px;
 	cursor: pointer;
 	text-align: center;
@@ -4586,7 +4589,7 @@ td.linecoldescription {
 table.tableforfield td, .tagtr.table-border-row .tagtd, table.border.margintable .trforfield td {
 	padding: 2px 4px 2px 10px;			/* t r b l */
 }
-table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
+table.liste td, table.noborder > tr > td, table.noborder > tbody > tr > td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 8px 10px 8px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract */
 	height: 32px;
@@ -9066,6 +9069,9 @@ table.jPicker {
 		width: 1.5em;
 		/* padding-right: 0; */
 	}
+	table.titlemodulehelp tr td img.widthpictotitle {
+		width: 1.5em;
+	}
 
 	.ai_dropdown{
 		min-width : 280px !important;
@@ -9140,6 +9146,11 @@ table.jPicker {
 		margin: 0 5px 0 1px;
 		transform: scale(1.1);
 	}
+
+	pre {
+		white-space: normal;
+		word-break: break-word;
+	}
 }
 
 @media only screen and (max-width: 320px)
@@ -9160,6 +9171,23 @@ table.jPicker {
 		max-width: 230px;
 	}
 }
+
+
+/* Test to have 2 columns for invoice type selection */
+/*
+@media only screen and (min-width: 1024px)
+{
+	.listofinvoicetypetable {
+		display: inline-grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px
+	}
+	.listofinvoicetype {
+		display: block;
+	}
+}
+*/
+
 
 /** For toggle Display of customer/Supplyer Invoices and Credit Notes on Payment Page */
 :where(#fourn-invoices-paiments-list,#customer-invoices-paiments-list)[data-display-all-invoices="1"] tr[data-row-type="2"]{
@@ -9207,5 +9235,4 @@ div.extra_inline_chkbxlst, div.extra_inline_checkbox {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
-
 }

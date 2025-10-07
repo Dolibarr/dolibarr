@@ -205,7 +205,7 @@ class Partnership extends CommonObject
 	 */
 	public $ip;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 	// END MODULEBUILDER PROPERTIES

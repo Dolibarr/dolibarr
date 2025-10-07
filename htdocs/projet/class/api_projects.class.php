@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015        Jean-François Ferry    <jfefe@aternatik.fr>
- * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -385,6 +386,90 @@ class Projects extends DolibarrApi
 		return $this->project->id;
 	}
 
+	/**
+	 * Adds a contact to an project
+	 *
+	 * @param   int		$id					project ID
+	 * @param   int		$fk_socpeople		Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
+	 * @param   string	$type_contact       Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
+	 * @param   string  $source				external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 * @param   int     $notrigger          Disable all triggers
+	 *
+	 * @url POST    {id}/contacts
+	 *
+	 * @return  object
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->project->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
+		if ($result < 0) {
+			throw new RestException(500, 'Error : '.$this->project->error);
+		}
+
+		return $this->_cleanObjectDatas($this->project);
+	}
+
+	/**
+	 * Delete a contact type of given project
+	 *
+	 * @param	int    $id             Id of project to update
+	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
+	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @return	Object				   Object with cleaned properties
+	 *
+	 * @url	DELETE {id}/contact/{contactid}/{type}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteContact($id, $contactid, $type)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->project->liste_contact(-1, $source);
+
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->project->delete_contact($contact['rowid']);
+					if (!$result) {
+						throw new RestException(500, 'Error when deleted the contact');
+					}
+				}
+			}
+		}
+		return $this->_cleanObjectDatas($this->project);
+	}
 	/**
 	 * Get tasks of a project.
 	 * See also API /tasks

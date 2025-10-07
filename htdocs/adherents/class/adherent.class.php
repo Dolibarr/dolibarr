@@ -175,7 +175,7 @@ class Adherent extends CommonObject
 	public $morphy;
 
 	/**
-	 * @var int<0,1> Info can be public
+	 * @var ?int<0,1> Info can be public
 	 */
 	public $public;
 
@@ -2546,10 +2546,11 @@ class Adherent extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
+		$baseurl = DOL_URL_ROOT . '/adherents/card.php';
 		if ($option == 'subscription') {
-			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.((int) $this->id);
+			$baseurl = DOL_URL_ROOT . '/adherents/subscription.php';
 		}
+		$query = ['rowid' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -2558,9 +2559,10 @@ class Adherent extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart .= '<a href="'.$url.'"';
 		$linkclose = "";
