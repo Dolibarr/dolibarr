@@ -234,7 +234,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public $multicurrency_code;
 	/**
-	 * @var float
+	 * @var ?float
 	 */
 	public $multicurrency_tx;
 	/**
@@ -542,15 +542,13 @@ class SupplierProposal extends CommonObject
 							return -1;
 						}
 						if ($result < -1) {
-							$this->error = $productsupplier->error;
-							$this->errors = $productsupplier->errors;
+							$this->setErrorsFromObject($productsupplier);
 							$this->db->rollback();
 							dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
 							return -1;
 						}
 					} else {
-						$this->error = $productsupplier->error;
-						$this->errors = $productsupplier->errors;
+						$this->setErrorsFromObject($productsupplier);
 						$this->db->rollback();
 						return -1;
 					}
@@ -578,7 +576,23 @@ class SupplierProposal extends CommonObject
 				$pu = 0;
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total(
+				$qty,
+				$pu,
+				(float) $remise_percent,
+				$txtva,
+				(float) $txlocaltax1,
+				(float) $txlocaltax2,
+				0,
+				$price_base_type,
+				$info_bits,
+				$type,
+				$this->thirdparty,
+				$localtaxes_type,
+				100,
+				(float) $this->multicurrency_tx,
+				$pu_ht_devise
+			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -769,7 +783,23 @@ class SupplierProposal extends CommonObject
 				$pu = 0;
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total(
+				$qty,
+				$pu,
+				(float) $remise_percent,
+				$txtva,
+				(float) $txlocaltax1,
+				(float) $txlocaltax2,
+				0,
+				$price_base_type,
+				$info_bits,
+				$type,
+				$this->thirdparty,
+				$localtaxes_type,
+				100,
+				(float) $this->multicurrency_tx,
+				$pu_ht_devise
+			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -2870,6 +2900,22 @@ class SupplierProposal extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param  int[]|int 	$categories 	Category or categories IDs
+	 * @return int<-1,1>					Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_SUPPLIER_PROPOSAL);
 	}
 }
 

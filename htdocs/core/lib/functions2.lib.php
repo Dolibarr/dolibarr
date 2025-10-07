@@ -2107,6 +2107,9 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$myobject = 'commande';
+	} elseif ($objecttype == 'mailing') {
+		$langs->load('mailing');
+		$classpath = 'comm/mailing/class';
 	} elseif ($objecttype == 'propal') {
 		$langs->load('propal');
 		$classpath = 'comm/propal/class';
@@ -2656,6 +2659,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'comm/propal';
 	} elseif ($moduleobject == 'agenda' || $moduleobject == 'agendaevents') {
 		$moduledirforclass = 'comm/action';
+	} elseif ($moduleobject == 'mailing') {
+		$moduledirforclass = 'comm/mailing';
 	} elseif ($moduleobject == 'adherent' || $moduleobject == 'members' || $moduleobject == 'memberstypes' || $moduleobject == 'subscriptions') {
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
@@ -2900,7 +2905,7 @@ function acceptLocalLinktoMedia()
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
 
-	// By default we acceptto add medias from emails templates but this may be refused if later
+	// By default we accept to add medias from emails templates but this may be refused in the future
 	// we detect we are not on a public url that we can access remotely (if we are on a private network, such files can't be reached),
 	// except if MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK is net, in which case we accept also if instance has a local or private network URL.
 

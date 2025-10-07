@@ -141,7 +141,15 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !image_format_supported($_FILES[$varforimage]["name"], 0)) {	// Logo can be used on a lot of different places. Recommend using jpg and png for better compatibility.
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+			$mesg = $langs->trans("ErrorBadImageFormat");
+			if (!function_exists("imagecreate")) {
+				$mesg .= ' - '.$langs->trans("ErrorPHPDoesNotSupport", "GD");
+			} else {
+				$supportedextensions = getListOfPossibleImageExt();
+				$supportedextensions = preg_replace('/\\\./', '', $supportedextensions); // Remove '\.'
+				$mesg .= ' - '.$langs->trans("ErrorSupportedFormatAre", implode(', ', explode('|', $supportedextensions)));
+			}
+			setEventMessages($mesg, null, 'errors');
 			break;
 		}
 
@@ -462,7 +470,7 @@ print '<input name="name" id="name" maxlength="'.$mysoc->fields['nom']['length']
 // Main currency
 print '<tr class="oddeven"><td class="fieldrequired"><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
 print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
-print $form->selectCurrency($conf->currency, "currency");
+print $form->selectCurrency($conf->currency, "currency", 2);
 print '</td></tr>'."\n";
 
 // Country

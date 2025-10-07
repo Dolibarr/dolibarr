@@ -1650,6 +1650,46 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 }
 
 /**
+ * Return path of url.
+ *
+ * @param	string							$url				Relative path to file
+ * @param	array<string,int|float|string>	$params     		params for the http query
+ * @param	bool							$addtoken			does we need to add token
+ * @return string												path
+ */
+function dolBuildUrl($url, $params = [], $addtoken = false)
+{
+	global $db, $hookmanager;
+
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+	if ((!isset($params['mainmenu']) || empty($params['mainmenu'])) && GETPOSTISSET('mainmenu')) {
+		$params = array_merge($params, ['mainmenu' => (GETPOST('mainmenu', 'restricthtml'))]);
+	}
+	if ((!isset($params['leftmenu'])/*  || empty($params['leftmenu']) */) && GETPOSTISSET('leftmenu')) { // do not fill leftmenu if we have leftmenu=
+		$params = array_merge($params, ['leftmenu' => (GETPOST('leftmenu', 'restricthtml'))]);
+	}
+	$parameters = [
+		'path' => &$url,
+		'params' => &$params,
+		'addtoken' => &$addtoken,
+	];
+	$hookmanager->executeHooks('buildurl', $parameters);
+	if ($addtoken) {
+		$params = array_merge($params, ['token' => newToken()]);
+	}
+	// TODO TO REMOVE
+	$params = array_merge($params, ['debug' => 'debug']);
+	if ($params) {
+		$url .= '?' . http_build_query($params);
+	}
+
+	return $url;
+}
+
+/**
  *	Get properties for an object - including magic properties when requested
  *
  *	Only returns properties that exist
@@ -7414,11 +7454,18 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	// Right
 	print '<td class="nobordernopadding valignmiddle right col-right">';
 	print '<input type="hidden" name="pageplusoneold" value="' . ((int) $page + 1) . '">';
+	$query = [];
+	parse_str($options, $query);
 	if ($sortfield) {
-		$options .= "&sortfield=" . urlencode($sortfield);
+		$query += ['sortfield' => $sortfield];
 	}
 	if ($sortorder) {
-		$options .= "&sortorder=" . urlencode($sortorder);
+		$query += ['sortorder' => $sortorder];
+	}
+
+	$options = '&'.http_build_query($query);
+	if ($page) {
+		$query = array_merge($query, ['page' => $page]);
 	}
 	// Show navigation bar
 	$pagelist = '';
@@ -7439,11 +7486,13 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt >= 1) {
 				if (empty($pagenavastextinput)) {
-					$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=0' . $options . '">1</a></li>';
+					$query['page'] = 0;
+					$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">1</a></li>';
 					if ($cpt > 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == 2) {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=1' . $options . '">2</a></li>';
+						$query['page'] = 0;
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">2</a></li>';
 					}
 				}
 			}
@@ -7458,7 +7507,8 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 					if ($cpt == $page) {
 						$pagelist .= '<li class="pagination"><span class="active">' . ($page + 1) . '</span></li>';
 					} else {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . $cpt . $options . '">' . ($cpt + 1) . '</a></li>';
+						$query['page'] = $cpt;
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . ($cpt + 1) . '</a></li>';
 					}
 				}
 				$cpt++;
@@ -7469,13 +7519,16 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 					if ($cpt < $nbpages - 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == $nbpages - 2) {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 2) . $options . '">' . ($nbpages - 1) . '</a></li>';
+						$query['page'] = ($nbpages - 2);
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . ($nbpages - 1) . '</a></li>';
 					}
-					$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 1) . $options . '">' . $nbpages . '</a></li>';
+					$query['page'] = ($nbpages - 1);
+					$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 				}
 			} else {
 				//var_dump($page.' '.$cpt.' '.$nbpages);
-				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 1) . $options . '">' . $nbpages . '</a></li>';
+				$query['page'] = ($nbpages - 1);
+				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 			}
 		} else {
 			$pagelist .= '<li class="pagination"><span class="active">' . ($page + 1) . "</li>";
@@ -7494,7 +7547,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	print '</td>';
 	print '</tr>';
 
-	print '</table>' . "\n";
+	print "</table>\n";
 
 	// Center
 	if ($morehtmlcenter && !empty($conf->dol_optimize_smallscreen)) {
@@ -7585,10 +7638,10 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
 						<script>
 						jQuery(document).ready(function () {
-					  		jQuery(".selectlimit").change(function() {
+							jQuery(".selectlimit").change(function() {
 								console.log("We change limit so we submit the form");
 								$(this).parents(\'form:first\').submit();
-					  		});
+							});
 						});
 						</script>
 					';
@@ -10577,9 +10630,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 		}
 	}
+
 	if ((empty($exclude) || !in_array('objectamount', $exclude)) && (empty($include) || in_array('objectamount', $include))) {
 		'@phan-var-force Facture|FactureRec $object';
-		/** @var Facture|FactureRec|null $object */
+		/** @var Propal|Commande|Facture|FactureRec|null $object */
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/functionsnumtoword.lib.php';
 
 		$substitutionarray['__DATE_YMD__']          = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', false, $outputlangs) : null) : '';
@@ -10606,10 +10660,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT_VAT_TEXT__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, '', true) : dol_convertToWord($object->total_tva, $outputlangs, '', true)) : '';
 		$substitutionarray['__AMOUNT_VAT_TEXTCURRENCY__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, $conf->currency, true) : dol_convertToWord($object->total_tva, $outputlangs, $conf->currency, true)) : '';
 
-		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
+		$mysocuselocaltax1 = false;
+		$mysocuselocaltax2 = false;
+		if ($mysoc instanceof Societe && !empty($mysoc->country_code)) {
+			$tmparray = $mysoc->useLocalTax(-1);
+			$mysocuselocaltax1 = $tmparray[1];
+			$mysocuselocaltax2 = $tmparray[2];
+		}
+
+		// Local taxes
+		if ($onlykey != 2 || $mysocuselocaltax1) {
 			$substitutionarray['__AMOUNT_TAX2__']     = is_object($object) ? $object->total_localtax1 : '';
 		}
-		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
+		if ($onlykey != 2 || $mysocuselocaltax2) {
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
@@ -10618,10 +10681,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT_FORMATTED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_REMAIN_FORMATTED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_VAT_FORMATTED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
-		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
+		if ($onlykey != 2 || $mysocuselocaltax1) {
 			$substitutionarray['__AMOUNT_TAX2_FORMATTED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
-		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
+		if ($onlykey != 2 || $mysocuselocaltax2) {
 			$substitutionarray['__AMOUNT_TAX3_FORMATTED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 		// Amount keys formatted in a currency (with the typo error for backward compatibility)
@@ -10630,10 +10693,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_FORMATED__']          = $substitutionarray['__AMOUNT_FORMATTED__'];
 			$substitutionarray['__AMOUNT_REMAIN_FORMATED__']   = $substitutionarray['__AMOUNT_REMAIN_FORMATTED__'];
 			$substitutionarray['__AMOUNT_VAT_FORMATED__']      = $substitutionarray['__AMOUNT_VAT_FORMATTED__'];
-			if ($mysoc instanceof Societe && $mysoc->useLocalTax(1)) {
+			if ($mysocuselocaltax1) {
 				$substitutionarray['__AMOUNT_TAX2_FORMATED__'] = $substitutionarray['__AMOUNT_TAX2_FORMATTED__'];
 			}
-			if ($mysoc instanceof Societe && $mysoc->useLocalTax(2)) {
+			if ($mysoc->useLocalTax2) {
 				$substitutionarray['__AMOUNT_TAX3_FORMATED__'] = $substitutionarray['__AMOUNT_TAX3_FORMATTED__'];
 			}
 		}
@@ -10712,7 +10775,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 /**
  *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval),
- *  and texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
+ *  and texts like __(TranslationKey|langfile)__, __[CONSTANTKEY]__ or __[CONSTANTKEY|urlencode]__ are also replaced.
  *  Example of usage:
  *  $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $thirdparty);
  *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);
@@ -10781,16 +10844,22 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
 	$reg = array();
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg)) {
-		$keyfound = $reg[1];
+		$originalkeyfound = $reg[1];
+		$keyfound = preg_replace('/\|urlencode$/', '', $originalkeyfound);
+
 		if (isASecretKey($keyfound)) {
 			$value = '*****forbidden*****';
 		} else {
-			$value = empty($conf->global->$keyfound) ? '' : $conf->global->$keyfound;
+			$value = getDolGlobalString($keyfound);
+			// Execute some functions on value of substitution key
+			if (preg_match('/\|urlencode$/', $originalkeyfound)) {
+				$value = urlencode($value);
+			}
 		}
 
 		if (empty($converttextinhtmlifnecessary)) {
 			// convert $newval into HTML is necessary
-			$text = preg_replace('/__\[' . preg_quote($keyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
+			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 		} else {
 			if (! $msgishtml) {
 				$valueishtml = dol_textishtml($value, 1);
@@ -10803,7 +10872,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				$value = dol_nl2br((string) $value);
 			}
 
-			$text = preg_replace('/__\[' . preg_quote($keyfound, '/') . '\]__/', $value, $text);
+			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $value, $text);
 		}
 	}
 
@@ -10813,7 +10882,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			continue; // If value is null, it same than not having substitution key at all into array, we do not replace.
 		}
 
-		if (($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__') && (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN'))) {
+		if (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN') && ($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__')) {
 			$value = ''; // Protection
 		}
 
@@ -14708,7 +14777,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
-	} elseif ($elementType == 'mo') {
+	} elseif ($elementType == 'mo' || $elementType == 'mrp') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
 		$classname = 'Mo';
@@ -15137,6 +15206,7 @@ function getNonce()
 	global $conf;
 
 	if (empty($conf->cache['nonce'])) {
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/security.lib.php';
 		$conf->cache['nonce'] = dolGetRandomBytes(8);
 	}
 

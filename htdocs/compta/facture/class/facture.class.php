@@ -273,6 +273,10 @@ class Facture extends CommonInvoice
 	 */
 	public $online_payment_url;
 
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 
 
 	/**
@@ -709,6 +713,7 @@ class Facture extends CommonInvoice
 		$sql .= ", retained_warranty";
 		$sql .= ", retained_warranty_date_limit";
 		$sql .= ", retained_warranty_fk_cond_reglement";
+		$sql .= ", ip";
 		$sql .= ")";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
@@ -748,6 +753,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".(empty($this->retained_warranty) ? "0" : $this->db->escape((string) $this->retained_warranty));
 		$sql .= ", ".(!empty($this->retained_warranty_date_limit) ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'NULL');
 		$sql .= ", ".(int) $this->retained_warranty_fk_cond_reglement;
+		$sql .= ", ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -1349,20 +1355,17 @@ class Facture extends CommonInvoice
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		} else {
 			// copy internal contacts
 			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
-				$this->error = $object->error;
-				$this->errors = $object->errors;
+				$this->setErrorsFromObject($object);
 			} elseif ($object->socid == $objFrom->socid) {
 				// copy external contacts if same company
 				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
-					$this->error = $object->error;
-					$this->errors = $object->errors;
+					$this->setErrorsFromObject($object);
 				}
 			}
 		}
