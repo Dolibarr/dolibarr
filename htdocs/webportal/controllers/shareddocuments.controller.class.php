@@ -42,19 +42,19 @@ class SharedDocumentsController extends AbstractDocumentController
 	 */
 	public function action()
 	{
-	global $langs;
-	$context = Context::getInstance();
-	if (!$context->controllerInstance->checkAccess()) {
-		return -1;
-	}
+		global $langs;
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			return -1;
+		}
 
-	$current_subdir = GETPOST('subdir', 'alpha');
-	if (!empty($current_subdir)) {
-		$parts = explode('/', $current_subdir);
-		$safe_parts = array();
-		foreach ($parts as $part) {
-			if ($part !== '.' && $part !== '..') {
-				$safe_parts[] = dol_sanitizeFileName($part);
+		$current_subdir = GETPOST('subdir', 'alpha');
+		if (!empty($current_subdir)) {
+			$parts = explode('/', $current_subdir);
+			$safe_parts = array();
+			foreach ($parts as $part) {
+				if ($part !== '.' && $part !== '..') {
+					$safe_parts[] = dol_sanitizeFileName($part);
 			}
 		}
 		$this->sanitized_subdir = implode('/', $safe_parts);
