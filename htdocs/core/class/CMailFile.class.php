@@ -343,9 +343,10 @@ class CMailFile
 				}
 			}
 
-			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA')) {	// On by default
+			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA')) {	// On by default because Gmail does not support src="data:image..."
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
-				// This convert an embedded file with src="data:image... into a cid link + attached file
+				// This convert an embedded file with src="data:image... into a cid link + attached file.
+				// It modifies ->html and complete ->html_images
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
 				if ($resultImageData < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData code=".$resultImageData." upload_dir_tmp=".$upload_dir_tmp);
@@ -616,7 +617,7 @@ class CMailFile
 				$smtps->setBodyContent($msg, 'plain');
 			}
 
-			if ($this->atleastoneimage) {
+			if (!empty($this->atleastoneimage)) {
 				foreach ($this->images_encoded as $img) {
 					$smtps->setImageInline($img['image_encoded'], $img['name'], $img['content_type'], $img['cid']);
 				}
