@@ -54,7 +54,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	$menuArbo = new Menubase($db, 'auguria');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria', $tabMenu);
 
-	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null, array('system', 'mycompany', 'date', 'user'));
 
 	global $usemenuhider;
 	$usemenuhider = 1;
@@ -370,7 +370,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		print "<!-- End Bookmarks -->\n";
 	}
 
-	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null, array('system', 'mycompany', 'date', 'user'));
 
 	// We update newmenu with entries found into database
 	$menuArbo = new Menubase($db, 'auguria');

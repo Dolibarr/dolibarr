@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('newpayment'));
 global $dolibarr_main_url_root;
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod

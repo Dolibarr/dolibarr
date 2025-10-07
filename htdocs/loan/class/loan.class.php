@@ -792,7 +792,7 @@ class Loan extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->dateend, 'day').'</span>';
 		}
 
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

@@ -270,7 +270,7 @@ if (empty($reshook)) {
 	/*
 	 * Action add_paiement
 	 */
-	if ($action == 'add_paiement') {
+	if ($action == 'add_paiement') {	// Test on permission not required
 		if ($error) {
 			$action = 'create';
 		}
@@ -281,7 +281,7 @@ if (empty($reshook)) {
 	/*
 	 * Action confirm_paiement
 	 */
-	if ($action == 'confirm_paiement' && $confirm == 'yes') {
+	if ($action == 'confirm_paiement' && $confirm == 'yes' && $permissiontoadd) {
 		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 		$multicurrency_code = array();

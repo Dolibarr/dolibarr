@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'productlotlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -148,7 +148,7 @@ $permissiontoadd = $usercancreate;
 //$permissiontodelete = $usercandelete;
 
 // Security check
-if (empty($conf->productbatch->enabled)) {
+if (!isModEnabled('productbatch')) {
 	accessforbidden('Module not enabled');
 }
 $socid = 0;
@@ -156,7 +156,7 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'productbatch');
+//restrictedArea($user, 'productbatch');
 if (!$permissiontoread) {
 	accessforbidden();
 }

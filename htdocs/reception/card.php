@@ -71,7 +71,7 @@ if (isModEnabled('project')) {
  * @var User $user
  */
 
-$langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'sendings'));
+$langs->loadLangs(array("receptions", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'sendings'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -550,36 +550,31 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif (($action == 'settracking_number' || $action == 'settracking_url'
-	|| $action == 'settrueWeight'
-	|| $action == 'settrueWidth'
-	|| $action == 'settrueHeight'
-	|| $action == 'settrueDepth'
-		|| $action == 'setshipping_method_id') && $permissiontoadd) {
+	} elseif (in_array($action, array('settracking_number', 'settracking_url', 'settrueWeight', 'settrueWidth', 'settrueHeight', 'settrueDepth', 'setshipping_method_id')) && $permissiontoadd) {
 		// Action update
 		$error = 0;
 
-		if ($action == 'settracking_number') {	// Test on permission to add
+		if ($action == 'settracking_number') {		// Test on permission already done
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
-		if ($action == 'settracking_url') {		// Test on permission to add
+		if ($action == 'settracking_url') {			// Test on permission already done
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
-		if ($action == 'settrueWeight') {		// Test on permission to add
+		if ($action == 'settrueWeight') {			// Test on permission already done
 			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
-		if ($action == 'settrueWidth') {		// Test on permission to add
+		if ($action == 'settrueWidth') {			// Test on permission already done
 			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
-		if ($action == 'settrueHeight') {		// Test on permission to add
+		if ($action == 'settrueHeight') {			// Test on permission already done
 			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
-		if ($action == 'settrueDepth') {		// Test on permission to add
+		if ($action == 'settrueDepth') {			// Test on permission already done
 			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
-		if ($action == 'setshipping_method_id') {	// Test on permission to add
+		if ($action == 'setshipping_method_id') {	// Test on permission already done
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
@@ -1242,7 +1237,7 @@ if ($action == 'create') {
 					print $line->qty;
 				}
 				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value="'.$line->id.'">';
-				print '<input type="hidden" name="pul'.$indiceAsked.'" value="'.$line->pu_ht.'">';
+				print '<input type="hidden" name="pul'.$indiceAsked.'" value="'.$line->subprice.'">';
 				print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
 				print '</td>';
 				$qtyProdCom = $line->qty;
@@ -1290,7 +1285,7 @@ if ($action == 'create') {
 
 					if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 						print '<td>';
-						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
+						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.price($cost_price).'">';
 						print '</td>';
 					}
 
@@ -1425,7 +1420,7 @@ if ($action == 'create') {
 		if ($objectref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans("ConfirmValidateReception", $numref);
@@ -1788,7 +1783,7 @@ if ($action == 'create') {
 		if (!isModEnabled('stock')) {
 			$editColspan--;
 		}
-		if (empty($conf->productbatch->enabled)) {
+		if (!isModEnabled('productbatch')) {
 			$editColspan--;
 		}
 		print '<td class="center" colspan="'.$editColspan.'">';
@@ -2271,7 +2266,7 @@ if ($action == 'create') {
 	}
 
 	// Presend form
-	$modelmail = 'shipping_send';
+	$modelmail = 'reception_send';
 	$defaulttopic = 'SendReceptionRef';
 	$diroutput = $conf->reception->dir_output;
 	$trackid = 'rec'.$object->id;

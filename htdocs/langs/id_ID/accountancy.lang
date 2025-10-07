@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Akuntansi
 Accounting=Akuntansi
+AccountingAccount=Akun akuntansi
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom pemisah untuk ekspor data
 ACCOUNTING_EXPORT_DATE=Format tanggal untuk ekspor data
 ACCOUNTING_EXPORT_PIECE=Ekspor jumlah potongan
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Rekening (dari Chart Of Account) yang akan digunakan 
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Akun (dari Chart Of Account) yang akan digunakan untuk mendaftarkan langganan keanggotaan (Modul Keanggotaan - jika keanggotaan dicatat tanpa faktur)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Rekening (dari Chart Of Account) yang akan digunakan sebagai rekening default untuk mendaftarkan simpanan nasabah
 UseAuxiliaryAccountOnCustomerDeposit=Simpan rekening pelanggan sebagai rekening perorangan dalam buku besar pembantu untuk jalur pembayaran uang muka (jika dinonaktifkan, rekening perorangan untuk jalur pembayaran uang muka akan tetap kosong)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Akun (dari Chart Of Account) untuk digunakan sebagai default
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Simpan akun pemasok sebagai akun individual di buku besar pembantu untuk jalur pembayaran uang muka (jika dinonaktifkan, akun individual untuk jalur pembayaran uang muka akan tetap kosong)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Akun akuntansi secara default untuk mendaftarkan garansi yang dipertahankan pelanggan
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Akun (dari Bagan Akun) untuk digunakan sebagai akun default untuk produk yang dibeli di negara yang sama (digunakan jika tidak ditentukan dalam lembar produk)
@@ -278,6 +280,7 @@ PcgtypeDesc=Grup akun digunakan sebagai kriteria 'filter' dan 'pengelompokan' ya
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Dapat didamaikan
 Centralized=Akun terpusat
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total margin penjualan
 DescVentilCustomer=Lihat di sini daftar baris faktur pelanggan yang terikat (atau tidak) ke akun produk dari bagan akun
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktifkan pengelolaan biaya balik PPN 
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Ketika opsi ini diaktifkan, Anda dapat menentukan bahwa faktur pemasok atau vendor tertentu harus ditransfer ke akuntansi secara berbeda: Debit tambahan dan batas kredit akan dihasilkan ke dalam akuntansi pada 2 akun tertentu dari bagan akun yang ditentukan dalam "%s" halaman penyiapan.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktifkan tab pada kartu pihak ketiga untuk melihat buku besar pembantu
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Saat opsi ini diaktifkan, tab baru akan ditampilkan di kartu pihak ketiga untuk melihat dan mengelola akuntansi pihak ketiga seperti merekonsiliasi, mencetak, dan lainnya
+
 ## Export
 NotExportLettering=Jangan mengekspor tulisan saat membuat file
 NotifiedExportDate=Tandai baris yang belum diekspor sebagai Diekspor <span class="warning">(untuk mengubah baris yang ditandai sebagai diekspor, Anda perlu menghapus seluruh transaksi dan mentransfernya kembali ke akuntansi)</span>

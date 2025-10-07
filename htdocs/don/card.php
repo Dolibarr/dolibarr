@@ -637,7 +637,7 @@ if (!empty($id) && $action == 'edit') {
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	if ($object->mode_reglement_id) {
-		$selected = $object->mode_reglement_id;
+		$selected = (string) $object->mode_reglement_id;
 	} else {
 		$selected = '';
 	}

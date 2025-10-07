@@ -105,7 +105,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-	if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
+	if (getDolGlobalString('CRON_KEY') && getDolGlobalString('CRON_KEY') != $securitykey) {
 		setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 	} else {
 		$now = dol_now(); // Date we start

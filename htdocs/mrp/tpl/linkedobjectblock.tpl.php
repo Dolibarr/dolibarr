@@ -97,7 +97,7 @@ if ($object->element == 'mo') {
 		}
 	}
 } else {
-	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 	'@phan-var-force array<CommonObject> $linkedObjectBlock';
 	$total = 0;
 	$ilink = 0;

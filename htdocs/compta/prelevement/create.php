@@ -55,7 +55,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bill
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'real';
 
 $type = GETPOST('type', 'aZ09');

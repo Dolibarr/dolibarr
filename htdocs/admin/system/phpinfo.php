@@ -236,8 +236,24 @@ print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions
 print "</tr>";
 
 $functions = array();
-$name      = "xDebug";
+$name = "bz2";
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions, $langs->trans("Optional"));
+print "</tr>";
 
+// bcmath is used only by swiftmailer for NTLM authentication that is not implemented by Dolibarr core for the moment, so i comment this.
+/*
+$functions = array();
+$name = "bcmath";
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions, $langs->trans("Optional").' (NTLM authentication of Swiftmailer)');
+print "</tr>";
+*/
+
+$functions = array();
+$name      = "xDebug";
 print "<tr>";
 print "<td>".$name."</td>";
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -325,13 +341,14 @@ $db->close();
 /**
  * Return a result column with a translated result text
  *
- * @param string $name			The name of the PHP extension
- * @param string[] $activated		A list with all activated PHP extensions. Deprecated.
- * @param string[] $loaded			A list with all loaded PHP extensions
- * @param string[] $functions		A list with all PHP functions to check
- * @return string
+ * @param 	string 		$name			The name of the PHP extension
+ * @param 	string[] 	$activated		A list with all activated PHP extensions. Deprecated.
+ * @param 	string[] 	$loaded			A list with all loaded PHP extensions
+ * @param 	string[] 	$functions		A list with all PHP functions to check
+ * @param	string		$optional		String with message when module is optional
+ * @return 	string
  */
-function getResultColumn($name, array $activated, array $loaded, array $functions)
+function getResultColumn($name, array $activated, array $loaded, array $functions, $optional = '')
 {
 	global $langs;
 
@@ -366,7 +383,11 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 		if (strtolower($name) == 'xdebug') {
 			$html .= yn(0).' - ';
 		} else {
-			$html .= img_warning($langs->trans("ModuleActivated", "xdebug"));
+			if ($optional) {
+				$html .= img_picto($langs->trans("NotFound"), 'minus');
+			} else {
+				$html .= img_warning($langs->trans("NotFound"));
+			}
 		}
 		if (in_array(strtolower($name), $loaded)) {
 			$html .= ' '.$langs->trans("Loaded").' - ';
@@ -374,6 +395,9 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 			//$html .= ' '.$langs->trans("NotLoaded").' - ';
 		}
 		$html .= ' '.$langs->trans("ErrorPHPDoesNotSupport", $name);
+		if ($optional) {
+			$html .= ' <span class="opacitymedium">'.$optional.'</span>';
+		}
 	}
 	$html .= "</td>";
 

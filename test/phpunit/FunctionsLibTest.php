@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2014 	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015	   	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -944,9 +945,9 @@ class FunctionsLibTest extends CommonClassTest
 	{
 		// Text not already HTML
 
-		$input = "A string\nwith a à ä é è ë ï ü ö ÿ, &, < and >.";
+		$input = "A string\nwith a à ä é è ë ï ü ö ÿ É É, &, < and >."; // the second É is different than the first one
 		$after = dol_string_unaccent($input);
-		$this->assertEquals("A string\nwith a a a e e e i u o y, &, < and >.", $after);
+		$this->assertEquals("A string\nwith a a a e e e i u o y E E, &, < and >.", $after);
 	}
 
 

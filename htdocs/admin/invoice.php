@@ -335,6 +335,7 @@ foreach ($dirmodels as $reldir) {
 						$classname = "mod_facture_".$file;
 					}
 					// Check if there is a filter on country
+					$reg = array();
 					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
 					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
 						continue;
@@ -504,7 +505,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;

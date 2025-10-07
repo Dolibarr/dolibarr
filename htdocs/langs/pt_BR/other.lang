@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - other
-Tools=Ferramentas
 Birthday=Aniversário
 BirthdayAlertOn=Alerta de aniversário ativo
 BirthdayAlertOff=Alerta de aniversário desativado
@@ -159,3 +158,19 @@ FTPFailedToRemoveFile=Falha ao remover o arquivo <b>%s</ b>.
 FTPFailedToRemoveDir=Falha ao remover a pasta <b>%s </b>: Verifique as permissões e que a pasta está vazia
 ChooseAFTPEntryIntoMenu=Escolha um site FTP / SFTP no menu ...
 FailedToGetFile=Falha ao obter arquivos %s
+AddThisPageToBookmarks =Adicione a página atual aos marcadores
+BehaviourOnClick =Comportamento quando um URL de marcador é selecionado
+BookmarkTargetNewWindowShort =Nova aba
+BookmarkTargetReplaceWindowShort =Guia atual
+BookmarkTitle =Nome do marcador
+BookmarksManagement =Gerenciamento de marcadores
+BookmarksMenuShortCut =Ctrl + Shift + M
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark =Escolha se a página vinculada deve abrir na guia atual ou em uma nova guia
+ListOfBookmarks =Lista de marcadores
+NoBookmarkFound =Nenhum marcador encontrado
+NoBookmarks =Nenhum marcador definido
+OpenANewWindow =Abra uma nova aba
+ReplaceWindow =Substituir guia atual
+SetHereATitleForLink =Definir um nome para o marcador
+UseAnExternalHttpLinkOrRelativeDolibarrLink =Use um link externo/absoluto (https://externalurl.com) ou um link interno/relativo (/mypage.php). Você também pode usar telefone como tel:0123456.
+SubscribeToFoundation=Ajude o projeto Dolibarr, assine a fundação

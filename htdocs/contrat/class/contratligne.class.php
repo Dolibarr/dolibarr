@@ -395,7 +395,7 @@ class ContratLigne extends CommonObjectLine
 
 		$datas = [];
 		$datas['label'] = $langs->trans("ShowContractOfService").': '.$this->label;
-		if (empty($datas['label'])) {
+		if (empty($this->label)) {
 			$datas['label'] = $this->description;
 		}
 
@@ -415,7 +415,7 @@ class ContratLigne extends CommonObjectLine
 
 		$result = '';
 		$label = $langs->trans("ShowContractOfService").': '.$this->label;
-		if (empty($label)) {
+		if (empty($this->label)) {
 			$label = $this->description;
 		}
 		$classfortooltip = 'classfortooltip';
@@ -877,12 +877,10 @@ class ContratLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
 
 			// Insert of extrafields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$this->db->rollback();
-					return -1;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
 			}
 
 			if (!$notrigger) {

@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -32,7 +32,7 @@
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
  *  MEMBER_MIN_AMOUNT                   Minimum amount
- *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
+ *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with 'all', 'paypal', 'paybox', 'stripe', ...
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
  *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once registration form has been submitted (hidden option, by default we just show a message on same page or redirect to the payment page)
  *  MEMBER_NEWFORM_FORCETYPE            Force type of member
@@ -609,9 +609,11 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	print '</td></tr>'."\n";
 
 	// Moral/Physic attribute
-	$morphys = array();
-	$morphys["phy"] = $langs->trans("Physical");
-	$morphys["mor"] = $langs->trans("Moral");
+	$morphys = [
+		// "" => $langs->trans("MorAndPhy"),
+		"phy" => $langs->trans("Physical"),
+		"mor" => $langs->trans("Moral"),
+	];
 	$checkednature = GETPOST("morphy", 'alpha');
 	$listetype_natures = $adht->morphyByType(1);		// Load the array of morphy per type
 	$listetype_natures_json = json_encode($listetype_natures);
@@ -856,7 +858,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '</td></tr>'."\n";
 	}
 
-	if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE')) {
+	if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE')) {	// Can be 'all', 'paypal', 'paybox', 'stripe'...
 		$typeid = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', GETPOSTINT('typeid'));
 		$adht = new AdherentType($db);
 		$adht->fetch($typeid);
@@ -884,7 +886,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		// Clean the amount
 		$amount = price2num($amount);
 		$showedamount = $amount > 0 ? $amount : 0;
-		// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
+
 		print '<tr><td>'.$langs->trans("Subscription");
 		if (getDolGlobalString('MEMBER_EXT_URL_SUBSCRIPTION_INFO')) {
 			print ' - <a href="' . getDolGlobalString('MEMBER_EXT_URL_SUBSCRIPTION_INFO').'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';

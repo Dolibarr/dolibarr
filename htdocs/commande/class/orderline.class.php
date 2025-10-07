@@ -210,11 +210,13 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,p.barcode as product_barcode,';
+		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.packaging,';
 		$sql .= ' cd.date_start, cd.date_end, cd.vat_src_code, cd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_country';
 		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -265,6 +267,10 @@ class OrderLine extends CommonOrderLine
 			$this->product_label    = $objp->product_label;
 			$this->product_desc     = $objp->product_desc;
 			$this->product_tobatch  = $objp->product_tobatch;
+			$this->product_barcode = $objp->product_barcode;
+			$this->product_custom_code = $objp->customcode;
+			$this->product_custom_country_id = $objp->country_id;
+			$this->product_custom_country_code = $objp->country_code;
 			$this->fk_unit          = $objp->fk_unit;
 			$this->packaging      	= $objp->packaging;
 
@@ -508,11 +514,9 @@ class OrderLine extends CommonOrderLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
 			$this->rowid = $this->id;
 
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -588,6 +592,9 @@ class OrderLine extends CommonOrderLine
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
+		}
+		if (empty($this->price)) {
+			$this->price = 0;
 		}
 		if (empty($this->remise)) {
 			$this->remise = 0;
@@ -670,12 +677,10 @@ class OrderLine extends CommonOrderLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$this->id = $this->rowid;
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {

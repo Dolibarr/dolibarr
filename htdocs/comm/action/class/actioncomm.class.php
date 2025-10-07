@@ -31,6 +31,7 @@
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 
 
@@ -377,7 +378,7 @@ class ActionComm extends CommonObject
 	public $event_paid;
 
 	/**
-	 * @var int status use but Event organisation module
+	 * @var ?int status use but Event organisation module
 	 */
 	public $status;
 
@@ -416,7 +417,65 @@ class ActionComm extends CommonObject
 	const EVENT_FINISHED = 100;
 
 
-	public $fields = array();
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		"id" => array("type" => "integer", "label" => "Ref", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
+		"ref" => array("type" => "varchar(30)", "label" => "Ref", "enabled" => "1", 'position' => 15, 'notnull' => 1, "visible" => "0", "csslist" => "tdoverflowmax150", "showoncombobox" => "1",),
+		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "0",),
+		"fk_action" => array("type" => "integer", "label" => "Fkaction", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"code" => array("type" => "varchar(50)", "label" => "Code", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "0", "showoncombobox" => "1",),
+		"label" => array("type" => "varchar(255)", "label" => "Title", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
+		"note" => array("type" => "mediumtext", "label" => "Description", "enabled" => "1", 'position' => 51, 'notnull' => 0, "visible" => "-1",),
+		"datep" => array("type" => "datetime", "label" => "DateStart", "enabled" => "1", 'position' => 53, 'notnull' => 0, "visible" => "1",),
+		"datep2" => array("type" => "datetime", "label" => "DateEnd", "enabled" => "1", 'position' => 54, 'notnull' => 0, "visible" => "1",),
+		"fk_project" => array("type" => "integer", "label" => "Project", "picto" => "project", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_soc" => array("type" => "integer", "label" => "ThirdParty", "picto" => "company", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_contact" => array("type" => "integer", "label" => "Contact", "picto" => "contact", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_parent" => array("type" => "integer", "label" => "Parent", "enabled" => "1", 'position' => 90, 'notnull' => 1, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_user_action" => array("type" => "integer", "label" => "Fkuseraction", "picto" => "user", "enabled" => "1", 'position' => 95, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"transparency" => array("type" => "integer", "label" => "Transparency", "enabled" => "1", 'position' => 100, 'notnull' => 0, "visible" => "0",),
+		"fk_user_done" => array("type" => "integer", "label" => "Fkuserdone", "picto" => "user", "enabled" => "1", 'position' => 105, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"priority" => array("type" => "smallint(6)", "label" => "Priority", "enabled" => "1", 'position' => 110, 'notnull' => 0, "visible" => "0",),
+		"fulldayevent" => array("type" => "smallint(6)", "label" => "Fulldayevent", "enabled" => "1", 'position' => 115, 'notnull' => 1, "visible" => "0",),
+		"location" => array("type" => "varchar(128)", "label" => "Location", "enabled" => "1", 'position' => 125, 'notnull' => 0, "visible" => "0",),
+		"durationp" => array("type" => "double", "label" => "Durationp", "enabled" => "1", 'position' => 130, 'notnull' => 0, "visible" => "0",),
+		"durationa" => array("type" => "double", "label" => "Durationa", "enabled" => "1", 'position' => 135, 'notnull' => 0, "visible" => "0",),
+		"fk_element" => array("type" => "integer", "label" => "LinkedObject", "enabled" => "getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')", 'position' => 145, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"elementtype" => array("type" => "varchar(255)", "label" => "Elementtype", "enabled" => "1", 'position' => 150, 'notnull' => 0, "visible" => "0",),
+		"email_msgid" => array("type" => "varchar(256)", "label" => "Emailmsgid", "enabled" => "1", 'position' => 155, 'notnull' => 0, "visible" => "0",),
+		"email_subject" => array("type" => "varchar(256)", "label" => "Emailsubject", "enabled" => "1", 'position' => 160, 'notnull' => 0, "visible" => "0",),
+		"email_from" => array("type" => "varchar(256)", "label" => "Emailfrom", "enabled" => "1", 'position' => 165, 'notnull' => 0, "visible" => "0",),
+		"email_sender" => array("type" => "varchar(256)", "label" => "Emailsender", "enabled" => "1", 'position' => 170, 'notnull' => 0, "visible" => "0",),
+		"email_to" => array("type" => "varchar(256)", "label" => "Emailto", "enabled" => "1", 'position' => 175, 'notnull' => 0, "visible" => "0",),
+		"email_tocc" => array("type" => "varchar(256)", "label" => "Emailtocc", "enabled" => "1", 'position' => 180, 'notnull' => 0, "visible" => "0",),
+		"email_tobcc" => array("type" => "varchar(256)", "label" => "Emailtobcc", "enabled" => "1", 'position' => 185, 'notnull' => 0, "visible" => "0",),
+		"errors_to" => array("type" => "varchar(256)", "label" => "Errorsto", "enabled" => "1", 'position' => 190, 'notnull' => 0, "visible" => "0",),
+		"recurid" => array("type" => "varchar(128)", "label" => "Recurid", "enabled" => "1", 'position' => 195, 'notnull' => 0, "visible" => "0",),
+		"recurrule" => array("type" => "varchar(128)", "label" => "Recurrule", "enabled" => "1", 'position' => 200, 'notnull' => 0, "visible" => "0",),
+		"recurdateend" => array("type" => "datetime", "label" => "Recurdateend", "enabled" => "1", 'position' => 205, 'notnull' => 0, "visible" => "0",),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "0",),
+		"extraparams" => array("type" => "varchar(255)", "label" => "Extraparams", "enabled" => "1", 'position' => 215, 'notnull' => 0, "visible" => "0",),
+		"calling_duration" => array("type" => "integer", "label" => "Callingduration", "enabled" => "1", 'position' => 220, 'notnull' => 0, "visible" => "0",),
+		"visibility" => array("type" => "varchar(12)", "label" => "Visibility", "enabled" => "1", 'position' => 225, 'notnull' => 0, "visible" => "0",),
+		"reply_to" => array("type" => "varchar(255)", "label" => "Replyto", "enabled" => "1", 'position' => 230, 'notnull' => 0, "visible" => "0",),
+		"num_vote" => array("type" => "integer", "label" => "Numvote", "enabled" => "1", 'position' => 235, 'notnull' => 0, "visible" => "0",),
+		"event_paid" => array("type" => "smallint(6)", "label" => "Eventpaid", "enabled" => "1", 'position' => 240, 'notnull' => 1, "visible" => "0",),
+		"status" => array("type" => "smallint(6)", "label" => "Status", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "0",),
+		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => "1", 'position' => 250, 'notnull' => 0, "visible" => "0",),
+		"fk_bookcal_calendar" => array("type" => "integer", "label" => "Fkbookcalcalendar", "enabled" => "1", 'position' => 255, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_task" => array("type" => "integer", "label" => "Task", "picto" => "task", "enabled" => "1", 'position' => 260, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_user_author" => array("type" => "integer", "label" => "UserCreation", "picto" => "user", "enabled" => "1", 'position' => 505, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_user_mod" => array("type" => "integer", "label" => "UserModification", "picto" => "user", "enabled" => "1", 'position' => 506, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 510, 'notnull' => 0, "visible" => "-1",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 520, 'notnull' => 1, "visible" => "-1",),
+		"percent" => array("type" => "smallint(6)", "label" => "Status", "enabled" => "1", 'position' => 1000, 'notnull' => 1, "visible" => "1",),	// status
+	);
+	// END MODULEBUILDER PROPERTIES
+
 
 	/**
 	 *      Constructor
@@ -2344,7 +2403,7 @@ class ActionComm extends CommonObject
 						$assignedUserArray[$key] = $assignedUser;
 					}
 
-					if ($filters['module'] != 'project@eventorganization') {
+					if (!empty($filters['module']) && $filters['module'] != 'project@eventorganization') {
 						$event['assignedUsers'] = $assignedUserArray;
 					}
 
@@ -2464,7 +2523,7 @@ class ActionComm extends CommonObject
 				$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
 			} else {
 				if (empty($title)) {
-					$title = 'Dolibarr actions '.$mysoc->name;
+					$title = $langs->transnoentities("Events").' '.$mysoc->name;
 				}
 				$desc = $langs->transnoentities('ListOfActions');
 				$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
@@ -2642,6 +2701,7 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
 				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
 				$tmpactioncommreminder->lasterror = $obj->lasterror;
+				$tmpactioncommreminder->fk_actioncomm = $this->id;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
@@ -2728,8 +2788,9 @@ class ActionComm extends CommonObject
 						// Content
 						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+						// Topic
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : $langs->transnoentitiesnoconv('EventReminder');
+						$sendTopic = make_substitutions($sendTopic, $substitutionarray);
 
 						// Recipient
 						$recipient = new User($this->db);
@@ -2825,6 +2886,181 @@ class ActionComm extends CommonObject
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg) ? implode(', ', $errorsMsg) : $error);
 
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+
+			return $error;
+		}
+	}
+
+	/**
+	 *  Send reminders by sms
+	 *  CAN BE A CRON TASK
+	 *
+	 *  @return int<-1,1>|string     0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendSmsReminder()
+	{
+		global $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+		$nbSmsSent = 0;
+		$errorsMsg = array();
+
+		if (!isModEnabled('agenda')) {	// Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+			return 0;
+		}
+		if (!getDolGlobalString('AGENDA_REMINDER_SMS')) {
+			$langs->load("agenda");
+			$this->output = $langs->trans('EventRemindersBySmsNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+			return 0;
+		}
+
+		$now = dol_now();
+		$actionCommReminder = new ActionCommReminder($this->db);
+
+		dol_syslog(__METHOD__." start", LOG_INFO);
+
+		$this->db->begin();
+
+		//Select all action comm reminders
+		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+		$sql .= " WHERE typeremind = 'sms'";
+		$sql .= " AND status = 0";	// 0=No yet sent, -1=Error. TODO Include reminder in error once we can count number of error, so we can try 5 times and not more on errors.
+		$sql .= " AND dateremind <= '".$this->db->idate($now)."'";
+		$sql .= " AND entity IN (".getEntity('actioncomm').")";
+		$sql .= $this->db->order("dateremind", "ASC");
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($this->db);
+			$to = null;  // Ensure 'to' is defined for static analysis
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$res = $actionCommReminder->fetch($obj->id);
+				if ($res < 0) {
+					$error++;
+					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
+				}
+
+				if (!$error) {
+					//Select email template
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
+
+					// Load event
+					$res = $this->fetch($actionCommReminder->fk_actioncomm);
+					if ($res > 0) {
+						// PREPARE SMS
+						$errormesg = '';
+						$this->fetch_thirdparty();
+
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
+
+						complete_substitutions_array($substitutionarray, $langs, $this);
+
+						// Content
+						$sendContent = dol_string_nohtmltag(make_substitutions($langs->trans($arraymessage->content), $substitutionarray));
+
+						// Topic
+						// $sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+
+						// Recipient
+						$recipient = new User($this->db);
+						$res = $recipient->fetch($actionCommReminder->fk_user);
+						if ($res > 0) {
+							if (!empty($recipient->user_mobile)) {
+								$to = $recipient->user_mobile;
+							} else {
+								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
+								$error++;
+							}
+						} else {
+							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
+							$error++;
+						}
+
+						// Sender
+						$from = getDolGlobalString('MAIN_SMS_FROM');
+						if (empty($from)) {
+							$errormesg = "Failed to get sender into global setup MAIN_SMS_FROM";
+							$error++;
+						}
+
+						if (!$error) {
+							// Errors Recipient
+							// $errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+
+							// Sms Creation
+							$CSMSFile = new CSMSFile((string) $to, $from, $sendContent, 0, 0, 3, 1);
+
+							// Sending Mail
+							if ($CSMSFile->sendfile()) {
+								$nbSmsSent++;
+							} else {
+								$errormesg = 'Failed to send email to: ' . $to . ' ' . $CSMSFile->error . implode(',', $CSMSFile->errors);
+								$error++;
+							}
+						}
+
+						if (!$error) {
+							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							}
+						} else {
+							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							} else {
+								$errorsMsg[] = $errormesg;
+							}
+						}
+					} else {
+						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
+						$error++;
+					}
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if (!$error) {
+			// Delete also very old past events (we do not keep more than 1 month record in past)
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
+			$sql .= " AND status = ".((int) $actionCommReminder::STATUS_DONE);
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$errorsMsg[] = 'Failed to delete old reminders';
+				//$error++;		// If this fails, we must not rollback other SQL requests already done. Never mind.
+			}
+		}
+
+		if (!$error) {
+			$this->output = 'Nb of SMS sent : '.$nbSmsSent;
+			$this->db->commit();
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+
+			return 0;
+		} else {
+			$this->db->commit(); // We commit also on error, to have the error message recorded.
+			$this->error = 'Nb of SMS sent : '.$nbSmsSent.', '.(!empty($errorsMsg) ? implode(', ', $errorsMsg) : $error);
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 
 			return $error;

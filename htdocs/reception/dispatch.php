@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
+$langs->loadLangs(array("bills", "orders", "sendings", "companies", "products", "stocks", "receptions"));
 
 if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');

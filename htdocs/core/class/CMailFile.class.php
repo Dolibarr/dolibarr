@@ -156,7 +156,7 @@ class CMailFile
 	public $headers;
 
 	/**
-	 * @var string Message
+	 * @var string|Swift_Message Message
 	 */
 	public $message;
 
@@ -343,7 +343,7 @@ class CMailFile
 				}
 			}
 
-			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA')) {
+			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA')) {	// On by default
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
@@ -659,8 +659,6 @@ class CMailFile
 
 			$smtps->setMessageID($this->msgid);
 
-			$smtps->setMessageID($this->msgid);
-
 			$this->smtps = $smtps;
 		} elseif ($this->sendmode == 'swiftmailer') {
 			// Use Swift Mailer library
@@ -716,7 +714,7 @@ class CMailFile
 			}
 
 			// Set the From address with an associative array
-			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
+			// $this->message->setFrom(array('john@doe.com' => 'John Doe'));
 			if (!empty($this->addr_from)) {
 				try {
 					if (getDolGlobalString('MAIN_FORCE_DISABLE_MAIL_SPOOFING')) {
@@ -725,8 +723,8 @@ class CMailFile
 						$adressEmailFrom = array();
 						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
 						$adressEmailFrom = reset($adressEmailFrom);
-						if ($emailMatchs !== false && filter_var($conf->global->MAIN_MAIL_SMTPS_ID, FILTER_VALIDATE_EMAIL) && $conf->global->MAIN_MAIL_SMTPS_ID !== $adressEmailFrom) {
-							$this->message->setFrom($conf->global->MAIN_MAIL_SMTPS_ID);
+						if ($emailMatchs !== false && filter_var(getDolGlobalString('MAIN_MAIL_SMTPS_ID'), FILTER_VALIDATE_EMAIL) && getDolGlobalString('MAIN_MAIL_SMTPS_ID') !== $adressEmailFrom[0]) {
+							$this->message->setFrom(getDolGlobalString('MAIN_MAIL_SMTPS_ID'));
 						} else {
 							$this->message->setFrom($this->getArrayAddress($this->addr_from));
 						}
@@ -946,26 +944,26 @@ class CMailFile
 			}
 
 			$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER';
-			$keyforsmtpport  = 'MAIN_MAIL_SMTP_PORT';
-			$keyforsmtpid    = 'MAIN_MAIL_SMTPS_ID';
-			$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW';
+			$keyforsmtpport = 'MAIN_MAIL_SMTP_PORT';
+			$keyforsmtpid = 'MAIN_MAIL_SMTPS_ID';
+			$keyforsmtppw = 'MAIN_MAIL_SMTPS_PW';
 			$keyforsmtpauthtype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
 			$keyforsmtpoauthservice = 'MAIN_MAIL_SMTPS_OAUTH_SERVICE';
-			$keyfortls       = 'MAIN_MAIL_EMAIL_TLS';
-			$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS';
+			$keyfortls = 'MAIN_MAIL_EMAIL_TLS';
+			$keyforstarttls = 'MAIN_MAIL_EMAIL_STARTTLS';
 			$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
 			if (!empty($this->sendcontext)) {
 				$smtpContextKey = strtoupper($this->sendcontext);
 				$smtpContextSendMode = getDolGlobalString('MAIN_MAIL_SENDMODE_'.$smtpContextKey);
 				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
-					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
-					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
-					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
+					$keyforsmtpport = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
+					$keyforsmtpid = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
+					$keyforsmtppw = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
 					$keyforsmtpauthtype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_'.$smtpContextKey;
 					$keyforsmtpoauthservice = 'MAIN_MAIL_SMTPS_OAUTH_SERVICE_'.$smtpContextKey;
-					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
-					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
+					$keyfortls = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
+					$keyforstarttls = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
 					$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 				}
 			}
@@ -2038,6 +2036,7 @@ class CMailFile
 
 	/**
 	 * Search images into html message and init array this->images_encoded if found
+	 * This is called in the CMailfile constructor but only if MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS is set (Off by default)
 	 *
 	 * @param	string	$images_dir		Path to store physical images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
@@ -2047,8 +2046,8 @@ class CMailFile
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
 
-		// We search (into mail body this->html), if we find some strings like "... file=xxx.img"
-		// For example when:
+		// We search (into mail body this->html), if we find some strings like "... .imgext" or '... .imgext' to detect strings like "...file=xxx.img"
+		// For example to detect:
 		// <img alt="" src="/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/picture.jpg" style="height:356px; width:1040px" />
 		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
@@ -2093,7 +2092,7 @@ class CMailFile
 				foreach ($this->html_images as $img) {
 					$fullpath = $images_dir.'/'.$img["name"];
 
-					// If duplicate images are embedded, they may show up as attachments, so remove them.
+					// If referenced image is found on disk (src link), it may show up as attachments, so we remove it by storing it into images_encoded
 					if (!in_array($fullpath, $inline)) {
 						// Read image file
 						if ($image = file_get_contents($fullpath)) {
@@ -2123,8 +2122,9 @@ class CMailFile
 	}
 
 	/**
-	 * Seearch images with data:image format into html message.
-	 * If we find some, we create it on disk.
+	 * Search images with src="data:image..." format into html message.
+	 * If we find some, we create them on disk.
+	 * This is called in the CMailfile constructor.
 	 *
 	 * @param	string	$images_dir		Location of where to store physically images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO

@@ -64,7 +64,7 @@ class OrderListController extends Controller
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+		$langs->loadLangs(array('orders', 'sendings', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
 		$context->title = $langs->trans('WebPortalOrderListTitle');
 		$context->desc = $langs->trans('WebPortalOrderListDesc');

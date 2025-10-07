@@ -234,7 +234,7 @@ if ($action == 'create') {
 	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'group');
+	print img_picto('', 'group', 'class="pictofixedwidth"');
 	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
@@ -242,7 +242,7 @@ if ($action == 'create') {
 	print $langs->trans('Machines');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'resource');
+	print img_picto('', 'resource', 'class="pictofixedwidth"');
 	print $formresource->select_resource_list($resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 0, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
@@ -287,7 +287,7 @@ if (($id || $ref) && $action == 'edit') {
 	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'group');
+	print img_picto('', 'group', 'class="pictofixedwidth"');
 	print $form->select_dolgroups(empty($groups) ? $object->usergroups : $groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
@@ -295,7 +295,7 @@ if (($id || $ref) && $action == 'edit') {
 	print $langs->trans('Machines');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'resource');
+	print img_picto('', 'resource', 'class="pictofixedwidth"');
 	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 1, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 

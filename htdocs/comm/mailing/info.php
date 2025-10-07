@@ -46,7 +46,7 @@ $langs->load("mails");
 if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'mailing');
+//restrictedArea($user, 'mailing');
 
 
 

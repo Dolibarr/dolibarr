@@ -143,7 +143,7 @@ class Facture extends CommonInvoice
 	public $ref_client;
 
 	/**
-	 * @var string customer ref
+	 * @var ?string customer ref
 	 */
 	public $ref_customer;
 
@@ -171,12 +171,11 @@ class Facture extends CommonInvoice
 	 * @var int id of template invoice when generated from a template invoice
 	 */
 	public $fk_fac_rec_source;
+
 	/**
 	 * @var int id of source invoice if replacement invoice or credit note
 	 */
 	public $fk_facture_source;
-
-	public $linked_objects = array();
 
 	/**
 	 * @var int ID Field to store bank id to use when payment mode is withdraw
@@ -274,6 +273,10 @@ class Facture extends CommonInvoice
 	 */
 	public $online_payment_url;
 
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 
 
 	/**
@@ -286,7 +289,7 @@ class Facture extends CommonInvoice
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -468,8 +471,8 @@ class Facture extends CommonInvoice
 			$this->type = self::TYPE_STANDARD;
 		}
 
-		$this->ref_client = trim($this->ref_client); // deprecated
-		$this->ref_customer = trim($this->ref_customer);
+		$this->ref_client = trim((string) $this->ref_client); // deprecated
+		$this->ref_customer = trim((string) $this->ref_customer);
 
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
 		$this->note = (isset($this->note) ? trim($this->note) : $this->note_private); // deprecated
@@ -710,6 +713,7 @@ class Facture extends CommonInvoice
 		$sql .= ", retained_warranty";
 		$sql .= ", retained_warranty_date_limit";
 		$sql .= ", retained_warranty_fk_cond_reglement";
+		$sql .= ", ip";
 		$sql .= ")";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
@@ -749,6 +753,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".(empty($this->retained_warranty) ? "0" : $this->db->escape((string) $this->retained_warranty));
 		$sql .= ", ".(!empty($this->retained_warranty_date_limit) ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'NULL');
 		$sql .= ", ".(int) $this->retained_warranty_fk_cond_reglement;
+		$sql .= ", ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -948,7 +953,7 @@ class Facture extends CommonInvoice
 
 						if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 							$originid = $line->origin_id;
-							$origintype = $line->origin;
+							$origintype = $line->origin_type;
 						} else {
 							$originid = $line->id;
 							$origintype = $this->element;
@@ -1019,7 +1024,7 @@ class Facture extends CommonInvoice
 					}
 
 					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
-					$tva_npr = $_facrec->lines[$i]->info_bits;
+					$tva_npr = (int) $_facrec->lines[$i]->info_bits;
 					if (empty($tva_tx)) {
 						$tva_npr = 0;
 					}
@@ -1350,20 +1355,17 @@ class Facture extends CommonInvoice
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		} else {
 			// copy internal contacts
 			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
-				$this->error = $object->error;
-				$this->errors = $object->errors;
+				$this->setErrorsFromObject($object);
 			} elseif ($object->socid == $objFrom->socid) {
 				// copy external contacts if same company
 				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
-					$this->error = $object->error;
-					$this->errors = $object->errors;
+					$this->setErrorsFromObject($object);
 				}
 			}
 		}
@@ -3673,7 +3675,7 @@ class Facture extends CommonInvoice
 			}
 			$num = $this->getNextNumRef($this->thirdparty);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 
 		if (!$num) {
@@ -4648,7 +4650,7 @@ class Facture extends CommonInvoice
 
 					if ($product_stock < $qty) {
 						$langs->load("errors");
-						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', (string) $product->ref);
 						$this->db->rollback();
 						return -3;
 					}
@@ -4677,7 +4679,10 @@ class Facture extends CommonInvoice
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
-					if (!empty($this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
+					if (!empty($this->line->packaging)
+						&& is_numeric($this->line->packaging)
+						&& (float) $this->line->packaging > 0
+						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
@@ -5961,7 +5966,7 @@ class Facture extends CommonInvoice
 
 		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
 		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit)) {
-			$totalpaid = $this->getSommePaiement();
+			$totalpaid = $this->getSommePaiement(0);
 			$totalpaid = (float) $totalpaid;
 			$RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
 			if ($totalpaid >= 0 && $RetainedWarrantyAmount >= 0) {

@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2020-2025  Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * COpyright (C) 2025		William Mead		<william@m34d.com>
+/* Copyright (C) 2015		Jean-François Ferry     	<jfefe@aternatik.fr>
+ * Copyright (C) 2020-2025	Thibault FOUCART			<support@ptibogxiv.net>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		William Mead				<william@m34d.com>
+ * Copyright (C) 2025		Jean François Baillette		<jean-francois@swiiptel.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -598,11 +599,11 @@ class Users extends DolibarrApi
 		}
 
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
-			$entity = (!empty($entity) ? $entity : $conf->entity);
+			$entity = (!empty($entity) ? (int) $entity : $conf->entity);
 		} else {
 			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
 			// hack the security by giving himself permissions on another entity.
-			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
+			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
 		}
 
 		$result = $this->useraccount->SetInGroup($group, $entity);
@@ -611,6 +612,43 @@ class Users extends DolibarrApi
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Remove user from group (only admin)
+	 *
+	 * @since    23.0.0    Initial implementation
+	 *
+	 * @url POST {id}/remove-group/{group}
+	 *
+	 * @param int $id User ID
+	 * @param int $group Group ID
+	 * @return  array{success:boolean,message:string}
+	 *
+	 * @throws RestException 403 Not allowed - only admin
+	 * @throws RestException 503 Error
+	 *
+	 */
+	public function removeUserFromGroup($id, $group)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only admin can remove users from groups');
+		}
+
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "usergroup_user";
+		$sql .= " WHERE fk_user = " . ((int) $id);
+		$sql .= " AND fk_usergroup = " . ((int) $group);
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			throw new RestException(503, 'DB error: ' . $this->db->lasterror());
+		}
+
+		return [
+			'success' => true,
+			'message' => "User $id removed from group $group"
+		];
 	}
 
 	/**
@@ -814,7 +852,9 @@ class Users extends DolibarrApi
 
 		if ($result) {
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$notifications[] = $obj;
 				$i++;

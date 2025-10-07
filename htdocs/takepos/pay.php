@@ -56,6 +56,8 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
+$action = GETPOST('action', 'aZ09');
+
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
 $invoiceid = GETPOSTINT('invoiceid');
@@ -747,10 +749,14 @@ if (getDolGlobalInt("TAKEPOS_ENABLE_SUMUP")) {
 	}
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $object may have been modified by hook
+$parameters = array('action_buttons' => $action_buttons);
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $invoice may have been modified by hook
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif ($reshook == 0) {
+	$action_buttons = array_merge($action_buttons, $hookmanager->resArray);
+} elseif ($reshook > 0) {
+	$action_buttons = $hookmanager->resArray;
 }
 
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";

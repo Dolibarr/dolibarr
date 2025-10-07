@@ -3,10 +3,10 @@ MenuFinancial=বিলিং | পেমেন্ট
 TaxModuleSetupToModifyRules=গণনার নিয়ম পরিবর্তন করতে <a href="%s">ট্যাক্স মডিউল সেটআপ</a> এ যান
 TaxModuleSetupToModifyRulesLT=গণনার নিয়ম পরিবর্তন করতে <a href="%s">কোম্পানি সেটআপ</a> এ যান
 OptionMode=অ্যাকাউন্টেন্সির জন্য বিকল্প
-OptionModeTrue=সঞ্চয়ী হিসাবরক্ষণ
-OptionModeVirtual=নগদ হিসাব
-OptionModeTrueDesc=এই প্রেক্ষাপটে, টার্নওভার গণনা করা হয় পেমেন্টের (পেমেন্টের তারিখ) উপর। পেমেন্টের ইনপুট/আউটপুটের মাধ্যমে হিসাব-নিকাশ যাচাই করা হলেই পরিসংখ্যানের বৈধতা নিশ্চিত করা হয়।
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=এই প্রেক্ষাপটে, টার্নওভার ইনভয়েসের উপর গণনা করা হয় (বৈধকরণের তারিখ)। যখন এই চালানগুলি বকেয়া থাকে, সেগুলি পরিশোধ করা হয়েছে বা না করা হয়েছে, সেগুলি টার্নওভার আউটপুটে তালিকাভুক্ত করা হয়৷
+OptionModeTrueDesc=এই প্রেক্ষাপটে, টার্নওভার গণনা করা হয় পেমেন্টের (পেমেন্টের তারিখ) উপর। পেমেন্টের ইনপুট/আউটপুটের মাধ্যমে হিসাব-নিকাশ যাচাই করা হলেই পরিসংখ্যানের বৈধতা নিশ্চিত করা হয়।
 FeatureIsSupportedInInOutModeOnly=বৈশিষ্ট্যটি শুধুমাত্র ক্রেডিট-ডেবিটিএস অ্যাকাউন্টেন্সি মোডে উপলব্ধ (অ্যাকাউন্টেন্সি মডিউল কনফিগারেশন দেখুন)
 VATReportBuildWithOptionDefinedInModule=এখানে দেখানো পরিমাণ ট্যাক্স মডিউল সেটআপ দ্বারা সংজ্ঞায়িত নিয়ম ব্যবহার করে গণনা করা হয়।
 LTReportBuildWithOptionDefinedInModule=এখানে দেখানো পরিমাণ কোম্পানি সেটআপ দ্বারা সংজ্ঞায়িত নিয়ম ব্যবহার করে গণনা করা হয়।
@@ -302,7 +302,6 @@ ByVatRate=বিক্রয় করের হার দ্বারা
 TurnoverbyVatrate=বিক্রয় করের হার দ্বারা টার্নওভার চালান
 TurnoverCollectedbyVatrate=বিক্রয় করের হার দ্বারা সংগৃহীত টার্নওভার
 PurchasebyVatrate=বিক্রয় করের হার দ্বারা ক্রয়
-LabelToShow=সংক্ষিপ্ত লেবেল
 PurchaseTurnover=ক্রয় টার্নওভার
 PurchaseTurnoverCollected=ক্রয় টার্নওভার সংগৃহীত
 RulesPurchaseTurnoverDue=- এতে সরবরাহকারীর বকেয়া ইনভয়েস অন্তর্ভুক্ত থাকে যে তারা অর্থপ্রদান করুক বা না করুক। <br>- এটি এই চালানগুলির চালানের তারিখের উপর ভিত্তি করে৷<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=লাইন তারিখের নিয়ম
 Prepaid=প্রিপেইড
 Postpaid=পোস্টপেইড
 SetRuleForLinesDates=লাইন তারিখের জন্য নিয়ম সেট করুন
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

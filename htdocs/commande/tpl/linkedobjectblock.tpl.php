@@ -42,7 +42,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 // Load translation files required by the page
 $langs->load("orders");
 
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 '@phan-var-force Commande[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
 /** @var Commande[] $linkedObjectBlock */
 

@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 $langs->loadLangs(array("admin", "products", "productbatch"));
 
 // Security check
-if (!$user->admin || (empty($conf->productbatch->enabled))) {
+if (!$user->admin || (!isModEnabled('productbatch'))) {
 	accessforbidden();
 }
 
@@ -399,10 +399,11 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 
 // Module to build doc
 $def = array();
+// TODO Replace with $def = getListOfModels($db, $type);
 $sql = "SELECT nom";
 $sql .= " FROM " . MAIN_DB_PREFIX . "document_model";
 $sql .= " WHERE type = '" . $db->escape($type) . "'";
-$sql .= " AND entity = " . $conf->entity;
+$sql .= " AND entity = " . ((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;

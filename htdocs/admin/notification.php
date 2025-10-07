@@ -5,7 +5,7 @@
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -321,6 +321,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$model = 'fichinter_send';
 	} elseif ($notifiedevent['elementtype'] == 'expensereport') {
 		$model = 'expensereport_send';
+	} elseif ($notifiedevent['elementtype'] == 'societe') {
+		$model = 'thirdparty';
 	} elseif ($notifiedevent['elementtype'] == 'order_supplier') {
 		$model = 'order_supplier_send';
 	} elseif ($notifiedevent['elementtype'] == 'invoice_supplier') {
@@ -446,6 +448,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'shipping') {
 		$elementPicto = 'shipment';
 		$elementLabel = $langs->trans('Shipping');
+	} elseif ($notifiedevent['elementtype'] == 'societe') {
+		$elementPicto = 'company';
 	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 		$elementPicto = 'expensereport';
 		$elementLabel = $langs->trans('ExpenseReport');

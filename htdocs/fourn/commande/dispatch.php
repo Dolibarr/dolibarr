@@ -55,7 +55,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
+$langs->loadLangs(array("bills", "orders", "sendings", "companies", "products", "stocks", "receptions"));
 
 if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
@@ -938,9 +938,9 @@ if ($id > 0 || !empty($ref)) {
 
 							print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
 							if (getDolGlobalString('SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT')) { // Not tested !
-								print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
+								print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price($up_ht_disc).'">';
 							} else {
-								print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
+								print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price($up_ht_disc).'">';
 							}
 
 							print '</td>';

@@ -67,7 +67,7 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
+$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'sendings', 'categories'));
 if (isModEnabled("shipping")) {
 	$langs->loadLangs(array('sendings'));
 }
@@ -80,7 +80,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$toselect 	= GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'proposallist';
 $optioncss  = GETPOST('optioncss', 'alpha');
 $mode 		= GETPOST('mode', 'alpha');
@@ -108,6 +108,13 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
+$searchCategoryPropalList = GETPOST('search_category_propal_list', 'array:int');
+$searchCategoryPropalOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryPropalOperator = GETPOSTINT('search_category_propal_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryPropalOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_product_category = GETPOSTINT('search_product_category');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
@@ -366,6 +373,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_ttc = '';
 		$search_login = '';
 		$search_product_category = 0;
+		$searchCategoryPropalList = array();
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -765,6 +773,7 @@ if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
 }
 // Search on user
+$param = '';
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
 	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
@@ -773,12 +782,46 @@ if ($search_user > 0) {
 	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal'";
 	$sql .= " WHERE ec.element_id = p.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
+if ($searchCategoryPropalOperator == 1) {
+	$param .= "&search_category_propal_operator=".urlencode((string) ($searchCategoryPropalOperator));
+}
+foreach ($searchCategoryPropalList as $searchCategoryPropal) {
+	$param .= "&search_category_propal_list[]=".urlencode($searchCategoryPropal);
+}
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
 	} elseif ($search_sale > 0) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search for tag/category ($searchCategoryPropalList is an array of ID)
+if (!empty($searchCategoryPropalList)) {
+	$searchCategoryPropalSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryPropalList as $searchCategoryPropal) {
+		if (intval($searchCategoryPropal) == -2) {
+			$searchCategoryPropalSqlList[] = "NOT EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal)";
+		} elseif (intval($searchCategoryPropal) > 0) {
+			if ($searchCategoryPropalOperator == 0) {
+				$searchCategoryPropalSqlList[] = " EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal AND ck.fk_categorie = ".((int) $searchCategoryPropal).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryPropal);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryPropalSqlList[] = " EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryPropalOperator == 1) {
+		if (!empty($searchCategoryPropalSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryPropalSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryPropalSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryPropalSqlList).")";
+		}
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
@@ -1117,6 +1160,9 @@ $arrayofmassactions = array(
 if ($permissiontosendbymail) {
 	$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
 }
+if (isModEnabled('category') && $user->hasRight('propal', 'lire')) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if ($permissiontovalidate) {
 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 }
@@ -1188,7 +1234,11 @@ if ($search_all) {
 $i = 0;
 
 $moreforfilter = '';
-
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROPOSAL, $searchCategoryPropalList, 'minwidth300', $searchCategoryPropalOperator ? $searchCategoryPropalOperator : 0);
+}
 // If the user can view prospects other than his'
 if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
@@ -1855,7 +1905,7 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

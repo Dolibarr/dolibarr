@@ -538,7 +538,7 @@ if ($resql) {
 	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT');
@@ -559,7 +559,7 @@ if ($resql) {
 	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT');
@@ -580,7 +580,7 @@ if ($resql) {
 	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT');
@@ -601,7 +601,7 @@ if ($resql) {
 	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT');
@@ -630,7 +630,7 @@ if ($resql) {
 	$limitforoptim = 100000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
@@ -653,7 +653,7 @@ if ($resql) {
 	$limitforoptim = 100000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
+	$nb = (int) $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE')) {
 			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
