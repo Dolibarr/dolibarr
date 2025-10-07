@@ -1916,7 +1916,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print '<td></td>';
 							}
 						}
-						var_dump($_POST);
+
 						// eat by mandatory
 						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
 							print '<td align="right">';
