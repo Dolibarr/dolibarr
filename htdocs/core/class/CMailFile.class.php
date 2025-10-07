@@ -2136,6 +2136,7 @@ class CMailFile
 						$this->images_encoded[$idx]['fullpath'] = $img['fullpath'];
 						$this->images_encoded[$idx]['content_type'] = $img['content_type'];
 						$this->images_encoded[$idx]['cid'] = $img['cid'];
+						$this->images_encoded[$idx]['type'] = 'cidfromdata';
 						$this->images_encoded[$idx]['image_encoded'] = chunk_split(base64_encode($image_content), 68, $this->eol);
 					}
 				}
