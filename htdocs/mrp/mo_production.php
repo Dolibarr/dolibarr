@@ -372,7 +372,7 @@ if (empty($reshook)) {
 							$stockmove->origin_id = $object->id;
 							$stockmove->context['mrp_role'] = 'toproduce';
 
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, GETPOSTDATE('sellby-'.$line->id.'-'.$i), GETPOSTDATE('eatby-'.$line->id.'-'.$i), GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, GETPOSTDATE('eatby-'.$line->id.'-'.$i), GETPOSTDATE('sellby-'.$line->id.'-'.$i), GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -1620,12 +1620,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// sell by
 			if ($atleastoneatby) {
-				print '<td>'.$langs->trans("SellByDate").'</td>';
+				print '<td>'.$langs->trans("EatByDate").'</td>';
 			}
 
 			// eat by
 			if ($atleastonsellby) {
-				print '<td>'.$langs->trans("EatByDate").'</td>';
+				print '<td>'.$langs->trans("SellByDate").'</td>';
 			}
 		}
 
