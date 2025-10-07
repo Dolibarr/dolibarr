@@ -627,9 +627,9 @@ class Invoices extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of invoice
-	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
-	 * @return	array				array with contact and user associated
+	 * @param	int					$id			ID of invoice
+	 * @param	string				$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @return	array<int,mixed>				Array with contact and user associated
 	 *
 	 * @url	GET {id}/contacts
 	 *
