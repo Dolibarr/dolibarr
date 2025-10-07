@@ -471,13 +471,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $warnings_unactivation;
 
 	/**
-	 * @var int[] Minimum version of PHP required by module.
+	 * @var null|int[] Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
 
 	/**
-	 * @var int[] Maximum version of PHP ensured compatible with module.
+	 * @var null|int[] Maximum version of PHP ensured compatible with module.
 	 */
 	public $phpmax;
 
