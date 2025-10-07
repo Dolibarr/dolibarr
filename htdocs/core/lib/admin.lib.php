@@ -1365,6 +1365,7 @@ function unActivateModule($value, $requiredby = 1)
 	if ($found) {
 		$objMod = new $modName($db);
 		'@phan-var-force DolibarrModules $objMod';
+		/** @var DolibarrModules $objMod */
 		$result = $objMod->remove();
 		if ($result <= 0) {
 			$ret = $objMod->error;
@@ -1438,6 +1439,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
+						/** @var DolibarrModules $objMod */
 
 						if ($objMod->numero > 0) {
 							$j = $objMod->numero;
@@ -1605,6 +1607,7 @@ function activateModulesRequiredByCountry($country_code)
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
+						/** @var DolibarrModules $objMod */
 
 						$modulequalified = 1;
 
