@@ -1222,6 +1222,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	$objMod = new $modName($db);
 	'@phan-var-force DolibarrModules $objMod';
+	/** @var DolibarrModules $objMod */
 
 	// Test if PHP version ok
 	$verphp = versionphparray();
