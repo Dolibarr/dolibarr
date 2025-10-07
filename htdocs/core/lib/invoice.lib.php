@@ -370,7 +370,7 @@ function supplier_invoice_rec_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildurl(DOL_URL_ROOT.'/fourn/facture/note-rec.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/note-rec.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -1329,7 +1329,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			print '<tr class="liste_titre">';
 			print '<th colspan="2">';
 			print $langs->trans("BillsSuppliersUnpaid", $num).' ';
-			print '<a href="'.dolBuildurl(DOL_URL_ROOT.'/fourn/facture/list.php', ['search_status' => FactureFournisseur::STATUS_VALIDATED]).'">';
+			print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/list.php', ['search_status' => FactureFournisseur::STATUS_VALIDATED]).'">';
 			print '<span class="badge">'.$num.'</span>';
 			print '</a>';
 			print '</th>';
