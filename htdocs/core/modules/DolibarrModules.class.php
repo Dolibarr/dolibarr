@@ -445,7 +445,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $conflictwith;
 
 	/**
-	 * @var string[] Module language files
+	 * @var null|string[] Module language files
 	 */
 	public $langfiles;
 
@@ -482,7 +482,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $phpmax;
 
 	/**
-	 * @var int[] Minimum version of Dolibarr required by module.
+	 * @var null|int[] Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
