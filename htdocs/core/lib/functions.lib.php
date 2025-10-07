@@ -7463,7 +7463,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 		$query += ['sortorder' => $sortorder];
 	}
 
-	$options = '&'.http_build_query($query);
+	$options = '&' . http_build_query($query);
 	if ($page) {
 		$query = array_merge($query, ['page' => $page]);
 	}
@@ -15963,7 +15963,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
 			$sql .= ", " . MAIN_DB_PREFIX . "propal as o";
 		} else {
-			if (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id)) {
+			if (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id) && array_key_exists('ref', $filterobj->fields)) {
 				$sql .= ", " . MAIN_DB_PREFIX . $filterobj->table_element . " as o";
 			}
 		}
@@ -16034,7 +16034,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id) . " AND a.elementtype = 'invoice_supplier'";
 				}
 			} else {
-				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id)) {
+				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id) && array_key_exists('ref', $filterobj->fields)) {
 					$sql .= " AND a.fk_element = o.rowid";
 					$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "'";
 					if ($filterobj->id) {
