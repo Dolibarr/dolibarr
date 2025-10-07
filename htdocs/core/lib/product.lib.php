@@ -426,7 +426,7 @@ function product_lot_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/product/admin/product_lot.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/product/admin/product_lot.php");
 	$head[$h][1] = $langs->trans('Parameters');
 	$head[$h][2] = 'settings';
 	$h++;
@@ -437,7 +437,7 @@ function product_lot_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_lot']['count'];
 	if ($nbExtrafields > 0) {
@@ -484,7 +484,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("propal");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/propal.php?id='.$product->id.'">'.img_object('', 'propal', 'class="pictofixedwidth"').$langs->trans("Proposals").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/propal.php', ['id' => $product->id]).'">'.img_object('', 'propal', 'class="pictofixedwidth"').$langs->trans("Proposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_propale['customers'];
 		print '</td><td class="right">';
@@ -503,7 +503,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("supplier_proposal");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/supplier_proposal.php?id='.$product->id.'">'.img_object('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans("SupplierProposals").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/supplier_proposal.php', ['id' => $product->id]).'">'.img_object('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans("SupplierProposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['suppliers'];
 		print '</td><td class="right">';
@@ -522,7 +522,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/commande.php?id='.$product->id.'">'.img_object('', 'order', 'class="pictofixedwidth"').$langs->trans("CustomersOrders").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande.php', ['id' => $product->id]).'">'.img_object('', 'order', 'class="pictofixedwidth"').$langs->trans("CustomersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande['customers'];
 		print '</td><td class="right">';
@@ -541,7 +541,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande_fournisseur.php', ['id' => $product->id]).'">'.img_object('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
 		print '</td><td class="right">';
@@ -560,7 +560,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/facture.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("CustomersInvoices").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("CustomersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture['customers'];
 		print '</td><td class="right">';
@@ -579,7 +579,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/facturerec.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facturerec.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facturerec['customers'];
 		print '</td><td class="right">';
@@ -598,7 +598,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SuppliersInvoices").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_fournisseur.php', ['id' => $product->id]).'">'.img_object('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SuppliersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
 		print '</td><td class="right">';
@@ -618,7 +618,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/facture_facturerec.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_facturerec.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facturefournrec['customers'];
 		print '</td><td class="right">';
@@ -639,7 +639,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("sendings");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/expedition.php?id='.$product->id.'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/expedition.php', ['id' => $product->id]).'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_expedition['customers'];
 		print '</td><td class="right">';
@@ -659,7 +659,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("receptions");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/reception.php?id='.$product->id.'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/reception.php', ['id' => $product->id]).'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_reception['suppliers'];
 		print '</td><td class="right">';
@@ -679,7 +679,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("contracts");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/contrat.php?id='.$product->id.'">'.img_object('', 'contract', 'class="pictofixedwidth"').$langs->trans("Contracts").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/contrat.php', ['id' => $product->id]).'">'.img_object('', 'contract', 'class="pictofixedwidth"').$langs->trans("Contracts").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_contrat['customers'];
 		print '</td><td class="right">';
@@ -700,7 +700,7 @@ function show_stats_for_company($product, $socid)
 		$langs->load("mrp");
 
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/bom.php?id='.$product->id.'">'.img_object('', 'bom', 'class="pictofixedwidth"').$langs->trans("BOM").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/bom.php', ['id' => $product->id]).'">'.img_object('', 'bom', 'class="pictofixedwidth"').$langs->trans("BOM").'</a>';
 		print '</td><td class="right">';
 
 		print '</td><td class="right">';
@@ -724,7 +724,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stats/mo.php?id='.$product->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/mo.php', ['id' => $product->id]).'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		print $form->textwithpicto((string) $product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
 		print ' ';
@@ -797,7 +797,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/expedition.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stock/stats/expedition.php', ['id' => $batch->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_expedition['customers'];
 		print '</td><td class="right">';
@@ -816,7 +816,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/reception.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stock/stats/reception.php', ['id' => $batch->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_reception['customers'];
 		print '</td><td class="right">';
@@ -833,7 +833,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/commande_fournisseur.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stock/stats/commande_fournisseur.php', ['id' => $batch->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_supplier_order['customers'];
 		print '</td><td class="right">';
@@ -852,7 +852,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/mo.php?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stock/stats/mo.php', ['id' => $batch->id]).'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['customers_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
 		print $form->textwithpicto((string) $batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
