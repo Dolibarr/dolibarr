@@ -285,6 +285,7 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+		$action = '';
 	}
 
 	// Save quantity found during inventory (when we click on Save button on inventory page)

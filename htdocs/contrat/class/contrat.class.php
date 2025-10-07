@@ -145,7 +145,7 @@ class Contrat extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * TODO: Which is the correct one?
+	 * TODO: Which is the correct one? user_author_id or user_creation_id ?
 	 * Author of the contract
 	 * @var int
 	 */
@@ -584,14 +584,14 @@ class Contrat extends CommonObject
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'contract/".$this->db->escape($this->newref)."'";
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'contract/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
 						$this->error = $this->db->lasterror();
 					}
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'contract/".$this->db->escape($this->newref)."'";
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filepath = 'contract/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -1069,7 +1069,7 @@ class Contrat extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 
 			// Load object modContract
-			$module = (getDolGlobalString('CONTRACT_ADDON') ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
+			$module = getDolGlobalString('CONTRACT_ADDON', 'mod_contract_serpis');
 			if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}
@@ -1346,9 +1346,6 @@ class Contrat extends CommonObject
 		}
 		if (empty($this->socid) && $this->fk_soc > 0) {
 			$this->socid = (int) $this->fk_soc;
-		}
-		if (empty($this->fk_project) && $this->projet > 0) {
-			$this->fk_project = (int) $this->projet;
 		}
 
 		if (isset($this->ref)) {
@@ -1766,7 +1763,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description = '".$this->db->escape($desc)."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET description = '".$this->db->escape($desc)."'";
 		$sql .= ",subprice = ".((float) price2num($subprice));
 		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
 		$sql .= ",qty = ".((float) $qty);
@@ -2076,7 +2073,8 @@ class Contrat extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/contrat/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT . '/contrat/card.php';
+		$query = ['id' => $this->id];
 
 		//if ($option !== 'nolink')
 		//{
@@ -2086,9 +2084,10 @@ class Contrat extends CommonObject
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
+			$query = array_merge($query, ['save_lastsearch_values' => 1]);
 		}
 		//}
+		$url = dolBuildUrl($baseurl, $query);
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
@@ -2933,5 +2932,21 @@ class Contrat extends CommonObject
 		$return .= '</div>';
 
 		return $return;
+	}
+
+	// @Todo getLibSignedStatus, LibSignedStatus
+
+	/**
+	 * Set signed status
+	 *
+	 * @param  User   $user        Object user that modify
+	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
+	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
+	 * @param  string $triggercode Trigger code to use
+	 * @return int                 0 < if KO, > 0 if OK
+	 */
+	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
+	{
+		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
 	}
 }

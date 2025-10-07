@@ -554,7 +554,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 		});
 		</script>';
 		if (count($arraysql)) {
-			print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
+			print ' - <a class="trforrunsqlshowhide'.$keyforsql.' reposition" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
 		} else {
 			print ' - <span class="opacitymedium">'.$langs->trans("ScriptIsEmpty").'</span>';
 		}
@@ -843,7 +843,7 @@ function ihm_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/tools/ui/index.php";
 	$head[$h][1] = $langs->trans("UxComponentsDoc").' '.img_picto('', 'external-link-square-alt');
-	$head[$h][2] = 'css';
+	$head[$h][2] = 'ux';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');

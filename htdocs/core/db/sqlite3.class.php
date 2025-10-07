@@ -500,7 +500,7 @@ class DoliDBSqlite3 extends DoliDB
 					$errormsg .= ' ('.$this->lasterrno.')';
 				}
 
-				if ($conf->global->SYSLOG_LEVEL < LOG_DEBUG) {
+				if (getDolGlobalString('SYSLOG_LEVEL') < LOG_DEBUG) {
 					dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR); // Log of request was not yet done previously
 				}
 				dol_syslog(get_class($this)."::query SQL Error message: ".$errormsg, LOG_ERR);

@@ -171,7 +171,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.DOL_URL_ROOT.'/bom/bom_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/bom/bom_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 
@@ -187,7 +187,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	$keyforbreak = 'duration';
+	$keyforbreak = 'duration';	// used into tpl
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Manufacturing cost
@@ -282,7 +282,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if ($action == 'treeview') {
 						print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					}
-					print '<td class="linecolqty right">'.$TProduct['qty'].'</td>';
+					print '<td class="linecolqty right">'.price(price2num($TProduct['qty'], 'MS')).'</td>';
 					print '<td>';
 					print '</td>';
 					print '<td class="linecolstock right"></td>';
@@ -306,7 +306,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($action == 'treeview') {
 							print '<td></td>';
 						}
-						print '<td class="linecolqty right">'.$TInfos['qty'].'</td>';
+						print '<td class="linecolqty right">'.price(price2num($TInfos['qty'], 'MS')).'</td>';
 						print '<td>';
 						print '</td>';
 						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
@@ -325,7 +325,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 				print '<tr class="oddeven">';
 				print '<td class="linecoldescription">'.$prod->getNomUrl(1).'</td>';
-				print '<td class="linecolqty right">'.$elem['qty'].'</td>';
+				print '<td class="linecolqty right">'.price(price2num($elem['qty'], 'MS')).'</td>';
 				print '<td>';
 				$useunit = (($prod->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($prod->type == Product::TYPE_SERVICE) && ($elem['fk_unit'])));
 				if ($useunit) {
@@ -335,7 +335,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
 				}
 				print '</td>';
-				print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
+				print '<td class="linecolstock right">'.price(price2num($prod->stock_reel, 'MS')).'</td>';
 				print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
 				print '</tr>';
 			}

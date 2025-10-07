@@ -168,7 +168,7 @@ $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
-$sql .= " WHERE cp.rowid > 0";
+$sql .= " WHERE cp.entity IN (".getEntity('holiday').") AND cp.rowid > 0";
 $sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
 $sql .= " AND (";
 $sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
@@ -240,7 +240,7 @@ print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 
 // Selection filter
 print '<div class="tabBar">';
-print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth50 maxwidth75imp valignmiddle', true);
+print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth75 maxwidth150imp valignmiddle', true);
 print $formother->selectyear($search_year, 'search_year', 0, 10, 5, 0, 0, '', 'valignmiddle width75', true);
 print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
 print '</div>';

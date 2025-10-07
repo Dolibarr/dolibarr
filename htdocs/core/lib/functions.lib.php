@@ -827,6 +827,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               '' or 'none'=no check (deprecated)
  *                               'password'=allow characters for a password
  *                               'email'=allow characters for an email "email@domain.com"
+ *                               'url'=allow characters for an url
  *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
@@ -1323,6 +1324,11 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 		case 'email':
 			$out = filter_var($out, FILTER_SANITIZE_EMAIL);
 			break;
+		case 'url':
+			//$out = filter_var($out, FILTER_SANITIZE_URL);	// Not reliable, replaced with FILTER_VALIDATE_URL
+			$out = preg_replace('/[^:\/\[\]a-z0-9@\$\'\*\~\.\-_,;\?\!=%&+#]+/i', '', $out);
+			// TODO Allow ( ) but only into password of https://login:password@domain...
+			break;
 		case 'aZ':
 			if (!is_array($out)) {
 				$out = trim($out);
@@ -1641,6 +1647,46 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 	}
 
 	return $res;
+}
+
+/**
+ * Return path of url.
+ *
+ * @param	string							$url				Relative path to file
+ * @param	array<string,int|float|string>	$params     		params for the http query
+ * @param	bool							$addtoken			does we need to add token
+ * @return string												path
+ */
+function dolBuildUrl($url, $params = [], $addtoken = false)
+{
+	global $db, $hookmanager;
+
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+	if ((!isset($params['mainmenu']) || empty($params['mainmenu'])) && GETPOSTISSET('mainmenu')) {
+		$params = array_merge($params, ['mainmenu' => (GETPOST('mainmenu', 'restricthtml'))]);
+	}
+	if ((!isset($params['leftmenu'])/*  || empty($params['leftmenu']) */) && GETPOSTISSET('leftmenu')) { // do not fill leftmenu if we have leftmenu=
+		$params = array_merge($params, ['leftmenu' => (GETPOST('leftmenu', 'restricthtml'))]);
+	}
+	$parameters = [
+		'path' => &$url,
+		'params' => &$params,
+		'addtoken' => &$addtoken,
+	];
+	$hookmanager->executeHooks('buildurl', $parameters);
+	if ($addtoken) {
+		$params = array_merge($params, ['token' => newToken()]);
+	}
+	// TODO TO REMOVE
+	$params = array_merge($params, ['debug' => 'debug']);
+	if ($params) {
+		$url .= '?' . http_build_query($params);
+	}
+
+	return $url;
 }
 
 /**
@@ -3429,7 +3475,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+			$tmptxt = $object->getLibStatut(5, (float) $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid like for invoices
@@ -4895,6 +4941,7 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
  *
  * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
  * @return	string				Real IP of remote user.
+ * @see getBrowserInfo()
  */
 function getUserRemoteIP($trusted = 0)
 {
@@ -4949,18 +4996,22 @@ function isHTTPS()
  */
 function dolGetCountryCodeFromIp($ip)
 {
-	global $conf;
-
 	$countrycode = '';
 
 	if (isModEnabled('geoipmaxmind')) {
 		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-		include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
-		$geoip = new DolGeoIP('country', $datafile);
-		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-		$countrycode = $geoip->getCountryCodeFromIP($ip);
+		if ($datafile) {
+			try {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
+				$geoip = new DolGeoIP('country', $datafile);
+				//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
+				$countrycode = $geoip->getCountryCodeFromIP($ip);
+			} catch (Exception $e) {
+				//print 'Error with GeoIP database: '.$e->getMessage();
+			}
+		}
 	}
 
 	return $countrycode;
@@ -7403,11 +7454,18 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	// Right
 	print '<td class="nobordernopadding valignmiddle right col-right">';
 	print '<input type="hidden" name="pageplusoneold" value="' . ((int) $page + 1) . '">';
+	$query = [];
+	parse_str($options, $query);
 	if ($sortfield) {
-		$options .= "&sortfield=" . urlencode($sortfield);
+		$query += ['sortfield' => $sortfield];
 	}
 	if ($sortorder) {
-		$options .= "&sortorder=" . urlencode($sortorder);
+		$query += ['sortorder' => $sortorder];
+	}
+
+	$options = '&'.http_build_query($query);
+	if ($page) {
+		$query = array_merge($query, ['page' => $page]);
 	}
 	// Show navigation bar
 	$pagelist = '';
@@ -7428,11 +7486,13 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt >= 1) {
 				if (empty($pagenavastextinput)) {
-					$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=0' . $options . '">1</a></li>';
+					$query['page'] = 0;
+					$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">1</a></li>';
 					if ($cpt > 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == 2) {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=1' . $options . '">2</a></li>';
+						$query['page'] = 0;
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">2</a></li>';
 					}
 				}
 			}
@@ -7447,7 +7507,8 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 					if ($cpt == $page) {
 						$pagelist .= '<li class="pagination"><span class="active">' . ($page + 1) . '</span></li>';
 					} else {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . $cpt . $options . '">' . ($cpt + 1) . '</a></li>';
+						$query['page'] = $cpt;
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . ($cpt + 1) . '</a></li>';
 					}
 				}
 				$cpt++;
@@ -7458,13 +7519,16 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 					if ($cpt < $nbpages - 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == $nbpages - 2) {
-						$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 2) . $options . '">' . ($nbpages - 1) . '</a></li>';
+						$query['page'] = ($nbpages - 2);
+						$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . ($nbpages - 1) . '</a></li>';
 					}
-					$pagelist .= '<li class="pagination"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 1) . $options . '">' . $nbpages . '</a></li>';
+					$query['page'] = ($nbpages - 1);
+					$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 				}
 			} else {
 				//var_dump($page.' '.$cpt.' '.$nbpages);
-				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="' . $file . '?page=' . ($nbpages - 1) . $options . '">' . $nbpages . '</a></li>';
+				$query['page'] = ($nbpages - 1);
+				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 			}
 		} else {
 			$pagelist .= '<li class="pagination"><span class="active">' . ($page + 1) . "</li>";
@@ -7483,7 +7547,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	print '</td>';
 	print '</tr>';
 
-	print '</table>' . "\n";
+	print "</table>\n";
 
 	// Center
 	if ($morehtmlcenter && !empty($conf->dol_optimize_smallscreen)) {
@@ -7574,10 +7638,10 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
 						<script>
 						jQuery(document).ready(function () {
-					  		jQuery(".selectlimit").change(function() {
+							jQuery(".selectlimit").change(function() {
 								console.log("We change limit so we submit the form");
 								$(this).parents(\'form:first\').submit();
-					  		});
+							});
 						});
 						</script>
 					';
@@ -8500,20 +8564,26 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  */
 function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0)
 {
-	global $conf, $db;
+	global $mysoc, $db;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 	// Note: possible values for tva_assuj are 0/1 or franchise/reel
 	$seller_use_vat = ((is_numeric($thirdparty_seller->tva_assuj) && !$thirdparty_seller->tva_assuj) || (!is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj == 'franchise')) ? 0 : 1;
 
+	if (empty($thirdparty_seller->country_code)) {
+		$thirdparty_seller->country_code = $mysoc->country_code;
+	}
 	$seller_country_code = $thirdparty_seller->country_code;
 	$seller_in_cee = isInEEC($thirdparty_seller);
 
+	if (empty($thirdparty_buyer->country_code)) {
+		$thirdparty_buyer->country_code = $mysoc->country_code;
+	}
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=" . $seller_use_vat . ", seller country=" . $seller_country_code . ", seller in cee=" . ((string) (int) $seller_in_cee) . ", buyer vat number=" . $thirdparty_buyer->tva_intra . " buyer country=" . $buyer_country_code . ", buyer in cee=" . ((string) (int) $buyer_in_cee) . ", idprod=" . $idprod . ", idprodfournprice=" . $idprodfournprice . ", SERVICE_ARE_ECOMMERCE_200238EC=" . (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC') ? $conf->global->SERVICE_ARE_ECOMMERCE_200238EC : ''));
+	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".((string) (int) $seller_in_cee).", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer state=".$thirdparty_buyer->state_id." buyer in cee=".((string) (int) $buyer_in_cee).", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC'));
 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
@@ -8679,6 +8749,18 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 		return -1;
 	}
 
+	if (empty($thirdparty_seller->country_code)) {
+		$thirdparty_seller->country_code = $mysoc->country_code;
+	}
+	$seller_country_code = $thirdparty_seller->country_code;
+	//$seller_in_cee = isInEEC($thirdparty_seller);
+
+	if (empty($thirdparty_buyer->country_code)) {
+		$thirdparty_buyer->country_code = $mysoc->country_code;
+	}
+	$buyer_country_code = $thirdparty_buyer->country_code;
+	//$buyer_in_cee = isInEEC($thirdparty_buyer);
+
 	if ($local == 1) { // Localtax 1
 		if ($mysoc->country_code == 'ES') {
 			if (is_numeric($thirdparty_buyer->localtax1_assuj) && !$thirdparty_buyer->localtax1_assuj) {
@@ -8703,7 +8785,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 		}
 	}
 
-	if ($thirdparty_seller->country_code == $thirdparty_buyer->country_code) {
+	if ($seller_country_code == $buyer_country_code) {
 		return get_product_localtax_for_country($idprod, $local, $thirdparty_seller);
 	}
 
@@ -8830,7 +8912,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// We will enhance here a common way of forging path for document storage.
 		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
-		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceOf Societe) {
+		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceof Societe) {
 			// Special case for thirdparty, where the ref is a company name that is not unique so path on disk is using the ID instead of the ref
 			$path = dol_sanitizeFileName((string) $object->id);
 		} else {
@@ -8954,7 +9036,7 @@ function picto_required()
  *  - you can decide to convert line feed into a space
  *
  *	@param	string	$stringtoclean		String to clean
- *	@param	integer	$removelinefeed		1=Replace all new lines by 1 space, 0=Only ending new lines are removed others are replaced with \n, 2=The ending new line is removed but others are kept with the same number of \n than the nb of <br> when there is both "...<br>\n..."
+ *	@param	integer	$removelinefeed		1=Replace all new lines strings ('<br>, "\n", "\r") by 1 space, 0=The last new line endings are removed and others '<br>' are replaced with "\n", 2=The last new line endings are removed and others '<br>\n' are replaced with "\n" with the same nb of "\n" than the nb of <br> when there is both "...<br>\n..."
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag or when tags is not closed like '<img onload=aaa')
  *  @param	integer	$removedoublespaces	Replace double space into one space
@@ -10295,8 +10377,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$project = null;
 				if (!empty($object->project)) {
 					$project = $object->project;
-				} elseif (!empty($object->projet)) { // Deprecated, for backward compatibility
-					$project = $object->projet;
 				}
 				if (!is_null($project) && is_object($project)) {
 					$substitutionarray['__PROJECT_ID__'] = $project->id;
@@ -10550,9 +10630,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 		}
 	}
+
 	if ((empty($exclude) || !in_array('objectamount', $exclude)) && (empty($include) || in_array('objectamount', $include))) {
 		'@phan-var-force Facture|FactureRec $object';
-		/** @var Facture|FactureRec|null $object */
+		/** @var Propal|Commande|Facture|FactureRec|null $object */
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/functionsnumtoword.lib.php';
 
 		$substitutionarray['__DATE_YMD__']          = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', false, $outputlangs) : null) : '';
@@ -10579,10 +10660,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT_VAT_TEXT__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, '', true) : dol_convertToWord($object->total_tva, $outputlangs, '', true)) : '';
 		$substitutionarray['__AMOUNT_VAT_TEXTCURRENCY__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, $conf->currency, true) : dol_convertToWord($object->total_tva, $outputlangs, $conf->currency, true)) : '';
 
-		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
+		$mysocuselocaltax1 = false;
+		$mysocuselocaltax2 = false;
+		if ($mysoc instanceof Societe && !empty($mysoc->country_code)) {
+			$tmparray = $mysoc->useLocalTax(-1);
+			$mysocuselocaltax1 = $tmparray[1];
+			$mysocuselocaltax2 = $tmparray[2];
+		}
+
+		// Local taxes
+		if ($onlykey != 2 || $mysocuselocaltax1) {
 			$substitutionarray['__AMOUNT_TAX2__']     = is_object($object) ? $object->total_localtax1 : '';
 		}
-		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
+		if ($onlykey != 2 || $mysocuselocaltax2) {
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
@@ -10591,10 +10681,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT_FORMATTED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_REMAIN_FORMATTED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_VAT_FORMATTED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
-		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
+		if ($onlykey != 2 || $mysocuselocaltax1) {
 			$substitutionarray['__AMOUNT_TAX2_FORMATTED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
-		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
+		if ($onlykey != 2 || $mysocuselocaltax2) {
 			$substitutionarray['__AMOUNT_TAX3_FORMATTED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 		// Amount keys formatted in a currency (with the typo error for backward compatibility)
@@ -10603,10 +10693,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_FORMATED__']          = $substitutionarray['__AMOUNT_FORMATTED__'];
 			$substitutionarray['__AMOUNT_REMAIN_FORMATED__']   = $substitutionarray['__AMOUNT_REMAIN_FORMATTED__'];
 			$substitutionarray['__AMOUNT_VAT_FORMATED__']      = $substitutionarray['__AMOUNT_VAT_FORMATTED__'];
-			if ($mysoc instanceof Societe && $mysoc->useLocalTax(1)) {
+			if ($mysocuselocaltax1) {
 				$substitutionarray['__AMOUNT_TAX2_FORMATED__'] = $substitutionarray['__AMOUNT_TAX2_FORMATTED__'];
 			}
-			if ($mysoc instanceof Societe && $mysoc->useLocalTax(2)) {
+			if ($mysoc->useLocalTax2) {
 				$substitutionarray['__AMOUNT_TAX3_FORMATED__'] = $substitutionarray['__AMOUNT_TAX3_FORMATTED__'];
 			}
 		}
@@ -10685,7 +10775,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 /**
  *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval),
- *  and texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
+ *  and texts like __(TranslationKey|langfile)__, __[CONSTANTKEY]__ or __[CONSTANTKEY|urlencode]__ are also replaced.
  *  Example of usage:
  *  $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $thirdparty);
  *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);
@@ -10754,16 +10844,22 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
 	$reg = array();
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg)) {
-		$keyfound = $reg[1];
+		$originalkeyfound = $reg[1];
+		$keyfound = preg_replace('/\|urlencode$/', '', $originalkeyfound);
+
 		if (isASecretKey($keyfound)) {
 			$value = '*****forbidden*****';
 		} else {
-			$value = empty($conf->global->$keyfound) ? '' : $conf->global->$keyfound;
+			$value = getDolGlobalString($keyfound);
+			// Execute some functions on value of substitution key
+			if (preg_match('/\|urlencode$/', $originalkeyfound)) {
+				$value = urlencode($value);
+			}
 		}
 
 		if (empty($converttextinhtmlifnecessary)) {
 			// convert $newval into HTML is necessary
-			$text = preg_replace('/__\[' . preg_quote($keyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
+			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 		} else {
 			if (! $msgishtml) {
 				$valueishtml = dol_textishtml($value, 1);
@@ -10776,7 +10872,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				$value = dol_nl2br((string) $value);
 			}
 
-			$text = preg_replace('/__\[' . preg_quote($keyfound, '/') . '\]__/', $value, $text);
+			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $value, $text);
 		}
 	}
 
@@ -10786,7 +10882,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			continue; // If value is null, it same than not having substitution key at all into array, we do not replace.
 		}
 
-		if (($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__') && (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN'))) {
+		if (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN') && ($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__')) {
 			$value = ''; // Protection
 		}
 
@@ -11317,7 +11413,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @phpstan-param T $array
  *  @phan-param T $array
- *  @param	string		$index				Key in array to use for sorting criteria
+ *  @param	string		$index				Key in array to use for sorting criteria. We can have several keys separated by a comma but we can have only 1 sorting order.
  *  @param	string		$order				Sort order ('asc' or 'desc')
  *  @param	int<-1,1>	$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort), -1=Force alpha order
  *                                          If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
@@ -11336,19 +11432,31 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 	if (is_array($array)) {
 		$sizearray = count($array);
 		if ($sizearray > 0) {
+			// Build a temp array with sorting key as value
 			$temp = array();
 			foreach (array_keys($array) as $key) {
+				$tmpmultikey = explode(',', $index);
+				$newindex = $tmpmultikey[0];
 				if (is_object($array[$key])) {
-					$temp[$key] = empty($array[$key]->$index) ? 0 : $array[$key]->$index;
+					$temp[$key] = empty($array[$key]->$newindex) ? 0 : $array[$key]->$newindex;
+					// Add other keys
+					if (!empty($tmpmultikey[1])) {
+						$newindex = $tmpmultikey[1];
+						$temp[$key] .= '__'.(empty($array[$key]->$newindex) ? 0 : $array[$key]->$newindex);
+					}
 				} else {
 					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable,PhanTypeArraySuspicious,PhanTypeMismatchDimFetch
-					$temp[$key] = empty($array[$key][$index]) ? 0 : $array[$key][$index];
+					$temp[$key] = empty($array[$key][$newindex]) ? 0 : $array[$key][$newindex];
+					// Add other keys
+					if (!empty($tmpmultikey[1])) {
+						$newindex = $tmpmultikey[1];
+						$temp[$key] .= '__'.(empty($array[$key][$newindex]) ? 0 : $array[$key][$newindex]);
+					}
 				}
 				if ($natsort == -1) {
-					$temp[$key] = '___' . $temp[$key];        // We add a string at begin of value to force an alpha order when using asort.
+					$temp[$key] = '___'.$temp[$key];        // We add a string at begin of value to force an alpha order when using asort.
 				}
 			}
-
 			if (empty($natsort) || $natsort == -1) {
 				if ($order == 'asc') {
 					asort($temp);
@@ -11637,14 +11745,14 @@ function dol_eval_new($s)
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-		$db, $langs, $user, $website, $websitepage,
-		$action, $mainmenu, $leftmenu,
-		$mysoc,
-		$objectoffield,	// To allow the use of $objectoffield in computed fields
+	$db, $langs, $user, $website, $websitepage,
+	$action, $mainmenu, $leftmenu,
+	$mysoc,
+	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
-		// Old variables used
-		$object,
-		$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	// Old variables used
+	$object,
+	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
@@ -13392,7 +13500,7 @@ function dolIsAllowedForPreview($file)
 	}
 
 	// Check mime types
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp');
+	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp', 'webm', 'mp4');
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
@@ -14669,7 +14777,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
-	} elseif ($elementType == 'mo') {
+	} elseif ($elementType == 'mo' || $elementType == 'mrp') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
 		$classname = 'Mo';
@@ -14720,7 +14828,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -14972,6 +15080,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			$className = $element_prop['classname'];
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
+			/** @var CommonObject $objecttmp */
 
 			if ($element_id > 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);
@@ -15097,6 +15206,7 @@ function getNonce()
 	global $conf;
 
 	if (empty($conf->cache['nonce'])) {
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/security.lib.php';
 		$conf->cache['nonce'] = dolGetRandomBytes(8);
 	}
 

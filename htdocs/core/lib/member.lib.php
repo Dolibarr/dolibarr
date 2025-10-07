@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2006-2015	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016	Alexandre Spangaro	    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015		Raphaël Doursenaud	    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017		Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ function member_prepare_head(Adherent $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/card.php?rowid='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/card.php', ['rowid' => $object->id]);
 	$head[$h][1] = $langs->trans("Member");
 	$head[$h][2] = 'general';
 	$h++;
@@ -48,7 +48,7 @@ function member_prepare_head(Adherent $object)
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 
-		$head[$h][0] = DOL_URL_ROOT.'/adherents/ldap.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/ldap.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
 		$h++;
@@ -56,7 +56,7 @@ function member_prepare_head(Adherent $object)
 
 	if ($user->hasRight('adherent', 'cotisation', 'lire')) {
 		$nbSubscription = is_array($object->subscriptions) ? count($object->subscriptions) : 0;
-		$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/subscription.php', ['rowid' => $object->id]);
 		$head[$h][1] = $langs->trans("Subscriptions");
 		$head[$h][2] = 'subscription';
 		if ($nbSubscription > 0) {
@@ -68,7 +68,7 @@ function member_prepare_head(Adherent $object)
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		if ($user->hasRight('partnership', 'read')) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?rowid='.$object->id;
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/partnership/partnership_list.php', ['rowid' => $object->id]);
 			$head[$h][1] = $langs->trans("Partnerships");
 			$nbNote = 0;
 			$sql = "SELECT COUNT(n.rowid) as nb";
@@ -105,7 +105,7 @@ function member_prepare_head(Adherent $object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/note.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
 	if ($nbNote > 0) {
@@ -119,7 +119,7 @@ function member_prepare_head(Adherent $object)
 	$upload_dir = $conf->adherent->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'member');
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -128,7 +128,7 @@ function member_prepare_head(Adherent $object)
 	$h++;
 
 	// Show agenda tab
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/agenda.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
@@ -181,14 +181,14 @@ function member_type_prepare_head(AdherentType $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/type.php?rowid='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/type.php', ['rowid' => $object->id]);
 	$head[$h][1] = $langs->trans("MemberType");
 	$head[$h][2] = 'card';
 	$h++;
 
 	// Multilangs
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$head[$h][0] = DOL_URL_ROOT."/adherents/type_translation.php?rowid=".$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/type_translation.php', ['rowid' => $object->id]);
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
 		$h++;
@@ -198,7 +198,7 @@ function member_type_prepare_head(AdherentType $object)
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 
-		$head[$h][0] = DOL_URL_ROOT.'/adherents/type_ldap.php?rowid='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/type_ldap.php', ['rowid' => $object->id]);
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
 		$h++;
@@ -231,12 +231,12 @@ function member_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/member.php');
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_emails.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/member_emails.php');
 	$head[$h][1] = $langs->trans("EMails");
 	$head[$h][2] = 'emails';
 	$h++;
@@ -247,7 +247,7 @@ function member_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'member_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/member_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsMember");
 	$nbExtrafields = $extrafields->attributes['adherent']['count'];
 	if ($nbExtrafields > 0) {
@@ -256,7 +256,7 @@ function member_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_type_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/member_type_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsMemberType");
 	$nbExtrafields = $extrafields->attributes['adherent_type']['count'];
 	if ($nbExtrafields > 0) {
@@ -265,7 +265,7 @@ function member_admin_prepare_head()
 	$head[$h][2] = 'attributes_type';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/website.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/website.php');
 	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
 	$head[$h][2] = 'website';
 	$h++;
@@ -289,32 +289,32 @@ function member_stats_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/stats/index.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/index.php');
 	$head[$h][1] = $langs->trans("Subscriptions");
 	$head[$h][2] = 'statssubscription';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbycountry';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/geo.php', ['mode' => 'memberbycountry']);
 	$head[$h][1] = $langs->trans("Country");
 	$head[$h][2] = 'statscountry';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbyregion';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/geo.php', ['mode' => 'memberbyregion']);
 	$head[$h][1] = $langs->trans("Region");
 	$head[$h][2] = 'statsregion';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbystate';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/geo.php', ['mode' => 'memberbystate']);
 	$head[$h][1] = $langs->trans("State");
 	$head[$h][2] = 'statsstate';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbytown';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/geo.php', ['mode' => 'memberbytown']);
 	$head[$h][1] = $langs->trans('Town');
 	$head[$h][2] = 'statstown';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/stats/byproperties.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/byproperties.php');
 	$head[$h][1] = $langs->trans('ByProperties');
 	$head[$h][2] = 'statsbyproperties';
 	$h++;
@@ -343,12 +343,12 @@ function subscription_prepare_head(Subscription $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/subscription/card.php', ['rowid' => $object->id]);
 	$head[$h][1] = $langs->trans("Subscription");
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription/info.php?rowid='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/subscription/info.php', ['rowid' => $object->id]);
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

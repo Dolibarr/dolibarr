@@ -143,7 +143,7 @@ class Facture extends CommonInvoice
 	public $ref_client;
 
 	/**
-	 * @var string customer ref
+	 * @var ?string customer ref
 	 */
 	public $ref_customer;
 
@@ -273,6 +273,10 @@ class Facture extends CommonInvoice
 	 */
 	public $online_payment_url;
 
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 
 
 	/**
@@ -467,8 +471,8 @@ class Facture extends CommonInvoice
 			$this->type = self::TYPE_STANDARD;
 		}
 
-		$this->ref_client = trim($this->ref_client); // deprecated
-		$this->ref_customer = trim($this->ref_customer);
+		$this->ref_client = trim((string) $this->ref_client); // deprecated
+		$this->ref_customer = trim((string) $this->ref_customer);
 
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
 		$this->note = (isset($this->note) ? trim($this->note) : $this->note_private); // deprecated
@@ -709,6 +713,7 @@ class Facture extends CommonInvoice
 		$sql .= ", retained_warranty";
 		$sql .= ", retained_warranty_date_limit";
 		$sql .= ", retained_warranty_fk_cond_reglement";
+		$sql .= ", ip";
 		$sql .= ")";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
@@ -748,6 +753,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".(empty($this->retained_warranty) ? "0" : $this->db->escape((string) $this->retained_warranty));
 		$sql .= ", ".(!empty($this->retained_warranty_date_limit) ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'NULL');
 		$sql .= ", ".(int) $this->retained_warranty_fk_cond_reglement;
+		$sql .= ", ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -1018,7 +1024,7 @@ class Facture extends CommonInvoice
 					}
 
 					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
-					$tva_npr = $_facrec->lines[$i]->info_bits;
+					$tva_npr = (int) $_facrec->lines[$i]->info_bits;
 					if (empty($tva_tx)) {
 						$tva_npr = 0;
 					}
@@ -1349,20 +1355,17 @@ class Facture extends CommonInvoice
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		} else {
 			// copy internal contacts
 			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
-				$this->error = $object->error;
-				$this->errors = $object->errors;
+				$this->setErrorsFromObject($object);
 			} elseif ($object->socid == $objFrom->socid) {
 				// copy external contacts if same company
 				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
-					$this->error = $object->error;
-					$this->errors = $object->errors;
+					$this->setErrorsFromObject($object);
 				}
 			}
 		}
@@ -4647,7 +4650,7 @@ class Facture extends CommonInvoice
 
 					if ($product_stock < $qty) {
 						$langs->load("errors");
-						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', (string) $product->ref);
 						$this->db->rollback();
 						return -3;
 					}

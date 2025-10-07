@@ -64,7 +64,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 $mode = GETPOST('mode', 'alpha');
@@ -106,11 +106,14 @@ $pagenext = $page + 1;
 
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search_entity = GETPOSTINT('search_entity');
+$search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_societe_alias = GETPOST("search_societe_alias", 'alpha');
 $search_societe_country = GETPOST("search_societe_country", 'alpha');
+$search_societe_ref_customer = GETPOST("search_societe_ref_customer", 'alpha');
+$search_societe_ref_supplier = GETPOST("search_societe_ref_supplier", 'alpha');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
@@ -135,7 +138,7 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array:int');
 $search_omitChildren = 0;
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	$search_omitChildren = GETPOST('search_omitChildren', 'alpha') == 'on' ? 1 : 0;
@@ -259,8 +262,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add non object fields to fields for list
 $arrayfields['s.nom'] = array('label' => "ThirdParty", 'checked' => '1', 'position' => 21, 'enabled' => (!isModEnabled('societe') ? '0' : '1'));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => '0', 'position' => 22);
-$arrayfields['co.country_code'] = array('label' => "Country", 'checked' => '-1', 'position' => 23);
-$arrayfields['commercial'] = array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 25);
+$arrayfields['s.code_client'] = array('label' => "RefCustomer", 'checked' => '0', 'position' => 23);
+$arrayfields['s.code_fournisseur'] = array('label' => "RefSupplier", 'checked' => '0', 'position' => 24);
+$arrayfields['co.country_code'] = array('label' => "Country", 'checked' => '-1', 'position' => 25);
+$arrayfields['commercial'] = array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 26);
 $arrayfields['c.assigned'] = array('label' => "AssignedTo", 'checked' => '1', 'position' => 120);
 $arrayfields['opp_weighted_amount'] = array('label' => 'OpportunityWeightedAmountShort', 'checked' => '0', 'enabled' => (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? '0' : '1'), 'position' => 106);
 $arrayfields['u.login'] = array('label' => "Author", 'checked' => '-1', 'position' => 165);
@@ -392,9 +397,12 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_all = '';
+		$search_id = "";
 		$search_ref = "";
 		$search_label = "";
 		$search_societe = "";
+		$search_societe_ref_customer = "";
+		$search_societe_ref_supplier = "";
 		$search_societe_alias = '';
 		$search_societe_country = '';
 		$search_status = -1;
@@ -584,7 +592,7 @@ $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, 
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
-$sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
+$sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.code_fournisseur,";
 $sql .= " country.code as country_code,";
 $sql .= " cls.code as opp_status_code,";
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
@@ -629,6 +637,9 @@ if (!$user->hasRight('projet', 'all', 'lire')) {
 if ($socid > 0) {
 	$sql .= " AND (p.fk_soc = ".((int) $socid).")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
 }
+if ($search_id) {
+	$sql .= natural_search('p.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
 }
@@ -644,6 +655,12 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
+}
+if ($search_societe_ref_customer) {
+	$sql .= natural_search('s.code_client', $search_societe_ref_customer);
+}
+if ($search_societe_ref_supplier) {
+	$sql .= natural_search('s.code_fournisseur', $search_societe_ref_supplier);
 }
 if ($search_societe_country) {
 	$sql .= natural_search('country.code', $search_societe_country);
@@ -1054,6 +1071,9 @@ if (!empty($search_category_array)) {
 		$param .= '&search_categegory_project_list[]='.urlencode($tmpval);
 	}
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1068,6 +1088,12 @@ if ($search_societe_alias != '') {
 }
 if ($search_societe_country != '') {
 	$param .= '&search_societe_country='.urlencode($search_societe_country);
+}
+if ($search_societe_ref_customer != '') {
+	$param .= '&search_societe_ref_customer='.urlencode($search_societe_ref_customer);
+}
+if ($search_societe_ref_supplier != '') {
+	$param .= '&search_societe_ref_supplier='.urlencode($search_societe_ref_supplier);
 }
 if ($search_status != '' && $search_status != '-1') {
 	$param .= "&search_status=".urlencode($search_status);
@@ -1300,16 +1326,22 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print $searchpicto;
 	print '</td>';
 }
+// Project ID
+if (!empty($arrayfields['p.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
+}
 // Project ref
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="6">';
+	print '<input type="text" class="flat width75" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 // Project label
 if (!empty($arrayfields['p.title']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_label" size="8" value="'.dol_escape_htmltag($search_label).'">';
+	print '<input type="text" class="flat width100" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
 	print '</td>';
 }
 // Third party
@@ -1320,7 +1352,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 		$tmpthirdparty->fetch($socid);
 		$search_societe = $tmpthirdparty->name;
 	}
-	print '<input type="text" class="flat" name="search_societe" size="8" value="'.dol_escape_htmltag((string) $search_societe).'">';
+	print '<input type="text" class="flat width100" name="search_societe" value="'.dol_escape_htmltag((string) $search_societe).'">';
 	print '</td>';
 }
 
@@ -1332,9 +1364,23 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 		$tmpthirdparty->fetch($socid);
 		$search_societe_alias = $tmpthirdparty->name_alias;
 	}
-	print '<input type="text" class="flat" name="search_societe_alias" size="8" value="'.dol_escape_htmltag($search_societe_alias).'">';
+	print '<input type="text" class="flat width100" name="search_societe_alias" value="'.dol_escape_htmltag($search_societe_alias).'">';
 	print '</td>';
 }
+
+// Ref customer
+if (!empty($arrayfields['s.code_client']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width75" name="search_societe_ref_customer" value="'.dol_escape_htmltag($search_societe_ref_customer).'">';
+	print '</td>';
+}
+// Ref supplier
+if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width75" name="search_societe_ref_supplier" value="'.dol_escape_htmltag($search_societe_ref_supplier).'">';
+	print '</td>';
+}
+
 // Country of thirdparty
 if (!empty($arrayfields['co.country_code']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1514,6 +1560,10 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1529,6 +1579,14 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.code_client']['checked'])) {
+	print_liste_field_titre($arrayfields['s.code_client']['label'], $_SERVER["PHP_SELF"], "s.code_client", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
+	print_liste_field_titre($arrayfields['s.code_fournisseur']['label'], $_SERVER["PHP_SELF"], "s.code_fournisseur", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['co.country_code']['checked'])) {
@@ -1668,6 +1726,7 @@ while ($i < $imaxinloop) {
 	$companystatic->name_alias = $obj->alias;
 	$companystatic->client = $obj->client;
 	$companystatic->code_client = $obj->code_client;
+	$companystatic->code_fournisseur = $obj->code_fournisseur;
 	$companystatic->email = $obj->email;
 	$companystatic->phone = $obj->phone;
 	$companystatic->address = $obj->address;
@@ -1901,7 +1960,7 @@ while ($i < $imaxinloop) {
 
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $object->status > 1) ? 'opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $object->status > 1) ? 'opacitymedium' : '').'">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
@@ -1917,7 +1976,16 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Project url
+		// Project ID
+		if (!empty($arrayfields['p.rowid']['checked'])) {
+			print '<td class="nowraponall">';
+			print $object->id;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Project ref url
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax200">';
 			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''));
@@ -1956,6 +2024,32 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->name_alias;
+			} else {
+				print '&nbsp;';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Ref customer
+		if (!empty($arrayfields['s.code_client']['checked'])) {
+			print '<td class="tdoverflowmax100">';
+			if ($obj->socid) {
+				print $companystatic->code_client;
+			} else {
+				print '&nbsp;';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Ref supplier
+		if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
+			print '<td class="tdoverflowmax100">';
+			if ($obj->socid) {
+				print $companystatic->code_fournisseur;
 			} else {
 				print '&nbsp;';
 			}

@@ -323,7 +323,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'add' && $permissiontoadd) {
-		$selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array:int');
 		$object->socid = $socid;
 		$object->duration = GETPOSTINT('duration');
 		$object->fk_project = GETPOSTINT('projectid');
@@ -441,7 +441,7 @@ if (empty($reshook)) {
 											$label = $lines[$i]->product_label;
 										}
 
-										if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
+										if ($prod->duration_value && getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
 											switch ($prod->duration_unit) {
 												default:
 												case 'h':
@@ -1030,7 +1030,7 @@ if ($action == 'create') {
 			else
 				$numprojet=select_projects($societe->id, GETPOST("projectid", 'int'), 'projectid');
 				*/
-			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
+			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			if ($numprojet == 0) {
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			}

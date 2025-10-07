@@ -206,7 +206,7 @@ class Societe extends CommonObject
 		'email' => array('type' => 'varchar(128)', 'label' => 'Email', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 120),
 		'fk_effectif' => array('type' => 'integer', 'label' => 'Workforce', 'enabled' => 1, 'visible' => -1, 'position' => 170),
-		'fk_typent' => array('type' => 'integer', 'label' => 'TypeOfCompany', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
+		'fk_typent' => array('type' => 'integer', 'label' => 'ThirdPartyType', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
 		'fk_forme_juridique' => array('type' => 'integer', 'label' => 'JuridicalStatus', 'enabled' => 1, 'visible' => -1, 'position' => 180),
 		'birth' => array('type' => 'date', 'label' => 'CompnanyBirthDate', 'enabled' => 1, 'visible' => -1, 'position' => 182),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
@@ -872,7 +872,7 @@ class Societe extends CommonObject
 
 	// Warehouse
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_warehouse;
 
@@ -894,6 +894,13 @@ class Societe extends CommonObject
 	 * @var Account|string Default BAN account
 	 */
 	public $bank_account;
+
+	/**
+	 * @deprecated
+	 * Accounting code for client
+	 * @var ?string
+	 */
+	public $code_compta;
 
 
 	const STATUS_CEASED = 0;
@@ -1084,7 +1091,7 @@ class Societe extends CommonObject
 			$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 			$sql .= ", ".(int) $this->fk_multicurrency;
 			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-			$sql .= ", '".$this->db->escape($this->ip)."'";
+			$sql .= ", ".(empty($this->ip) ? "null" : "'".$this->db->escape($this->ip)."'");
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
@@ -4535,7 +4542,7 @@ class Societe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
 			$this->db->free($resql);
 			return $nb;
@@ -4941,29 +4948,50 @@ class Societe extends CommonObject
 	/**
 	 *  Check if we must use localtax feature or not according to country (country of $mysoc in most cases).
 	 *
-	 *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
-	 *  @return		boolean					true or false
+	 *	@param		int<-1,2>		$localTaxNum	Use 1 or 2 to get info for only localtax1 or localtax2, 0 to get both a boolean using a OR, -1 to get array for each case.
+	 * 	@param		int<0,1>		$mode			0=Check according to vat dictionary, 1=Check according to ->localtaxX_assuj field of $thirdparty
+	 *  @param      Societe|null	$thirdparty		Object thirdparty
+	 *  @return		boolean|array<int,boolean>		true or false or array of 2 booleans if $localTaxNum == -1
 	 */
-	public function useLocalTax($localTaxNum = 0)
+	public function useLocalTax($localTaxNum = 0, $mode = 0, $thirdparty = null)
 	{
-		$sql  = "SELECT t.localtax1, t.localtax2";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
-		$sql .= " AND t.active = 1";
-		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
-		if (empty($localTaxNum)) {
-			$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
-		} elseif ($localTaxNum == 1) {
-			$sql .= " AND t.localtax1_type <> '0'";
-		} elseif ($localTaxNum == 2) {
-			$sql .= " AND t.localtax2_type <> '0'";
-		}
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			return ($this->db->num_rows($resql) > 0);
-		} else {
+		if ($mode == 1 && $thirdparty instanceof Societe) {
+			if ($localTaxNum == -1) {
+				return array(1 => ($thirdparty->localtax1_assuj ? true : false), 2 => ($thirdparty->localtax2_assuj ? true : false));
+			} elseif ($localTaxNum == 1) {
+				return $thirdparty->localtax1_assuj ? true : false;
+			} elseif ($localTaxNum == 2) {
+				return $thirdparty->localtax2_assuj ? true : false;
+			}
 			return false;
+		} else {
+			$sql  = "SELECT t.localtax1, t.localtax2";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
+			$sql .= " AND t.active = 1";
+			$sql .= " AND t.entity IN (".getEntity('c_tva').")";
+			if (empty($localTaxNum) || $localTaxNum == -1) {
+				$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
+			} elseif ($localTaxNum == 1) {
+				$sql .= " AND t.localtax1_type <> '0'";
+			} elseif ($localTaxNum == 2) {
+				$sql .= " AND t.localtax2_type <> '0'";
+			}
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($localTaxNum == -1) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						return array(1 => ($obj->localtax1 ? true : false), 2 => ($obj->localtax2 ? true : false));
+					}
+					return array(1 => false, 2 => false);
+				} else {
+					return ($this->db->num_rows($resql) > 0);
+				}
+			} else {
+				return false;
+			}
 		}
 	}
 
@@ -5235,10 +5263,12 @@ class Societe extends CommonObject
 		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
+		$today = dol_get_first_hour(dol_now('tzuser')); // Returns today at 00:00 in the user's time zone
+
 		$sql = "SELECT rowid, ref, total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
 		if (!empty($late)) {
-			$sql .= " AND date_lim_reglement < '".$this->db->idate(dol_now())."'";
+			$sql .= " AND date_lim_reglement < '".$this->db->idate($today)."'";
 		}
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
@@ -5708,7 +5738,7 @@ class Societe extends CommonObject
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-					$tab[$i] = array(
+					$tab[$obj->id] = array(
 						'source' => $obj->source,
 						'socid' => $obj->socid,
 						'id' => $obj->id,
@@ -5728,7 +5758,7 @@ class Societe extends CommonObject
 						'fk_c_type_contact' => $obj->fk_c_type_contact
 					);
 				} else {
-					$tab[$i] = $obj->id;
+					$tab[$obj->id] = $obj->id;
 				}
 
 				$i++;

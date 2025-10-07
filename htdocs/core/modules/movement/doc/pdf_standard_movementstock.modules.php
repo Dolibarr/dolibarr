@@ -395,10 +395,6 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				$file = $dir."/".$objectref.".pdf";
 			}
 
-			$stockFournisseur = new ProductFournisseur($this->db);
-			$supplierprices = $stockFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
-
 			$productstatic = new Product($this->db);
 
 			if (!file_exists($dir)) {
@@ -797,6 +793,8 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

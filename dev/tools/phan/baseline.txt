@@ -9,7 +9,7 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 440+ occurrences
+    // PhanUndeclaredProperty : 420+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
     // PhanTypeMismatchArgument : 70+ occurrences
     // PhanUndeclaredGlobalVariable : 70+ occurrences
@@ -17,11 +17,11 @@ return [
     // PhanTypeInvalidDimOffset : 15+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
     // PhanUndeclaredMethod : 9 occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 8 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
     // PhanTypeExpectedObjectPropAccess : 5 occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanParamTooMany : 3 occurrences
     // PhanPluginUndeclaredVariableIsset : 3 occurrences
@@ -31,11 +31,6 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/bom/tpl/objectline_create.tpl.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/bom/tpl/objectline_edit.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/bom/tpl/objectline_view.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/bookcal/availabilities_card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/bookcal/calendar_card.php' => ['PhanUndeclaredProperty'],
         'htdocs/bookcal/class/availabilities.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/bookcal/class/calendar.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/categories/viewcat.php' => ['PhanUndeclaredProperty'],
@@ -46,7 +41,6 @@ return [
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/mailing/targetemailing.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
-        'htdocs/commande/class/api_orders.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/commande/class/commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanTypeInvalidDimOffset'],
@@ -181,7 +175,6 @@ return [
         'htdocs/fichinter/class/api_interventions.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/fichinter/class/fichinterrec.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/filefunc.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/fourn/class/api_supplier_orders.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/fourn/commande/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/fourn/facture/card-rec.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
@@ -287,17 +280,7 @@ return [
         'htdocs/webportal/class/html.formcardwebportal.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/webportal/class/html.formlistwebportal.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/webportal/class/webportalpropal.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_actioncomm.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_category.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_contact.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_invoice.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_order.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_payment.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_productorservice.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_supplier_invoice.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_thirdparty.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_user.php' => ['PhanUndeclaredProperty'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.
     // (directory_suppressions will currently be ignored by subsequent calls to --save-baseline, but may be preserved in future Phan releases)

@@ -428,7 +428,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 	}
 
 	// Show title of step
-	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
+	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
 	print '<table cellspacing="0" class="centpercent" cellpadding="1">';
 
 	// Check parameter main_dir

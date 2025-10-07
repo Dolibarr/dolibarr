@@ -64,7 +64,7 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $backtopage = GETPOST("backtopage", "alpha");
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $show_files = GETPOST('show_files', 'aZ');
@@ -619,41 +619,48 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 if ($action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
 	$toselect = array_map('intval', $toselect);
 
+	$db->begin();
+
 	$sql = "SELECT rowid, label, inventorycode, datem";
 	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
-	$sql .= " WHERE rowid IN (";
-	foreach ($toselect as $id) {
-		$sql .= ((int) $id).",";
-	}
-	$sql = rtrim($sql, ',');
-	$sql .= ")";
+	$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $toselect)).")";
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$hasSuccess = false;
-		$hasError = false;
+		$error =0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			$object->fetch($obj->rowid);
-			$reverse = $object->reverseMouvement();
+
+			$object->id = 0;
+			$object->fetch($obj->rowid);		// $object is MouvementStock
+
+			// TODO Add a protection to disallow reversion if type of movement is not the same value for all selected lines
+
+			// Create the reverse movement
+			$reverse = $object->reverseMovement();
 			if ($reverse < 0) {
-				$hasError = true;
-			} else {
-				$hasSuccess = true;
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
 			}
 			$i++;
 		}
-		if ($hasError) {
-			setEventMessages($langs->trans("WarningAlreadyReverse", $langs->transnoentities($idAlreadyReverse)), null, 'warnings');
-		}
-		if ($hasSuccess) {
-			setEventMessages($langs->trans("ReverseConfirmed"), null);
-		}
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+	} else {
+		setEventMessages($db->lasterror(), null, 'errors');
+		$error++;
 	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("ReverseConfirmed"), null);
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+
+	header("Location: ".$_SERVER["PHP_SELF"]);
+	exit;
 }
 
 /*

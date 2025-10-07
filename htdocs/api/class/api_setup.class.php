@@ -3,7 +3,7 @@
  * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	    Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -389,7 +389,7 @@ class Setup extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$region = new Cregion($this->db);
 				if ($region->fetch($obj->rowid) > 0) {
-					if (empty($filter) || stripos($region->name, $filter) !== false) {
+					if (empty($filter) || stripos((string) $region->name, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($region);
 					}
 				}

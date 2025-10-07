@@ -229,7 +229,7 @@ class FactureFournisseur extends CommonInvoice
 	public $propalid;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_account;		// default bank account
 
@@ -1016,6 +1016,8 @@ class FactureFournisseur extends CommonInvoice
 				$this->extraparams = isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->socid  = $obj->socid;
+
+				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -3514,7 +3516,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$langs->load('bills');
 
-		if (!isModEnabled(empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) ? 'fournisseur' : 'supplier_invoice')) {	// Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled(!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'fournisseur' : 'supplier_invoice')) {	// Should not happen. If module disabled, cron job should not be visible.
 			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv('Suppliers'));
 			return 0;
 		}
@@ -3671,7 +3673,7 @@ class FactureFournisseur extends CommonInvoice
 							}
 
 							// Errors Recipient
-							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
 							$trackid = 'inv'.$tmpinvoice->id;
 							$sendcontext = 'standard';

@@ -523,7 +523,7 @@ if ($action == 'create') {
 	print $hookmanager->resPrint;
 
 	// Category
-	if (is_array($options) && count($options) && $conf->categorie->enabled) {
+	if (is_array($options) && count($options) && isModEnabled('category')) {
 		print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
 		print img_picto('', 'category').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
 		print '</td></tr>';
