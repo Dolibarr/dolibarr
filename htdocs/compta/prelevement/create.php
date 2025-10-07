@@ -638,7 +638,7 @@ if ($resql) {
 					if ($obj->soc_rib_id > 0) {
 						print $form->textwithpicto('', $langs->trans("BankAccountForcedOnRequest"));
 					} else {
-						print $form->textwithpicto('', $langs->trans("BankAccountUsedByDefault"), 1, 'help', 'valigmiddle warning');
+						print $form->textwithpicto('', $langs->trans("BankAccountUsedByDefault").'<br><b>'.$langs->trans("Label").'</b> : '.$bac->label.'<br><b>'.$langs->trans("BankName").'</b> : '.$bac->bank, 1, 'help', 'valigmiddle warning');
 					}
 				} else {
 					print img_warning($langs->trans("IBANNotDefined"));

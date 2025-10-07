@@ -45,6 +45,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 
 $forceCSP = getDolGlobalString("MAIN_SECURITY_FORCECSP");
 $selectarrayCSPDirectives = GetContentPolicyDirectives();
@@ -56,6 +57,10 @@ $error = 0;
 /*
  * Actions
  */
+
+if ($cancel) {
+	$action = '';
+}
 
 $reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
@@ -356,7 +361,7 @@ print '</div>';
 print '<div class="center">';
 
 print '<input type="submit" class="button small" name="updateandstay" value="'.$langs->trans("Save").'">';
-print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+print '<input class="button button-cancel small" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 
 print '</div>';
 
