@@ -1030,7 +1030,7 @@ if ($action == 'create') {
 			else
 				$numprojet=select_projects($societe->id, GETPOST("projectid", 'int'), 'projectid');
 				*/
-			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
+			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			if ($numprojet == 0) {
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			}

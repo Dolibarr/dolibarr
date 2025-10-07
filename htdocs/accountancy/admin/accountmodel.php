@@ -329,7 +329,7 @@ print load_fiche_titre($titre, $linkback, 'title_accountancy');
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.urlencode((string) ($page)).'&' : '').'sortfield='.urlencode((string) ($sortfield)).'&sortorder='.urlencode((string) ($sortorder)).'&rowid='.urlencode((string) ($rowid)).'&code='.urlencode((string) ($code)).'&id='.urlencode((string) ($id)), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['page'=> $page, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'rowid' => $rowid, 'code' => $code, 'id' => $id]), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 
@@ -577,19 +577,34 @@ if ($resql) {
 					}
 				}
 
-				$url = $_SERVER["PHP_SELF"].'?token='.newToken().($page ? '&page='.$page : '').'&sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
-				$url .= '&'.$param.'&';
+				// $url = $_SERVER["PHP_SELF"].'?token='.newToken().($page ? '&page='.$page : '').'&sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
+				// $url .= '&'.$param.'&';
+
+				$query = [];
+				// decode and add param to query
+				parse_str($param, $query);
+				$query = array_merge($query, [
+					'action' => '',
+					'page' => $page,
+					'sortfield' => $sortfield,
+					'sortorder' => $sortorder,
+					'rowid' => (!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')),
+					'code' => $obj->code,
+				]);
 
 				// Active
 				print '<td class="center nowrap">';
-				print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+				$query['action'] = $acts[$obj->active];
+				print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], $query, true).'">'.$actl[$obj->active].'</a>';
 				print "</td>";
 
 				// Modify link
-				print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
+				$query['action'] = 'edit';
+				print '<td class="center"><a class="reposition editfielda" href="'.dolBuildUrl($_SERVER["PHP_SELF"], $query, true).'">'.img_edit().'</a></td>';
 
 				// Delete link
-				print '<td class="center"><a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
+				$query['action'] = 'delete';
+				print '<td class="center"><a href="'.dolBuildUrl($_SERVER["PHP_SELF"], $query, true).'">'.img_delete().'</a></td>';
 
 				print "</tr>\n";
 			}

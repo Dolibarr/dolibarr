@@ -135,7 +135,7 @@ class Mo extends CommonObject
 	 */
 	public $qty;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $fk_warehouse;
 	/**

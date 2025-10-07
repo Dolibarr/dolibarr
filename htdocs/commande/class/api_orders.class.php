@@ -579,13 +579,13 @@ class Orders extends DolibarrApi
 	}
 
 	/**
-	 * Get contacts of given order
+	 * Get contacts of a given order
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of order
-	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
-	 * @return	Object				Object with cleaned properties
+	 * @param	int					$id			ID of order
+	 * @param	string				$type		Type of the contact ('BILLING', 'SHIPPING', 'CUSTOMER', ...)
+	 * @return	array<int,mixed>				Array of contacts
 	 *
 	 * @url	GET {id}/contacts
 	 *
@@ -607,8 +607,11 @@ class Orders extends DolibarrApi
 		}
 
 		$contacts = $this->commande->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $this->commande->liste_contact(-1, 'internal', 0, $type);
 
-		return $this->_cleanObjectDatas($contacts);
+		$contacts = array_merge($contacts, $socpeoples);
+
+		return $contacts;
 	}
 
 	/**
@@ -1115,12 +1118,14 @@ class Orders extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
 			if ($num <= 0) {
 				throw new RestException(404, 'Shipments not found ');
 			}
-			$i = 0;
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$shipment_static = new Expedition($this->db);
 				if ($shipment_static->fetch($obj->rowid)) {

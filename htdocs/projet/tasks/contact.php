@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Incent Maury TimGroup	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,8 @@ $project_ref = GETPOST('project_ref', 'alpha');
 $object = new Task($db);
 $projectstatic = new Project($db);
 
+$hookmanager->initHooks(array('projecttaskcontact', 'globalcard'));
+
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
@@ -67,82 +70,90 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  * Actions
  */
 
-// Add new contact
-if ($action == 'addcontact' && $user->hasRight('projet', 'creer')) {
-	$source = 'internal';
-	if (GETPOST("addsourceexternal")) {
-		$source = 'external';
-	}
+$parameters = array('projectid' => $object->fk_project);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	$result = $object->fetch($id, $ref);
-
-	if ($result > 0 && $id > 0) {
-		if ($source == 'internal') {
-			$idfortaskuser = ((GETPOST("userid") != 0 && GETPOST('userid') != -1) ? GETPOST("userid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
-			$typeid = GETPOST('type');
-		} else {
-			$idfortaskuser = ((GETPOST("contactid") > 0) ? GETPOSTINT("contactid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
-			$typeid = GETPOST('typecontact');
+if (empty($reshook)) {
+	// Add new contact
+	if ($action == 'addcontact' && $user->hasRight('projet', 'creer')) {
+		$source = 'internal';
+		if (GETPOST("addsourceexternal")) {
+			$source = 'external';
 		}
-		if ($idfortaskuser == -2) {
-			$result = $projectstatic->fetch($object->fk_project);
-			if ($result <= 0) {
-				dol_print_error($db, $projectstatic->error, $projectstatic->errors);
+
+		$result = $object->fetch($id, $ref);
+
+		if ($result > 0 && $id > 0) {
+			if ($source == 'internal') {
+				$idfortaskuser = ((GETPOST("userid") != 0 && GETPOST('userid') != -1) ? GETPOST("userid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+				$typeid = GETPOST('type');
 			} else {
-				$contactsofproject = $projectstatic->getListContactId('internal');
-				foreach ($contactsofproject as $key => $val) {
-					$result = $object->add_contact($val, $typeid, $source);
-				}
+				$idfortaskuser = ((GETPOST("contactid") > 0) ? GETPOSTINT("contactid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+				$typeid = GETPOST('typecontact');
 			}
-		} else {
-			$result = $object->add_contact($idfortaskuser, $typeid, $source);
+			if ($idfortaskuser == -2) {
+				$result = $projectstatic->fetch($object->fk_project);
+				if ($result <= 0) {
+					dol_print_error($db, $projectstatic->error, $projectstatic->errors);
+				} else {
+					$contactsofproject = $projectstatic->getListContactId('internal');
+					foreach ($contactsofproject as $key => $val) {
+						$result = $object->add_contact($val, $typeid, $source);
+					}
+				}
+			} else {
+				$result = $object->add_contact($idfortaskuser, $typeid, $source);
+			}
 		}
-	}
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-}
-
-// bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
-	if ($object->fetch($id, $ref)) {
-		$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-	} else {
-		dol_print_error($db);
-	}
-}
-
-// Efface un contact
-if ($action == 'deleteline' && $user->hasRight('projet', 'creer')) {
-	$object->fetch($id, $ref);
-	$result = $object->delete_contact(GETPOSTINT("lineid"));
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
-		exit;
-	} else {
-		dol_print_error($db);
-	}
-}
-
-// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
-if (!empty($project_ref) && !empty($withproject)) {
-	if ($projectstatic->fetch(0, $project_ref) > 0) {
-		$tasksarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
-		if (count($tasksarray) > 0) {
-			$id = $tasksarray[0]->id;
-		} else {
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
+		if ($result >= 0) {
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	}
+
+	// bascule du statut d'un contact
+	if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
+		if ($object->fetch($id, $ref)) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	// Efface un contact
+	if ($action == 'deleteline' && $user->hasRight('projet', 'creer')) {
+		$object->fetch($id, $ref);
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
+			exit;
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
+	if (!empty($project_ref) && !empty($withproject)) {
+		if ($projectstatic->fetch(0, $project_ref) > 0) {
+			$tasksarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
+			if (count($tasksarray) > 0) {
+				$id = $tasksarray[0]->id;
+			} else {
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
+				exit;
+			}
 		}
 	}
 }

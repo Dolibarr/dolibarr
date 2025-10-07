@@ -378,7 +378,7 @@ class ActionComm extends CommonObject
 	public $event_paid;
 
 	/**
-	 * @var int status use but Event organisation module
+	 * @var ?int status use but Event organisation module
 	 */
 	public $status;
 
@@ -2788,8 +2788,9 @@ class ActionComm extends CommonObject
 						// Content
 						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+						// Topic
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : $langs->transnoentitiesnoconv('EventReminder');
+						$sendTopic = make_substitutions($sendTopic, $substitutionarray);
 
 						// Recipient
 						$recipient = new User($this->db);

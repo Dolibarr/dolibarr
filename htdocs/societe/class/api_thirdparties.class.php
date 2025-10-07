@@ -1130,7 +1130,7 @@ class Thirdparties extends DolibarrApi
 		if (!$result) {
 			throw new RestException(503, $this->db->lasterror());
 		} else {
-			$num = $this->db->num_rows($result);
+			//$num = $this->db->num_rows($result);
 			while ($obj = $this->db->fetch_object($result)) {
 				$obj_ret[] = $obj;
 			}
@@ -1447,8 +1447,11 @@ class Thirdparties extends DolibarrApi
 		$notifications = array();
 
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$notifications[] = $obj;
 				$i++;
@@ -1738,8 +1741,11 @@ class Thirdparties extends DolibarrApi
 		$accounts = array();
 
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 
 				$account = new CompanyBankAccount($this->db);
@@ -1994,7 +2000,9 @@ class Thirdparties extends DolibarrApi
 			}
 
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 
 				$account = new CompanyBankAccount($this->db);
@@ -2067,8 +2075,11 @@ class Thirdparties extends DolibarrApi
 
 		$accounts = array();
 
+		$i = 0;
 		$num = $this->db->num_rows($result);
-		while ($i < $num) {
+		//$min = min($num, ($limit <= 0 ? $num : $limit));
+		$min = $num;
+		while ($i < $min) {
 			$obj = $this->db->fetch_object($result);
 			$account = new SocieteAccount($this->db);
 
@@ -2448,8 +2459,11 @@ class Thirdparties extends DolibarrApi
 		} else {
 			$i = 0;
 
+			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$account = new SocieteAccount($this->db);
 				$account->fetch($obj->rowid);
