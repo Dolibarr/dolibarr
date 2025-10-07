@@ -1099,12 +1099,6 @@ parameters:
 			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 2
-			path: ../../../htdocs/admin/triggers.php
-
-		-
 			message: '#^Variable \$label might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
