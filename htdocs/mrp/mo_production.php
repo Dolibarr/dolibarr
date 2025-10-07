@@ -372,7 +372,7 @@ if (empty($reshook)) {
 							$stockmove->origin_id = $object->id;
 							$stockmove->context['mrp_role'] = 'toproduce';
 
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, GETPOSTDATE('sellby-'.$line->id.'-'.$i), GETPOSTDATE('eatby-'.$line->id.'-'.$i), GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -1601,6 +1601,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Split All
 			print '<td></td>';
+
+			// sell by
+			print '<td>'.$langs->trans("SellByDate").'</td>';
+
+			// eat by
+			print '<td>'.$langs->trans("EatByDate").'</td>';
 		}
 
 		// Action delete
@@ -1909,6 +1915,26 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 								print '<td></td>';
 							}
+						}
+						var_dump($_POST);
+						// eat by mandatory
+						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+							print '<td align="right">';
+							$preselectedEatBy = (GETPOSTISSET('eatby-' . $line->id . '-' . $i) ? GETPOSTDATE('eatby-' . $line->id . '-' . $i) : '');
+							print $form->selectDate($preselectedEatBy, 'eatby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
+							print '</td>';
+						} else {
+							print '<td></td>';
+						}
+
+						// sell by mandatory
+						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+							print '<td align="right">';
+							$preselectedSellBy = (GETPOSTISSET('sellby-' . $line->id . '-' . $i) ? GETPOSTDATE('sellby-' . $line->id . '-' . $i) : '');
+							print $form->selectDate($preselectedSellBy, 'sellby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
+							print '</td>';
+						} else {
+							print '<td></td>';
 						}
 
 						// Action delete
