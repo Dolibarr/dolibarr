@@ -185,7 +185,10 @@ class MailingTarget extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_target";
 		$sql .= " (fk_mailing, fk_contact, email, statut)";
-		$sql .= " VALUES ('".((int) $this->fk_mailing)."', "((int) $this->fk_contact).", '".$this->db->escape($this->email)."', ".((int) $conf->statut).")";
+		$sql .= " VALUES ('".((int) $this->fk_mailing)."', ";
+		$sql .= " .((int) $this->fk_contact)., ";
+		$sql .= "'".$this->db->escape($this->email)."', ";
+		$sql .= " .((int) $conf->statut)).";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
