@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ09');
 
 $id = GETPOSTINT('id');
-$socid		= GETPOSTINT('socid');
+$socid = GETPOSTINT('socid');
 
 // Initialize objects
 $object = new Contact($db);
