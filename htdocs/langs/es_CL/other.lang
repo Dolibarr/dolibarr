@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Código de seguridad
 NumberingShort=NORTE
-Tools=Herramientas
-TMenuTools=Herramientas
 ToolsDesc=Todas las herramientas no incluidas en otras entradas del menú se agrupan aquí. <br> Se puede acceder a todas las herramientas a través del menú de la izquierda.
 Birthday=Cumpleaños
 BirthdayAlertOn=alerta de cumpleaños activa
@@ -143,3 +141,7 @@ WebsiteSetup=Configuración del sitio web del módulo
 WEBSITE_KEYWORDS=Palabras clave
 LinesToImport=Líneas para importar
 FTPFailedToRemoveFile=Falló al eliminar el archivo <b>%s</b>.
+AddThisPageToBookmarks =Agregar página actual a marcadores
+EditBookmarks =Listar/editar Marcadores
+ListOfBookmarks =Lista de marcadores
+ShowBookmark =Mostrar marcador

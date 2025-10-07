@@ -283,10 +283,10 @@ class FormProduct
 	 *                                          'warehouseopen' = select products from open warehouses,
 	 *                                          'warehouseclosed' = select products from closed warehouses,
 	 *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param  int<0,1>    $empty			    1=Can be empty, 0 if not
+	 *  @param  int<0,1>|string    $empty		Use 1 or 'label'=Can be empty, 0 if not
 	 * 	@param	int<0,1>    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
+	 *  @param	string	    $empty_label	    Empty label if needed (deprecated, set the label into the field $empty)
 	 *  @param	int<0,1>    $showstock		    1=Show stock count
 	 *  @param	int<0,1>   	$forcecombo		    1=Force combo iso ajax select2
 	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
@@ -341,7 +341,7 @@ class FormProduct
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
 		$out .= '>';
 		if ($empty) {
-			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+			$out .= '<option value="-1">'.(is_numeric($empty) ? ($empty_label ? $empty_label : '&nbsp;') : $empty).'</option>';
 		}
 		foreach ($this->cache_warehouses as $id => $arraytypes) {
 			$label = '';

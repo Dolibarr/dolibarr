@@ -538,7 +538,7 @@ if ($source == 'proposal') {
 	$result = $object->fetch_thirdparty();
 
 	// Proposer
-	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("Proposer");
+	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("CreditorName");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>' . $creditor . '</b>';

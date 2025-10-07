@@ -66,7 +66,11 @@ function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 // Security check
 if (!isModEnabled('don')) {
 	httponly_accessforbidden('Module Donation not enabled');
@@ -97,7 +101,7 @@ if ($resql) {
 		print "<td>Date</td>";
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print "</tr>\n";
-
+		$i = 0;
 		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
@@ -120,6 +124,6 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooterVierge();
+$db->close();

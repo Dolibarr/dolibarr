@@ -7,7 +7,8 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,13 @@
  */
 
 /**
- * @var CommonObject $this
+ * @var CommonObject|Facture $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var Conf $conf
  * @var User $user
  */
 
@@ -51,7 +53,7 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
-'@phan-var-force CommonObject $this
+'@phan-var-force CommonObject|Facture $this
  @phan-var-force CommonObject $object';
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
@@ -116,16 +118,22 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_
 }
 print '</th>';
 
-// Price HT
+// Price HT / excl tax
 print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</th>';
 
-// Multicurrency
+// Multicurrency HT / excl tax
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</th>';
+	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUTTC').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
 }
 
+// Price TTC / incl tax
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
-	print '<th class="right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+	print '<th class="linecoluttc right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+}
+
+// Multicurrency TTC / incl tax
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+	print '<th class="linecoluttc_currency right " style="width: 80px">'.$langs->trans('PriceUTTCCurrency', $this->multicurrency_code).'</th>';
 }
 
 // Qty
@@ -158,7 +166,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture')) && $objec
 print '</th>';
 
 // Fields for situation invoice
-if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	print '<th class="linecolcycleref right">'.$langs->trans('CumulativeProgression').'</th>';
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
@@ -210,7 +218,7 @@ print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</th>';
+	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
 }
 
 if ($outputalsopricetotalwithtax) {

@@ -130,7 +130,7 @@ if (empty($reshook)) {
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {		// Test on permission not required
 				$backtopage = $backurlforlist;
 			} else {
 				$backtopage = dol_buildpath('/hrm/evaluation_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
@@ -166,7 +166,7 @@ if (empty($reshook)) {
 	$trackid = 'evaluation'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	if ($action == 'saveSkill') {
+	if ($action == 'saveSkill' && $permissiontoadd) {
 		$TNote = GETPOST('TNote', 'array');
 		if (!empty($TNote)) {
 			foreach ($object->lines as $line) {
@@ -376,7 +376,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateEvaluation', $numref);
@@ -581,15 +581,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$Tab[$num]->required_rank = '<span title="'.$required_rank_desc.'" class="radio_js_bloc_number TNote_1">' . $required_rank . '</span>';
 
-				if ($obj->userRankForSkill == -1) {
+				if ($obj->userRankForSkill < 0 || $obj->required_rank < 0) {
 					$title = $langs->trans('NA');
-					$class .= 'veryhappy diffnote';
+					$class .= 'na';
 				} elseif ($obj->userRankForSkill > $obj->required_rank) {
 					$title = $langs->trans('MaxlevelGreaterThanShort');
-					$class .= 'veryhappy diffnote';
+					$class .= 'veryhappy';
 				} elseif ($obj->userRankForSkill == $obj->required_rank) {
 					$title = $langs->trans('MaxLevelEqualToShort');
-					$class .= 'happy diffnote';
+					$class .= 'happy';
 				} elseif ($obj->userRankForSkill < $obj->required_rank) {
 					$title = $langs->trans('MaxLevelLowerThanShort');
 					$class .= 'sad';

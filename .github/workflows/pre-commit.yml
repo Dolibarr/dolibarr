@@ -28,7 +28,7 @@ jobs:
       #  if: false
 
       # Checkout git sources to analyze
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Try to get the list of modified files into steps.changed-php.outputs.all_changed_files
       #- name: Get changed files
@@ -66,7 +66,7 @@ jobs:
         run: |-
           [ -r requirements.txt ] || [ -r pyproject.toml ] || touch requirements.txt
       # Install python and pre-commit tool
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           cache: pip
           python-version: "3.11"

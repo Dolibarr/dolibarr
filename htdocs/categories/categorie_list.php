@@ -62,8 +62,10 @@ if (empty($mode)) {
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
-if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[(int) $type];
+if (is_numeric($type)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+	$tmpcategory = new Categorie($db);
+	$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+	$type = $MAP_ID_TO_CODE[(int) $type];
 }
 $nosearch = GETPOSTINT('nosearch');
 
@@ -338,7 +340,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -369,6 +371,9 @@ if ($mode == 'hierarchy') {
 	$param = ($nosearch ? '&nosearch=1' : '');
 	if ($type != '') {
 		$param .= '&type='.urlencode($type);
+	}
+	if (GETPOST('dol_openinpopup', 'aZ')) {
+		$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ'));
 	}
 
 	$typetext = $type;
@@ -429,7 +434,7 @@ if ($mode == 'hierarchy') {
 		$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
 		if (!empty($conf->main_checkbox_left_column)) {
 			if ($user->hasRight('categorie', 'creer')) {
-				$entry .= ' &nbsp; <a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+				$entry .= ' &nbsp; <a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . ((int) $val['id']) . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"].'?type='.urlencode($type).'&'.$param) . '">' . img_edit() . '</a>';
 			}
 			if ($user->hasRight('categorie', 'supprimer')) {
 				$entry .= ' &nbsp; <a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '">' . img_delete() . '</a>';
@@ -443,7 +448,7 @@ if ($mode == 'hierarchy') {
 		if (empty($conf->main_checkbox_left_column)) {
 			$entry .= '<td class="right" width="30px;">';
 			if ($user->hasRight('categorie', 'creer')) {
-				$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+				$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"].'?type='.urlencode($type).'&'.$param).'">' . img_edit() . '</a>';
 			}
 			$entry .= '</td>';
 
@@ -480,7 +485,10 @@ if ($mode == 'hierarchy') {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param).$param, '', $permissiontoadd);
 
-	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+	$morehtmlrightbeforebutton = '';
+	if (!GETPOST('dol_openinpopup', 'aZ')) {
+		$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+	}
 
 	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1, $morehtmlrightbeforebutton);
 
@@ -522,7 +530,7 @@ if ($mode == 'hierarchy') {
 } else {
 	// Mode list
 
-	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-aaa page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
+	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-acategory page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -542,6 +550,9 @@ if ($mode == 'hierarchy') {
 	}
 	if ($type != '') {
 		$param .= '&type='.urlencode($type);
+	}
+	if (GETPOST('dol_openinpopup', 'aZ')) {
+		$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ'));
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key])) {
@@ -604,7 +615,10 @@ if ($mode == 'hierarchy') {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param).$param, '', $permissiontoadd);
 
-	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+	$morehtmlrightbeforebutton = '';
+	if (!GETPOST('dol_openinpopup', 'aZ')) {
+		$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+	}
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1, $morehtmlrightbeforebutton);
 

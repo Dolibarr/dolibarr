@@ -7,7 +7,7 @@
  * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       Nick Fragoulis
+ * Copyright (C) 2024-205   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +91,9 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
 	}
+	if (GETPOSTISSET('PROPOSAL_SHOW_SHIPPING_ADDRESS')) {
+		dolibarr_set_const($db, "PROPOSAL_SHOW_SHIPPING_ADDRESS", GETPOSTINT("PROPOSAL_SHOW_SHIPPING_ADDRESS"), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('SALES_ORDER_SHOW_SHIPPING_ADDRESS')) {
 		dolibarr_set_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", GETPOSTINT("SALES_ORDER_SHOW_SHIPPING_ADDRESS"), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", $conf->entity);
@@ -148,6 +151,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_INVOICE_SHOW_VAT_ANALYSIS", GETPOSTINT("PDF_INVOICE_SHOW_VAT_ANALYSIS"), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "PDF_INVOICE_SHOW_VAT_ANALYSIS", $conf->entity);
 	}
+	if (GETPOSTISSET('PDF_INVOICE_SHOW_BALANCE_SUMMARY')) {
+		dolibarr_set_const($db, "PDF_INVOICE_SHOW_BALANCE_SUMMARY", GETPOSTINT("PDF_INVOICE_SHOW_BALANCE_SUMMARY"), 'chaine', 0, '', $conf->entity);
+		dolibarr_del_const($db, "PDF_INVOICE_SHOW_BALANCE_SUMMARY", $conf->entity);
+	}
 	if (GETPOSTISSET('INVOICE_HIDE_LINKED_OBJECT')) {
 		dolibarr_set_const($db, "INVOICE_HIDE_LINKED_OBJECT", GETPOSTINT("INVOICE_HIDE_LINKED_OBJECT"), 'chaine', 0, '', $conf->entity);
 	}
@@ -160,7 +167,6 @@ if ($action == 'update') {
 	if (GETPOSTISSET('BARCODE_ON_STOCKTRANSFER_PDF')) {
 		dolibarr_set_const($db, "BARCODE_ON_STOCKTRANSFER_PDF", GETPOSTINT("BARCODE_ON_STOCKTRANSFER_PDF"), 'chaine', 0, '', $conf->entity);
 	}
-
 	// add file to concat
 	foreach (array('MAIN_INFO_PROPAL_TERMSOFSALE', 'MAIN_INFO_ORDER_TERMSOFSALE', 'MAIN_INFO_INVOICE_TERMSOFSALE') as $varname) {
 		if ($_FILES[$varname]["name"]) {
@@ -192,8 +198,6 @@ if ($action == 'update') {
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
-
-
 // Remove file to concat
 if ($action == 'removetermsofsale') {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -244,7 +248,6 @@ print '<input type="hidden" name="action" value="update">';
 
 if (isModEnabled('propal')) {
 	print load_fiche_titre($langs->trans("Proposal"), '', 'proposal');
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px"></td></tr>';
@@ -284,6 +287,18 @@ if (isModEnabled('propal')) {
 	}
 	print '</td></tr>';
 
+	// Add delivery address option for proposals
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("PROPOSAL_SHOW_SHIPPING_ADDRESS"), $langs->trans("PROPOSAL_SHOW_SHIPPING_ADDRESSMore"));
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('PROPOSAL_SHOW_SHIPPING_ADDRESS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("PROPOSAL_SHOW_SHIPPING_ADDRESS", $arrval, getDolGlobalString('PROPOSAL_SHOW_SHIPPING_ADDRESS'));
+	}
+	print '</td></tr>';
+
 	// Concat PDF
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_PROPAL"), $tooltipconcatpdf);
@@ -309,7 +324,6 @@ if (isModEnabled('propal')) {
 		}
 		print '</div>';
 	}
-
 	print '</td></tr>';
 
 	print '</table>';
@@ -425,6 +439,45 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("INVOICE_SHOW_SHIPPING_ADDRESS"), $langs->trans("INVOICE_SHOW_SHIPPING_ADDRESSMore"));
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('INVOICE_SHOW_SHIPPING_ADDRESS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("INVOICE_SHOW_SHIPPING_ADDRESS", $arrval, getDolGlobalString('INVOICE_SHOW_SHIPPING_ADDRESS'));
+	}
+	print '</td></tr>';
+
+	// Concat PDF
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_INVOICE"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_INVOICE', array(), null, 0, 0, 1);
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_INVOICE'));
+	}
+
+	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_INVOICE")) {
+		$modulepart = 'invoice';
+		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_INVOICE_TERMSOFSALE" id="MAIN_INFO_INVOICE_TERMSOFSALE" accept="application/pdf">';
+		if (getDolGlobalString("MAIN_INFO_INVOICE_TERMSOFSALE")) {
+			$termofsale = getDolGlobalString("MAIN_INFO_INVOICE_TERMSOFSALE");
+			if (file_exists($conf->invoice->dir_output.'/'.$termofsale)) {
+				$file = dol_dir_list($conf->invoice->dir_output, 'files', 0, $termofsale);
+				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+			}
+		}
+		print '</div>';
+	}
+	print '</td></tr>';
+
+	// QR Codes
+	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("INVOICE_ADD_ZATCA_QR_CODE"), $langs->trans("INVOICE_ADD_ZATCA_QR_CODEMore"));
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -473,18 +526,6 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("INVOICE_SHOW_SHIPPING_ADDRESS"), $langs->trans("INVOICE_SHOW_SHIPPING_ADDRESSMore"));
-	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('INVOICE_SHOW_SHIPPING_ADDRESS');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("INVOICE_SHOW_SHIPPING_ADDRESS", $arrval, getDolGlobalString('INVOICE_SHOW_SHIPPING_ADDRESS'));
-	}
-	print '</td></tr>';
-
-	/* too late to have it enabled by default in v21
-	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("PDF_INVOICE_SHOW_VAT_ANALYSIS"), '');
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -494,7 +535,18 @@ if (isModEnabled('invoice')) {
 		print $form->selectarray("PDF_INVOICE_SHOW_VAT_ANALYSIS", $arrval, $conf->global->PDF_INVOICE_SHOW_VAT_ANALYSIS);
 	}
 	print '</td></tr>';
-	*/
+
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("PDF_INVOICE_SHOW_BALANCE_SUMMARY"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('PDF_INVOICE_SHOW_BALANCE_SUMMARY');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("PDF_INVOICE_SHOW_BALANCE_SUMMARY", $arrval, $conf->global->PDF_INVOICE_SHOW_BALANCE_SUMMARY);
+	}
+	print '</td></tr>';
 
 	/* Keep this option hidden for the moment to avoid options inflation. We'll see later if it is used enough...
 	print '<tr class="oddeven"><td>';
@@ -517,34 +569,6 @@ if (isModEnabled('invoice')) {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("INVOICE_HIDE_LINKED_OBJECT", $arrval, getDolGlobalString('INVOICE_HIDE_LINKED_OBJECT'));
 	}
-	print '</td></tr>';
-
-	// Concat PDF
-	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_INVOICE"), '');
-	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_INVOICE', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_INVOICE'));
-	}
-
-	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_INVOICE")) {
-		$modulepart = 'invoice';
-		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
-		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_INVOICE_TERMSOFSALE" id="MAIN_INFO_INVOICE_TERMSOFSALE" accept="application/pdf">';
-		if (getDolGlobalString("MAIN_INFO_INVOICE_TERMSOFSALE")) {
-			$termofsale = getDolGlobalString("MAIN_INFO_INVOICE_TERMSOFSALE");
-			if (file_exists($conf->invoice->dir_output.'/'.$termofsale)) {
-				$file = dol_dir_list($conf->invoice->dir_output, 'files', 0, $termofsale);
-				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
-				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
-			}
-		}
-		print '</div>';
-	}
-
 	print '</td></tr>';
 
 	print '</table>';

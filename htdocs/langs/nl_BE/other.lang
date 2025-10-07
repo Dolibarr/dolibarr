@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - other
-Tools=Gereedschap
-TMenuTools=Gereedschap
 BirthdayAlert=Verjaardagskennisgeving
 TextNextMonthOfInvoice=Volgende maand (tekst) factuurdatum
 DateNextInvoiceBeforeGen=Datum volgende factuur (vóór genereren)
@@ -16,3 +14,10 @@ WEBSITE_KEYWORDS=Trefwoorden
 ExternalSiteSetup=Setup link naar externe website
 ExternalSiteModuleNotComplete=Module ExternalSite werd niet correct geconfigureerd.
 FailedToGetFile=Mislukt om de bestanden te ontvangen %s
+AddThisPageToBookmarks =Voeg huidige pagina toe aan de bladwijzers
+BookmarksManagement =Bladwijzerbeheer
+CreateBookmark =Bladwijzer aanmaken
+EditBookmarks =Bladwijzers oplijsten/bewerken
+ListOfBookmarks =Lijst van bladwijzers
+NewBookmark =Nieuwe bladwijzer
+ShowBookmark =Toon bladwijzer

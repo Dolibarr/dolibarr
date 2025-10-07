@@ -4,8 +4,8 @@ table#list_of_modules {
 }
 .imgstore {
 	max-height:120px;
-	max-width: 120px;
-	box-shadow: 3px 3px 20px #ddd;
+	width: 120px;
+	/* box-shadow: 3px 3px 20px #ddd; */
 }
 
 div.divsearchfield {
@@ -18,6 +18,9 @@ div.divsearchfield {
 }
 .margeCote,.margeCoteDroite{
     padding-left: 20px!important;
+}
+.margeCote {
+	padding-bottom: 10px;
 }
 .nomargesupinf{
     margin-top: 0;
@@ -88,6 +91,7 @@ div.divsearchfield {
     overflow: hidden;
     padding: 10px;
     /* min-height: 100px; */
+    box-shadow: 1px 1px 6px #bbb;
 }
 .newApp, .updatedApp{
     background-color: orange;
@@ -95,19 +99,18 @@ div.divsearchfield {
     box-sizing: border-box;
     color: white;
     display: block;
-    font-size: 18px;
-    font-weight: bold;
-    left: -34px;
-    padding: 5px 0;
+    font-size: 0.8em;
+    left: -25px;
+    padding: 5px 20px 5px 20px;
     position: absolute;
     text-align: center;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.35);
-    top: 22px;
+    top: 20px;
     transform: rotate(-45deg);
-    width: 150px;
+    width: 120px;
 }
 .updatedApp{
-    background-color: greenyellow;
+    background-color: #25a580;
 }
 .notcompatible {
     color: red;
@@ -116,7 +119,7 @@ div.divsearchfield {
     color: orange;
 }
 .compatible {
-    color: green;
+    color: #25a580;
 }
 tr.app {
     height: 200px;
@@ -198,6 +201,13 @@ tr.NotCompatible{
 tr.NotCompatible:hover{
     opacity: 0.7;
 }
+span.details{
+    font-size: 12px;
+    margin-left: 10px;
+    vertical-align: super;
+}
+
+
 @media only screen and (min-width: 1150px) {
     #categorieArea{
         display:none;
@@ -210,8 +220,10 @@ tr.NotCompatible:hover{
         float: right;
     }
 }
-span.details{
-    font-size: 12px;
-    margin-left: 10px;
-    vertical-align: super;
+
+@media only screen and (max-width: 724px) {
+    .imgstore {
+    	max-height: 50px;
+    	width: 50px;
+    }
 }

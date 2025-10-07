@@ -30,6 +30,14 @@ global $mysoc;
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -43,66 +51,34 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
 $local = GETPOSTINT('localTaxType');
-// Date range
-$year = GETPOSTINT("year");
-if (empty($year)) {
-	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$year_start = $year_current;
-} else {
-	$year_current = $year;
-	$year_start = $year;
-}
-$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"));
-// Quarter
-if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOSTINT("q");
-	if (empty($q)) {
-		if (GETPOSTINT("month")) {
-			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), false);
-			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
-		} else {
-			$date_start = dol_get_first_day($year_start, !getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
-			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
-				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
-			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 3) {
-				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 1) {
-				$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
-			}
-		}
-	} else {
-		if ($q == 1) {
-			$date_start = dol_get_first_day($year_start, 1, false);
-			$date_end = dol_get_last_day($year_start, 3, false);
-		}
-		if ($q == 2) {
-			$date_start = dol_get_first_day($year_start, 4, false);
-			$date_end = dol_get_last_day($year_start, 6, false);
-		}
-		if ($q == 3) {
-			$date_start = dol_get_first_day($year_start, 7, false);
-			$date_end = dol_get_last_day($year_start, 9, false);
-		}
-		if ($q == 4) {
-			$date_start = dol_get_first_day($year_start, 10, false);
-			$date_end = dol_get_last_day($year_start, 12, false);
-		}
-	}
-}
+
+include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+/**
+ * @var	int	$date_start
+ * @var int $date_end
+ * @var int $date_start_month
+ * @var int $date_start_year
+ * @var int $date_start_day
+ * @var int $date_end_month
+ * @var int $date_end_year
+ * @var int $date_end_day
+ * @var int $year_current
+ */
+'
+@phan-var-force int $date_start
+@phan-var-force int $date_end
+@phan-var-force int $date_start_month
+@phan-var-force int $date_start_year
+@phan-var-force int $date_start_day
+@phan-var-force int $date_end_month
+@phan-var-force int $date_end_year
+@phan-var-force int $date_end_day
+@phan-var-force int $year_current
+';
 
 $min = price2num(GETPOST("min", "alpha"));
 if (empty($min)) {
@@ -152,7 +128,7 @@ $morequerystring = '';
 $listofparams = array('date_startmonth', 'date_startyear', 'date_startday', 'date_endmonth', 'date_endyear', 'date_endday');
 foreach ($listofparams as $param) {
 	if (GETPOST($param) != '') {
-		$morequerystring .= ($morequerystring ? '&' : '').$param.'='.GETPOST($param);
+		$morequerystring .= ($morequerystring ? '&' : '').$param.'='.GETPOSTINT($param);
 	}
 }
 
@@ -177,23 +153,7 @@ if ($modetax == 2) {
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-$prevyear = $year_start;
-$q = 0;
-$prevquarter = $q;
-if ($prevquarter > 1) {
-	$prevquarter--;
-} else {
-	$prevquarter = 4;
-	$prevyear--;
-}
-$nextyear = $year_start;
-$nextquarter = $q;
-if ($nextquarter < 4) {
-	$nextquarter++;
-} else {
-	$nextquarter = 1;
-	$nextyear++;
-}
+
 $description = $fsearch;
 $builddate = dol_now();
 
@@ -397,8 +357,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				if (($local == 1 && $fields['localtax1'] != 0) || ($local == 2 && $fields['localtax2'] != 0)) {
 					// Define type
 					$type = ($fields['dtype'] ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -558,8 +517,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				if (($local == 1 && $fields['localtax1'] != 0) || ($local == 2 && $fields['localtax2'] != 0)) {
 					// Define type
 					$type = ($fields['dtype'] ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -680,7 +638,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	// Total to pay
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
+	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").'</td>';
 	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
 	print "</tr>\n";
 

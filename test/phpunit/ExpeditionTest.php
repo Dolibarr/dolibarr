@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,10 +83,10 @@ class ExpeditionTest extends CommonClassTest
 	/**
 	 * testExpeditionFetch
 	 *
-	 * Check that a Reception object can be fetched from database.
+	 * Check that a Expedition object can be fetched from database.
 	 *
-	 * @param 	int		$id 	The id of an existing Reception object to fetch.
-	 * @return 					Reception $localobject
+	 * @param 	int			$id 		The id of an existing Expedition object to fetch.
+	 * @return 	Expedition 	$localobject
 	 *
 	 * @depends testExpeditionCreate
 	 */
@@ -105,10 +105,10 @@ class ExpeditionTest extends CommonClassTest
 	/**
 	 * testExpeditionUpdate
 	 *
-	 * Check that a Expedition object can be updated.
+	 * Check that an Expedition object can be updated.
 	 *
-	 * @param 	Object	$localobject 	An existing Expedition object to update.
-	 * @return 							Reception a Expedition object with data fetched and name changed
+	 * @param 	Expedition	$localobject 	An existing Expedition object to update.
+	 * @return 	Expedition 					An Expedition object with data fetched and name changed
 	 *
 	 * @depends testExpeditionFetch
 	 */
@@ -118,7 +118,7 @@ class ExpeditionTest extends CommonClassTest
 
 		$localobject->name = "foobar";
 
-		$result = $localobject->update($localobject->id, $user);
+		$result = $localobject->update($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 
@@ -128,11 +128,11 @@ class ExpeditionTest extends CommonClassTest
 	/**
 	 * testExpeditionValid
 	 *
-	 * Check that a Reception with status == Reception::STATUS_DRAFT can be
-	 * re-opened with the Reception::reOpen() function.
+	 * Check that an Expedition with status == Expedition::STATUS_DRAFT can be
+	 * re-opened with the Expedition::reOpen() function.
 	 *
-	 * @param Object	$localobject 	An existing Reception object to validate.
-	 * @return Reception a Reception object with data fetched and STATUS_VALIDATED
+	 * @param Expedition	$localobject 	An existing Expedition object to validate.
+	 * @return Expedition					An Expedition object with data fetched and STATUS_VALIDATED
 	 *
 	 * @depends testExpeditionUpdate
 	 */
@@ -168,10 +168,10 @@ class ExpeditionTest extends CommonClassTest
 	/**
 	 * testExpeditionSetClosed
 	 *
-	 * Check that a Reception can be closed with the Reception::setClosed()
+	 * Check that a Expedition can be closed with the Reception::setClosed()
 	 * function, after it has been validated.
 	 *
-	 * @param 	Object		$localobject 	An existing validated Reception object to close.
+	 * @param 	Expedition	$localobject 	An existing validated Expedition object to close.
 	 * @return 	Expedition 					An Expedition object with data fetched and STATUS_CLOSED
 	 *
 	 * @depends testExpeditionValid
@@ -181,13 +181,13 @@ class ExpeditionTest extends CommonClassTest
 		global $db, $user;
 
 		$result = $localobject->fetch($localobject->id);
-		$this->assertLessThanOrEqual($result, 0, "Cannot fetch Reception object:\n".
+		$this->assertLessThanOrEqual($result, 0, "Cannot fetch Expedition object:\n".
 									 $localobject->errorsToString());
 		$this->assertEquals(Expedition::STATUS_VALIDATED, $localobject->statut);
 		$this->assertEquals(Expedition::STATUS_VALIDATED, $localobject->status);
 
 		$result = $localobject->setClosed($user);
-		$this->assertLessThanOrEqual($result, 0, "Cannot close Reception object:\n".
+		$this->assertLessThanOrEqual($result, 0, "Cannot close Expedition object:\n".
 									 $localobject->errorsToString());
 		$this->assertEquals(
 			Expedition::STATUS_CLOSED,
@@ -202,7 +202,7 @@ class ExpeditionTest extends CommonClassTest
 
 		$obj = new Expedition($db);
 		$result = $obj->fetch($localobject->id);
-		$this->assertLessThanOrEqual($result, 0, "Cannot fetch Reception object:\n".
+		$this->assertLessThanOrEqual($result, 0, "Cannot fetch Expedition object:\n".
 									 $obj->errorsToString());
 		$this->assertEquals(
 			Expedition::STATUS_CLOSED,
@@ -222,10 +222,10 @@ class ExpeditionTest extends CommonClassTest
 	 * testExpeditionReOpen
 	 *
 	 * Check that a Expedition with status == Reception::STATUS_CLOSED can be
-	 * re-opened with the Reception::reOpen() function.
+	 * re-opened with the Expedition::reOpen() function.
 	 *
-	 * @param 	Object	$localobject 	An existing closed Reception object to re-open.
-	 * @return 	Expedition 				A Expedition object with data fetched and STATUS_VALIDATED
+	 * @param 	Expedition	$localobject 	An existing closed Reception object to re-open.
+	 * @return 	Expedition 					An Expedition object with data fetched and STATUS_VALIDATED
 	 *
 	 * @depends testExpeditionSetClosed
 	 */
@@ -234,14 +234,14 @@ class ExpeditionTest extends CommonClassTest
 		global $db;
 
 		$result = $localobject->fetch($localobject->id);
-		$this->assertLessThanOrEqual($result, 0, "Cannot fetch Reception object:\n".
+		$this->assertLessThanOrEqual($result, 0, "Cannot fetch Expedition object:\n".
 									 $localobject->errorsToString());
 
 		$this->assertEquals(Expedition::STATUS_CLOSED, $localobject->status);
 		$this->assertEquals(Expedition::STATUS_CLOSED, $localobject->statut);
 
 		$result = $localobject->reOpen();
-		$this->assertLessThanOrEqual($result, 0, "Cannot reOpen Reception object:\n".
+		$this->assertLessThanOrEqual($result, 0, "Cannot reOpen Expedition object:\n".
 									 $localobject->errorsToString());
 		$this->assertEquals(Expedition::STATUS_VALIDATED, $localobject->statut);
 		$this->assertEquals(Expedition::STATUS_VALIDATED, $localobject->status);
@@ -257,11 +257,11 @@ class ExpeditionTest extends CommonClassTest
 	/**
 	 * testExpeditionSetDraft
 	 *
-	 * Check that a Reception with status == Reception::STATUS_CLOSED can be
-	 * re-opened with the Reception::reOpen() function.
+	 * Check that a Expedition with status == Reception::STATUS_CLOSED can be
+	 * re-opened with the Expedition::reOpen() function.
 	 *
-	 * @param 	Object	$localobject 	An existing validated Reception object to mark as Draft.
-	 * @return 	Reception 				A Reception object with data fetched and STATUS_DRAFT
+	 * @param 	Expedition	$localobject 	An existing validated Expedition object to mark as Draft.
+	 * @return 	Expedition	 				An Expeditionn object with data fetched and STATUS_DRAFT
 	 *
 	 * @depends testExpeditionReOpen
 	 */
@@ -295,10 +295,10 @@ class ExpeditionTest extends CommonClassTest
 	/**
 	 * testExpeditionDelete
 	 *
-	 * Check that a Reception object can be deleted.
+	 * Check that an Expedition object can be deleted.
 	 *
-	 * @param 	Object 	$localobject 	An existing Reception object to delete.
-	 * @return 	int 					The result of the delete operation
+	 * @param 	Expedition 	$localobject 	An existing Expedition object to delete.
+	 * @return 	int 						The result of the delete operation
 	 *
 	 * @depends testExpeditionReOpen
 	 */

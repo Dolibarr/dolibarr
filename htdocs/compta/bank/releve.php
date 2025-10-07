@@ -352,9 +352,6 @@ if (empty($numref)) {
 		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 		$morehtml = '';
-		//if ($action != 'addline' && $action != 'reconcile') {
-		//	$morehtml .= $buttonreconcile;
-		//}
 
 		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

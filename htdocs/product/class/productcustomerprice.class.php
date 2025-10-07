@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Florian Henry   <florian.henry@open-concept.pro>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,11 +60,6 @@ class ProductCustomerPrice extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'product_customer_price';
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var string
@@ -222,7 +217,7 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function create($user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		$error = 0;
 		$now = dol_now();
 
@@ -362,9 +357,9 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " ".(!isset($this->tva_tx) ? 'NULL' : (empty($this->tva_tx) ? 0 : $this->tva_tx)).",";
 		$sql .= " ".(!isset($this->recuperableonly) ? 'NULL' : "'".$this->db->escape($this->recuperableonly)."'").",";
 		$sql .= " ".(empty($this->localtax1_type) ? "'0'" : "'".$this->db->escape($this->localtax1_type)."'").",";
-		$sql .= " ".(!isset($this->localtax1_tx) ? 'NULL' : (empty($this->localtax1_tx) ? 0 : $this->localtax1_tx)).",";
+		$sql .= " ".(!isset($this->localtax1_tx) ? 'NULL' : (empty($this->localtax1_tx) ? "'0'" : "'".$this->db->escape($this->localtax1_tx)."'")).",";
 		$sql .= " ".(empty($this->localtax2_type) ? "'0'" : "'".$this->db->escape($this->localtax2_type)."'").",";
-		$sql .= " ".(!isset($this->localtax2_tx) ? 'NULL' : (empty($this->localtax2_tx) ? 0 : $this->localtax2_tx)).",";
+		$sql .= " ".(!isset($this->localtax2_tx) ? 'NULL' : (empty($this->localtax2_tx) ? "'0'" : "'".$this->db->escape($this->localtax2_tx)."'")).",";
 		$sql .= " ".(empty($this->discount_percent) ? '0' : "'".$this->db->escape(price2num($this->discount_percent))."'").",";
 		$sql .= " '".$this->db->idate($this->date_begin)."',";
 		$sql .= " ".(empty($this->date_end) ? 'NULL' : "'".$this->db->idate($this->date_end)."'").",";
@@ -422,8 +417,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
@@ -462,6 +455,7 @@ class ProductCustomerPrice extends CommonObject
 				$this->entity = $obj->entity;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->tms);
 				$this->fk_product = $obj->fk_product;
 				$this->fk_soc = $obj->fk_soc;
 				$this->ref_customer = $obj->ref_customer;
@@ -601,6 +595,7 @@ class ProductCustomerPrice extends CommonObject
 				$line->entity = $obj->entity;
 				$line->datec = $this->db->jdate($obj->datec);
 				$line->tms = $this->db->jdate($obj->tms);
+				$line->date_modification = $this->db->jdate($obj->tms);
 				$line->fk_product = $obj->fk_product;
 				$line->fk_soc = $obj->fk_soc;
 				$line->ref_customer = $obj->ref_customer;
@@ -718,6 +713,7 @@ class ProductCustomerPrice extends CommonObject
 				$line->entity = $obj->entity;
 				$line->datec = $this->db->jdate($obj->datec);
 				$line->tms = $this->db->jdate($obj->tms);
+				$line->date_modification = $this->db->jdate($obj->tms);
 				$line->fk_product = $obj->fk_product;
 				$line->fk_soc = $obj->fk_soc;
 				$line->ref_customer = $obj->ref_customer;
@@ -761,7 +757,7 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		$error = 0;
 		$now = dol_now();
 
@@ -864,7 +860,6 @@ class ProductCustomerPrice extends CommonObject
 		// Do a copy of current record into log table
 		// Insert request
 		$sql = "INSERT INTO ".$this->db->prefix()."product_customer_price_log(";
-
 		$sql .= "entity,";
 		$sql .= "datec,";
 		$sql .= "fk_product,";
@@ -888,10 +883,8 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= "fk_user,";
 		$sql .= "price_label,";
 		$sql .= "import_key";
-
 		$sql .= ") 		";
 		$sql .= "SELECT";
-
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.fk_product,";
@@ -915,7 +908,6 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " t.fk_user,";
 		$sql .= " t.price_label,";
 		$sql .= " t.import_key";
-
 		$sql .= " FROM ".$this->db->prefix()."product_customer_price as t";
 		$sql .= " WHERE t.rowid = ".((int) $this->id);
 
@@ -929,7 +921,6 @@ class ProductCustomerPrice extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix()."product_customer_price SET";
-
 		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " datec='".$this->db->idate($now)."',";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
@@ -944,8 +935,8 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null").",";
 		$sql .= " tva_tx=".(isset($this->tva_tx) ? (empty($this->tva_tx) ? 0 : $this->tva_tx) : "null").",";
 		$sql .= " recuperableonly=".(isset($this->recuperableonly) ? $this->recuperableonly : "null").",";
-		$sql .= " localtax1_tx=".(isset($this->localtax1_tx) ? (empty($this->localtax1_tx) ? 0 : $this->localtax1_tx) : "null").",";
-		$sql .= " localtax2_tx=".(isset($this->localtax2_tx) ? (empty($this->localtax2_tx) ? 0 : $this->localtax2_tx) : "null").",";
+		$sql .= " localtax1_tx=".(isset($this->localtax1_tx) ? (empty($this->localtax1_tx) ? "'0'" : "'".$this->db->escape($this->localtax1_tx)."'") : "null").",";
+		$sql .= " localtax2_tx=".(isset($this->localtax2_tx) ? (empty($this->localtax2_tx) ? "'0'" : "'".$this->db->escape($this->localtax2_tx)."'") : "null").",";
 		$sql .= " localtax1_type=".(!empty($this->localtax1_type) ? "'".$this->db->escape($this->localtax1_type)."'" : "'0'").",";
 		$sql .= " localtax2_type=".(!empty($this->localtax2_type) ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'").",";
 		$sql .= " discount_percent=".(!empty($this->discount_percent) ? "'".price2num($this->discount_percent)."'" : "0").",";
@@ -1171,8 +1162,7 @@ class ProductCustomerPrice extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
-			$this->errors = array_merge($this->errors, $object->errors);
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 

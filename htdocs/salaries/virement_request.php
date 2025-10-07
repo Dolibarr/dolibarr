@@ -22,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/salaries/info.php
+ *	\file       htdocs/salaries/virement_request.php
  *	\ingroup    salaries
- *	\brief      Page with info about salaries contribution
+ *	\brief      Page to request payment of a salary
  */
 
 // Load Dolibarr environment
@@ -220,9 +220,7 @@ if ($action == "delete" && $permissiontodelete) {
  * View
  */
 
-if (isModEnabled('project')) {
-	$formproject = new FormProjets($db);
-}
+$form = new Form($db);
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Info');
 $help_url = "";

@@ -8,13 +8,12 @@ Shipments=Göndərmələr
 ShowSending=Göndərmələri göstərin
 Receivings=Çatdırılma Qəbzləri
 SendingsArea=Göndərmə sahəsi
-ListOfSendings=Göndərmələrin siyahısı
 SendingMethod=Göndərmə üsulu
 LastSendings=Ən son %s göndərişləri
 StatisticsOfSendings=Göndərmə statistikası
 NbOfSendings=Göndərmələrin sayı
 NumberOfShipmentsByMonth=Aylar üzrə göndərişlərin sayı
-SendingCard=Göndərmə kartı
+SendingCard=Göndərmə
 NewSending=Yeni göndəriş
 CreateShipment=Göndərmə yaradın
 QtyShipped=Miqdar göndərildi
@@ -44,6 +43,7 @@ ConfirmCancelSending=Bu göndərişi ləğv etmək istədiyinizə əminsiniz?
 DocumentModelMerou=Merou A5 modeli
 WarningNoQtyLeftToSend=Xəbərdarlıq, göndərilməyi gözləyən heç bir məhsul yoxdur.
 StatsOnShipmentsOnlyValidated=Statistikalar yalnız təsdiqlənmiş göndərişlər üçündür. İstifadə olunan tarix göndərişin təsdiqlənmə tarixidir (planlaşdırılmış çatdırılma tarixi həmişə məlum deyil)
+DateShipping=Göndərmə tarixi
 DateDeliveryPlanned=Planlaşdırılmış çatdırılma tarixi
 RefDeliveryReceipt=Ref çatdırılma qəbzi
 StatusReceipt=Statusun çatdırılması qəbzi
@@ -63,6 +63,12 @@ NoProductToShipFoundIntoStock=<b>%s</b> anbarında göndəriləcək məhsul tap�
 WeightVolShort=Çəki/Vol.
 ValidateOrderFirstBeforeShipment=Göndərmə həyata keçirməzdən əvvəl ilk növbədə sifarişi təsdiqləməlisiniz.
 NoLineGoOnTabToAddSome=Sətir yoxdur, əlavə etmək üçün "%s" tabına keçin
+CreateInvoiceForThisCustomerFromSendings=Hesablar yaradın
+IfValidateInvoiceIsNoSendingStayUnbilled=Faktura təsdiqi "Xeyr" olarsa, göndərmə faktura təsdiqlənənə qədər "Faturasız" statusunda qalacaq.
+OptionToSetSendingBilledNotEnabled=Faktura təsdiqləndikdə avtomatik olaraq "Faturalandırıldı"ya göndərilməsini təyin etmək üçün İş axını modulundan seçim aktiv deyil, ona görə də faktura yaradıldıqdan sonra göndərmələrin statusunu əl ilə "Faturalandırılıb" təyin etməli olacaqsınız.
+NoWarehouseInBase=Bazada anbar yoxdur
+ShipmentUpdated=Göndərmə uğurla yeniləndi
+ShipmentIncrementStockOnDelete = Silinmə ehtiyatını artırın
 
 # Sending methods
 # ModelDocument
@@ -71,16 +77,22 @@ DocumentModelStorm=Çatdırılma qəbzləri və əlavə sahələrə uyğunluq ü
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Daimi EXPEDITION_ADDON_NUMBER müəyyən edilməyib
 SumOfProductVolumes=Məhsul həcmlərinin cəmi
 SumOfProductWeights=Məhsul çəkilərinin cəmi
-
 # warehouse details
 DetailWarehouseNumber= Anbar təfərrüatları
 DetailWarehouseFormat= W:%s (Kəmiyyət: %d)
+DetailChildrenFormat=%s : %s (Məqsəd: >TXPROTECT-ecb2ec87TXEND49)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Serial nömrəsi və ya partiya üçün göndərişin yaradılması zamanı anbara son giriş tarixini göstərin
 CreationOptions=Göndərmənin yaradılması zamanı mövcud seçimlər
-
 ShipmentDistribution=Göndərmə paylanması
-
 ErrorTooManyCombinationBatchcode=%s xətti üçün göndəriş yoxdur, çünki çoxlu anbar, məhsul, toplu kod kombinasiyası tapılıb (%s).
 ErrorNoCombinationBatchcode=%s sətrini anbar-məhsul lotu/seriya kombinasiyası kimi saxlamaq mümkün olmadı (%s, %s, %s) anbarda tapılmadı.
-
 ErrorTooMuchShipped=Göndərilən miqdar %s sətri üçün sifariş edilmiş miqdardan çox olmamalıdır.
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Nümayəndə göndərilməsini izləyir
+TypeContact_shipping_external_BILLING=Müştəri faktura əlaqəsi
+TypeContact_shipping_external_CUSTOMER=Göndərməni təqib edən müştəri ilə əlaqə
+TypeContact_shipping_external_SHIPPING=Göndərmə üçün müştəri əlaqəsi
+TypeContact_shipping_external_DELIVERY=Çatdırılma üçün müştəri əlaqəsi
+CloseShipment=Göndərməni bağlayın
+ConfirmCloseShipment=Yaxın göndərməni təsdiqləyin
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Göndərmə yaratarkən ən erkən satış/bitmə tarixi ilə partiya/seriya nömrəsini əvvəlcədən seçin

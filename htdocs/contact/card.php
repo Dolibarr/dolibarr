@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -240,7 +240,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		$object->email = (string) GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
+		$object->email = (string) GETPOST('email', 'email');
 		$object->no_email = GETPOSTINT("no_email");
 		$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
 		$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
@@ -251,6 +251,7 @@ if (empty($reshook)) {
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
 
+		$object->status = 1; //Default status to Actif
 		$object->statut = 1; //Default status to Actif
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
@@ -358,13 +359,13 @@ if (empty($reshook)) {
 			$action = 'edit';
 		}
 
-		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOSTINT("no_email") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOSTINT("no_email") == -1 && !empty(GETPOST('email', 'email'))) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'edit';
 		}
 
-		if (!empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL)) && !isValidEmail(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (!empty(GETPOST('email', 'email')) && !isValidEmail(GETPOST('email', 'email'))) {
 			$langs->load("errors");
 			$error++;
 			$errors[] = $langs->trans("ErrorBadEMail", GETPOST('email', 'alpha'));
@@ -377,7 +378,7 @@ if (empty($reshook)) {
 			$object->fetchRoles();
 
 			// Photo save
-			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
+			$dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/contact/".$object->id."/photos";
 			$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 			if (GETPOST('deletephoto') && $object->photo) {
 				$fileimg = $dir.'/'.$object->photo;
@@ -446,7 +447,7 @@ if (empty($reshook)) {
 			$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
 			$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 			$object->fax = (string) GETPOST("fax", 'alpha');
-			$object->priv = (string) GETPOSTINT("priv");
+			$object->priv = GETPOSTINT("priv");
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
@@ -1546,11 +1547,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Activer
-			if ($object->statut == 0 && $user->hasRight('societe', 'contact', 'creer')) {
+			if ($object->status == 0 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
-			if ($object->statut == 1 && $user->hasRight('societe', 'contact', 'creer')) {
+			if ($object->status == 1 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a>';
 			}
 

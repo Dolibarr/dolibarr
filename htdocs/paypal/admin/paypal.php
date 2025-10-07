@@ -44,7 +44,7 @@ $servicename = 'PayPal';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
+$langs->loadLangs(array('admin', 'other', 'paypal', 'stripe'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -152,7 +152,7 @@ $form = new Form($db);
 llxHeader('', $langs->trans("PaypalSetup"), '', '', 0, 0, '', '', '', 'mod-paypal page-admin_paypal');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' PayPal', $linkback);
 
 $head = paypaladmin_prepare_head();

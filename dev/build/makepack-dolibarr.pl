@@ -22,6 +22,8 @@ $PROJECT="dolibarr";
 $PUBLISHBETARC="$ENV{'DESTIASSOLOGIN'}\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
 $PUBLISHSTABLE="$ENV{'DESTISFLOGIN'}\@frs.sourceforge.net:/home/frs/project/dolibarr";
 
+# due to implicit origin on git commands, example: implicit origin, lionel upstream, eric dolibarr
+$GITREMOTENAME="$ENV{'GITREMOTENAME'}";
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTPUBLISH=(
@@ -113,6 +115,13 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 if (! -d $ENV{"DESTIBETARC"} || ! -d $ENV{"DESTISTABLE"})
 {
 	print "Error: Directory of environment variable DESTIBETARC ($ENV{'DESTIBETARC'}) or DESTISTABLE ($ENV{'DESTISTABLE'}) does not exist.\n";
+	print "$PROG.$Extension aborted.\n";
+	sleep 2;
+	exit 1;
+}
+
+if (! $ENV{"GITREMOTENAME"}) {
+	print "Error: environment variable GITREMOTENAME does not exist. You can set it to 'origin' or any other git remote name.\n";
 	print "$PROG.$Extension aborted.\n";
 	sleep 2;
 	exit 1;
@@ -437,6 +446,15 @@ if ($nboftargetok) {
 
 	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/dev/build/generate_filelist_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	  	$ret=`php $SOURCE/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
+		my $retcode=$?;
+		if ($retcode!=0)
+		{
+				print "Error running generate_filelist_xml.php please check\n";
+				print $ret;
+				print "Canceled.\n";
+				exit;
+		}
+
 	  	print $ret."\n";
 	  	# Copy to final dir
 	  	$NEWDESTI=$DESTI;
@@ -468,15 +486,15 @@ if ($nboftargetok) {
 			{
 				print 'Run git tag -a -f -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
-				print 'Run git push -f --tags'."\n";
-				$ret=`git push -f --tags`;
+				print 'Run git push '.$GITREMOTENAME.' -f "$MAJOR.$MINOR.$BUILD"'."\n";
+				$ret=`git push $GITREMOTENAME -f -"$MAJOR.$MINOR.$BUILD"`;
 				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
 		}
 		else
 		{
-			print 'Run git push --tags'."\n";
-			$ret=`git push --tags`;
+			print "Run git push $GITREMOTENAME --tags\n";
+			$ret=`git push $GITREMOTENAME --tags`;
 			#$ret=`git push origin "$MAJOR.$MINOR.$BUILD"`;
 		}
 		chdir("$olddir");
@@ -506,6 +524,8 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.mailmap`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
@@ -941,7 +961,7 @@ if ($nboftargetok) {
 			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
 			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			$ret=`$cmd`;
-			$cmd="cp -pr \"$BUILDROOT/$PROJECT/build/debian/apache/.htaccess\" \"$BUILDROOT/$PROJECT.tmp/build/debian/apache/.htaccess\"";
+			$cmd="cp -pr \"$BUILDROOT/$PROJECT/dev/build/debian/apache/.htaccess\" \"$BUILDROOT/$PROJECT.tmp/dev/build/debian/apache/.htaccess\"";
 			$ret=`$cmd`;
 
 			print "Remove other files\n";
@@ -1040,7 +1060,7 @@ if ($nboftargetok) {
 			$ret=`cp -fr "$SOURCE/dev/build/debian/apache"         "$BUILDROOT/$PROJECT.tmp/debian/apache"`;
 			$ret=`cp -f  "$SOURCE/dev/build/debian/apache/.htaccess" "$BUILDROOT/$PROJECT.tmp/debian/apache"`;
 			$ret=`cp -fr "$SOURCE/dev/build/debian/lighttpd"       "$BUILDROOT/$PROJECT.tmp/debian/lighttpd"`;
-			# Add files also required to dev/build binary package
+			# Add files also required to build binary package
 			$ret=`cp -f  "$SOURCE/dev/build/debian/dolibarr.config"         "$BUILDROOT/$PROJECT.tmp/debian"`;
 			$ret=`cp -f  "$SOURCE/dev/build/debian/dolibarr.postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
 			$ret=`cp -f  "$SOURCE/dev/build/debian/dolibarr.postrm"         "$BUILDROOT/$PROJECT.tmp/debian"`;
@@ -1055,11 +1075,11 @@ if ($nboftargetok) {
 			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ";
 			$ret=`$cmd`;
-			$cmd="find $BUILDROOT/$PROJECT.tmp/build -name '*.php' -type f -exec chmod 755 {} \\; ";
+			$cmd="find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
-			$cmd="find $BUILDROOT/$PROJECT.tmp/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ";
+			$cmd="find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
-			$cmd="find $BUILDROOT/$PROJECT.tmp/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
+			$cmd="find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;

@@ -1080,10 +1080,10 @@ class FormOther
 	/**
 	 *      Return HTML combo list of month
 	 *
-	 *      @param  string      $selected          	Preselected value
+	 *      @param  int|string  $selected          	Preselected value
 	 *      @param  string      $htmlname          	Name of HTML select object
 	 *      @param  int         $useempty          	Show empty in list
-	 *      @param  int         $longlabel         	Show long label
+	 *      @param  int         $longlabel         	Show long label (1) or short label (0)
 	 *      @param	string		$morecss			More Css
 	 *  	@param  bool		$addjscombo			Add js combo
 	 *      @return string
@@ -1096,9 +1096,9 @@ class FormOther
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		if ($longlabel) {
-			$montharray = monthArray($langs, 0); // Get array
+			$montharray = monthArray($langs, 0); // Get array of month with long labels
 		} else {
-			$montharray = monthArray($langs, 1);
+			$montharray = monthArray($langs, 1); // Get array of month with short labels
 		}
 
 		$select_month = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -1106,7 +1106,7 @@ class FormOther
 			$select_month .= '<option value="0">&nbsp;</option>';
 		}
 		foreach ($montharray as $key => $val) {
-			if ($selected == $key) {
+			if ((int) $selected == $key) {
 				$select_month .= '<option value="'.$key.'" selected>';
 			} else {
 				$select_month .= '<option value="'.$key.'">';
@@ -1152,16 +1152,16 @@ class FormOther
 	/**
 	 *	Return HTML combo list of years
 	 *
-	 *  @param  string	$selected       Preselected value (''=current year, -1=none, year otherwise)
-	 *  @param  string	$htmlname       Name of HTML select object
-	 *  @param  int	    $useempty       Affiche valeur vide dans liste
-	 *  @param  int	    $min_year		Offset of minimum year into list (by default current year -10)
-	 *  @param  int	    $max_year       Offset of maximum year into list (by default current year + 5)
-	 *  @param	int		$offset			Offset
-	 *  @param	int		$invert			Invert
-	 *  @param	string	$option			Option
-	 *  @param	string	$morecss		More css
-	 *  @param  bool	$addjscombo		Add js combo
+	 *  @param  int|string	$selected       Preselected value (''=current year, -1=none, year otherwise)
+	 *  @param  string		$htmlname       Name of HTML select object
+	 *  @param  int	    	$useempty       Affiche valeur vide dans liste
+	 *  @param  int	    	$min_year		Offset of minimum year into list (by default current year -10)
+	 *  @param  int	    	$max_year       Offset of maximum year into list (by default current year + 5)
+	 *  @param	int			$offset			Offset
+	 *  @param	int			$invert			Invert
+	 *  @param	string		$option			Option
+	 *  @param	string		$morecss		More css
+	 *  @param  bool		$addjscombo		Add js combo
 	 *  @return	string
 	 */
 	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle width75', $addjscombo = false)
@@ -1178,7 +1178,7 @@ class FormOther
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$option.' >';
 		if ($useempty) {
 			$selected_html = '';
-			if ($selected == '') {
+			if ((string) $selected == '') {
 				$selected_html = ' selected';
 			}
 			$out .= '<option value=""'.$selected_html.'>&nbsp;</option>';
@@ -1186,7 +1186,7 @@ class FormOther
 		if (!$invert) {
 			for ($y = $max_year; $y >= $min_year; $y--) {
 				$selected_html = '';
-				if ($selected > 0 && $y == $selected) {
+				if ((int) $selected > 0 && $y == (int) $selected) {
 					$selected_html = ' selected';
 				}
 				$out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
@@ -1194,7 +1194,7 @@ class FormOther
 		} else {
 			for ($y = $min_year; $y <= $max_year; $y++) {
 				$selected_html = '';
-				if ($selected > 0 && $y == $selected) {
+				if ((int) $selected > 0 && $y == (int) $selected) {
 					$selected_html = ' selected';
 				}
 				$out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';

@@ -80,7 +80,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 */
 	public function getExample(): string
 	{
-		return "2025VT0001";
+		return "2501VT00001";
 	}
 
 
@@ -124,7 +124,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 		global $conf, $db;
 
 		// Get mask
-		$mask = '{yyyy}{jj}{0000@1}';
+		$mask = '{yy}{mm}{jj}{00000@99}';
 
 		$where = '';
 

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2005-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2013	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,8 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-debugbar');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup');
 
 if (!function_exists('mb_check_encoding')) {
@@ -109,7 +110,7 @@ print '<span class="opacitymedium"> '.$langs->trans("UsingLogFileShowAllRecordOf
 print '</td></tr>';
 
 print '<tr class="oddeven"><td class="nowrap">'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';
-print '<td><input type="text" class="flat width75" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(!getDolGlobalString('DEBUGBAR_LOGS_LINES_NUMBER') ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">'; // This slow seriously output
+print '<td><input type="text" class="flat width75" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.getDolGlobalString('DEBUGBAR_LOGS_LINES_NUMBER', '250').'">'; // This slow seriously output
 print '</td><td>';
 print '<span class="opacitymedium">'.$langs->trans("WarningValueHigherSlowsDramaticalyOutput").'</span>';
 print '</td></tr>';

@@ -8,7 +8,7 @@
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,13 +151,13 @@ function product_prepare_head($object)
 	// Tab to link resources
 	if (isModEnabled('resource')) {
 		if ($object->isProduct() && getDolGlobalString('RESOURCE_ON_PRODUCTS')) {
-			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
+			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&element_id='.$object->id;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
 			$h++;
 		}
 		if ($object->isService() && getDolGlobalString('RESOURCE_ON_SERVICES')) {
-			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&ref='.$object->ref;
+			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&element_id='.$object->id;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
 			$h++;
@@ -203,18 +203,18 @@ function product_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = '';
 	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
-		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	if (isModEnabled("service") && ($object->type == Product::TYPE_SERVICE)) {
-		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
-			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+			$upload_dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
 		if (isModEnabled("service") && ($object->type == Product::TYPE_SERVICE)) {
-			$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+			$upload_dir = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
 		$nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	}
@@ -273,7 +273,7 @@ function productlot_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->productbatch->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_document.php?id=".$object->id;
@@ -363,7 +363,7 @@ function product_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = $extrafields->attributes['product']['count'];
+	$nbExtrafields = isset($extrafields->attributes['product']['count']) ? $extrafields->attributes['product']['count'] : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
@@ -374,7 +374,7 @@ function product_admin_prepare_head()
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_price_extrafields.php';
 		$head[$h][1] = $langs->trans("ProductLevelExtraFields");
-		$nbExtrafields = $extrafields->attributes['product_price']['count'];
+		$nbExtrafields = isset($extrafields->attributes['product_price']['count']) ? $extrafields->attributes['product_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 		}
@@ -386,7 +386,7 @@ function product_admin_prepare_head()
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php';
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
-		$nbExtrafields = $extrafields->attributes['product_customer_price']['count'];
+		$nbExtrafields = isset($extrafields->attributes['product_customer_price']['count']) ? $extrafields->attributes['product_customer_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 		}
@@ -397,7 +397,7 @@ function product_admin_prepare_head()
 	// Supplier prices
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
-	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];
+	$nbExtrafields = isset($extrafields->attributes['product_fournisseur_price']['count']) ? $extrafields->attributes['product_fournisseur_price']['count'] : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
@@ -797,7 +797,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/expedition.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/expedition.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_expedition['customers'];
 		print '</td><td class="right">';
@@ -816,7 +816,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/reception.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/reception.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_reception['customers'];
 		print '</td><td class="right">';
@@ -833,7 +833,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/commande_fournisseur.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/commande_fournisseur.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_supplier_order['customers'];
 		print '</td><td class="right">';
@@ -852,7 +852,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/mo.php', 1).'?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/mo.php?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['customers_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
 		print $form->textwithpicto((string) $batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
