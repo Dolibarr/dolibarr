@@ -46,6 +46,7 @@ CREATE TABLE llx_expensereport (
   fk_statut			integer NOT NULL,				-- 1=brouillon, 2=validated (waiting approval), 4=canceled, 5=approved, 6=paid, 99=refused
   fk_c_paiement 	integer DEFAULT NULL,			-- deprecated
   paid              smallint default 0 NOT NULL,	-- deprecated (status is used instead)
+  fk_projet			integer DEFAULT NULL,			-- project expense is linked to
   note_public		text,
   note_private 		text,
   detail_refuse 	varchar(255) DEFAULT NULL,
