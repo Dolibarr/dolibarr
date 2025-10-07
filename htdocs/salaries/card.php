@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
  * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
@@ -144,21 +144,19 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = DOL_URL_ROOT.'/salaries/list.php';
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/salaries/list.php');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/salaries/card.php?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/salaries/card.php', ['id' => ($id > 0 ? $id : '__ID__')]);
 			}
 		}
 	}
 
 	if ($cancel) {
-		//var_dump($cancel);
-		//var_dump($backtopage);exit;
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
 			exit;
@@ -318,7 +316,7 @@ if ($action == 'add' && empty($cancel) && $permissiontoadd) {
 			$paiement->datev		= $datev;
 			$paiement->amounts      = array($object->id => $amount); // Tableau de montant
 			$paiement->fk_typepayment = $type_payment;
-			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
+			$paiement->num_payment = GETPOST("num_payment", 'alphanohtml');
 			$paiement->note_private = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
@@ -343,11 +341,20 @@ if ($action == 'add' && empty($cancel) && $permissiontoadd) {
 			$db->commit();
 
 			if (GETPOST('saveandnew', 'alpha')) {
-				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				header("Location: card.php?action=create&fk_project=" . urlencode((string) ($projectid)) . "&accountid=" . urlencode((string) ($accountid)) . '&paymenttype=' . urlencode((string) (GETPOSTINT('paymenttype'))) . '&datepday=' . GETPOSTINT("datepday") . '&datepmonth=' . GETPOSTINT("datepmonth") . '&datepyear=' . GETPOSTINT("datepyear"));
+				setEventMessages($langs->trans("RecordSaved"), null);
+				$query = [
+					'action' => 'create',
+					'fk_project' => $projectid,
+					'accountid' => $accountid,
+					'paymenttype' => GETPOSTINT('paymenttype'),
+					'datepday' => GETPOSTINT("datepday"),
+					'datepmonth' => GETPOSTINT("datepmonth"),
+					'datepyear' => GETPOSTINT("datepyear"),
+				];
+				header("Location: ". dolBuildUrl($_SERVER['PHP_SELF'], $query));
 				exit;
 			} else {
-				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
+				header("Location: " . dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]));
 				exit;
 			}
 		} else {
@@ -368,7 +375,7 @@ if ($action == 'confirm_delete' && $permissiontodelete) {
 		$ret = $object->delete($user);
 		if ($ret > 0) {
 			$db->commit();
-			header("Location: ".DOL_URL_ROOT.'/salaries/list.php');
+			header("Location: ".dolBuildUrl(DOL_URL_ROOT.'/salaries/list.php'));
 			exit;
 		} else {
 			$db->rollback();
@@ -775,7 +782,7 @@ if ($id > 0) {
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 
 		//Add buttons to fill start and end dates
 		$formconfirm .= "<script>
@@ -853,16 +860,16 @@ if ($id > 0) {
 
 	if ($action == 'paid') {
 		$text = $langs->trans('ConfirmPaySalary');
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySalary'), $text, "confirm_paid", '', '', 2);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('PaySalary'), $text, "confirm_paid", '', '', 2);
 	}
 
 	if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteSalary');
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSalary'), $text, 'confirm_delete', '', '', 2);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]), $langs->trans('DeleteSalary'), $text, 'confirm_delete', '', '', 2);
 	}
 
 	if ($action == 'edit') {
-		print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
+		print '<form name="charge" action="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'update']).'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 	}
 
@@ -881,7 +888,7 @@ if ($id > 0) {
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/salaries/list.php', ['restore_lastsearch_values' => 1]).(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 
