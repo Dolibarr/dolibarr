@@ -10775,7 +10775,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 /**
  *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval),
- *  and texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
+ *  and texts like __(TranslationKey|langfile)__, __[CONSTANTKEY]__ or __[CONSTANTKEY|urlencode]__ are also replaced.
  *  Example of usage:
  *  $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $thirdparty);
  *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);
@@ -10844,16 +10844,22 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
 	$reg = array();
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg)) {
-		$keyfound = $reg[1];
+		$originalkeyfound = $reg[1];
+		$keyfound = preg_replace('/\|urlencode$/', '', $originalkeyfound);
+
 		if (isASecretKey($keyfound)) {
 			$value = '*****forbidden*****';
 		} else {
-			$value = empty($conf->global->$keyfound) ? '' : $conf->global->$keyfound;
+			$value = getDolGlobalString($keyfound);
+			// Execute some functions on value of substitution key
+			if (preg_match('/\|urlencode$/', $originalkeyfound)) {
+				$value = urlencode($value);
+			}
 		}
 
 		if (empty($converttextinhtmlifnecessary)) {
 			// convert $newval into HTML is necessary
-			$text = preg_replace('/__\[' . preg_quote($keyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
+			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 		} else {
 			if (! $msgishtml) {
 				$valueishtml = dol_textishtml($value, 1);
@@ -10866,7 +10872,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				$value = dol_nl2br((string) $value);
 			}
 
-			$text = preg_replace('/__\[' . preg_quote($keyfound, '/') . '\]__/', $value, $text);
+			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $value, $text);
 		}
 	}
 
@@ -10876,7 +10882,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			continue; // If value is null, it same than not having substitution key at all into array, we do not replace.
 		}
 
-		if (($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__') && (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN'))) {
+		if (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN') && ($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__')) {
 			$value = ''; // Protection
 		}
 
