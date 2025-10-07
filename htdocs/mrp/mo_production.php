@@ -1535,11 +1535,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="clearboth"></div>';
 
 		$nblinetoproduce = 0;
+		$atleastoneatby = false;
+		$atleastonsellby = false;
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toproduce') {
+				$tmpproduct = new Product($db);
+				$tmpproduct->fetch($line->fk_product);
+				if (
+					$tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY
+					|| $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT
+				) {
+					$atleastoneatby = true;
+				}
+				if (
+					$tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY
+					|| $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT
+				) {
+					$atleastonsellby = true;
+				}
 				$nblinetoproduce++;
 			}
 		}
+		var_dump($nblinetoproduce);
+		var_dump($atleastoneatby);
+		var_dump($atleastonsellby);
 
 		$newcardbutton = '';
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addproduceline&token='.newToken();
@@ -1603,10 +1622,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td></td>';
 
 			// sell by
-			print '<td>'.$langs->trans("SellByDate").'</td>';
+			if ($atleastoneatby) {
+				print '<td>'.$langs->trans("SellByDate").'</td>';
+			}
 
 			// eat by
-			print '<td>'.$langs->trans("EatByDate").'</td>';
+			if ($atleastonsellby) {
+				print '<td>'.$langs->trans("EatByDate").'</td>';
+			}
 		}
 
 		// Action delete
@@ -1924,7 +1947,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print $form->selectDate($preselectedEatBy, 'eatby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
 							print '</td>';
 						} else {
-							print '<td></td>';
+							if ($atleastoneatby) {
+								print '<td></td>';
+							}
 						}
 
 						// sell by mandatory
@@ -1934,7 +1959,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print $form->selectDate($preselectedSellBy, 'sellby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
 							print '</td>';
 						} else {
-							print '<td></td>';
+							if ($atleastonsellby) {
+								print '<td></td>';
+							}
 						}
 
 						// Action delete
