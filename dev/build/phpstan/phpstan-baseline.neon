@@ -805,12 +805,6 @@ parameters:
 			path: ../../../htdocs/admin/modules.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$langfiles \(array\<string\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/admin/modules.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 5
@@ -1103,12 +1097,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 2
-			path: ../../../htdocs/admin/triggers.php
 
 		-
 			message: '#^Variable \$label might not be defined\.$#'
@@ -13525,12 +13513,6 @@ parameters:
 			path: ../../../htdocs/product/stock/movement_list.php
 
 		-
-			message: '#^Variable \$idAlreadyReverse might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
 			message: '#^Variable \$listofobjectref might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -14607,7 +14589,7 @@ parameters:
 		-
 			message: '#^Variable \$suffix might not be defined\.$#'
 			identifier: variable.undefined
-			count: 2
+			count: 1
 			path: ../../../htdocs/public/eventorganization/subscriptionok.php
 
 		-

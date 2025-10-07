@@ -7245,7 +7245,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			}
 		}
 		$sortordertouseinlink = preg_replace('/,$/', '', $sortordertouseinlink);
-		$out .= '<a class="reposition" href="' . $file . '?sortfield=' . urlencode($field) . '&sortorder=' . urlencode($sortordertouseinlink) . '&begin=' . urlencode($begin) . $options . '"';
+		$out .= '<a class="reposition" href="' . dolBuildUrl($file, ['sortfield' => $field, 'sortorder' => $sortordertouseinlink, 'begin' => $begin]) . $options . '"';
 		//$out .= (getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') ? '' : ' title="'.dol_escape_htmltag($langs->trans($name)).'"');
 		$out .= '>';
 	}
@@ -12670,8 +12670,11 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						}
 					}
 				}
-
-				$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
+				$url = preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]);
+				$link = parse_url($url);
+				$query = [];
+				parse_str($link['query'], $query);
+				$newtab[0] = dolBuildUrl(dol_buildpath($link['path'], 1), $query);
 				$newtab[1] = $label;
 				$newtab[2] = str_replace('+', '', $values[1]);
 				$h++;
