@@ -179,7 +179,7 @@ function bank_report_prepare_head(Account $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/annuel.php', ['account'.$object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/bank/annuel.php', ['account' => $object->id]);
 	$head[$h][1] = $langs->trans("IOMonthlyReporting");
 	$head[$h][2] = 'annual';
 	$h++;
