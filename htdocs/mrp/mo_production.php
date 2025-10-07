@@ -1535,8 +1535,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="clearboth"></div>';
 
 		$nblinetoproduce = 0;
-		$atleastoneatby = false;
-		$atleastonsellby = false;
+		$atLeastOneEatBy = false;
+		$atLeastOneSellBy = false;
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toproduce') {
 				$tmpproduct = new Product($db);
@@ -1545,13 +1545,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY
 					|| $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT
 				) {
-					$atleastoneatby = true;
+					$atLeastOneEatBy = true;
 				}
 				if (
 					$tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY
 					|| $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT
 				) {
-					$atleastonsellby = true;
+					$atLeastOneSellBy = true;
 				}
 				$nblinetoproduce++;
 			}
@@ -1619,12 +1619,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td></td>';
 
 			// sell by
-			if ($atleastoneatby) {
+			if ($atLeastOneEatBy) {
 				print '<td>'.$langs->trans("EatByDate").'</td>';
 			}
 
 			// eat by
-			if ($atleastonsellby) {
+			if ($atLeastOneSellBy) {
 				print '<td>'.$langs->trans("SellByDate").'</td>';
 			}
 		}
@@ -1937,18 +1937,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 						}
 
-						// eat by mandatory
-						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
-							print '<td align="right">';
-							$preselectedEatBy = (GETPOSTISSET('eatby-' . $line->id . '-' . $i) ? GETPOSTDATE('eatby-' . $line->id . '-' . $i) : '');
-							print $form->selectDate($preselectedEatBy, 'eatby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
-							print '</td>';
-						} else {
-							if ($atleastoneatby) {
-								print '<td></td>';
-							}
-						}
-
 						// sell by mandatory
 						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
 							print '<td align="right">';
@@ -1956,7 +1944,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print $form->selectDate($preselectedSellBy, 'sellby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
 							print '</td>';
 						} else {
-							if ($atleastonsellby) {
+							if ($atLeastOneSellBy) {
+								print '<td></td>';
+							}
+						}
+
+						// eat by mandatory
+						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+							print '<td align="right">';
+							$preselectedEatBy = (GETPOSTISSET('eatby-' . $line->id . '-' . $i) ? GETPOSTDATE('eatby-' . $line->id . '-' . $i) : '');
+							print $form->selectDate($preselectedEatBy, 'eatby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
+							print '</td>';
+						} else {
+							if ($atLeastOneEatBy) {
 								print '<td></td>';
 							}
 						}
