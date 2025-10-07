@@ -446,7 +446,6 @@ class MailingTarget extends CommonObject
 		$sql .= ", t.tms as date_modification";
 		$sql .= ", t.error_text";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
-		// $sql .= " WHERE entity IN (".getEntity('mailing_target').")";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -455,7 +454,6 @@ class MailingTarget extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
-				// $this->entity = $obj->entity;
 				$this->fk_mailing = $obj->fk_mailing;
 				$this->fk_contact = $obj->fk_contact;
 				$this->lastname = $obj->lastname;
@@ -470,6 +468,7 @@ class MailingTarget extends CommonObject
 				$this->source_type = $obj->source_type;
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
+				$this->tms = $this->db->jdate($obj->date_modification); // tms
 				$this->error_text = $obj->error_text;
 
 				return 1;

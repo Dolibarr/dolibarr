@@ -19,6 +19,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
 
 /**
  * API class for mass mailings
@@ -45,6 +46,11 @@ class Mailings extends DolibarrApi
 	public $mailing;
 
 	/**
+	 * @var MailingTarget {@type MailingTarget}
+	 */
+	public $mailing_target;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -52,6 +58,7 @@ class Mailings extends DolibarrApi
 		global $db;
 		$this->db = $db;
 		$this->mailing = new Mailing($this->db);
+		$this->mailing_target = new MailingTarget($this->db);
 	}
 
 	/**
@@ -125,7 +132,8 @@ class Mailings extends DolibarrApi
 	 * @phan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
-	 * @throws	RestException
+	 * @throws RestException 400
+	 * @throws RestException 403
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_projects = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
@@ -191,6 +199,114 @@ class Mailings extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve list of mass mailings : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * List mass mailing targets
+	 *
+	 * Get a list of mass mailing targets
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param int       $id                 Mass mailing ID
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.lastname:like:'John Doe') and (t.statut:=:3)"
+	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return  array                       Array of order objects
+	 * @phan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @url GET    {id}/getTargets
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 */
+	public function getTargets($id, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mailing', 'read')) {
+			throw new RestException(403);
+		}
+
+		$fetchMailingResult = $this->mailing->fetch($id);
+		if ($fetchMailingResult < 0) {
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+
+		$fk_project = $fetchMailingResult->fk_project;
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$obj_ret = array();
+
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles AS t";
+		$sql .= " WHERE t.fk_mailing = ".((int) $id);
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		//this query will return total mass mailing targets with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog("API Rest request mass mailing target");
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$mailing_target = new MailingTarget($this->db);
+				if ($mailing_target->fetch($obj->rowid) > 0) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanTargetDatas($mailing_target), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve list of mass mailing targetss : '.$this->db->lasterror());
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -612,6 +728,139 @@ class Mailings extends DolibarrApi
 		return $mailing;
 	}
 
+
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 */
+	protected function _cleanTargetDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+		unset($object->TRIGGER_PREFIX);
+		unset($object->actionmsg);
+		unset($object->actionmsg2);
+		unset($object->actiontypecode);
+		unset($object->alreadypaid);
+		unset($object->array_options);
+		unset($object->array_languages);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_coder);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type);
+		unset($object->canvas);
+		unset($object->civility_code);
+		unset($object->civility_id);
+		unset($object->comments);
+		unset($object->cond_reglement_id);
+		unset($object->cond_reglement_supplier_id);
+		unset($object->contact_id);
+		unset($object->contact);
+		unset($object->contacts_ids_internal);
+		unset($object->contacts_ids);
+		unset($object->context);
+		unset($object->country_code);
+		unset($object->country_id);
+		unset($object->country);
+		unset($object->date_cloture);
+		unset($object->date_creation);
+		unset($object->date_validation);
+		unset($object->db);
+		unset($object->demand_reason_id);
+		unset($object->deposit_percent);
+		unset($object->element_for_permission);
+		unset($object->element);
+		unset($object->entity);
+		unset($object->error);
+		unset($object->errorhidden);
+		unset($object->errors);
+		unset($object->extraparams);
+		unset($object->fields);
+		unset($object->fk_account);
+		unset($object->fk_bank);
+		unset($object->fk_delivery_address);
+		unset($object->fk_element);
+		unset($object->fk_multicurrency);
+		unset($object->fk_projet);
+		unset($object->fk_project);
+		unset($object->fk_user_creat);
+		unset($object->fk_user_modif);
+		unset($object->import_key);
+		unset($object->isextrafieldmanaged);
+		unset($object->ismultientitymanaged);
+		unset($object->last_main_doc);
+		unset($object->lines);
+		unset($object->linked_objects);
+		unset($object->linkedObjects);
+		unset($object->linkedObjectsIds);
+		unset($object->mode_reglement_id);
+		unset($object->model_pdf);
+		unset($object->module);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_tx);
+		unset($object->name);
+		unset($object->nb);
+		unset($object->nbphoto);
+		unset($object->newref);
+		unset($object->next_prev_filter);
+		unset($object->note);
+		unset($object->note_public);
+		unset($object->note_private);
+		unset($object->oldcopy);
+		unset($object->oldref);
+		unset($object->origin_id);
+		unset($object->origin_object);
+		unset($object->origin_type);
+		unset($object->origin);
+		unset($object->output);
+		unset($object->product);
+		unset($object->project);
+		unset($object->ref_ext);
+		unset($object->ref_next);
+		unset($object->ref_previous);
+		unset($object->ref);
+		unset($object->region_code);
+		unset($object->region_id);
+		unset($object->region);
+		unset($object->restrictiononfksoc);
+		unset($object->retained_warranty_fk_cond_reglement);
+		unset($object->sendtoid);
+		unset($object->shipping_method_id);
+		unset($object->shipping_method);
+		unset($object->showphoto_on_popup);
+		unset($object->specimen);
+		unset($object->state_code);
+		unset($object->state_id);
+		unset($object->state);
+		unset($object->table_element_line);
+		unset($object->table_element);
+		unset($object->thirdparty);
+		unset($object->total_ht);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+		unset($object->total_tva);
+		unset($object->totalpaid_multicurrency);
+		unset($object->totalpaid);
+		unset($object->tpl);
+		unset($object->transport_mode_id);
+		unset($object->user);
+		unset($object->user_creation_id);
+		unset($object->user_validation_id);
+		unset($object->user_closing_id);
+		unset($object->user_modification_id);
+		unset($object->warehouse_id);
+
+		return $object;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**

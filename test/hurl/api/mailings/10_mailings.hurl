@@ -108,3 +108,12 @@ HTTP 400
 GET http://{{hostnport}}/api/index.php/mailings/clone/0
 HTTP 404
 {"error":{"code":404,"message":"Not Found: Mass mailing to clone not found, id=0"}}
+
+
+GET http://{{hostnport}}/api/index.php/mailings//getTargets
+HTTP 400
+
+# get targets of mailing with ID 0 - which should not exist
+GET http://{{hostnport}}/api/index.php/mailings/0/getTargets
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Mass mailing not found, id=0"}}

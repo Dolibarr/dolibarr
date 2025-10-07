@@ -26,7 +26,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
 
 /**
  *	Class to manage emailings module
@@ -173,6 +173,11 @@ class Mailing extends CommonObject
 	 * @var array<string,string> substitutionarrayfortest
 	 */
 	public $substitutionarrayfortest;
+
+	/**
+	 * @var MailingTarget[]
+	 */
+	public $targets = array();
 
 	/**
 	 * @var ?int 			The related project ID
