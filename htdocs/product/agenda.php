@@ -7,7 +7,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,9 +209,9 @@ if (isModEnabled('agenda')) {
 	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
 		if (get_class($objproduct) == 'Product') {
-			$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
+			$out .= '&prodid='.$objproduct->id.'&origin=product&originid='.$id;
 		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id;
+		$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	}
 
 	$linktocreatetimeBtnStatus = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
