@@ -1352,6 +1352,8 @@ class MouvementStock extends CommonObject
 			$newtype = 3;
 		} elseif ($this->type == 3) {
 			$newtype = 2;
+		} else {
+			return -1;
 		}
 		$newqty = - $this->qty;
 
