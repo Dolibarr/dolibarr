@@ -62,6 +62,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by the page
@@ -87,7 +89,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -1271,7 +1273,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 	if (!$error) {
 		// Website categories association
-		$categoriesarray = GETPOST('categories', 'array');
+		$categoriesarray = GETPOST('categories', 'array:int');
 		$result = $objectpage->setCategories($categoriesarray);
 		if ($result < 0) {
 			$error++;
@@ -2205,7 +2207,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 
 	if (!$error) {
 		// Website categories association
-		$categoriesarray = GETPOST('categories', 'array');
+		$categoriesarray = GETPOST('categories', 'array:int');
 		$result = $objectpage->setCategories($categoriesarray);
 		if ($result < 0) {
 			$error++;
@@ -3362,7 +3364,7 @@ if (!GETPOST('hide_websitemenu')) {
 		} elseif (empty($virtualurl)) {
 			//$htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
 		} else {
-			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.'</a></center><br>';
+			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.' '.img_picto('', 'url').'</a></center><br>';
 		}
 		if (getDolGlobalString('WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER')) {
 			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
@@ -3631,6 +3633,9 @@ if (!GETPOST('hide_websitemenu')) {
 						$onlylang['none'] = 'none';
 						$textifempty = $langs->trans("Default");
 					}
+
+					$formheight = 300;
+
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value' => $objectpage->pageurl),
 						array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite((string) $object->id, 'newwebsite', 0)),
@@ -3639,12 +3644,13 @@ if (!GETPOST('hide_websitemenu')) {
 						);
 					if (count($onlylang) > 1) {
 						$formquestion[] = array('type' => 'checkbox', 'tdclass' => 'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss' => 'margintoponly');
+						$formheight += 50;
 					}
 
 					$value = $formadmin->select_language($preselectedlanguage, 'newlang', 0, array(), $textifempty, 0, 0, 'minwidth200', 1, 0, 0, $onlylang, 1);
 					$formquestion[] = array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $value);
 
-					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
+					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, $formheight, 550);
 
 					print $formconfirm;
 				}
@@ -4373,17 +4379,17 @@ if ($action == 'editsecurity') {
 
 	// Force RP
 	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceRP'), 'HTTP Header Referer-Policy<br><br>'.$langs->trans("Recommended").':<br>"strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured"', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCERP').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceRP'), 'HTTP Header Referer-Policy<br><br>'.$langs->trans("Recommended").':<br>strict-origin-when-cross-origin <span class="opacitymedium">'.$langs->trans("or").'</span> same-origin"=more secured', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCERP').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCERP" id="WEBSITE_'.$object->id.'_SECURITY_FORCERP" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCERP").'"></td>';
 	print '</tr>';
 	// Force STS
 	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceSTS'), 'HTTP Header Strict-Transport-Security<br><br>'.$langs->trans("Example").':<br>"max-age=31536000; includeSubDomains"', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCESTS').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceSTS'), 'HTTP Header Strict-Transport-Security<br><br>'.$langs->trans("Example").':<br>max-age=31536000; includeSubDomains', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCESTS').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCESTS" id="WEBSITE_'.$object->id.'_SECURITY_FORCESTS" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCESTS").'"></td>';
 	print '</tr>';
 	// Force PP
 	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>"camera=(), microphone=(), geolocation=*"', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCEPP').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>camera=*, microphone=(), geolocation=*', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCEPP').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCEPP" id="WEBSITE_'.$object->id.'_SECURITY_FORCEPP" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCEPP").'"></td>';
 	print '</tr>';
 
@@ -5331,14 +5337,15 @@ if ($action == 'editsource') {
 	//$contentforedit.=$csscontent;
 	//$contentforedit.='</style>'."\n";
 	$contentforedit .= $objectpage->content;
-	//var_dump($_SESSION["dol_screenheight"]);
+
+	// We set maxheightwin in px. We take the height of screen in px and we remove a part for the top banner and more
 	$maxheightwin = 480;
 	if (isset($_SESSION["dol_screenheight"])) {
 		if ($_SESSION["dol_screenheight"] > 680) {
-			$maxheightwin = $_SESSION["dol_screenheight"] - 400;
+			$maxheightwin = $_SESSION["dol_screenheight"] - 300;	// We remove a height for header
 		}
 		if ($_SESSION["dol_screenheight"] > 800) {
-			$maxheightwin = $_SESSION["dol_screenheight"] - 490;
+			$maxheightwin = $_SESSION["dol_screenheight"] - 250;	// We remove a height for header (on large width, risk to have header on 2 lines is lower)
 		}
 	}
 
@@ -5395,7 +5402,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 	print '</div>';
 	print '<div class="tagtd">';
 	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionpagecontent" name="optionpagecontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optionpagecontent', 'aZ09')) ? ' checked' : '').'> <label for="checkboxoptionpagecontent" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Content").'</label><br>';
-	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("WEBSITE_PAGENAME").' | '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
 	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionsitefiles" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionsitefiles" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("GlobalCSSorJS").'</label><br>';
 	print '</div>';
 	print '</div>';

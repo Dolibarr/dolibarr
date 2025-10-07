@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2017		Laurent Destailleur		<eldy@destailleur.fr>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ $formSetup = new FormSetup($db);
 
 // Main options
 $formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+
 
 $formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')->setAsYesNo();
 
@@ -179,75 +180,73 @@ if ($action == 'updatemode') {
 if ($action == 'update2') {
 	$error = 0;
 
-	if (!$error) {
-		foreach ($list as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-		if ($error) {
-			setEventMessages($langs->trans("Error"), null, 'errors');
-		}
-
-		// option in section binding
-		foreach ($list_binding as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-
-			if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
-				$constvalue = dol_mktime(0, 0, 0, GETPOSTINT($constname.'month'), GETPOSTINT($constname.'day'), GETPOSTINT($constname.'year'));
-			}
-
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-
-		// options in section other
-		if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-
-		// Export options
-		$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
-
-		if (!empty($modelcsv)) {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-			//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
-			//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
-			//}
-		} else {
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
+	}
+	if ($error) {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 
-		foreach ($main_option as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
+	// option in section binding
+	foreach ($list_binding as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+		if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
+			$constvalue = dol_mktime(0, 0, 0, GETPOSTINT($constname.'month'), GETPOSTINT($constname.'day'), GETPOSTINT($constname.'year'));
+		}
+
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	// options in section other
+	if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	// Export options
+	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
+
+	if (!empty($modelcsv)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
+		//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
+		//}
+	} else {
+		$error++;
+	}
+
+	foreach ($main_option as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
+	foreach ($listparam[$modelcsv] as $key => $value) {
+		$constante = $key;
+
+		if (strpos($constante, 'ACCOUNTING') !== false) {
+			$constvalue = GETPOST($key, 'alpha');
+			if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
 		}
+	}
 
-		foreach ($listparam[$modelcsv] as $key => $value) {
-			$constante = $key;
-
-			if (strpos($constante, 'ACCOUNTING') !== false) {
-				$constvalue = GETPOST($key, 'alpha');
-				if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
-					$error++;
-				}
-			}
-		}
-
-		if (!$error) {
-			// reload
-			$configuration = $accountancyexport->getTypeConfig();
-			$listparam = $configuration['param'];
-		}
+	if (!$error) {
+		// reload
+		$configuration = $accountancyexport->getTypeConfig();
+		$listparam = $configuration['param'];
 	}
 
 	if (!$error) {
@@ -460,8 +459,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 }
 
 
-// Show form main options
+// Show form for main parameters
 print $formSetup->generateOutput(true);
+
 
 print '<br><br><br>';
 
@@ -498,7 +498,7 @@ foreach ($list_binding as $key) {
 			1=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece"),
 			2=>$langs->trans("ThirdPartyName")
 		);
-		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
+		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width300');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
@@ -579,8 +579,10 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
 
+
 // Show numbering options
-print '<br><br>';
+print '<br><br><br>';
+
 
 // Accountancy Numbering model
 $dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
@@ -695,7 +697,8 @@ print '</div>';
 
 
 // Show advanced options
-print '<br><br>';
+print '<br><br><br>';
+
 
 // Advanced params
 print '<div class="div-table-responsive-no-min">';
@@ -786,7 +789,8 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button button-edit reposition" name="button" value="'.$langs->trans('Save').'"></div>';
 
-print '<br><br>';
+
+print '<br><br><br>';
 
 
 // Export options

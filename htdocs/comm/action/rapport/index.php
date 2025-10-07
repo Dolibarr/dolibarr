@@ -65,7 +65,7 @@ if (!$sortfield) {
 }
 
 // Security check
-//$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+//restrictedArea($user, 'agenda', 0, '', 'myactions');
 if (!$user->hasRight("agenda", "allactions", "read")) {
 	accessforbidden();
 }

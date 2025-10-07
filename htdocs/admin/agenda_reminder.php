@@ -25,12 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -123,7 +122,7 @@ if ($action == 'set') {
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
-			return;
+			exit;
 		} else {
 			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
@@ -190,42 +189,18 @@ print '</tr>'."\n";
 // AGENDA REMINDER BROWSER
 print '<tr class="oddeven">'."\n";
 print '<td>';
-print $langs->trans('AGENDA_REMINDER_BROWSER').'<br>';
-print '<span class="opacitymedium">'.$langs->trans('AGENDA_REMINDER_BROWSERHelp').'</span>';
+print $form->textwithpicto($langs->trans('AGENDA_REMINDER_BROWSER'), $langs->trans('AGENDA_REMINDER_BROWSERHelp').'<br>'.$langs->trans('AGENDA_REMINDER_Remind')).'<br>';
 print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
 if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	/*if (!isHTTPS()) {
-		$langs->load("errors");
-		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
-	}*/
 	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
-	print '</td></tr>'."\n";
 } else {
-	/*if (!isHTTPS()) {
-		$langs->load("errors");
-		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
-	}*/
 	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
-	print '</td></tr>'."\n";
-
-	/* This feature need to use the old method AGENDA_NOTIFICATION_METHOD =  'jsnotification' that is broken on a lot of browser setup
-	print '<tr class="oddeven">'."\n";
-	print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
-	print '<td class="center">&nbsp;</td>'."\n";
-	print '<td class="right">'."\n";
-
-	if (!getDolGlobalString('AGENDA_REMINDER_BROWSER_SOUND')) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
-	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
-	}
-
-	print '</td></tr>'."\n";
-	*/
 }
+print '</td></tr>'."\n";
+
 
 $job = new Cronjob($db);
 $job->fetch(0, 'ActionComm', 'sendEmailsReminder');
@@ -233,7 +208,7 @@ $job->fetch(0, 'ActionComm', 'sendEmailsReminder');
 // AGENDA REMINDER EMAIL
 print '<tr class="oddeven">'."\n";
 print '<td>';
-print $langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
+print $form->textwithpicto($langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")), $langs->trans('AGENDA_REMINDER_Help', 'E-mail').'<br>'.$langs->trans('AGENDA_REMINDER_Remind'));
 if (isModEnabled('cron')) {
 	if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		if ($job->id > 0) {
@@ -246,7 +221,6 @@ if (isModEnabled('cron')) {
 print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
-
 if (!isModEnabled('cron')) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 } else {
@@ -267,9 +241,38 @@ if (!isModEnabled('cron')) {
 		}
 	}
 }
+print '</td></tr>'."\n";
+
+// AGENDA REMINDER SMS
+print '<tr class="oddeven">'."\n";
+print '<td>';
+print $form->textwithpicto($langs->trans('AGENDA_REMINDER_SMS'), $langs->trans('AGENDA_REMINDER_Help', 'SMS').'<br>'.$langs->trans('AGENDA_REMINDER_Remind'));
+if (isModEnabled('cron')) {
+	if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
+		if ($job->id > 0) {
+			if ($job->status == $job::STATUS_ENABLED) {
+				print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_REMINDER_EMAIL_NOTE", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
+			}
+		}
+	}
+}
+print '</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right nowraponall">'."\n";
+if (!isModEnabled('cron')) {
+	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
+} else {
+	if (!getDolGlobalString('AGENDA_REMINDER_SMS')) {
+		print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_SMS&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	} else {
+		print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_SMS&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+	}
+}
+print '</td></tr>'."\n";
+
 
 // AGENDA DEFAULT REMINDER EVENT TYPE
-if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+if (getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_SMS')) {
 	print '<tr class="oddeven">'."\n";
 	print '<td>';
 	print $langs->trans('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', $langs->transnoentities("Module2300Name"));
@@ -287,25 +290,26 @@ if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		}
 		// Assuming $selected is correct type: @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		print $formactions->select_type_actions($selected, "AGENDA_DEFAULT_REMINDER_EVENT_TYPES", "systemauto", 0, -1, 1, 1);
-		print '</td></tr>';
 	}
+	print '</td></tr>'."\n";
 }
 
 // AGENDA DEFAULT REMINDER OFFSET
-if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+if (getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_SMS')) {
 	print '<tr class="oddeven">'."\n";
 	print '<td>';
 	print $langs->trans('AGENDA_DEFAULT_REMINDER_OFFSET', $langs->transnoentities("Module2300Name"));
 	print '</td>'."\n";
 	print '<td class="center">&nbsp;</td>'."\n";
-	print '<td class="right nowraponall">'."\n";
+	print '<td class="right nowraponall minwidth75imp">'."\n";
 	if (!isModEnabled('cron')) {
 		print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 	} else {
 		print '<input class="width50" type="number" name="AGENDA_DEFAULT_REMINDER_OFFSET" value="'.(GETPOSTISSET('AGENDA_DEFAULT_REMINDER_OFFSET') ? GETPOSTINT('AGENDA_DEFAULT_REMINDER_OFFSET') : getDolGlobalInt('AGENDA_DEFAULT_REMINDER_OFFSET', 30)).'"> ';
 		$selected = (GETPOSTISSET('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT_type_duration') ? GETPOST('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT_type_duration') : getDolGlobalString('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT', 'i'));
-		print $form->selectTypeDuration('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT_', $selected, array('y', 'm'));
+		print $form->selectTypeDuration('AGENDA_DEFAULT_REMINDER_OFFSET_UNIT_', $selected, array('y', 'm', 's'), 'width150 maxwidth150');
 	}
+	print '</td></tr>'."\n";
 }
 
 // AGENDA DEFAULT EMAIL MODEL
@@ -320,10 +324,10 @@ if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 	} else {
 		$selected = (GETPOSTISSET('AGENDA_DEFAULT_REMINDER_EMAIL_MODELmodel_mail') ? GETPOST('AGENDA_DEFAULT_REMINDER_EMAIL_MODELmodel_mail') : getDolGlobalInt('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL', 0));
-		print $form->selectModelMail('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL', 'actioncomm_send', 1, 1, $selected);
+		print $form->selectModelMail('AGENDA_DEFAULT_REMINDER_EMAIL_MODEL', 'actioncomm_send', 1, 1, $selected, 'minwidth150 width300 flat onrightofpage');
 	}
+	print '</td></tr>'."\n";
 }
-print '</td></tr>'."\n";
 
 print '</table>';
 

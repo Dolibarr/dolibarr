@@ -59,7 +59,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'stocks', 'productbatch', 'incoterm', 'other'));
 
 $order_id	= GETPOSTINT('id'); // id of order
 $ref		= GETPOST('ref', 'alpha');
@@ -171,7 +171,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 		if ($result < 0) {
@@ -665,8 +665,7 @@ if ($order_id > 0 || !empty($ref)) {
 					// Show product and description
 					$type = isset($objp->type) ? $objp->type : $objp->product_type;
 
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($objp->date_start)) {
 						$type = 1;
 					}
@@ -739,7 +738,7 @@ if ($order_id > 0 || !empty($ref)) {
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.$label;
 						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
-						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
+						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity ?? $conf->entity], 1, 1, 0, 0, 0, 80);
 						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range

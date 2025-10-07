@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Setup of module ReceiptPrinter
+ReceiptPrinterSetup=Setup of module RAW/Text Printers
 PrinterAdded=Printer %s added
 PrinterUpdated=Printer %s updated
 PrinterDeleted=Printer %s deleted
 TestSentToPrinter=Test Sent To Printer %s
 ReceiptPrinter=Receipt printers
-ReceiptPrinterDesc=Setup of receipt printers
+ReceiptPrinterDesc=Setup of RAW/Text printers
 ReceiptPrinterTemplateDesc=Setup of Templates
 ReceiptPrinterTypeDesc=Example of possible values for the field "Parameters" according to the type of driver
-ReceiptPrinterProfileDesc=Description of Receipt Printer's Profile
+ReceiptPrinterProfileDesc=Description of RAW/Text Printer's Profile
 ListPrinters=List of Printers
 FromServerPointOfView=From the web server point of view. This printer must be reachable from the web server hosting.
 SetupReceiptTemplate=Template Setup
@@ -22,7 +22,7 @@ CONNECTOR_CUPS_PRINT=Cups Printer
 CONNECTOR_DUMMY_HELP=Fake Printer for test, does nothing
 CONNECTOR_NETWORK_PRINT_HELP=10.x.x.x:9100
 CONNECTOR_FILE_PRINT_HELP=/dev/usb/lp0, /dev/usb/lp1
-CONNECTOR_WINDOWS_PRINT_HELP=LPT1, COM1, smb://FooUser:secret@computername/workgroup/Receipt Printer
+CONNECTOR_WINDOWS_PRINT_HELP=LPT1, COM1, smb://FooUser:secret@computername/workgroup/RAW/Text Printer
 CONNECTOR_CUPS_PRINT_HELP=CUPS printer name, example: HPRT_TP805L
 PROFILE_DEFAULT=Default Profile
 PROFILE_SIMPLE=Simple Profile

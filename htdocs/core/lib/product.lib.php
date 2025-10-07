@@ -203,18 +203,18 @@ function product_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = '';
 	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
-		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	if (isModEnabled("service") && ($object->type == Product::TYPE_SERVICE)) {
-		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
-			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+			$upload_dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
 		if (isModEnabled("service") && ($object->type == Product::TYPE_SERVICE)) {
-			$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+			$upload_dir = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
 		$nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	}
@@ -273,7 +273,7 @@ function productlot_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->productbatch->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_document.php?id=".$object->id;
@@ -797,7 +797,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/expedition.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/expedition.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_expedition['customers'];
 		print '</td><td class="right">';
@@ -816,7 +816,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/reception.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/reception.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_reception['customers'];
 		print '</td><td class="right">';
@@ -833,7 +833,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/commande_fournisseur.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/commande_fournisseur.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_supplier_order['customers'];
 		print '</td><td class="right">';
@@ -852,7 +852,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/mo.php', 1).'?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/mo.php?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['customers_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
 		print $form->textwithpicto((string) $batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));

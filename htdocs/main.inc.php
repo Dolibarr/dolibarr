@@ -13,7 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020-2024  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
@@ -72,13 +72,15 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var ?string $php_session_save_handler
+ * @var ?string $dolibarr_main_force_https
  */
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -173,11 +175,11 @@ if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 		if (session_id() && isset($_SESSION["dol_login"]) && !in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 			print 'Sorry, your application is offline.'."\n";
 			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
-			$nexturl = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
+			$nexturl = dolBuildUrl(DOL_URL_ROOT . '/user/logout.php', [], true);
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
 			print 'Sorry, your application is offline. Only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
-			$nexturl = DOL_URL_ROOT.'/';
+			$nexturl = dolBuildUrl(DOL_URL_ROOT . '/');
 			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
 		}
 		exit;
@@ -534,14 +536,23 @@ if (!defined('NOLOGIN')) {
 		if (!empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php') {  // We ask index page
 			if (empty($_SERVER['HTTP_REFERER']) || !preg_match('/public/', $_SERVER['HTTP_REFERER'])) {
 				dol_syslog("Call index page from another url than demo page (call is done from page ".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER']).")");
-				$url = '';
-				$url .= ($url ? '&' : '').($dol_hide_topmenu ? 'dol_hide_topmenu='.$dol_hide_topmenu : '');
-				$url .= ($url ? '&' : '').($dol_hide_leftmenu ? 'dol_hide_leftmenu='.$dol_hide_leftmenu : '');
-				$url .= ($url ? '&' : '').($dol_optimize_smallscreen ? 'dol_optimize_smallscreen='.$dol_optimize_smallscreen : '');
-				$url .= ($url ? '&' : '').($dol_no_mouse_hover ? 'dol_no_mouse_hover='.$dol_no_mouse_hover : '');
-				$url .= ($url ? '&' : '').($dol_use_jmobile ? 'dol_use_jmobile='.$dol_use_jmobile : '');
-				$url = DOL_URL_ROOT.'/public/demo/index.php'.($url ? '?'.$url : '');
-				header("Location: ".$url);
+				$query = [];
+				if ($dol_hide_topmenu) {
+					$query += ['dol_hide_topmenu' => $dol_hide_topmenu];
+				}
+				if ($dol_hide_leftmenu) {
+					$query += ['dol_hide_leftmenu' => $dol_hide_leftmenu];
+				}
+				if ($dol_optimize_smallscreen) {
+					$query += ['dol_optimize_smallscreen' => $dol_optimize_smallscreen];
+				}
+				if ($dol_no_mouse_hover) {
+					$query += ['dol_no_mouse_hover='.$dol_no_mouse_hover];
+				}
+				if ($dol_use_jmobile) {
+					$query += ['dol_use_jmobile='.$dol_use_jmobile];
+				}
+				header("Location: " . dolBuildUrl(DOL_URL_ROOT . '/public/demo/index.php', $query));
 				exit;
 			}
 		}
@@ -772,7 +783,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// End test login / passwords
-		if (!$login || (in_array('ldap', $authmode) && empty($passwordtotest))) {	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success.
+		if (!$login || (in_array('ldap', $authmode) && !in_array('openid_connect', $authmode) && empty($passwordtotest))) {     // With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success.
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_NOTICE);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
@@ -838,17 +849,17 @@ if (!defined('NOLOGIN')) {
 				$error++;
 			}
 
-			$paramsurl = array();
+			$paramsurl = [];
 			if (GETPOSTINT('textbrowser')) {
-				$paramsurl[] = 'textbrowser='.GETPOSTINT('textbrowser');
+				$paramsurl += ['textbrowser' => GETPOSTINT('textbrowser')];
 			}
 			if (GETPOSTINT('nojs')) {
-				$paramsurl[] = 'nojs='.GETPOSTINT('nojs');
+				$paramsurl += ['nojs' => GETPOSTINT('nojs')];
 			}
 			if (GETPOST('lang', 'aZ09')) {
-				$paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
+				$paramsurl += ['lang' => (string) GETPOST('lang', 'aZ09')];
 			}
-			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
+			header('Location: '.dolBuildUrl(DOL_URL_ROOT . '/index.php', $paramsurl));
 			exit;
 		} else {
 			// User is loaded, we may need to change language for him according to its choice
@@ -1557,10 +1568,34 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 	// Note that we do not use 'strict-origin' as this breaks feature to restore filters when clicking on "back to page" link on some cases.
 	if (!defined('MAIN_SECURITY_FORCERP')) {
 		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "same-origin");
-
-		header("Referrer-Policy: ".$referrerpolicy);
+		if (!empty($referrerpolicy)) {
+			header("Referrer-Policy: ".$referrerpolicy);
+		}
+	} else {
+		header("Referrer-Policy: ".constant('MAIN_SECURITY_FORCERP'));
 	}
 
+	// Strict-Transport-Security
+	if (!defined('MAIN_SECURITY_FORCESTS')) {
+		$sts = getDolGlobalString('MAIN_SECURITY_FORCESTS', "");
+		if (!empty($sts)) {
+			header("Strict-Transport-Security: ".$sts);
+		}
+	} else {
+		header("Strict-Transport-Security: ".constant('MAIN_SECURITY_FORCESTS'));
+	}
+
+	// Permissions-Policy (old name was Feature-Policy)
+	if (!defined('MAIN_SECURITY_FORCEPP')) {
+		$pp = getDolGlobalString('MAIN_SECURITY_FORCEPP', "");
+		if (!empty($pp)) {
+			header("Permissions-Policy: ".$pp);
+		}
+	} else {
+		header("Permissions-Policy: ".constant('MAIN_SECURITY_FORCEPP'));
+	}
+
+	// Cache
 	if ($forcenocache) {
 		header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
 	}
@@ -1575,7 +1610,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  *
  * @param 	string		$head			 Optional head lines
  * @param 	string		$title			 HTML title
- * @param 	int<0,1>   	$disablejs		 Disable js output
+ * @param 	int<0,2>   	$disablejs		 Disable js output (1) or disable output except jquery (2)
  * @param 	int<0,1>   	$disablehead	 Disable head output
  * @param 	string[]	$arrayofjs		 Array of complementary js files
  * @param 	string[]	$arrayofcss		 Array of complementary css files
@@ -1733,7 +1768,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@200;300;400;500;600&display=swap" rel="stylesheet">'."\n";
 		}
 
-		if (!defined('DISABLE_JQUERY') && !$disablejs && $conf->use_javascript_ajax) {
+		if (!defined('DISABLE_JQUERY') && (!$disablejs || $disablejs == 2) && $conf->use_javascript_ajax) {
 			print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
 			if (!defined('DISABLE_JQUERY_UI')) {
 				$jquerytheme = 'base';
@@ -1779,9 +1814,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<link rel="stylesheet" type="text/css" href="' . $themepath . $themeparam . '">' . "\n";
 		}
 
+		// To fix old chrome bug
+		/*
 		if (getDolGlobalString('MAIN_FIX_FLASH_ON_CHROME')) {
 			print '<!-- Includes CSS that does not exists as a workaround of flash bug of chrome -->'."\n".'<link rel="stylesheet" type="text/css" href="filethatdoesnotexiststosolvechromeflashbug">'."\n";
 		}
+		*/
 
 		// LEAFLET AND GEOMAN
 		if (getDolGlobalString('MAIN_USE_GEOPHP')) {
@@ -1837,7 +1875,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		// Output standard javascript links
-		if (!defined('DISABLE_JQUERY') && !$disablejs && !empty($conf->use_javascript_ajax)) {
+		if (!defined('DISABLE_JQUERY') && (!$disablejs || $disablejs == 2) && !empty($conf->use_javascript_ajax)) {
 			// JQuery. Must be before other includes
 			print '<!-- Includes JS for JQuery -->'."\n";
 			if (defined('JS_JQUERY') && constant('JS_JQUERY')) {
@@ -1883,11 +1921,6 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '</script>'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/editinplace.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-			}
-			// jQuery Timepicker
-			if (getDolGlobalString('MAIN_USE_JQUERY_TIMEPICKER') || defined('REQUIRE_JQUERY_TIMEPICKER')) {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
 			}
 			if (!defined('DISABLE_SELECT2') && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
 				// jQuery plugin "mutiselect", "multiple-select", "select2", ...
@@ -2153,7 +2186,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Link to module builder
 		if (isModEnabled('modulebuilder')) {
-			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
+			$text = '<a href="' . dolBuildUrl(DOL_URL_ROOT . '/modulebuilder/index.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']) .'" target="modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text .= '</a>';
@@ -2433,7 +2466,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	}
 
 	if (empty($urllogout)) {
-		$urllogout = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
+		$urllogout = dolBuildUrl(DOL_URL_ROOT . '/user/logout.php', [], true);
 	}
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox

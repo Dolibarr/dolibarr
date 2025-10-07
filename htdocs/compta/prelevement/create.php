@@ -55,7 +55,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bill
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'real';
 
 $type = GETPOST('type', 'aZ09');
@@ -638,7 +638,7 @@ if ($resql) {
 					if ($obj->soc_rib_id > 0) {
 						print $form->textwithpicto('', $langs->trans("BankAccountForcedOnRequest"));
 					} else {
-						print $form->textwithpicto('', $langs->trans("BankAccountUsedByDefault"), 1, 'help', 'valigmiddle warning');
+						print $form->textwithpicto('', $langs->trans("BankAccountUsedByDefault").'<br><b>'.$langs->trans("Label").'</b> : '.$bac->label.'<br><b>'.$langs->trans("BankName").'</b> : '.$bac->bank, 1, 'help', 'valigmiddle warning');
 					}
 				} else {
 					print img_warning($langs->trans("IBANNotDefined"));

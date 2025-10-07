@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Cedric Gross         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2017      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2003,2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2009-2011  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015       Bahfir Abbes            <bafbes@gmail.com>
+ * Copyright (C) 2017       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +123,7 @@ class modAgenda extends DolibarrModules
 		$datestart = dol_now();
 		$this->cronjobs = array(
 			0 => array('label' => 'SendEmailsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendEmailsReminder', 'parameters' => '', 'comment' => 'SendEMailsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
+			1 => array('label' => 'SendSmsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendSmsReminder', 'parameters' => '', 'comment' => 'SendSmsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
 		);
 
 		// Permissions

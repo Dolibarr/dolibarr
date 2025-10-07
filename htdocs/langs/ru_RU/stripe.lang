@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s"> Нажмите здесь, чтобы попр
 CreationOfPaymentModeMustBeDoneFromStripeInterface=В соответствии с строгими правилами клиент Аутентификация создание карты должно выполняться из бэк-офиса Stripe. Вы можете нажать здесь, чтобы включить запись Stripe клиент: %s
 STRIPE_CARD_PRESENT=Наличие карты для терминалов Stripe
 TERMINAL_LOCATION=Расположение (адрес) терминалов Stripe
-RequestDirectDebitWithStripe=Запрос Прямой дебет с помощью Stripe
-RequesCreditTransferWithStripe=Запросить кредит перевод с помощью Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Включите платежи Прямой дебет через Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Включить платежи с помощью Klarna
 STRIPE_BANCONTACT=Включите платежи с помощью BANCONTACT
 STRIPE_IDEAL=Включите платежи с помощью IDEAL
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Только для немецкого клиенты
 ExampleOnlyForNLCustomers=Только для голландского клиенты
 ExampleOnlyForATBEDEITNLESCustomers=Только для клиенты из Австрии, Бельгии, Германии, Италии, Нидерландов, Испании
 ListOfSupportedHooksToActivate=Список поддерживаемых хуков для активации
+# Paybox
+PayBoxSetup=Настройка модуля PayBox
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=Вы будете перенаправлены по обеспеченным Paybox страницу для ввода данных кредитной карточки
+SetupPayBoxToHavePaymentCreatedAutomatically=Настройте свою Paybox с URL-адресом <b>%s</b>, чтобы платеж создавался автоматически при подтверждении Paybox.
+YourPaymentHasBeenRecorded=Эта страница подтверждает, что ваш платеж был записан. Спасибо.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url модуля Paybox CGI для оплаты
+NewPayboxPaymentReceived=Новый платёж Paybox поулчен.
+NewPayboxPaymentFailed=Попытка нового платежа Paybox не удалась
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=Значение PBX SITE
+PAYBOX_PBX_RANG=Значение PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Значение PBX ID
+PAYBOX_HMAC_KEY=HMAC key

@@ -608,7 +608,7 @@ function showEyeForField($htmlname, $htmlnameofinput)
 {
 	return '<!-- code to manage the eye hide/show -->
 <span id="'.$htmlname.'" tabindex="-1"><span class="fa fa-eye"></span></span>
-<script nonce="<?php echo getNonce(); ?>">
+<script nonce="'.getNonce().'">
 	$(document).ready(function () {
 		$(\'#'.$htmlname.'\').on(\'click\', function (e) {
 			e.preventDefault();

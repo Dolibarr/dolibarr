@@ -96,3 +96,5 @@ SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=Oui
 XNewLinesConciliated=%s nouvelle(s) ligne(s) conciliée(s)
 InSepa=Zone SEPA
 CountryIsInSepa=Pays de la zone SEPA
+BankAccountForcedOnRequest=Ce compte bancaire a été défini lors de la préparation de la demande de virement. Supprimez-le et reprenez la préparation depuis l'objet source si vous devez le modifier.
+BankAccountUsedByDefault=Il s’agit du compte bancaire par défaut du tiers.

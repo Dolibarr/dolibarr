@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro	  		<aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ class PaymentDonation extends CommonObject
 	public $rowid;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_donation;
 
@@ -67,7 +67,7 @@ class PaymentDonation extends CommonObject
 	public $datep = '';
 
 	/**
-	 * @var float amount
+	 * @var ?float amount
 	 */
 	public $amount; // Total amount of payment
 
@@ -77,42 +77,42 @@ class PaymentDonation extends CommonObject
 	public $amounts = array(); // Array of amounts
 
 	/**
-	 * @var int  Payment mode ID
+	 * @var ?int  Payment mode ID
 	 * @deprecated Use $paymenttype
 	 * @see $paymenttype
 	 */
 	public $fk_typepayment;
 
 	/**
-	 * @var int Payment mode ID or Code. TODO Use only the code in this field.
+	 * @var ?int Payment mode ID or Code. TODO Use only the code in this field.
 	 */
 	public $paymenttype;
 
 	/**
-	 * @var string      Payment reference
+	 * @var ?string      Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_modif;
 
 	/**
 	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
-	 * @var float
+	 * @var ?float
 	 */
 	public $total;
 
@@ -320,8 +320,8 @@ class PaymentDonation extends CommonObject
 				$this->num_payment    = $obj->num_payment;
 				$this->note_public    = $obj->note_public;
 				$this->fk_bank        = $obj->fk_bank;
-				$this->fk_user_creat  = $obj->fk_user_creat;
-				$this->fk_user_modif  = $obj->fk_user_modif;
+				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->fk_user_modif = $obj->fk_user_modif;
 
 				$this->type_code = $obj->type_code;
 				$this->type_label = $obj->type_label;
@@ -405,17 +405,13 @@ class PaymentDonation extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
-			if (!$notrigger) {
-				if (!$error && !$notrigger) {
-					// Call triggers
-					$result = $this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -443,20 +439,19 @@ class PaymentDonation extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
+
 		$error = 0;
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql .= " WHERE type='payment_donation' AND url_id=".(int) $this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
+		$sql .= " WHERE type='payment_donation' AND url_id=".(int) $this->id;
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -471,17 +466,13 @@ class PaymentDonation extends CommonObject
 			}
 		}
 
-		if (!$error) {
-			if (!$notrigger) {
-				if (!$error && !$notrigger) {
-					// Call triggers
-					$result = $this->call_trigger('DONATION_PAYMENT_DELETE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('DONATION_PAYMENT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -529,7 +520,7 @@ class PaymentDonation extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 
@@ -639,7 +630,7 @@ class PaymentDonation extends CommonObject
 				$this->datep,
 				(string) $this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
-				$amount,
+				(float) $amount,
 				$this->num_payment,
 				0,
 				$user,

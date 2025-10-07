@@ -35,12 +35,20 @@
 /**
  *	\file       htdocs/societe/list.php
  *	\ingroup    societe
- *	\brief      Page to show list of third parties
+ *	\brief      Page to list all third parties
  */
 
 // Load Dolibarr environment
 require_once '../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -51,14 +59,6 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
@@ -68,7 +68,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 $optioncss = GETPOST('optioncss', 'alpha');
 if ($contextpage == 'poslist') {
@@ -76,7 +76,7 @@ if ($contextpage == 'poslist') {
 }
 $mode = GETPOST("mode", 'alpha');
 
-// search fields
+// Search fields
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
@@ -125,11 +125,11 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 	$searchCategorySupplierOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array:int');
 if (!empty($search_categ_cus) && empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerList = array($search_categ_cus);
 }
-$searchCategorySupplierList = GETPOST('search_category_supplier_list', 'array');
+$searchCategorySupplierList = GETPOST('search_category_supplier_list', 'array:int');
 if (!empty($search_categ_sup) && empty($searchCategorySupplierList)) {
 	$searchCategorySupplierList = array($search_categ_sup);
 }
@@ -1638,14 +1638,14 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Note public
 if (!empty($arrayfields['s.note_public']['checked'])) {
-	// Note public
 	print '<td class="liste_titre">';
 	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
 	print '</td>';
 }
+// Note private
 if (!empty($arrayfields['s.note_private']['checked'])) {
-	// Note private
 	print '<td class="liste_titre">';
 	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
 	print '</td>';
@@ -1944,7 +1944,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$companystatic->id.'" class="oddeven"';
+		print '<tr data-rowid="'.$companystatic->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
 			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}

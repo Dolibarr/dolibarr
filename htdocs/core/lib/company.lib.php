@@ -431,7 +431,7 @@ function societe_prepare_head(Societe $object)
 		} else {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
-			$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
+			$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity] . "/" . $object->id;
 			$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 			$nbLinks = Link::count($db, $object->element, $object->id);
 			$totalAttached = $nbFiles + $nbLinks;
@@ -564,6 +564,13 @@ function societe_admin_prepare_head()
 	}
 	$head[$h][2] = 'attributes_contacts';
 	$h++;
+
+	if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
+		$head[$h][0] = DOL_URL_ROOT . '/societe/admin/public_interface.php';
+		$head[$h][1] = $langs->trans("PublicUrl");
+		$head[$h][2] = 'publicurl';
+		$h++;
+	}
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin', 'remove');
 
@@ -954,7 +961,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
+		if ($user->hasRight('projet', 'creer') && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/projet/card.php?socid=' . $object->id . '&action=create&backtopage=' . urlencode($backtopage));
 		}
 
@@ -1133,7 +1140,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// To verify role of users
 						$userAccess = $projecttmp->restrictedProjectArea($user);
 
-						if ($user->rights->projet->lire && $userAccess > 0) {
+						if ($userAccess > 0) {
 							print '<tr class="oddeven">';
 
 							// Ref
@@ -1676,7 +1683,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
 				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
-				print '<td class="tdoverflowmax150" title="' . dolPrintHTMLForAttribute($addresstoshow) . '">';
+				print '<td class="tdoverflowmax150 classfortooltip" title="'.dolPrintHTMLForAttribute($addresstoshow).'">';
 				print $addresstoshow;
 				print '</td>';
 			}
@@ -1949,6 +1956,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "element_resources as er";
 			$sql .= " ON er.resource_type = 'dolresource'";
+			$sql .= " AND er.element_type = 'action'";
 			$sql .= " AND er.element_id = a.id";
 			$sql .= " AND er.resource_id = " . ((int) $filterobj->id);
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {

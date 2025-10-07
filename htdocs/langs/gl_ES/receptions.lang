@@ -53,4 +53,5 @@ RestoreWithCurrentQtySaved=Complete as cantidades cos últimos valores gardados
 ReceptionsRecorded=Recepcións gardadas
 ReceptionUpdated=A recepción actualizouse correctamente
 ReceptionDistribution=Distribución de recepción
+ReceptionMustBeInTheSameCurrencyThanOther=A recepción debe ser na mesma moeda que a outra
 AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=A validación automática non é posible cando as existencias son diminuídas na validación da factura

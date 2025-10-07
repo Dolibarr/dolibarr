@@ -2,6 +2,7 @@
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke  		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +110,8 @@ class Shipments extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		global $hookmanager;
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -138,6 +141,15 @@ class Shipments extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
+			$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'shipments', 'apimethod' => 'index');
+			$object = new stdClass();
+			$action = 'list';
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$sql = $hookmanager->resPrint;
+			} elseif ($reshook == 0) {
+				$sql .= $hookmanager->resPrint;
+			}
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 			if ($errormessage) {
@@ -208,7 +220,7 @@ class Shipments extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);

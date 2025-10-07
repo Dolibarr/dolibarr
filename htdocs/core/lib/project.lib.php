@@ -441,7 +441,7 @@ function task_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$filesdir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
+	$filesdir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$nbFiles = count(dol_dir_list($filesdir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
@@ -552,7 +552,7 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+	if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 		$head[$h][0] = DOL_URL_ROOT . '/projet/admin/project_task_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
 		$nbExtrafields = $extrafields->attributes['projet_task']['count'];
@@ -601,6 +601,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 {
 	global $user, $langs, $conf, $db, $hookmanager;
 	global $projectstatic, $taskstatic, $extrafields;
+	global $objectoffield;
 
 	'
 	@phan-var-force Project $projectstatic
@@ -973,6 +974,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$extrafieldsobjectkey = $taskstatic->table_element;
 				$extrafieldsobjectprefix = 'efpt.';
 				$obj = $lines[$i];
+				$object = $lines[$i];
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $lines[$i]);

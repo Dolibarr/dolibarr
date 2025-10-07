@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,15 +33,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("users", "admin", "other"));
+$langs->loadLangs(array("users", "admin", "other", "website"));
 
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 
 $forceCSP = getDolGlobalString("MAIN_SECURITY_FORCECSP");
 $selectarrayCSPDirectives = GetContentPolicyDirectives();
@@ -53,10 +53,16 @@ $selectarrayCSPSources = GetContentPolicySources();
 $forceCSPArr = GetContentPolicyToArray($forceCSP);
 $error = 0;
 
+
 /*
  * Actions
  */
 
+if ($cancel) {
+	$action = '';
+}
+
+$reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
@@ -134,7 +140,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	}
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit();
+	exit;
 } elseif ($action == "updateform" && GETPOST("btn_MAIN_SECURITY_FORCECSP")) {
 	$directivecsp = GETPOST("select_identifier_MAIN_SECURITY_FORCECSP");
 	$sourcecsp = GETPOST("select_source_MAIN_SECURITY_FORCECSP");
@@ -202,7 +208,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		setEventMessages($langs->trans("MainErrorAddingSecurityPolicy"), null, 'errors');
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit();
+	exit;
 } elseif ($action == "updateform") {
 	$db->begin();
 	$res1 = $res2 = $res3 = $res4 = 0;
@@ -221,6 +227,9 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	if ($res1 >= 0 && $res2 >= 0 && $res3 >= 0 && $res4 >= 0 && $res5 >= 0) {
 		$db->commit();
 		setEventMessages($langs->trans("Saved"), null, 'mesgs');
+
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
 	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("ErrorSavingChanges"), null, 'errors');
@@ -249,6 +258,10 @@ print '<br>';
 
 print '<span class="opacitymedium">'.$langs->trans("HTTPHeaderEditor").'. '.$langs->trans("ReservedToAdvancedUsers").'.</span><br><br>';
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateform">';
+
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -256,24 +269,20 @@ print '<td>'.$langs->trans("HTTPHeader").'</td>';
 print '<td></td>'."\n";
 print '</tr>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updateform">';
-
 // Force RP
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForceRP'), 'HTTP Header Referer-Policy<br><br>'.$langs->trans("Recommended").':<br>"strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured"', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCERP').'</td>';
-print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCERP" id="MAIN_SECURITY_FORCERP" value="'.getDolGlobalString("MAIN_SECURITY_FORCERP").'"></td>';
+print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForceRP'), 'HTTP Header Referer-Policy<br><br>'.$langs->trans("Recommended").':<br>strict-origin-when-cross-origin <span class="opacitymedium"> &nbsp; '.$langs->trans("or").' &nbsp; </span> same-origin <span class="opacitymedium">(more secured)</span>', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCERP').'</td>';
+print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCERP" id="MAIN_SECURITY_FORCERP" value="'.getDolGlobalString("MAIN_SECURITY_FORCERP").'" spellcheck="false"></td>';
 print '</tr>';
 // Force STS
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForceSTS'), 'HTTP Header Strict-Transport-Security<br><br>'.$langs->trans("Example").':<br>"max-age=31536000; includeSubDomains"', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCESTS').'</td>';
-print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCESTS" id="MAIN_SECURITY_FORCESTS" value="'.getDolGlobalString("MAIN_SECURITY_FORCESTS").'"></td>';
+print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForceSTS'), 'HTTP Header Strict-Transport-Security<br><br>'.$langs->trans("Example").':<br>max-age=31536000; includeSubDomains', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCESTS').'</td>';
+print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCESTS" id="MAIN_SECURITY_FORCESTS" value="'.getDolGlobalString("MAIN_SECURITY_FORCESTS").'" spellcheck="false"></td>';
 print '</tr>';
 // Force PP
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>"camera=(), microphone=(), geolocation=*"', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCEPP').'</td>';
-print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCEPP" id="MAIN_SECURITY_FORCEPP" value="'.getDolGlobalString("MAIN_SECURITY_FORCEPP").'"></td>';
+print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>camera=*, microphone=(), geolocation=*', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCEPP').'</td>';
+print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCEPP" id="MAIN_SECURITY_FORCEPP" value="'.getDolGlobalString("MAIN_SECURITY_FORCEPP").'" spellcheck="false"></td>';
 print '</tr>';
 
 $examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
@@ -285,7 +294,7 @@ print '<td>';
 
 print '<div class="div-table-responsive-no-min">';
 
-print '<input class="minwidth500 quatrevingtpercent" name="MAIN_SECURITY_FORCECSP" id="MAIN_SECURITY_FORCECSP" value="'.$forceCSP.'"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
+print '<input class="minwidth500 quatrevingtpercent" name="MAIN_SECURITY_FORCECSP" id="MAIN_SECURITY_FORCECSP" value="'.$forceCSP.'" spellcheck="false"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
 
 print '<br class="selectaddcontentsecuritypolicy hidden">';
 
@@ -352,7 +361,7 @@ print '</div>';
 print '<div class="center">';
 
 print '<input type="submit" class="button small" name="updateandstay" value="'.$langs->trans("Save").'">';
-print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+print '<input class="button button-cancel small" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 
 print '</div>';
 
@@ -413,6 +422,8 @@ print '<script>
 		});
 	});
 </script>';
+
+print '</form>';
 
 print dol_get_fiche_end();
 print '</div>';

@@ -77,6 +77,7 @@ $terminaltouse = $terminal;
 /*
  * Actions
  */
+
 $error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
@@ -368,67 +369,12 @@ if (isModEnabled('project')) {
 	print '</td></tr>';
 }
 
-if (isModEnabled('receiptprinter')) {
-	// Select printer to use with terminal
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-	$printer = new dolReceiptPrinter($db);
-
-	$printer->listprinters();
-	$printers = array();
-	foreach ($printer->listprinters as $key => $value) {
-		$printers[$value['rowid']] = $value['name'];
-	}
-	print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse");
-	print ' <span class="opacitymedium">('.$langs->trans("MainPrinterToUseMore").')</span>';
-	print '</td>';
-	print '<td>';
-	print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
-	print '</td></tr>';
-	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal), 1);
-		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal), 1);
-		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 3</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal), 1);
-		print '</td></tr>';
-	}
-}
-
-if (isModEnabled('receiptprinter') || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-	// Select printer to use with terminal
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-	$printer = new dolReceiptPrinter($db);
-	$printer->listPrintersTemplates();
-	$templates = array();
-	foreach ($printer->listprinterstemplates as $key => $value) {
-		$templates[$value['rowid']] = $value['name'];
-	}
-	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse");
-	print ' <span class="opacitymedium">('.$langs->trans("MainTemplateToUseMore").')</span>';
-	print ' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
-	print '<td>';
-	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1);
-	print '</td></tr>';
-	if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal), 1);
-		print '</td></tr>';
-	}
-}
-
 print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';
 print '<td>';
 print '<input type="text" class="width50" name="CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse).'" />';
 print '</td></tr>';
 
-// Numbering module
+// Numbering module (TODO When this is used ?)
 if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BillsNumberingModule");
@@ -450,6 +396,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 							$classname = "mod_facture_".$file;
 						}
 						// Check if there is a filter on country
+						$reg = array();
 						preg_match('/\-(.*)_(.*)$/', $classname, $reg);
 						if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
 							continue;
@@ -483,15 +430,87 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 	}
 	print $form->selectarray('TAKEPOS_ADDON'.$terminaltouse, $array, getDolGlobalString('TAKEPOS_ADDON'.$terminaltouse, '0'), 0);
 	print "</td></tr>\n";
-	print '</table>';
-	print '</div>';
 }
+
+
+// Options when using a special printer in TakePOS
+$customprinterallowed = true;
+$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
+if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
+	$customprinterallowed = false;
+}
+
+if (isModEnabled('receiptprinter')) {
+	// Select printer to use with terminal
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	$printer = new dolReceiptPrinter($db);
+
+	$printer->listprinters();
+	$printers = array();
+	foreach ($printer->listprinters as $key => $value) {
+		$printers[$value['rowid']] = $value['name'];
+	}
+	print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse");
+	print ' <span class="opacitymedium">('.$langs->trans("MainPrinterToUseMore").')</span>';
+	print '</td>';
+	print '<td>';
+	if (!$customprinterallowed) {
+		print '<span class="opacitymedium">'.$langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name')).'</span>';
+	} else {
+		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
+	}
+	print '</td></tr>';
+
+	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal), 1);
+		print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal), 1);
+		print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 3</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal), 1);
+		print '</td></tr>';
+	}
+}
+
+if (isModEnabled('receiptprinter') || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+	// Select printer to use with terminal
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	$printer = new dolReceiptPrinter($db);
+	$printer->listPrintersTemplates();
+	$templates = array();
+	foreach ($printer->listprinterstemplates as $key => $value) {
+		$templates[$value['rowid']] = $value['name'];
+	}
+	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse");
+	print ' <span class="opacitymedium">('.$langs->trans("MainTemplateToUseMore").')</span>';
+	print ' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
+	print '<td>';
+	if (!$customprinterallowed) {
+		print '<span class="opacitymedium">'.$langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name')).'</span>';
+	} else {
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1);
+	}
+	print '</td></tr>';
+	if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal), 1);
+		print '</td></tr>';
+	}
+}
+
 
 print '</table>';
 
 print $form->buttonsSaveCancel("Save", '');
 
 print '</div>';
+
 
 // add free text on each terminal of cash desk
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);

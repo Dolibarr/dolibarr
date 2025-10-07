@@ -120,9 +120,16 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 * Unit price included taxes
 	 * @var float
+	 * @deprecated Use $subprice_ttc
+	 * @see $subprice_ttc
 	 */
 	public $pu_ttc;
 
+	/**
+	 * Unit price including taxes
+	 * @var float
+	 */
+	public $subprice_ttc;
 
 	/**
 	 * Id of the corresponding supplier invoice
@@ -356,8 +363,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->product_desc		= $obj->product_desc;
 
-		$this->subprice = $obj->pu_ht;
-		$this->pu_ht = $this->subprice;
+		$this->subprice 		= $obj->pu_ht;
+		$this->pu_ht 			= $obj->pu_ht;
+		$this->subprice_ttc		= $obj->pu_ttc;
 		$this->pu_ttc			= $obj->pu_ttc;
 		$this->tva_tx			= $obj->tva_tx;
 		$this->localtax1_tx		= $obj->localtax1_tx;
@@ -513,7 +521,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", date_start = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= ", date_end = ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", pu_ht = ".price2num($this->subprice);
-		$sql .= ", pu_ttc = ".price2num($this->pu_ttc);
+		$sql .= ", pu_ttc = ".price2num($this->subprice_ttc);
 		$sql .= ", qty = ".price2num($this->qty);
 		$sql .= ", remise_percent = ".price2num($this->remise_percent);
 		if ($this->fk_remise_except > 0) {

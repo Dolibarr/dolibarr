@@ -64,7 +64,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierproposallist';
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -107,6 +107,13 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'int');
+$searchCategorySupplierPropalList = GETPOST('search_category_supplier_proposal_list', 'array:int');
+$searchCategorySupplierPropalOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategorySupplierPropalOperator = GETPOSTINT('search_category_supplier_proposal_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategorySupplierPropalOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 $object_statut = GETPOST('supplier_proposal_statut', 'intcomma');
@@ -125,7 +132,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'sp.date_livraison';
+	$sortfield = 'sp.ref';
 }
 if (!$sortorder) {
 	$sortorder = 'DESC';
@@ -221,7 +228,7 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $permissiontoread = $user->hasRight('supplier_proposal', 'lire');
 $permissiontodelete = $user->hasRight('supplier_proposal', 'supprimer');
-
+$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
 
 /*
  * Actions
@@ -264,6 +271,7 @@ if (empty($reshook)) {
 		$search_project_ref = '';
 		$search_login = '';
 		$search_product_category = '';
+		$searchCategorySupplierPropalList = array();
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -462,6 +470,34 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+// Search for tag/category ($searchCategorySupplierInvoiceList is an array of ID)
+if (!empty($searchCategorySupplierPropalList)) {
+	$searchCategorySupplierPropalSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierPropalList as $searchCategorySupplierPropal) {
+		if (intval($searchCategorySupplierPropal) == -2) {
+			$searchCategorySupplierPropalSqlList[] = "NOT EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal)";
+		} elseif (intval($searchCategorySupplierPropal) > 0) {
+			if ($searchCategorySupplierPropalOperator == 0) {
+				$searchCategorySupplierPropalSqlList[] = " EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal AND ck.fk_categorie = ".((int) $searchCategorySupplierPropal).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplierPropal);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierPropalSqlList[] = " EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierPropalOperator == 1) {
+		if (!empty($searchCategorySupplierPropalSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierPropalSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierPropalSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierPropalSqlList).")";
+		}
+	}
+}
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
@@ -631,6 +667,12 @@ if ($resql) {
 	if ($search_login) {
 		$param .= '&search_login='.urlencode($search_login);
 	}
+	if ($searchCategorySupplierPropalOperator == 1) {
+		$param .= "&search_category_supplier_propal_operator=".urlencode((string) ($searchCategorySupplierPropalOperator));
+	}
+	foreach ($searchCategorySupplierPropalList as $searchCategorySupplierPropal) {
+		$param .= "&search_category_supplier_invoice_list[]=".urlencode($searchCategorySupplierPropal);
+	}
 	if ($search_town) {
 		$param .= '&search_town='.urlencode($search_town);
 	}
@@ -661,6 +703,9 @@ if ($resql) {
 		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
+	if (isModEnabled('category') && $user->hasRight('supplier_proposal', 'lire')) {
+		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+	}
 	if ($user->hasRight('supplier_proposal', 'supprimer')) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
@@ -709,7 +754,11 @@ if ($resql) {
 	$i = 0;
 
 	$moreforfilter = '';
-
+	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_PROPOSAL, $searchCategorySupplierPropalList, 'minwidth300', $searchCategorySupplierPropalOperator ? $searchCategorySupplierPropalOperator : 0);
+	}
 	// If the user can view prospects other than his'
 	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
@@ -1083,7 +1132,7 @@ if ($resql) {
 				print '</td></tr>';
 			}
 		} else {
-			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? 'opacitymedium' : '').'">';
+			print '<tr class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';

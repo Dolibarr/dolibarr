@@ -44,7 +44,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('sendings', 'companies', 'bills', 'deliveries', 'orders', 'stocks', 'other', 'propal'));
+$langs->loadLangs(array('sendings', 'companies', 'bills', 'orders', 'stocks', 'other', 'propal'));
 
 $id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');

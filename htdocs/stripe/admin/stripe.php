@@ -56,7 +56,7 @@ if (getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
+$langs->loadLangs(array('admin', 'other', 'paypal', 'stripe'));
 
 if (empty($user->admin)) {
 	accessforbidden();
@@ -497,6 +497,16 @@ if ($conf->use_javascript_ajax) {
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT'));
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("STRIPE_SEPA_CREDIT_TRANSFER").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('STRIPE_SEPA_CREDIT_TRANSFER');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STRIPE_SEPA_CREDIT_TRANSFER", $arrval, getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER'));
 }
 print '</td></tr>';
 

@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
  * @var User $user
  */
 
-$langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
+$langs->loadLangs(array("receptions", "companies", "bills", 'orders', 'stocks', 'other', 'propal'));
 
 $id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');

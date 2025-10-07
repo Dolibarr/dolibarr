@@ -44,7 +44,7 @@ $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$toselect   = GETPOST('toselect', 'array');
+$toselect   = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'margindetail'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss  = GETPOST('optioncss', 'alpha');

@@ -207,7 +207,10 @@ class DolEditor
 
 		$fullpage = false;
 
-		$extraAllowedContent = 'a[target];section[contenteditable,id];div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,padding-left,padding-right,padding-top,padding-bottom,width,border-top-left-radius,border-top-right-radius,border-bottom-left-radius,border-bottom-right-radius,box-shadow}';
+		$extraAllowedContent = 'a[target];';
+		$extraAllowedContent .= 'section[contenteditable,id];';
+		$extraAllowedContent .= 'div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,padding-left,padding-right,padding-top,padding-bottom,width,border-top-left-radius,border-top-right-radius,border-bottom-left-radius,border-bottom-right-radius,box-shadow}';
+
 		if (is_string($restrictContent)) {
 			$extraAllowedContent = $restrictContent;
 		}
@@ -410,7 +413,7 @@ class DolEditor
 						//enableSnippets: true,				// ???
 						showPrintMargin: false, 			// hides the vertical limiting strip
 						minLines: 10,
-						maxLines: '.(empty($this->height) ? '34' : (round($this->height / 10))).',
+						maxLines: '.(empty($this->height) ? '34' : (round(($this->height - 60) / 19))).',		// we remove 60 for the ace toolbar + bottom status line. 19 seems the height in px required for 1 line.
 				    	fontSize: "110%" // ensures that the editor fits in the environment
 					});
 

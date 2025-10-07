@@ -459,10 +459,16 @@ if (!empty($object->ext_payment_id)) {
 		if (!empty($stripeacc)) {
 			$connect = $stripeacc.'/';
 		}
-		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
-		if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
-			$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+
+		if ($stripecu) {
+			$url = 'https://dashboard.stripe.com/'.$connect.($object->ext_payment_site == 'Stripe' ? 'test/' : '').'customers/'.$stripecu;
+			if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
+				$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+			}
+		} else {
+			$url = 'https://dashboard.stripe.com/'.($object->ext_payment_site == 'Stripe' ? 'test/' : '').'payments/'.$object->ext_payment_id;
 		}
+
 		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account_payment, 'globe').'</a>';
 	} else {
 		print dol_escape_htmltag($object->ext_payment_id);

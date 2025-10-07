@@ -3,10 +3,10 @@ MenuFinancial=ማስከፈል | ክፍያ
 TaxModuleSetupToModifyRules=የስሌት ደንቦችን ለማሻሻል ወደ <a href="%s">የግብር ሞዱል ማዋቀር</a> ይሂዱ
 TaxModuleSetupToModifyRulesLT=የስሌት ደንቦችን ለማሻሻል ወደ <a href="%s">የኩባንያ ማዋቀር</a> ይሂዱ
 OptionMode=ለሂሳብ አያያዝ አማራጭ
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=በዚህ አውድ፣ ማዞሪያው በደረሰኞች (የተረጋገጠበት ቀን) ላይ ይሰላል። እነዚህ ደረሰኞች ሲከፈሉ፣ተከፈሉም አልሆኑ፣በማዞሪያው ውጤት ውስጥ ተዘርዝረዋል።
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=ባህሪ የሚገኘው በCREDITS-DEBTS የሒሳብ አያያዝ ሁነታ ላይ ብቻ ነው (የአካውንቲንግ ሞጁል ውቅረትን ይመልከቱ)
 VATReportBuildWithOptionDefinedInModule=እዚህ የሚታዩት መጠኖች የሚሰሉት በታክስ ሞጁል ማዋቀር የተገለጹ ህጎችን በመጠቀም ነው።
 LTReportBuildWithOptionDefinedInModule=እዚህ የሚታዩት መጠኖች በኩባንያው ማዋቀር የተገለጹ ደንቦችን በመጠቀም ይሰላሉ.
@@ -302,7 +302,6 @@ ByVatRate=በሽያጭ የግብር መጠን
 TurnoverbyVatrate=በሽያጭ የግብር ተመን የተገኘ የትርፍ ደረሰኝ
 TurnoverCollectedbyVatrate=በሽያጭ የግብር ተመን የተሰበሰበ ትርፍ
 PurchasebyVatrate=በሽያጭ የግብር መጠን ይግዙ
-LabelToShow=አጭር መለያ
 PurchaseTurnover=የግዢ ማዞሪያ
 PurchaseTurnoverCollected=የግዢ ማዞሪያ ተሰብስቧል
 RulesPurchaseTurnoverDue=- ተከፈለም አልተከፈለም የአቅራቢውን የክፍያ መጠየቂያ ደረሰኞች ያካትታል። <br>- በነዚህ ደረሰኞች የክፍያ መጠየቂያ ቀን ላይ የተመሰረተ ነው።<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
  */
 
 // Load translation files required by the page
-$langs->load("deliveries");
+$langs->load("sendings");
 
 $id     = GETPOSTINT('id');
 $ref    = GETPOST('ref', 'alpha');

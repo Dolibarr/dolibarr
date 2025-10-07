@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Muhasebe
 Accounting=Muhasebe
+AccountingAccount=Muhasebe hesabı
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Dışa aktarma dosyası için sütun ayırıcısı
 ACCOUNTING_EXPORT_DATE=Dışa aktarma dosyası için tarih biçimi
 ACCOUNTING_EXPORT_PIECE=Parça sayısını dışa aktar
@@ -72,7 +74,7 @@ AccountancyAreaDescActionOnce=Aşağıdaki eylemler genellikle yalnızca bir ker
 AccountancyAreaDescActionOnceBis=Muhasebede veri aktarırken otomatik olarak doğru varsayılan muhasebe hesabını önererek gelecekte size zaman kazandırmak için sonraki adımlar atılmalıdır.
 AccountancyAreaDescActionFreq=Aşağıdaki eylemler çok büyük şirketler için genellikle her ay, her hafta veya her gün gerçekleştirilir...
 AccountancyAreaDescJournalSetup=ADIM %s: Dergi listenizin içeriğini %s menüsünden kontrol edin
-AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
+AccountancyAreaDescChartModel=ADIM %s: Ülkeniz için bir hesap planı modelinin mevcut olup olmadığını kontrol edin veya menüden bir tane oluşturun %s
 AccountancyAreaDescChart=ADIM %s: Menüden hesap planınızı seçin ve|veya tamamlayın %s
 AccountancyAreaDescFiscalPeriod=ADIM %s: Muhasebe girişlerinin oluşturulması için kabul edilen tarihler aralığını belirleyen mali dönemi tanımlayın. Bunun için %s menü girişini kullanın.
 AccountancyAreaDescVat=ADIM %s: "%s" menüsünü kullanarak her bir KDV Oranı için muhasebe hesaplarını tanımlayın.
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Bağışların kaydedileceği hesap (Hesap Planı'nda
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Üyelik aboneliklerini kaydetmek için kullanılacak hesap (Hesap Planından) (Üyelik modülü - üyeliğin faturasız kaydedilmesi durumunda)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Müşteri mevduatını kaydetmek için varsayılan hesap olarak kullanılacak hesap (Hesap Planından)
 UseAuxiliaryAccountOnCustomerDeposit=Peşinat satırları için müşteri hesabını yardımcı defterde bireysel hesap olarak saklayın (devre dışı bırakılırsa peşinat satırları için bireysel hesap boş kalacaktır)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Varsayılan olarak kullanılacak Hesap (Hesap Planından)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Peşinat satırları için tedarikçi hesabını yardımcı defterde bireysel hesap olarak saklayın (devre dışı bırakılırsa peşinat satırları için bireysel hesap boş kalacaktır)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Müşterinin tutulan garantisini kaydetmek için varsayılan olarak muhasebe hesabı
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Aynı ülke içerisinde satın alınan ürünlerde varsayılan hesap olarak kullanılacak hesap (Hesap Planından) (ürün föyünde tanımlanmamışsa kullanılır)
@@ -275,11 +277,12 @@ HideOpeningBalance=Açılış bakiyesini gizle
 ShowSubtotalByGroup=seviye'a göre alt toplamı göster
 Pcgtype=Hesap grubu
 PcgtypeDesc=Hesap grubu, bazı muhasebe raporlarında önceden tanımlanmış 'filtre' ve 'gruplama' kriterleri olarak kullanılır. Örneğin, 'GELİR' veya 'GİDER', gider/gelir raporu oluşturmak amacıyla ürünlerin muhasebe hesapları için gruplar olarak kullanılır.
-AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
+AccountingCategoriesDesc=Muhasebe hesaplarını tek bir ad altında gruplamak için özel hesap grupları kullanılabilir; bu sayede filtrelerin kullanımı veya özel raporların oluşturulması kolaylaşır.
 Reconcilable=Uzlaştırılabilir
 Centralized=Merkezi hesap
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Vergi öncesi toplam gelir
-TotalMarge=Toplam satışlar kar oranı
+TotalMarge=Toplam satış kâr oranı
 DescVentilCustomer=Hesap planından bir ürün hesabına bağlı (veya bağlı olmayan) müşteri fatura satırlarının listesine buradan bakın
 DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Müşterilerin fatura satırları listesine ve hesap planındaki ürün hesaplarına buradan bakın
@@ -319,7 +322,7 @@ NotReconciled=Uzlaştırılmadı
 WarningRecordWithoutSubledgerAreExcluded=Uyarı, yardımcı defter hesabı tanımlanmayan tüm satırlar filtrelendi ve bu görünümden çıkarıldı
 AccountRemovedFromCurrentChartOfAccount=Mevcut hesap planında bulunmayan muhasebe hesabı
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Uyarı, bu sayfa yalnızca Muhasebe sistemine aktarılan girdileri içerir.
-BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
+BookkeepingNumRefModelDesc = Referans numarasını yymmjjnnnnn biçiminde döndürür. Burada yy yıl, mm ay ve jj dergi kodudur. nnnnn ise yıla, aya ve dergi koduna bağlı olarak art arda gelen otomatik artan bir sayıdır.
 BookkeepingNumberingModules = Muhasebe numaralandırma modelleri
 ## Admin
 BindingOptions=Muhasebede transfer seçenekleri
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Tedarikçi alımlarında KDV ters üc
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Üçüncü-parti kartlarında bir sekmeyi etkinleştirerek yardımcı defteri görüntüleyin
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Bu seçenek etkinleştirildiğinde, üçüncü-parti kartlarında ve'i görüntülemek, üçüncü-parti için Muhasebe'i yönetmek ve uzlaştırmak, yazdırmak ve daha fazlası için yeni bir sekme gösterilir
+
 ## Export
 NotExportLettering=Dosyayı oluştururken harfleri dışa aktarmayın
 NotifiedExportDate=Henüz dışa aktarılmamış satırları Dışa Aktarıldı olarak işaretle <span class="warning">(dışa aktarılmış olarak işaretlenmiş bir satırı değiştirmek için tüm işlemi silmeniz ve muhasebeye yeniden aktarmanız gerekir)</span>
@@ -389,7 +393,7 @@ Modelcsv_Gestinumv5=Gestinum için dışa aktarma (v5)
 Modelcsv_charlemagne=Aplim Charlemagne için ihracat
 ChartofaccountsId=Hesap planı Id
 ExportToPdf = PDF'ye aktar
-ExportToCsv = Export to CSV
+ExportToCsv = CSV'ye aktar
 PdfLedgerTitle = Ana Defter hesapları
 PdfBalanceTitle = Ana Defter bilanço
 PdfBookkeepingTitle = Günlükler
@@ -408,7 +412,7 @@ AccountancyGroupTHIRDPARTY = Cariler
 AccountancyGroupFINAN = Parasal
 AccountancyGroupSTOCK = Envanterler
 AccountancyGroupCAPIT = Sermaye
-AccountancyGroupIMMO = varlıklar düzeltildi
+AccountancyGroupIMMO = Duran Varlıklar
 AccountancyGroupEXPENSE = Giderler
 AccountancyGroupINCOME = Gelirler
 GrandTotals = Genel Toplamlar
@@ -441,7 +445,7 @@ AccountRemovedFromGroup=Hesap gruptan kaldırıldı
 SaleLocal=Yerel satış
 SaleExport=İhracat satışı
 SaleEEC=AET'de Satış
-SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
+SaleEECWithVAT=Satış, KDV'si olmayan AET'de gerçekleştiğinden, bunun bir topluluk içi satış olmadığını ve önerilen hesabın standart ürün hesabı olduğunu varsayıyoruz.
 SaleEECWithoutVATNumber=Satış EEC içindedir ve KDV yoktur ancak KDV üçüncü parti'in KİMLİK'i tanımlanmamıştır. Standart satışlar için hesaba geri döneriz. KDV KİMLİK veya üçüncü parti hatasını düzeltebilir veya gerekirse bağlama için önerilen ürün hesabını değiştirebilirsiniz.
 AnySale=Herhangi bir satış
 ForbiddenTransactionAlreadyExported=Yasak: İşlem doğrulandı ve/veya dışa aktarıldı.
@@ -486,7 +490,7 @@ AccountancyClosureConfirmClose=Mevcut mali dönemi kapatmak istediğinizden emin
 AccountancyClosureConfirmAccountingReversal="Birikmiş karlar" girişlerini kaydetmek istediğinizden emin misiniz?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
+WarningBookkeepingRecordAlreadyExists=İşlem için (doc_type=%s, doc_id=%s, doc_det=%s) zaten kaydedildi
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Kurulumun bazı zorunlu adımları tamamlanmadı, lütfen onları tamamlayın.
@@ -509,7 +513,7 @@ ErrorNoFiscalPeriodActiveFound=Hiç bir etkin bir mali dönem (başlangıç ve b
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Defter tutma belgesi tarihi etkin mali dönem içinde değil
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Defter tutma belgesi tarihi kapalı bir mali dönem içindedir
 Error_BOOKKEEPING_ADDON_NotDefined=Hata, muhasebe numaralandırma referansı kuralı Muhasebe modülünün genel Kurulum referansında tanımlanmamış
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=%s (Ödeme KİMLİK: %s) için deftere dengesiz bir işlem eklemeye çalıştınız. İşlem iptal edildi.
 ProductUsage=Ürün veya hizmet kullanımı
 ## Import
 ImportAccountingEntries=Muhasebe girişleri
@@ -538,15 +542,15 @@ ExpenseReportJournal=Gider Raporu Günlüğü
 DocsAlreadyExportedAreIncluded=Halihazırda dışa aktarılan dokümanlar dahil edilmiştir
 ClickToShowAlreadyExportedLines=Zaten dışa aktarılan satırları göstermek için tıklayın
 NAccounts=%s hesapları
-ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
-ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
+ACCOUNTING_USE_NON_TREASURY_Desc=Bu, tahakkuk esaslı muhasebe yöntemidir ("gerçek" veya "tam" olarak da bilinir). Muhasebeyi oluşturmak için tüm bilgileri (satış ve satın alma faturaları, gider raporları, banka vb.) kullanırız.
+ACCOUNTING_USE_TREASURY_Desc=Bu, nakit muhasebe yöntemidir. Muhasebeyi oluşturmak için yalnızca ödemeleri ve tarihlerini kullanırız. Bu muhasebe yöntemine uygun olup olmadığınızı öğrenmek için muhasebe firmanıza danışın.
 PieceDesc=Bu banka işlemini oluşturan belge kaynağının referansı (Fatura Referansı, gider raporu referansı, ...)
 BankTransactionRef=Banka işlemi için bir referans (İsteğe bağlı, otomatik bir KİMLİK zaten oluşturuldu)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Bu, muhasebe girişini klonlayacaktır (bu muhasebe girişine bağlı tüm satırlar klonlanacaktır). Seçili %s kayıtlarını klonlamak için İstediğinizden emin misiniz?
 ConfirmMassCloneBookkeepingWriting=onayla toplu klonlama
-ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
-ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
+ConfirmMassReturnAccountBookkeepingWriting=Toplu geri dönüşü onaylayın
+ConfirmMassReturnAccountBookkeepingWritingQuestion=Bu, seçili muhasebe kayıtları için oluştur ters kayıt girişlerini yapacaktır (bu kayıtlara bağlı tüm satırlar ters çevrilecektir: borç ve alacak değiştirilecek, ve bir ters işlem kaydedilecektir). İstediğinizden emin misiniz seçili %s kayıtları için bu ters işlemi gerçekleştirmek istiyor musunuz?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Bu, seçili tüm satırların hesabını değiştirecektir.
 confirmMassAssignAccountBookkeepingWritingConfirm=onayla toplu hesap değişikliği
 CloningSuccess=Başarılı işlem klonlama: %s
