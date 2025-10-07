@@ -251,7 +251,7 @@ class MailingTarget extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
-		$sql .= " SET statut = ".((int) STATUS_NOTSENT).", tms = '".$this->db->idate($now)."'";
+		$sql .= " SET statut = ".((int) self::STATUS_NOTSENT).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
@@ -273,7 +273,7 @@ class MailingTarget extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
-		$sql .= " SET statut = ".((int) STATUS_SENT).", tms = '".$this->db->idate($now)."'";
+		$sql .= " SET statut = ".((int) self::STATUS_SENT).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
@@ -295,7 +295,7 @@ class MailingTarget extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
-		$sql .= " SET statut = ".((int) STATUS_READ).", tms = '".$this->db->idate($now)."'";
+		$sql .= " SET statut = ".((int) self::STATUS_READ).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
@@ -317,7 +317,7 @@ class MailingTarget extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
-		$sql .= " SET statut = ".((int) STATUS_READANDUNSUBSCRIBED).", tms = '".$this->db->idate($now)."'";
+		$sql .= " SET statut = ".((int) self::STATUS_READANDUNSUBSCRIBED).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
@@ -339,7 +339,7 @@ class MailingTarget extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
-		$sql .= " SET statut = ".((int) STATUS_ERROR).", tms = '".$this->db->idate($now)."'";
+		$sql .= " SET statut = ".((int) self::STATUS_ERROR).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
