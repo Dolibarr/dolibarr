@@ -310,6 +310,9 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 				}
 
 				// Add the title line
+				if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+					$this->addDashLine($pdf, $pdf->getPage(), $nexY);
+				}
 				$this->addTitleLine(
 					$pdf,
 					$curY,
