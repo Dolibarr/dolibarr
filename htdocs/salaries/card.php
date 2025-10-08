@@ -214,7 +214,7 @@ if ($action == 'reopen' && $permissiontoadd) {
 	if ($object->paye) {
 		$result = $object->set_unpaid($user);
 		if ($result > 0) {
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+			header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
 			exit();
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -451,7 +451,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 			$db->commit();
 			$db->close();
 
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			header("Location: ".dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
 			exit;
 		} else {
 			$id = $originalId;
@@ -543,7 +543,7 @@ if ($action == 'create' && $permissiontoadd) {
 		$dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
 	}
 
-	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<form name="salary" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -767,6 +767,7 @@ if ($action == 'create' && $permissiontoadd) {
 if ($id > 0) {
 	$head = salaries_prepare_head($object);
 	$formconfirm = '';
+	$pageurl = dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]);
 
 	if ($action === 'clone') {
 		$formquestion = array(
@@ -831,7 +832,7 @@ if ($id > 0) {
 				$('#clone_date_startyear').val(date.getFullYear());
 			}
 
-   			// Button for end date
+			// Button for end date
 			$('#clone_date_end').after($('<button id=\"fill_end_of_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('FillEndOfMonth')."</button>'));
 			$('#fill_end_of_month').click(function(){
 				var clone_date_startmonth = +$('#clone_date_startmonth').val();
@@ -898,7 +899,7 @@ if ($id > 0) {
 		$morehtmlref .= $object->label;
 	} else {
 		$morehtmlref .= $langs->trans('Label').' :&nbsp;';
-		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		$morehtmlref .= '<form method="post" action="'.$pageurl.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
@@ -930,7 +931,7 @@ if ($id > 0) {
 		}
 	} else {
 		$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
-		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		$morehtmlref .= '<form method="post" action="'.$pageurl.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="setfk_user">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$morehtmlref .= $form->select_dolusers($object->fk_user, 'userid', 1);
@@ -947,9 +948,9 @@ if ($id > 0) {
 		if ($usercancreate) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($pageurl, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -1011,15 +1012,15 @@ if ($id > 0) {
 	print $langs->trans('DefaultPaymentMode');
 	print '</td>';
 	if ($action != 'editmode') {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'editmode', 'id' => $object->id], true).'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
 
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'mode_reglement_id');
+		$form->form_modes_reglement($pageurl, (string) $object->type_payment, 'mode_reglement_id');
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'none');
+		$form->form_modes_reglement($pageurl, (string) $object->type_payment, 'none');
 	}
 	print '</td></tr>';
 
@@ -1030,14 +1031,14 @@ if ($id > 0) {
 		print $langs->trans('DefaultBankAccount');
 		print '<td>';
 		if ($action != 'editbankaccount' && $permissiontoadd) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'editbankaccount', 'id' => $object->id], true).'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
+			$form->formSelectAccount($pageurl, (string) $object->fk_account, 'fk_account', 1);
 		} else {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
+			$form->formSelectAccount($pageurl, (string) $object->fk_account, 'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -1187,45 +1188,45 @@ if ($id > 0) {
 			if (empty($user->socid)) {
 				$canSendMail = true;
 
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', $canSendMail);
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '', $canSendMail);
 			}
 		}
 
 		// Reopen
 		if ($object->status == $object::STATUS_PAID && $permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'reopen', 'id' => $object->id], true), '');
 		}
 
 		// Edit
 		if ($object->status == $object::STATUS_UNPAID && $permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
+			print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit', 'id' => $object->id]), '');
 		}
 
 		// Transfer request
 		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT . '/salaries/virement_request.php?id=' . $object->id, '');
+			print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', dolBuildUrl(DOL_URL_ROOT . '/salaries/virement_request.php', ['id' => $object->id]), '');
 		}
 
 		// Emit payment
 		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php?action=create&token='.newToken().'&id='. $object->id, '');
+			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', dolBuildUrl(DOL_URL_ROOT.'/salaries/paiement_salary.php', ['action' => 'create', 'id' => $object->id], true), '');
 		}
 
 		// Classify 'paid'
 		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
 		if ($object->status == $object::STATUS_UNPAID && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', $_SERVER["PHP_SELF"].'?action=paid&token='.newToken().'&id='.$object->id, '');
+			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'paid', 'id' => $object->id], true), '');
 		}
 
 		// Clone
 		if ($permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
+			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone', 'id' => $object->id], true), '');
 		}
 
 		if ($permissiontodelete && empty($totalpaid)) {
-			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
+			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
 		} else {
-			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'), 'default', dolBuildUrl($_SERVER['PHP_SELF']).'#', '', false);
 		}
 	}
 	print "</div>";
@@ -1248,7 +1249,7 @@ if ($id > 0) {
 			$objref = dol_sanitizeFileName($object->ref);
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->salaries->dir_output.'/'.$objref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$urlsource = dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]);
 			//$genallowed = $permissiontoread; // If you can read, you can build the PDF to read content
 			$genallowed = 0; // If you can read, you can build the PDF to read content
 			$delallowed = $permissiontoadd; // If you can create/edit, you can remove a file on card
