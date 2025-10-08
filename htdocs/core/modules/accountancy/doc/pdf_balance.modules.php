@@ -486,7 +486,7 @@ class pdf_balance extends ModelePdfAccountancy
 				$curY,
 				$nexY,
 				$default_font_size,
-				$langs->trans('Total') . ' ' . $langs->trans('AccountancyGroup' . $accountingAccount->pcg_type),
+				$langs->transnoentitiesnoconv('Total') . ' ' . $langs->trans('AccountancyGroup' . ' ' . $accountingAccount->pcg_type),
 				$tab_top_newpage,
 				$groupDebit,
 				$groupCredit
