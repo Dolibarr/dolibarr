@@ -168,7 +168,7 @@ function facture_prepare_head($object)
  */
 function invoice_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('facture');
@@ -182,6 +182,11 @@ function invoice_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/admin/invoice.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/invoice_pdf.php';
+	$head[$h][1] = $langs->trans("PDF");
+	$head[$h][2] = 'pdf';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/payment.php';

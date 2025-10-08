@@ -922,7 +922,7 @@ class FormFile
 			if ((!empty($file_list) || !empty($link_list) || preg_match('/^massfilesarea/', $modulepart))
 				&& !$headershown) {
 				$headershown = 1;
-				$out .= '<div class="titre">'.$titletoshow.'</div>'."\n";
+				$out .= '<div class="titre paddingbottom">'.$titletoshow.'</div>'."\n";
 				$out .= '<div class="div-table-responsive-no-min">';
 				$out .= '<table class="noborder centpercent" id="'.$modulepart.'_table">'."\n";
 			}

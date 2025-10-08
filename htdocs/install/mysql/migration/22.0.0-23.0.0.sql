@@ -230,4 +230,5 @@ ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeepin
 ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_closing (fk_user_closing);
 
 ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
+UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
 -- end of migration

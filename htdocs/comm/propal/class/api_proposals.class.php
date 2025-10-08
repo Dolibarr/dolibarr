@@ -782,19 +782,18 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->propal->liste_contact(-1, $source);
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->propal->delete_contact($contact['rowid']);
 
-		$contacts = $this->propal->liste_contact();
-
-		foreach ($contacts as $contact) {
-			if ($contact['id'] == $contactid && $contact['code'] == $type) {
-				$result = $this->propal->delete_contact($contact['rowid']);
-
-				if (!$result) {
-					throw new RestException(500, 'Error when deleted the contact');
+					if (!$result) {
+						throw new RestException(500, 'Error when deleted the contact');
+					}
 				}
 			}
 		}
-
 		return $this->_cleanObjectDatas($this->propal);
 	}
 
