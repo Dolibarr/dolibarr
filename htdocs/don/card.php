@@ -494,7 +494,7 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.img_picto('', 'object_email', 'class="paddingrightonly"').'<input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200" spellcheck="false"></td></tr>';
+		print '<tr><td>'.$langs->trans("EMail").'</td><td>'.img_picto('', 'object_email', 'class="paddingrightonly"').'<input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200" spellcheck="false"></td></tr>';
 	}
 
 	// Payment mode
@@ -632,7 +632,7 @@ if (!empty($id) && $action == 'edit') {
 		}
 		print '</td></tr>';
 
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'" spellcheck="false"></td></tr>';
+		print '<tr><td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'" spellcheck="false"></td></tr>';
 	}
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
