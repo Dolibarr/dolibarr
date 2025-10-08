@@ -1582,7 +1582,8 @@ AdherentMailRequired=Email required to create a new member
 MemberSendInformationByMailByDefault=The checkbox to send an email confirmation to members (validation or new subscription) is on by default
 MemberCreateAnExternalUserForSubscriptionValidated=Create automatically an external user (with a login to connect to the application) after an online payment of a membership subscription
 VisitorCanChooseItsPaymentMode=Visitor can choose from any available payment modes
-MEMBER_REMINDER_EMAIL=Enable automatic reminder <b>by email</b> of expired subscriptions. Note: Module <strong>%s</strong> must be enabled and correctly setup to send reminders.
+MEMBER_REMINDER_EMAIL=Enable automatic reminder <b>by email</b> of expired subscriptions.
+MEMBER_REMINDER_EMAILHelp=Note: The module <strong>%s</strong> must be enabled and correctly setup to send reminders.
 MembersDocModules=Document templates for documents generated from member record
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup

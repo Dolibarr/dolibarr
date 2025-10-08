@@ -1779,22 +1779,18 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = '')
 	print '</td>';
 	print "</tr>\n";
 
-	$label = '';
 	foreach ($tableau as $key => $const) {	// Loop on each param
 		$label = '';
 		// $const is a const key like 'MYMODULE_ABC'
-		if (is_numeric($key)) {		// Very old behaviour
-			$type = 'string';
+		if (is_array($const)) {
+			$type = $const['type'];
+			$label = $const['label'];
+			$const = $key;
 		} else {
-			if (is_array($const)) {
-				$type = $const['type'];
-				$label = $const['label'];
-				$const = $key;
-			} else {
-				$type = $const;
-				$const = $key;
-			}
+			$type = $const;
+			$const = $key;
 		}
+
 		$sql = "SELECT ";
 		$sql .= "rowid";
 		$sql .= ", ".$db->decrypt('name')." as name";

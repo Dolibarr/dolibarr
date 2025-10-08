@@ -544,19 +544,19 @@ if ($result >= 0) {
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'"></td></tr>';
+	print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'" spellcheck="false"></td></tr>';
 
 	// Check transmitter
-	print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
+	print '<tr><td><span class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter').'</span>';
 	print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
 	print '</td>';
-	print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
+	print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
 	// Bank name
 	print '<tr><td>'.$langs->trans('Bank');
 	print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
 	print '</td>';
-	print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
+	print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
 	// Comments
 	print '<tr><td>'.$langs->trans('Comments').'</td>';
@@ -927,7 +927,6 @@ if ($result >= 0) {
 				$totalrecudeposits += $deposits;
 				$i++;
 			}
-			print '</tbody>';
 
 			if ($i > 1) {
 				$colspan = 3;
@@ -939,7 +938,6 @@ if ($result >= 0) {
 
 				// Print total
 
-				print '<tfoot>';
 				print '<tr class="liste_total">';
 				print '<td colspan="'.$colspan.'" class="left">'.$langs->trans('TotalTTC').'</td>';
 				if (isModEnabled('multicurrency')) {
@@ -962,8 +960,10 @@ if ($result >= 0) {
 				print '<td class="right" id="result" style="font-weight: bold;"></td>'; // Autofilled
 				print '<td align="center">&nbsp;</td>';
 				print "</tr>\n";
-				print '</tfoot>';
 			}
+
+			print '</tbody>';
+
 			print "</table>";
 			print "</div>\n";
 		}
