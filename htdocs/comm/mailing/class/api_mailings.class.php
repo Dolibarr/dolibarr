@@ -301,7 +301,7 @@ class Mailings extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$mailing_target = new MailingTarget($this->db);
 				if ($mailing_target->fetch($obj->rowid) > 0) {
-					$obj_ret[] = $this->_filterObjectProperties($this->_cleanTargetDatas($mailing_target), $properties);
+					$obj_ret[] = $this->_filterObjectProperties($this->cleanTargetDatas($mailing_target), $properties);
 				}
 				$i++;
 			}
@@ -735,7 +735,7 @@ class Mailings extends DolibarrApi
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
 	 */
-	protected function _cleanTargetDatas($object)
+	protected function cleanTargetDatas($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
