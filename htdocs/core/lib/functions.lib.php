@@ -3338,94 +3338,92 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} else {
-		if ($showimage) {
-			if ($modulepart != 'unknown' || method_exists($object, 'getDataToShowPhoto')) {
-				$phototoshow = '';
-				// Check if a preview file is available
-				if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick")) {
-					$objectref = dol_sanitizeFileName($object->ref);
-					$dir_output = (empty($conf->$modulepart->multidir_output[$entity]) ? $conf->$modulepart->dir_output : $conf->$modulepart->multidir_output[$entity]) . "/";
-					if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice'))) {
-						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart);
-						$subdir .= ((!empty($subdir) && !preg_match('/\/$/', $subdir)) ? '/' : '') . $objectref; // the objectref dir is not included into get_exdir when used with level=2, so we add it at end
-					} else {
-						$subdir = get_exdir($object->id, 0, 0, 1, $object, $modulepart);
-					}
-					if (empty($subdir)) {
-						$subdir = 'errorgettingsubdirofobject'; // Protection to avoid to return empty path
-					}
+		if ($modulepart != 'unknown' || method_exists($object, 'getDataToShowPhoto')) {
+			$phototoshow = '';
+			// Check if a preview file is available
+			if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick")) {
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir_output = (empty($conf->$modulepart->multidir_output[$entity]) ? $conf->$modulepart->dir_output : $conf->$modulepart->multidir_output[$entity]) . "/";
+				if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice'))) {
+					$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart);
+					$subdir .= ((!empty($subdir) && !preg_match('/\/$/', $subdir)) ? '/' : '') . $objectref; // the objectref dir is not included into get_exdir when used with level=2, so we add it at end
+				} else {
+					$subdir = get_exdir($object->id, 0, 0, 1, $object, $modulepart);
+				}
+				if (empty($subdir)) {
+					$subdir = 'errorgettingsubdirofobject'; // Protection to avoid to return empty path
+				}
 
-					$filepath = $dir_output . $subdir . "/";
+				$filepath = $dir_output . $subdir . "/";
 
-					$filepdf = $filepath . $objectref . ".pdf";
-					$relativepath = $subdir . '/' . $objectref . '.pdf';
+				$filepdf = $filepath . $objectref . ".pdf";
+				$relativepath = $subdir . '/' . $objectref . '.pdf';
 
-					// Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
-					$fileimage = $filepdf . '_preview.png';
-					$relativepathimage = $relativepath . '_preview.png';
+				// Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
+				$fileimage = $filepdf . '_preview.png';
+				$relativepathimage = $relativepath . '_preview.png';
 
-					$pdfexists = file_exists($filepdf);
+				$pdfexists = file_exists($filepdf);
 
-					// If PDF file exists
-					if ($pdfexists) {
-						// Conversion du PDF en image png si fichier png non existent
-						if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
-							if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
-								include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-								$ret = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
-								if ($ret < 0) {
-									$error++;
-								}
+				// If PDF file exists
+				if ($pdfexists) {
+					// Conversion du PDF en image png si fichier png non existent
+					if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
+						if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							$ret = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+							if ($ret < 0) {
+								$error++;
 							}
 						}
 					}
+				}
 
-					if ($pdfexists && !$error) {
-						$heightforphotref = 80;
-						if (!empty($conf->dol_optimize_smallscreen)) {
-							$heightforphotref = 60;
-						}
-						// If the preview file is found
-						if (file_exists($fileimage)) {
-							$phototoshow = '<div class="photoref">';
-							$phototoshow .= '<img height="' . $heightforphotref . '" class="photo photowithborder" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=apercu' . $modulepart . '&amp;file=' . urlencode($relativepathimage) . '">';
-							$phototoshow .= '</div>';
-						}
+				if ($pdfexists && !$error) {
+					$heightforphotref = 80;
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$heightforphotref = 60;
 					}
-				} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo' or 'memberphoto'
-					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0);
+					// If the preview file is found
+					if (file_exists($fileimage)) {
+						$phototoshow = '<div class="photoref">';
+						$phototoshow .= '<img height="' . $heightforphotref . '" class="photo photowithborder" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=apercu' . $modulepart . '&amp;file=' . urlencode($relativepathimage) . '">';
+						$phototoshow .= '</div>';
+					}
 				}
-
-				if ($phototoshow) {
-					$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
-					$morehtmlleft .= $phototoshow;
-					$morehtmlleft .= '</div>';
-				}
+			} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo' or 'memberphoto'
+				$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0);
 			}
 
-			if (empty($phototoshow)) {      // Show No photo link (picto of object)
-				if ($object->element == 'action') {
-					$width = 80;
-					$cssclass = 'photorefcenter';
-					$nophoto = img_picto('No photo', 'title_agenda');
-				} else {
-					$width = 14;
-					$cssclass = 'photorefcenter';
-					$picto = $object->picto;  // @phan-suppress-current-line PhanUndeclaredProperty
-					$prefix = 'object_';
-					if ($object->element == 'project' && !$object->public) {  // @phan-suppress-current-line PhanUndeclaredProperty
-						$picto = 'project'; // instead of projectpub
-					}
-					if (strpos($picto, 'fontawesome_') !== false) {
-						$prefix = '';
-					}
-					$nophoto = img_picto('No photo', $prefix . $picto);
-				}
-				$morehtmlleft .= '<!-- No photo to show -->';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-				$morehtmlleft .= $nophoto;
-				$morehtmlleft .= '</div></div>';
+			if ($phototoshow) {
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
+				$morehtmlleft .= $phototoshow;
+				$morehtmlleft .= '</div>';
 			}
+		}
+
+		if (empty($phototoshow)) {      // Show No photo link (picto of object)
+			if ($object->element == 'action') {
+				$width = 80;
+				$cssclass = 'photorefcenter';
+				$nophoto = img_picto('No photo', 'title_agenda');
+			} else {
+				$width = 14;
+				$cssclass = 'photorefcenter';
+				$picto = $object->picto;  // @phan-suppress-current-line PhanUndeclaredProperty
+				$prefix = 'object_';
+				if ($object->element == 'project' && !$object->public) {  // @phan-suppress-current-line PhanUndeclaredProperty
+					$picto = 'project'; // instead of projectpub
+				}
+				if (strpos($picto, 'fontawesome_') !== false) {
+					$prefix = '';
+				}
+				$nophoto = img_picto('No photo', $prefix . $picto);
+			}
+			$morehtmlleft .= '<!-- No photo to show -->';
+			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+			$morehtmlleft .= $nophoto;
+			$morehtmlleft .= '</div></div>';
 		}
 	}
 
@@ -7245,7 +7243,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			}
 		}
 		$sortordertouseinlink = preg_replace('/,$/', '', $sortordertouseinlink);
-		$out .= '<a class="reposition" href="' . $file . '?sortfield=' . urlencode($field) . '&sortorder=' . urlencode($sortordertouseinlink) . '&begin=' . urlencode($begin) . $options . '"';
+		$out .= '<a class="reposition" href="' . dolBuildUrl($file, ['sortfield' => $field, 'sortorder' => $sortordertouseinlink, 'begin' => $begin]) . $options . '"';
 		//$out .= (getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') ? '' : ' title="'.dol_escape_htmltag($langs->trans($name)).'"');
 		$out .= '>';
 	}
@@ -12670,8 +12668,11 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						}
 					}
 				}
-
-				$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
+				$url = preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]);
+				$link = parse_url($url);
+				$query = [];
+				parse_str($link['query'], $query);
+				$newtab[0] = dolBuildUrl(dol_buildpath($link['path'], 1), $query);
 				$newtab[1] = $label;
 				$newtab[2] = str_replace('+', '', $values[1]);
 				$h++;

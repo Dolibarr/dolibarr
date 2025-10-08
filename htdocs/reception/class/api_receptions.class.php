@@ -94,7 +94,7 @@ class Receptions extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter receptions of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101'). (el.fk_source:=:123) allows filtering by supplier order id"
 	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
@@ -123,6 +123,9 @@ class Receptions extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception AS t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."reception_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		if (preg_match("/el\.fk_source:=:\d+/", $sqlfilters)) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = t.rowid AND el.targettype = 'reception' AND el.sourcetype = 'order_supplier'";
+		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('reception').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";

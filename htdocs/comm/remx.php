@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Anthony Damhet				<a.damhet@progiseize.fr>
  *
@@ -815,7 +815,7 @@ if ($socid > 0) {
 
 	if ($isSupplier) {
 		if ($isCustomer) {
-			$newcardbutton = dolGetButtonTitle($langs->trans("NewSupplierGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=1&backtopage='.$_SERVER["PHP_SELF"].'?id='.$id.'&token='.newToken());
+			$newcardbutton = dolGetButtonTitle($langs->trans("NewSupplierGlobalDiscount"), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create_remise&id='.$id.'&discount_type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'&token='.newToken());
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), $newcardbutton, '');
