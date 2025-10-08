@@ -938,6 +938,8 @@ class pdf_ledger extends ModelePdfAccountancy
 	 */
 	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
 	{
+		global $langs;
+
 		$curY = $nexY;
 		$pageposbefore = $pdf->getPage();
 		$pdf->SetFont('', 'B', $default_font_size - 1);
