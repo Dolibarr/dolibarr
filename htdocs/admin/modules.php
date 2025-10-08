@@ -540,6 +540,7 @@ foreach ($modulesdir as $dir) {
 						if (class_exists($modName)) {
 							$objMod = new $modName($db);
 							'@phan-var-force DolibarrModules $objMod';
+							/** @var DolibarrModules $objMod */
 							$modNameLoaded[$modName] = $dir;
 							if (!$objMod->numero > 0 && $modName != 'modUser') {
 								dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
@@ -653,6 +654,7 @@ foreach ($modulesdir as $dir) {
 }
 
 '@phan-var-force array<string,DolibarrModules> $modules';
+/** @var array<string,DolibarrModules> $modules */
 
 if ($action == 'reset_confirm' && $user->admin) {
 	if (!empty($modules[$value])) {
