@@ -1095,7 +1095,8 @@ class pdf_sponge extends ModelePDFFactures
 				}
 				// Add terms to sale
 				if (!empty($mysoc->termsofsale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsale = $conf->mycompany->dir_output.'/'.$mysoc->termsofsale;
+					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+					$termsofsale = $conf->mycompany->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity].'/'.$mysoc->termsofsale;
 					}
