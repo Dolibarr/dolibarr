@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,7 @@ require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 
 global $langs;
 
-$grant_query = '';
-$step = 2;
+
 $error = 0;
 
 
@@ -144,7 +143,7 @@ pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'up
 
 
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
-	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
+	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="Database"> ';
 	print '<span class="inline-block valignmiddle">'.$langs->trans('DataMigration').'</span></h3>';
 
 	print '<table class="centpercent">';
@@ -605,6 +604,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
 				migrate_accountingbookkeeping($entity);
+			}
+
+			// Scripts for 23.0
+			$afterversionarray = explode('.', '22.0.9');
+			$beforeversionarray = explode('.', '23.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_apiresttokens();
 			}
 		}
 
@@ -5364,5 +5370,82 @@ function migrate_accountingbookkeeping(int $entity)
 
 	if (!$resultstring) {
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
+}
+
+/**
+ * Migrate API key in oauth_token table
+ *
+ * @return  void
+ */
+function migrate_apiresttokens()
+{
+	global $db, $langs;
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationApiRestTokens')."</b><br>\n";
+
+	$error = 0;
+	$nbofmigration = 0;
+	$allexistingtokens = array();
+
+	$db->begin();
+
+	$sqlforalltokens = "SELECT oat.token";
+	$sqlforalltokens .= " FROM ".$db->prefix()."oauth_token AS oat";
+	$sqlforalltokens .= " WHERE oat.service = 'dolibarr_rest_api'";
+
+	$resalltoken = $db->query($sqlforalltokens);
+
+	if ($resalltoken) {
+		while ($tokenobj = $db->fetch_object($resalltoken)) {
+			$allexistingtokens[] = dolDecrypt($tokenobj->token);
+		}
+	} else {
+		$error++;
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	if (!$error) {
+		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, CURRENT_TIMESTAMP AS datec, u.entity";
+		$sql .= " FROM llx_user AS u";
+		$sql .= " WHERE u.api_key IS NOT NULL";
+
+		$result = $db->query($sql);
+
+		if ($result) {
+			while ($obj = $db->fetch_object($result)) {
+				if (!in_array(dolDecrypt($obj->token), $allexistingtokens)) {
+					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, fk_user, datec, entity)";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape($obj->token)."', ".((int) $obj->fk_user).", '".$db->escape($obj->datec)."', ".((int) $obj->entity).")";
+
+					$insertresult = $db->query($sqlforinsert);
+					if (!$insertresult) {
+						$error++;
+						dol_print_error($db);
+					} else {
+						$nbofmigration++;
+					}
+				}
+			}
+
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+		} else {
+			dol_print_error($db);
+			$db->rollback();
+		}
+	}
+
+	if (!$nbofmigration) {
+		print '</td></tr>';
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	} else {
+		print $langs->trans('MigratedTokens', $nbofmigration);
+		print '</td></tr>';
 	}
 }

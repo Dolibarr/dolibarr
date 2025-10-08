@@ -2,13 +2,13 @@
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2012       Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014       Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014       Marcos García 		 <marcosgdf@gmail.com>
- * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2012       Cédric Salvador       	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Raphaël Doursenaud    	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Marcos García 		 	<marcosgdf@gmail.com>
+ * Copyright (C) 2015       Juanjo Menent		 	<jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet		 	<fmarcet@2byte.es>
  * Copyright (C) 2018       Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra Gaya 	<jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
@@ -198,7 +198,7 @@ class Paiement extends CommonObject
 	public $bank_account;
 
 	/**
-	 * @var int bank account id of payment
+	 * @var ?int bank account id of payment
 	 */
 	public $fk_account;
 
@@ -281,6 +281,7 @@ class Paiement extends CommonObject
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 
+				$this->fetch_optionals();
 				$this->db->free($resql);
 				return 1;
 			} else {
@@ -403,11 +404,11 @@ class Paiement extends CommonObject
 			$currencyofpayment = $conf->currency;
 		}
 
-		if (!empty($currencyofpayment)) {
+		if (!empty($currencyofpayment && !empty($this->fk_account))) {
 			// We must check that the currency of invoices is the same than the currency of the bank
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$bankaccount = new Account($this->db);
-			$bankaccount->fetch($this->fk_account);
+			$bankaccount->fetch((int) $this->fk_account);
 			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
 
 			if ($bankcurrencycode != $conf->currency) {
@@ -707,6 +708,7 @@ class Paiement extends CommonObject
 
 		// Delete bank urls. If payment is on a conciliated line, return error.
 		if ($bank_line_id > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accline = new AccountLine($this->db);
 
 			$result = $accline->fetch($bank_line_id);
@@ -741,6 +743,7 @@ class Paiement extends CommonObject
 			// End call triggers
 		}
 
+		$this->deleteExtraFields();
 		// Delete payment (into paiement_facture and paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
 		$sql .= ' WHERE fk_paiement = '.((int) $this->id);
@@ -1555,6 +1558,7 @@ class Paiement extends CommonObject
 	 */
 	public function isReconciled()
 	{
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$accountline = new AccountLine($this->db);
 		$accountline->fetch($this->bank_line);
 		return $accountline->rappro ? true : false;

@@ -157,14 +157,14 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/contrat/list.php';
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT . '/contrat/list.php');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/contrat/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = dolBuildUrl(DOL_URL_ROOT . '/contrat/card.php', ['id'=> ((!empty($id) && $id > 0) ? $id : '__ID__')]);
 			}
 		}
 	}
@@ -1019,8 +1019,8 @@ if (empty($reshook)) {
 				$action = 'editref';
 			} else {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				$old_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($old_ref);
-				$new_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+				$old_filedir = $conf->contrat->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($old_ref);
+				$new_filedir = $conf->contrat->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 				// Rename directory of contract with new name
 				dol_move_dir($old_filedir, $new_filedir);
@@ -1203,7 +1203,7 @@ if ($action == 'create') {
 			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (int) $objectsrc->fk_project;
 
 			$soc = $objectsrc->thirdparty;
 
@@ -1262,7 +1262,7 @@ if ($action == 'create') {
 		print '<td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+		print ' <a href="'.dolBuildUrl(DOL_URL_ROOT . '/societe/card.php', ['action' => 'create', 'customer' => 3, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1310,7 +1310,7 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
 		$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, "projectid", 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print ' &nbsp; <a href="' . dolBuildUrl(DOL_URL_ROOT . '/projet/card.php', ['socid' => $soc->id, 'action' => 'create', 'status' => 1, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'socid' => $soc->id])]) . '"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print "</td></tr>";
 	}
 
@@ -1394,7 +1394,7 @@ if ($action == 'create') {
 			if ($ref == 'PROV' && !empty($modCodeContract->code_auto)) {
 				$numref = $object->getNextNumRef($object->thirdparty);
 			} else {
-				$numref = $object->ref;
+				$numref = (string) $object->ref;
 			}
 			$text = $langs->trans('ConfirmValidateContract', $numref);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ValidateAContract"), $text, "confirm_valid", '', 0, 1);
@@ -2278,7 +2278,18 @@ if ($action == 'create') {
 
 				// Create ... buttons
 				$arrayofcreatebutton = array();
-				if (isModEnabled('order') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
+				if (isModEnabled('propal') && $object->status > 0 && $soc->client > 0) {
+					$arrayofcreatebutton[] = array(
+						'attr' => array('style' => 'text-align: left;'),
+						'url' => '/comm/propal/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'&renewal=true',
+						'label' => $langs->trans('AddProp'),
+						'lang' => 'propal',
+						'perm' => $user->hasRight('propale', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
+				//if (isModEnabled('order') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
+				if (isModEnabled('order') && $object->status > 0 && $soc->client > 0) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddOrder'),
@@ -2370,7 +2381,7 @@ if ($action == 'create') {
 			 * Generated documents
 			 */
 			$filename = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->contrat->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
+			$filedir = $conf->contrat->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->hasRight('contrat', 'lire');
 			$delallowed = $user->hasRight('contrat', 'creer');
@@ -2416,7 +2427,7 @@ if ($action == 'create') {
 		// Presend form
 		$modelmail = 'contract';
 		$defaulttopic = 'SendContractRef';
-		$diroutput = $conf->contrat->multidir_output[$object->entity];
+		$diroutput = $conf->contrat->multidir_output[$object->entity ?? $conf->entity];
 		$trackid = 'con'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

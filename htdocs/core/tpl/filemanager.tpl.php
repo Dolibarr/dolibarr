@@ -28,6 +28,8 @@
  * @var Translate $langs
  * @var User $user
  * @var Website $website
+ *
+ * @var string $module
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {

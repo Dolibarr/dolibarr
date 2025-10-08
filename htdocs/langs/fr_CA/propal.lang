@@ -3,6 +3,7 @@ ProposalsDraft=Propositions brouillons
 ProposalCard=Carte de proposition
 DeleteProp=Supprimer la proposition commerciale
 ValidateProp=Valider la proposition commerciale
+AddRenewalProp=Créer une proposition de renouvellement
 ConfirmDeleteProp=Êtes-vous sûr de vouloir supprimer cette proposition commerciale?
 ConfirmValidateProp=Êtes-vous sûr de vouloir valider cette proposition commerciale sous le nom <b> %s</b>?
 ConfirmCancelPropal=Êtes-vous sûr de vouloir annuler la proposition commerciale <b>%s</b> ?

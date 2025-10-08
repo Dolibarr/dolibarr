@@ -30,6 +30,8 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
+ * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.logfile.
+ *
  * @param	string	  	$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
  * @param	string    	$param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
@@ -40,17 +42,17 @@
  * @param	int<-1,1>  	$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
  * @param	int			$timeoutconnect		Timeout connect
  * @param	int			$timeoutresponse	Timeout response
+ * @param	array<int, mixed>	$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0)
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array())
 {
-	//declaring of global variables
-	global $conf;
-	$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? 0 : $conf->global->MAIN_PROXY_USE;
-	$PROXY_HOST = !getDolGlobalString('MAIN_PROXY_HOST') ? 0 : $conf->global->MAIN_PROXY_HOST;
-	$PROXY_PORT = !getDolGlobalString('MAIN_PROXY_PORT') ? 0 : $conf->global->MAIN_PROXY_PORT;
-	$PROXY_USER = !getDolGlobalString('MAIN_PROXY_USER') ? 0 : $conf->global->MAIN_PROXY_USER;
-	$PROXY_PASS = !getDolGlobalString('MAIN_PROXY_PASS') ? 0 : $conf->global->MAIN_PROXY_PASS;
+	// Get global variables for proxy use
+	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
+	$PROXY_HOST = getDolGlobalString('MAIN_PROXY_HOST');
+	$PROXY_PORT = getDolGlobalInt('MAIN_PROXY_PORT');
+	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
+	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
@@ -65,7 +67,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	 print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
 	 print $nvpStr;
 	 exit;*/
-	curl_setopt($ch, CURLOPT_VERBOSE, 1);
+	curl_setopt($ch, CURLOPT_VERBOSE, true);
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');	// set the Dolibarr user agent name
 
 	// We use @ here because this may return warning if safe mode is on or open_basedir is on (following location is forbidden when safe mode is on).
@@ -76,6 +78,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
+
+	if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) {
+		curl_setopt($ch, CURLOPT_HEADER, true); // To be able to retrieve response header
+	}
 
 	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
@@ -96,7 +102,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// Turning off the server and peer verification(TrustManager Concept).
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
+
+	// 0 to not check the names
+	// 1 to check the existence of a common name in the SSL peer certificate
+	// 2 to check the existence of a common name and also verify that it matches the hostname provided.
+	// In production environments the value of this option should be kept at 2 (default value).
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? 2 : 0));
 
 	// Restrict use to some protocols only
 	$protocols = 0;
@@ -119,8 +130,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		}
 	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
-	curl_setopt($ch, CURLOPT_TIMEOUT, $timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	$newtimeoutresponse = ($timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+
+	dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse);
+
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -132,18 +148,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // We want response
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // We want response
 	if ($postorget == 'POST') {
-		curl_setopt($ch, CURLOPT_POST, 1); // POST
+		curl_setopt($ch, CURLOPT_POST, true); // POST
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // Setting param x=a&y=z as POST fields
 	} elseif ($postorget == 'POSTALREADYFORMATED') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); // HTTP request is 'POST' but param string is taken as it is
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
 	} elseif ($postorget == 'PUT') {
-		$array_param = null;
+		$array_param = array();
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
 		if (!is_array($param)) {
-			parse_str($param, $array_param);  // @phan-suppress-current-line PhanPluginConstantVariableNull
+			parse_str($param, $array_param);
 		} else {
 			dol_syslog("parameter param must be a string", LOG_WARNING);
 			$array_param = $param;
@@ -153,10 +169,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
 	} elseif ($postorget == 'PATCH') {
-		$array_param = null;
+		$array_param = array();
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH'); // RFC 5789
 		if (!is_array($param)) {
-			parse_str($param, $array_param);  // @phan-suppress-current-line PhanPluginConstantVariableNull
+			parse_str($param, $array_param);
 		} else {
 			dol_syslog("parameter param must be a string", LOG_WARNING);
 			$array_param = $param;
@@ -171,7 +187,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'DELETE') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
 	} else {
-		curl_setopt($ch, CURLOPT_POST, 0); // GET
+		curl_setopt($ch, CURLOPT_POST, false); // GET
 	}
 
 	//if USE_PROXY constant set at begin of this method.
@@ -181,6 +197,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
 		if ($PROXY_USER) {
 			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER.":".$PROXY_PASS);
+		}
+	}
+
+	if (is_array($otherCurlOptions)) {
+		foreach ($otherCurlOptions as $option => $value) {
+			curl_setopt($ch, $option, $value);
 		}
 	}
 
@@ -311,6 +333,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
+			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
+				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
+			}
 		} else {
 			$rep['content'] = '';
 		}

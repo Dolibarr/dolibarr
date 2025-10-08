@@ -1066,7 +1066,7 @@ function getNbOfImagePublicURLOfObject($object)
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		}
 	}
 

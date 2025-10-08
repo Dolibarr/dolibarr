@@ -295,7 +295,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 			}
 
@@ -742,7 +742,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(1, 'create', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
+} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
 	}

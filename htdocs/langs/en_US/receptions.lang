@@ -55,3 +55,5 @@ ReceptionUpdated=Reception successfully updated
 ReceptionDistribution=Reception distribution
 ReceptionMustBeInTheSameCurrencyThanOther=Reception have to be int the same currency than the other
 AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=Automatic validation is not possible when stock is decreased on invoice validation
+ReceptionSentByEMail=Reception sent by email
+ReceptionValidated=Reception validated

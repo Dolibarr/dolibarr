@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011	Regis Houssin					<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Cédric Salvador					<csalvador@gpcsolutions.fr>
  * Copyright (C) 2017		Ferran Marcet					<fmarcet@2byte.es>
- * Copyright (C) 2017-2024	Frédéric France					<frederic.france@free.fr>
+ * Copyright (C) 2017-2025  Frédéric France					<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro				<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW								<mdeweerd@users.noreply.github.com>
  *
@@ -136,10 +136,10 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->facture->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
-		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
+		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, $object->picto);
 
 		$totalpaid = $object->getSommePaiement();
 
@@ -165,7 +165,7 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {
+			if (0) {	// @phpstan-ignore-line
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';

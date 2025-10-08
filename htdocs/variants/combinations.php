@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016      	Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017      	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022   	Open-Dsi			<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -62,7 +62,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $cancel = GETPOST('cancel', 'alpha');
 $delete_product = GETPOST('delete_product', 'alpha');
 $subaction = GETPOST('subaction', 'aZ09');
@@ -374,7 +374,7 @@ if ($action === 'confirm_deletecombination' && $usercancreate) {
 
 	$product_child = new Product($db);
 	$product_child->fetch($prodcomb->fk_product_child);
-	$reference = $product_child->ref;
+	$reference = (string) $product_child->ref;
 	$weight_impact = $prodcomb->variation_weight;
 	$price_impact = $prodcomb->variation_price;
 	$price_impact_percent = $prodcomb->variation_price_percentage;
@@ -875,7 +875,7 @@ if (!empty($id) || !empty($ref)) {
 
 		$aaa = '';
 		if (count($productCombinations)) {
-			$aaa = '<select id="bulk_action" name="massaction" class="flat">';
+			$aaa = '<select id="bulk_action" name="massaction" class="minwidth250">';
 			$aaa .= '	<option value="nothing">&nbsp;</option>';
 			$aaa .= '	<option value="not_buy" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusNotOnBuy'))).'">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
 			$aaa .= '	<option value="not_sell" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusNotOnSell'))).'">'.$langs->trans('ProductStatusNotOnSell').'</option>';

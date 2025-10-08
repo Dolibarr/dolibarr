@@ -1,7 +1,7 @@
-<!-- file menu.tpl.php -->
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		sebastien schaffhauser	<sebastien@webmaster67.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu orders
 	if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
 		$navMenu['order_list'] = array(
@@ -53,7 +52,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu invoices
 	if (isModEnabled('invoice') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
 		$navMenu['invoice_list'] = array(
@@ -64,7 +62,26 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
+	// menu documents (GED)
+	if (getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS')) {
+		$navMenu['document_list'] = array(
+			'id' => 'document_list',
+			'rank' => 40,
+			'url' => $context->getControllerUrl('documentlist'),
+			'name' => $langs->trans('MyDocuments'), // CORRIGÉ : Clé de traduction correcte
+			'group' => 'administrative' // group identifier for the group if necessary
+		);
+	}
+	// Shared documents menu
+	if (getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS')) {
+		$navMenu['shared_documents'] = array(
+			'id' => 'shared_documents',
+			'rank' => 50,
+			'url' => $context->getControllerUrl('shareddocuments'),
+			'name' => $langs->trans('SharedDocuments'),
+			'group' => 'administrative'
+		);
+	}
 	// menu member
 	$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
 	if (isModEnabled('member')
@@ -80,7 +97,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu partnership
 	$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
 	if (isModEnabled('partnership')
@@ -96,7 +112,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu user with logout
 	$navUserMenu['user_logout'] = array(
 		'id' => 'user_logout',
@@ -105,7 +120,6 @@ if ($context->userIsLog()) {
 		'name' => img_picto($langs->trans('Logout'), 'logout', 'class="pictofixedwidth"'),
 	);
 }
-
 // GROUP MENU
 $navGroupMenu = array(
 	'administrative' => array(
@@ -127,6 +141,7 @@ $navGroupMenu = array(
 $parameters = array(
 	'controller' => $context->controller,
 	'Tmenu' => & $navMenu,
+	'TUserMenu' => & $navUserMenu,
 	'TGroupMenu' => & $navGroupMenu,
 	'maxTopMenu' => & $maxTopMenu
 );
@@ -163,7 +178,6 @@ if (empty($reshook)) {
 					}
 				}
 			}
-
 			// add grouped items to this menu
 			foreach ($navGroupMenu as $groupId => $groupItem) {
 				// If group have more than 1 item, group is valid
@@ -191,7 +205,7 @@ if (empty($reshook)) {
 		<li class="brand">
 		<?php
 		$brandTitle = getDolGlobalString('WEBPORTAL_TITLE') ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-		print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
+		print '<a class="brand__logo-link" href="'.$context->getControllerUrl().'" >';
 		if (!empty($context->theme->menuLogoUrl)) {
 			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '">';
 		} else {
@@ -212,7 +226,7 @@ if (empty($reshook)) {
 	<ul class="menu-entries-alt">
 	<?php
 	// show menu
-	print '<li data-deep="0" class="--item-propal-list nav-item  "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
+	print '<li data-deep="0" class="--item-propal-list nav-item "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
 	?>
 	</ul>
 	<ul class="logout">

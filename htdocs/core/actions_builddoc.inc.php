@@ -34,7 +34,7 @@
  * @var Conf $conf
  * @var Translate $langs
  * @var User $user
- * @var CommonObject $object
+ * @var CommonObject|Societe $object
  *
  * @var string $action
  * @var int $id
@@ -50,6 +50,7 @@
  */
 '
 @phan-var-force ?array<string,mixed> $moreparams
+@phan-var-force CommonObject|Societe $object
 ';
 
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
@@ -87,7 +88,7 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->thirdparty->default_lang)) {
 			$newlang = $object->thirdparty->default_lang; // for proposal, order, invoice, ...
 		}
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && property_exists($object, 'default_lang') && empty($newlang) && isset($object->default_lang)) {
 			$newlang = $object->default_lang; // for thirdparty
 		}
 		if (!empty($newlang)) {

@@ -53,6 +53,8 @@ $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user')
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
+$object = new User($db);
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Define value to know what current user can do on properties of edited user
@@ -61,6 +63,7 @@ if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
 	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"));
 }
+
 
 
 /*

@@ -1412,14 +1412,14 @@ class AccountancyExport
 					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref;
+					$refInvoice = (string) $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref_supplier;
+					$refInvoice = (string) $invoice->ref_supplier;
 				}
 
 				$tab = array();
@@ -1632,14 +1632,14 @@ class AccountancyExport
 					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref;
+					$refInvoice = (string) $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref_supplier;
+					$refInvoice = (string) $invoice->ref_supplier;
 				}
 
 				$tab = array();

@@ -3,10 +3,10 @@ MenuFinancial=Fakturácia | Platba
 TaxModuleSetupToModifyRules=Prejsť na <a href="%s">daniach z modulu nastavenie</a> zmeniť pravidlá pre výpočet
 TaxModuleSetupToModifyRulesLT=Ak chcete upraviť pravidlá výpočtu, prejdite na <a href="%s">Nastavenie spoločnosti</a>
 OptionMode=Voľba pre účtovníctvo
-OptionModeTrue=Akruálne účtovníctvo
-OptionModeVirtual=Účtovníctvo v hotovosti
-OptionModeTrueDesc=V tejto súvislosti sa obrat vypočítava na základe platieb (dátum platieb). Platnosť údajov je zaručená iba vtedy, ak sa účtovníctvo kontroluje prostredníctvom vstupov/výstupov platieb.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=V tejto súvislosti sa počíta obrat cez faktúr (dátum schválenia). Ak sú tieto faktúry sú splatné, či boli zaplatené alebo nie, sú uvedené v obrate výstupu.
+OptionModeTrueDesc=V tejto súvislosti sa obrat vypočítava na základe platieb (dátum platieb). Platnosť údajov je zaručená iba vtedy, ak sa účtovníctvo kontroluje prostredníctvom vstupov/výstupov platieb.
 FeatureIsSupportedInInOutModeOnly=Funkcie dostupné iba v ÚVERY-dlhy účtovného režimu (pozri konfigurácia modulu Účtovníctvo)
 VATReportBuildWithOptionDefinedInModule=Sumy uvedené tu sú vypočítané na základe pravidiel stanovených daňovými Nastavenie modulu.
 LTReportBuildWithOptionDefinedInModule=Tu zobrazené sumy sú vypočítané pomocou pravidiel definovaných nastavením spoločnosti.
@@ -302,7 +302,6 @@ ByVatRate=Podľa sadzby dane z predaja
 TurnoverbyVatrate=Obrat fakturovaný podľa sadzby dane z predaja
 TurnoverCollectedbyVatrate=Obrat vyberaný podľa sadzby dane z predaja
 PurchasebyVatrate=Nákup podľa sadzby dane z predaja
-LabelToShow=Krátky názov
 PurchaseTurnover=Nákupný obrat
 PurchaseTurnoverCollected=Zhromaždený nákupný obrat
 RulesPurchaseTurnoverDue=- Zahŕňa splatné faktúry dodávateľa bez ohľadu na to, či sú zaplatené alebo nie. <br>– Vychádza z dátumu faktúry týchto faktúr.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Pravidlo pre dátumy riadkov
 Prepaid=Predplatené
 Postpaid=Paušálna platba
 SetRuleForLinesDates=Nastaviť pravidlo pre dátumy riadkov
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

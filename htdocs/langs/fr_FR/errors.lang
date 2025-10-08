@@ -87,6 +87,7 @@ ErrorBadFormatValueList=Les valeurs de la liste ne peuvent pas avoir plus d'une 
 ErrorFieldCanNotContainSpecialCharacters=Le champ <b>%s</b> ne peut contenir de caractères spéciaux.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=Le champ <b>%s</b> ne doit pas contenir de caractères spéciaux, ni de majuscules, et doit commencer par un caractère alphabétique (a-z)
 ErrorFieldMustHaveXChar=Le champ <b> %s </b> doit comporter au moins %s caractères.
+ErrorFieldMustHaveLessThanXChar=Le champ <b>%s</b> doit contenir un maximum de %s caractères.
 ErrorNoAccountancyModuleLoaded=Aucun module de comptabilité activé
 ErrorExportDuplicateProfil=Ce nom de profil existe déjà pour ce lot d'export.
 ErrorLDAPSetupNotComplete=Le matching Dolibarr-LDAP est incomplet.

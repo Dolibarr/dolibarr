@@ -1512,4 +1512,23 @@ class DoliDBPgsql extends DoliDB
 
 		return array();
 	}
+
+	/**
+	 * Prepare a SQL statement for execution (PostgreSQL prepared statement)
+	 *
+	 * @param string $sql The SQL query to prepare
+	 * @return string|false The name of the prepared statement on success, or false on failure
+	 */
+	public function prepare($sql)
+	{
+		$stmtname = uniqid('dolipgstmt_'); // Generate a unique identifier for the statement
+
+		$result = pg_prepare($this->db, $stmtname, $sql);
+		if (!$result) {
+			$this->lasterror = pg_last_error($this->db);
+			return false;
+		}
+
+		return $stmtname; // We just return the name of the prepared statement
+	}
 }

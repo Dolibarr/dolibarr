@@ -100,6 +100,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	/**
 	 * Unit price without taxes
 	 * @var float
+	 * @deprecated Use $subprice
 	 */
 	public $pu_ht;
 

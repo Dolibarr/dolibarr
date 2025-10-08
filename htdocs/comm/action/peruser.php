@@ -1493,14 +1493,28 @@ $maxnbofchar = 18;
 $cachethirdparties = array();
 $cachecontacts = array();
 $cacheusers = array();
-
+// default values
+$theme_datacolor = array(
+	array(137, 86, 161),
+	array(60, 147, 183),
+	array(250, 190, 80),
+	array(80, 166, 90),
+	array(190, 190, 100),
+	array(91, 115, 247),
+	array(140, 140, 220),
+	array(190, 120, 120),
+	array(115, 125, 150),
+	array(100, 170, 20),
+	array(150, 135, 125),
+	array(85, 135, 150),
+	array(150, 135, 80),
+	array(150, 80, 150)
+);
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
 	include $color_file;
-}
-if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
+	global $theme_datacolor;
 }
 
 $massactionbutton = '';
@@ -2295,10 +2309,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 			foreach ($cases1[$h] as $id => $ev) {
 				if ($ev['busy']) {
-					$style1 = 'onclickopenref peruser_busy';
+					$style1 .= 'peruser_busy ';
 				}
 				if (!empty($ev['css'])) {
-					$style1 .= ' '.$ev['css'];
+					$style1 .= $ev['css'].' ';
 				}
 			}
 		}
@@ -2315,10 +2329,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 			foreach ($cases2[$h] as $id => $ev) {
 				if ($ev['busy']) {
-					$style2 = 'onclickopenref peruser_busy';
+					$style2 .= 'peruser_busy ';
 				}
 				if (!empty($ev['css'])) {
-					$style2 .= ' '.$ev['css'];
+					$style2 .= $ev['css'].' ';
 				}
 			}
 		}
@@ -2335,10 +2349,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 			foreach ($cases3[$h] as $id => $ev) {
 				if ($ev['busy']) {
-					$style3 = 'onclickopenref peruser_busy';
+					$style3 .= 'peruser_busy ';
 				}
 				if (!empty($ev['css'])) {
-					$style3 .= ' '.$ev['css'];
+					$style3 .= $ev['css'].' ';
 				}
 			}
 		}
@@ -2355,10 +2369,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 			foreach ($cases4[$h] as $id => $ev) {
 				if ($ev['busy']) {
-					$style4 = 'onclickopenref peruser_busy';
+					$style4 .= 'peruser_busy ';
 				}
 				if (!empty($ev['css'])) {
-					$style4 .= ' '.$ev['css'];
+					$style4 .= $ev['css'].' ';
 				}
 			}
 		}
@@ -2473,13 +2487,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '<table class="nobordernopadding case centpercent">';
 		print '<tr>';
 		print '<td ';
-		if ($style1 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style1)) {
 			print 'style="border: 1px solid #'.($color1 ? $color1 : "888").' !important" ';
 		} elseif ($color1) {
 			print 'style="background: #'.$color1.'; "';
 		}
 		print 'class="';
-		print $style1.' ';
+		print $style1;
 		print 'center'.($title1 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'"';
 		print 'ref="'.$ref1.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"';
 		print ($title1 ? ' title="'.$title1.'"' : '').'>';
@@ -2487,13 +2501,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style2 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style2)) {
 			print 'style="border: 1px solid #'.($color2 ? $color2 : "888").' !important" ';
 		} elseif ($color2) {
 			print 'style="background: #'.$color2.'; "';
 		}
 		print 'class="';
-		print $style2.' ';
+		print $style2;
 		print 'center'.($title2 ? ' classfortooltip' : '').($title2 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref2.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_15_'.($ids2 ? $ids2 : 'none').'"';
 		print ($title2 ? ' title="'.$title2.'"' : '').'>';
@@ -2501,13 +2515,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style3 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style3)) {
 			print 'style="border: 1px solid #'.($color3 ? $color3 : "888").' !important" ';
 		} elseif ($color3) {
 			print 'style="background: #'.$color3.'; "';
 		}
 		print 'class="';
-		print $style3.' ';
+		print $style3;
 		print 'center'.($title3 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref3.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"';
 		print ($title3 ? ' title="'.$title3.'"' : '').'>';
@@ -2515,13 +2529,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style4 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style4)) {
 			print 'style="border: 1px solid #'.($color4 ? $color4 : "888").' !important" ';
 		} elseif ($color4) {
 			print 'style="background: #'.$color4.'; "';
 		}
 		print 'class="';
-		print $style4.' ';
+		print $style4;
 		print 'center'.($title4 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref4.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"';
 		print ($title4 ? ' title="'.$title4.'"' : '').'>';

@@ -32,6 +32,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
@@ -45,14 +52,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm", "trips"));
@@ -959,8 +958,9 @@ if ($id > 0) {
 	$morehtmlref .= '</div>';
 
 	$totalpaid = $object->getSommePaiement();
-	$object->alreadypaid = $totalpaid;
+
 	$object->totalpaid = $totalpaid;
+	$object->alreadypaid = $totalpaid;	// Same then $totalpaid because there is no amount of credit note or deposits for salary payments.
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
@@ -991,15 +991,6 @@ if ($id > 0) {
 		print dol_print_date($object->dateep, 'day');
 		print '</td></tr>';
 	}
-
-	/*print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td>';
-	print dol_print_date($object->datep, 'day');
-	print '</td></tr>';
-
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
-	print dol_print_date($object->datev, 'day');
-	print '</td></tr>';*/
 
 	if ($action == 'edit') {
 		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount) . '"></td></tr>';
@@ -1081,7 +1072,6 @@ if ($id > 0) {
 
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$total = 0;
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder paymenttable">';

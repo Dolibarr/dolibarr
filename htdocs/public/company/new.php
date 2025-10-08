@@ -207,6 +207,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$societe->code_client = '-1';
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 		$societe->note_private = GETPOST('note_private', 'alphanohtml');
+		$societe->ip = getUserRemoteIP();
 
 		// Fill array 'array_options' with data from add form
 		/*

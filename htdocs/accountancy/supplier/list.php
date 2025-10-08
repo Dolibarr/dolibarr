@@ -56,14 +56,14 @@ $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountancysupplierlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $default_account = GETPOSTINT('default_account');
 
 // Select Box
-$mesCasesCochees = GETPOST('toselect', 'array');
+$mesCasesCochees = GETPOST('toselect', 'array:int');
 
 // Search Getpost
 $search_lineid = GETPOST('search_lineid', 'alpha');		// Can be '> 100'
@@ -409,7 +409,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

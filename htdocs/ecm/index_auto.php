@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025 Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
@@ -346,7 +346,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	}
 	if (isModEnabled("supplier_order")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => $user->hasRight('fournisseur', 'commande', 'lire'), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => $user->hasRight('fournisseur', 'commande', 'lire'), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SuppliersOrders")));
 	}
 	if (isModEnabled("supplier_invoice")) {
 		$rowspan++;

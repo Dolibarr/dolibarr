@@ -402,9 +402,9 @@ class FormSetup
 		 */
 
 		$item = new FormSetupItem($confKey);
-		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developer to use object oriented usage
-		// @phan-suppress-next-line PhanDeprecatedFunction
-		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString((string) $params['type']);
+		// setTypeFromTypeString was created as deprecated to incite developer to use object oriented usage
+		/** @phan-suppress-next-line PhanDeprecatedFunction */
+		$item->setTypeFromTypeString((string) $params['type']);
 
 		if (!empty($params['enabled']) && is_numeric($params['enabled'])) {
 			$item->enabled = (int) $params['enabled'];

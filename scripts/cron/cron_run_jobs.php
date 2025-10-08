@@ -3,8 +3,8 @@
 /*
  * Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
- * Copyright (C) 2013-2015  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -109,12 +109,6 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=
 // Show TZ of the serveur when ran from command line.
 $ini_path = php_ini_loaded_file();
 print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
-
-// Check module cron is activated
-if (!isModEnabled('cron')) {
-	print "Error: module Scheduled jobs (cron) not activated\n";
-	exit(1);
-}
 
 // Check security key
 if ($key != getDolGlobalString('CRON_KEY')) {
@@ -240,6 +234,13 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
 			$conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
 			$mysoc->setMysoc($conf);
+
+			// Check module cron is activated
+			if (!isModEnabled('cron')) {
+				print "Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
+				dol_syslog("cron_run_jobs.php: Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity, LOG_INFO);
+				continue;
+			}
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
 			if ($conf->entity != $user->entity) {

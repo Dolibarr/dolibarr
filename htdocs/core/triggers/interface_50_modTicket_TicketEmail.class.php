@@ -182,7 +182,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 							$old_MAIN_MAIL_AUTOCOPY_TO = '';
 							if (!getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+								$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
 

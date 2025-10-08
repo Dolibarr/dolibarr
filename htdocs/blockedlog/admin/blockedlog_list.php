@@ -664,7 +664,7 @@ if (is_array($blocks)) {
 			print '<td class="right nowraponall">'.price($block->amounts).'</td>';
 
 			// Details link
-			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
+			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_picto($langs->trans('ShowDetails'), 'note', 'class="size15x"').'</a></td>';
 
 			// Fingerprint
 			print '<td class="nowraponall">';
@@ -737,14 +737,17 @@ print '</form>';
 print '<script type="text/javascript">
 
 jQuery(document).ready(function () {
-	jQuery("#dialogforpopup").dialog(
-	{ closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-	maxHeight: window.innerHeight-60, height: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).',
-	modal: true,
-	autoOpen: false }).css("z-index: 5000");
+	jQuery("#dialogforpopup").dialog({
+		closeOnEscape: true,
+		classes: { "ui-dialog": "highlight" },
+		maxHeight: window.innerHeight-60,
+		height: window.innerHeight-60,
+		width: '.($conf->browser->layout == 'phone' ? 400 : 700).',
+		modal: true,
+		autoOpen: false
+	}).css("z-index: 5000");
 
 	$("a[rel=show-info]").click(function() {
-
 	    console.log("We click on tooltip, we open popup and get content using an ajax call");
 
 		var fk_block = $(this).attr("data-blockid");
@@ -758,7 +761,9 @@ jQuery(document).ready(function () {
 			jQuery("#dialogforpopup").html(data);
 		});
 
-		jQuery("#dialogforpopup").dialog("open");
+		var mydialog = jQuery("#dialogforpopup");
+		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->trans("UnlaterableDataOfEvent")).'\',});
+		mydialog.dialog("open");
 	});
 })
 </script>'."\n";
