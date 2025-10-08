@@ -204,7 +204,7 @@ CREATE TABLE llx_accounting_bookkeeping_piece
 (
 	rowid               integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	entity              integer DEFAULT 1 NOT NULL,
-	ref             	varchar(255),
+	ref             	varchar(128),
 	tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datec				datetime,
 	datep				date NOT NULL,
@@ -230,4 +230,5 @@ ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeepin
 ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_closing (fk_user_closing);
 
 ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
+UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
 -- end of migration

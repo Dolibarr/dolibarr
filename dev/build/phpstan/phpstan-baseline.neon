@@ -1183,12 +1183,6 @@ parameters:
 			path: ../../../htdocs/ai/admin/setup.php
 
 		-
-			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|Expedition\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
 			message: '#^Variable \$modulepart in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1

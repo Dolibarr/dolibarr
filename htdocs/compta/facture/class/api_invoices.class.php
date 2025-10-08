@@ -579,6 +579,8 @@ class Invoices extends DolibarrApi
 	 * @param	int    $id             Id of invoice to update
 	 * @param	int    $contactid      Id of contact to add
 	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @param   string  $source		   external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 * @param   int     $notrigger     Disable all triggers
 	 * @return	array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
@@ -588,7 +590,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-	public function postContact($id, $contactid, $type)
+	public function postContact($id, $contactid, $type, $source = 'external', $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
@@ -608,7 +610,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->add_contact($contactid, $type, 'external');
+		$result = $this->invoice->add_contact($contactid, $type, $source, $notrigger);
 
 		if (!$result) {
 			throw new RestException(500, 'Error when added the contact');
