@@ -295,7 +295,7 @@ class pdf_ledger extends ModelePdfAccountancy
 						$curY,
 						$nexY,
 						$default_font_size,
-						$langs->trans('Total'),
+						$langs->transnoentities('Total'),
 						$tab_top_newpage,
 						$accountDebit,
 						$accountCredit
@@ -309,7 +309,7 @@ class pdf_ledger extends ModelePdfAccountancy
 					$nexY,
 					$default_font_size,
 					'piece_num',
-					$langs->trans('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
+					$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
 					$tab_top_newpage
 				);
 
@@ -426,7 +426,7 @@ class pdf_ledger extends ModelePdfAccountancy
 
 			if ($this->getColumnStatus('balance')) {
 				$solde = $object->lines[$i]->credit - $object->lines[$i]->debit;
-				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 				$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 				$nexY = max($pdf->GetY(), $nexY);
 			}
@@ -496,7 +496,7 @@ class pdf_ledger extends ModelePdfAccountancy
 				$curY,
 				$nexY,
 				$default_font_size,
-				$langs->trans('Total'),
+				$langs->transnoentities('Total'),
 				$tab_top_newpage,
 				$accountDebit,
 				$accountCredit
@@ -972,7 +972,7 @@ class pdf_ledger extends ModelePdfAccountancy
 
 		if ($this->getColumnStatus('balance')) {
 			$solde = $credit - $debit;
-			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 			$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 			$nexY = max($pdf->GetY(), $nexY);
 		}
