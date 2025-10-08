@@ -24,6 +24,7 @@ CantSuggest=Can't suggest
 AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done from the menu %s
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=Journalization
+Journal=Journal
 Journals=Journals
 JournalFinancial=Financial journals
 BackToChartofaccounts=Return chart of accounts
