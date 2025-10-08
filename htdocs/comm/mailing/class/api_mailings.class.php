@@ -544,6 +544,13 @@ class Mailings extends DolibarrApi
 		if ($fetchMailingResult < 0) {
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
+		$result = $this->mailing_target->fetch($targetid);
+		if ($result < 0) {
+			throw new RestException(404, 'Mass mailing target not found, id='.$targetid);
+		}
+		if ($id != $this->mailing_target->fk_mailing) {
+			throw new RestException(404, 'Target id='.$targetid.' is does not belong to mailing id='.$id);
+		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
@@ -554,7 +561,7 @@ class Mailings extends DolibarrApi
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
-				continue;
+				throw new RestException(400, 'Changing id field is forbidden');
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -566,7 +573,7 @@ class Mailings extends DolibarrApi
 		}
 
 		if ($this->mailing_target->update(DolibarrApiAccess::$user) > 0) {
-			return $this->getTarget($targetid);
+			return $this->getTarget($id, $targetid);
 		} else {
 			throw new RestException(500, $this->mailing_target->error);
 		}
@@ -622,7 +629,6 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Target id='.$targetid.' is does not belong to mailing id='.$id);
 		}
 
-
 		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -631,10 +637,6 @@ class Mailings extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->mailing_target->fetch($targetid);
-		if ($result < 0) {
-			throw new RestException(404, 'Mass mailing target not found, id='.$targetid);
-		}
 		return $this->_cleanTargetDatas($this->mailing_target);
 	}
 

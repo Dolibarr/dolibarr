@@ -121,3 +121,8 @@ HTTP 404
 # get a target in a mailing
 GET http://{{hostnport}}/api/index.php/mailings/0/getTarget/0
 HTTP 404
+
+# get a target in a mailing
+GET http://{{hostnport}}/api/index.php/mailings/0/updateTarget/0
+{}
+HTTP 404

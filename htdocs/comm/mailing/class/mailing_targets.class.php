@@ -183,7 +183,7 @@ class MailingTarget extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_target";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " (fk_mailing, fk_contact, email, statut)";
 		$sql .= " VALUES ('".((int) $this->fk_mailing)."', ";
 		$sql .= " .((int) $this->fk_contact)., ";
@@ -194,7 +194,7 @@ class MailingTarget extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing_target");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing_cibles");
 
 			$result = $this->update($user);
 			if ($result < 0) {
@@ -228,7 +228,7 @@ class MailingTarget extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_target";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " WHERE rowid = " . ((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -253,7 +253,7 @@ class MailingTarget extends CommonObject
 	{
 		$now = dol_now();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles ";
 		$sql .= " SET statut = ".((int) self::STATUS_NOTSENT).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -275,7 +275,7 @@ class MailingTarget extends CommonObject
 	{
 		$now = dol_now();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles ";
 		$sql .= " SET statut = ".((int) self::STATUS_SENT).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -297,7 +297,7 @@ class MailingTarget extends CommonObject
 	{
 		$now = dol_now();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles ";
 		$sql .= " SET statut = ".((int) self::STATUS_READ).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -319,7 +319,7 @@ class MailingTarget extends CommonObject
 	{
 		$now = dol_now();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles ";
 		$sql .= " SET statut = ".((int) self::STATUS_READANDUNSUBSCRIBED).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -341,7 +341,7 @@ class MailingTarget extends CommonObject
 	{
 		$now = dol_now();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles ";
 		$sql .= " SET statut = ".((int) self::STATUS_ERROR).", tms = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -388,7 +388,7 @@ class MailingTarget extends CommonObject
 		$error = 0;
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_target";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET fk_mailing = '".((int) $this->fk_mailing)."'";
 		$sql .= ", fk_contact = '".((int) $this->fk_contact)."'";
 		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
@@ -400,8 +400,9 @@ class MailingTarget extends CommonObject
 		$sql .= ", source_url = '".$this->db->escape($this->source_url)."'";
 		$sql .= ", source_id = '".((int) $this->source_id)."'";
 		$sql .= ", source_type = '".$this->db->escape($this->source_type)."'";
-		$sql .= ", date_envoi = '".((int) $this->date_envoi)."'";
-		$sql .= ", tms = '".$this->db->idate($now)."'";
+		if ($this->date_envoi) {
+			$sql .= ", date_envoi = '".$this->db->idate($this->date_envoi)."'";
+		}
 		$sql .= ", error_text = '".($this->error_text ? $this->db->escape($this->error_text) : null)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
