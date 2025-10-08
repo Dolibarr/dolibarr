@@ -917,6 +917,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 			}
 
+			// at this step $object is always an object
 			if ($fetchbyid) {
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $object->fetch((int) $ref);
@@ -1064,7 +1065,8 @@ class Documents extends DolibarrApi
 		}
 
 		$moreinfo = array('note_private' => 'File uploaded using API /documents from IP '.getUserRemoteIP());
-		if (!empty($object) && $object->id > 0) {
+		// $object may be null
+		if (is_object($object) && $object->id > 0) {
 			$moreinfo['src_object_type'] = $object->table_element;
 			$moreinfo['src_object_id'] = $object->id;
 		}

@@ -510,18 +510,41 @@ class ExternalModules
 			$html .= '<td class="margeCote"><h2 class="appTitle">';
 			$html .= dolPrintHTML(dol_string_nohtmltag($product["label"]));
 			$html .= '<br><small>';
-			$html .= $version;			// No dol_escape_htmltag, it is already escape html
+			$html .= $version;			// Version Dolibarr. No dol_escape_htmltag, it is already escape html
 			$html .= '</small></h2>';
-			$html .= '<small> ';
+			$html .= '<small class="appDateCreation appRef"> ';
 			if (empty($product['tms'])) {
-				$html .= '<span class="opacitymedium">'.$langs->trans("DateCreation").': '.$langs->trans("Unknown").'</span>';
+				$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.$langs->trans("DateCreation").': ';
+				$html .= (!empty($product['datec']) ? dol_print_date(dol_stringtotime($product['datec']), 'day') : $langs->trans("Unknown")).'</span>';
 			} else {
-				$html .= '<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
+				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
 			}
-			$html .= ' - '.$langs->trans('Ref').' '.dolPrintHTML($product["ref"]);
+			$html .= ' &nbsp; '.$langs->trans('Ref').' '.dolPrintHTML($product["ref"]);
 			//$html .= ' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]);
 			$html .= '</small><br>';
-			$html .= '<small>'.$langs->trans('Source').': '.$product["source"].'</small><br>';
+			//$html .= '<div class="appSource valignmiddle inline-block">'.$langs->trans('Source').' &nbsp; </div>';
+			$html .= '<div class="appSource valignmiddle inline-block">';
+			if ($product["source"] == 'dolistore') {
+				//$html .= img_picto('DoliStore', 'shop', 'class="pictofixedwidth"');
+				$html .= '<img border="0" title="'.dolPrintHTML($langs->trans('Source').": DoliStore").'" class="imgautosize imgmaxwidth100 valignmiddle" style="height: 14px" src="'.DOL_URL_ROOT.'/theme/dolistore_squarred.svg">';
+			} elseif ($product["source"] == 'githubcommunity') {
+				$html .= img_picto($langs->trans('Source').': GitHub community repo', 'group', 'class="pictofixedwidth valignmiddle"');
+			} else {
+				$html .= img_picto($langs->trans('Source').': '.$langs->trans('Other'), 'generic', 'class="pictofixedwidth"');
+			}
+			//$html .= $product["source"];
+			$html .= '</div> &nbsp;';
+			if (!empty($product['phpmin'])) {
+				$html .= ' <span class="badge-secondary" style="padding: 2px; border-radius: 5px">PHP min '.$product['phpmin'].'</span>';
+			}
+			if (!empty($product['phpmax'])) {
+				$html .= ' <span class="badge-secondary" style="padding: 2px; border-radius: 5px">PHP max '.$product['phpmax'].'</span>';
+			}
+			if (!empty($product['author'])) {
+				$html .= ' - '.$langs->trans("Author").' : '.$product['author'];
+			}
+			$html .= '<br>';
+
 			$html .= '<br>'.dolPrintHTML(dol_string_nohtmltag($product["description"]));
 			$html .= '</td>';
 			// do not load if display none
