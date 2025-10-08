@@ -180,16 +180,11 @@ print "</tr>\n";
 
 foreach ($tableau as $key => $const) {	// Loop on each param
 	$label = '';
-	// $const is a const key like 'MYMODULE_ABC'
-	if (is_array($const)) {
-		$type = $const['type'];
-		$label = $const['label'];
-		$help = $const['help'];
-		$const = $key;
-	} else {
-		$type = $const;
-		$const = $key;
-	}
+	$type = $const['type'];
+	$label = $const['label'];
+	$help = empty($const['help']) ? '' : $const['help'];
+	$const = $key;
+
 	$sql = "SELECT rowid, ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value, type, note";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE ".$db->decrypt('name')." = '".$db->escape($const)."'";
