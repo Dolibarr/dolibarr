@@ -718,7 +718,7 @@ if (!empty($id) || !empty($ref)) {
 			} ?>
 			<tr>
 				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
-				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
+				   <td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>" spellcheck="false"></td>
 			</tr>
 			<?php
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
