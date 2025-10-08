@@ -65,17 +65,17 @@ $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL_
 
 // Editing global variables not related to a specific theme
 $constantes = array(
-	'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
-	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_MAIL_FROM'							=>array('type'=>'string','label'=>''),
-	'ADHERENT_CC_MAIL_FROM'							=>array('type'=>'string','label'=>''),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>array('type'=>'string','label'=>''),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>array('type'=>'html', 'tooltip'=>$helptext,'label'=>'')
+	'MEMBER_REMINDER_EMAIL'                         => array('type'=>'yesno', 'label' => $langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")), 'help' => $langs->trans('MEMBER_REMINDER_EMAILHelp', $langs->transnoentities("Module2300Name"))),
+	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_MAIL_FROM'							=> array('type'=>'string', 'label'=>''),
+	'ADHERENT_CC_MAIL_FROM'							=> array('type'=>'string', 'label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=> array('type'=>'string', 'label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=> array('type'=>'html', 'tooltip' => $helptext, 'label' => '')
 );
 
 
@@ -178,41 +178,35 @@ print '<td>';
 print '</td>';
 print "</tr>\n";
 
-$label = '';
 foreach ($tableau as $key => $const) {	// Loop on each param
 	$label = '';
 	// $const is a const key like 'MYMODULE_ABC'
-	if (is_numeric($key)) {		// Very old behaviour
-		$type = 'string';
+	if (is_array($const)) {
+		$type = $const['type'];
+		$label = $const['label'];
+		$help = $const['help'];
+		$const = $key;
 	} else {
-		if (is_array($const)) {
-			$type = $const['type'];
-			$label = $const['label'];
-			$const = $key;
-		} else {
-			$type = $const;
-			$const = $key;
-		}
+		$type = $const;
+		$const = $key;
 	}
-	$sql = "SELECT ";
-	$sql .= "rowid";
-	$sql .= ", ".$db->decrypt('name')." as name";
-	$sql .= ", ".$db->decrypt('value')." as value";
-	$sql .= ", type";
-	$sql .= ", note";
+	$sql = "SELECT rowid, ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value, type, note";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE ".$db->decrypt('name')." = '".$db->escape($const)."'";
 	$sql .= " AND entity IN (0, ".$conf->entity.")";
 	$sql .= " ORDER BY name ASC, entity DESC";
-	$result = $db->query($sql);
+	$resql = $db->query($sql);
 
 	dol_syslog("List params", LOG_DEBUG);
 
-	if ($result) {
-		$obj = $db->fetch_object($result); // Take first result of select
+	if ($resql) {
+		$obj = $db->fetch_object($resql); // Take first result of select
 
 		if (empty($obj)) {	// If not yet into table
 			$obj = (object) array('rowid' => '', 'name' => $const, 'value' => '', 'type' => $type, 'note' => '');
+		}
+		if ($const == 'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' && !getDolGlobalString('MEMBER_REMINDER_EMAIL')) {
+			continue;
 		}
 
 		print '<tr class="oddeven">';
@@ -224,12 +218,14 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 		print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 		print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
 
-		$picto = 'generic';
+		$picto = '';
 		$tmparray = explode(':', $obj->type);
 		if (!empty($tmparray[1])) {
 			$picto = preg_replace('/_send$/', '', $tmparray[1]);
 		}
-		print img_picto('', $picto, 'class="pictofixedwidth"');
+		if ($picto) {
+			print img_picto('', $picto, 'class="pictofixedwidth"');
+		}
 
 		if (!empty($tableau[$key]['tooltip'])) {
 			print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
@@ -237,31 +233,14 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 			print($label ? $label : $langs->trans('Desc'.$const));
 		}
 
-		if ($const == 'ADHERENT_MAILMAN_URL') {
-			print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
-			//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
-			print '<div id="example1" class="hidden">';
-			print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;subscribe_or_invite=0&amp;send_welcome_msg_to_this_batch=0&amp;notification_to_list_owner=0';
-			print '</div>';
-		} elseif ($const == 'ADHERENT_MAILMAN_UNSUB_URL') {
-			print '. '.$langs->trans("Example").': <a href="#" id="exampleclick2">'.img_down().'</a><br>';
-			print '<div id="example2" class="hidden">';
-			print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;send_unsub_ack_to_this_batch=0&amp;send_unsub_notifications_to_list_owner=0';
-			print '</div>';
-			//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
-		} elseif ($const == 'ADHERENT_MAILMAN_LISTS') {
-			print '. '.$langs->trans("Example").': <a href="#" id="exampleclick3">'.img_down().'</a><br>';
-			print '<div id="example3" class="hidden">';
-			print 'mymailmanlist<br>';
-			print 'mymailmanlist1,mymailmanlist2<br>';
-			print 'TYPE:Type1:mymailmanlist1,TYPE:Type2:mymailmanlist2<br>';
-			if (isModEnabled('category')) {
-				print 'CATEG:Categ1:mymailmanlist1,CATEG:Categ2:mymailmanlist2<br>';
-			}
-			print '</div>';
-			//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
-		} elseif (in_array($const, ['ADHERENT_MAIL_FROM', 'ADHERENT_CC_MAIL_FROM'])) {
+		if (in_array($const, ['ADHERENT_MAIL_FROM', 'ADHERENT_CC_MAIL_FROM'])) {
 			print ' '.img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
+		}
+		if ($help) {
+			print '<br><span class="opacitymedium">';
+			//print $langs->trans("MEMBER_REMINDER_EMAILHelp");
+			print $help;
+			print '</span>';
 		}
 
 		print "</td>\n";
@@ -270,7 +249,7 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 		print '<td>';
 		print '<input type="hidden" name="consttype_'.$const.'" value="'.($obj->type ? $obj->type : 'string').'">';
 		print '<input type="hidden" name="constnote_'.$const.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
-		if ($obj->type == 'textarea' || in_array($const, array('ADHERENT_CARD_TEXT', 'ADHERENT_CARD_TEXT_RIGHT', 'ADHERENT_ETIQUETTE_TEXT'))) {
+		if ($obj->type == 'textarea') {
 			print '<textarea class="flat" name="constvalue_'.$const.'" cols="50" rows="5" wrap="soft">'."\n";
 			print $obj->value;
 			print "</textarea>\n";
