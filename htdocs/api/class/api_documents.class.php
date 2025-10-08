@@ -917,19 +917,17 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 			}
 
-			if (is_object($object)) {
-				if ($fetchbyid) {
-					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$result = $object->fetch((int) $ref);
-				} else {
-					$result = $object->fetch(0, $ref);
-				}
+			if ($fetchbyid) {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				$result = $object->fetch((int) $ref);
+			} else {
+				$result = $object->fetch(0, $ref);
+			}
 
-				if ($result == 0) {
-					throw new RestException(404, "Object with ref '".$ref."' was not found.");
-				} elseif ($result < 0) {
-					throw new RestException(500, 'Error while fetching object: '.$object->error);
-				}
+			if ($result == 0) {
+				throw new RestException(404, "Object with ref '".$ref."' was not found.");
+			} elseif ($result < 0) {
+				throw new RestException(500, 'Error while fetching object: '.$object->error);
 			}
 
 			if (!($object->id > 0)) {
