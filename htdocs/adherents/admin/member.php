@@ -341,6 +341,7 @@ foreach ($dirModMember as $dirroot) {
 					continue;
 				}
 				$modCodeMember = new $file();
+				/** @var ModeleNumRefMembers $modCodeMember */
 				// Show modules according to features level
 				if ($modCodeMember->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
