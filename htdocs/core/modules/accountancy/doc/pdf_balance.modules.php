@@ -481,6 +481,14 @@ class pdf_balance extends ModelePdfAccountancy
 			if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
 				$this->addDashLine($pdf, $pdf->getPage(), $nexY);
 			}
+			// check if translation for AccountancyGroupXXX exists
+			$translationKey = 'AccountancyGroup' . $accountingAccount->pcg_type;
+			$translation = $langs->transnoentitiesnoconv($translationKey);
+			if ($translation !== $translationKey) {
+				$output = $langs->transnoentitiesnoconv('Total') . ' ' . $translation;
+			} else {
+				$output = $langs->transnoentitiesnoconv('Total') . ' ' . $langs->transnoentitiesnoconv('AccountancyGroup') . ' ' . $accountingAccount->pcg_type;
+			}
 			$this->addTotalLine(
 				$pdf,
 				$curY,
