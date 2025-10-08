@@ -231,4 +231,37 @@ ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeepin
 
 ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
 UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
+
+create table llx_receptiondet
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_reception     	integer NOT NULL,  						    		-- ID of parent object
+  fk_element        integer,           						    		-- ID of main source object
+  fk_elementdet     integer,           						    		-- ID of line of source object (Vendor proposals, Purchase order)
+  element_type   	varchar(50) DEFAULT 'supplier_order' NOT NULL,		-- Type of source object ('supplier_order', ...)
+  fk_product        integer,  								    		-- ID of product. If empty, you can retreive it using fk_element/element_type link, but it may be empty too if line is a non predefined product line.
+  fk_parent         integer,                                    		-- ID of parent line. For a hierarchy of lines.
+  qty               real,              						    		-- Quantity
+  fk_unit           integer, 				                    		-- ID of unit code
+  fk_entrepot       integer,           						    		-- Warehouse for reception of product
+  description		text,												-- Product description/label of non origin
+  rang              integer  DEFAULT 0,									-- Position of line
+  extraparams		varchar(255)				 						-- To save other parameters in json format
+)ENGINE=innodb;
+
+ALTER TABLE llx_receptiondet ADD INDEX idx_receptiondet_fk_reception (fk_reception);
+ALTER TABLE llx_receptiondet ADD INDEX idx_receptiondet_fk_elementdet (fk_elementdet);
+ALTER TABLE llx_receptiondet ADD INDEX idx_receptiondet_fk_product (fk_product);
+ALTER TABLE llx_receptiondet ADD INDEX idx_receptiondet_fk_parent (fk_parent);
+ALTER TABLE llx_receptiondet ADD CONSTRAINT fk_receptiondet_fk_reception FOREIGN KEY (fk_reception) REFERENCES llx_reception (rowid);
+
+create table llx_receptiondet_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_receptiondet_extrafields ADD UNIQUE INDEX uk_receptiondet_extrafields (fk_object);
 -- end of migration
