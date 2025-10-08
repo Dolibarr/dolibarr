@@ -319,7 +319,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 					$nexY,
 					$default_font_size,
 					'piece_num',
-					"{$langs->trans('Journal')} {$object->lines[$i]->code_journal}",
+					"{$langs->transnoentities('Journal')} {$object->lines[$i]->code_journal}",
 					$tab_top_newpage
 				);
 
