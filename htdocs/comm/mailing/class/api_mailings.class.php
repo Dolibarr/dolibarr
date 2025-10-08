@@ -257,7 +257,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(404, 'Mass mailing not found, id='.$id);
 		}
 
-		$fk_project = $fetchMailingResult->fk_project;
+		$fk_project = $this->mailing->fk_project;
 		if (!DolibarrApi::_checkAccessToResource('project', ((int) $fk_project))) {
 			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
 		}
