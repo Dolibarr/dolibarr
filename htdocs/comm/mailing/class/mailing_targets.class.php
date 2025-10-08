@@ -446,6 +446,7 @@ class MailingTarget extends CommonObject
 		$sql .= ", t.tms as date_modification";
 		$sql .= ", t.error_text";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
+		$sql .= " WHERE t.rowid = ".(int) $rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

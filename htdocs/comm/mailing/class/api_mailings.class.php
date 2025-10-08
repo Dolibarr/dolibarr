@@ -240,13 +240,13 @@ class Mailings extends DolibarrApi
 	 * @phan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
-	 * @url GET    {id}/getTargets
+	 * @url GET    {id}/targets
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function getTargets($id, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function indexTargets($id, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('mailing', 'read')) {
 			throw new RestException(403);
@@ -301,7 +301,7 @@ class Mailings extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$mailing_target = new MailingTarget($this->db);
 				if ($mailing_target->fetch($obj->rowid) > 0) {
-					$obj_ret[] = $this->_filterObjectProperties($this->cleanTargetDatas($mailing_target), $properties);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanTargetDatas($mailing_target), $properties);
 				}
 				$i++;
 			}
@@ -380,7 +380,8 @@ class Mailings extends DolibarrApi
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of mass mailing
 	 *
-	 * @throws	RestException
+	 * @throws RestException 403
+	 * @throws RestException 500 System error
 	 */
 	public function post($request_data = null)
 	{
@@ -423,7 +424,9 @@ class Mailings extends DolibarrApi
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 *
-	 * @throws RestException
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -511,6 +514,128 @@ class Mailings extends DolibarrApi
 				'message' => 'Mass mailing with id='.$id.' deleted'
 			)
 		);
+	}
+
+	/**
+	 * Update a mass mailing general fields (won't change lines of mass mailing)
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id             Id of mass mailing with the targetid to update
+	 * @param	int		$targetid       Id mass mailing target to update
+	 * @param	array	$request_data   Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @url PUT    {id}/updateTarget/{targetid}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function updateTarget($id, $targetid, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mailing', 'write')) {
+			throw new RestException(403);
+		}
+
+		$fetchMailingResult = $this->mailing->fetch($id);
+		if ($fetchMailingResult < 0) {
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->mailing_target->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->mailing_target->$field = $this->_checkValForAPI($field, $value, $this->mailing_target);
+		}
+
+		if ($this->mailing_target->update(DolibarrApiAccess::$user) > 0) {
+			return $this->getTarget($targetid);
+		} else {
+			throw new RestException(500, $this->mailing_target->error);
+		}
+	}
+
+	/**
+	 * Get a target in a mass mailing
+	 *
+	 * Return an array with info about a mass mailing target
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id             Id of mass mailing with the targetid to get
+	 * @param	int		$targetid       Id mass mailing target to get
+	 * @return  Object						Object with cleaned properties
+	 *
+	 * @url GET    {id}/getTarget/{targetid}
+	 *
+	 * @throws	RestException
+	 */
+	public function getTarget($id, $targetid)
+	{
+		return $this->_fetchTarget($id, $targetid);
+	}
+
+	/**
+	 * Get properties of an mailing object
+	 *
+	 * Return an array with mailing information
+	 *
+	 * @param   int     $id             ID of mailing object
+	 * @param	int		$targetid       Id mass mailing target
+	 * @return  Object						Object with cleaned properties
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 */
+	private function _fetchTarget($id, $targetid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mailing', 'read')) {
+			throw new RestException(403);
+		}
+
+		$fetchMailingResult = $this->mailing->fetch($id);
+		if ($fetchMailingResult < 0) {
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+		$result = $this->mailing_target->fetch($targetid);
+		if ($result < 0) {
+			throw new RestException(404, 'Mass mailing target not found, id='.$targetid);
+		}
+		if ($id != $this->mailing_target->fk_mailing) {
+			throw new RestException(404, 'Target id='.$targetid.' is does not belong to mailing id='.$id);
+		}
+
+
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->mailing_target->fetch($targetid);
+		if ($result < 0) {
+			throw new RestException(404, 'Mass mailing target not found, id='.$targetid);
+		}
+		return $this->_cleanTargetDatas($this->mailing_target);
 	}
 
 	/**
@@ -735,7 +860,7 @@ class Mailings extends DolibarrApi
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
 	 */
-	protected function cleanTargetDatas($object)
+	protected function _cleanTargetDatas($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
