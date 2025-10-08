@@ -28,18 +28,18 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "cron", "bills", "members"));
@@ -49,27 +49,9 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $confirm = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'cronjoblist'; // To manage different context of search
-
-$id = GETPOSTINT('id');
-
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
-	$page = 0;
-}     // If $page is not defined, or '' or -1
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-if (!$sortfield) {
-	$sortfield = 't.priority,t.status';
-}
-if (!$sortorder) {
-	$sortorder = 'ASC,DESC';
-}
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
+
 //Search criteria
 $search_status = GETPOST('search_status', 'intcomma');
 $search_label = GETPOST("search_label", 'alpha');
@@ -78,22 +60,81 @@ $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
 $search_processing = GETPOST("search_processing", 'int');
 $securitykey = GETPOST('securitykey', 'alpha');
 
+$id = GETPOSTINT('id');
+
+// Load variable for pagination
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 $outputdir = $conf->cron->dir_output;
 if (empty($outputdir)) {
 	$outputdir = $conf->cronjob->dir_output;
 }
-$diroutputmassaction = $outputdir.'/temp/massgeneration/'.$user->id;
 
+// Initialize technical objects
 $object = new Cronjob($db);
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('cronjoblist'));
 $extrafields = new ExtraFields($db);
+$diroutputmassaction = $outputdir.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('cronjoblist'));
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+
+// Default sort order (if not yet defined by previous GETPOST)
+if (!$sortfield) {
+	$sortfield = 't.priority,t.status';
+}
+if (!$sortorder) {
+	$sortorder = 'ASC,DESC';
+}
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array();
+// foreach ($object->fields as $key => $val) {
+// 	if (!empty($val['searchall'])) {
+// 		$fieldstosearchall['t.'.$key] = $val['label'];
+// 	}
+// }
+// $parameters = array('fieldstosearchall'=>$fieldstosearchall);
+// $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+// if ($reshook > 0) {
+// 	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
+// } elseif ($reshook == 0) {
+// 	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
+// }
+
+// Definition of array of fields for columns from ->fields
+$tableprefix = 't';
+$arrayfields = array();
+/*
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+*/
+
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security
 if (!$user->hasRight('cron', 'read')) {
@@ -105,11 +146,13 @@ $permissiontoadd = $user->hasRight('cron', 'create') ? $user->hasRight('cron', '
 $permissiontodelete = $user->hasRight('cron', 'delete');
 $permissiontoexecute = $user->hasRight('cron', 'execute');
 
+$error = 0;
+//var_dump($arrayfields);
+
 
 /*
  * Actions
  */
-$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -119,7 +162,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -134,6 +177,7 @@ if (empty($reshook)) {
 		$search_label = '';
 		$search_status = -1;
 		$search_lastresult = '';
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -244,6 +288,8 @@ if (empty($reshook)) {
  * View
  */
 
+$now = dol_now();
+
 $form = new Form($db);
 $cronjob = new Cronjob($db);
 
@@ -263,6 +309,8 @@ if ($resultTest) {
 	}
 }
 
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = "SELECT";
 $sql .= " t.rowid,";
 $sql .= " t.tms,";
@@ -322,38 +370,57 @@ if (!empty($search_module_name)) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$sqlforcount = $sql;
+
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$nbtotalofrecords = $db->num_rows($resql);
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
-$result = $db->query($sql);
-if (!$result) {
+$resql = $db->query($sql);
+if (!$resql) {
 	dol_print_error($db);
+	exit;
 }
 
-$num = $db->num_rows($result);
+$num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_status) {
 	$param .= '&search_status='.urlencode($search_status);
@@ -366,12 +433,6 @@ if ($search_module_name) {
 }
 if ($search_lastresult) {
 	$param .= '&search_lastresult='.urlencode($search_lastresult);
-}
-if ($mode) {
-	$param .= '&mode='.urlencode($mode);
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -420,6 +481,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Line with explanation and button new
@@ -449,19 +511,40 @@ if (getDolGlobalString('CRON_WARNING_DELAY_HOURS')) {
 print info_admin($text);
 //print '<br>';
 
-//$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = '';
-//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+$moreforfilter = '';
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	$moreforfilter .= $hookmanager->resPrint;
+} else {
+	$moreforfilter = $hookmanager->resPrint;
+}
+$parameters = array(
+	'arrayfields' => &$arrayfields,
+);
+
+if (!empty($moreforfilter)) {
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	print '</div>';
+}
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">';
-print '<table class="noborder liste">';
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
+// Fields title search
+// --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre right">';
-	$searchpicto = $form->showFilterButtons();
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
@@ -492,8 +575,13 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print $searchpicto;
 	print '</td>';
 }
-print '</tr>';
+print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -519,17 +607,21 @@ print_liste_field_titre("", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
-print "</tr>\n";
+print '</tr>'."\n";
 
+// Loop on record
+// --------------------------------------------------------------------
+$i = 0;
+$savnbfield = $totalarray['nbfield'];
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+$imaxinloop = ($limit ? min($num, $limit) : $num);
 
 if ($num > 0) {
 	// Loop on each job
-	$now = dol_now();
-	$i = 0;
 
-	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($result);
-
+	while ($i < $imaxinloop) {
+		$obj = $db->fetch_object($resql);
 		if (empty($obj)) {
 			break;
 		}
@@ -555,6 +647,8 @@ if ($num > 0) {
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
+		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
+
 
 		print '<tr class="oddeven row-with-select">';
 
@@ -569,12 +663,18 @@ if ($num > 0) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect valignmiddle" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Ref
 		print '<td class="nowraponall">';
 		print $object->getNomUrl(1);
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Label
 		print '<td class="minwidth150">';
@@ -588,6 +688,9 @@ if ($num > 0) {
 			//print $langs->trans('CronNone');
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Priority
 		/*print '<td class="right">';
@@ -598,6 +701,9 @@ if ($num > 0) {
 		print '<td>';
 		print dol_escape_htmltag($object->module_name);
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Class/Method
 		print '<td class="nowraponall">';
@@ -622,6 +728,9 @@ if ($num > 0) {
 		}
 		print '<span class="classfortooltip" title="'.dol_escape_htmltag($texttoshow, 1, 1).'">'.$text.'</a>';
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Frequency
 		$s = '';
@@ -639,6 +748,9 @@ if ($num > 0) {
 		print '<td class="tdoverflowmax125 center" title="'.dol_escape_htmltag($s).'">';
 		print dol_escape_htmltag($s);
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		/*
 		print '<td class="center">';
@@ -646,12 +758,18 @@ if ($num > 0) {
 			print dol_print_date($db->jdate($obj->datestart), 'dayhour', 'tzserver');
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td class="center">';
 		if (!empty($obj->dateend)) {
 			print dol_print_date($db->jdate($obj->dateend), 'dayhour', 'tzserver');
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 		*/
 
 		print '<td class="right">';
@@ -664,8 +782,9 @@ if ($num > 0) {
 			print ' <span class="'.$langs->trans("Max").'">/ '.dol_escape_htmltag($obj->maxrun).'</span>';
 		}
 		print '</td>';
-
-		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Date start last run
 		print '<td class="center lineheightsmall" title="'.dol_escape_htmltag($datefromto).'">';
@@ -673,6 +792,9 @@ if ($num > 0) {
 			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Duration
 		print '<td class="center nowraponall" title="'.dol_escape_htmltag($datefromto).'">';
@@ -681,6 +803,9 @@ if ($num > 0) {
 			print $nbseconds.' '.$langs->trans("SecondShort");
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Return code of last run
 		print '<td class="center tdlastresultcode" title="'.dol_escape_htmltag($obj->lastresult).'">';
@@ -692,6 +817,9 @@ if ($num > 0) {
 			}
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Output of last run
 		print '<td class="small minwidth150">';
@@ -701,6 +829,9 @@ if ($num > 0) {
 			print '</div>';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Next run date
 		print '<td class="center lineheightsmall">';
@@ -722,14 +853,20 @@ if ($num > 0) {
 			}
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Status
 		print '<td class="center">';
 		print $object->getLibStatut(5);
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
+		// Action
 		print '<td class="nowraponall right">';
-
 		$backtopage = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : ''));
 		if ($user->hasRight('cron', 'create')) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid.'&action=edit&token='.newToken().($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
@@ -754,8 +891,10 @@ if ($num > 0) {
 		} else {
 			print '<a href="#" class="cursornotallowed" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), "playdisabled", '', 0, 0, 0, '', 'marginleftonly').'</a>';
 		}
-
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -768,9 +907,12 @@ if ($num > 0) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect valignmiddle" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
-		print '</tr>';
+		print '</tr>'."\n";
 
 		$i++;
 	}
@@ -778,10 +920,16 @@ if ($num > 0) {
 	print '<tr><td colspan="16"><span class="opacitymedium">'.$langs->trans('CronNoJobs').'</span></td></tr>';
 }
 
-print '</table>';
-print '</div>';
+$db->free($resql);
 
-print '</from>';
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+print '</table>'."\n";
+print '</div>'."\n";
+
+print '</form>'."\n";
 
 if ($mode == 'modulesetup') {
 	print dol_get_fiche_end();

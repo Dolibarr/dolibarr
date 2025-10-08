@@ -29,21 +29,21 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
@@ -100,7 +100,7 @@ if ($action == 'update') {
 	} else {
 		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
 	}
-	if ($forcemorphy == '-1') {
+	if (empty($forcemorphy) || $forcemorphy == '-1') {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $forcemorphy, 'chaine', 0, '', $conf->entity);
@@ -222,7 +222,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
 	print "</tr>\n";
 
 	// Force Type
@@ -233,20 +233,20 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	$listofval = array();
 	$listofval += $adht->liste_array(1);
 	$forcetype = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', -1);
-	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
+	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, $langs->trans("No"), 0, 0, '', 0, 0, 0, '', 'width200');
 	print "</td></tr>\n";
 
 	// Force nature of member (mor/phy)
 	$morphys = [
-		"" => $langs->trans("MorAndPhy"), // for empty choice
 		"phy" => $langs->trans("Physical"),
 		"mor" => $langs->trans("Moral"),
 	];
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
 	print $langs->trans("ForceMemberNature");
 	print '</td><td>';
-	$forcenature = getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY');
-	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature);
+
+	$forcenature = getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY'); // 'phy' or 'mor'
+	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, $langs->trans("No"), 0, 0, '', 0, 0, 0, '', 'width200');
 	print "</td></tr>\n";
 
 	// Amount
@@ -254,6 +254,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print $langs->trans("DefaultAmount");
 	print '</td><td>';
 	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.getDolGlobalString('MEMBER_NEWFORM_AMOUNT').'">';
+	print ' <span class="opacitymedium">'.$langs->getCurrencySymbol($mysoc->currency_code).'</span>';
 	print "</td></tr>\n";
 
 	// Min amount
@@ -261,6 +262,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print $langs->trans("MinimumAmount");
 	print '</td><td>';
 	print '<input type="text" class="right width50" id="MEMBER_MIN_AMOUNT" name="MEMBER_MIN_AMOUNT" value="'.getDolGlobalString('MEMBER_MIN_AMOUNT').'">';
+	print ' <span class="opacitymedium">'.$langs->getCurrencySymbol($mysoc->currency_code).'</span>';
 	print "</td></tr>\n";
 
 	// SHow counter of validated members publicly
