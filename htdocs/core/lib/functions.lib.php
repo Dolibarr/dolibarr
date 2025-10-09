@@ -12673,7 +12673,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 				$url = preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]);
 				$link = parse_url($url);
 				$query = [];
-				parse_str($link['query'], $query);
+				if (isset($link['query'])) {
+					parse_str($link['query'], $query);
+				}
 				$newtab[0] = dolBuildUrl(dol_buildpath($link['path'], 1), $query);
 				$newtab[1] = $label;
 				$newtab[2] = str_replace('+', '', $values[1]);
