@@ -726,9 +726,9 @@ class Mailings extends DolibarrApi
 	 *
 	 * @param	int		$id             Id of mass mailing with the targetid to delete
 	 * @param	int		$targetid       Id mass mailing target to delete
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
-	 * @return	Object					Object with cleaned properties
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE    {id}/deleteTarget/{targetid}
 	 *

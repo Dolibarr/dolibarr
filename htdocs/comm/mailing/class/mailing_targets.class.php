@@ -177,7 +177,7 @@ class MailingTarget extends CommonObject
 			$status = 0;
 		}
 		if ($this->status !== $this->statut) {
-			$this->error = 'Status='.$status.' and Statut='.$statut.' field must be identical';
+			$this->error = 'Status='.$this->status.' and Statut='.$this->statut.' field must be identical';
 			return -4;
 		}
 		if (empty($this->fk_contact)) {
