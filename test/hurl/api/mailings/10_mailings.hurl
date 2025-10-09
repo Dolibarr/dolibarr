@@ -131,3 +131,57 @@ HTTP 404
 DELETE http://{{hostnport}}/api/index.php/mailings/0/deleteTarget/0
 {}
 HTTP 404
+
+# Create a target in a mailing
+POST http://{{hostnport}}/api/index.php/mailings/0/createTarget
+{}
+HTTP 400
+
+# Create a target in a mailing
+POST http://{{hostnport}}/api/index.php/mailings/0/createTarget
+{
+  "statut": "0",
+  "status": "0",
+  "lastname": "Example",
+  "firstname": "Bad",
+  "date_modification": 1759051258,
+  "tms": 1759051258,
+  "fk_mailing": "0",
+  "fk_contact": "0",
+  "email": "bad@example.com",
+  "other": "",
+  "tag": "acaa266a6b12a85a7db47a377a10333b",
+  "source_url": "",
+  "source_id": null,
+  "source_type": "file",
+  "date_envoi": "",
+  "error_text": null
+}
+HTTP 404
+
+# Create a target in a mailing
+POST http://{{hostnport}}/api/index.php/mailings/0/createTarget
+{
+  "id": "0"
+}
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: fk_mailing field missing"}}
+
+# Create a target in a mailing
+POST http://{{hostnport}}/api/index.php/mailings/0/createTarget
+{
+  "id": "0",
+  "fk_mailing" : "0"
+}
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: email field missing"}}
+
+# Create a target in a mailing
+POST http://{{hostnport}}/api/index.php/mailings/0/createTarget
+{
+  "id": "0",
+  "email": "bad@example.com",
+  "fk_mailing" : "0"
+}
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: Creating with id field is forbidden"}}
