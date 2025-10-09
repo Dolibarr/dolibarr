@@ -240,7 +240,7 @@ Updated=Updated
 AchatTelechargement=Buy / Download
 GoModuleSetupArea=To deploy/install a new module, go to the Module setup area: <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore, the official market place for Dolibarr ERP/CRM external modules
-CommunityModulesDesc=Dolibarr community modules repository. This repository contains some modules for Dolibarr ERP CRM referenced on the community repository.
+CommunityModulesDesc=Dolibarr community modules repository. This repository contains some external modules for Dolibarr ERP CRM referenced on the community repository.
 DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 WebSiteDesc=External websites for more add-on (non-core) modules...
 DevelopYourModuleDesc=Some solutions to develop your own module...
@@ -1293,8 +1293,8 @@ Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 Delays_MAIN_DELAY_MRP=Manufacturing order in progress
 Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE=Supplier proposal not closed
 Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL=Supplier proposal not billed
-SetupDescription1=Before starting to use Dolibarr some initial parameters must be defined and modules enabled/configured.
-SetupDescription2=The following two sections (the two first entries in the Setup menu) are mandatory:
+SetupDescription1=Before you begin, you need to configure initial parameters and enable modules/features you need...
+SetupDescription2=The following two configuration sections (the two first entries in the Setup menu) are mandatory.
 SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
 SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
 SetupDescription5=Other Setup menu entries manage optional parameters.

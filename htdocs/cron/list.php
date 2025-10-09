@@ -75,6 +75,11 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+$outputdir = $conf->cron->dir_output;
+if (empty($outputdir)) {
+	$outputdir = $conf->cronjob->dir_output;
+}
+
 // Initialize technical objects
 $object = new Cronjob($db);
 $extrafields = new ExtraFields($db);
@@ -92,11 +97,6 @@ if (!$sortfield) {
 }
 if (!$sortorder) {
 	$sortorder = 'ASC,DESC';
-}
-
-$outputdir = $conf->cron->dir_output;
-if (empty($outputdir)) {
-	$outputdir = $conf->cronjob->dir_output;
 }
 
 // List of fields to search into when doing a "search in all"
@@ -617,12 +617,11 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 
-
 if ($num > 0) {
 	// Loop on each job
 
 	while ($i < $imaxinloop) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 		if (empty($obj)) {
 			break;
 		}
