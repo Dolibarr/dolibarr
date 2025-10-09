@@ -2150,7 +2150,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				} elseif ($permissiontoeditpasswordandsee && !$object->ldap_sid &&
 				(!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit', '', true, $params);
+					print dolGetButtonAction($langs->trans('Modify'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'edit'], true), '', true, $params);
 				}
 
 				// If we have a password generator engine enabled
@@ -2176,7 +2176,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
 					if ($object->status == $object::STATUS_DISABLED) {
 						$params['attr']['title'] = $langs->trans('UserDisabled');
-						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
+						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF']).'#', '', false, $params);
 					} elseif (($user->id != $id && $permissiontoeditpasswordandsee) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						unset($params['attr']['title']);
