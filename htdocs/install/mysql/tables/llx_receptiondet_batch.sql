@@ -19,9 +19,7 @@
 -- into stock_movement so this table may be useless.
 --
 -- Detail of each lines of a reception (qty, batch and into which warehouse must be
--- received or has been receveived a purchase order line).
---
--- This table should be renamed into llx_receptiondet_batch
+-- received or has been received a purchase order line).
 -- ===================================================================
 
 create table llx_receptiondet_batch

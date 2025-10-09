@@ -6776,6 +6776,10 @@ if ($action == 'create') {
 		$urlsource = $_SERVER['PHP_SELF'].'?facid='.$object->id;
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
+		$tooltipAfterComboOfModels = '';
+		if (getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+			$tooltipAfterComboOfModels = $langs->trans("AccordingToYourSetupTheFileWillBeConcatenated", getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE'));
+		}
 
 		print $formfile->showdocuments(
 			'facture',
@@ -6797,7 +6801,8 @@ if ($action == 'create') {
 			'',
 			$object,
 			0,
-			'remove_file_comfirm'
+			'remove_file_comfirm',
+			$tooltipAfterComboOfModels
 		);
 
 		$somethingshown = $formfile->numoffiles;
