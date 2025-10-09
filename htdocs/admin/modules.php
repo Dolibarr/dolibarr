@@ -1079,6 +1079,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				$backtourl = dolBuildUrl($_SERVER["PHP_SELF"], $backtourlquery);
 
 				$regs = array();
+				$query = [
+					'save_lastsearch_values' => 1,
+					'backtopage' => $backtourl,
+				];
 				if (is_array($objMod->config_page_url)) {
 					$i = 0;
 					foreach ($objMod->config_page_url as $page) {
