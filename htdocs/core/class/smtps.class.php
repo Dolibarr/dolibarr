@@ -1861,8 +1861,8 @@ class SMTPs
 		if ($strContent) {
 			$this->_msgContent['image'][$strImageName]['mimeType'] = $strMimeType;
 			$this->_msgContent['image'][$strImageName]['imageName'] = $strImageName;
-			$this->_msgContent['image'][$strImageName]['cid']      = $strImageCid;
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
+			$this->_msgContent['image'][$strImageName]['cid']      = $strImageCid;
 
 			if ($this->getMD5flag()) {
 				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, '3');

@@ -8,6 +8,7 @@
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -343,9 +344,10 @@ class CMailFile
 				}
 			}
 
-			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA')) {
+			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA')) {	// On by default because Gmail does not support src="data:image..."
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
-				// This convert an embedded file with src="data:image... into a cid link + attached file
+				// This convert an embedded file with src="data:image... into a cid link + attached file.
+				// It modifies ->html and complete ->html_images
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
 				if ($resultImageData < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData code=".$resultImageData." upload_dir_tmp=".$upload_dir_tmp);
@@ -616,7 +618,7 @@ class CMailFile
 				$smtps->setBodyContent($msg, 'plain');
 			}
 
-			if ($this->atleastoneimage) {
+			if (!empty($this->atleastoneimage)) {
 				foreach ($this->images_encoded as $img) {
 					$smtps->setImageInline($img['image_encoded'], $img['name'], $img['content_type'], $img['cid']);
 				}
@@ -625,7 +627,9 @@ class CMailFile
 			if (!empty($this->atleastonefile)) {
 				foreach ($filename_list as $i => $val) {
 					$content = file_get_contents($filename_list[$i]);
-					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], (empty($cid_list[$i]) ? '' : $cid_list[$i]));
+					if (empty($cid_list[$i])) {
+						$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], (empty($cid_list[$i]) ? '' : $cid_list[$i]));
+					}
 				}
 			}
 
@@ -656,8 +660,6 @@ class CMailFile
 			}
 
 			$this->msgid = uniqid('', true).'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
-
-			$smtps->setMessageID($this->msgid);
 
 			$smtps->setMessageID($this->msgid);
 
@@ -1870,15 +1872,18 @@ class CMailFile
 						$mimetype_list[$i] = "application/octet-stream";
 					}
 
+					// Skip files that have a CID (they will be added as inline images instead)
+					// @phpstan-ignore-next-line
+					if (!empty($cidlist) && is_array($cidlist) && isset($cidlist[$i]) && $cidlist[$i] !== null && $cidlist[$i] !== '') {
+						continue; // Skip this file as it will be processed as inline image
+					}
+
 					$out .= "--".$this->mixed_boundary.$this->eol;
+
 					$out .= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
 					$out .= "Content-Type: ".$mimetype_list[$i]."; name=\"".$filename_list[$i]."\"".$this->eol;
 					$out .= "Content-Transfer-Encoding: base64".$this->eol;
 					$out .= "Content-Description: ".$filename_list[$i].$this->eol;
-					if (!empty($cidlist) && is_array($cidlist) && $cidlist[$i]) {
-						$out .= "X-Attachment-Id: ".$cidlist[$i].$this->eol;
-						$out .= "Content-ID: <".$cidlist[$i].'>'.$this->eol;
-					}
 					$out .= $this->eol;
 					$out .= $encoded;
 					$out .= $this->eol;
@@ -2038,6 +2043,7 @@ class CMailFile
 
 	/**
 	 * Search images into html message and init array this->images_encoded if found
+	 * This is called in the CMailfile constructor but only if MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS is set (Off by default)
 	 *
 	 * @param	string	$images_dir		Path to store physical images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
@@ -2047,8 +2053,8 @@ class CMailFile
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
 
-		// We search (into mail body this->html), if we find some strings like "... file=xxx.img"
-		// For example when:
+		// We search (into mail body this->html), if we find some strings like "... .imgext" or '... .imgext' to detect strings like "...file=xxx.img"
+		// For example to detect:
 		// <img alt="" src="/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/picture.jpg" style="height:356px; width:1040px" />
 		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
@@ -2093,7 +2099,7 @@ class CMailFile
 				foreach ($this->html_images as $img) {
 					$fullpath = $images_dir.'/'.$img["name"];
 
-					// If duplicate images are embedded, they may show up as attachments, so remove them.
+					// If referenced image is found on disk (src link), it may show up as attachments, so we remove it by storing it into images_encoded
 					if (!in_array($fullpath, $inline)) {
 						// Read image file
 						if ($image = file_get_contents($fullpath)) {
@@ -2123,8 +2129,9 @@ class CMailFile
 	}
 
 	/**
-	 * Seearch images with data:image format into html message.
-	 * If we find some, we create it on disk.
+	 * Search images with src="data:image..." format into html message.
+	 * If we find some, we create them on disk.
+	 * This is called in the CMailfile constructor.
 	 *
 	 * @param	string	$images_dir		Location of where to store physically images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
@@ -2206,6 +2213,22 @@ class CMailFile
 					$this->html = str_replace('src="data:image/'.$ext.';base64,'.$filecontent.'"', 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
 				}
 				$i++;
+			}
+
+			// Also add cidfromdata images to images_encoded array so they are sent as inline images
+			foreach ($this->html_images as $img) {
+				if ($img['type'] == 'cidfromdata') {
+					$image_content = file_get_contents($img['fullpath']);
+					if ($image_content !== false) {
+						$idx = count($this->images_encoded);
+						$this->images_encoded[$idx]['name'] = $img['name'];
+						$this->images_encoded[$idx]['fullpath'] = $img['fullpath'];
+						$this->images_encoded[$idx]['content_type'] = $img['content_type'];
+						$this->images_encoded[$idx]['cid'] = $img['cid'];
+						$this->images_encoded[$idx]['type'] = 'cidfromdata';
+						$this->images_encoded[$idx]['image_encoded'] = chunk_split(base64_encode($image_content), 68, $this->eol);
+					}
+				}
 			}
 
 			return 1;

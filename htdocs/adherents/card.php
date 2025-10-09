@@ -1071,14 +1071,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}
 		if ($user->hasRight('member', 'configurer')) {
-			print ' <a href="'.DOL_URL_ROOT.'/adherents/type.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&typeid=--IDFORBACKTOPAGE--').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
+			print ' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/type.php', ['action' => 'create', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'typeid' => '--IDFORBACKTOPAGE--'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
 		}
 		print "</td>\n";
 
-		// Morphy
-		$morphys = array();
-		$morphys["phy"] = $langs->trans("Physical");
-		$morphys["mor"] = $langs->trans("Moral");
+		// Legal entity or natural person
+		$morphys = [
+			"phy" => $langs->trans("Physical"),
+			"mor" => $langs->trans("Moral"),
+		];
 		$checkednature = GETPOST("morphy", 'alpha');
 		$listetype_natures = $adht->morphyByType(1);
 		$listetype_natures_json = json_encode($listetype_natures);

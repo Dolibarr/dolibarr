@@ -1,9 +1,9 @@
 <?php
 
-/* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2012 	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -113,21 +113,21 @@ class doc_generic_user_odt extends ModelePDFUser
 		$odtChosen = getDolGlobalInt('MAIN_PROPAL_CHOOSE_ODT_DOCUMENT') > 0;
 		$odtPath = trim(getDolGlobalString('USER_ADDON_PDF_ODT_PATH'));
 
-		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
-		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="page_y" value="">';
-		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte .= '<input type="hidden" name="param1" value="USER_ADDON_PDF_ODT_PATH">';
+		$out = $this->description.".<br>\n";
+		$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
+		$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$out .= '<input type="hidden" name="page_y" value="">';
+		$out .= '<input type="hidden" name="action" value="setModuleOptions">';
+		$out .= '<input type="hidden" name="param1" value="USER_ADDON_PDF_ODT_PATH">';
 		if ($odtChosen) {
-			$texte .= '<input type="hidden" name="param2" value="USER_ADDON_PDF_ODT_DEFAULT">';
-			$texte .= '<input type="hidden" name="param3" value="USER_ADDON_PDF_ODT_TOBILL">';
-			$texte .= '<input type="hidden" name="param4" value="USER_ADDON_PDF_ODT_CLOSED">';
+			$out .= '<input type="hidden" name="param2" value="USER_ADDON_PDF_ODT_DEFAULT">';
+			$out .= '<input type="hidden" name="param3" value="USER_ADDON_PDF_ODT_TOBILL">';
+			$out .= '<input type="hidden" name="param4" value="USER_ADDON_PDF_ODT_CLOSED">';
 		}
-		$texte .= '<table class="nobordernopadding centpercent">';
+		$out .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
-		$texte .= '<tr><td>';
+		$out .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
 		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', $odtPath));
 		$listoffiles = array();
@@ -155,71 +155,71 @@ class doc_generic_user_odt extends ModelePDFUser
 
 		// Scan directories
 		if (count($listofdir)) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+			$out .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
 			if ($odtChosen) {
 				// Model for creation
 				$list = ModelePDFUser::liste_modeles($this->db);
-				$texte .= '<table width="50%;">';
-				$texte .= '<tr>';
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
-				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value2', $list, getDolGlobalString('USER_ADDON_PDF_ODT_DEFAULT'));
-				$texte .= "</td></tr>";
+				$out .= '<table width="50%;">';
+				$out .= '<tr>';
+				$out .= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
+				$out .= '<td colspan="">';
+				$out .= $form->selectarray('value2', $list, getDolGlobalString('USER_ADDON_PDF_ODT_DEFAULT'));
+				$out .= "</td></tr>";
 
-				$texte .= '<tr>';
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
-				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value3', $list, getDolGlobalString('USER_ADDON_PDF_ODT_TOBILL'));
-				$texte .= "</td></tr>";
-				$texte .= '<tr>';
+				$out .= '<tr>';
+				$out .= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
+				$out .= '<td colspan="">';
+				$out .= $form->selectarray('value3', $list, getDolGlobalString('USER_ADDON_PDF_ODT_TOBILL'));
+				$out .= "</td></tr>";
+				$out .= '<tr>';
 
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalClosed").'</td>';
-				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value4', $list, getDolGlobalString('USER_ADDON_PDF_ODT_CLOSED'));
-				$texte .= "</td></tr>";
-				$texte .= '</table>';
+				$out .= '<td width="60%;">'.$langs->trans("DefaultModelPropalClosed").'</td>';
+				$out .= '<td colspan="">';
+				$out .= $form->selectarray('value4', $list, getDolGlobalString('USER_ADDON_PDF_ODT_CLOSED'));
+				$out .= "</td></tr>";
+				$out .= '</table>';
 			}
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$out .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=users/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
-				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=USER_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
-				$texte .= '<br>';
+				$out .= '- '.$file['name'].' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/document.php', ['modulepart' => 'doctemplates', 'file' => 'users/'.basename($file['name'])]).'">'.img_picto('', 'listlight').'</a>';
+				$out .= ' &nbsp; <a class="reposition" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['modulepart' => 'doctemplates', 'keyforuploaddir' => 'USER_ADDON_PDF_ODT_PATH', 'action' => 'deletefile', 'file' => basename($file['name'])], true).'">'.img_picto('', 'delete').'</a>';
+				$out .= '<br>';
 			}
-			$texte .= '</div>';
+			$out .= '</div>';
 		}
 
-		$texte .= '<br>';
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-		$texte .= $odtPath;
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
+		$out .= '<br>';
+		$out .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$out .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$out .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$out .= $odtPath;
+		$out .= '</textarea>';
+		$out .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$out .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$out .= '<br></div></div>';
 
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$out .= '<div>'.$langs->trans("UploadNewTemplate");
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
-			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+			$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 		}
-		$texte .= ' <input type="file" name="uploadfile">';
-		$texte .= '<input type="hidden" value="USER_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
-		$texte .= '</div>';
+		$out .= ' <input type="file" name="uploadfile">';
+		$out .= '<input type="hidden" value="USER_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$out .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$out .= '</div>';
 
-		$texte .= '</td>';
+		$out .= '</td>';
 
-		$texte .= '</tr>';
+		$out .= '</tr>';
 
-		$texte .= '</table>';
-		$texte .= '</form>';
+		$out .= '</table>';
+		$out .= '</form>';
 
-		return $texte;
+		return $out;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

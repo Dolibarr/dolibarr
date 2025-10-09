@@ -1822,6 +1822,8 @@ class Contrat extends CommonObject
 				}
 			}
 
+			// TODO Update column llx_contrat.denormalized_lower_panned_end_date
+
 			if (empty($error)) {
 				// Call trigger
 				$this->context['line_id'] = $rowid;
@@ -2073,7 +2075,8 @@ class Contrat extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/contrat/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT . '/contrat/card.php';
+		$query = ['id' => $this->id];
 
 		//if ($option !== 'nolink')
 		//{
@@ -2083,9 +2086,10 @@ class Contrat extends CommonObject
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
+			$query = array_merge($query, ['save_lastsearch_values' => 1]);
 		}
 		//}
+		$url = dolBuildUrl($baseurl, $query);
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
@@ -2827,6 +2831,9 @@ class Contrat extends CommonObject
 							$resqlupdate = $this->db->query($sqlupdate);
 							if ($resqlupdate) {
 								$contractlineprocessed[$obj->lid] = $object->ref;
+
+								// TODO Update column llx_contrat.denormalized_lower_panned_end_date
+
 
 								$actioncode = 'RENEW_CONTRACT';
 								$now = dol_now();

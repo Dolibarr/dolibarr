@@ -805,12 +805,6 @@ parameters:
 			path: ../../../htdocs/admin/modules.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$langfiles \(array\<string\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/admin/modules.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 5
@@ -1105,12 +1099,6 @@ parameters:
 			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 2
-			path: ../../../htdocs/admin/triggers.php
-
-		-
 			message: '#^Variable \$label might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -1193,12 +1181,6 @@ parameters:
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../htdocs/ai/admin/setup.php
-
-		-
-			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|Expedition\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
 			message: '#^Variable \$modulepart in empty\(\) always exists and is not falsy\.$#'
@@ -6856,12 +6838,6 @@ parameters:
 			message: '#^Variable \$resarray might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/core/lib/admin.lib.php
-
-		-
-			message: '#^Variable \$strictw3c in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 13
 			path: ../../../htdocs/core/lib/admin.lib.php
 
 		-
@@ -13525,12 +13501,6 @@ parameters:
 			path: ../../../htdocs/product/stock/movement_list.php
 
 		-
-			message: '#^Variable \$idAlreadyReverse might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
 			message: '#^Variable \$listofobjectref might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -14602,12 +14572,6 @@ parameters:
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/public/eventorganization/subscriptionok.php
-
-		-
-			message: '#^Variable \$suffix might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/public/eventorganization/subscriptionok.php
 
 		-

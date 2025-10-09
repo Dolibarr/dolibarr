@@ -494,6 +494,8 @@ if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
 			dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
 			$ispaymentok = $hookmanager->resArray['ispaymentok'];
 		}
+	} else {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 }
 
@@ -2117,10 +2119,18 @@ if (empty($doactionsthenredirect)) {
 		}
 	} else {
 		print $langs->trans('DoExpressCheckoutPaymentAPICallFailed')."<br>\n";
-		print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
-		print $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
-		print $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
-		print $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+		if ($ErrorLongMsg) {
+			print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
+		}
+		if ($ErrorShortMsg) {
+			print $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
+		}
+		if ($ErrorCode) {
+			print $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
+		}
+		if ($ErrorSeverityCode) {
+			print $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+		}
 
 		if ($mysoc->email) {
 			print "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
