@@ -123,6 +123,11 @@ GET http://{{hostnport}}/api/index.php/mailings/0/getTarget/0
 HTTP 404
 
 # get a target in a mailing
-GET http://{{hostnport}}/api/index.php/mailings/0/updateTarget/0
+PUT http://{{hostnport}}/api/index.php/mailings/0/updateTarget/0
+{}
+HTTP 404
+
+# Delete a target in a mailing
+DELETE http://{{hostnport}}/api/index.php/mailings/0/deleteTarget/0
 {}
 HTTP 404

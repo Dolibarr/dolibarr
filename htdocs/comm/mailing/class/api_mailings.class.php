@@ -644,6 +644,59 @@ class Mailings extends DolibarrApi
 	}
 
 	/**
+	 * Delete a mass mailing general fields (won't change lines of mass mailing)
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id             Id of mass mailing with the targetid to delete
+	 * @param	int		$targetid       Id mass mailing target to delete
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @url DELETE    {id}/deleteTarget/{targetid}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteTarget($id, $targetid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mailing', 'delete')) {
+			throw new RestException(403);
+		}
+
+		$fetchMailingResult = $this->mailing->fetch($id);
+		if ($fetchMailingResult < 0) {
+			throw new RestException(404, 'Mass mailing not found, id='.$id);
+		}
+		$result = $this->mailing_target->fetch($targetid);
+		if ($result < 0) {
+			throw new RestException(404, 'Mass mailing target not found, id='.$targetid);
+		}
+		if ($id != $this->mailing_target->fk_mailing) {
+			throw new RestException(404, 'Target id='.$targetid.' is does not belong to mailing id='.$id);
+		}
+		if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+			throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if (!DolibarrApi::_checkAccessToResource('mailing', $this->mailing->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if (!$this->mailing_target->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete Mass mailing target: '.$this->mailing->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Deleting target id='.$targetid.' belonging to mailing id='.$id
+			)
+		);
+	}
+
+	/**
 	 * Delete targets of a mass mailing
 	 *
 	 * @since	23.0.0	Initial implementation
