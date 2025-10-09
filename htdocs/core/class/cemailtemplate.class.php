@@ -374,11 +374,11 @@ class cEmailTemplate extends CommonObject
 		$sql .= " type_template=".(property_exists($this, 'type_template') && !empty($this->type_template) ? "'".$this->db->escape($this->type_template)."'" : "null").",";
 		$sql .= " lang=".(property_exists($this, 'lang') && !empty($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").",";
 		$sql .= " private=".((int) $this->private).",";
-		$sql .= " fk_user=".(property_exists($this, 'fk_user') && !empty($this->fk_user) ? $this->db->escape($this->fk_user) : "null").",";
+		$sql .= " fk_user=".(property_exists($this, 'fk_user') && !empty($this->fk_user) ? ((int) $this->fk_user) : "null").",";
 		$sql .= " datec=".((int) $this->datec).",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " position=".(isset($this->position) ? "'".$this->db->escape($this->position)."'" : "null").",";
-		$sql .= " defaultfortype=".(isset($this->defaultfortype) ? "'".$this->db->escape($this->defaultfortype)."'" : "null").",";
+		$sql .= " position=".(isset($this->position) ? "'".((int) $this->position)."'" : "null").",";
+		$sql .= " defaultfortype=".(isset($this->defaultfortype) ? "'".((int) $this->defaultfortype)."'" : "null").",";
 		$sql .= " enabled=".(isset($this->enabled) ? "'".$this->db->escape($this->enabled)."'" : "null").",";
 		$sql .= " active=".((int) $this->active).",";
 		$sql .= " email_from=".(isset($this->email_from) ? "'".$this->db->escape($this->email_from)."'" : "null").",";
