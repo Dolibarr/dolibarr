@@ -563,6 +563,9 @@ class Mailings extends DolibarrApi
 			if ($field == 'id') {
 				throw new RestException(400, 'Changing id field is forbidden');
 			}
+			if ($field == 'fk_mailing') {
+				throw new RestException(400, 'Changing fk_mailing field is forbidden to protect inserting a wrong fk_mailing number. Use a POST to create a new mailing target with the correct mailing id, then an PUT to update the new target in the right mailing id, and finally a delete to remove the old target');
+			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->mailing_target->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
