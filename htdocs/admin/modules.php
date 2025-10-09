@@ -169,7 +169,11 @@ if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 $remotestore = new ExternalModules();
 if ($mode == 'marketplace') {
 	// Make remote calls
-	$remotestore->loadRemoteSources();
+	$clearcache = 0;
+	if (GETPOSTINT('dol_resetcache')) {
+		dol_delete_file($remotestore->cache_file);
+	}
+	$remotestore->loadRemoteSources(false, $clearcache);
 }
 
 $object = new stdClass();
