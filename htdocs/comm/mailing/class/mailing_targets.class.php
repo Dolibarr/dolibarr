@@ -162,6 +162,10 @@ class MailingTarget extends CommonObject
 			return -2;
 			// we probably should also check that this number actually exists in ".MAIN_DB_PREFIX."mailing";
 		}
+		if (0 == $this->fk_mailing) {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Mailing"));
+			return -4;
+		}
 		if (empty($this->email)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"));
 			return -3;
@@ -173,6 +177,7 @@ class MailingTarget extends CommonObject
 			$status = 0;
 		}
 		if ($this->status !== $this->statut) {
+			$this->error = 'Status='.$status.' and Statut='.$statut.' field must be identical';
 			return -4;
 		}
 		if (empty($this->fk_contact)) {
@@ -183,12 +188,16 @@ class MailingTarget extends CommonObject
 
 		$this->db->begin();
 
+
+		// 2025-10-09 06:33:26 DEBUG   192.168.127.1        52     33  sql=INSERT INTO llx_mailing_cibles (fk_mailing, fk_contact, email, statut) VALUES ('4',  .((int) 0)., 'jon@jonb.dk',  .((int) )).
+		//2025-10-09 06:35:13 DEBUG   192.168.127.1        54     33  sql=INSERT INTO llx_mailing_cibles (fk_mailing, fk_contact, email, statut) VALUES (4,  .((int) 0)., 'jon@jonb.dk',  .((int) )).
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " (fk_mailing, fk_contact, email, statut)";
-		$sql .= " VALUES ('".((int) $this->fk_mailing)."', ";
-		$sql .= " .((int) $this->fk_contact)., ";
+		$sql .= " VALUES (".((int) $this->fk_mailing).", ";
+		$sql .=  ((int) $this->fk_contact).", ";
 		$sql .= "'".$this->db->escape($this->email)."', ";
-		$sql .= " .((int) $conf->statut)).";
+		$sql .=  ((int) $conf->statut)." )";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 

@@ -41,6 +41,14 @@ class Mailings extends DolibarrApi
 	);
 
 	/**
+	 * @var string[]       Mandatory fields, checked when create and update object
+	 */
+	public static $TARGETFIELDS = array(
+		'fk_mailing',
+		'email'
+	);
+
+	/**
 	 * @var Mailing {@type Mailing}
 	 */
 	public $mailing;
@@ -582,6 +590,74 @@ class Mailings extends DolibarrApi
 		}
 	}
 
+/**
+	 * Create a mass mailing
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id             Id of mass mailing to create a target for
+	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return  int     ID of mass mailing
+	 *
+	 * @url POST    {id}/createTarget
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function postTarget($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mailing', 'write')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
+		// Check mandatory fields
+		$result = $this->_validateTarget($request_data);
+
+		$fk_mailing_id = 0;
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->mailing_target->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field === 'fk_project') {
+				if (!DolibarrApi::_checkAccessToResource('project', ((int) $value))) {
+					throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+				}
+			}
+
+			if ($field == 'id') {
+				throw new RestException(400, 'Creating with id field is forbidden');
+			}
+			if ($field == 'fk_mailing') {
+				$fetchMailingResult = $this->mailing->fetch((int) $value);
+				if ($fetchMailingResult < 0) {
+					throw new RestException(404, 'Mass mailing not found, id='.((int) $value));
+				}
+				if (!DolibarrApi::_checkAccessToResource('project', ((int) $this->mailing->fk_project))) {
+					throw new RestException(403, 'Access (project) not allowed for login '.DolibarrApiAccess::$user->login);
+				}
+				$fk_mailing_id = ((int) $value);
+			}
+
+			$this->mailing_target->$field = $this->_checkValForAPI($field, $value, $this->mailing_target);
+		}
+
+		if (0 == $fk_mailing_id) {
+			throw new RestException(404, 'Mass mailing not found, id='.((int) $fk_mailing_id));
+		}
+
+		if ($this->mailing_target->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, "Error creating mass mailing target", array_merge(array($this->mailing->error), $this->mailing->errors));
+		}
+
+		return ((int) $this->mailing_target->id);
+	}
+
 	/**
 	 * Get a target in a mass mailing
 	 *
@@ -909,6 +985,29 @@ class Mailings extends DolibarrApi
 			$mailing[$field] = $data[$field];
 		}
 		return $mailing;
+	}
+
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
+	 *
+	 * @throws  RestException
+	 */
+	private function _validateTarget($data)
+	{
+		if ($data === null) {
+			$data = array();
+		}
+		$mailing_target = array();
+		foreach (Mailings::$TARGETFIELDS as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$mailing_target[$field] = $data[$field];
+		}
+		return $mailing_target;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
