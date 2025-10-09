@@ -381,9 +381,9 @@ class cEmailTemplate extends CommonObject
 		$sql .= " defaultfortype=".(isset($this->defaultfortype) ? "'".((int) $this->defaultfortype)."'" : "null").",";
 		$sql .= " enabled=".(isset($this->enabled) ? "'".$this->db->escape($this->enabled)."'" : "null").",";
 		$sql .= " active=".((int) $this->active).",";
-		$sql .= " email_from=".(isset($this->email_from) ? "'".$this->db->escape($this->email_from)."'" : "null").",";
-		$sql .= " email_to=".(isset($this->email_to) ? "'".$this->db->escape($this->email_to)."'" : "null").",";
-		$sql .= " email_tocc=".(isset($this->email_tocc) ? "'".$this->db->escape($this->email_tocc)."'" : "null").",";
+		$sql .= " email_from=".$this->db->escape($this->email_from).",";
+		$sql .= " email_to=".$this->db->escape($this->email_to).",";
+		$sql .= " email_tocc=".$this->db->escape($this->email_tocc).",";
 		$sql .= " email_tobcc=".(isset($this->email_tobcc) ? "'".$this->db->escape($this->email_tobcc)."'" : "null").",";
 		$sql .= " topic=".(isset($this->topic) ? "'".$this->db->escape($this->topic)."'" : "null").",";
 		$sql .= " joinfiles=".((int) $this->joinfiles).",";
