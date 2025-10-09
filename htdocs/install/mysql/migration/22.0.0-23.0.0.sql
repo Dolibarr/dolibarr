@@ -234,4 +234,8 @@ ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeepin
 
 ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
 UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
+
+ALTER TABLE llx_receptiondet_batch ADD COLUMN description text AFTER fk_product;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN fk_unit integer AFTER qty;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN rang integer DEFAULT 0 AFTER cost_price;
 -- end of migration
