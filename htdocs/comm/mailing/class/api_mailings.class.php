@@ -590,7 +590,7 @@ class Mailings extends DolibarrApi
 		}
 	}
 
-/**
+	/**
 	 * Create a mass mailing
 	 *
 	 * @since	23.0.0	Initial implementation
