@@ -52,8 +52,6 @@ $hookmanager->initHooks(array('homesetup'));
  * View
  */
 
-$form = new Form($db);
-
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-index');
 
@@ -84,8 +82,9 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 }
 
 print '<span class="opacitymedium hideonsmartphone">';
-print $langs->trans("SetupDescription1").' ';
-print $langs->trans("AreaForAdminOnly").' ';
+print $langs->trans("SetupDescription1").'<br>';
+//print $langs->trans("AreaForAdminOnly").' ';
+print '<br>';
 print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
 print "<br><br>";
 print '</span>';

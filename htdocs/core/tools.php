@@ -25,7 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +42,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+require_once DOL_DOCUMENT_ROOT.'/core/redirect_if_setup_not_complete.inc.php';
 
 
 /*

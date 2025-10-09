@@ -6841,12 +6841,6 @@ parameters:
 			path: ../../../htdocs/core/lib/admin.lib.php
 
 		-
-			message: '#^Variable \$strictw3c in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 13
-			path: ../../../htdocs/core/lib/admin.lib.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
@@ -14577,12 +14571,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/public/eventorganization/subscriptionok.php
-
-		-
-			message: '#^Variable \$suffix might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/public/eventorganization/subscriptionok.php
 
