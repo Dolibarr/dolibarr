@@ -49,3 +49,6 @@ TotalCost=Costo total
 BOMTotalCost=El costo a producir este BOM es basado sobre el costo de cantidad y producto a consumir (Se usa si el precio de costo está definido, de lo contario usa el precio promedio ponderado, o en todo caso el mejor precio de compra)
 GoOnTabProductionToProduceFirst=Debe primero empezar la producción para cerrar una orden de fabricación (Ver tab '%s'). Pero puede cancelarlo.
 ErrorAVirtualProductCantBeUsedIntoABomOrMo=Un kit no se puede usar en una Lista de Materiales BOM o una Orden de Fabricación MO
+StatusMrpValidated=Validada
+ConfirmMassChangeDateStartQuestion =¿Está seguro de que quiere modificar el %s registro(s) seleccionado?
+ConfirmMassChangeDateEndQuestion =¿Está seguro de que quiere modificar el %s registro(s) seleccionado?

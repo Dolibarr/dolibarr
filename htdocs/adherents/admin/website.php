@@ -4,7 +4,8 @@
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,25 +29,30 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
 
 $action = GETPOST('action', 'aZ09');
+
+// Hook to be used by external payment modules (ie Payzen, ...)
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks(array('newpayment'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -94,7 +100,7 @@ if ($action == 'update') {
 	} else {
 		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
 	}
-	if ($forcemorphy == '-1') {
+	if (empty($forcemorphy) || $forcemorphy == '-1') {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $forcemorphy, 'chaine', 0, '', $conf->entity);
@@ -123,8 +129,8 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin_website');
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = member_admin_prepare_head();
@@ -142,23 +148,18 @@ if ($conf->use_javascript_ajax) {
 	print 'jQuery(document).ready(function () {
                 function initemail()
                 {
-                    if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\')
-                    {
+                    if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') {
                         jQuery("#tremail").hide();
-					}
-					else
-					{
+					} else {
                         jQuery("#tremail").show();
 					}
 				}
                 function initfields()
                 {
-					if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\')
-                    {
+					if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\') {
                         jQuery("#trforcetype, #tramount, #tredit, #trpayment, #tremail").hide();
                     }
-                    if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\')
-                    {
+                    if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\') {
                         jQuery("#trforcetype, #tramount, #tredit, #trpayment").show();
                         if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') jQuery("#tremail").hide();
                         else jQuery("#tremail").show();
@@ -196,7 +197,6 @@ print '<br><br>';
 
 if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<br>';
-	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
 	if (isModEnabled('multicompany')) {
 		$entity_qr = '?entity='.((int) $conf->entity);
@@ -222,7 +222,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
 	print "</tr>\n";
 
 	// Force Type
@@ -233,18 +233,20 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	$listofval = array();
 	$listofval += $adht->liste_array(1);
 	$forcetype = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', -1);
-	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
+	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, $langs->trans("No"), 0, 0, '', 0, 0, 0, '', 'width200');
 	print "</td></tr>\n";
 
 	// Force nature of member (mor/phy)
-	$morphys = array();
-	$morphys["phy"] = $langs->trans("Physical");
-	$morphys["mor"] = $langs->trans("Moral");
+	$morphys = [
+		"phy" => $langs->trans("Physical"),
+		"mor" => $langs->trans("Moral"),
+	];
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
 	print $langs->trans("ForceMemberNature");
 	print '</td><td>';
-	$forcenature = getDolGlobalInt('MEMBER_NEWFORM_FORCEMORPHY', 0);
-	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
+
+	$forcenature = getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY'); // 'phy' or 'mor'
+	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, $langs->trans("No"), 0, 0, '', 0, 0, 0, '', 'width200');
 	print "</td></tr>\n";
 
 	// Amount
@@ -252,6 +254,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print $langs->trans("DefaultAmount");
 	print '</td><td>';
 	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.getDolGlobalString('MEMBER_NEWFORM_AMOUNT').'">';
+	print ' <span class="opacitymedium">'.$langs->getCurrencySymbol($mysoc->currency_code).'</span>';
 	print "</td></tr>\n";
 
 	// Min amount
@@ -259,6 +262,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print $langs->trans("MinimumAmount");
 	print '</td><td>';
 	print '<input type="text" class="right width50" id="MEMBER_MIN_AMOUNT" name="MEMBER_MIN_AMOUNT" value="'.getDolGlobalString('MEMBER_MIN_AMOUNT').'">';
+	print ' <span class="opacitymedium">'.$langs->getCurrencySymbol($mysoc->currency_code).'</span>';
 	print "</td></tr>\n";
 
 	// SHow counter of validated members publicly
@@ -273,7 +277,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowMembershipTypesTable");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SHOW_TABLE", (int) !$skiptable, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Show "vote allowed" setting for membership types
@@ -281,25 +285,30 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowVotesAllowed");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", (int) !$hidevoteallowed, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Jump to an online payment page
 	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
 	print '</td><td>';
+
+	// Initialize $validpaymentmethod
+	// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+	$validpaymentmethod = getValidOnlinePaymentMethods('', 1);
+
+	// Define $listofval using the $validpaymentmethod
 	$listofval = array();
-	$listofval['-1'] = $langs->trans('No');
-	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (isModEnabled('paybox')) {
-		$listofval['paybox'] = 'Paybox';
+	$listofval['-1'] = array('label' => $langs->trans('No'));
+	$listofval['all'] = array('label' => $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')', 'data-html' => $langs->trans('Yes').' &nbsp; <span class="opacitymedium">('.$langs->trans("VisitorCanChooseItsPaymentMode").')</span>');
+	foreach ($validpaymentmethod as $key => $val) {
+		if (is_array($val)) {
+			$listofval[$key] = $val;
+		} else {
+			$listofval[$key] = array('label' => $key, 'status' => 'valid');
+		}
 	}
-	if (isModEnabled('paypal')) {
-		$listofval['paypal'] = 'PayPal';
-	}
-	if (isModEnabled('stripe')) {
-		$listofval['stripe'] = 'Stripe';
-	}
+
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, getDolGlobalString('MEMBER_NEWFORM_PAYONLINE'), 0);
 	print "</td></tr>\n";
 

@@ -1,12 +1,35 @@
 # Dolibarr language file - Source file is en_US - oauth
 ManualTokenGeneration=Génération de jetons manuels
+TokenManager=Gestionnaire de jetons
 IsTokenGenerated=Le jeton est-il généré?
 NoAccessToken=Pas de jeton d'accès enregistré dans la base de données locale
 HasAccessToken=Un jeton a été généré et enregistré dans la base de données locale
 NewTokenStored=Jeton reçu et enregistré
 ToCheckDeleteTokenOnProvider=Cliquez ici pour vérifier / supprimer l'autorisation enregistrée par %s OAuth provider
 TokenDeleted=Jeton supprimé
+GetAccess=Obtenez un nouveau jeton
+DeleteAccess=Supprimer le jeton
+ListOfSupportedOauthProviders=Ajoutez vos fournisseurs de jetons OAuth2. Ensuite, accédez à la page d'administration de votre fournisseur OAuth pour créer/obtenir un identifiant et un secret OAuth et enregistrez-les ici. Une fois terminé, activez l'autre onglet pour générer votre jeton.
 SeePreviousTab=Voir l'onglet précédent
 TOKEN_EXPIRED=Jeton expiré
 TOKEN_EXPIRE_AT=Token expire à
 TOKEN_DELETE=Supprimer le jeton enregistré
+OAUTH_GOOGLE_ID=Identifiant Google OAuth
+OAUTH_GITHUB_ID=Identifiant GitHub OAuth
+OAUTH_GITHUB_SECRET=Secret OAuth GitHub
+OAUTH_URL_FOR_CREDENTIAL=Accédez à <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">cette page<span class="fas fa-external-link-alt paddingleft"></span></a> pour créer ou obtenir votre identifiant et votre secret OAuth
+OAUTH_STRIPE_TEST_NAME=Test de bande
+OAUTH_STRIPE_LIVE_NAME=Stripe en direct
+OAUTH_SECRET=Secret OAuth
+OAUTH_TENANT=Locataire OAuth
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Une entrée OAuth pour ce fournisseur et cette étiquette existe déjà
+URLOfOAuthServiceEndpoints=URL de base pour les points de terminaison du service OAuth
+URLOfOAuthServiceEndpointsExample=https://mastodon.exemple.com
+Scopes=Autorisations (Portées)
+ScopeUndefined=Autorisations (Portées) non définies (voir onglet précédent)
+ScopesDesc=Exemple : lecture, écriture avec Mastodon
+TokenNotExpired=Pas expiré
+ExpirationDate=Date d'expiration
+RefreshToken=Jeton de rafraîchissement
+OldTokenWasExpiredItHasBeenRefresh=L'ancien jeton a expiré, il a été actualisé
+OldTokenWasNotExpiredButItHasBeenRefresh=L'ancien jeton n'a pas expiré mais il a été actualisé

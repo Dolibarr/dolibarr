@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ if (GETPOST('add')) {
 if ($categid) {
 	$bankcateg = new BankCateg($db);
 
-	if ($bankcateg->fetch($categid) > 0) {
+	if ($bankcateg->fetch((int) $categid) > 0) {
 		//Update category
 		if (GETPOST('update') && $label) {
 			$bankcateg->label = $label;

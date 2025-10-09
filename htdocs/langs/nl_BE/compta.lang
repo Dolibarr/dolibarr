@@ -17,6 +17,7 @@ LT2Payments=BTW 3 betalingen
 Refund=Teruggave
 CustomerAccountancyCodeShort=Klantcode
 SupplierAccountancyCodeShort=Leverancierscode
+AccountNumber=Rekeningnummer
 PaySocialContribution=Betaal een sociale bijdrage/belasting
 DeleteSocialContribution=Verwijder betaling sociale bijdrage/belasting
 ExportDataset_tax_1=sociale bijdragen/belastingen en betalingen

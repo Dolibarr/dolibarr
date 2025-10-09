@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,10 +97,10 @@ class Ctypent extends CommonDict
 		$sql .= "active,";
 		$sql .= "module";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape($this->id)."'").",";
+		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape((string) $this->id)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape((string) $this->active)."'").",";
 		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'");
 		$sql .= ")";
 

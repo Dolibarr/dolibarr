@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -419,7 +419,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action == 'close') {
 		$langs->load("propal");
-
+		$formquestion = array();
 		//Form to close proposal (signed or not)
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ConfirmClose'), $langs->trans('ConfirmCloseAsk'), 'confirm_close', $formquestion, '', 1, 250);
 	}
@@ -697,7 +697,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$recruiter = new User($db);
 	$recruiter->fetch($job->fk_user_recruiter);
 
-	$recruitername = $recruiter->getFullName('');
+	$recruitername = $recruiter->getFullName($langs);
 	$recruitermail = (!empty($job->email_recruiter) ? $job->email_recruiter : $recruiter->email);
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

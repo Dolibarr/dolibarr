@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=One click Printing
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
-MenuDirectPrinting=One click Printing jobs
-DirectPrint=One click Print
+Module64000Name=Печат с едно кликване
+Module64000Desc=Активиране на системата за печат с едно кликване
+PrintingSetup=Настройка на системата за печат с едно кликване
+PrintingDesc=Този модул добавя бутон за печат към различни модули, за да позволи документите да бъдат отпечатани директно на принтер, без да е необходимо документът да се отваря в друго приложение.
+MenuDirectPrinting=Задания за печат с едно кликване
+DirectPrint=Печат с едно кликване
 PrintingDriverDesc=Конфигурационни променливи на драйвера за принтиране.
 ListDrivers=Списък с драйвери
 PrintTestDesc=Списък с принтери
@@ -32,6 +32,7 @@ PRINTIPP_HOST=Сървър за печат
 PRINTIPP_PORT=Порт
 PRINTIPP_USER=Потребителско име
 PRINTIPP_PASSWORD=Парола
+PRINTIPP_SSL=Използвайте SSL
 NoDefaultPrinterDefined=Няма зададен принтер по подразбиране
 DefaultPrinter=Принтер по подразбиране
 Printer=Принтер
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Конфигурационни променливи �
 PrintingDriverDescprintipp=Конфигурационни променливи на драйвер за печат CUPS.
 PrintTestDescprintgcp=Списък с принтери за Google Cloud Print
 PrintTestDescprintipp=Списък с принтери за CUPS
+Testbbbb

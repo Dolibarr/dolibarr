@@ -298,7 +298,7 @@ class mailing_partnership extends MailingTargets
 			return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $id).'">'.img_object('', "societe").'</a>';
 		}
 		if ($sourcetype == 'member') {
-			return '<a href="'.DOL_URL_ROOT.'/adherent/card.php?id='.((int) $id).'">'.img_object('', "member").'</a>';
+			return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?id='.((int) $id).'">'.img_object('', "member").'</a>';
 		}
 
 		return '';

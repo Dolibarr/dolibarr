@@ -6,9 +6,9 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		Eric Seigne					<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,8 +127,8 @@ if (empty($date_endmonth)) {
 }
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
-	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+	$date_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
+	$date_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 }
 
 $sql = "SELECT er.rowid, er.ref, er.date_debut as de, er.date_fin as df,";
@@ -153,8 +153,8 @@ if ($date_start && $date_end) {
 	$sql .= " AND er.date_debut >= '".$db->idate($date_start)."' AND er.date_debut <= '".$db->idate($date_end)."'";
 }
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 // Already in bookkeeping or not
 if ($in_bookkeeping == 'already') {
@@ -595,7 +595,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["ref"].'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("Thirdparty"))).'"'.$sep;
+			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("ThirdParty"))).'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"';
 		}

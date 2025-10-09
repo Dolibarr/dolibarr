@@ -4,10 +4,10 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,13 +80,14 @@ $fk_entrepot = GETPOSTINT('fk_entrepot');
 // List all visible warehouses
 $resWar = $db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . $db->sanitize(getEntity('stock')) . ")");
 $listofqualifiedwarehousesid = "";
+$lastWarehouseID = 0;
 $count = 0;
 while ($tmpobj = $db->fetch_object($resWar)) {
 	if (!empty($listofqualifiedwarehousesid)) {
 		$listofqualifiedwarehousesid .= ",";
 	}
 	$listofqualifiedwarehousesid .= $tmpobj->rowid;
-	$lastWarehouseID = $tmpobj->rowid;
+	$lastWarehouseID = (int) $tmpobj->rowid;
 	$count++;
 }
 
@@ -286,10 +287,10 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						0,
 						$line->type,
 						0,
-						false,
-						null,
-						null,
 						0,
+						null,
+						null,
+						array(),
 						$line->fk_unit,
 						$line->multicurrency_subprice
 					);
@@ -578,7 +579,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {
+	if (($page * $limit) > (int) $nbtotalofrecords) {
 		$page = 0;
 		$offset = 0;
 	}
@@ -653,7 +654,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE')) {
 	print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-	print $langs->trans('Warehouse') . ' ' . $formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
+	print $langs->trans('Warehouse') . ' ' . $formproduct->selectWarehouses((int) $fk_entrepot, 'fk_entrepot', '', 1);
 	print '</div>';
 }
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
@@ -855,7 +856,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			exit;
 		}
 
-		$prod->load_stock('warehouseopen, warehouseinternal'.(!$usevirtualstock ? ', novirtual' : ''), $draftchecked);
+		$prod->load_stock('warehouseopen, warehouseinternal'.(!$usevirtualstock ? ', novirtual' : ''), $draftchecked === 'checked' ? 1 : 0);
 
 		// Multilangs
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -883,12 +884,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$stock = $prod->stock_theorique;
 			//if conf active, stock virtual by warehouse is calculated
 			if (getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
-				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->virtual;
+				$stockwarehouse = $prod->stock_warehouse[(int) $fk_entrepot]->virtual;
 			}
 		} else {
 			$stock = $prod->stock_reel;
 			if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
-				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
+				$stockwarehouse = $prod->stock_warehouse[(int) $fk_entrepot]->real;
 			}
 		}
 

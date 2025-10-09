@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -161,7 +161,7 @@ if ($object->id > 0) {
 	$head = facturefourn_prepare_head($object);
 	$titre = $langs->trans('SupplierInvoice');
 
-	print dol_get_fiche_head($head, 'agenda', $titre, -1, 'supplier_invoice', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'agenda', $titre, -1, $object->picto, 0, '', '', 0, '', 1);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -169,7 +169,7 @@ if ($object->id > 0) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	$morehtmlref .= $form->editfieldkey("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, (int) $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'supplier');
@@ -180,12 +180,12 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);

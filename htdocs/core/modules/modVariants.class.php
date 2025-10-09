@@ -41,7 +41,7 @@ class modVariants extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 

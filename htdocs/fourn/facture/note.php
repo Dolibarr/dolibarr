@@ -5,6 +5,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2017      	Ferran Marcet       	<fmarcet@2byte.es>
  * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +107,7 @@ if ($object->id > 0) {
 
 	$head = facturefourn_prepare_head($object);
 	$titre = $langs->trans('SupplierInvoice');
-	print dol_get_fiche_head($head, 'note', $titre, -1, 'supplier_invoice');
+	print dol_get_fiche_head($head, 'note', $titre, -1, $object->picto);
 
 
 	// Supplier invoice card
@@ -125,12 +126,12 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -169,13 +170,15 @@ if ($object->id > 0) {
 		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 	}
 
-	$facidavoir = $object->getListIdAvoirFromInvoice();
-	if (count($facidavoir) > 0) {
+	// Retrieve credit note ids
+	$object->getListIdAvoirFromInvoice();
+
+	if (!empty($object->creditnote_ids)) {
 		$invoicecredits = array();
-		foreach ($facidavoir as $facid) {
-			$facavoir = new FactureFournisseur($db);
-			$facavoir->fetch($facid);
-			$invoicecredits[] = $facavoir->getNomUrl(1);
+		foreach ($object->creditnote_ids as $invoiceid) {
+			$creditnote = new FactureFournisseur($db);
+			$creditnote->fetch($invoiceid);
+			$invoicecredits[] = $creditnote->getNomUrl(1);
 		}
 		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . implode(',', $invoicecredits) . ')';
 	}

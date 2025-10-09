@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2020-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2020-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,10 @@
  * \brief      Page to make custom reports. Page can also be used alone or as a tab among other tabs of an object
  *
  * To include this tool into another PHP page:
+ *
  * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
  * define('MAIN_DO_NOT_USE_JQUERY_MULTISELECT', 1);
- * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);	// TODO Use a variable
+ * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);		// TODO Use a variable
  * $SHOWLEGEND = 0;
  * $search_xaxis = array('t.column');
  * $customreportkey='abc';
@@ -39,11 +40,20 @@
  * @var Translate $langs
  * @var User $user
  *
- * @var ?int[]	$toselect  Items selected on page, only used to see if not empty here
+ * @var ?int[]		$toselect  			Items selected on page, only used to see if not empty here
+ * @var ?int		$SHOWLEGEND			Show legend or not
+ * @var	string		$customreportkey	Custom report key
+ * @var string		$customsql			Custom SQL
+ * @var ?string[]	$search_groupby		Array with the third dimension
  */
 '
 @phan-var-force ?int[] $toselect
 ';
+
+// Initialise values
+$search_groupby = array();
+$tabfamily = null;
+$objecttype = null;
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
@@ -61,20 +71,16 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	//$search_xaxis = GETPOST('search_xaxis', 'array');
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
 		$search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
-	} else {
-		$search_xaxis = array();
 	}
 	//$search_groupby = GETPOST('search_groupby', 'array');
 	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') {
 		$search_groupby = array(GETPOST('search_groupby', 'alpha'));
-	} else {
-		$search_groupby = array();
 	}
 
 	'@phan-var-force string[] $search_groupby';
 
 	$search_yaxis = GETPOST('search_yaxis', 'array');
-	$search_graph = GETPOST('search_graph', 'restricthtml');
+	$search_graph = (string) GETPOST('search_graph', 'restricthtml');
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -88,8 +94,6 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 
-	$diroutputmassaction = $conf->user->dir_temp.'/'.$user->id.'/customreport';
-
 	$object = null;
 } else {
 	// When included into a main page
@@ -102,11 +106,11 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	if (empty($user) || empty($user->id)) {
 		print 'Page is called as an include but $user and its permission loaded with loadRights() are not defined. We stop here.';
-		exit(-1);
+		exit(1);
 	}
 	if (empty($object)) {
 		print 'Page is called as an include but $object is not defined. We stop here.';
-		exit(-1);
+		exit(1);
 	}
 }
 
@@ -116,12 +120,21 @@ if (empty($mode)) {
 if (!isset($search_measures)) {
 	$search_measures = array(0 => 't.count');
 }
+if (!isset($search_xaxis)) {
+	// Ensure value is set and not null.
+	$search_xaxis = array();
+}
+if (!isset($search_graph)) {
+	// Ensure value is set and not null
+	$search_graph = '';
+}
 if (!empty($object)) {
 	$objecttype = $object->element.($object->module ? '@'.$object->module : '');
 }
-if (empty($objecttype)) {
+if ((!is_string($objecttype) || empty($objecttype)) && isModEnabled('societe')) {
 	$objecttype = 'thirdparty';
 }
+'@phan-var-force string $objecttype';  // Help phan that suggests $objecttype can be null
 
 require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.form.class.php";
@@ -148,24 +161,27 @@ $head = array();
 $ObjectClassName = '';
 // Objects available by default
 $arrayoftype = array(
-	'thirdparty' => array('langs' => 'companies', 'label' => 'ThirdParties', 'picto' => 'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
+	'thirdparty' => array('label' => 'ThirdParties', 'picto' => 'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php", 'langs' => 'companies'),
 	'contact' => array('label' => 'Contacts', 'picto' => 'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
-	'proposal' => array('label' => 'Proposals', 'picto' => 'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
-	'order' => array('label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php"),
-	'invoice' => array('langs' => 'facture', 'label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
+	'proposal' => array('label' => 'Proposals', 'picto' => 'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php", 'langs' => 'propal'),
+	'proposaldet' => array('label' => 'ProposalLines', 'picto' => 'proposal', 'ObjectClassName' => 'PropaleLigne', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propaleligne.class.php", 'langs' => 'propal'),
+	'order' => array('label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php", 'langs' => 'orders'),
+	'orderdet' => array('label' => 'SaleOrderLines', 'picto' => 'order', 'ObjectClassName' => 'OrderLine', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/orderline.class.php", 'langs' => 'orders'),
+	'invoice' => array('label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php", 'langs' => 'bills'),
 	'invoice_template' => array('label' => 'PredefinedInvoices', 'picto' => 'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture-rec.class.php", 'langs' => 'bills'),
 	'contract' => array('label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
 	'contractdet' => array('label' => 'ContractLines', 'picto' => 'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
 	'bom' => array('label' => 'BOM', 'picto' => 'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
 	'mrp' => array('label' => 'MO', 'picto' => 'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'picto' => 'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
-	'member' => array('label' => 'Adherent', 'picto' => 'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs' => 'members'),
-	'cotisation' => array('label' => 'Subscriptions', 'picto' => 'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs' => 'members'),
+	'member' => array('langs' => 'members', 'label' => 'Adherent', 'picto' => 'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/adherent.class.php"),
+	'cotisation' => array('langs' => 'members', 'label' => 'Subscriptions', 'picto' => 'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/subscription.class.php"),
 );
 
 
 // Complete $arrayoftype by external modules
 $parameters = array('objecttype' => $objecttype, 'tabfamily' => $tabfamily);
+// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 $reshook = $hookmanager->executeHooks('loadDataForCustomReports', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -194,9 +210,13 @@ if ($objecttype) {
 		} else {
 			$fileforclass = "/".$objecttype."/class/".$objecttype.".class.php";
 		}
-		dol_include_once($fileforclass);
+		$ObjectClassName = null;
 
-		$ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
+		if ($fileforclass !== null) {
+			dol_include_once($fileforclass);
+
+			$ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
+		}
 		if (!empty($ObjectClassName)) {
 			if (class_exists($ObjectClassName)) {
 				$object = new $ObjectClassName($db);
@@ -343,8 +363,6 @@ if (!empty($object->element_for_permission)) {
 // Security check
 restrictedArea($user, $features, 0, '');
 
-//$error = 0;
-
 
 /*
  * Actions
@@ -371,9 +389,10 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 }
 
+// Define $newarrayoftype that is array of object available for report
 $newarrayoftype = array();
 foreach ($arrayoftype as $key => $val) {
-	if (dol_eval($val['enabled'], 1, 1, '1')) {
+	if (dol_eval((string) $val['enabled'], 1, 1, '1')) {
 		$newarrayoftype[$key] = $arrayoftype[$key];
 	}
 	if (!empty($val['langs'])) {
@@ -382,35 +401,39 @@ foreach ($arrayoftype as $key => $val) {
 }
 
 $count = 0;
-$arrayoffilterfields = fillArrayOfFilterFields($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayoffilterfields, 0, $count);
+$label = '';
+if (array_key_exists($objecttype, $newarrayoftype)) {
+	$label = $langs->trans($newarrayoftype[$objecttype]['label']);
+}
+$arrayoffilterfields = fillArrayOfFilterFields($object, 't', $label, $arrayoffilterfields, 0, $count);
 $arrayoffilterfields = dol_sort_array($arrayoffilterfields, 'position', 'asc', 0, 0, 1);
 
 $count = 0;
-$arrayofmesures = fillArrayOfMeasures($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofmesures, 0, $count);
+$arrayofmesures = fillArrayOfMeasures($object, 't', $label, $arrayofmesures, 0, $count);
 $arrayofmesures = dol_sort_array($arrayofmesures, 'position', 'asc', 0, 0, 1);
 
 $count = 0;
-$arrayofxaxis = fillArrayOfXAxis($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofxaxis, 0, $count);
+$arrayofxaxis = fillArrayOfXAxis($object, 't', $label, $arrayofxaxis, 0, $count);
 $arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 0, 0, 1);
 
 $count = 0;
-$arrayofgroupby = fillArrayOfGroupBy($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofgroupby, 0, $count);
+$arrayofgroupby = fillArrayOfGroupBy($object, 't', $label, $arrayofgroupby, 0, $count);
 $arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
 
 
 // Check parameters
 if ($action == 'viewgraph') {
-	if (is_array($search_measures) && !count($search_measures)) {
+	if (!count($search_measures)) {
 		setEventMessages($langs->trans("AtLeastOneMeasureIsRequired"), null, 'warnings');
 	} elseif ($mode == 'graph' && is_array($search_xaxis) && count($search_xaxis) > 1) {
 		setEventMessages($langs->trans("OnlyOneFieldForXAxisIsPossible"), null, 'warnings');
 		$search_xaxis = array(0 => $search_xaxis[0]);
 	}
-	if (is_array($search_groupby) && count($search_groupby) >= 2) {
+	if (count($search_groupby) >= 2) {
 		setEventMessages($langs->trans("ErrorOnlyOneFieldForGroupByIsPossible"), null, 'warnings');
 		$search_groupby = array(0 => $search_groupby[0]);
 	}
-	if (is_array($search_xaxis) && !count($search_xaxis)) {
+	if (!count($search_xaxis)) {
 		setEventMessages($langs->trans("AtLeastOneXAxisIsRequired"), null, 'warnings');
 	} elseif ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > $MAXMEASURESINBARGRAPH) {
 		$langs->load("errors");
@@ -421,7 +444,7 @@ if ($action == 'viewgraph') {
 
 // Get all possible values of fields when a 'group by' is set, and save this into $arrayofvaluesforgroupby
 // $arrayofvaluesforgroupby will be used to forge lael of each grouped series
-if (is_array($search_groupby) && count($search_groupby)) {
+if (count($search_groupby)) {
 	$fieldtocount = '';
 	foreach ($search_groupby as $gkey => $gval) {
 		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
@@ -553,7 +576,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 					*/
 					$labeloffield = $arrayofgroupby[$fieldtocount]['labelnohtml'];
 				} else {
-					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+					$labeloffield = 'FK_ISSUE'; // $langs->transnoentitiesnoconv($keyforlabeloffield);
 				}
 			} else {											// This is a common field
 				$reg = array();
@@ -567,7 +590,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 				}
 			}
 			//var_dump($labeloffield);
-			setEventMessages($langs->transnoentitiesnoconv("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorTooManyDifferentValueForSelectedGroupBy", (string) $MAXUNIQUEVALFORGROUP, (string) $labeloffield), null, 'warnings');
 			$search_groupby = array();
 		}
 
@@ -577,11 +600,11 @@ if (is_array($search_groupby) && count($search_groupby)) {
 //var_dump($arrayofvaluesforgroupby);exit;
 
 
-$tmparray = dol_getdate(dol_now());
-$endyear = $tmparray['year'];
-$endmonth = $tmparray['mon'];
-$datelastday = dol_get_last_day($endyear, $endmonth, 1);
-$startyear = $endyear - 2;
+//$tmparray = dol_getdate(dol_now());
+//$endyear = $tmparray['year'];
+//$endmonth = $tmparray['mon'];
+//$datelastday = dol_get_last_day($endyear, $endmonth, 1);
+//$startyear = $endyear - 2;
 
 $param = '';
 
@@ -590,7 +613,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="viewgraph">';
-	print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
+	print '<input type="hidden" name="tabfamily" value="'.(string) $tabfamily.'">';
 
 	$viewmode = '';
 
@@ -618,7 +641,8 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	// Select object
 	print '<div class="divadvancedsearchfield center floatnone">';
 	print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1, '', 0, 1);
+
+	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth250', 1, '', 0, 1);
 	if (empty($conf->use_javascript_ajax)) {
 		print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 	} else {
@@ -634,40 +658,41 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	}
 	print '</div><div class="clearboth"></div>';
 
-	// Filter (you can use param &show_search_component_params_hidden=1 for debug)
-	if (!empty($object)) {
+	if (!empty($newarrayoftype)) {
+		// Filter (you can use param &show_search_component_params_hidden=1 for debug)
+		if (!empty($object)) {
+			print '<div class="divadvancedsearchfield">';
+			print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden, $arrayoffilterfields);
+			print '</div>';
+		}
+
+		// YAxis (add measures into array)
+		$count = 0;
+		//var_dump($arrayofmesures);
+		print '<div class="divadvancedsearchfield clearboth">';
+		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
+		$simplearrayofmesures = array();
+		foreach ($arrayofmesures as $key => $val) {
+			$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
+		}
+		print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth300 widthcentpercentminusx', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		print '</div>';
+
+		// XAxis
+		$count = 0;
 		print '<div class="divadvancedsearchfield">';
-		print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden, $arrayoffilterfields);
+		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
+		//var_dump($arrayofxaxis);
+		print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400 widthcentpercentminusx');	// Fill the array $arrayofxaxis with possible fields
+		print '</div>';
+
+		// Group by
+		$count = 0;
+		print '<div class="divadvancedsearchfield">';
+		print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
+		print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300 widthcentpercentminusx', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
 		print '</div>';
 	}
-
-	// YAxis (add measures into array)
-	$count = 0;
-	//var_dump($arrayofmesures);
-	print '<div class="divadvancedsearchfield clearboth">';
-	print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
-	$simplearrayofmesures = array();
-	foreach ($arrayofmesures as $key => $val) {
-		$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
-	}
-	print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth300 widthcentpercentminusx', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
-	print '</div>';
-
-	// XAxis
-	$count = 0;
-	print '<div class="divadvancedsearchfield">';
-	print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
-	//var_dump($arrayofxaxis);
-	print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400 widthcentpercentminusx');	// Fill the array $arrayofxaxis with possible fields
-	print '</div>';
-
-	// Group by
-	$count = 0;
-	print '<div class="divadvancedsearchfield">';
-	print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
-	print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300 widthcentpercentminusx', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
-	print '</div>';
-
 
 	if ($mode == 'grid') {
 		// YAxis
@@ -726,17 +751,16 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 			$arrayofyaxislabel[$key] = $val['label'];
 		}
 		print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-vertical paddingright" title="'.$langs->trans("YAxis").'"></span>'.$langs->trans("YAxis").'</div> ';
-		print $form->multiselectarray('search_yaxis', $arrayofyaxislabel, $search_yaxis, 0, 0, 'minwidth100', 1);
+		print $form->multiselectarray('search_yaxis', $arrayofyaxislabel, $search_yaxis != null ? $search_yaxis : array(), 0, 0, 'minwidth100', 1);
 		print '</div>';
 	}
 
-	if ($mode == 'graph') {
-		//
+	if (!empty($newarrayoftype)) {
+		print '<div class="divadvancedsearchfield">';
+		print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
+		print '</div>';
 	}
 
-	print '<div class="divadvancedsearchfield">';
-	print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
-	print '</div>';
 	print '</div>';
 	print '</form>';
 }
@@ -903,6 +927,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	// Add LEFT JOIN for all tables mentioned into filter
 	if (!empty($search_component_params_hidden)) {
 		// Get all fields used into the filter
+		$matches = array();
 		preg_match_all('/\b(t[\w]*_[\w]*)\.(\w+(-\w+)?)/', $search_component_params_hidden, $matches);
 		$fieldsUsedInFilter = array_unique($matches[0]);
 
@@ -1068,7 +1093,7 @@ foreach ($search_measures as $key => $val) {
 	$legend[] = $langs->trans($arrayofmesures[$val]['label']);
 }
 
-$useagroupby = (is_array($search_groupby) && count($search_groupby));
+$useagroupby = count($search_groupby);
 //var_dump($useagroupby);
 //var_dump($arrayofvaluesforgroupby);
 
@@ -1119,7 +1144,7 @@ if ($sql) {
 				 */
 				foreach ($search_measures as $key => $val) {
 					$gi = 0;
-					foreach ($search_groupby as $gkey) {
+					foreach ($search_groupby as $gkey => $gval) {
 						//var_dump('*** Fetch #'.$ifetch.' for labeltouse='.$labeltouse.' measure number '.$key.' and group g_'.$gi);
 						//var_dump($arrayofvaluesforgroupby);
 						foreach ($arrayofvaluesforgroupby['g_'.$gi] as $gvaluepossiblekey => $gvaluepossiblelabel) {
@@ -1200,6 +1225,10 @@ if ($sql) {
 print '<!-- Section to show the result -->'."\n";
 print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreportsoutputnotdata').'">';
 
+if (empty($newarrayoftype)) {
+	$langs->load("admin");
+	print info_admin($langs->trans("NoSupportedModulesHaveBeenActivated").' '.$langs->trans("YouCanEnableModulesFrom"), 0, 0, 'info');
+}
 
 if ($mode == 'grid') {
 	// TODO
@@ -1225,7 +1254,7 @@ if ($mode == 'graph') {
 
 		$px1->SetLegend($legend);
 		$px1->setShowLegend($SHOWLEGEND);
-		$px1->SetMinValue($px1->GetFloorMinValue());
+		$px1->SetMinValue((int) $px1->GetFloorMinValue());
 		$px1->SetMaxValue($px1->GetCeilMaxValue());
 		$px1->SetWidth($WIDTH);
 		$px1->SetHeight($HEIGHT);

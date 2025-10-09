@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
  * Copyright (C) 2023       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -314,7 +314,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
 	}
@@ -341,7 +341,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
 	}
@@ -699,7 +699,7 @@ if (count($amount)) {
 	print '<td></td>';
 	print '</tr>';
 
-	$db->free($result);
+	$db->free($resql);
 } else {
 	print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }

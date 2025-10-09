@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,9 +61,6 @@ $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'expeditiondet'; //Must be the $table_element of the class that manage extrafield
 
-if (!$user->admin) {
-	accessforbidden();
-}
 
 
 /*
@@ -82,7 +79,8 @@ $textobject = $langs->transnoentitiesnoconv("Sendings");
 
 llxHeader('', $langs->trans("SendingsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expeditiondet_extrafields');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
 print "<br>\n";
 

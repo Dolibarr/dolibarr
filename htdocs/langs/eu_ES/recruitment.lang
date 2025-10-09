@@ -4,76 +4,67 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Kontratazioa
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = Lanpostu berrietarako kontratazio kanpainak kudeatu eta jarraitu
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = Kontratazio konfigurazioa
+RecruitmentSetupPage = Sartu hemen kontratazio modulurako aukera nagusien konfigurazioa
+RecruitmentArea=Kontratazio eremua
+PublicInterfaceRecruitmentDesc=Lanpostuen orrialde publikoak lanpostu hutsak erakusteko eta horiei erantzuteko URL publikoak dira. Lanpostu huts bakoitzerako esteka desberdin bat dago, lan-erregistro bakoitzean aurkitzen dena.
+EnablePublicRecruitmentPages=Gaitu lanpostu hutsen orrialde publikoak
 
-#
-# About page
-#
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
+NbOfEmployeesExpected=Aurreikusitako langile kopurua
+JobLabel=Lanpostuaren etiketa.
+WorkPlace=Lan-lekua
+DateExpected=Aurreikusitako data
+FutureManager=Etorkizuneko kudeatzailea
+ResponsibleOfRecruitement=Kontratazioaren arduraduna.
+IfJobIsLocatedAtAPartner=Lana bazkide baten lekuan badago
+PositionToBeFilled=Lanpostua
+PositionsToBeFilled=Lanpostuak
+ListOfPositionsToBeFilled=Lanpostuen zerrenda
+NewPositionToBeFilled=Lanpostu berriak
+JobOfferToBeFilled=Bete beharreko lanpostua
+ThisIsInformationOnJobPosition=Bete beharreko lanpostuaren informazioa
+ContactForRecruitment=Kontrataziorako kontaktua
+EmailRecruiter=Kontratatzaileari posta elektronikoz bidali
+ToUseAGenericEmail=Helbide elektroniko generiko bat erabiltzea. Definitzen ez bada, kontratazio arduradunaren helbide elektronikoa erabiliko da.
+NewCandidature=Aplikazio berria
+ListOfCandidatures=Eskaeren zerrenda
 Remuneration=Soldata
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+RequestedRemuneration=Eskatutako soldata
+ProposedRemuneration=Proposatutako soldata
+ContractProposed=Kontratu proposatua
+ContractSigned=Kontratua sinatuta
+ContractRefused=Kontratua ukatuta
+RecruitmentCandidature=Aplikazioa
+JobPositions=Lanpostuak
+RecruitmentCandidatures=Aplikazioak
+InterviewToDo=Jarraitu beharreko kontaktuak
+AnswerCandidature=Aplikazioaren erantzuna
+YourCandidature=Zure eskaera
+YourCandidatureAnswerMessage=Eskerrik asko zure eskaeragatik.<br>...
+JobClosedTextCandidateFound=Lanpostua itxita dago. Postua bete da.
+JobClosedTextCanceled=Lanpostua itxita dago.
+ExtrafieldsJobPosition=Osagarri diren ezaugarriak (lanpostuak)
+ExtrafieldsApplication=Osagarri diren ezaugarriak (lan eskaerak)
+MakeOffer=Eskaintza bat egin
+WeAreRecruiting=Langileak kontratatzen ari gara. Hau bete beharreko lanpostu hutsen zerrenda da...
+NoPositionOpen=Ez dago lanpostu irekirik une honetan
+ConfirmClose=Berretsi ezeztapena
+ConfirmCloseAsk=Ziur zaude kontratazio-hautagai hau bertan behera utzi nahi duzula?
+Recruitment=Kontratazioa
+ApplyJobCandidature=Lanpostu honetarako eskaera egin
+ErrorRecruitmmentCandidatureAlreadyExists= Kontratazio-hautagaia dagoeneko badago %s helbide elektronikoarekin
+RecruitmentCandidatureSaved=Kontratazio-hautagaia behar bezala gorde da
+NoOpenJobOffer=Ez dago lan eskaintza irekirik momentuz

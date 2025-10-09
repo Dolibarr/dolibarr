@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('bomnetneeds')); // Note that conf->hooks_modules contains array
 
 // Massaction
-$diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -90,7 +91,7 @@ if ($object->id > 0) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
+restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 // Permissions
 $permissionnote = $user->hasRight('bom', 'write'); // Used by the include of actions_setnotes.inc.php
@@ -135,7 +136,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans('BOM');
-$help_url ='EN:Module_BOM';
+$help_url = 'EN:Module_BOM';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-net_needs');
 
@@ -151,7 +152,7 @@ if ($action == 'treeview') {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = bomPrepareHead($object);
-	print dol_get_fiche_head($head, 'net_needs', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'net_needs', $langs->trans("BillOfMaterials"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -170,7 +171,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.DOL_URL_ROOT.'/bom/bom_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/bom/bom_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 
@@ -186,7 +187,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	$keyforbreak = 'duration';
+	$keyforbreak = 'duration';	// used into tpl
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Manufacturing cost
@@ -281,7 +282,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if ($action == 'treeview') {
 						print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					}
-					print '<td class="linecolqty right">'.$TProduct['qty'].'</td>';
+					print '<td class="linecolqty right">'.price(price2num($TProduct['qty'], 'MS')).'</td>';
 					print '<td>';
 					print '</td>';
 					print '<td class="linecolstock right"></td>';
@@ -305,7 +306,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($action == 'treeview') {
 							print '<td></td>';
 						}
-						print '<td class="linecolqty right">'.$TInfos['qty'].'</td>';
+						print '<td class="linecolqty right">'.price(price2num($TInfos['qty'], 'MS')).'</td>';
 						print '<td>';
 						print '</td>';
 						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
@@ -324,17 +325,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 				print '<tr class="oddeven">';
 				print '<td class="linecoldescription">'.$prod->getNomUrl(1).'</td>';
-				print '<td class="linecolqty right">'.$elem['qty'].'</td>';
+				print '<td class="linecolqty right">'.price(price2num($elem['qty'], 'MS')).'</td>';
 				print '<td>';
 				$useunit = (($prod->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($prod->type == Product::TYPE_SERVICE) && ($elem['fk_unit'])));
 				if ($useunit) {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 					$unit = new CUnits($db);
-					$unit->fetch($elem['fk_unit']);
+					$unit->fetch((int) $elem['fk_unit']);
 					print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
 				}
 				print '</td>';
-				print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
+				print '<td class="linecolstock right">'.price(price2num($prod->stock_reel, 'MS')).'</td>';
 				print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
 				print '</tr>';
 			}

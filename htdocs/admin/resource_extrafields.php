@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,9 +57,6 @@ $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'resource'; //Must be the $table_element of the class that manage extrafield
 
-if (!$user->admin) {
-	accessforbidden();
-}
 
 
 /*
@@ -78,7 +75,8 @@ $textobject = $langs->transnoentitiesnoconv("ResourceSingular");
 
 llxHeader('', $langs->trans("ResourceSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-resource_extrafields');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ResourceSetup"), $linkback, 'title_setup');
 
 $head = resource_admin_prepare_head();

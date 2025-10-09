@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,11 +143,6 @@ class Loan extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_project;
-
-	/**
 	 * @var float totalpaid
 	 */
 	public $totalpaid;
@@ -186,7 +181,7 @@ class Loan extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
+		$sql = "SELECT l.rowid, l.entity, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
 		$sql .= " l.paid, l.fk_bank, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
 		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE l.rowid = ".((int) $id);
@@ -198,6 +193,7 @@ class Loan extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref = $obj->rowid;
 				$this->datestart = $this->db->jdate($obj->datestart);
 				$this->dateend = $this->db->jdate($obj->dateend);
@@ -301,12 +297,12 @@ class Loan extends CommonObject
 		$sql .= " accountancy_account_capital, accountancy_account_insurance, accountancy_account_interest, entity,";
 		$sql .= " datec, fk_projet, fk_user_author, insurance_amount)";
 		$sql .= " VALUES ('".$this->db->escape($this->label)."',";
-		$sql .= " '".$this->db->escape($this->fk_bank)."',";
+		$sql .= " '".$this->db->escape((string) $this->fk_bank)."',";
 		$sql .= " '".price2num($newcapital)."',";
 		$sql .= " '".$this->db->idate($this->datestart)."',";
 		$sql .= " '".$this->db->idate($this->dateend)."',";
-		$sql .= " '".$this->db->escape($this->nbterm)."',";
-		$sql .= " '".$this->db->escape($this->rate)."',";
+		$sql .= " '".$this->db->escape((string) $this->nbterm)."',";
+		$sql .= " '".$this->db->escape((string) $this->rate)."',";
 		$sql .= " '".$this->db->escape($this->note_private)."',";
 		$sql .= " '".$this->db->escape($this->note_public)."',";
 		$sql .= " '".$this->db->escape($this->account_capital)."',";
@@ -413,7 +409,7 @@ class Loan extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan";
 		$sql .= " SET label='".$this->db->escape($this->label)."',";
-		$sql .= " capital='".price2num($this->db->escape($this->capital))."',";
+		$sql .= " capital='".$this->db->escape(price2num($this->capital))."',";
 		$sql .= " datestart='".$this->db->idate($this->datestart)."',";
 		$sql .= " dateend='".$this->db->idate($this->dateend)."',";
 		$sql .= " nbterm=".((float) $this->nbterm).",";
@@ -423,7 +419,7 @@ class Loan extends CommonObject
 		$sql .= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
 		$sql .= " fk_projet=".(empty($this->fk_project) ? 'NULL' : ((int) $this->fk_project)).",";
 		$sql .= " fk_user_modif = ".((int) $user->id).",";
-		$sql .= " insurance_amount = '".price2num($this->db->escape($this->insurance_amount))."'";
+		$sql .= " insurance_amount = '".price2num($this->db->escape((string) $this->insurance_amount))."'";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -767,7 +763,7 @@ class Loan extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -796,7 +792,7 @@ class Loan extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->dateend, 'day').'</span>';
 		}
 
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

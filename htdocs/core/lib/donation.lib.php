@@ -59,6 +59,13 @@ function donation_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin', 'remove');
 
+	$head[$h][0] = DOL_URL_ROOT.'/don/admin/website.php';
+	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+	$head[$h][2] = 'website';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin', 'remove');
+
 	return $head;
 }
 

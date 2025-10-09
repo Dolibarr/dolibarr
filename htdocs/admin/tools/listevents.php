@@ -124,8 +124,8 @@ if ($date_end !== '') {
 $arrayfields = array(
 	'e.prefix_session' => array(
 		'label' => 'UserAgent',
-		'checked' => (!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
-		'enabled' => (!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
+		'checked' => getDolGlobalInt('AUDIT_ENABLE_PREFIX_SESSION'),
+		'enabled' => getDolGlobalInt('AUDIT_ENABLE_PREFIX_SESSION'),
 		'position' => 110
 	)
 );
@@ -175,7 +175,6 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
 	$error = 0;
 
 	$db->begin();
-	$securityevents = new Events($db);
 
 	// Delete events
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
@@ -340,7 +339,7 @@ if ($result) {
 
 	$center = '';
 	if ($num) {
-		$center = '<a class="butActionDelete small" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+		$center = '<a class="butActionDelete small" href="'.$_SERVER["PHP_SELF"].'?action=purge&token='.newToken().'">'.$langs->trans("Purge").'</a>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -473,7 +472,7 @@ if ($result) {
 		print '<td class="nowrap left">'.dol_print_date($db->jdate($obj->dateevent), '%Y-%m-%d %H:%M:%S', 'tzuserrel').'</td>';
 
 		// Code
-		print '<td>'.dol_escape_htmltag($obj->type).'</td>';
+		print '<td class="tdoverflowmax200" title="'.dolPrintLabel($obj->type).'">'.dolPrintLabel($obj->type).'</td>';
 
 		// IP
 		print '<td class="nowraponall">';
@@ -522,15 +521,15 @@ if ($result) {
 			}
 		}
 		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($text).'">';
-		print dol_escape_htmltag($text);
+		print '<span class="small">'.dol_escape_htmltag($text).'</span>';
 		print '</td>';
 
 		// User agent
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
-		print dol_escape_htmltag($obj->user_agent);
+		print '<span class="small">'.dol_escape_htmltag($obj->user_agent).'</span>';
 		print '</td>';
 
-		// Prefix
+		// Prefix (the name of the session is DOLSESSID_
 		if (!empty($arrayfields['e.prefix_session']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
 			print dol_escape_htmltag($obj->prefix_session);

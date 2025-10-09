@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
+ * Copyright (C) 2014		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ foreach ($list_account_main as $key) {
 	// Value
 	print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
 	$key_value = getDolGlobalString($key);
-	print $formaccounting->select_account($key_value, $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
+	print $formaccounting->select_account($key_value, $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain', '1', 2);
 	print '</td>';
 	print '</tr>';
 }

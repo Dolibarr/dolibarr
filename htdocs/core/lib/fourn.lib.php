@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Marc Barilley		<marc@ocebo.com>
  * Copyright (C) 2011-2013  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023 	    Nick Fragoulis
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -201,7 +201,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 		$head[$h][1] = $langs->trans("OrderDispatch");
 
 		//If dispatch process running we add the number of item to dispatch into the head
-		if (in_array($object->statut, array($object::STATUS_ORDERSENT, $object::STATUS_RECEIVED_PARTIALLY, $object::STATUS_RECEIVED_COMPLETELY))) {
+		if (in_array($object->status, array($object::STATUS_ORDERSENT, $object::STATUS_RECEIVED_PARTIALLY, $object::STATUS_RECEIVED_COMPLETELY))) {
 			$sumQtyAllreadyDispatched = 0;
 			$sumQtyOrdered = 0;
 

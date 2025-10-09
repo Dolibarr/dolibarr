@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,13 +83,15 @@ class box_members_last_modified extends ModeleBoxes
 
 		if ($user->hasRight('adherent', 'lire')) {
 			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
-			$sql .= " a.datec, a.tms as datem, a.statut as status, a.datefin as date_end_subscription,";
+			$sql .= " a.datec, GREATEST(a.tms, aef.tms) as datem, a.statut as status, a.datefin as date_end_subscription,";
 			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
 			$sql .= " t.rowid as typeid, t.subscription, t.libelle as label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
+			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = a.rowid';
+			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE a.entity IN (".getEntity('member').")";
 			$sql .= " AND a.fk_adherent_type = t.rowid";
-			$sql .= " ORDER BY a.tms DESC";
+			$sql .= " ORDER BY datem DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);

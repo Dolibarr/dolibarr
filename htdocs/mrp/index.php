@@ -6,6 +6,7 @@
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,7 +209,7 @@ if (isModEnabled('bom')) {
 				$staticbom->status = $obj->status;
 
 				print '<tr class="oddeven">';
-				print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
+				print '<td>'.$staticbom->getNomUrl(1, '32').'</td>';
 				print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
 				print '<td class="right">'.$staticbom->getLibStatut(3).'</td>';
 				print '</tr>';
@@ -219,18 +220,26 @@ if (isModEnabled('bom')) {
 			print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '</tr>';
 		}
-		print "</table></div>";
-		print "<br>";
+		print '</table>';
+		print '</div>';
+		print '<br>';
 	} else {
 		dol_print_error($db);
 	}
 }
+
 
 /*
  * Last modified MOs
  */
 
 if (isModEnabled('mrp')) {
+	$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
+	$sql .= " WHERE a.entity IN (".getEntity('mo').")";
+	$sql .= $db->order("a.tms", "DESC");
+	$sql .= $db->plimit($max, 0);
+
 	$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
 	$sql .= " WHERE a.entity IN (".getEntity('mo').")";
@@ -265,7 +274,7 @@ if (isModEnabled('mrp')) {
 				$staticmo->status = $obj->status;
 
 				print '<tr class="oddeven">';
-				print '<td>'.$staticmo->getNomUrl(1, 32).'</td>';
+				print '<td>'.$staticmo->getNomUrl(1, '32').'</td>';
 				print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
 				print '<td class="right">'.$staticmo->getLibStatut(3).'</td>';
 				print '</tr>';
@@ -276,8 +285,9 @@ if (isModEnabled('mrp')) {
 			print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '</tr>';
 		}
-		print "</table></div>";
-		print "<br>";
+		print '</table>';
+		print '</div>';
+		print '<br>';
 	} else {
 		dol_print_error($db);
 	}

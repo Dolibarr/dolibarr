@@ -4,8 +4,8 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ function versiondolibarrarray()
  *  - Running specific Sql by a module init
  *  - Loading sql file of website import package
  *  Install process however does not use it.
- *  Note that Sql files must have all comments at start of line. Also this function take ';' as the char to detect end of sql request
+ *  Note that SQL files must have all comments at start of line. Also this function take ';' as the char to detect end of sql request
  *
  *	@param		string		$sqlfile					Full path to sql file
  * 	@param		int			$silent						1=Do not output anything, 0=Output line for update page
@@ -166,13 +166,13 @@ function versiondolibarrarray()
  *  @param		int			$nocommentremoval			Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int			$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
  *  @param		int			$colspan					2=Add a colspan=2 on td
- *  @param		int			$onlysqltoimportwebsite		Only sql requests used to import a website template are allowed
+ *  @param		int			$onlysqltoimportwebsite		Only sql requests used to import a website template are allowed. This is a security feature to disallow SQL injection when loading a template.
  *  @param		string		$database					Database (replace __DATABASE__ with this value)
  * 	@return		int										Return integer <=0 if KO, >0 if OK
  */
 function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0, $database = '')
 {
-	global $db, $conf, $langs, $user;
+	global $db, $conf, $langs;
 
 	dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler." okerror=".$okerror, LOG_DEBUG);
 
@@ -189,6 +189,8 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 
 	// Get version of database
 	$versionarray = $db->getVersionArray();
+
+	// TODO Restore all sequences "/* new line */\n" into "" in $sqlfile.
 
 	$fp = fopen($sqlfile, "r");
 	if ($fp) {
@@ -254,7 +256,8 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 
 			//print $buf.'<br>';exit;
 
-			if (preg_match('/;/', $buffer)) {	// If string contains ';', it's end of a request string, we save it in arraysql.
+			if (preg_match('/;\s*$/', $buffer)) {
+				// If string contains the end of request string (';'), we save it into $arraysql.
 				// Found new request
 				if ($buffer) {
 					$arraysql[$i] = $buffer;
@@ -551,7 +554,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 		});
 		</script>';
 		if (count($arraysql)) {
-			print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
+			print ' - <a class="trforrunsqlshowhide'.$keyforsql.' reposition" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
 		} else {
 			print ' - <span class="opacitymedium">'.$langs->trans("ScriptIsEmpty").'</span>';
 		}
@@ -809,7 +812,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
  */
 function ihm_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -838,6 +841,11 @@ function ihm_prepare_head()
 	$head[$h][2] = 'css';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/tools/ui/index.php";
+	$head[$h][1] = $langs->trans("UxComponentsDoc").' '.img_picto('', 'external-link-square-alt');
+	$head[$h][2] = 'ux';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin', 'remove');
@@ -854,7 +862,7 @@ function ihm_prepare_head()
  */
 function security_prepare_head()
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -874,7 +882,7 @@ function security_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
-	$head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Upload").')';
+	$head[$h][1] = $langs->trans("Files").' ('.$langs->trans("UploadName").' | '.$langs->trans("Download").')';
 	$head[$h][2] = 'file';
 	$h++;
 
@@ -893,6 +901,11 @@ function security_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/events.php";
 	$head[$h][1] = $langs->trans("Audit");
 	$head[$h][2] = 'audit';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/openid_connect.php";
+	$head[$h][1] = $langs->trans("OpenIDconnectSetup");
+	$head[$h][2] = 'openid';
 	$h++;
 
 
@@ -925,6 +938,11 @@ function security_prepare_head()
 		$head[$h][2] = 'default';
 		$h++;
 	}
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/security_headers_http.php";
+	$head[$h][1] = $langs->trans("MainHttpSecurityHeaders");
+	$head[$h][2] = 'headers_http';
+	$h++;
 
 	return $head;
 }
@@ -1005,7 +1023,7 @@ function translation_prepare_head()
  */
 function defaultvalues_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -1053,13 +1071,18 @@ function defaultvalues_prepare_head()
 /**
  * 	Return list of session
  *
- *  @return array<string,array{login:string,age:int,creation:int,modification:int,raw:string}>	Array list of sessions
+ *  @return array<string,array{login:string,age:int,creation:null|int|false,modification:int|false,raw:string,remote_ip:?string,user_agent:?string}>	Array list of sessions
  */
 function listOfSessions()
 {
-	global $conf;
+	global $conf, $php_session_save_handler;
 
 	$arrayofSessions = array();
+	// Set the handler of session
+	if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/phpsessionin'.$php_session_save_handler.'.lib.php';
+		return dolListSessions();
+	}
 	// session.save_path can be returned empty so we set a default location and work from there
 	$sessPath = '/tmp';
 	$iniPath = ini_get("session.save_path");
@@ -1087,13 +1110,16 @@ function listOfSessions()
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
 						$regs = array();
-						$loginfound = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i', $sessValues, $regs);
+						$arrayofSessions[$idsess]["login"] = '';
+						$loginfound = preg_match('/dol_login\|s:[0-9]+:"([^"]+)"/i', $sessValues, $regs);
 						if ($loginfound) {
-							$arrayofSessions[$idsess]["login"] = $regs[1];
+							$arrayofSessions[$idsess]["login"] = (string) $regs[1];
 						}
 						$arrayofSessions[$idsess]["age"] = time() - filectime($fullpath);
 						$arrayofSessions[$idsess]["creation"] = filectime($fullpath);
 						$arrayofSessions[$idsess]["modification"] = filemtime($fullpath);
+						$arrayofSessions[$idsess]["user_agent"] = null;
+						$arrayofSessions[$idsess]["remote_ip"] = null;
 						$arrayofSessions[$idsess]["raw"] = $sessValues;
 					}
 				}
@@ -1196,6 +1222,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	$objMod = new $modName($db);
 	'@phan-var-force DolibarrModules $objMod';
+	/** @var DolibarrModules $objMod */
 
 	// Test if PHP version ok
 	$verphp = versionphparray();
@@ -1310,7 +1337,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
  */
 function unActivateModule($value, $requiredby = 1)
 {
-	global $db, $modules, $conf;
+	global $db;
 
 	// Check parameters
 	if (empty($value)) {
@@ -1338,6 +1365,7 @@ function unActivateModule($value, $requiredby = 1)
 	if ($found) {
 		$objMod = new $modName($db);
 		'@phan-var-force DolibarrModules $objMod';
+		/** @var DolibarrModules $objMod */
 		$result = $objMod->remove();
 		if ($result <= 0) {
 			$ret = $objMod->error;
@@ -1382,7 +1410,7 @@ function unActivateModule($value, $requiredby = 1)
  * 	@param		string[]	$tabrowid			Tabrowid
  * 	@param		bool[]		$tabcond			Tabcond
  * 	@param		array<array<string,string>>	$tabhelp	Tabhelp
- *  @param		array<string,array<string,array<string,string>>>	$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
+ *  @param		array<string|int,array<int|string,string|array<string,string>>>	$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
  * 	@return		int			1
  */
 function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabcomplete)
@@ -1411,6 +1439,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
+						/** @var DolibarrModules $objMod */
 
 						if ($objMod->numero > 0) {
 							$j = $objMod->numero;
@@ -1561,7 +1590,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
  */
 function activateModulesRequiredByCountry($country_code)
 {
-	global $db, $conf, $langs;
+	global $db;
 
 	$modulesdir = dolGetModulesDirs();
 
@@ -1578,6 +1607,7 @@ function activateModulesRequiredByCountry($country_code)
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
+						/** @var DolibarrModules $objMod */
 
 						$modulequalified = 1;
 
@@ -1654,6 +1684,7 @@ function complete_elementList_with_modules(&$elementList)
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						/** @var DolibarrModules $objMod */
 
 						if ($objMod->numero > 0) {
 							$j = $objMod->numero;
@@ -1729,51 +1760,37 @@ function complete_elementList_with_modules(&$elementList)
  *  @param	string		$text			Text to use for the column name of values
  *	@return	void
  */
-function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Value')
+function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = '')
 {
 	global $db, $langs, $conf, $user;
 	global $_Avery_Labels;
 
 	$form = new Form($db);
 
-	if (empty($strictw3c)) {
-		dol_syslog("Warning: Function 'form_constantes' was called with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_WARNING);
-	}
-	if (!empty($strictw3c) && $strictw3c == 1) {
-		print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="updateall">';
-	}
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$text = $langs->trans($text);
-	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
-	print '</td>';
-	if (empty($strictw3c)) {
-		print '<td class="center" width="80">'.$langs->trans("Action").'</td>';
+	if ($text) {
+		$text = $langs->trans($text);
+		print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
 	}
+	print '</td>';
 	print "</tr>\n";
 
-	$label = '';
 	foreach ($tableau as $key => $const) {	// Loop on each param
 		$label = '';
 		// $const is a const key like 'MYMODULE_ABC'
-		if (is_numeric($key)) {		// Very old behaviour
-			$type = 'string';
+		if (is_array($const)) {
+			$type = $const['type'];
+			$label = $const['label'];
+			$const = $key;
 		} else {
-			if (is_array($const)) {
-				$type = $const['type'];
-				$label = $const['label'];
-				$const = $key;
-			} else {
-				$type = $const;
-				$const = $key;
-			}
+			$type = $const;
+			$const = $key;
 		}
+
 		$sql = "SELECT ";
 		$sql .= "rowid";
 		$sql .= ", ".$db->decrypt('name')." as name";
@@ -1795,19 +1812,12 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				$obj = (object) array('rowid' => '', 'name' => $const, 'value' => '', 'type' => $type, 'note' => '');
 			}
 
-			if (empty($strictw3c)) {	// deprecated. must be always true.
-				print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="page_y" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="update">';
-			}
-
 			print '<tr class="oddeven">';
 
 			// Show label of parameter
 			print '<td>';
-			print '<input type="hidden" name="rowid'.(empty($strictw3c) ? '' : '[]').'" value="'.$obj->rowid.'">';
-			print '<input type="hidden" name="constname'.(empty($strictw3c) ? '' : '[]').'" value="'.$const.'">';
+			print '<input type="hidden" name="rowid[]" value="'.$obj->rowid.'">';
+			print '<input type="hidden" name="constname[]" value="'.$const.'">';
 			print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 			print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
 
@@ -1862,36 +1872,35 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				foreach (array_keys($_Avery_Labels) as $codecards) {
 					$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 				}
-				print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
+				print $form->selectarray('constvalue'.($strictw3c == 3 ? '_'.$const : '[]'), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
 				print '<input type="hidden" name="consttype" value="yesno">';
-				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+				print '<input type="hidden" name="constnote[]" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				print '</td>';
 			} else {
 				print '<td>';
-				print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.($obj->type ? $obj->type : 'string').'">';
-				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+				print '<input type="hidden" name="consttype'.($strictw3c == 3 ? '_'.$const : '[]').'" value="'.($obj->type ? $obj->type : 'string').'">';
+				print '<input type="hidden" name="constnote'.($strictw3c == 3 ? '_'.$const : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				if ($obj->type == 'textarea' || in_array($const, array('ADHERENT_CARD_TEXT', 'ADHERENT_CARD_TEXT_RIGHT', 'ADHERENT_ETIQUETTE_TEXT'))) {
-					print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" cols="50" rows="5" wrap="soft">'."\n";
+					print '<textarea class="flat" name="constvalue'.($strictw3c == 3 ? '_'.$const : '[]').'" cols="50" rows="5" wrap="soft">'."\n";
 					print $obj->value;
 					print "</textarea>\n";
 				} elseif ($obj->type == 'html') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
+					$doleditor = new DolEditor('constvalue'.($strictw3c == 3 ? '_'.$const : '[]'), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
-					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1, false, 0, 1);
+					print $form->selectyesno('constvalue'.($strictw3c == 3 ? '_'.$const : '[]'), $obj->value, 1, false, 0, 1);
 				} elseif (preg_match('/emailtemplate/', $obj->type)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
 
 					$tmp = explode(':', $obj->type);
 
-					$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
-					//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+					$formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
+
 					$arrayofmessagename = array();
 					if (is_array($formmail->lines_model)) {
 						foreach ($formmail->lines_model as $modelmail) {
-							//var_dump($modelmail);
 							$moreonlabel = '';
 							if (!empty($arrayofmessagename[$modelmail->label])) {
 								$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
@@ -1900,40 +1909,23 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 							$arrayofmessagename[$modelmail->label.':'.$tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
 						}
 					}
-					//var_dump($arraydefaultmessage);
-					//var_dump($arrayofmessagename);
+
 					print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 
-					print '<a href="'.DOL_URL_ROOT.'/admin/mails_templates.php?action=create&type_template='.urlencode($tmp[1]).'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('', 'add').'</a>';
+					print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/mails_templates.php', ['action' => 'create', 'type_template' => $tmp[1], 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"])]).'">'.img_picto('', 'add').'</a>';
 				} elseif (preg_match('/MAIL_FROM$/i', $const)) {
-					print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
+					print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue'.($strictw3c == 3 ? '_'.$const : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
 				} else { // type = 'string' ou 'chaine'
-					print '<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
+					print '<input type="text" class="flat minwidth300" name="constvalue'.($strictw3c == 3 ? '_'.$const : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
 				}
 				print '</td>';
 			}
 
-			// Submit button
-			if (empty($strictw3c)) {	// deprecated. must be always true.
-				print '<td class="center">';
-				print '<input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update">';
-				print "</td>";
-			}
-
 			print "</tr>\n";
-
-			if (empty($strictw3c)) {
-				print "</form>\n";
-			}
 		}
 	}
 	print '</table>';
 	print '</div>';
-
-	if (!empty($strictw3c) && $strictw3c == 1) {
-		print '<div align="center"><input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update"></div>';
-		print "</form>\n";
-	}
 }
 
 
@@ -2177,4 +2169,155 @@ function email_admin_prepare_head()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'email_admin', 'remove');
 
 	return $head;
+}
+
+/**
+ * Prepare array of directives for HTTP headers
+ *
+ * @return 	array<string,array<string,string>>					Array of directives
+ */
+function GetContentPolicyDirectives()
+{
+	return array(
+		// Fetch directives
+		"child-src" => array("label" => "child-src", "data-directivetype" => "fetch"),
+		"connect-src" => array("label" => "connect-src", "data-directivetype" => "fetch"),
+		"default-src" => array("label" => "default-src", "data-directivetype" => "fetch"),
+		"fenced-frame-src" => array("label" => "fenced-frame-src", "data-directivetype" => "fetch"),
+		"font-src" => array("label" => "font-src", "data-directivetype" => "fetch"),
+		"frame-src" => array("label" => "frame-src", "data-directivetype" => "fetch"),
+		"img-src" => array("label" => "img-src", "data-directivetype" => "fetch"),
+		"manifest-src" => array("label" => "manifest-src", "data-directivetype" => "fetch"),
+		"media-src" => array("label" => "media-src", "data-directivetype" => "fetch"),
+		"object-src" => array("label" => "object-src", "data-directivetype" => "fetch"),
+		"prefetch-src" => array("label" => "prefetch-src", "data-directivetype" => "fetch"),
+		"script-src" => array("label" => "script-src", "data-directivetype" => "fetch"),
+		"script-src-elem" => array("label" => "script-src-elem", "data-directivetype" => "fetch"),
+		"script-src-attr" => array("label" => "script-src-attr", "data-directivetype" => "fetch"),
+		"style-src" => array("label" => "style-src","data-directivetype" => "fetch"),
+		"style-src-elem" => array("label" => "style-src-elem", "data-directivetype" => "fetch"),
+		"style-src-attr" => array("label" => "style-src-attr", "data-directivetype" => "fetch"),
+		"worker-src" => array("label" => "worker-src", "data-directivetype" => "fetch"),
+		// Document directives
+		"base-uri" => array("label" => "base-uri", "data-directivetype" => "document"),
+		"sandbox" => array("label" => "sandbox", "data-directivetype" => "document"),
+		// Navigation directives
+		"form-action" => array("label" => "form-action", "data-directivetype" => "navigation"),
+		"frame-ancestors" => array("label" => "frame-ancestors", "data-directivetype" => "navigation"),
+		// Reporting directives
+		"report-to" => array("label" => "report-to", "data-directivetype" => "reporting"),
+		// Other directives
+		"require-trusted-types-for" => array("label" => "require-trusted-types-for", "data-directivetype" => "require-trusted-types-for"),
+		"trusted-types" => array("label" => "trusted-types", "data-directivetype" => "trusted-types"),
+		"upgrade-insecure-requests" => array("label" => "upgrade-insecure-requests", "data-directivetype" => "none"),
+	);
+}
+
+/**
+ * Prepare array of sources for HTTP headers
+ *
+ * @return 	array<string,array<string,array<string,string>>>					Array of sources
+ */
+function GetContentPolicySources()
+{
+	return array(
+		// Fetch directives
+		"fetch" => array(
+			"*" => array("label" => "*", "data-sourcetype" => "select"),
+			"data" => array("label" => "data:", "data-sourcetype" => "data"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"unsafe-eval" => array("label" => "unsafe-eval", "data-sourcetype" => "quoted"),
+			"wasm-unsafe-eval" => array("label" => "wasm-unsafe-eval", "data-sourcetype" => "quoted"),
+			"unsafe-inline" => array("label" => "unsafe-inline", "data-sourcetype" => "quoted"),
+			"unsafe-hashes" => array("label" => "unsafe-hashes", "data-sourcetype" => "quoted"),
+			"inline-speculation-rules" => array("label" => "inline-speculation-rules", "data-sourcetype" => "quoted"),
+			"strict-dynamic" => array("label" => "strict-dynamic", "data-sourcetype" => "quoted"),
+			"report-sample" => array("label" => "report-sample", "data-sourcetype" => "quoted"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
+		),
+		// Document directives
+		"document" => array(
+			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"scheme-source" => array("label" => "scheme-source (*.mydomain.com)", "data-sourcetype" => "input"),
+		),
+		// Navigation directives
+		"navigation" => array(
+			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
+		),
+		// Reporting directives
+		"reporting" => array(
+			"report-to" => array("label" => "report-to", "data-sourcetype" => "input"),
+		),
+		// Other directives
+		"require-trusted-types-for" => array(
+			"script" => array("label" => "script", "data-sourcetype" => "select"),
+		),
+		"trusted-types" => array(
+			"policyName" => array("label" => "policyName", "data-sourcetype" => "input"),
+			"none" => array("label" => "none", "data-sourcetype" => "quoted"),
+			"allow-duplicates" => array("label" => "allow-duplicates", "data-sourcetype" => "quoted"),
+		),
+	);
+}
+
+/**
+ * Transform a Content Security Policy to an array
+ *
+ * @param	string		$forceCSP		Content security policy string
+ * @return 	array<string,array<string|int,array<string|int,string>|string>>				Array of sources
+ */
+function GetContentPolicyToArray($forceCSP)
+{
+	$forceCSPArr = array();
+	$sourceCSPArr = GetContentPolicySources();
+	$sourceCSPArrflatten = array();
+
+	// We remove a level for sources array
+	foreach ($sourceCSPArr as $key => $arr) {
+		$sourceCSPArrflatten = array_merge($sourceCSPArrflatten, array_keys($arr));
+	}
+	// Gerer le problème avec data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D qui est split + problème avec button ajouter
+	$forceCSP = preg_replace('/;base64,/', "__semicolumnbase64__", $forceCSP);
+	$securitypolicies = explode(";", $forceCSP);
+
+	// Loop on each security policy to create an array
+	foreach ($securitypolicies as $key => $securitypolicy) {
+		if ($securitypolicy == "") {
+			continue;
+		}
+		$securitypolicy = preg_replace('/__semicolumnbase64__/', ";base64,", $securitypolicy);
+		$securitypolicyarr = explode(" ", $securitypolicy);
+		$directive = array_shift($securitypolicyarr);
+		// Remove unwanted spaces
+		while ($directive == "") {
+			$directive = array_shift($securitypolicyarr);
+		}
+		if (empty($directive)) {
+			continue;
+		}
+		$sources = $securitypolicyarr;
+		if (empty($sources)) {
+			$forceCSPArr[$directive] = array();
+		} else {
+			//Loop on each sources to add to the right directive array key
+			foreach ($sources as $key2 => $source) {
+				$source = str_replace("'", "", $source);
+				if (empty($source)) {
+					continue;
+				}
+				if (empty($forceCSPArr[$directive])) {
+					$forceCSPArr[$directive] = array($source);
+				} else {
+					$forceCSPArr[$directive][] = $source;
+				}
+			}
+		}
+	}
+	return $forceCSPArr;
 }

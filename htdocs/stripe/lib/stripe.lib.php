@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ function html_print_stripe_footer($fromcompany, $langs)
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", (string) $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
 	}
 
 	$reg = array();
