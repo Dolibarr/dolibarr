@@ -376,18 +376,18 @@ class cEmailTemplate extends CommonObject
 		$sql .= " private=".((int) $this->private).",";
 		$sql .= " fk_user=".(property_exists($this, 'fk_user') && !empty($this->fk_user) ? ((int) $this->fk_user) : "null").",";
 		$sql .= " datec=".((int) $this->datec).",";
-		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " position=".(isset($this->position) ? "'".((int) $this->position)."'" : "null").",";
-		$sql .= " defaultfortype=".(isset($this->defaultfortype) ? "'".((int) $this->defaultfortype)."'" : "null").",";
+		$sql .= " label=".$this->db->escape($this->label).",";
+		$sql .= " position=".((int) $this->position).",";
+		$sql .= " defaultfortype=".((int) $this->defaultfortype).",";
 		$sql .= " enabled=".(isset($this->enabled) ? "'".$this->db->escape($this->enabled)."'" : "null").",";
 		$sql .= " active=".((int) $this->active).",";
 		$sql .= " email_from=".$this->db->escape($this->email_from).",";
 		$sql .= " email_to=".$this->db->escape($this->email_to).",";
 		$sql .= " email_tocc=".$this->db->escape($this->email_tocc).",";
 		$sql .= " email_tobcc=".(isset($this->email_tobcc) ? "'".$this->db->escape($this->email_tobcc)."'" : "null").",";
-		$sql .= " topic=".(isset($this->topic) ? "'".$this->db->escape($this->topic)."'" : "null").",";
+		$sql .= " topic=".$this->db->escape($this->topic).",";
 		$sql .= " joinfiles=".((int) $this->joinfiles).",";
-		$sql .= " content=".(isset($this->content) ? "'".$this->db->escape($this->content)."'" : "null").",";
+		$sql .= " content=".$this->db->escape($this->content).",";
 		$sql .= " content_lines=".(isset($this->content_lines) ? "'".$this->db->escape($this->content_lines)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
