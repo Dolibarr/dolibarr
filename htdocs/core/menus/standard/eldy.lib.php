@@ -2345,8 +2345,8 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$langs->load("mrp");
 
 			$newmenu->add("", $langs->trans("MenuMRP"), 0, $user->hasRight('mrp', 'read'), '', $mainmenu, 'mrp', 0, '', '', '', img_picto('', 'mrp', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/mrp/mo_card.php?leftmenu=mo&action=create", $langs->trans("NewMO"), 1, $user->hasRight('mrp', 'write'), '', $mainmenu, '');
-			$newmenu->add("/mrp/mo_list.php?leftmenu=mo", $langs->trans("List"), 1, $user->hasRight('mrp', 'read'), '', $mainmenu, '');
+			$newmenu->add("/mrp/mo_card.php?leftmenu=mrp&action=create", $langs->trans("NewMO"), 1, $user->hasRight('mrp', 'write'), '', $mainmenu, '');
+			$newmenu->add("/mrp/mo_list.php?leftmenu=mrp", $langs->trans("List"), 1, $user->hasRight('mrp', 'read'), '', $mainmenu, '');
 		}
 	}
 }
