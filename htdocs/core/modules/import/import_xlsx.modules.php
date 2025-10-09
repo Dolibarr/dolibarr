@@ -1067,7 +1067,6 @@ class ImportXlsx extends ModeleImports
 								}
 
 								$sql = $sqlstart . $sqlend;
-								print $sql;exit;
 
 								// Run update request
 								$resql = $this->db->query($sql);
