@@ -91,6 +91,10 @@ class MailingTarget extends CommonObject
 	 */
 	public $status; // Status 0=Not sent, 1=Sent, 2=Read, 3=Read and unsubscribed, -1=Error
 
+	/**
+	 * @var array<int,string> statut dest
+	 */
+	public $statut_dest = array();
 
 	/**
 	 * @var string source_url of the mailing_target
@@ -145,6 +149,12 @@ class MailingTarget extends CommonObject
 		$this->labelStatus[2] = 'TargetStatusRead';
 		$this->labelStatus[3] = 'TargetStatusReadAndUnsubscribed';
 		$this->labelStatus[-1] = 'TargetStatusError';
+
+		$this->statut_dest[0] = 'TargetStatusNotSent';
+		$this->statut_dest[1] = 'TargetStatusSent';
+		$this->statut_dest[2] = 'TargetStatusRead';
+		$this->statut_dest[3] = 'TargetStatusReadAndUnsubscribed'; // Read but ask to not be contacted anymore
+		$this->statut_dest[-1] = 'TargetStatusError';
 	}
 
 	/**
