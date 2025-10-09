@@ -30,11 +30,13 @@ create table llx_receptiondet_batch
   fk_elementdet  integer,                  						-- ID of line of main source object.
   element_type   varchar(50) DEFAULT 'supplier_order' NOT NULL,	-- Type of source object ('supplier_order', ...)
   fk_product     integer,
-  qty            float,             			-- qty to move
-  fk_entrepot    integer,						-- ID of warehouse to use for the stock change
+  description	 text,											-- Product description/label of non origin
+  qty            float,             							-- qty to move
+  fk_unit		 integer,										-- ID of unit code
+  fk_entrepot    integer,										-- ID of warehouse to use for the stock change
   fk_projet  	 integer  DEFAULT NULL,
-  comment		 varchar(255),					-- comment on movement
-  batch          varchar(128) DEFAULT NULL,		-- serial/lot number
+  comment		 varchar(255),									-- comment on movement
+  batch          varchar(128) DEFAULT NULL,						-- serial/lot number
   eatby          date DEFAULT NULL,
   sellby         date DEFAULT NULL,
   status         integer,
@@ -42,5 +44,6 @@ create table llx_receptiondet_batch
   datec          datetime,
   tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   cost_price     double(24,8) DEFAULT 0,
-  extraparams	 varchar(255)				 	-- to stock other parameters in json format
+  rang 			 integer  DEFAULT 0,							-- Position of line
+  extraparams	 varchar(255)				 					-- to stock other parameters in json format
 )ENGINE=innodb;
