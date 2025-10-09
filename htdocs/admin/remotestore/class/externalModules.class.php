@@ -512,6 +512,7 @@ class ExternalModules
 			$html .= '<br><small>';
 			$html .= $version;			// Version Dolibarr. No dol_escape_htmltag, it is already escape html
 			$html .= '</small></h2>';
+
 			$html .= '<small class="appDateCreation appRef"> ';
 			if (empty($product['tms'])) {
 				$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.$langs->trans("DateCreation").': ';
@@ -519,7 +520,7 @@ class ExternalModules
 			} else {
 				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
 			}
-			$html .= ' &nbsp; '.$langs->trans('Ref').' '.dolPrintHTML($product["ref"]);
+			$html .= ' &nbsp; '.$langs->trans('Ref').' '.dolPrintHTML(preg_replace('/@.*$/', '', $product["ref"]));
 			//$html .= ' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]);
 			$html .= '</small><br>';
 			//$html .= '<div class="appSource valignmiddle inline-block">'.$langs->trans('Source').' &nbsp; </div>';
@@ -534,10 +535,10 @@ class ExternalModules
 			}
 			//$html .= $product["source"];
 			$html .= '</div> &nbsp;';
-			if (!empty($product['phpmin'])) {
+			if (!empty($product['phpmin']) && $product['phpmin'] != 'unknown') {
 				$html .= ' <span class="badge-secondary" style="padding: 2px; border-radius: 5px">PHP min '.$product['phpmin'].'</span>';
 			}
-			if (!empty($product['phpmax'])) {
+			if (!empty($product['phpmax']) && $product['phpmax'] != 'unknown') {
 				$html .= ' <span class="badge-secondary" style="padding: 2px; border-radius: 5px">PHP max '.$product['phpmax'].'</span>';
 			}
 			if (!empty($product['author'])) {

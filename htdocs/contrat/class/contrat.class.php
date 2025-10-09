@@ -1822,6 +1822,8 @@ class Contrat extends CommonObject
 				}
 			}
 
+			// TODO Update column llx_contrat.denormalized_lower_panned_end_date
+
 			if (empty($error)) {
 				// Call trigger
 				$this->context['line_id'] = $rowid;
@@ -2829,6 +2831,9 @@ class Contrat extends CommonObject
 							$resqlupdate = $this->db->query($sqlupdate);
 							if ($resqlupdate) {
 								$contractlineprocessed[$obj->lid] = $object->ref;
+
+								// TODO Update column llx_contrat.denormalized_lower_panned_end_date
+
 
 								$actioncode = 'RENEW_CONTRACT';
 								$now = dol_now();

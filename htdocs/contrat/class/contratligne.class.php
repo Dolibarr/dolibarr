@@ -540,11 +540,6 @@ class ContratLigne extends CommonObjectLine
 				$this->date_start_real = $this->db->jdate($obj->date_start_real);
 				$this->date_end = $this->db->jdate($obj->date_end);
 				$this->date_end_real = $this->db->jdate($obj->date_end_real);
-				// For backward compatibility
-				//$this->date_ouverture_prevue = $this->db->jdate($obj->date_ouverture_prevue);
-				//$this->date_ouverture = $this->db->jdate($obj->date_ouverture);
-				//$this->date_fin_validite = $this->db->jdate($obj->date_fin_validite);
-				//$this->date_cloture = $this->db->jdate($obj->date_cloture);
 
 				$this->tva_tx = $obj->tva_tx;
 				$this->vat_src_code = $obj->vat_src_code;
@@ -939,6 +934,10 @@ class ContratLigne extends CommonObjectLine
 		dol_syslog(get_class($this)."::active_line", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			if ($date_end >= 0) {
+				// TODO Update column llx_contrat.denormalized_lower_panned_end_date
+			}
+
 			// Call trigger
 			$result = $this->call_trigger('LINECONTRACT_ACTIVATE', $user);
 			if ($result < 0) {
