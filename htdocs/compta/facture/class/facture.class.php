@@ -390,7 +390,7 @@ class Facture extends CommonInvoice
 	public $element_for_advance_permission = 'invoice_advance';
 
 	/**
-	 * @var array{read:string,write:string,delete:string,export:string,invoice_advance:array{send;string}} List of common rights
+	 * @var array{read:string,write:string,delete:string,export:string,invoice_advance:array{send:string}} List of common rights
 	 */
 	public $rights_permission = [
 		'read' => 'lire',
