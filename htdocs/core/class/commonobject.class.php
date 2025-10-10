@@ -20,7 +20,8 @@
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
- *
+ * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -11618,5 +11619,31 @@ abstract class CommonObject
 
 		$this->db->commit();
 		return true;
+	}
+	
+	function checkActiveProductInLines($status = 'onsale') {
+		global $langs;
+		if (isModEnabled('product')) {
+			$langs->load('products');
+			$statustotest = $statustype == 'onsale' ? 'status' : 'status_buy';
+			$statuskey4lang = $statustype == 'onsale' ? 'ProductStatusNotOnSell' : 'ProductStatusNotOnBuy';
+			$ret = true;
+			foreach ($this->lines as $line) {
+				if ($line->fk_product > 0) {
+					include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+					$langs->load('products');
+					$product = new Product($this->db);
+					$product->fetch($line->fk_product);
+					if (!$product->$statustotest) {
+						$ret = false;
+						$this->errors[] = $langs->trans('ProductRef').' '.$product->ref.' '.$langs->trans($statuskey4lang);
+					}
+				}
+			}
+			if (!$ret) $this->error = 'ErrorOneLineContainsADisactivatedProduct';
+			return $ret;
+		} else {
+			return true;
+		}
 	}
 }
