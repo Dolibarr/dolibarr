@@ -55,23 +55,23 @@ class SharedDocumentsController extends AbstractDocumentController
 			foreach ($parts as $part) {
 				if ($part !== '.' && $part !== '..') {
 					$safe_parts[] = dol_sanitizeFileName($part);
+				}
 			}
+			$this->sanitized_subdir = implode('/', $safe_parts);
 		}
-		$this->sanitized_subdir = implode('/', $safe_parts);
+
+		$context->title = html_entity_decode($langs->trans('SharedDocuments'));
+		$context->desc = $langs->trans('ListOfSharedDocuments');
+		$context->menu_active[] = 'shared_documents';
+
+		return 1;
 	}
 
-	$context->title = html_entity_decode($langs->trans('SharedDocuments'));
-	$context->desc = $langs->trans('ListOfSharedDocuments');
-	$context->menu_active[] = 'shared_documents';
-
-	return 1;
-}
-
 	/**
-	* Build and display the page.
-	*
-	* @return  void
-	*/
+	 * Build and display the page.
+	 *
+	 * @return  void
+	 */
 	public function display()
 	{
 		global $conf, $langs;
@@ -98,16 +98,16 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// 3. List ALL contents (files AND folders) of the current directory
 		$itemList = dol_dir_list($current_dir_ged_partage, 'all', 0, '', '', 'name', SORT_ASC);
-			if (is_array($itemList)) {
-            foreach ($itemList as $key => $item) {
-                // If the item is a file and its size is empty...
-                if ($item['type'] === 'file' && empty($item['size'])) {
-                    $full_file_path = $current_dir_ged_partage . '/' . $item['name'];
-                    // ... we recalculate its size and update the table.
-                    // The @ avoids an error if the file is unreadable.
-                    $itemList[$key]['size'] = @filesize($full_file_path);
-                }
-            }
+		if (is_array($itemList)) {
+			foreach ($itemList as $key => $item) {
+				// If the item is a file and its size is empty...
+				if ($item['type'] === 'file' && empty($item['size'])) {
+					$full_file_path = $current_dir_ged_partage . '/' . $item['name'];
+					// ... we recalculate its size and update the table.
+					// The @ avoids an error if the file is unreadable.
+					$itemList[$key]['size'] = @filesize($full_file_path);
+				}
+			}
 		}
 		// 4. Build the Breadcrumb
 		$baseUrl = $_SERVER['PHP_SELF'].'?controller=shareddocuments';
