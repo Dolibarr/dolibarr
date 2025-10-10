@@ -11620,8 +11620,15 @@ abstract class CommonObject
 		$this->db->commit();
 		return true;
 	}
-	
-	function checkActiveProductInLines($status = 'onsale') {
+
+	/** check if all products have the right status (on sale, on buy)
+	 * called during validation of propal, order, supplier proposal, supplier order
+	 * 
+	 * @global type $langs
+	 * @param type $status
+	 * @return bool
+	 */
+	public function checkActiveProductInLines($status = 'onsale') {
 		global $langs;
 		if (isModEnabled('product')) {
 			$langs->load('products');
