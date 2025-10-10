@@ -11623,12 +11623,13 @@ abstract class CommonObject
 
 	/** check if all products have the right status (on sale, on buy)
 	 * called during validation of propal, order, supplier proposal, supplier order
-	 * 
-	 * @global type $langs
-	 * @param type $status
+	 *
+	 * @global object $langs
+	 * @param string $status onsale or onbuy
 	 * @return bool
 	 */
-	public function checkActiveProductInLines($status = 'onsale') {
+	public function checkActiveProductInLines($status = 'onsale')
+	{
 		global $langs;
 		if (isModEnabled('product')) {
 			$langs->load('products');
