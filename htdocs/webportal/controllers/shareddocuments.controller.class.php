@@ -128,15 +128,15 @@ class SharedDocumentsController extends AbstractDocumentController
 		// 5. Define functions to build navigation and download links
 		$linkBuilder = array(
 			'dir' => /** @param array<string, mixed> $dir */
-        function (array $dir) use ($baseUrl, $sanitized_subdir) {
-				$new_subdir = (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $dir['name'];
-				return $baseUrl . '&subdir=' . urlencode($new_subdir);
-			 },
+				function (array $dir) use ($baseUrl, $sanitized_subdir) {
+					$new_subdir = (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $dir['name'];
+					return $baseUrl . '&subdir=' . urlencode($new_subdir);
+				},
 			'file' => /** @param array<string, mixed> $file */
-			function (array $file) use ($shared_dir_name, $sanitized_subdir) {
-				$file_path = $shared_dir_name . '/' . (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $file['name'];
-				return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($file_path);
-			}
+				function (array $file) use ($shared_dir_name, $sanitized_subdir) {
+					$file_path = $shared_dir_name . '/' . (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $file['name'];
+					return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($file_path);
+				}
 		);
 		// 6. Call the new display method
 		$this->displayFileBrowser(
