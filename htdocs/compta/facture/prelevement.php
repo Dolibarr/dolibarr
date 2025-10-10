@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Make payment with Direct Debit Stripe
+	// Request payment with a Stripe Direct Debit for a customer invoice
 	if ($action == 'sepastripedirectdebit' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'direct-debit', 'facture');
 		if ($result < 0) {
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Make payment with Direct Debit Stripe
+	// Make payment with a stripe sepa for a supplier invoice
 	if ($action == 'sepastripecredittransfer' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
@@ -1051,7 +1051,7 @@ if ($object->id > 0) {
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
 					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
 				}
 			}
 			print '</td>';

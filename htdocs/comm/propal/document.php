@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -104,7 +104,7 @@ $usercancreate = $user->hasRight("propal", "creer");
 
 if ($object->id > 0) {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->propal->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
@@ -119,7 +119,7 @@ llxHeader('', $title, $help_url);
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$upload_dir = $conf->propal->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 	$head = propal_prepare_head($object);
 	print dol_get_fiche_head($head, 'document', $langs->trans('Proposal'), -1, $object->picto);

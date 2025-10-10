@@ -165,11 +165,14 @@ if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 	$allowonlineinstall = false;
 }
 
-//$remotestore = new Dolistore(false);
-$remotestore = new ExternalModules();
+$debug = false;
+$remotestore = new ExternalModules($debug);
 if ($mode == 'marketplace') {
 	// Make remote calls
-	$remotestore->loadRemoteSources();
+	if (GETPOSTINT('dol_resetcache')) {
+		dol_delete_file($remotestore->cache_file);
+	}
+	$remotestore->loadRemoteSources(false);
 }
 
 $object = new stdClass();
@@ -540,6 +543,7 @@ foreach ($modulesdir as $dir) {
 						if (class_exists($modName)) {
 							$objMod = new $modName($db);
 							'@phan-var-force DolibarrModules $objMod';
+							/** @var DolibarrModules $objMod */
 							$modNameLoaded[$modName] = $dir;
 							if (!$objMod->numero > 0 && $modName != 'modUser') {
 								dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
@@ -653,6 +657,7 @@ foreach ($modulesdir as $dir) {
 }
 
 '@phan-var-force array<string,DolibarrModules> $modules';
+/** @var array<string,DolibarrModules> $modules */
 
 if ($action == 'reset_confirm' && $user->admin) {
 	if (!empty($modules[$value])) {
@@ -691,7 +696,7 @@ $nbofactivatedmodules = count($conf->modules);
 
 // Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
-$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+$listofmodulesautoenabled = array('user', 'agenda', 'fckeditor', 'export', 'import');
 foreach ($listofmodulesautoenabled as $moduleautoenable) {
 	if (in_array($moduleautoenable, $conf->modules)) {
 		$nbmodulesnotautoenabled--;
@@ -707,7 +712,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
-	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+	if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
 	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message. A good usage for SaaS with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
@@ -764,7 +769,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter .= '<div class="divfilteralone colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
-	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
+	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" spellcheck="false" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
@@ -1104,7 +1109,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($objMod->always_enabled)) {
 				// A 'always_enabled' module should not never be disabled. If this happen, we keep a link to re-enable it.
 				$codeenabledisable .= '<!-- Message to show: an always_enabled module has been disabled -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" id="idalways'.$objMod->numero.'" data-alreadyclicked="0" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');
 				$codeenabledisable .= "</a>\n";
@@ -1117,7 +1122,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$codeenabledisable .= '<!-- This module is a core module and it may have a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
 					foreach ($arrayofwarnings[$modName] as $keycountry => $cursorwarningmessage) {
 						if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry))) {
-							$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code);
+							if (!is_array($cursorwarningmessage)) {
+								$cursorwarningmessage = array($cursorwarningmessage);
+							}
+							foreach ($cursorwarningmessage as $messagetoshow) {
+								// TODO Use replacement instead of always adding param module name and country code to the string message
+								$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($messagetoshow, $objMod->getName(), $mysoc->country_code);
+							}
 						}
 					}
 				}
@@ -1125,15 +1136,21 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$codeenabledisable .= '<!-- This module is an external module and it may have a warning to show (note: your country is '.$mysoc->country_code.') -->'."\n";
 					foreach ($arrayofwarningsext as $keymodule => $arrayofwarningsextbycountry) {
 						$keymodulelowercase = strtolower(preg_replace('/^mod/', '', $keymodule));
-						if (in_array($keymodulelowercase, $conf->modules)) {    // If module that request warning is on
+						if (preg_match('/^always/', $keymodulelowercase) || in_array($keymodulelowercase, $conf->modules)) {    // If module that trigger the warning is on
 							foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage) {
 								if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry))) {
-									$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+									if (!is_array($cursorwarningmessage)) {
+										$cursorwarningmessage = array($cursorwarningmessage);
+									}
+									foreach ($cursorwarningmessage as $messagetoshow) {
+										// TODO Use replacement instead of always adding param module name to enable and country code to the string message and triggering module
+										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($messagetoshow, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+									}
 									$warningmessage .= ($warningmessage ? "\n" : "").($warningmessage ? "\n" : "").$langs->trans("Module").' : '.$objMod->getName();
 									if (!empty($objMod->editor_name)) {
 										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans("Publisher").' : '.$objMod->editor_name;
 									}
-									if (!empty($objMod->editor_name)) {
+									if ($keymodulelowercase != 'always') {
 										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans("ModuleTriggeringThisWarning").' : '.$modules[$keymodule]->getName();
 									}
 								}
@@ -1141,10 +1158,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 						}
 					}
 				}
+
+				$urltogo = $_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param;
+				$popupwidth = 500;
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" id="idqualified'.$objMod->numero.'" data-alreadyclicked="0" href="'.$urltogo.'"';
 				if ($warningmessage) {
-					$codeenabledisable .= ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
+					$codeenabledisable .= ' onclick="return confirmDolibarr(\''.dol_escape_js($warningmessage).'\', \'idqualified'.$objMod->numero.'\', '.$popupwidth.');"';
 				}
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -1354,7 +1374,7 @@ if ($mode == 'marketplace') {
 					<input type="hidden" name="mode" value="marketplace">
 					<input type="hidden" name="page_y" value="">
 					<div class="divsearchfield">
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>">
+						<input name="search_keyword" spellcheck="false" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>">
 					</div>
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">

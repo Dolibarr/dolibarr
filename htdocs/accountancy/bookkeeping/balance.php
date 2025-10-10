@@ -352,7 +352,7 @@ if ($action != 'export') {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?type=sub' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToCsv'), '', 'fa fa-file-csv paddingleft', $_SERVER['PHP_SELF'], 'exportcsvbutton', 1, array('morecss' => 'marginleftonly'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans("Export").' (' . getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').')', '', 'fa fa-file-csv paddingleft', $_SERVER['PHP_SELF'], 'exportcsvbutton', 1, array('morecss' => 'marginleftonly'));
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {

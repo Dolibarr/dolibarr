@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -739,7 +739,7 @@ class FormMail extends Form
 
 						// Add also email aliases from the c_email_senderprofile table
 						$sql = "SELECT rowid, label, email FROM ".$this->db->prefix()."c_email_senderprofile";
-						$sql .= " WHERE active = 1 AND (private = 0 OR private = ".((int) $user->id).")";
+						$sql .= " WHERE active = 1 AND (private = 0 OR private = ".((int) $user->id).") AND entity IN (".getEntity('c_email_senderprofile').")";
 						$sql .= " ORDER BY position";
 						$resql = $this->db->query($sql);
 						if ($resql) {
@@ -1213,7 +1213,7 @@ class FormMail extends Form
 				}
 				$out .= ' &lt;'.$this->tomail.'&gt;';
 				if ($this->withtofree) {
-					$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
+					$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
 				}
 			} else {
 				// Note withto may be a text like 'AllRecipientSelected'
@@ -1222,7 +1222,7 @@ class FormMail extends Form
 		} else {
 			// The free input of email
 			if (!empty($this->withtofree)) {
-				$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
+				$out .= '<input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
 			}
 			// The select combo
 			if (!empty($this->withto) && is_array($this->withto)) {
@@ -1513,10 +1513,9 @@ class FormMail extends Form
 
 		// Define list of email layouts to use
 		$layouts = array(
-			'empty' => 'empty',
+			'none' => 'None',
 		);
-
-		// Search available layouts on disk
+		// Add layouts found on disk in install/doctemplates/maillayout directory
 		$arrayoflayoutemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/', 'files', 0, '\.html$');
 		foreach ($arrayoflayoutemplates as $layouttemplatefile) {
 			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
@@ -1525,7 +1524,7 @@ class FormMail extends Form
 			if ($layoutname == 'news' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || !isModEnabled('website'))) {
 				continue;
 			}
-			if ($layoutname == 'products' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || (!isModEnabled('product') && !isModEnabled('service')))) {
+			if ($layoutname == 'product' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || (!isModEnabled('product') && !isModEnabled('service')))) {
 				continue;
 			}
 
@@ -1577,11 +1576,23 @@ class FormMail extends Form
 		}
 
 		// Use the multiselect array function to create the dropdown
-		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
+		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
-		$out .= '<!-- select component for selection of products -->'."\n";
+		$out .= '<!-- select component for selection of blog posts -->'."\n";
 		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200');
+		$out .= ' <input type="submit" class="smallpaddingimp button" name="submit" id="post-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 		$out .= '</div>';
+
+		if (isModEnabled('product') || isModEnabled('service')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($this->db);
+			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
+			$out .= '<!-- select component for selection of product -->'."\n";
+			$out .= $form->select_produits(0, 'product-select', '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, '', 0, '', null, 1);
+			$out .= ' <input type="submit" class="smallpaddingimp button" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
+			$out .= '</div>';
+		}
 
 		$out .= '<!-- Js code to manage choice of an email layout -->'."\n";
 		$out .= '<script type="text/javascript">
@@ -1601,12 +1612,15 @@ class FormMail extends Form
 
 				if (template === "news") {
 					$("#post-dropdown-container").show();
+					$("#product-dropdown-container").hide();
 					console.log("Displaying dropdown for news selection");
-				} else if (template === "products") {
-					$("#post-dropdown-container").show();
-					console.log("Displaying dropdown for products selection");
+				} else if (template === "product") {
+					$("#product-dropdown-container").show();
+					$("#post-dropdown-container").hide();
+					console.log("Displaying dropdown for product selection");
 				} else {
 					$("#post-dropdown-container").hide();
+					$("#product-dropdown-container").hide();
 				}
 
 				var csrfToken = "' .newToken().'";
@@ -1719,7 +1733,9 @@ class FormMail extends Form
 			$this->error = 'LabelIsMandatoryWhenIdIs-2or-3';
 			return -1;
 		}
-
+		if ($type_template === 'societe') {
+			$type_template = 'thirdparty';
+		}
 		$ret = new ModelMail($dbs);
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
@@ -1732,7 +1748,7 @@ class FormMail extends Form
 
 		$sql = "SELECT rowid, entity, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
-		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
+		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = '".$dbs->escape($type_template)."_send' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {

@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Klik hier om het opnieuw te proberen ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de sterke Klant Authenticatie regels, moet het maken van een kaart worden gedaan vanuit de Stripe-backoffice. U kunt hier klikken om het Stripe Klant record in te schakelen: %s
 STRIPE_CARD_PRESENT=Kaart aanwezig voor Stripe Terminals
 TERMINAL_LOCATION=Locatie (adres) voor Stripe Terminals
-RequestDirectDebitWithStripe=Automatische incasso aanvragen met Stripe
-RequesCreditTransferWithStripe=Vraag een overboeking aan met Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Schakel de automatische incasso via Stripe in
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Schakel de betalingen via Klarna in
 STRIPE_BANCONTACT=Schakel de betalingen in met BANCONTACT
 STRIPE_IDEAL=Schakel de betalingen in via IDEAL
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Alleen voor Duitse klanten
 ExampleOnlyForNLCustomers=Alleen voor Nederlandse klanten
 ExampleOnlyForATBEDEITNLESCustomers=Alleen voor klanten uit Oostenrijk, België, Duitsland, Italië, Nederland, Spanje
 ListOfSupportedHooksToActivate=Lijst met ondersteunde hooks om te activeren
+# Paybox
+PayBoxSetup=PayBox module instellen
+PayBoxDesc=Deze module biedt pagina's waarmee klanten kunnen betalen met <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>. Dit kan worden gebruikt voor een gratis betaling of voor een betaling op een bepaald Dolibarr-object (factuur, bestelling, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=U wordt doorverwezen naar een beveiligde Paybox pagina om uw creditcard informatie in te voeren
+SetupPayBoxToHavePaymentCreatedAutomatically=Stel uw Paybox in met url <b> %s </b> om de betaling automatisch te laten aanmaken na validatie door Paybox.
+YourPaymentHasBeenRecorded=Deze pagina bevestigd dat uw betaling succesvol in geregistreerd. Dank u.
+YourPaymentHasNotBeenRecorded=Uw betaling is NIET geboekt en de transactie is geannuleerd. Dankuwel.
+PAYBOX_CGI_URL_V2=URL van de Paybox CGI module voor betalingen
+NewPayboxPaymentReceived=Betaling met Paybox ontvangen
+NewPayboxPaymentFailed=Poging te betalen met Paybox mislukt
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=Waarde PBX SITE
+PAYBOX_PBX_RANG=Waarde PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Waarde PBX ID
+PAYBOX_HMAC_KEY=HMAC key

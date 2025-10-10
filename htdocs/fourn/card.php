@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Jean Heimburger				<jean@tiaris.info>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -145,7 +145,7 @@ if (empty($reshook)) {
 	// Set payment terms of the settlement
 	if ($action == 'setconditions' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_supplier_id'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_supplier_id'), GETPOSTINT('cond_reglement_supplier_id_deposit_percent'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -218,7 +218,7 @@ if ($id > 0 && empty($object->id)) {
 	$res = $object->fetch($id);
 	if ($object->id <= 0) {
 		dol_print_error($db, $object->error);
-		exit(-1);
+		exit(1);
 	}
 }
 
@@ -360,9 +360,9 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editconditions') {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', 1);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?socid=' . $object->id, (string) $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', 1, '', 1, $object->deposit_percent);
 	} else {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->cond_reglement_supplier_id, 'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?socid=' . $object->id, (string) $object->cond_reglement_supplier_id, 'none', 0, '', 1, $object->deposit_percent);
 	}
 	print "</td>";
 	print '</tr>';
@@ -490,7 +490,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 	print '<br>';
@@ -611,7 +611,7 @@ if ($object->id > 0) {
 	print $boxstat;
 
 
-	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 	/*

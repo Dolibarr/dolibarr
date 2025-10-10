@@ -3,10 +3,10 @@ MenuFinancial=بلنگ | ادائیگی
 TaxModuleSetupToModifyRules=حساب کے قواعد میں ترمیم کرنے کے لیے <a href="%s"> ٹیکسز ماڈیول سیٹ اپ </a> پر جائیں
 TaxModuleSetupToModifyRulesLT=حساب کے قواعد میں ترمیم کرنے کے لیے <a href="%s"> کمپنی کے سیٹ اپ </a> پر جائیں
 OptionMode=اکاؤنٹنسی کے لیے آپشن
-OptionModeTrue=اکروئل اکاؤنٹنگ
-OptionModeVirtual=کیش اکاؤنٹنگ
-OptionModeTrueDesc=اس تناظر میں، ٹرن اوور کا حساب ادائیگیوں (ادائیگیوں کی تاریخ) پر کیا جاتا ہے۔ اعداد و شمار کی درستگی صرف اس صورت میں یقینی بنائی جاتی ہے جب ادائیگیوں پر ان پٹ/آؤٹ پٹ کے ذریعے بک کیپنگ کی چھان بین کی جائے۔
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=اس تناظر میں، ٹرن اوور کا حساب انوائسز (توثیق کی تاریخ) پر کیا جاتا ہے۔ جب یہ رسیدیں واجب الادا ہوں، چاہے ان کی ادائیگی کی گئی ہو یا نہ ہو، وہ ٹرن اوور آؤٹ پٹ میں درج ہیں۔
+OptionModeTrueDesc=اس تناظر میں، ٹرن اوور کا حساب ادائیگیوں (ادائیگیوں کی تاریخ) پر کیا جاتا ہے۔ اعداد و شمار کی درستگی صرف اس صورت میں یقینی بنائی جاتی ہے جب ادائیگیوں پر ان پٹ/آؤٹ پٹ کے ذریعے بک کیپنگ کی چھان بین کی جائے۔
 FeatureIsSupportedInInOutModeOnly=خصوصیت صرف کریڈٹس-ڈیبیٹس اکاؤنٹنسی موڈ میں دستیاب ہے (دیکھیں اکاؤنٹنسی ماڈیول کنفیگریشن)
 VATReportBuildWithOptionDefinedInModule=یہاں دکھائی گئی رقم کا حساب ٹیکس ماڈیول سیٹ اپ کے ذریعے بیان کردہ اصولوں کا استعمال کرتے ہوئے کیا جاتا ہے۔
 LTReportBuildWithOptionDefinedInModule=یہاں دکھائی گئی رقوم کا حساب کمپنی کے سیٹ اپ کے ذریعے بیان کردہ اصولوں کے ذریعے کیا جاتا ہے۔
@@ -302,7 +302,6 @@ ByVatRate=سیلز ٹیکس کی شرح سے
 TurnoverbyVatrate=سیل ٹیکس کی شرح سے ٹرن اوور کی رسید
 TurnoverCollectedbyVatrate=ٹرن اوور سیلز ٹیکس کی شرح سے جمع ہوتا ہے۔
 PurchasebyVatrate=سیل ٹیکس کی شرح کے ذریعے خریداری
-LabelToShow=مختصر لیبل
 PurchaseTurnover=خریداری کا کاروبار
 PurchaseTurnoverCollected=خریداری کا کاروبار جمع ہوا۔
 RulesPurchaseTurnoverDue=- اس میں سپلائر کی واجب الادا رسیدیں شامل ہیں چاہے وہ ادا کیے گئے ہوں یا نہیں۔ <br> - یہ ان رسیدوں کی انوائس تاریخ پر مبنی ہے۔ <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=لائنوں کی تاریخوں کا اصول
 Prepaid=پری پیڈ
 Postpaid=پوسٹ پیڈ
 SetRuleForLinesDates=لائنوں کی تاریخوں کے لیے اصول طے کریں۔
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

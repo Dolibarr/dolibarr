@@ -318,7 +318,7 @@ if (empty($reshook)) {
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
 				}*/
-				$object->packaging = $packaging;
+				$object->product_fourn_packaging = $packaging;
 
 				if (isModEnabled("multicurrency")) {
 					$multicurrency_tx = GETPOSTFLOAT("multicurrency_tx");

@@ -10,6 +10,7 @@
  * Copyright (C) 2021       Noé Cendrier            <noe.cendrier@altairis.fr>
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Günter Lukas			<github@gl.co.at>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,7 +182,6 @@ if ($id == '' && $ref == '') {
 }
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
@@ -1189,7 +1189,7 @@ foreach ($listofreferent as $key => $value) {
 		}
 
 		if (is_array($elementarray) && count($elementarray) > 0 && $key == "order_supplier") {
-			$addform = '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
+			$addform .= '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
 						 <span id="textBtnShow" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("CanceledShown").'</span><span id="minus-circle" class="fa fa-eye valignmiddle paddingleft"></span>
 						 </a>
 						 <script>
@@ -1210,7 +1210,30 @@ foreach ($listofreferent as $key => $value) {
 								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
 							}
 						 });
-						 </script></div> '.$addform;
+						 </script></div>';
+
+			$addform .= '<div class="inline-block valignmiddle"><a id="btnShowPaid" class="buttonxxx marginleftonly" href="#" onClick="return false;">
+						 <span id="textBtnShowPaid" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("PaidShown").'</span><span id="minus-circle-paid" class="fa fa-eye valignmiddle paddingleft"></span>
+						 </a>
+						 <script>
+						 $("#btnShowPaid").on("click", function () {
+							console.log("We click to show or hide the paid lines");
+							var attr = $(this).attr("data-paidarehidden");
+							if (typeof attr !== "undefined" && attr !== false) {
+								console.log("Show paid");
+								$(".tr_paid").show();
+								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidShown")).'");
+								$("#btnShowPaid").removeAttr("data-paidarehidden");
+								$("#minus-circle-paid").removeClass("fa-eye-slash").addClass("fa-eye");
+							} else {
+								console.log("Hide paid");
+								$(".tr_paid").hide();
+								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidHidden")).'");
+								$("#btnShowPaid").attr("data-paidarehidden", 1);
+								$("#minus-circle-paid").removeClass("fa-eye").addClass("fa-eye-slash");
+							}
+						 });
+						 </script></div>';
 		}
 
 		print load_fiche_titre($langs->trans($title), $addform, '');
@@ -1340,12 +1363,12 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->close_code) && $element->close_code == 'replaced') {
 						$qualifiedfortotal = false; // Replacement invoice, do not include into total
 					}
-				} elseif ($key == 'order_supplier' && $element->status == 7) {
+				} elseif ($key == 'order_supplier' && ($element->status == 6 || $element->status == 7)) {
 					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				if ($key == "order_supplier" && $element->status == 7) {
-					print '<tr class="oddeven tr_canceled" style=display:none>';
+				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
+					print '<tr class="oddeven tr_canceled">';
 				} else {
 					print '<tr class="oddeven" >';
 				}
@@ -1383,18 +1406,18 @@ foreach ($listofreferent as $key => $value) {
 					$filename = dol_sanitizeFileName($element->ref);
 					if (!empty($conf->$element_doc)) {
 						$confelementdoc = $conf->$element_doc;
-						$filedir = $confelementdoc->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $confelementdoc->multidir_output[$element->entity ?? $conf->entity].'/'.dol_sanitizeFileName($element->ref);
 					} else {
 						$filedir = '';
 					}
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc = 'commande_fournisseur';
-						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity ?? $conf->entity].'/'.dol_sanitizeFileName($element->ref);
 					} elseif ($element_doc === 'invoice_supplier') {
 						$element_doc = 'facture_fournisseur';
 						$filename = get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.$filename;
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity ?? $conf->entity].'/'.$filename;
 					}
 
 					print '<div class="inline-block valignmiddle">';

@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Contabilidade
 Accounting=Contabilidade
+AccountingAccount=Conta contable
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas no ficheiro de exportación
 ACCOUNTING_EXPORT_DATE=Formato de data no ficheiro de exportación
 ACCOUNTING_EXPORT_PIECE=Exportar o número de asento
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Conta (do Plan Contable) que se utilizará para rexis
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conta (do Plan Contable) que se utilizará para rexistrar subscricións de asociados (módulo de adhesión - se asociado rexistrado sen factura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conta (do Plan Contable) que se utilizará como conta predeterminada para rexistrar o depósito do cliente
 UseAuxiliaryAccountOnCustomerDeposit=Almacenar a conta do cliente como unha conta individual para as liñas de anicipo no Libro Maior subsidiario (se está desactivada, a conta individual para as liñas de anticipo permanecerá baleira)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Conta (do Plan Contable) que se utilizará como predeterminada
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Conta (do Plan Contable) que se usará como conta predeterminada para rexistrar o depósito do provedor
 UseAuxiliaryAccountOnSupplierDeposit=Almacenar a conta do provedor como unha conta individual no libro maior subsidiario para as liñas de anticipo (se está desactivada, a conta individual para as liñas de anticipo permanecerá baleira)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Conta contable por defecto para rexistrar a garantía establecida para o cliente
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta (do Plan Contable) que se utilizará como conta predeterminada para os produtos adquiridos no mesmo país (utilizada se non está definida na ficha do produto)
@@ -278,6 +280,7 @@ PcgtypeDesc=Grupo e subgrupo de conta utilízanse como criterios predefinidos de
 AccountingCategoriesDesc=O grupo de contas personalizado pódese usar para agrupar contas de contabilidade nun só nome para facilitar o uso de filtros ou a creación de informes personalizados.
 Reconcilable=Reconciliable
 Centralized=Conta centralizada
+CentralizedAccountHelp=Cando se rexistra unha transacción contable nunha conta centralizada, tamén se permite rexistrar unha conta subsidiaria máis precisa nesta transacción.
 TotalVente=Total facturación antes de impostos
 TotalMarge=Total marxe vendas
 DescVentilCustomer=Consulte aquí a listaxe de liñas de factura de clientes ligadas (ou non) a unha conta de produto do plan contable
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activar a xestión da cota inversa do
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Cando esta opción está activada, pode definir que un provedor ou unha determinada factura de provedor debe transferirse á contabilidade de forma diferente: xerarase un débito e unha liña de crédito adicional na contabilidade en 2 contas determinadas a partir do plan contable definido no "%s". " páxina de configuración.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Active unha pestana nas tarxetas de terceiros para ver o libro maior subsidiario
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Cando esta opción está activada, aparece unha nova lapela nas tarxetas de terceiros para ver e xestionar a contabilidade de terceiros, para conciliar, imprimir e moito máis.
+
 ## Export
 NotExportLettering=Non exporte as letras ao xerar o ficheiro
 NotifiedExportDate=Marcar as liñas aínda non exportadas como Exportadas <span class="warning"> (para modificar unha liña marcada como exportada, terá que eliminar toda a transacción e transferila de novo á contabilidade) </span>
@@ -389,7 +393,7 @@ Modelcsv_Gestinumv5=Exportar para Gestinum (v5)
 Modelcsv_charlemagne=Exportar para Aplim Charlemagne
 ChartofaccountsId=Id do plan contable
 ExportToPdf = Exportar a PDF
-ExportToCsv = Export to CSV
+ExportToCsv = Exportar a CSV
 PdfLedgerTitle = Contas do libro maior
 PdfBalanceTitle = Saldo do libro maior
 PdfBookkeepingTitle = Diarios
@@ -441,7 +445,7 @@ AccountRemovedFromGroup=Conta eliminada do grupo
 SaleLocal=Venda local
 SaleExport=Venda de exportación
 SaleEEC=Venda na CEE
-SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
+SaleEECWithVAT=A venda é na CEE cun IVE non nulo, polo que supoñemos que NON é unha venda intracomunitaria e a conta suxerida é a conta de produto estándar.
 SaleEECWithoutVATNumber=A venda realízase na CEE sen IVE, pero non se define o número de identificación intracomunitario do IVE do terceiro. Votamos á conta das vendas estándar. Pode corrixir o número de identificación intracomunitario de IVE do terceiro ou cambiar a conta do produto suxerida para a ligazónn se é preciso.
 AnySale=Calquera venda
 ForbiddenTransactionAlreadyExported=Prohibido: a transacción foi validada e/ou exportada.
@@ -486,7 +490,7 @@ AccountancyClosureConfirmClose=Está certo de querer pechar o período fiscal ac
 AccountancyClosureConfirmAccountingReversal=Está certo de querer rexistrar as entradas para as "Garantías retidas"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
+WarningBookkeepingRecordAlreadyExists=Transacción para (doc_type=%s, doc_id=%s, doc_det=1%s) foi gravado
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Algúns pasos precisos da configuración non foron realizados, prégase completalos.
@@ -509,7 +513,7 @@ ErrorNoFiscalPeriodActiveFound=Non se atopou ningún período fiscal activo (cun
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=A data do documento de contabilidade non está dentro do período fiscal activo
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=A data do documento de contabilidade está dentro dun período fiscal pechado
 Error_BOOKKEEPING_ADDON_NotDefined=Erro, a regra para a referencia de numeración de contabilidade non está definida na configuración xeral do módulo de Contabilidade
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Tentou inserir unha transacción non equilibrada no libro para %s (ID de pago: %s). A acción foi cancelada.
 ProductUsage=Uso do produto ou servizo
 ## Import
 ImportAccountingEntries=Entradas contables
@@ -538,15 +542,15 @@ ExpenseReportJournal=Informe de gastos diario
 DocsAlreadyExportedAreIncluded=Inclúense os documentos xa exportados
 ClickToShowAlreadyExportedLines=Prema para amosar as liñas xa exportadas
 NAccounts=%s contas
-ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
-ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
+ACCOUNTING_USE_NON_TREASURY_Desc=Este é o método da contabilidade devengada (coñecida como "real" ou "completa"). Empregamos toda a información (facturas de venda e compra, informes de gastos, contas bancarias, etc.) para xerar a contabilidade.
+ACCOUNTING_USE_TREASURY_Desc=Este é o método de contabilidade de caixa. Só empregamos os pagamentos e as súas datas para xerar a contabilidade. Consulte coa súa empresa de contabilidade para ver se cumpre os requisitos para este método de contabilidade.
 PieceDesc=A referencia do documento de orixe que xera esta transacción bancaria (Referencia da factura, referencia do informe de gastos, ...)
 BankTransactionRef=Unha referencia para a transacción bancaria (opcional, xa se xera un ID automático)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Isto clonará a entrada de contabilidade (clonaranse todas as liñas ligadas a esta entrada de contabilidade). Está certo de querer clonar os rexistros %s seleccionados?
 ConfirmMassCloneBookkeepingWriting=Confirmar a clonación masiva
-ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
-ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
+ConfirmMassReturnAccountBookkeepingWriting=Confirmar a inversión masiva
+ConfirmMassReturnAccountBookkeepingWritingQuestion=Isto creará entradas de reversión para os rexistros de contabilidade seleccionados (reverteranse todas as liñas ligadas a estes rexistros: o débito e o crédito intercambiaranse e rexistrarase unha operación de reversión). Está seguro de que quere realizar esta reversión para os rexistros seleccionados %s?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Isto cambiará a conta de todas as liñas seleccionadas.
 confirmMassAssignAccountBookkeepingWritingConfirm=Confirmar cambio masivo de conta
 CloningSuccess=Clonación da transacción correcta: %s

@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,7 @@ if ($object->id > 0) {
 	$object->fetch_thirdparty();
 }
 
-$upload_dir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->contrat->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contract';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -156,7 +156,7 @@ if ($object->id) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' <span class="otherlink">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
+		$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
 	}
 	// Project
 	if (isModEnabled('project')) {

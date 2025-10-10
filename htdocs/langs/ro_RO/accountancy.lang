@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Contabilitate
 Accounting=Contabilitate
+AccountingAccount=Cont contabil
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Separator coloane pentru fisier export
 ACCOUNTING_EXPORT_DATE=Format date pentru fişiere export
 ACCOUNTING_EXPORT_PIECE=Export număr de piesă
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Cont contabil (din Planul de Conturi) care va fi util
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cont contabil (din Planul de Conturi) care va fi utilizat pentru a înregistra abonamentele de membru (modulul de Membri - dacă calitatea de membru este înregistrată fără factură)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Contul contabil (din Planul de Conturi) va fi utilizat ca și cont implicit pentru a înregistra un depozit de la client 
 UseAuxiliaryAccountOnCustomerDeposit=Stochează contul de client ca și cont contabil individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Contul contabil (din Planul de Conturi) care va fi folosit în mod implicit
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cont (din Planul de Conturi) care va fi utilizat ca și cont implicit pentru înregistrarea depozitului furnizor
 UseAuxiliaryAccountOnSupplierDeposit=Stocare cont furnizor ca și cont individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol) 
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Cont contabil implicit pentru înregistrarea garanției reținute de la client
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cont contabil (din Planul de Conturi) care va fi utilizat ca și cont implicit pentru produsele achiziționate din aceeași țară (utilizat dacă nu este definit în fișa de produs)
@@ -278,6 +280,7 @@ PcgtypeDesc=Grupele de conturi sunt utilizate ca criterii predefinite de 'filtra
 AccountingCategoriesDesc=Grupul personalizat de conturi poate fi utilizat pentru a grupa conturile contabile într-un singur nume, pentru a facilita utilizarea filtrelor sau crearea de rapoarte personalizate.
 Reconcilable=Compensabil
 Centralized=Cont centralizat
+CentralizedAccountHelp=Când o tranzacție contabilă se înregistrează într-un cont centralizat, ți se permite, de asemenea, să înregistrezi un cont auxiliar mai precis pentru această tranzacție.
 TotalVente=Cifra de afaceri totală înainte de impozitare
 TotalMarge=Total marje vânzări
 DescVentilCustomer=Consultă aici lista liniilor de factură ale clienților asociate (sau nu) unui cont de produs din planul de conturi 
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activare gestionare TVA cu taxare inv
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Când această opțiune este activată, poți defini că un furnizor sau o anumită factură de furnizor trebuie să fie transferată în contabilitate în mod diferit: Un debit suplimentar și o linie de credit se vor genera în contabilitate pe 2 conturi date din planul de conturi definit în pagina de configurare "%s".
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activare filă pe cardurile de terți pentru a vedea registrul analitic
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Când această opțiune este activată, se afișează o filă nouă în cardurile de la terți pentru a vedea și gestiona contabilitatea terțului, pentru a reconcilia, imprima și altele.
+
 ## Export
 NotExportLettering=Nu exporta numerotările atunci când se generează fișierul
 NotifiedExportDate=Marchează liniile încă neexportate ca Exportate <span class="warning">(pentru a modifica o linie marcată ca exportată, va trebui să ștergi întreaga tranzacție și să o retransferi în contabilitate)</span>
@@ -389,7 +393,7 @@ Modelcsv_Gestinumv5=Export pentru Gestinum (v5)
 Modelcsv_charlemagne=Export pentru Aplim Charlemagne
 ChartofaccountsId=Id plan de conturi
 ExportToPdf = Export în PDF
-ExportToCsv = Export to CSV
+ExportToCsv = Export în CSV
 PdfLedgerTitle = Conturi contabile de jurnal
 PdfBalanceTitle = Sold registru
 PdfBookkeepingTitle = Jurnale
@@ -441,7 +445,7 @@ AccountRemovedFromGroup=Cont contabil eliminat din grupă
 SaleLocal=Vânzare locală
 SaleExport=Vânzare la export
 SaleEEC=Vânzări în CEE
-SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
+SaleEECWithVAT=Vânzarea este în CEE cu cotă TVA diferită de zero, deci presupunem că NU este o vânzare intracomunitară, iar contul sugerat este contul standard de produs.
 SaleEECWithoutVATNumber=Vânzarea este în CEE fără TVA, dar codul de TVA al terțului nu este definit. Revenim la cota de TVA standard. Poți modifica cota de TVA al terțului sau poți modifica contul contabil de produs sugerat pentru asociere, dacă este necesar.
 AnySale=Orice vânzare
 ForbiddenTransactionAlreadyExported=Interzis: Tranzacţia a fost validată şi/sau exportată.
@@ -486,7 +490,7 @@ AccountancyClosureConfirmClose=Sigur vrei să închizi perioada fiscală curent�
 AccountancyClosureConfirmAccountingReversal=Sigur vrei să înregistrezi intrări pentru "Venituri reținute"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
+WarningBookkeepingRecordAlreadyExists=Transacția pentru (doc_type=%s, doc_id=%s, doc_det=%s) a fost deja înregistrată
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Câțiva pași obligatorii de configurare nu au fost făcuți, efectuează-i
@@ -509,7 +513,7 @@ ErrorNoFiscalPeriodActiveFound=Nu a fost găsită nicio perioadă fiscală activ
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Data documentului contabil nu se află în perioada fiscală activă
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Data documentului contabil se află într-o perioada fiscală închisă
 Error_BOOKKEEPING_ADDON_NotDefined=Eroare, regula pentru referința de numerotare contabilă nu este definită în configurația generală a modulului Contabilitate
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Ai încercat să introduci o tranzacție neechilibrată în registru pentru %s (ID plată: %s). Acțiunea este anulată.
 ProductUsage=Utilizare produs sau serviciu
 ## Import
 ImportAccountingEntries=Intrări contabile
@@ -538,15 +542,15 @@ ExpenseReportJournal=Jurnalul raportului de cheltuieli
 DocsAlreadyExportedAreIncluded=Documentele deja exportate sunt incluse
 ClickToShowAlreadyExportedLines=Fă clic pentru a afișa liniile deja exportate
 NAccounts=%s conturi
-ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
-ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
+ACCOUNTING_USE_NON_TREASURY_Desc=Aceasta este metoda contabilității de angajamente (cunoscută sub numele de "reală" sau "completă"). Folosim toate informațiile (facturi de vânzare și achiziție, rapoarte de cheltuieli, conturi bancare etc.) pentru a genera contabilitatea.
+ACCOUNTING_USE_TREASURY_Desc=Aceasta este metoda contabilității de numerar. Folosim doar plățile și datele acestora pentru a genera contabilitatea. Verifică cu firma ta de contabilitate pentru a vedea dacă ești eligibil pentru această metodă contabilă.
 PieceDesc=Referința documentului sursă care generează această tranzacție bancară (Referință factură, Referință raport cheltuieli, ...)
 BankTransactionRef=O referință pentru tranzacția bancară (opțional, este deja generat un ID automat)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Această operațiune va clona înregistrarea contabilă (toate liniile legate de această înregistrare contabilă vor fi clonate). Sigur vrei să clonezi înregistrările %s selectate?
 ConfirmMassCloneBookkeepingWriting=Confirmare clonare în masă
-ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
-ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
+ConfirmMassReturnAccountBookkeepingWriting=Confirmare reversare în masă
+ConfirmMassReturnAccountBookkeepingWritingQuestion=Aceasta va crea intrări de stornare pentru înregistrările contabile selectate (toate liniile legate de aceste înregistrări vor fi stornate: debitul și creditul vor fi inversate și se va înregistra o operațiune de stornare). Sigur vrei să efectuezi această stornare pentru înregistrările selectate %s ?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Aceasta va modifica contul tuturor liniilor selectate.
 confirmMassAssignAccountBookkeepingWritingConfirm=Confirmare schimbare cont în masă
 CloningSuccess=Clonare reușită tranzacție: %s

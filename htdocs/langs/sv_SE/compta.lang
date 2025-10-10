@@ -3,10 +3,10 @@ MenuFinancial=Fakturering | Betalning
 TaxModuleSetupToModifyRules=Gå till <a href="%s">skatt modul inställning</a> att ändra reglerna för beräkning
 TaxModuleSetupToModifyRulesLT=Gå till <a href="%s">Företag inställning</a> att ändra reglerna för beräkning
 OptionMode=Alternativ för bokföring
-OptionModeTrue=Periodiseringsredovisning
-OptionModeVirtual=Kassaflödesredovisning
-OptionModeTrueDesc=I detta sammanhang beräknas omsättningen över betalningar (betalningsdatum). Siffrornas giltighet garanteras endast om bokföringen granskas genom in- och utbetalningar av betalningar.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=I detta sammanhang skall omsättningen beräknas på fakturor (datum för bekräftandet). När dessa fakturor betalas, om de har betalats eller inte, de är förtecknade i omsättning produktionen.
+OptionModeTrueDesc=I detta sammanhang beräknas omsättningen över betalningar (betalningsdatum). Siffrornas giltighet garanteras endast om bokföringen granskas genom in- och utbetalningar av betalningar.
 FeatureIsSupportedInInOutModeOnly=Funktionen bara tillgänglig i PROV-FORDRINGAR bokförings-läge (Se redovisning modul konfiguration)
 VATReportBuildWithOptionDefinedInModule=Belopp som anges här beräknas enligt regler som fastställts av Skatteverket modul inställning.
 LTReportBuildWithOptionDefinedInModule=Belopp som visas här är beräknade med hjälp av regler som fastställts av bolagets inställning.
@@ -302,7 +302,6 @@ ByVatRate=Med försäljningsskattesats
 TurnoverbyVatrate=Omsättning fakturerad med försäljningsskattesats
 TurnoverCollectedbyVatrate=Omsättning upptagen med försäljningsskattesats
 PurchasebyVatrate=Inköp med försäljningsskattesats
-LabelToShow=Kort etikett
 PurchaseTurnover=Inköpsomsättning
 PurchaseTurnoverCollected=Inköpt omsättning
 RulesPurchaseTurnoverDue=- Den inkluderar leverantörens förfallna fakturor oavsett om de betalas eller inte. <br> - Det är baserat på fakturadatum för dessa fakturor. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Regel för raddatum
 Prepaid=Förbetalt
 Postpaid=efterbetalt
 SetRuleForLinesDates=Ange regel för raddatum
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

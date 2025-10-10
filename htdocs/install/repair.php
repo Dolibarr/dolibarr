@@ -56,6 +56,7 @@ if (file_exists($conffile)) {
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
+require_once $dolibarr_main_document_root.'/core/class/html.form.class.php';
 require_once 'lib/repair.lib.php';
 
 $ok = 0;
@@ -93,6 +94,8 @@ if (!is_object($conf)) {
 /*
  * View
  */
+
+$form = new Form($db);
 
 pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 
@@ -134,11 +137,11 @@ $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
-	print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+	print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
 	$ok = 1;
 } else {
-	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right">'.$langs->transnoentities("Error")."</td></tr>";
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
 	$ok = 0;
 }
@@ -146,11 +149,11 @@ if ($db->connected) {
 if ($ok) {
 	if ($db->database_selected) {
 		print '<tr><td class="nowrap">';
-		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
 		dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
 		$ok = 1;
 	} else {
-		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
+		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right">'.$langs->trans("Error")."</td></tr>";
 		dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
 		$ok = 0;
 	}
@@ -216,6 +219,11 @@ $sections = [
 		[
 			'name' => 'rebuild_product_thumbs',
 			'info' => 'Rebuild product thumbnails'
+		],
+		[
+			'name' => 'repair_mailing_path',
+			'info' => 'Repair path of mailing files',
+			'tooltip' => 'Should be applied when using emailing module with > 99 mailings. In that case, please also set MAILING_USE_NEW_PATH_FOR_FILES.'
 		]
 	],
 	'Clean tables and data' => [
@@ -276,18 +284,27 @@ $sections = [
 	]
 ];
 
+$conf->use_javascript_ajax = 1;
+
 foreach ($sections as $section => $options) {
 	print '<tr style="background:#f4f4f4;font-weight:bold"><td colspan="5">'.$section.'</td></tr>';
 	foreach ($options as $opt) {
 		$option = $opt['name'];
 		$info = $opt['info'];
+		$tooltip = empty($opt['tooltip']) ? '' : $opt['tooltip'];
 		$value = GETPOST($option, 'alpha') ? GETPOST($option, 'alpha') : 'undefined';
 		// Generate links with the right option and value
 		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test';
 		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed';
 		print '<tr>';
 		print '<td>' . $option . '</td>';
-		print '<td>' . $info . '</td>';
+		print '<td>';
+		if ($tooltip) {
+			print $form->textwithpicto($info, $tooltip);
+		} else {
+			print $info;
+		}
+		print '</td>';
 		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (X)' : '').'</td>';
 		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch confirmed on option '.$option.'">confirmed</a>'.($value == 'confirmed' ? ' (X)' : '').'</td>';
 		print '</tr>';
@@ -297,8 +314,7 @@ print '</table>';
 
 
 print '<br id="sectionresult">';
-
-print '<table cellspacing="0" cellpadding="1" class="centpercent">';
+print '<br>';
 
 
 $conf->setValues($db);
@@ -316,14 +332,21 @@ $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_l
 	|| GETPOST('clean_perm_table', 'alpha') || GETPOST('clean_ecm_files_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
 	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha') || GETPOST('force_collation_from_conf_on_tables', 'alpha')
-	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha'));
+	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha')) || GETPOST('repair_mailing_path', 'alpha');
 
 if ($ok && $oneoptionset) {
 	// Show wait message
-	print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'<br><br></td></tr>';
+	print $langs->trans("PleaseBePatient").'<br><br>';
+
+	// Flush (some browser need a certain amount of data)
+	print str_repeat(' ', 1024);
+	ob_flush();
 	flush();
 }
 
+
+
+print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 
 // run_sql: Run repair SQL file
 if ($ok && GETPOST('standard', 'alpha')) {
@@ -367,6 +390,13 @@ if ($ok && GETPOST('standard', 'alpha')) {
 // sync_extrafields: Search list of fields declared and list of fields created into databases, then create fields missing
 
 if ($ok && GETPOST('standard', 'alpha')) {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
+
+	print '<tr><td colspan="2"><br>*** Update denormalized_lower_planned_end_date.</td></tr>';
+	$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
+	$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+	$resqltoupdatecontract = $db->query($sqltoupdatecontract);
+
 	$extrafields = new ExtraFields($db);
 
 	// List of tables that has an extrafield table
@@ -381,7 +411,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				'adherent_type' => 'adherent_type', 'user' => 'user', 'partnership' => 'partnership', 'projet' => 'projet', 'projet_task' => 'projet_task', 'ticket' => 'ticket');
 	//$listofmodulesextra = array('fichinter'=>'fichinter');
 
-	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
+	print '<tr><td colspan="2"><br>*** Check that fields into the extra table structure match the table of definition. If not, add column into table</td></tr>';
 	foreach ($listofmodulesextra as $tablename => $elementtype) {
 		// Get list of fields
 		$tableextra = MAIN_DB_PREFIX.$tablename.'_extrafields';
@@ -1987,12 +2017,15 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 	$err = 0;
 	$db->begin();
-	$sql = "SELECT f.rowid, SUM(fd.total_ht) as total_ht";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture f";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd ON fd.fk_facture = f.rowid";
-	$sql .= " WHERE f.total_ht = 0";
-	$sql .= " GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) <> 0";
-
+	$sql = "
+		SELECT
+			f.rowid,
+			SUM(fd.total_ht) as total_ht
+		FROM ".MAIN_DB_PREFIX."facture f
+			LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd
+				ON fd.fk_facture = f.rowid
+		WHERE f.total_ht = 0
+		GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) <> 0";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -2016,14 +2049,24 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 						fd.fk_facture = $obj->rowid";
 				$ressql_calculs = $db->query($sql_calculs);
 				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
+					// Calcul de la somme des paiements reçus
+					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = $obj->rowid";
+					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
+					$totHt= ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
+					$totTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
+					$totLocal1 = ($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0);
+					$totLocal2 = ($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0);
+					$totTtc = $totHt + $totTva + $totLocal1 + $totLocal2;
 					$sql_maj = "
 						UPDATE ".MAIN_DB_PREFIX."facture
 						SET
-							total_ht = ".($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0).",
-							total_tva = ".($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0).",
-							localtax1 = ".($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0).",
-							localtax2 = ".($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0).",
-							total_ttc = ".($obj_calcul->total_ttc ? price2num($obj_calcul->total_ttc, 'MT') : 0)."
+							total_ht = $totHt,
+							total_tva = $totTva,
+							localtax1 = $totLocal1,
+							localtax2 = $totLocal2,
+							total_ttc = $totTtc,
+							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1 ).",
+							paid = ".($totTtc == price2num($montantPaiements, 'MT') ? 1 : 0 )."
 						WHERE
 							rowid = $obj->rowid";
 					$db->query($sql_maj);
@@ -2046,6 +2089,84 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 	}
 }
 
+// Repair mailing path
+if ($ok && GETPOST('repair_mailing_path')) {
+	global $user;
+	$sav_user = is_object($user) ? clone $user : $user;
+
+	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+	print '<tr><td colspan="2"><br>*** Repair mailing path<br>';
+
+	/**
+	 * Migrate file from old path to new one for mailing $mailing
+	 *
+	 * @param 	Mailing $mailing		Object mailing
+	 * @return 	void
+	 */
+	function migrate_mailing_filespath($mailing)
+	{
+		global $db, $conf, $user;
+
+		$dir = $conf->mailing->dir_output;
+		$origin = $dir.'/'.get_exdir($mailing->id, 2, 0, 1, $mailing, 'mailing');
+		$destin = $dir.'/'.get_exdir($mailing->id, 0, 0, 1, $mailing, 'mailing');
+
+		$origin_osencoded = dol_osencode($origin);
+		$destin_osencoded = dol_osencode($destin);
+		dol_mkdir($destin);
+
+		$user = new User($db);
+		$user->fetch($mailing->user_creation_id);
+
+		if (dol_is_dir($origin)) {
+			$handle = opendir($origin_osencoded);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if ($file != '.' && $file != '..' && is_dir($origin_osencoded.'/'.$file)) {
+						$thumbs = opendir($origin_osencoded.'/'.$file);
+						if (is_resource($thumbs)) {
+							dol_mkdir($destin.'/'.$file);
+							while (($thumb = readdir($thumbs)) !== false) {
+								$res = dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
+								$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
+								print ($msg);
+							}
+							// dol_delete_dir($origin.'/'.$file);
+						}
+					} else {
+						if (dol_is_file($origin.'/'.$file)) {
+							$res = dol_move($origin.'/'.$file, $destin.'/'.$file);
+							$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
+							print ($msg);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	$mailing = new Mailing($db);
+
+	$sql = "SELECT rowid as mid from ".MAIN_DB_PREFIX."mailing"; // Get list of all mailing
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$mailing->fetch($obj->mid);
+			print "Migrating mailing id=".$mailing->id." ref=".$mailing->ref."<br>\n";
+			migrate_mailing_filespath($mailing);
+		}
+	} else {
+		$ok = 0;
+		dol_print_error($db);
+	}
+
+	$user = $sav_user;
+
+	print '</td></tr>';
+}
+
 print '</table>';
 
 if (empty($actiondone)) {
@@ -2053,7 +2174,9 @@ if (empty($actiondone)) {
 }
 
 if ($oneoptionset) {
+	print '<br>';
 	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
+	print img_picto('', 'url', 'class="pictofixedwidth"');
 	print $langs->trans("GoToDolibarr");
 	print '</a></div>';
 }

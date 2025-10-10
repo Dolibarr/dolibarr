@@ -64,13 +64,13 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("categories", "orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+$langs->loadLangs(array("categories", "orders", 'sendings', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'orderlistdet';
 $optioncss = GETPOST('optioncss', 'alpha');
 

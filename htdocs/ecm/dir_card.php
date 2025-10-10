@@ -512,7 +512,7 @@ if ($user->hasRight('ecm', 'upload')) {
 // List of document
 if ($user->hasRight('ecm', 'read')) {
 	$param = '&amp;section=' . $section;
-	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload);
+	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->hasRight("ecm", "upload"));
 }
 */
 

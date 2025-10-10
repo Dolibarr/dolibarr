@@ -305,7 +305,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$sql = "SELECT nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$i = 0;
@@ -396,7 +396,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 									// Default
 									print '<td class="center">';
-									if ($conf->global->HOLIDAY_ADDON_PDF == $name) {
+									if (getDolGlobalString('HOLIDAY_ADDON_PDF') == $name) {
 										print img_picto($langs->trans("Default"), 'on');
 									} else {
 										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

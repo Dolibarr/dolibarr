@@ -3,10 +3,10 @@ MenuFinancial=ການຮຽກເກັບເງິນ | ການຊໍາລ
 TaxModuleSetupToModifyRules=ໄປທີ່ <a href="%s"> ການຕັ້ງຄ່າໂມດູນພາສີ </a> ເພື່ອດັດແປງກົດລະບຽບສໍາລັບການຄິດໄລ່
 TaxModuleSetupToModifyRulesLT=ໄປທີ່ <a href="%s"> ການຕັ້ງບໍລິສັດ </a> ເພື່ອແກ້ໄຂກົດລະບຽບການຄໍານວນ
 OptionMode=ທາງເລືອກສໍາລັບການບັນຊີ
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=ໃນສະພາບການນີ້, ລາຍຮັບຖືກຄິດໄລ່ຜ່ານໃບແຈ້ງ ໜີ້ (ວັນທີກວດສອບຄວາມຖືກຕ້ອງ). ເມື່ອໃບຮຽກເກັບເງິນເຫຼົ່ານີ້ຮອດກໍານົດ, ເຖິງວ່າຈະໄດ້ຈ່າຍແລ້ວຫຼືບໍ່ກໍ່ຕາມ, ເຂົາເຈົ້າໄດ້ລະບຸໄວ້ໃນຜົນໄດ້ຮັບຂອງລາຍຮັບ.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=ຄຸນສົມບັດມີຢູ່ໃນຮູບແບບການບັນຊີ CREDITS-DEBTS ເທົ່ານັ້ນ (ເບິ່ງການຕັ້ງຄ່າໂມດູນການບັນຊີ)
 VATReportBuildWithOptionDefinedInModule=ຈຳ ນວນທີ່ສະແດງຢູ່ທີ່ນີ້ແມ່ນ ຄຳ ນວນໂດຍໃຊ້ກົດລະບຽບທີ່ ກຳ ນົດໄວ້ໂດຍການຕັ້ງຄ່າໂມດູນພາສີ.
 LTReportBuildWithOptionDefinedInModule=ຈຳ ນວນທີ່ສະແດງຢູ່ນີ້ແມ່ນຄິດໄລ່ຕາມກົດລະບຽບທີ່ຕັ້ງໄວ້ໂດຍການຕັ້ງຂອງບໍລິສັດ.
@@ -302,7 +302,6 @@ ByVatRate=ໂດຍອັດຕາອາກອນການຂາຍ
 TurnoverbyVatrate=ໃບຮຽກເກັບລາຍຮັບຕາມອັດຕາອາກອນການຂາຍ
 TurnoverCollectedbyVatrate=ລາຍຮັບຈາກການເກັບຈາກອັດຕາອາກອນການຂາຍ
 PurchasebyVatrate=ຊື້ຕາມອັດຕາອາກອນການຂາຍ
-LabelToShow=ປ້າຍສັ້ນ
 PurchaseTurnover=ມູນຄ່າການຊື້
 PurchaseTurnoverCollected=ເກັບລາຍຮັບການຊື້
 RulesPurchaseTurnoverDue=- ມັນລວມມີໃບແຈ້ງ ໜີ້ ທີ່ຄົບກໍານົດຂອງຜູ້ສະ ໜອງ ບໍ່ວ່າຈະຈ່າຍຫຼືບໍ່. <br> - ມັນອີງໃສ່ວັນທີໃບແຈ້ງ ໜີ້ ຂອງໃບຮຽກເກັບເງິນເຫຼົ່ານີ້. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

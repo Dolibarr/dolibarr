@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -26,14 +26,8 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
-
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -41,6 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
@@ -130,13 +130,13 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'BOM_MODIFY'; // Name of trigger action code to execute when we modify record
-
+	$triggermodname = $object->TRIGGER_PREFIX.'_MODIFY'; // Name of trigger action code to execute when we modify record. Used in actions_addupdatedelete.inc.php
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
 	// The fetch/fetch_lines was redone into the inc.php so we must recall the calculateCosts()
-	if ($action == 'confirm_validate' && $object->id > 0) {
+	if ($action == 'confirm_validate' && $object->id > 0) {		// Test on permission not required
 		$object->calculateCosts();
 	}
 
@@ -177,7 +177,7 @@ if (empty($reshook)) {
 		}
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
-		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
+		$qty_frozen = GETPOSTINT('qty_frozen');
 		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$fk_workstation = GETPOSTINT('idworkstations');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
@@ -261,7 +261,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
-		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
+		$qty_frozen = GETPOSTINT('qty_frozen');
 		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOSTINT('fk_unit');
@@ -291,7 +291,7 @@ if (empty($reshook)) {
 				$fk_default_workstation = GETPOSTINT('idworkstations');
 			}
 
-			$result = $object->updateLine($lineid, (float) $qty, (int) $qty_frozen, (int) $disable_stock_change, (float) $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
+			$result = $object->updateLine($lineid, (float) $qty, $qty_frozen, (int) $disable_stock_change, (float) $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -320,7 +320,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 if ($object->id > 0) {
-	$title = $object->ref;
+	$title = (string) $object->ref;
 } else {
 	$title = $langs->trans('BOM');
 }
@@ -389,7 +389,7 @@ if (($id || $ref) && $action == 'edit') {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = bomPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("BillOfMaterials"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("BillOfMaterials"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -410,7 +410,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$object->fetch_product();
 			$numref = $object->getNextNumRef($object->product);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateBom', $numref);
@@ -514,7 +514,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.DOL_URL_ROOT.'/bom/bom_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/bom/bom_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -774,7 +774,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&object=bom', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom', 'clone', $permissiontoadd);
 			}
 
 			// Close / Cancel

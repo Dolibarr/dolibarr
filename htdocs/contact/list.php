@@ -38,11 +38,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -50,6 +45,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "suppliers", "categories"));
@@ -61,19 +60,18 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contactlist';
-$mode = GETPOST('mode', 'alpha');
-
+$optioncss = GETPOST('optioncss', 'alpha');
 if ($contextpage == 'poslist') {
 	$optioncss = 'print';
-}
+}$mode = GETPOST('mode', 'alpha');
 
-// Security check
 $id = GETPOSTINT('id');
 $contactid = GETPOSTINT('id');
 $ref = ''; // There is no ref for contacts
 
+// Search fields
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
@@ -123,6 +121,8 @@ $search_level = GETPOST("search_level", 'array');
 $search_stcomm = GETPOST('search_stcomm', 'intcomma');
 $search_birthday_start = dol_mktime(0, 0, 0, GETPOSTINT('search_birthday_startmonth'), GETPOSTINT('search_birthday_startday'), GETPOSTINT('search_birthday_startyear'));
 $search_birthday_end = dol_mktime(23, 59, 59, GETPOSTINT('search_birthday_endmonth'), GETPOSTINT('search_birthday_endday'), GETPOSTINT('search_birthday_endyear'));
+$search_note_public = GETPOST('search_note_public', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 
 if ($search_status === '') {
 	$search_status = 1; // always display active customer first
@@ -270,6 +270,10 @@ if (isModEnabled('socialnetworks')) {
 	}
 }
 
+$arrayfields['p.note_public'] = array('label' => 'NotePublic', 'position' => 350, 'checked' => '-1');
+$arrayfields['p.note_private'] = array('label' => 'NotePrivate', 'position' => 351, 'checked' => '-1');
+
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -406,6 +410,8 @@ if (empty($reshook)) {
 		$search_roles = array();
 		$search_birthday_start = '';
 		$search_birthday_end = '';
+		$search_note_public = "";
+		$search_note_private = "";
 	}
 
 	// Mass actions
@@ -446,9 +452,7 @@ $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
 
-$now = dol_now();
-
-$title = $langs->trans("Contacts")." - ".$langs->trans("List");
+$title = $langs->trans("ContactsAddresses");
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
 $morejs = array();
 $morecss = array();
@@ -486,7 +490,7 @@ $sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias,";
 $sql .= " p.rowid, p.ref_ext, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.ip, p.datec as date_creation, p.tms as date_modification,";
-$sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel,";
+$sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel, p.note_public, p.note_private,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto,";
 $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
@@ -737,6 +741,12 @@ if ($search_no_email != -1 && $search_no_email > 0) {
 if ($search_no_email != -1 && $search_no_email == 0) {
 	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) = 0 AND p.email IS NOT NULL  AND p.email <> ''";
 }
+if ($search_note_public != '') {
+	$sql .= natural_search('p.note_public', $search_note_public);
+}
+if ($search_note_private != '') {
+	$sql .= natural_search('p.note_private', $search_note_private);
+}
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND p.statut = ".((int) $search_status);
 }
@@ -913,6 +923,15 @@ if ($search_email != '') {
 if ($search_no_email != '') {
 	$param .= '&search_no_email='.urlencode((string) ($search_no_email));
 }
+if ($search_note_private != '') {
+	$param .= '&search_note_private='.urlencode((string) ($search_note_private));
+}
+if ($search_note_public != '') {
+	$param .= '&search_note_public='.urlencode((string) ($search_note_public));
+}
+if ($search_stcomm != '') {
+	$param .= '&search_stcomm='.urlencode((string) ($search_stcomm));
+}
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode((string) ($search_status));
 }
@@ -939,6 +958,9 @@ if ($search_birthday_start) {
 if ($search_birthday_end) {
 	$param .= '&search_birthday_end='.urlencode(dol_print_date($search_birthday_end, '%d')).'&search_birthday_endmonth='.urlencode(dol_print_date($search_birthday_end, '%m')).'&search_birthday_endyear='.urlencode(dol_print_date($search_birthday_end, '%Y'));
 }
+
+
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -1254,6 +1276,18 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+// Note public
+if (!empty($arrayfields['p.note_public']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
+	print '</td>';
+}
+// Note private
+if (!empty($arrayfields['p.note_private']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
+	print '</td>';
+}
 // Status
 if (!empty($arrayfields['p.statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -1403,6 +1437,14 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note_public']['label'], $_SERVER["PHP_SELF"], "p.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['p.statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -1478,7 +1520,7 @@ while ($i < $imaxinloop) {
 		}
 	} else {
 		// Show here line of result
-		print '<tr data-rowid="'.$object->id.'" class="oddeven"';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
 			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
@@ -1790,6 +1832,25 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.tms']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Note public
+		if (!empty($arrayfields['p.note_public']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['p.note_private']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

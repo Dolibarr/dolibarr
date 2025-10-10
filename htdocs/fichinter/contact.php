@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -177,9 +177,12 @@ if ($id > 0 || !empty($ref)) {
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

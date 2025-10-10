@@ -108,6 +108,12 @@ if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUC
 	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
 }
 
+// TODO
+//$permissiontoadd should be set according to $element
+//$permissiontodelete should be set according to $element
+$permissiontoadd = $user->hasRight('resource', 'write');
+$permissiontodelete = $user->hasRight('resource', 'delete');
+
 
 /*
  * Actions
@@ -123,7 +129,7 @@ if (empty($reshook)) {
 	$error = 0;
 	$objstat = null;
 
-	if ($action == 'add_element_resource' && !$cancel) {
+	if ($action == 'add_element_resource' && !$cancel && $permissiontoadd) {	// Test on permission already done in header before actions
 		$res = 0;
 		if (!($resource_id > 0)) {
 			$error++;
@@ -206,7 +212,7 @@ if (empty($reshook)) {
 	}
 
 	// Update resource
-	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !$cancel) {
+	if ($action == 'update_linked_resource' && $permissiontoadd && !$cancel) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
@@ -285,7 +291,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
+	if ($action == 'confirm_delete_linked_resource' && $permissiontodelete && $confirm === 'yes') {
 		$res = $object->fetchElementResource($lineid); // to have correct object deleting resource
 		if ($res) {
 			$result = $object->objelement->delete_resource($lineid, '');

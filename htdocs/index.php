@@ -31,8 +31,6 @@
 define('CSRFCHECK_WITH_TOKEN', 1); // We force need to use a token to login when making a POST
 
 require 'main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  *
  * @var string $conffile	defined into filefunc.inc.php
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
 $_GET['mainmenu'] = GETPOST('mainmenu', 'aZ09') ? GETPOST('mainmenu', 'aZ09') : 'home';	// Keep this ?
@@ -49,29 +48,13 @@ $action = GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('index'));
 
+require_once DOL_DOCUMENT_ROOT.'/core/redirect_if_setup_not_complete.inc.php';
+
 
 /*
  * Actions
  */
 
-// Define $nbmodulesnotautoenabled - TODO This code is at different places
-$nbmodulesnotautoenabled = count($conf->modules);
-$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
-foreach ($listofmodulesautoenabled as $moduleautoenable) {
-	if (in_array($moduleautoenable, $conf->modules)) {
-		$nbmodulesnotautoenabled--;
-	}
-}
-
-// Check if company name is defined (first install)
-if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
-	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
-	exit;
-}
-if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only autoenabled modules (property ->enabled_bydefault in modules) are activated
-	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
-	exit;
-}
 if (GETPOST('addbox')) {	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 	$zone = GETPOSTINT('areacode');
@@ -690,11 +673,13 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 							$openedDashBoard .= '</div>';
 							$openedDashBoard .= ' <div class="inline-block"><a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
 						} else {
-							$openedDashBoard .= ' ';
+							$openedDashBoard .= ' <span class="info-box-text info-box-text-a displaycontents">';
 						}
 						$openedDashBoard .= $textLate;
 						if ($board->url_late) {
 							$openedDashBoard .= '</a>';
+						} else {
+							$openedDashBoard .= '</span>';
 						}
 					}
 					$openedDashBoard .= '</div>'."\n";

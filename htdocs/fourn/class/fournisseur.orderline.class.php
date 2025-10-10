@@ -100,6 +100,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	/**
 	 * Unit price without taxes
 	 * @var float
+	 * @deprecated Use $subprice
 	 */
 	public $pu_ht;
 
@@ -466,7 +467,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		}
 		// Multicurrency
 		$sql .= ", multicurrency_subprice = ".((float) price2num($this->multicurrency_subprice));
-		$sql .= ", multicurrency_subprice = ".((float) price2num($this->multicurrency_subprice_ttc));
+		$sql .= ", multicurrency_subprice_ttc = ".((float) price2num($this->multicurrency_subprice_ttc));
 		$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht));
 		$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva));
 		$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc));

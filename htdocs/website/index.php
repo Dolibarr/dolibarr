@@ -62,6 +62,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by the page
@@ -87,7 +89,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -1271,7 +1273,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 	if (!$error) {
 		// Website categories association
-		$categoriesarray = GETPOST('categories', 'array');
+		$categoriesarray = GETPOST('categories', 'array:int');
 		$result = $objectpage->setCategories($categoriesarray);
 		if ($result < 0) {
 			$error++;
@@ -2205,7 +2207,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 
 	if (!$error) {
 		// Website categories association
-		$categoriesarray = GETPOST('categories', 'array');
+		$categoriesarray = GETPOST('categories', 'array:int');
 		$result = $objectpage->setCategories($categoriesarray);
 		if ($result < 0) {
 			$error++;
@@ -3362,7 +3364,7 @@ if (!GETPOST('hide_websitemenu')) {
 		} elseif (empty($virtualurl)) {
 			//$htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
 		} else {
-			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.'</a></center><br>';
+			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.' '.img_picto('', 'url').'</a></center><br>';
 		}
 		if (getDolGlobalString('WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER')) {
 			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
@@ -3631,6 +3633,9 @@ if (!GETPOST('hide_websitemenu')) {
 						$onlylang['none'] = 'none';
 						$textifempty = $langs->trans("Default");
 					}
+
+					$formheight = 300;
+
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value' => $objectpage->pageurl),
 						array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite((string) $object->id, 'newwebsite', 0)),
@@ -3639,12 +3644,13 @@ if (!GETPOST('hide_websitemenu')) {
 						);
 					if (count($onlylang) > 1) {
 						$formquestion[] = array('type' => 'checkbox', 'tdclass' => 'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss' => 'margintoponly');
+						$formheight += 50;
 					}
 
 					$value = $formadmin->select_language($preselectedlanguage, 'newlang', 0, array(), $textifempty, 0, 0, 'minwidth200', 1, 0, 0, $onlylang, 1);
 					$formquestion[] = array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $value);
 
-					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
+					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, $formheight, 550);
 
 					print $formconfirm;
 				}
@@ -5396,7 +5402,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 	print '</div>';
 	print '<div class="tagtd">';
 	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionpagecontent" name="optionpagecontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optionpagecontent', 'aZ09')) ? ' checked' : '').'> <label for="checkboxoptionpagecontent" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Content").'</label><br>';
-	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("WEBSITE_PAGENAME").' | '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
 	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionsitefiles" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionsitefiles" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("GlobalCSSorJS").'</label><br>';
 	print '</div>';
 	print '</div>';

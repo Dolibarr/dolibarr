@@ -73,9 +73,9 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 
 		if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE') && getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE') > 60) {
-			$hh = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "hour");
-			$mm = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "min");
-			$ss = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "sec");
+			$hh = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "hour");
+			$mm = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "min");
+			$ss = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "sec");
 
 			fwrite($calfileh, "X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
 		}

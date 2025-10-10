@@ -128,7 +128,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *  @param      int<0,1>	$hidedetails		Do not show line details
 	 *  @param      int<0,1>	$hidedesc			Do not show desc
 	 *  @param      int<0,1>	$hideref			Do not show ref
-	 *  @return     int<0,1>             			1=OK, 0=KO
+	 *  @return     int<-1,1>             			1=OK, <=0 => KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -144,7 +144,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings"));
 
 		if ($conf->expedition->dir_output) {
 			$object->fetch_thirdparty();
@@ -584,6 +584,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

@@ -25,17 +25,11 @@
 /**
  *	\file       htdocs/comm/propal/note.php
  *	\ingroup    propal
- *	\brief      Fiche d'information sur une proposition commerciale
+ *	\brief      Page for notes on proposals
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +37,12 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'compta', 'bills', 'companies'));
@@ -117,8 +117,8 @@ if ($object->id > 0) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
-		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		// Project

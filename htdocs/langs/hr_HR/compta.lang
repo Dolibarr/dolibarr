@@ -3,10 +3,10 @@ MenuFinancial=Računi | Plaćanja
 TaxModuleSetupToModifyRules=Idite na <a href="%s">Podešavanje modula poreza</a> za promjenu pravila izračuna
 TaxModuleSetupToModifyRulesLT=Idite na <a href="%s">Postavke tvrtke</a> za promjenu pravila za kalkulacije
 OptionMode=Opcija za računovodstvo
-OptionModeTrue=obračunsko računovodstvo
-OptionModeVirtual=Računovodstvo gotovine
-OptionModeTrueDesc=U ovom kontekstu, promet se izračunava na temelju plaćanja (datum plaćanja). Valjanost podataka osigurana je samo ako se knjigovodstvo provjerava kroz ulazne/izlazne podatke o plaćanjima.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=U ovom kontekstu, promet je izračunat putem računa (datum ovjere). Kada su ti računi u dospijeću, bez obzira da li su plaćeni ili ne, oni su prikazani na prikazu prometa.
+OptionModeTrueDesc=U ovom kontekstu, promet se izračunava na temelju plaćanja (datum plaćanja). Valjanost podataka osigurana je samo ako se knjigovodstvo provjerava kroz ulazne/izlazne podatke o plaćanjima.
 FeatureIsSupportedInInOutModeOnly=Mogučnost je dostupna samo u KREDITIRANJA-DUGOVANJA načinu računovodstva ( Pogledajte podešavanje Računovodstvenog modula )
 VATReportBuildWithOptionDefinedInModule=Prikazani iznosi su izračunati korištenjem pravila definiranih u postavkama Poreznog modula
 LTReportBuildWithOptionDefinedInModule=Prikazani iznosi su izračunati korištenjem pravila definiranih u postavkama tvrtke.
@@ -302,7 +302,6 @@ ByVatRate=Po stopi poreza na promet
 TurnoverbyVatrate=Promet fakturiran po stopi poreza na promet
 TurnoverCollectedbyVatrate=Promet prikupljen po stopi poreza na promet
 PurchasebyVatrate=Kupnja po stopi poreza na promet
-LabelToShow=Kratka oznaka
 PurchaseTurnover=Nabavni promet
 PurchaseTurnoverCollected=Prikupljeni promet od nabave
 RulesPurchaseTurnoverDue=- Uključuje dospjele račune dobavljača bez obzira jesu li plaćeni ili ne. <br>- Temelji se na datumu fakture ovih faktura.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Pravilo za datume redaka
 Prepaid=Prepaid
 Postpaid=Naknadno plaćanje
 SetRuleForLinesDates=Postavi pravilo za datume redaka
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

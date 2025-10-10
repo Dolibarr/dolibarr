@@ -60,14 +60,14 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("orders", "sendings", 'deliveries', 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
+$langs->loadLangs(array("orders", "sendings", 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierorderlist';
 $mode = GETPOST('mode', 'alpha');
 
@@ -110,6 +110,13 @@ $search_date_approve_end = dol_mktime(23, 59, 59, $search_date_approve_endmonth,
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
+$searchCategorySupplierOrderList = GETPOST('search_category_supplier_order_list', 'array:int');
+$searchCategorySupplierOrderOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategorySupplierOrderOperator = GETPOSTINT('search_category_supplier_order_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategorySupplierOrderOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_product_category = GETPOSTINT('search_product_category');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_refsupp = GETPOST('search_refsupp', 'alpha');
@@ -134,7 +141,7 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_tva = GETPOST('search_multicurrency_montant_tva', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$billed = GETPOSTINT('billed');
+$billed = GETPOST('billed', 'int');		// Value '' must be possible
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -283,6 +290,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$searchCategorySupplierOrderList = array();
 		$search_ref = '';
 		$search_refsupp = '';
 		$search_company = '';
@@ -389,7 +397,7 @@ if (empty($reshook)) {
 
 	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills') {
-		$orders = GETPOST('toselect', 'array');
+		$orders = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -744,6 +752,12 @@ if (empty($reshook)) {
 			if ($search_user > 0) {
 				$param .= '&search_user='.urlencode((string) ($search_user));
 			}
+			if ($searchCategorySupplierOrderOperator == 1) {
+				$param .= "&search_category_supplier_order_operator=".urlencode((string) ($searchCategorySupplierOrderOperator));
+			}
+			foreach ($searchCategorySupplierOrderList as $searchCategorySupplierOrder) {
+				$param .= "&search_category_order_list[]=".urlencode($searchCategorySupplierOrder);
+			}
 			if ($search_sale > 0) {
 				$param .= '&search_sale='.urlencode($search_sale);
 			}
@@ -981,6 +995,34 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc)";
 	} elseif ($search_sale > 0) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search for tag/category ($searchCategorySupplierOrderList is an array of ID)
+if (!empty($searchCategorySupplierOrderList)) {
+	$searchCategorySupplierOrderSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierOrderList as $searchCategorySupplierOrder) {
+		if (intval($searchCategorySupplierOrder) == -2) {
+			$searchCategorySupplierOrderSqlList[] = "NOT EXISTS (SELECT ck.fk_supplier_order FROM ".MAIN_DB_PREFIX."categorie_supplier_order as ck WHERE cf.rowid = ck.fk_supplier_order)";
+		} elseif (intval($searchCategorySupplierOrder) > 0) {
+			if ($searchCategorySupplierOrderOperator == 0) {
+				$searchCategorySupplierOrderSqlList[] = " EXISTS (SELECT ck.fk_supplier_order FROM ".MAIN_DB_PREFIX."categorie_supplier_order as ck WHERE cf.rowid = ck.fk_supplier_order AND ck.fk_categorie = ".((int) $searchCategorySupplierOrder).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplierOrder);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierOrderSqlList[] = " EXISTS (SELECT ck.fk_supplier_order FROM ".MAIN_DB_PREFIX."categorie_supplier_order as ck WHERE cf.rowid = ck.fk_supplier_order AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierOrderOperator == 1) {
+		if (!empty($searchCategorySupplierOrderSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierOrderSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierOrderSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierOrderSqlList).")";
+		}
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
@@ -1230,7 +1272,9 @@ if ($resql) {
 		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
-
+	if (isModEnabled('category') && $user->hasRight("fournisseur", "commande", "lire")) {
+		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+	}
 	if ($permissiontovalidate) {
 		if ($permissiontoapprove && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE')) {
 			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove");
@@ -1334,7 +1378,11 @@ if ($resql) {
 	}
 
 	$moreforfilter = '';
-
+	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_ORDER, $searchCategorySupplierOrderList, 'minwidth300', $searchCategorySupplierOrderOperator ? $searchCategorySupplierOrderOperator : 0);
+	}
 	// If the user can view prospects other than his'
 	if ($user->hasRight("user", "user", "lire")) {
 		$langs->load("commercial");
@@ -1795,7 +1843,7 @@ if ($resql) {
 				print '</td></tr>';
 			}
 		} else {
-			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
+			print '<tr class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowraponall center">';

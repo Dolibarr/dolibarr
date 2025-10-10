@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
+$langs->loadLangs(array("admin", "sendings", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -357,7 +357,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	$sql = "SELECT nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	$resql = $db->query($sql);
 	if ($resql) {

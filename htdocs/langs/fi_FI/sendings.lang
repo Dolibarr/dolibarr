@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=Työnkulku-moduulin vaihtoehto, jolla lähety
 NoWarehouseInBase=Ei varastoa tukikohdassa
 ShipmentUpdated=Lähetys päivitetty onnistuneesti
 ShipmentIncrementStockOnDelete = Lisää varastoa poiston yhteydessä
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Toimituksesta
+DeliveryRef=Toimitusviite
+DeliveryCard=Lähetyslista
+DeliveryOrder=Lähetyslista
+DeliveryDate=Toimituspäivä
+CreateDeliveryOrder=Lähetyslistan luonti
+DeliveryStateSaved=Toimituksen tila tallennettu
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Aseta toimituspäivämäärä
+ValidateDeliveryReceipt=Vahvista lähetyslista
+ValidateDeliveryReceiptConfirm=Haluatko varmasti vahvistaa tämän lähetyslistan?
+DeleteDeliveryReceipt=Poista lähetyslista
+DeleteDeliveryReceiptConfirm=Haluatko varmasti poistaa lähetyslistan <b>%s</b>?
+DeliveryMethod=Toimitustapa
+TrackingNumber=Seurantanumero
+DeliveryNotValidated=Toimitus ei validoitu
+StatusDeliveryCanceled=Peruttu
+StatusDeliveryDraft=Vekseli
+StatusDeliveryValidated=Vastaanotetut
+NameAndSignature=Allekirjoitus ja nimenselvennys
+ToAndDate=To___________________________________ on ____ / _____ / __________
+GoodStatusDeclaration=Ovat saaneet tavarat edellä hyvässä kunnossa,
+Deliverer=Kuljetusyritys
+Sender=Lähettäjä
+Recipient=Vastaanottaja
+ErrorStockIsNotEnough=Varaston saldo ei riitä
+Shippable=Toimitettavissa
+NonShippable=Ei toimitettavissa
+ShowShippableStatus=Näytä kuljetuksien tila
+ShowReceiving=Näytä lähetyslista
+NonExistentOrder=Tilausta ei ole järjestelmässä
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument

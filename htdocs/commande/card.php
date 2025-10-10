@@ -77,7 +77,7 @@ if (isModEnabled('variants')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'products', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'products', 'other'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$selectedLines = GETPOST('toselect', 'array');
+	$selectedLines = GETPOST('toselect', 'array:int');
 
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {
@@ -391,11 +391,9 @@ if (empty($reshook)) {
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$object->multicurrency_tx = GETPOSTFLOAT('originmulticurrency_tx');
 			// Fill array 'array_options' with data from add form
-			if (!$error) {
-				$ret = $extrafields->setOptionalsFromPost(null, $object);
-				if ($ret < 0) {
-					$error++;
-				}
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) {
+				$error++;
 			}
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
@@ -440,6 +438,7 @@ if (empty($reshook)) {
 						$classname = ucfirst($subelement);
 						$srcobject = new $classname($db);
 						'@phan-var-force Commande|Propal|Contrat $srcobject';
+						/** @var Commande|Propal|Contrat $srcobject */
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 						$result = $srcobject->fetch($object->origin_id);
@@ -813,11 +812,11 @@ if (empty($reshook)) {
 			}
 			$subprice_multicurrency = $line->subprice;
 			if (is_numeric($margin_rate) && $margin_rate > 0) {
-				$line->subprice = floatval(price2num(floatval($line->pa_ht) * (1 + floatval($margin_rate) / 100), 'MU'));
+				$line->subprice = (float) price2num((float) $line->pa_ht * (1 + (float) $margin_rate / 100), 'MU');
 			} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
-				$line->subprice = floatval($line->pa_ht / (1 - (floatval($mark_rate) / 100)));
+				$line->subprice = (float) ($line->pa_ht / (1 - ((float) $mark_rate / 100)));
 			} else {
-				$line->subprice = floatval($line->pa_ht);
+				$line->subprice = (float) $line->pa_ht;
 			}
 
 			$prod = new Product($db);
@@ -1043,7 +1042,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -1921,7 +1920,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->cancel($idwarehouse);
+			$result = $object->cancel($user, $idwarehouse);
 
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1954,12 +1953,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	// add lines from objectlinked
-	if (
-		$action == 'import_lines_from_object'
-		&& $usercancreate
-		&& $object->status == Commande::STATUS_DRAFT
-	) {
+	// Add lines from objectlinked
+	if ($action == 'import_lines_from_object' && $usercancreate && $object->status == Commande::STATUS_DRAFT) {
 		$fromElement = GETPOST('fromelement');
 		$fromElementid = GETPOST('fromelementid');
 		$importLines = GETPOST('line_checkbox');
@@ -2035,7 +2030,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = !empty($conf->commande->multidir_output[$object->entity]) ? $conf->commande->multidir_output[$object->entity] : $conf->commande->dir_output;
+	$upload_dir = !empty($conf->commande->multidir_output[$object->entity ?? $conf->entity]) ? $conf->commande->multidir_output[$object->entity ?? $conf->entity] : $conf->commande->dir_output;
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
@@ -2048,7 +2043,7 @@ if (empty($reshook)) {
 
 
 	if (!$error && getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
-		if ($action == 'addcontact' && $usercancreate) {
+		if ($action == 'addcontact') { // Test on permission already done
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -2066,14 +2061,14 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} elseif ($action == 'swapstatut' && $usercancreate) {
+		} elseif ($action == 'swapstatut') { // Test on permission already done
 			// bascule du statut d'un contact
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		} elseif ($action == 'deletecontact' && $usercancreate) {
+		} elseif ($action == 'deletecontact') { // Test on permission already done
 			// Efface un contact
 			$result = $object->delete_contact($lineid);
 
@@ -2180,7 +2175,7 @@ if ($action == 'create' && $usercancreate) {
 			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (int) $objectsrc->fk_project;
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->thirdparty;
@@ -2190,10 +2185,10 @@ if ($action == 'create' && $usercancreate) {
 			$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
 			$availability_id = (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : 0);
 			$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
-			$warehouse_id       = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+			$warehouse_id = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
 			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
-			//$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-			//$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
+			// $remise_percent = (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
+			// $remise_absolue = (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 			$dateorder = !getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? -1 : '';
 
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
@@ -2222,9 +2217,9 @@ if ($action == 'create' && $usercancreate) {
 		$shipping_method_id = $soc->shipping_method_id;
 		$warehouse_id       = $soc->fk_warehouse;
 		$demand_reason_id   = $soc->demand_reason_id;
-		//$remise_percent     = $soc->remise_percent;
-		//$remise_absolue     = 0;
-		$dateorder          = !getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? -1 : '';
+		// $remise_percent = $soc->remise_percent;
+		// $remise_absolue = 0;
+		$dateorder = !getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? -1 : '';
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
@@ -2377,7 +2372,7 @@ if ($action == 'create' && $usercancreate) {
 		// Terms of payment
 		print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', (float) $deposit_percent);
+		print $form->getSelectConditionsPaiements((int) $cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', (float) $deposit_percent);
 		print '</td></tr>';
 
 		// Payment mode
@@ -2389,7 +2384,7 @@ if ($action == 'create' && $usercancreate) {
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("bank")) {
 			print '<tr><td>' . $langs->trans('BankAccount') . '</td><td>';
-			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
 		}
 
@@ -2488,7 +2483,7 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Categories
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled('category')) {
 			print '<tr><td>' . $langs->trans("Categories") . '</td><td colspan="3">';
 			print $form->selectCategories(Categorie::TYPE_ORDER, 'categories', $object);
 			print "</td></tr>";
@@ -2525,13 +2520,12 @@ if ($action == 'create' && $usercancreate) {
 				$objectsrc->update_price(1);
 			}
 
-			print "\n<!-- " . $classname . " info -->";
-			print "\n";
-			print '<input type="hidden" name="amount"         value="' . $objectsrc->total_ht . '">' . "\n";
-			print '<input type="hidden" name="total"          value="' . $objectsrc->total_ttc . '">' . "\n";
-			print '<input type="hidden" name="tva"            value="' . $objectsrc->total_tva . '">' . "\n";
-			print '<input type="hidden" name="origin"         value="' . $objectsrc->element . '">';
-			print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
+			print "\n<!-- " . $classname . " info -->\n";
+			print '<input type="hidden" name="amount"   value="' . $objectsrc->total_ht . '">' . "\n";
+			print '<input type="hidden" name="total"    value="' . $objectsrc->total_ttc . '">' . "\n";
+			print '<input type="hidden" name="tva"      value="' . $objectsrc->total_tva . '">' . "\n";
+			print '<input type="hidden" name="origin"   value="' . $objectsrc->element . '">';
+			print '<input type="hidden" name="originid" value="' . $objectsrc->id . '">';
 
 			switch ($classname) {
 				case 'Propal':
@@ -2633,7 +2627,7 @@ if ($action == 'create' && $usercancreate) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			} else {
-				$numref = $object->ref;
+				$numref = (string) $object->ref;
 			}
 
 			$text = $langs->trans('ConfirmValidateOrder', $numref);
@@ -2756,7 +2750,6 @@ if ($action == 'create' && $usercancreate) {
 							);
 						}
 
-
 						$paymentTermsSelect = $form->getSelectConditionsPaiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
 
 						$formquestion[] = array(
@@ -2823,12 +2816,17 @@ if ($action == 'create' && $usercancreate) {
 				if ($conf->browser->name == 'ie') {
 					$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
 				}
-				$formquestion = array(
+				$formquestion = [
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-				);
+					[
+						'type' => 'other',
+						'name' => 'idwarehouse',
+						'label' => $langs->trans("SelectWarehouseForStockIncrease"),
+						'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo)
+					]
+				];
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
@@ -2902,12 +2900,12 @@ if ($action == 'create' && $usercancreate) {
 			$langs->load('subtotals');
 			$type = 'title';
 			$depth_array = $object->getPossibleLevels($langs);
-			require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+			include DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_create.tpl.php';
 		} elseif ($action == 'add_subtotal_line') {
 			$langs->load('subtotals');
 			$type = 'subtotal';
 			$titles = $object->getPossibleTitles();
-			require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+			include DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_create.tpl.php';
 		}
 
 		// Call Hook formConfirm
@@ -2959,7 +2957,6 @@ if ($action == 'create' && $usercancreate) {
 			}
 		}
 		$morehtmlref .= '</div>';
-
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -3640,11 +3637,16 @@ if ($action == 'create' && $usercancreate) {
 			// Documents
 			$objref = dol_sanitizeFileName($object->ref);
 			$relativepath = $objref . '/' . $objref . '.pdf';
-			$filedir = $conf->commande->multidir_output[$object->entity] . '/' . $objref;
-			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+			$filedir = $conf->commande->multidir_output[$object->entity ?? $conf->entity] . '/' . $objref;
+			$urlsource = dolBuildUrl($_SERVER["PHP_SELF"], ["id" => $object->id]);
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;
-			print $formfile->showdocuments('commande', $objref, $filedir, $urlsource, $genallowed, (int) $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
+			$tooltipAfterComboOfModels = '';
+			if (getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_ORDER')) {
+				$tooltipAfterComboOfModels = $langs->trans("AccordingToYourSetupTheFileWillBeConcatenated", getDolGlobalString('MAIN_INFO_ORDER_TERMSOFSALE'));
+			}
+
+			print $formfile->showdocuments('commande', $objref, $filedir, $urlsource, $genallowed, (int) $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object, 0, 'remove_file', $tooltipAfterComboOfModels);
 
 
 			// Show links to link elements
@@ -3682,8 +3684,8 @@ if ($action == 'create' && $usercancreate) {
 			$MAXEVENT = 10;
 
 			//button to go to messaging from the events box
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT . '/commande/messaging.php?id=' . $object->id);
-			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT . '/commande/agenda.php?id=' . $object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', dolBuildUrl(DOL_URL_ROOT . '/commande/messaging.php', ['id' => $object->id]));
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT . '/commande/agenda.php', ['id' => $object->id]));
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

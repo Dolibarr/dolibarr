@@ -37,6 +37,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 /**
  * @var Conf $conf
@@ -76,9 +77,63 @@ $error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-global $conf;
+if ($action == 'updateMask') {
+	$maskconst = GETPOST('maskconst', 'aZ09');
+	$maskvalue = GETPOST('maskvalue', 'alpha');
 
-if ($action == 'set_default') {
+	$res = 0;
+
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+	}
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'specimen') { // For fiche expensereport
+	$modele = GETPOST('module', 'alpha');
+
+	$adherentspecimen = new Adherent($db);
+	$adherentspecimen->initAsSpecimen();
+	$adherentspecimen->status = 0; // Force statut draft to show watermark
+
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/member/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($classname !== '') {
+		require_once $file;
+
+		$module = new $classname($db);
+		'@phan-var-force ModelePDFMember $module';
+		/** @var ModelePDFMember $module */
+
+		if ($module->write_file($adherentspecimen, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=member&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+} elseif ($action == 'set_default') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 	$res = true;
 } elseif ($action == 'del_default') {
@@ -264,7 +319,7 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '  <td class="center" width="60"></td>';
 print "</tr>\n";
 
 $arrayofmodules = array();
@@ -286,6 +341,7 @@ foreach ($dirModMember as $dirroot) {
 					continue;
 				}
 				$modCodeMember = new $file();
+				/** @var ModeleNumRefMembers $modCodeMember */
 				// Show modules according to features level
 				if ($modCodeMember->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
@@ -303,6 +359,7 @@ foreach ($dirModMember as $dirroot) {
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
 '@phan-var-force array<string,ModeleNumRefMembers> $arrayofmodules';
+/** @var array<string,ModeleNumRefMembers> $arrayofmodules */
 
 foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
@@ -347,12 +404,14 @@ print "<br>";
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+
 // Defined model definition table
 $def = array();
+// TODO Replace with $def = getListOfModels($db, $type);
 $sql = "SELECT nom as name";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -403,6 +462,7 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 							'@phan-var-force doc_generic_member_odt|pdf_standard_member $module';
+							/** @var doc_generic_member_odt|pdf_standard_member $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -629,10 +689,52 @@ print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
+$helptext = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+// Set list of substitution variables (must be the same list than into the core/modules/member/doc/pdf_standard_member.class.php
+$helptext .= '<small>';
+
+$now = dol_now();
+$year = dol_print_date($now, '%Y');
+$month = dol_print_date($now, '%m');
+$day = dol_print_date($now, '%d');
+
+// List of values to scan for a replacement (Must be samevalues than into adherents/cartes/carte.php and pdf_standard_members.class.php)
+$substitutionarray = array(
+	'__MEMBER_ID__' => 'MemberID',
+	'__MEMBER_REF__' => 'MemberRef',
+	'__MEMBER_LOGIN__' => 'MemberLogin',
+	'__MEMBER_TITLE__' => 'MemberLogin',
+	'__MEMBER_FIRSTNAME__' => 'MemberFirstname',
+	'__MEMBER_LASTNAME__' => 'MemberLastname',
+	'__MEMBER_FULLNAME__' => 'MemberFullname',
+	'__MEMBER_COMPANY__' => 'Company',
+	'__MEMBER_ADDRESS__' => 'MemberAddress',
+	'__MEMBER_ZIP__' => 'MemberZip',
+	'__MEMBER_TOWN__' => 'MemberTown',
+	'__MEMBER_COUNTRY__' => 'MemberCountry',
+	'__MEMBER_COUNTRY_CODE__' =>'MemberCountryCode',
+	'__MEMBER_EMAIL__' => 'MemberEmail',
+	'__MEMBER_BIRTH__' => 'MemberBirthdate',
+	'__MEMBER_TYPE__' => 'MemberType',
+	'__MEMBER_PHOTO__' => 'MemberPhoto',
+	'__YEAR__' => $year,
+	'__MONTH__' => $month,
+	'__DAY__' => $day,
+	'__DOL_MAIN_URL_ROOT__' => (string) DOL_MAIN_URL_ROOT,
+	'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
+);
+foreach ($substitutionarray as $key => $val) {
+	$helptext .= $key.' => '.$val.'<br>';
+}
+// Make substitutions for new variables
+/*
+$array_member = $this->getSubstitutionarrayMember($object, $outputlangs);
+$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
+$array_other = $this->get_substitutionarray_other($outputlangs);
+
+$substitutionarray = array_merge($substitutionarray, $array_member, $array_soc, $array_other);
+*/
+$helptext .= '</small>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -649,32 +751,32 @@ $arrayoflabels = array();
 foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
-print $form->selectarray('ADHERENT_CARD_TYPE', $arrayoflabels, getDolGlobalString('ADHERENT_CARD_TYPE') ? getDolGlobalString('ADHERENT_CARD_TYPE') : 'CARD', 1, 0, 0);
+print $form->selectarray('ADHERENT_CARD_TYPE', $arrayoflabels, getDolGlobalString('ADHERENT_CARD_TYPE', 'CARD'), 1, 0, 0);
 
 print "</td></tr>\n";
 
 // Text printed on top of member cards
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_HEADER_TEXT").'</td><td>';
-print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_HEADER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_HEADER_TEXT')).'">';
+print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_HEADER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_HEADER_TEXT')).'" spellcheck="false">';
 print "</td></tr>\n";
 
 // Text printed on member cards (align on left)
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TEXT").'</td><td>';
-print '<textarea class="flat" name="ADHERENT_CARD_TEXT" cols="50" rows="5" wrap="soft">'."\n";
+print '<textarea class="flat" name="ADHERENT_CARD_TEXT" cols="50" rows="5" wrap="soft" spellcheck="false">'."\n";
 print getDolGlobalString('ADHERENT_CARD_TEXT');
 print '</textarea>';
 print "</td></tr>\n";
 
 // Text printed on member cards (align on right)
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TEXT_RIGHT").'</td><td>';
-print '<textarea class="flat" name="ADHERENT_CARD_TEXT_RIGHT" cols="50" rows="5" wrap="soft">'."\n";
+print '<textarea class="flat" name="ADHERENT_CARD_TEXT_RIGHT" cols="50" rows="5" wrap="soft" spellcheck="false">'."\n";
 print getDolGlobalString('ADHERENT_CARD_TEXT_RIGHT');
 print '</textarea>';
 print "</td></tr>\n";
 
 // Text printed on bottom of member cards
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_FOOTER_TEXT").'</td><td>';
-print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_FOOTER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_FOOTER_TEXT')).'">';
+print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_FOOTER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_FOOTER_TEXT')).'" spellcheck="false">';
 print "</td></tr>\n";
 
 print '</table>';
@@ -698,11 +800,6 @@ print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("MembersTickets"), '', '');
 
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
-
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -724,7 +821,7 @@ print "</td></tr>\n";
 
 // Text printed on member address sheets
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_ETIQUETTE_TEXT").'</td><td>';
-print '<textarea class="flat" name="ADHERENT_ETIQUETTE_TEXT" cols="50" rows="5" wrap="soft">'."\n";
+print '<textarea class="flat" name="ADHERENT_ETIQUETTE_TEXT" cols="50" rows="5" wrap="soft" spellcheck="false">'."\n";
 print getDolGlobalString('ADHERENT_ETIQUETTE_TEXT');
 print '</textarea>';
 print "</td></tr>\n";

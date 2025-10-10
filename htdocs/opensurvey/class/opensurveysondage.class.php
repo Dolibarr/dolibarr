@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
- * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,11 @@ class Opensurveysondage extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'opensurvey_sondage';
+
+	/**
+	 * @var string
+	 */
+	public $table_rowid = 'id_sondage';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -88,7 +93,7 @@ class Opensurveysondage extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -141,12 +146,12 @@ class Opensurveysondage extends CommonObject
 	public $commentaires;
 
 	/**
-	 * @var string admin mail
+	 * @var ?string admin mail
 	 */
 	public $mail_admin;
 
 	/**
-	 * @var string admin name
+	 * @var ?string admin name
 	 */
 	public $nom_admin;
 
@@ -156,13 +161,13 @@ class Opensurveysondage extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var string title of survey
+	 * @var ?string title of survey
 	 * @deprecated Rename the field titre into title into the table to allow to change this in fields and remove this declaration.
 	 */
 	public $titre;
 
 	/**
-	 * @var string title of survey
+	 * @var ?string title of survey
 	 */
 	public $title;
 
@@ -170,28 +175,29 @@ class Opensurveysondage extends CommonObject
 	 * @var int|'' end date of survey
 	 */
 	public $date_fin = '';
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
 	/**
-	 * @var string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
+	 * @var ?string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
 	 */
 	public $format;
 
 	/**
-	 * @var int to allow send mail
+	 * @var ?int to allow send mail
 	 */
 	public $mailsonde;
 
 	/**
-	 * @var int		Allow comments on this poll
+	 * @var ?int		Allow comments on this poll
 	 */
 	public $allow_comments;
 
 	/**
-	 * @var int		Allow users see others vote
+	 * @var ?int		Allow users see others vote
 	 */
 	public $allow_spy;
 
@@ -272,10 +278,10 @@ class Opensurveysondage extends CommonObject
 		$sql .= "'".$this->db->escape($this->id_sondage)."',";
 		$sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
 		$sql .= " ".(int) $user->id.",";
-		$sql .= " '".$this->db->escape($this->title)."',";
+		$sql .= " '".$this->db->escape((string) $this->title)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".(int) $this->status.",";
-		$sql .= " '".$this->db->escape($this->format)."',";
+		$sql .= " '".$this->db->escape((string) $this->format)."',";
 		$sql .= " ".((int) $this->mailsonde).",";
 		$sql .= " ".((int) $this->allow_comments).",";
 		$sql .= " ".((int) $this->allow_spy).",";

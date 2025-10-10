@@ -18,8 +18,8 @@ BlockedlogInfoDialog=Log Details
 ListOfTrackedEvents=List of tracked events
 Fingerprint=Fingerprint
 DownloadLogCSV=Export unalterable logs (CSV)
-DataOfArchivedEvent=Complementary data of archived event
-DataOfArchivedEventHelp=This field contains the complementary data that was archived on real time. Even if some parent business event could have been purged or modified, the data archived here is the original data, and it can't be modified.
+DataOfArchivedEvent=Complete data of archived event
+DataOfArchivedEventHelp=This field contains the complementary data that was archived on real time. Even if some parent business event could have been canceled or modified, the data stored here is the original data, and it can't be modified.
 DataOfArchivedEventHelp2=The integrity of data on each line is guaranteed if the status of the line is OK
 ImpossibleToReloadObject=Original object (type %s, id %s) not linked (see 'Full datas' column to get unalterable saved data)
 BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
@@ -33,6 +33,7 @@ BlockedLogDisabled=System to track events into unalterable logs has been disable
 BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.
 LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
 SavedOnLine=Saved on line
+UnlaterableDataOfEvent=Unalterable data of event
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted

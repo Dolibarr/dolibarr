@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2004-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2022	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Ion Agorria				<ion@agorria.com>
+/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
- * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Nick Fragoulis
- * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2024 Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2024-2025 MDW						      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Nick Fragoulis
+ * Copyright (C) 2025		   Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ if (isModEnabled('stock')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'products', 'stocks', 'productbatch'));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -248,7 +248,7 @@ if (empty($reshook)) {
 
 	// payment conditions
 	if ($action == 'setconditions' && $usercancreate) {
-		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -479,7 +479,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -1209,7 +1209,7 @@ if (empty($reshook)) {
 
 				$result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment")); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
 				if ($result > 0) {
-					$langs->load("deliveries");
+					$langs->load("sendings");
 					setEventMessages($langs->trans("DeliveryStateSaved"), null);
 					$action = '';
 				} else {
@@ -1286,7 +1286,7 @@ if (empty($reshook)) {
 	 */
 	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
-		$selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array:int');
 		if ($socid < 1) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
 			$action = 'create';
@@ -1300,6 +1300,7 @@ if (empty($reshook)) {
 			$object->ref_supplier = GETPOST('refsupplier');
 			$object->socid = $socid;
 			$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+			$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 			$object->fk_account = GETPOSTINT('fk_account');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
@@ -1509,7 +1510,7 @@ if (empty($reshook)) {
 			}
 
 			if (isModEnabled('category')) {
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				if (method_exists($object, 'setCategories')) {
 					$object->setCategories($categories);
 				}
@@ -1639,17 +1640,19 @@ if ($action == 'create') {
 		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 
-		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+		$projectid = (int) $objectsrc->fk_project;
 		$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 		$fk_account = 0;
 		if ($origin == "commande") {
 			$cond_reglement_id = 0;
+			$deposit_percent = 0;
 			$mode_reglement_id = 0;
 			$datelivraison = '';
 			$objectsrc->note_private = '';
 			$objectsrc->note_public = '';
 			if ($societe = $object->thirdparty) {
 				$cond_reglement_id = $societe->cond_reglement_supplier_id;
+				$deposit_percent = $societe->deposit_percent;
 				$mode_reglement_id = $societe->mode_reglement_supplier_id;
 				if (isModEnabled("multicurrency")) {
 					$currency_code = $societe->multicurrency_code;
@@ -1662,6 +1665,7 @@ if ($action == 'create') {
 			$soc = $objectsrc->thirdparty;
 
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
+			$deposit_percent	= (!empty($objectsrc->deposit_percent) ? $objectsrc->deposit_percent : (!empty($soc->deposit_percent) ? $soc->deposit_percent : 0));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 			$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
 			$availability_id	= (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : (!empty($soc->availability_id) ? $soc->availability_id : 0));
@@ -1690,6 +1694,7 @@ if ($action == 'create') {
 		}
 	} else {
 		$cond_reglement_id 	= !empty($societe->cond_reglement_supplier_id) ? $societe->cond_reglement_supplier_id : 0;
+		$deposit_percent = !empty($societe->deposit_percent) ? $societe->deposit_percent : 0;
 		$mode_reglement_id 	= !empty($societe->mode_reglement_supplier_id) ? $societe->mode_reglement_supplier_id : 0;
 
 		if (isModEnabled("multicurrency") && !empty($societe->multicurrency_code)) {
@@ -1706,6 +1711,9 @@ if ($action == 'create') {
 	}
 	if (empty($mode_reglement_id) && getDolGlobalString('SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID')) {
 		$mode_reglement_id = getDolGlobalString('SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID');
+	}
+	if (GETPOSTISSET('cond_reglement_id_deposit_percent')) {
+		$deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -1787,7 +1795,7 @@ if ($action == 'create') {
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') &&  GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
+		print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') &&  GETPOST('cond_reglement_id') != 0) ? GETPOSTINT('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 		print '</td></tr>';
 
 		// Payment mode
@@ -1806,9 +1814,7 @@ if ($action == 'create') {
 			$usehourmin = 1;
 		}
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-
-		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, 0, "set");
-
+		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, 0, "set", 1, 1);
 		print '</td></tr>';
 
 		// Bank Account
@@ -1826,7 +1832,14 @@ if ($action == 'create') {
 
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
-			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+			if ($socid > 0) { // external user
+				$projSocFilter = $socid;
+			} elseif ((int) $societe->id == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
+				$projSocFilter = -1;
+			} else {
+				$projSocFilter = $societe->id;
+			}
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects($projSocFilter, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 			print '</td></tr>';
 		}
@@ -2272,9 +2285,9 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'cond_reglement_id');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->cond_reglement_id, 'cond_reglement_id', 1, '', 1, $object->deposit_percent);
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->cond_reglement_id, 'none', 1, '', 1, $object->deposit_percent);
 		}
 		print "</td>";
 		print '</tr>';

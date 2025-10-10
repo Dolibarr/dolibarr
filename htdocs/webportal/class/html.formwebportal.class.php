@@ -3,7 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1077,7 +1077,7 @@ class FormWebPortal extends Form
 		//
 		if (in_array($key, array('rowid', 'ref'))) {
 			if (property_exists($object, 'ref')) {
-				$value = $object->ref;
+				$value = (string) $object->ref;
 			} elseif (property_exists($object, 'id')) {
 				$value = $object->id;
 			} else {
@@ -1357,15 +1357,16 @@ class FormWebPortal extends Form
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						'@phan-var-force CommonObject $object';
+						/** @var CommonObject $object */
 						$result = $object->fetch($value);
 						$value = '';
 						if ($result > 0) {
 							if (property_exists($object, 'label')) {
-								$value = $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'libelle')) {
-								$value = $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
-								$value = $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}

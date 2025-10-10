@@ -254,7 +254,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
 				if (isModEnabled('category')) {
-					$categories = GETPOST('categories', 'array');
+					$categories = GETPOST('categories', 'array:int');
 					if (method_exists($object, 'setCategories')) {
 						$object->setCategories($categories);
 					}
@@ -467,7 +467,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
-	} elseif ($action == 'settags' && isModEnabled('category')) {		// Set tags
+	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {
+		// Set tags
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// payment mode
@@ -794,7 +795,7 @@ if (empty($reshook)) {
 		if ($socid > 0) {
 			$object->socid = GETPOSTINT('socid');
 		}
-		$selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array:int');
 
 		$db->begin();
 
@@ -933,7 +934,7 @@ if (empty($reshook)) {
 				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx   = GETPOSTINT('originmulticurrency_tx');
+				$object->multicurrency_tx   = GETPOSTFLOAT('originmulticurrency_tx');
 				$object->transport_mode_id	= GETPOSTINT('transport_mode_id');
 
 				// Proprietes particulieres a facture avoir
@@ -1027,7 +1028,7 @@ if (empty($reshook)) {
 				$object->ref_supplier       = GETPOST('ref_supplier', 'alphanohtml');
 				$object->model_pdf          = GETPOST('model', 'alphanohtml');
 				$object->fk_project         = GETPOSTINT('projectid');
-				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
+				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOSTINT('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
 				$object->fk_account         = GETPOSTINT('fk_account');
 				$object->amount             = (float) price2num(GETPOST('amount'));  // FIXME: FactureFournisseur::$amount is deprecated and not used?
@@ -1036,7 +1037,7 @@ if (empty($reshook)) {
 				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx   = GETPOSTINT('originmulticurrency_tx');
+				$object->multicurrency_tx   = GETPOSTFLOAT('originmulticurrency_tx');
 
 				// Source facture
 				$object->fac_rec = $fac_recid;
@@ -1103,7 +1104,7 @@ if (empty($reshook)) {
 				$object->fk_incoterms		= GETPOSTINT('incoterm_id');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx	= GETPOSTINT('originmulticurrency_tx');
+				$object->multicurrency_tx	= GETPOSTFLOAT('originmulticurrency_tx');
 				$object->transport_mode_id	= GETPOSTINT('transport_mode_id');
 
 				// Auto calculation of date due if not filled by user
@@ -1534,7 +1535,7 @@ if (empty($reshook)) {
 			GETPOSTINT('lineid'),
 			$label,
 			(float) $up,
-			(float) $tva_tx,
+			$tva_tx,
 			$localtax1_tx,
 			$localtax2_tx,
 			(float) price2num(GETPOST('qty'), 'MS'),
@@ -1590,7 +1591,7 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, (float) $vat_rate, $localtax1_rate, $localtax2_rate, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $vat_rate, $localtax1_rate, $localtax2_rate, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
 		// Add a product line
@@ -1699,7 +1700,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -1886,7 +1887,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$pu_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($line_desc, (float) $pu_ht, (float) $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
+			$result = $object->addline($line_desc, (float) $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -2171,6 +2172,7 @@ if ($action == 'create') {
 		}
 	}
 
+	$objectsrc = null;  // Initialise
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -2203,10 +2205,11 @@ if ($action == 'create') {
 		}
 		$objectsrc = new $classname($db);
 		'@phan-var-force Project|Commande|Propal|Facture|Contrat|CommandeFournisseur|CommonObject $objectsrc';
+		/** @var CommandeFournisseur|CommonObject $objectsrc */
 		$objectsrc->fetch($originid);
 		$objectsrc->fetch_thirdparty();
 
-		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+		$projectid = (int) $objectsrc->fk_project;
 		//$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
 		$soc = $objectsrc->thirdparty;
 
@@ -2495,7 +2498,7 @@ if ($action == 'create') {
 		print $desc;
 		print '</div></div>';
 
-		if (empty($origin) || ($origin == 'order_supplier' && !empty($originid))) {
+		if (empty($origin) || (($origin == 'supplier_proposal' || $origin == 'order_supplier' || $origin == 'reception') && !empty($originid))) {
 			// Deposit - Down payment
 			if (!getDolGlobalString('INVOICE_DISABLE_DEPOSIT')) {
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
@@ -2536,17 +2539,40 @@ if ($action == 'create') {
 				print '<td>';
 				print $desc;
 				print '</td>';
-				if ($origin == 'order_supplier') {
+				if ($origin == 'supplier_proposal' || $origin == 'order_supplier' || $origin == 'reception') {
 					print '<td class="nowrap" style="padding-left: 15px">';
 					$arraylist = array(
 						'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),
 						'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
 						'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
 					);
-					print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit', 'aZ09'), 0, 0, 0, '', 1);
+					$typedeposit = GETPOST('typedeposit', 'aZ09');
+					$valuedeposit = GETPOST('valuedeposit', 'int');
+					$deposit_percent = null;
+					if ($origin == 'reception') {
+						// try to get from source of reception (supplier order)
+						if (!isset($objectsrc->origin_object)) {
+							$objectsrc->fetch_origin();
+						}
+						if (!empty($objectsrc->origin_object)) {
+							$deposit_percent = $objectsrc->origin_object->deposit_percent;
+						}
+					} elseif (!empty($objectsrc->deposit_percent)) {
+						$deposit_percent = $objectsrc->deposit_percent;
+					}
+					if (empty($typedeposit) && !empty($deposit_percent)) {
+						$origin_payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
+						if (!empty($origin_payment_conditions_deposit_percent)) {
+							$typedeposit = 'variable';
+						}
+					}
+					if (empty($valuedeposit) && $typedeposit == 'variable' && !empty($deposit_percent)) {
+						$valuedeposit = $deposit_percent;
+					}
+					print $form->selectarray('typedeposit', $arraylist, $typedeposit, 0, 0, 0, '', 1);
 					print '</td>';
 					print '<td class="nowrap" style="padding-left: 5px">';
-					print '<span class="opacitymedium paddingleft">'.$langs->trans("AmountOrPercent").'</span><input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="' . GETPOSTINT('valuedeposit') . '"/>';
+					print '<span class="opacitymedium paddingleft">'.$langs->trans("AmountOrPercent").'</span><input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="' . $valuedeposit . '"/>';
 					print '</td>';
 				}
 				print '</tr></table>';
@@ -2761,14 +2787,14 @@ if ($action == 'create') {
 		// Payment mode
 		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 		print img_picto('', 'bank', 'class="pictofixedwidth"');
-		$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
+		$form->select_types_paiements((string) $mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Bank Account
 		if (isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
-			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
 		}
 
@@ -2891,7 +2917,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 
-		if (!empty($objectsrc) && is_object($objectsrc)) {
+		if (!empty($objectsrc)) {
 			print "\n<!-- ".$classname." info -->";
 			print "\n";
 			print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
@@ -2955,7 +2981,7 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("CreateDraft");
 
 	// Show origin lines
-	if (!empty($objectsrc) && is_object($objectsrc)) {
+	if (!empty($objectsrc)) {
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
@@ -3082,7 +3108,7 @@ if ($action == 'create') {
 				// empty should not happened, but when it occurs, the test save life
 				$numref = $object->getNextNumRef($societe);
 			} else {
-				$numref = $object->ref;
+				$numref = (string) $object->ref;
 			}
 
 			if ($numref < 0) {

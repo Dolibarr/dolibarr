@@ -2,7 +2,7 @@
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,7 +222,7 @@ if ($object->id > 0) {
 			$out .= '&amp;socid='.$objthirdparty->id;
 		}
 		$backtopageurl = urlencode($_SERVER['PHP_SELF'].'?id='.$objthirdparty->id);
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$backtopageurl;
+		$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '').'&backtopage='.$backtopageurl;
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
 		//$out.="</a>";

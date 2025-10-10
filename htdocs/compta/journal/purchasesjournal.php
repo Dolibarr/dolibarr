@@ -118,8 +118,7 @@ $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
-$p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
-$idpays = $p[0];
+$idpays = $mysoc->country_id;
 
 
 $sql = "SELECT f.rowid, f.ref_supplier, f.type, f.datef, f.libelle as label,";

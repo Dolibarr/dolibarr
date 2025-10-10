@@ -265,7 +265,7 @@ class pdf_cyan extends ModelePDFPropales
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->propal->multidir_output[$object->entity]."/".$objectref;
+				$dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -304,8 +304,8 @@ class pdf_cyan extends ModelePDFPropales
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -347,6 +347,8 @@ class pdf_cyan extends ModelePDFPropales
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 				//print $heightforinfotot + $heightforsignature + $heightforfreetext + $heightforfooter;exit;
+
+				$save_note_public = $object->note_public;	// Because $object->note_public may be modified by _pagehead() that calls pdf_writeLinkedObjects() that calls ... that modify $object->note_private
 
 				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -397,6 +399,8 @@ class pdf_cyan extends ModelePDFPropales
 						}
 					}
 				}
+
+				$object->note_public = $save_note_public;	// Now that we have output the note_public, we can restore it to initial value.
 
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
@@ -662,23 +666,7 @@ class pdf_cyan extends ModelePDFPropales
 							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 						} else {
 							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
-							$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
-							$pdf->SetXY($pdf->GetX(), $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite  - $this->marge_gauche, 6, '', 0, '', true);
-							$previous_align = array();
-							$previous_align['align'] = $this->cols['desc']['content']['align'];
-							if ($object->lines[$i]->qty < 0) {
-								$langs->load("subtotals");
-								$object->lines[$i]->desc = $langs->trans("SubtotalOf", $object->lines[$i]->desc);
-								if ($previous_align['align'] == 'L') {
-									$this->cols['desc']['content']['align'] = 'R';
-								} elseif ($previous_align['align'] == 'R') {
-									$this->cols['desc']['content']['align'] = 'L';
-								}
-							}
-							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
-							$this->cols['desc']['content']['align'] = $previous_align['align']; // Re align if we printed a subtotal ligne
+							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						}
 					}
 
@@ -956,8 +944,8 @@ class pdf_cyan extends ModelePDFPropales
 				if (getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE');
 					$termsofsale = $conf->propal->dir_output.'/'.$termsofsalefilename;
-					if (!empty($conf->propal->multidir_output[$object->entity])) {
-						$termsofsale = $conf->propal->multidir_output[$object->entity].'/'.$termsofsalefilename;
+					if (!empty($conf->propal->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->propal->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
 					}
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
@@ -1008,15 +996,15 @@ class pdf_cyan extends ModelePDFPropales
 										$filetomerge_dir = null;
 										if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 											if (isModEnabled("product")) {
-												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											} elseif (isModEnabled("service")) {
-												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											}
 										} else {
 											if (isModEnabled("product")) {
-												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											} elseif (isModEnabled("service")) {
-												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											}
 										}
 
@@ -1059,6 +1047,8 @@ class pdf_cyan extends ModelePDFPropales
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1244,7 +1234,7 @@ class pdf_cyan extends ModelePDFPropales
 						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					}
 					$account = new Account($this->db);
-					$account->fetch($bankid);
+					$account->fetch((int) $bankid);
 
 					$curx = $this->marge_gauche;
 					$cury = $posy;
@@ -1721,8 +1711,8 @@ class pdf_cyan extends ModelePDFPropales
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -1856,7 +1846,7 @@ class pdf_cyan extends ModelePDFPropales
 		$top_shift = 0;
 		// Show list of linked objects
 		$current_y = $pdf->getY();
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);	// May modify $object->note_public
 		if ($current_y < $pdf->getY()) {
 			$top_shift = $pdf->getY() - $current_y;
 		}

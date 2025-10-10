@@ -77,9 +77,10 @@ ClickHereToTryAgain= <a href="%s"> Барои дубора кӯшиш карда
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Бинобар қоидаҳои пурқуввати аутентификатсияи муштарӣ, эҷоди корт бояд аз офиси пушти Stripe анҷом дода шавад. Шумо метавонед ин ҷоро клик кунед, то сабти муштариёни Stripe-ро фаъол созед: %s
 STRIPE_CARD_PRESENT=Корт тақдим барои терминалҳои Stripe
 TERMINAL_LOCATION=Ҷойгиршавӣ (суроға) барои терминалҳои Stripe
-RequestDirectDebitWithStripe=Дебети мустақимро бо Stripe дархост кунед
-RequesCreditTransferWithStripe=Бо Stripe интиқоли қарзро дархост кунед
-STRIPE_SEPA_DIRECT_DEBIT=Пардохтҳои дебетии мустақимро тавассути Stripe фаъол созед
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Бо истифода аз Klarna пардохтҳоро фаъол созед
 STRIPE_BANCONTACT=Бо истифода аз BANCONTACT пардохтҳоро фаъол созед
 STRIPE_IDEAL=Бо истифода аз IDEAL пардохтҳоро фаъол созед
