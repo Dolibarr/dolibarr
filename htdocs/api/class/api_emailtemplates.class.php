@@ -465,10 +465,10 @@ class EmailTemplates extends DolibarrApi
 		}
 		if ($result == 0) {
 			if ($id) {
-				throw new RestException(404, 'Email template with id='.((string) $id).' not found in entity='.((int) $this->entity));
+				throw new RestException(404, 'Email template with id='.((string) $id).' not found in entity='.((int) getEntity('email_template')));
 			}
 			if ($label) {
-				throw new RestException(404, 'Email template with label '.$label.' not found in entity='.((int) $this->entity));
+				throw new RestException(404, 'Email template with label '.$label.' not found in entity='.((int) getEntity('email_template')));
 			}
 			throw new RestException(404, 'Email Template not found');
 		} else {
