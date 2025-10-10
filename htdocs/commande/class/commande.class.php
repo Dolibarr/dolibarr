@@ -377,6 +377,31 @@ class Commande extends CommonOrder
 	// END MODULEBUILDER PROPERTIES
 
 	/**
+	 * @var string 		Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
+	 * 					Undefined means same value than $element.
+	 *					Can be use to force a check on another element (for example for class of a line, we mention here its parent element).
+	 */
+	public $element_for_permission = 'commande';
+
+	/**
+	 * @var string 		Name to use for 'advance' parameter to check module permissions ex user->rights->facture->invoice_advance.
+	 * 					Undefined means same value than $element.
+	 */
+	public $element_for_advance_permission = 'order_advance';
+
+	/**
+	 * @var array<int,array{read:string,write:string,delete:string,export:string}> List of common rights
+	 */
+	public $rights_permission = [
+		'commande' => [
+			'read' => 'lire',
+			'write' => 'creer',
+			'delete' => 'supprimer',
+			'export' => 'export',
+		],
+	];
+
+	/**
 	 * ERR Not enough stock
 	 */
 	const STOCK_NOT_ENOUGH_FOR_ORDER = -3;

@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,10 +103,10 @@ class modFacture extends DolibarrModules
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
 		$this->boxes = array(
-				0 => array('file' => 'box_factures_imp.php', 'enabledbydefaulton' => 'Home'),
-				1 => array('file' => 'box_factures.php', 'enabledbydefaulton' => 'Home'),
-				2 => array('file' => 'box_graph_invoices_permonth.php', 'enabledbydefaulton' => 'Home'),
-				3 => array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home')
+			array('file' => 'box_factures_imp.php', 'enabledbydefaulton' => 'Home'),
+			array('file' => 'box_factures.php', 'enabledbydefaulton' => 'Home'),
+			array('file' => 'box_graph_invoices_permonth.php', 'enabledbydefaulton' => 'Home'),
+			array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home')
 		);
 
 		// Cronjobs
