@@ -38,7 +38,7 @@ class SharedDocumentsController extends AbstractDocumentController
 	/**
 	 * Action method is called before html output.
 	 *
-	 * @return int Valeur négative si KO, valeur positive si OK.
+	 * return int
 	 */
 	public function action()
 	{
