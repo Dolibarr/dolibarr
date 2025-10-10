@@ -22,7 +22,7 @@ require_once __DIR__ . '/abstractdocument.controller.class.php';
  */
 class SharedDocumentsController extends AbstractDocumentController
 {
-	public $sanitized_subdir = '';
+	public string $sanitized_subdir = '';
 
 	/**
 	 * Check access rights for this page.
