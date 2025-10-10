@@ -298,25 +298,25 @@ if ($reshook < 0) {
 
 // 1) Normalisation
 foreach ($tmparray as $k => $v) {
-    if (!is_array($v)) {
-        $tmparray[$k] = [
-            'label' => is_string($v) ? $v : (is_string($k) ? $k : (string) $k),
-            'picto' => 'generic',
-        ];
-    } else {
-        $tmparray[$k]['label'] = $tmparray[$k]['label'] ?? (is_string($k) ? $k : (string) $k);
-        $tmparray[$k]['picto'] = !empty($tmparray[$k]['picto']) ? $tmparray[$k]['picto'] : 'generic';
-    }
+	if (!is_array($v)) {
+		$tmparray[$k] = [
+			'label' => is_string($v) ? $v : (is_string($k) ? $k : (string) $k),
+			'picto' => 'generic',
+		];
+	} else {
+		$tmparray[$k]['label'] = $tmparray[$k]['label'] ?? (is_string($k) ? $k : (string) $k);
+		$tmparray[$k]['picto'] = !empty($tmparray[$k]['picto']) ? $tmparray[$k]['picto'] : 'generic';
+	}
 }
 
 foreach ($tmparray as $key => $val) {
-    $tmparray[$key]['data-html'] = img_picto(
-        $langs->trans($val['label']),
-        $val['picto'],
-        'class="pictofixedwidth"'
-    ) . $langs->trans($val['label']);
+	$tmparray[$key]['data-html'] = img_picto(
+		$langs->trans($val['label']),
+		$val['picto'],
+		'class="pictofixedwidth"'
+	) . $langs->trans($val['label']);
 
-    $tmparray[$key]['label'] = $langs->trans($val['label']);
+	$tmparray[$key]['label'] = $langs->trans($val['label']);
 }
 
 $head = user_prepare_head($object);
