@@ -507,6 +507,7 @@ class cEmailTemplate extends CommonObject
 
 		// Check parameters
 		if (empty($id) && empty($label)) {
+			dol_syslog(get_class($this)."::apifetch id and label are empty", LOG_DEBUG);
 			return -1;
 		}
 

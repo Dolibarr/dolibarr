@@ -459,7 +459,7 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		$result = $this->email_template->apifetch($id, $label);
-		if (!$result) {
+		if ($result < 0) {
 			if ($id) {
 				throw new RestException(404, 'Email template with id '.((string) $id).' not found');
 			}
