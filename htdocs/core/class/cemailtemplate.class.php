@@ -370,25 +370,25 @@ class cEmailTemplate extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " entity=".((int) $this->entity).",";
-		$sql .= " module='".$this->db->escape($this->module)."',";
-		$sql .= " type_template=".$this->db->escape($this->type_template).",";
-		$sql .= " lang=".$this->db->escape($this->lang).",";
+		$sql .= " module=".($this->module ? "'".$this->db->escape($this->module)."', " : 'NULL, ');
+		$sql .= " type_template=".($this->type_template ? "'".$this->db->escape($this->type_template)."', " : 'NULL, ');
+		$sql .= " lang=".($this->lang ? "'".$this->db->escape($this->lang)."', " : 'NULL, ');
 		$sql .= " private=".((int) $this->private).",";
 		$sql .= " fk_user=".((int) $this->fk_user).",";
 		$sql .= " datec=".((int) $this->datec).",";
-		$sql .= " label=".$this->db->escape($this->label).",";
+		$sql .= " label=".($this->label ? "'".$this->db->escape($this->label)."', " : 'NULL, ');
 		$sql .= " position=".((int) $this->position).",";
 		$sql .= " defaultfortype=".((int) $this->defaultfortype).",";
-		$sql .= " enabled=".$this->db->escape($this->enabled).",";
+		$sql .= " enabled=".($this->enabled ? "'".$this->db->escape($this->enabled)."', " : 'NULL, ');
 		$sql .= " active=".((int) $this->active).",";
-		$sql .= " email_from=".$this->db->escape($this->email_from).",";
-		$sql .= " email_to=".$this->db->escape($this->email_to).",";
-		$sql .= " email_tocc=".$this->db->escape($this->email_tocc).",";
-		$sql .= " email_tobcc=".$this->db->escape($this->email_tobcc).",";
-		$sql .= " topic=".$this->db->escape($this->topic).",";
+		$sql .= " email_from=".($this->email_from ? "'".$this->db->escape($this->email_from)."', " : 'NULL, ');
+		$sql .= " email_to=".($this->email_to ? "'".$this->db->escape($this->email_to)."', " : 'NULL, ');
+		$sql .= " email_tocc=".($this->email_tocc ? "'".$this->db->escape($this->email_tocc)."', " : 'NULL, ');
+		$sql .= " email_tobcc=".($this->email_tobcc ? "'".$this->db->escape($this->email_tobcc)."', " : 'NULL, ');
+		$sql .= " topic=".($this->topic ? "'".$this->db->escape($this->topic)."', " : 'NULL, ');
 		$sql .= " joinfiles=".((int) $this->joinfiles).",";
-		$sql .= " content=".$this->db->escape($this->content).",";
-		$sql .= " content_lines=".$this->db->escape($this->content_lines)." ";
+		$sql .= " content=".($this->content ? "'".$this->db->escape($this->content)."', " : 'NULL, ');
+		$sql .= " content_lines=".($this->content_lines ? "'".$this->db->escape($this->content_lines)."'" : 'NULL');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -506,8 +506,9 @@ class cEmailTemplate extends CommonObject
 		global $db, $conf;
 
 		// Check parameters
-		if (empty($id) && empty($label)) {
+		if (($id ==0 || empty($id)) && empty($label)) {
 			dol_syslog(get_class($this)."::apifetch id and label are empty", LOG_DEBUG);
+			$this->error = 'id='.$id.' and label are empty';
 			return -1;
 		}
 
@@ -524,7 +525,7 @@ class cEmailTemplate extends CommonObject
 		}
 		$sql .= " AND e.entity = ".((int) $this->entity);
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(get_class($this)."::apifetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

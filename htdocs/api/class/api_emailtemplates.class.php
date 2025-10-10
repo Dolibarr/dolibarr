@@ -92,7 +92,7 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		$result = $this->email_template->apifetch($id, '');
-		if (!$result) {
+		if (!$result || $id == 0) {
 			throw new RestException(404, 'Email Template with id '.$id.' not found');
 		}
 
@@ -358,8 +358,8 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		$result = $this->email_template->apifetch($id, '');
-		if (!$result) {
-			throw new RestException(404, 'email template not found');
+		if (!$result || $id == 0) {
+			throw new RestException(404, 'email template with id='.$id.' not found');
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -448,6 +448,7 @@ class EmailTemplates extends DolibarrApi
 	 * @phan-return		cEmailTemplate
 	 * @phpstan-return	cEmailTemplate
 	 *
+	 * @throws	RestException 400
 	 * @throws	RestException 403
 	 * @throws	RestException 404
 	 */
@@ -459,17 +460,24 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		$result = $this->email_template->apifetch($id, $label);
-		if ($result < 0) {
+		if ($result > 0) {
+			return $this->_cleanObjectDatas($this->email_template);
+		}
+		if ($result == 0) {
 			if ($id) {
-				throw new RestException(404, 'Email template with id '.((string) $id).' not found');
+				throw new RestException(404, 'Email template with id='.((string) $id).' not found in entity='.((int) $this->entity));
 			}
 			if ($label) {
-				throw new RestException(404, 'Email template with label '.$label.' not found');
+				throw new RestException(404, 'Email template with label '.$label.' not found in entity='.((int) $this->entity));
 			}
 			throw new RestException(404, 'Email Template not found');
+		} else {
+			if (empty($this->email_template->error)) {
+				throw new RestException(400, 'Unknown error in your request');
+			} else {
+				throw new RestException(400, 'Error: '.$this->email_template->error);
+			}
 		}
-
-		return $this->_cleanObjectDatas($this->email_template);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -488,6 +496,8 @@ class EmailTemplates extends DolibarrApi
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
+		dol_syslog(get_class($this)."::_cleanObjectDatas", LOG_DEBUG);
+
 
 		unset($object->import_key);
 		unset($object->array_languages);
