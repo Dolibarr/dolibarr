@@ -82,6 +82,7 @@ if (!$sortfield) {
 
 // Initialize objects
 $object = new Societe($db);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
