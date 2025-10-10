@@ -238,4 +238,7 @@ UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
 ALTER TABLE llx_receptiondet_batch ADD COLUMN description text AFTER fk_product;
 ALTER TABLE llx_receptiondet_batch ADD COLUMN fk_unit integer AFTER qty;
 ALTER TABLE llx_receptiondet_batch ADD COLUMN rang integer DEFAULT 0 AFTER cost_price;
+
+ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_src_object_type_id (src_object_type, src_object_id);
+
 -- end of migration
