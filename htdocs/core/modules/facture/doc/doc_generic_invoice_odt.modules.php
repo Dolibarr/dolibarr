@@ -270,7 +270,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 
-				$newfiletmp = $objectref . '_' . $newfiletmp;
+				if (getDolGlobalString('MAIN_ODT_AS_PDF_OMIT_TEMPLATE_NAME')) {
+					$newfiletmp = $objectref;
+				} else {
+					$newfiletmp = $objectref . '_' . $newfiletmp;
+				}
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
