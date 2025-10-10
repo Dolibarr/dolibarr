@@ -38,7 +38,7 @@ class SharedDocumentsController extends AbstractDocumentController
 	/**
 	 * Action method is called before html output.
 	 *
-	 * return int
+	 * @return int
 	 */
 	public function action()
 	{
