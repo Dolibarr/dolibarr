@@ -3873,16 +3873,19 @@ class Propal extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = '';
+		$baseurl = '';
+		$query = [];
 		if ($user->hasRight('propal', 'lire')) {
+			parse_str($get_params, $query);
+			$query = array_merge($query, ['id' => $this->id]);
 			if ($option == '') {
-				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/card.php';
 			} elseif ($option == 'compta') {  // deprecated
-				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/card.php';
 			} elseif ($option == 'expedition') {
-				$url = DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/expedition/propal.php';
 			} elseif ($option == 'document') {
-				$url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/document.php';
 			}
 
 			if ($option != 'nolink') {
@@ -3892,10 +3895,11 @@ class Propal extends CommonObject
 					$add_save_lastsearch_values = 1;
 				}
 				if ($add_save_lastsearch_values) {
-					$url .= '&save_lastsearch_values=1';
+					$query = array_merge($query, ['save_lastsearch_values' => 1]);
 				}
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('propal', 'lire')) {

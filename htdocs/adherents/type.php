@@ -697,7 +697,7 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->hasRight('adherent', 'configurer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'edit', 'rowid' => $object->id], true).'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
@@ -710,14 +710,14 @@ if ($rowid > 0) {
 		}
 
 		if ($user->hasRight('adherent', 'configurer') && !empty($object->status)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.($morphy ? '&morphy='.urlencode($morphy) : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl('card.php', ['action' => 'create', 'typeid' => $object->id, 'morphy' => ($morphy ? $morphy : ''), 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
 
 		// Delete
 		if ($user->hasRight('adherent', 'configurer')) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'rowid' => $object->id], true).'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";
@@ -829,34 +829,35 @@ if ($rowid > 0) {
 				$titre .= " (".$membertype->label.")";
 			}
 
-			$param = "&rowid=".urlencode((string) ($object->id));
+			$query = ['rowid' => $object->id];
 			if (!empty($mode)) {
-				$param .= '&mode='.urlencode($mode);
+				$query+= ['mode' => $mode];
 			}
 			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-				$param .= '&contextpage='.urlencode($contextpage);
+				$query += ['contextpage' => $contextpage];
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.((int) $limit);
+				$query += ['limit' => $limit];
 			}
 			if (!empty($status)) {
-				$param .= "&status=".urlencode($status);
+				$query += ['status' => $status];
 			}
 			if (!empty($search_ref)) {
-				$param .= "&search_ref=".urlencode($search_ref);
+				$query += ['search_ref' => $search_ref];
 			}
 			if (!empty($search_lastname)) {
-				$param .= "&search_lastname=".urlencode($search_lastname);
+				$query += ['search_lastname' => $search_lastname];
 			}
 			if (!empty($search_login)) {
-				$param .= "&search_login=".urlencode($search_login);
+				$query += ['search_login' => $search_login];
 			}
 			if (!empty($search_email)) {
-				$param .= "&search_email=".urlencode($search_email);
+				$query += ['search_email' => $search_email];
 			}
 			if (!empty($filter)) {
-				$param .= "&filter=".urlencode($filter);
+				$query += ['filter' => $filter];
 			}
+			$param = '&' . http_build_query($query);
 
 			if ($sall) {
 				print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
@@ -954,10 +955,10 @@ if ($rowid > 0) {
 				if ($conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
-						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
 					}
 					if ($user->hasRight('adherent', 'supprimer')) {
-						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
 				}
@@ -1022,10 +1023,10 @@ if ($rowid > 0) {
 				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
-						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
 					}
 					if ($user->hasRight('adherent', 'supprimer')) {
-						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
 				}

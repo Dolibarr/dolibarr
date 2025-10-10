@@ -3638,10 +3638,15 @@ if ($action == 'create' && $usercancreate) {
 			$objref = dol_sanitizeFileName($object->ref);
 			$relativepath = $objref . '/' . $objref . '.pdf';
 			$filedir = $conf->commande->multidir_output[$object->entity ?? $conf->entity] . '/' . $objref;
-			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+			$urlsource = dolBuildUrl($_SERVER["PHP_SELF"], ["id" => $object->id]);
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;
-			print $formfile->showdocuments('commande', $objref, $filedir, $urlsource, $genallowed, (int) $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
+			$tooltipAfterComboOfModels = '';
+			if (getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_ORDER')) {
+				$tooltipAfterComboOfModels = $langs->trans("AccordingToYourSetupTheFileWillBeConcatenated", getDolGlobalString('MAIN_INFO_ORDER_TERMSOFSALE'));
+			}
+
+			print $formfile->showdocuments('commande', $objref, $filedir, $urlsource, $genallowed, (int) $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object, 0, 'remove_file', $tooltipAfterComboOfModels);
 
 
 			// Show links to link elements
@@ -3679,8 +3684,8 @@ if ($action == 'create' && $usercancreate) {
 			$MAXEVENT = 10;
 
 			//button to go to messaging from the events box
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT . '/commande/messaging.php?id=' . $object->id);
-			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT . '/commande/agenda.php?id=' . $object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', dolBuildUrl(DOL_URL_ROOT . '/commande/messaging.php', ['id' => $object->id]));
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT . '/commande/agenda.php', ['id' => $object->id]));
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

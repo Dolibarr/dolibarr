@@ -17,14 +17,14 @@ if [[ "" != "${DOLISUBURL}" ]]; then
 fi
 
 echo "First we run tests that do not require authentication"
-find api/ gui/ public/ -type f -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --test "{}" \;
+find api/ gui/ public/ -type f -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --test "{}" + || exit 1
 
 # Now we get ready to run tests that do require authentication
 if [[ -z ${DOLAPIKEY+x} ]]; then
 	echo "DOLAPIKEY bash variable is unset, no API tests that require authentication"
 else
 	echo "Now we are ready to run API tests that do require authentication"
-	find api/ -type f -iname '10*.hurl' -not -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "{}" \;
+	find api/ -type f -iname '10*.hurl' -not -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "{}" + || exit 2
 fi
 
 ./save_login_cookie.sh
@@ -32,5 +32,5 @@ if [[ -z ${COOKIEJAR+x} ]]; then
 	COOKIEJAR=/tmp/cookie.jar
 fi
 echo "Now we are ready to run GUI tests that do require authentication"
-find gui/ -type f -iname '10*.hurl' -not -iname 'save_login_cookie.hurl' -not -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --cookie "${COOKIEJAR}" --test "{}" \;
+find gui/ -type f -iname '10*.hurl' -not -iname 'save_login_cookie.hurl' -not -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --cookie "${COOKIEJAR}" --test "{}" + || exit 3
 rm -rf "${COOKIEJAR}"

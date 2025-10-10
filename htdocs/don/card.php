@@ -465,7 +465,7 @@ if ($action == 'create') {
 	print '</td>';
 
 	// Amount
-	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.dol_escape_htmltag(GETPOST("amount")).'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.dol_escape_htmltag(GETPOST("amount")).'" size="10" spellcheck="false"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Public donation
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
@@ -494,7 +494,7 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 
-		print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.img_picto('', 'object_email', 'class="paddingrightonly"').'<input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
+		print '<tr><td>'.$langs->trans("EMail").'</td><td>'.img_picto('', 'object_email', 'class="paddingrightonly"').'<input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200" spellcheck="false"></td></tr>';
 	}
 
 	// Payment mode
@@ -588,7 +588,7 @@ if (!empty($id) && $action == 'edit') {
 
 	// Amount
 	if ($object->status == 0) {
-		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'" spellcheck="false"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	} else {
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
@@ -632,7 +632,7 @@ if (!empty($id) && $action == 'edit') {
 		}
 		print '</td></tr>';
 
-		print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'" spellcheck="false"></td></tr>';
 	}
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
