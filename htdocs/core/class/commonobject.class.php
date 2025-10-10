@@ -120,7 +120,7 @@ abstract class CommonObject
 	public $element_for_advance_permission;
 
 	/**
-	 * @var array{}|array<string,array<string,string|array<string,string>>> List of common rights
+	 * @var array{}|array<string,string|array<string,string>> List of common rights
 	 */
 	public $rights_permission = [];
 

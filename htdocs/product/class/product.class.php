@@ -108,15 +108,13 @@ class Product extends CommonObject
 	public $element_for_advance_permission = 'product_advance';
 
 	/**
-	 * @var array<string,array{read:string,write:string,delete:string,export:string}> List of common rights
+	 * @var array{read:string,write:string,delete:string,export:string} List of common rights
 	 */
 	public $rights_permission = [
-		'produit' => [
-			'read' => 'lire',
-			'write' => 'creer',
-			'delete' => 'supprimer',
-			'export' => 'export',
-		],
+		'read' => 'lire',
+		'write' => 'creer',
+		'delete' => 'supprimer',
+		'export' => 'export',
 	];
 
 	/**

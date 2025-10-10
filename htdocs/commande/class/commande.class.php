@@ -390,15 +390,13 @@ class Commande extends CommonOrder
 	public $element_for_advance_permission = 'order_advance';
 
 	/**
-	 * @var array<string,array{read:string,write:string,delete:string,export:string}> List of common rights
+	 * @var array{read:string,write:string,delete:string,export:string} List of common rights
 	 */
 	public $rights_permission = [
-		'commande' => [
-			'read' => 'lire',
-			'write' => 'creer',
-			'delete' => 'supprimer',
-			'export' => 'export',
-		],
+		'read' => 'lire',
+		'write' => 'creer',
+		'delete' => 'supprimer',
+		'export' => 'export',
 	];
 
 	/**
