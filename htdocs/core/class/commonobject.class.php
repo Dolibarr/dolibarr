@@ -11633,8 +11633,8 @@ abstract class CommonObject
 		global $langs;
 		if (isModEnabled('product')) {
 			$langs->load('products');
-			$statustotest = $statustype == 'onsale' ? 'status' : 'status_buy';
-			$statuskey4lang = $statustype == 'onsale' ? 'ProductStatusNotOnSell' : 'ProductStatusNotOnBuy';
+			$statustotest = $status == 'onsale' ? 'status' : 'status_buy';
+			$statuskey4lang = $status == 'onsale' ? 'ProductStatusNotOnSell' : 'ProductStatusNotOnBuy';
 			$ret = true;
 			foreach ($this->lines as $line) {
 				if ($line->fk_product > 0) {
