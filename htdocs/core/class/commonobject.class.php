@@ -120,6 +120,11 @@ abstract class CommonObject
 	public $element_for_advance_permission;
 
 	/**
+	 * @var array{}|array<string,array<string,string|array<string,string>>> List of common rights
+	 */
+	public $rights_permission = [];
+
+	/**
 	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element;
@@ -196,11 +201,6 @@ abstract class CommonObject
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array();
-
-	/**
-	 * @var array{}|array<string,array{?read:string,?write:string,?delete:string,?export:string,?send:string}> List of common rights
-	 */
-	public $rights_permission = [];
 
 	/**
 	 * @var array<string,array<string,string>>	Array to store alternative languages values of object
