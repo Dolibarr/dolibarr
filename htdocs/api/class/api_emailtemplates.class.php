@@ -300,7 +300,7 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * @return  int     ID of email template
 	 *
-	 * @throws	RestException 304
+	 * @throws	RestException 400
 	 * @throws	RestException 403
 	 * @throws	RestException 500
 	 */
@@ -319,6 +319,9 @@ class EmailTemplates extends DolibarrApi
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->email_template->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
+			}
+			if ($field == 'id') {
+				throw new RestException(400, 'Creating with id field is forbidden');
 			}
 
 			$this->email_template->$field = $this->_checkValForAPI($field, $value, $this->email_template);

@@ -279,7 +279,7 @@ class cEmailTemplate extends CommonObject
 		if (is_null($this->datec)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((int) $this->datec)."',";
+			$sql .= " ".((int) $this->datec).",";
 		}
 		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " ".((int) $this->position).", ".((int) $this->defaultfortype ).",";
@@ -323,7 +323,7 @@ class cEmailTemplate extends CommonObject
 		if (is_null($this->content_lines)) {
 			$sql .= " NULL";
 		} else {
-			$sql .= " '".((string) $this->db->escape($this->content_lines))."',";
+			$sql .= " '".((string) $this->db->escape($this->content_lines))."'";
 		}
 		$sql .= ")";
 
@@ -366,6 +366,8 @@ class cEmailTemplate extends CommonObject
 	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
@@ -504,6 +506,9 @@ class cEmailTemplate extends CommonObject
 	public function apifetch($id, $label = '')
 	{
 		global $db, $conf;
+
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
 
 		// Check parameters
 		if (($id ==0 || empty($id)) && empty($label)) {
