@@ -7,84 +7,144 @@
  * the Free Software Foundation.
  */
 
-require_once __DIR__ . '/../class/controller.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+
+require_once __DIR__ . '/abstractdocument.controller.class.php';
 
 /**
- * \file        htdocs/webportal/controllers/abstractdocument.controller.class.php
+ * \file        htdocs/webportal/controllers/shareddocuments.controller.class.php
  * \ingroup     webportal
- * \brief       This file is an abstract controller with shared logic to display a list of documents.
+ * \brief       This file is a controller for the globally shared documents list.
  */
 
 /**
- * Abstract Class for Document Controllers
- * Contains the shared logic to display a table of files.
- *
- * @property DoliDB $db          Inherited from Controller
- * @property int $accessRight    Inherited from Controller
+ * Class for SharedDocumentsController
  */
-abstract class AbstractDocumentController extends Controller
+class SharedDocumentsController extends AbstractDocumentController
 {
+	public $sanitized_subdir = '';
+
 	/**
-	 * Renders an HTML file browser table for a given list of files and directories.
+	 * Check access rights for this page.
 	 *
-	 * @param   string                               $title              The main H2 title for the page.
-	 * @param   array<int, array<string, mixed>>     $itemList           The list of items from dol_dir_list('all').
-	 * @param   string                               $emptyMessage       The message to display if the list is empty.
-	 * @param   array<string, callable>              $linkBuilder        An array of functions to build URLs ('dir' and 'file').
-	 * @return  void
+	 * @return  bool
 	 */
-	protected function displayFileBrowser($title, $itemList, $emptyMessage, array $linkBuilder)
+	public function checkAccess()
+	{
+		$this->accessRight = getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS');
+		return parent::checkAccess();
+	}
+
+	/**
+	 * Action method is called before html output.
+	 *
+	 * @return  int     <0 if KO, >0 if OK
+	 */
+	public function action()
 	{
 		global $langs;
-
-		echo '<h2>' . htmlspecialchars($title) . '</h2>';
-
-		if (is_array($itemList) && count($itemList) > 0) {
-			// 1. Separate folders and files
-			$directories = array();
-			$files = array();
-			foreach ($itemList as $item) {
-				if ($item['type'] === 'dir') {
-					$directories[] = $item;
-				} else {
-					$files[] = $item;
-				}
-			}
-
-			// 2. Display the table
-			echo '<table class="table table-hover" width="100%">';
-			echo '<thead><tr>';
-			echo '<th>' . $langs->trans('Name') . '</th>';
-			echo '<th style="text-align: right; white-space: nowrap;">' . $langs->trans('Size') . '</th>';
-			echo '<th style="text-align: right; white-space: nowrap;">' . $langs->trans('DateM') . '</th>';
-			echo '</tr></thead>';
-			echo '<tbody>';
-
-			// 3. Display all folders first
-			foreach ($directories as $dir) {
-				echo '<tr>';
-				// The link for a directory is for navigation
-				echo '<td><a href="' . $linkBuilder['dir']($dir) . '">📁&nbsp;' . htmlspecialchars($dir['name']) . '</a></td>';
-				echo '<td style="text-align: right;">--</td>'; // No size for a directory
-				echo '<td style="text-align: right;">' . dol_print_date($dir['date'], 'dayhour') . '</td>';
-				echo '</tr>';
-			}
-
-			// 4. Then, display all files
-			foreach ($files as $file) {
-				echo '<tr>';
-				// The link for a file is for download
-				echo '<td><a href="' . $linkBuilder['file']($file) . '" target="_blank">📄&nbsp;' . htmlspecialchars($file['name']) . '</a></td>';
-				echo '<td style="text-align: right;">' . dol_print_size($file['size']) . '</td>';
-				echo '<td style="text-align: right;">' . dol_print_date($file['date'], 'dayhour') . '</td>';
-				echo '</tr>';
-			}
-
-			echo '</tbody></table>';
-		} else {
-			echo '<p>' . htmlspecialchars($emptyMessage) . '</p>';
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			return -1;
 		}
 
-		echo '<br>';
+		$current_subdir = GETPOST('subdir', 'alpha');
+		if (!empty($current_subdir)) {
+			$parts = explode('/', $current_subdir);
+			$safe_parts = array();
+			foreach ($parts as $part) {
+				if ($part !== '.' && $part !== '..') {
+					$safe_parts[] = dol_sanitizeFileName($part);
+				}
+			}
+			$this->sanitized_subdir = implode('/', $safe_parts);
+		}
+
+		$context->title = html_entity_decode($langs->trans('SharedDocuments'));
+		$context->desc = $langs->trans('ListOfSharedDocuments');
+		$context->menu_active[] = 'shared_documents';
+
+		return 1;
+	}
+
+	/**
+	 * Build and display the page.
+	 *
+	 * @return  void
+	 */
+	public function display()
+	{
+		global $conf, $langs;
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			$this->display404();
+			return;
+		}
+
+		$this->loadTemplate('header');
+		$this->loadTemplate('menu');
+		$this->loadTemplate('hero-header-banner');
+
+		print '<main class="container">';
+
+		// 1. Manage the current subfolder from the class property
+		$sanitized_subdir = $this->sanitized_subdir;
+
+		// 2. Prepare the paths
+		$shared_dir_name = getDolGlobalString('WEBPORTAL_SHARED_DOCS_DIR', 'Documentscomptes');
+		$base_dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
+		// The full path now includes the visited subfolder
+		$current_dir_ged_partage = $base_dir_ged_partage . '/' . $sanitized_subdir;
+
+		// 3. List ALL contents (files AND folders) of the current directory
+		$itemList = dol_dir_list($current_dir_ged_partage, 'all', 0, '', '', 'name', SORT_ASC);
+		if (is_array($itemList)) {
+			foreach ($itemList as $key => $item) {
+				// If the item is a file and its size is empty...
+				if ($item['type'] === 'file' && empty($item['size'])) {
+					$full_file_path = $current_dir_ged_partage . '/' . $item['name'];
+					// ... we recalculate its size and update the table.
+					// The @ avoids an error if the file is unreadable.
+					$itemList[$key]['size'] = @filesize($full_file_path);
+				}
+			}
+		}
+		// 4. Build the Breadcrumb
+		$baseUrl = $_SERVER['PHP_SELF'].'?controller=shareddocuments';
+		$breadcrumbs = '<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="'.$baseUrl.'">'.dol_htmlentities($langs->trans("Home")).'</a></li>';
+		$path_so_far = '';
+		if (!empty($sanitized_subdir)) {
+			foreach (explode('/', $sanitized_subdir) as $part) {
+				$path_so_far .= (empty($path_so_far) ? '' : '/') . $part;
+				$breadcrumbs .= '<li class="breadcrumb-item"><a href="'.$baseUrl.'&subdir='.$path_so_far.'">'.dol_htmlentities($part).'</a></li>';
+			}
+		}
+		$breadcrumbs .= '</ol></nav>';
+
+		// Show breadcrumbs
+		print $breadcrumbs;
+
+		// 5. Define functions to build navigation and download links
+		$linkBuilder = array(
+			'dir' => function (array $dir) use ($baseUrl, $sanitized_subdir) {
+				$new_subdir = (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $dir['name'];
+				return $baseUrl . '&subdir=' . urlencode($new_subdir);
+			},
+			'file' => function (array $file) use ($shared_dir_name, $sanitized_subdir) {
+				$file_path = $shared_dir_name . '/' . (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $file['name'];
+				return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($file_path);
+			}
+		);
+		// 6. Call the new display method
+		$this->displayFileBrowser(
+			html_entity_decode($langs->trans('SharedDocuments')),
+			$itemList,
+			$langs->trans('ThisDirectoryIsEmpty'),
+			$linkBuilder
+		);
+
+		print '</main>';
+
+		$this->loadTemplate('footer');
 	}
 }
