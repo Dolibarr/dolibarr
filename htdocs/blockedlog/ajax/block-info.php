@@ -57,7 +57,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "bills", "cashdesk", "companies"));
+$langs->loadLangs(array("admin", "bills", "cashdesk", "companies", "members", "products"));
 
 
 /*
@@ -115,7 +115,7 @@ function formatObject($objtoshow, $prefix)
 		$arrayoffields = $tmpobject->fields;
 	}
 
-
+	// Convert the key stored into blocked log into the key used into ->fields
 	$convertkey = array(
 		'name' => 'nom',
 		'country_code' => 'fk_pays',
@@ -129,7 +129,41 @@ function formatObject($objtoshow, $prefix)
 		'posmodule' => 'POSModule',
 		'posnumber' => 'POSTerminal',
 		'managers' => 'Managers',
-		'type_code' => 'PaymentMode'
+		'type_code' => 'PaymentMode',
+		'datec' => 'DateCreation',
+		'dateh' => 'DateSubscription',
+		'datef' => 'DateEndSubscription',
+		'fk_adherent' => 'MemberId',
+		'amount' => 'Amount',
+		'id' => 'ID',
+		'ref' => 'Ref',
+		'date' => 'Date',
+		'total_ht' => 'TotalHT',
+		'total_ttc' => 'TotalTTC',
+		'total_tva' => 'TotalVAT',
+		'total_localtax1' => 'TotalTax2',
+		'total_localtax2' => 'TotalTax3',
+		'multicurrency_total_ht' => 'TotalHTShortCurrency',
+		'multicurrency_total_ttc' => 'TotalTTCShortCurrency',
+		'multicurrency_total_tva' => 'TotalVATShortCurrency',
+		'tva_tx' => 'VatRate',
+		'localtax1_tx' => 'Localtax1Rate',
+		'localtax2_tx' => 'Localtax2Rate',
+		'multicurrency_code' => 'Currency',
+		'qty' => 'Quantity',
+		'nom' => 'Name',
+		'name' => 'Name',
+		'email' => 'Email',
+		'revenuestamp' => 'RevenueStamp',
+		'code_client' => 'CustomerCode',
+		'capital' => 'Capital',
+		'localtax1_value' => 'UseLocalTax1',
+		'localtax2_value' => 'UseLocalTax2',
+		'subprice' => 'UnitPrice',
+		'product_type' => 'ProductType',
+		'type' => 'InvoiceType',
+		'info_bits' => 'TVA NPR or NOT',
+		'special_code' => 'Special line (WEEE line, option, id of module...)'
 	);
 
 	if (is_object($newobjtoshow) || is_array($newobjtoshow)) {
@@ -148,7 +182,7 @@ function formatObject($objtoshow, $prefix)
 
 				// Label
 				$s .= '<td>';
-				$label = ''.$convertkey[$key];
+				$label = '';
 				if (isset($arrayoffields[$key]['label'])) {
 					$label = $langs->trans($tmpobject->fields[$key]['label']);
 				} elseif (!empty($convertkey[$key]) && isset($arrayoffields[$convertkey[$key]]['label'])) {
@@ -162,6 +196,12 @@ function formatObject($objtoshow, $prefix)
 				}
 				if (empty($label) && !empty($otherlabels[$key])) {
 					$label = $langs->trans($otherlabels[$key]);
+				}
+				if (empty($label) && !empty($otherlabels[$convertkey[$key]])) {
+					$label = $langs->trans($otherlabels[$convertkey[$key]]);
+				}
+				if (empty($label)) {
+					$label = array_key_exists($key, $convertkey) ? $convertkey[$key] : '';
 				}
 				if (!empty($label)) {
 					$s .= '<span class="opacitymedium">'.$label.'</span>';
