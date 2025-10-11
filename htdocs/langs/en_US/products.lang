@@ -458,3 +458,4 @@ GenerateWithAI=Generate with AI
 PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)
 WhenProductVirtualOnOptionAreForced=When the option 'Enable Kits' (Product module) is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
 UpdatedRecently=Updated recently
+ProductType=Type of product

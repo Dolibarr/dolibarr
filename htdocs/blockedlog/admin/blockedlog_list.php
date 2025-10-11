@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
+$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
 
 // Access Control
 if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->blockedlog->enabled)) {
@@ -389,10 +389,11 @@ if (GETPOST('withtab', 'alpha')) {
 	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
-print load_fiche_titre($title, $linkback);
+print load_fiche_titre($title, $linkback, 'blockedlog');
 
 if (GETPOST('withtab', 'alpha')) {
 	$head = blockedlogadmin_prepare_head();
+
 	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
@@ -523,7 +524,7 @@ print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth150', 1);
+print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth200', 1);
 print '</td>';
 
 // Ref
@@ -559,6 +560,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 print '</tr>';
+
 
 print '<tr class="liste_titre">';
 // Action column
@@ -656,7 +658,11 @@ if (is_array($blocks)) {
 
 			// Ref
 			print '<td class="nowraponall">';
-			print dol_escape_htmltag($block->ref_object);
+			if (!empty($block->ref_object)) {
+				print dol_escape_htmltag($block->ref_object);
+			} else {
+				// Ref not stored
+			}
 			print '</td>';
 
 			// Amount
