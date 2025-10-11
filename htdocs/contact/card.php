@@ -664,7 +664,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</script>'."\n";
 			}
 
-			print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" name="formsoc" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

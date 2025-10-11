@@ -928,7 +928,7 @@ if ($action == 'create' || $action == 'presend') {
 		if ($action != 'editsubject') {
 			$morehtmlref .= dolPrintLabel($object->subject);
 		} else {
-			$morehtmlref .= '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			$morehtmlref .= '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
 			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$morehtmlref .= '<input type="hidden" name="id" value="'.$object->id.'">';

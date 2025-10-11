@@ -80,7 +80,7 @@ $head = adminProductAttributePrepareHead();
 
 print dol_get_fiche_head($head, 'admin', $title, -1, 'product');
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 

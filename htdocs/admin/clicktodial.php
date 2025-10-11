@@ -175,7 +175,7 @@ if (getDolGlobalString('CLICKTODIAL_URL')) {
 		$phonefortest = GETPOST('phonefortest');
 	}
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $langs->trans("LinkToTestClickToDial", $user->login).' : ';
 	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';

@@ -810,7 +810,7 @@ if ($object->id > 0) {
 				}
 
 				print '<!-- form to select BAN -->';
-				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';

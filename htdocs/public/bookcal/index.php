@@ -308,7 +308,7 @@ if ($action == 'afteradd') {
 	print '<tr>';
 	print '<td>';
 	if ($action != 'create') {
-		print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form name="formsearch" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 
 		$nav = '<a href="?id='.$id."&year=".$prev_year."&month=".$prev_month.$param.'"><i class="fa fa-chevron-left"></i></a> &nbsp;'."\n";
@@ -347,7 +347,7 @@ if ($action == 'afteradd') {
 		print '</td>';
 
 		print '<td>';
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
@@ -492,7 +492,7 @@ if ($action == 'afteradd') {
 		print '<td>'; // Column visible after selection of a day
 		print '<div class="center bookingtab" style="height:50%">';
 		print '<div style="height:100%">';
-		print '<form id="formbooking" name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form id="formbooking" name="formbooking" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';

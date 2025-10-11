@@ -195,7 +195,7 @@ print $langs->trans("NotificationsDescGlobal").' - '.$langs->trans("YouAreHere")
 print '</span>';
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -271,7 +271,7 @@ print '<br><br>';
 
 // Emails templates for notification
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
@@ -399,7 +399,7 @@ print '</form>';
 print '<br><br>';
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setfixednotif">';
 print '<input type="hidden" name="page_y" value="">';
