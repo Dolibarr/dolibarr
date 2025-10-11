@@ -505,7 +505,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Invoice not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . "/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . "/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service') {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -896,6 +896,11 @@ class Documents extends DolibarrApi
 				$modulepart = 'societe';
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$object = new Societe($this->db);
+				$fetchbyid = true;
+			} elseif ($modulepart == 'knowledgemanagement' ) {
+				$modulepart = 'knowledgemanagement';
+				require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
+				$object = new KnowledgeRecord($this->db);
 				$fetchbyid = true;
 			} elseif ($modulepart == 'ticket' ) {
 				$modulepart = 'ticket';

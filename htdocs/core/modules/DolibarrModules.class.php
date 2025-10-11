@@ -450,16 +450,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $langfiles;
 
 	/**
-	 * @var array<string,string> Array of warnings to show when we activate the module
+	 * @var array<string,mixed> 	Array of warnings to show when we activate the module
 	 *
-	 * array('always'='text') or array('FR'='text')
+	 * array('always'=>'text') or array('FR'=>array('text1', 'text2))
 	 */
 	public $warnings_activation;
 
 	/**
-	 * @var array<string,string> Array of warnings to show when we activate an external module
+	 * @var array<string,mixed> 	Array of warnings to show when we activate a module if another module is on
 	 *
-	 * array('always'='text') or array('FR'='text')
+	 * array('modOtherModule' => array('always'=>'text')) or array('modOtherModule' => array('FR'=>array('text1', 'text2)))
 	 */
 	public $warnings_activation_ext;
 

@@ -416,7 +416,7 @@ class pdf_balance extends ModelePdfAccountancy
 
 			if ($this->getColumnStatus('balance')) {
 				$solde = $object->lines[$i]->credit - $object->lines[$i]->debit;
-				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 				$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 				$nexY = max($pdf->GetY(), $nexY);
 			}
@@ -481,12 +481,20 @@ class pdf_balance extends ModelePdfAccountancy
 			if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
 				$this->addDashLine($pdf, $pdf->getPage(), $nexY);
 			}
+			// check if translation for AccountancyGroupXXX exists
+			$translationKey = 'AccountancyGroup' . $accountingAccount->pcg_type;
+			$translation = $langs->transnoentitiesnoconv($translationKey);
+			if ($translation !== $translationKey) {
+				$output = $langs->transnoentitiesnoconv('Total') . ' ' . $translation;
+			} else {
+				$output = $langs->transnoentitiesnoconv('Total') . ' ' . $langs->transnoentitiesnoconv('AccountancyGroup') . ' ' . $accountingAccount->pcg_type;
+			}
 			$this->addTotalLine(
 				$pdf,
 				$curY,
 				$nexY,
 				$default_font_size,
-				$langs->trans('Total') . ' ' . $langs->trans('AccountancyGroup' . $accountingAccount->pcg_type),
+				$langs->transnoentitiesnoconv('Total') . ' ' . $langs->trans('AccountancyGroup' . $accountingAccount->pcg_type),
 				$tab_top_newpage,
 				$groupDebit,
 				$groupCredit
@@ -873,6 +881,8 @@ class pdf_balance extends ModelePdfAccountancy
 	 */
 	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
 	{
+		global $langs;
+
 		$curY = $nexY;
 		$pageposbefore = $pdf->getPage();
 		$pdf->SetFont('', 'B', $default_font_size - 1);
@@ -907,7 +917,7 @@ class pdf_balance extends ModelePdfAccountancy
 
 		if ($this->getColumnStatus('balance')) {
 			$solde = $credit - $debit;
-			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 			$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 			$nexY = max($pdf->GetY(), $nexY);
 		}

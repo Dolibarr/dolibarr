@@ -172,6 +172,9 @@ ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_adherent (fk_adherent
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_bank (fk_bank);
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_dateadh (dateadh);
 
+ALTER TABLE llx_subscription ADD COLUMN ref_ext varchar(128);
+ALTER TABLE llx_subscription ADD COLUMN note_private text;
+
 ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account; -- OFX Financial Institution Transaction ID "FITID"
 
 ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id;
@@ -231,4 +234,11 @@ ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeepin
 
 ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
 UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
+
+ALTER TABLE llx_receptiondet_batch ADD COLUMN description text AFTER fk_product;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN fk_unit integer AFTER qty;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN rang integer DEFAULT 0 AFTER cost_price;
+
+ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_src_object_type_id (src_object_type, src_object_id);
+
 -- end of migration
