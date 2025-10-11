@@ -26,7 +26,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
 
 /**
  *	Class to manage emailings module
@@ -173,6 +173,11 @@ class Mailing extends CommonObject
 	 * @var array<string,string> substitutionarrayfortest
 	 */
 	public $substitutionarrayfortest;
+
+	/**
+	 * @var MailingTarget[]
+	 */
+	public $targets = array();
 
 	/**
 	 * @var ?int 			The related project ID
@@ -621,7 +626,7 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 0, fk_user_modif=".$user->id;
+		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);

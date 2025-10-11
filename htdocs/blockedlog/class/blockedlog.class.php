@@ -45,6 +45,12 @@ class BlockedLog
 	public $entity;
 
 	/**
+	 * Picto
+	 * @var string
+	 */
+	public $picto = 'blockedlog';
+
+	/**
 	 * @var string Error message
 	 */
 	public $error = '';
@@ -176,13 +182,18 @@ class BlockedLog
 
 		$this->trackedevents = array();
 
+		$sep = 0;
+
 		// Customer Invoice/Facture / Payment
 		if (isModEnabled('invoice')) {
-			$this->trackedevents['BILL_VALIDATE'] = array('id' => 'BILL_VALIDATE', 'label' => 'logBILL_VALIDATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_VALIDATE'));
-			//$this->trackedevents['BILL_UPDATE'] = array('id' => 'BILL_VALIDATE', 'label' => 'logBILL_UPDATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_UPDATE'));
-			$this->trackedevents['BILL_SENTBYMAIL'] = array('id' => 'BILL_SENTBYMAIL', 'label' => 'logBILL_SENTBYMAIL', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_SENTBYMAIL'));
-			$this->trackedevents['DOC_DOWNLOAD'] = array('id' => 'DOC_DOWNLOAD', 'label' => 'BlockedLogBillDownload', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('BlockedLogBillDownload'));
-			$this->trackedevents['DOC_PREVIEW'] = array('id' => 'DOC_PREVIEW', 'label' => 'BlockedLogBillPreview', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('BlockedLogBillPreview'));
+			$sep++;
+			$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("Invoices").' | '.$langs->trans("Payments").'</span>', 'disabled' => 1);
+
+			$this->trackedevents['BILL_VALIDATE']           = array('id' => 'BILL_VALIDATE', 'label' => 'logBILL_VALIDATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_VALIDATE'));
+			//$this->trackedevents['BILL_UPDATE']           = array('id' => 'BILL_VALIDATE', 'label' => 'logBILL_UPDATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_UPDATE'));
+			$this->trackedevents['BILL_SENTBYMAIL']         = array('id' => 'BILL_SENTBYMAIL', 'label' => 'logBILL_SENTBYMAIL', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_SENTBYMAIL'));
+			$this->trackedevents['DOC_DOWNLOAD']            = array('id' => 'DOC_DOWNLOAD', 'label' => 'BlockedLogBillDownload', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('BlockedLogBillDownload'));
+			$this->trackedevents['DOC_PREVIEW']             = array('id' => 'DOC_PREVIEW', 'label' => 'BlockedLogBillPreview', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('BlockedLogBillPreview'));
 			$this->trackedevents['PAYMENT_CUSTOMER_CREATE'] = array('id' => 'PAYMENT_CUSTOMER_CREATE', 'label' => 'logPAYMENT_CUSTOMER_CREATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_CUSTOMER_CREATE'));
 			$this->trackedevents['PAYMENT_CUSTOMER_DELETE'] = array('id' => 'PAYMENT_CUSTOMER_DELETE', 'label' => 'logPAYMENT_CUSTOMER_DELETE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_CUSTOMER_DELETE'));
 		}
@@ -202,53 +213,82 @@ class BlockedLog
 
 		// Donation
 		if (isModEnabled('don')) {
-			$this->trackedevents['DON_VALIDATE'] = 'logDON_VALIDATE';
-			$this->trackedevents['DON_DELETE'] = 'logDON_DELETE';
-			//$this->trackedevents['DON_SENTBYMAIL']='logDON_SENTBYMAIL';
-			$this->trackedevents['DONATION_PAYMENT_CREATE'] = 'logDONATION_PAYMENT_CREATE';
-			$this->trackedevents['DONATION_PAYMENT_DELETE'] = 'logDONATION_PAYMENT_DELETE';
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----  '.$langs->trans("Donations").' | '.$langs->trans("Payments").'</span>', 'disabled' => 1);
+			}
+
+			$this->trackedevents['DON_VALIDATE'] = array('id' => 'DON_VALIDATE', 'label' => 'logDON_VALIDATE', 'labelhtml' => img_picto('', 'donation', 'class="pictofixedwidth").').$langs->trans('logDON_VALIDATE'));
+			$this->trackedevents['DON_DELETE'] = array('id' => 'DON_DELETE', 'label' => 'logDON_DELETE', 'labelhtml' => img_picto('', 'donation', 'class="pictofixedwidth").').$langs->trans('logDON_DELETE'));
+			//$this->trackedevents['DON_SENTBYMAIL'] = array('id' => 'BILL_VALIDATE', img_picto('', 'don', 'class="pictofixedwidth").').$langs->trans('labelhtml' => 'logDON_SENTBYMAIL');
+			$this->trackedevents['DONATION_PAYMENT_CREATE'] = array('id' => 'DONATION_PAYMENT_CREATE', 'label' => 'logDONATION_PAYMENT_CREATE', 'labelhtml' => img_picto('', 'donation', 'class="pictofixedwidth").').$langs->trans('logDONATION_PAYMENT_CREATE'));
+			$this->trackedevents['DONATION_PAYMENT_DELETE'] = array('id' => 'DONATION_PAYMENT_DELETE', 'label' => 'logDONATION_PAYMENT_DELETE', 'labelhtml' => img_picto('', 'donation', 'class="pictofixedwidth").').$langs->trans('logDONATION_PAYMENT_DELETE'));
 		}
 
 		/*
 		// Salary
 		if (isModEnabled('salary')) {
-			$this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
-			$this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
-			$this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
+			$this->trackedevents['PAYMENT_SALARY_CREATE'] = 'BlockedLogSalaryPaymentCreate';
+			$this->trackedevents['PAYMENT_SALARY_MODIFY'] = 'BlockedLogSalaryPaymentCreate';
+			$this->trackedevents['PAYMENT_SALARY_DELETE'] = 'BlockedLogSalaryPaymentCreate';
 		}
 		 */
 
 		// Members
 		if (isModEnabled('member')) {
-			$this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = 'logMEMBER_SUBSCRIPTION_CREATE';
-			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
-			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("MenuMembers").'</span>', 'disabled' => 1);
+			}
+
+			$this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = array('id' => 'MEMBER_SUBSCRIPTION_CREATE', 'label' => 'logMEMBER_SUBSCRIPTION_CREATE', 'labelhtml' => img_picto('', 'member', 'class="pictofixedwidth").').$langs->trans('logMEMBER_SUBSCRIPTION_CREATE'));
+			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = array('id' => 'MEMBER_SUBSCRIPTION_MODIFY', 'label' => 'logMEMBER_SUBSCRIPTION_MODIFY', 'labelhtml' => img_picto('', 'member', 'class="pictofixedwidth").').$langs->trans('logMEMBER_SUBSCRIPTION_MODIFY'));
+			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = array('id' => 'MEMBER_SUBSCRIPTION_DELETE', 'label' => 'logMEMBER_SUBSCRIPTION_DELETE', 'labelhtml' => img_picto('', 'member', 'class="pictofixedwidth").').$langs->trans('logMEMBER_SUBSCRIPTION_DELETE'));
 		}
 
 		// Bank
 		if (isModEnabled("bank")) {
-			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
-			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
-			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----  '.$langs->trans("VariousPayment").'</span>', 'disabled' => 1);
+			}
+
+			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = array('id' => 'PAYMENT_VARIOUS_CREATE', 'label' => 'logPAYMENT_VARIOUS_CREATE', 'labelhtml' => img_picto('', 'bank', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_VARIOUS_CREATE'));
+			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = array('id' => 'PAYMENT_VARIOUS_MODIFY', 'label' => 'logPAYMENT_VARIOUS_MODIFY', 'labelhtml' => img_picto('', 'bank', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_VARIOUS_MODIFY'));
+			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = array('id' => 'PAYMENT_VARIOUS_DELETE', 'label' => 'logPAYMENT_VARIOUS_DELETE', 'labelhtml' => img_picto('', 'bank', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_VARIOUS_DELETE'));
 		}
 
-		// Cashdesk
+		// Cash register closing
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
 		$moduleposenabled = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalString('BANK_ENABLE_POS_CASHCONTROL'));
 		if ($moduleposenabled) {
-			$this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----   '.$langs->trans("CashControl").'</span>', 'disabled' => 1);
+			}
+
+			$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
 		}
 
 		// Add more action to track from a conf variable
 		// For example: STOCK_MOVEMENT,...
 		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----------</span>', 'disabled' => 1);
+			}
+
 			$tmparrayofmoresupportedevents = explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'));
 			foreach ($tmparrayofmoresupportedevents as $val) {
-				$this->trackedevents[$val] = 'log'.$val;
+				$this->trackedevents[$val] = array('id' => $val, 'label' => 'log'.$val, 'labelhtml' => img_picto('', 'generic', 'class="pictofixedwidth").').$langs->trans('log'.$val));
 			}
 		}
 
-		$this->trackedevents['BLOCKEDLOG_EXPORT'] = 'logBLOCKEDLOG_EXPORT';
+		if (!empty($this->trackedevents)) {
+			$sep++;
+			$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("Other").'</span>', 'disabled' => 1);
+		}
+		$this->trackedevents['BLOCKEDLOG_EXPORT'] = array('id' => 'BLOCKEDLOG_EXPORT', 'label' => 'logBLOCKEDLOG_EXPORT', 'labelhtml' => img_picto('', $this->picto, 'class="pictofixedwidth").').$langs->trans('logBLOCKEDLOG_EXPORT'));
 
 		return 1;
 	}

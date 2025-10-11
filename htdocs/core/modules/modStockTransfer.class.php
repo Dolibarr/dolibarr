@@ -126,8 +126,8 @@ class modStockTransfer extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("stocktransfer@stocktransfer");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'StockTransferWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 
 		// Constants

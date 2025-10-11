@@ -130,8 +130,8 @@ class modEventOrganization extends DolibarrModules
 		$this->need_dolibarr_version = array(13, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'EventOrganizationWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 
 		// Constants

@@ -915,13 +915,14 @@ class ContratLigne extends CommonObjectLine
 		$this->db->begin();
 
 		$this->statut = ContratLigne::STATUS_OPEN;
+		$this->status = ContratLigne::STATUS_OPEN;
 		$this->date_start_real = $date;
 		$this->date_end = $date_end;
 		$this->fk_user_ouverture = $user->id;
 		$this->date_end_real = null;
 		$this->commentaire = $comment;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) $this->statut).",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) $this->status).",";
 		$sql .= " date_ouverture = ".(dol_strlen((string) $this->date_start_real) != 0 ? "'".$this->db->idate($this->date_start_real)."'" : "null").",";
 		if ($date_end >= 0) {
 			$sql .= " date_fin_validite = ".(dol_strlen($this->date_end) != 0 ? "'".$this->db->idate($this->date_end)."'" : "null").",";
@@ -935,7 +936,16 @@ class ContratLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($date_end >= 0) {
-				// TODO Update column llx_contrat.denormalized_lower_panned_end_date
+				// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
+				$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
+				$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+				$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+				$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
+				if (!$resqltoupdatecontract) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
 			}
 
 			// Call trigger
@@ -991,6 +1001,17 @@ class ContratLigne extends CommonObjectLine
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
+			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
+			$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+			$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+			$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
+			if (!$resqltoupdatecontract) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('LINECONTRACT_CLOSE', $user);

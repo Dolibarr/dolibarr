@@ -1,6 +1,7 @@
 ---
 # This is a basic workflow to check code with PHPSTAN tool
 name: PHPStan
+
 # Controls when the workflow will run
 on:
   # workflow called by the parent workflow ci.yml
@@ -13,8 +14,9 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: stan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: phpstan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
   CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
