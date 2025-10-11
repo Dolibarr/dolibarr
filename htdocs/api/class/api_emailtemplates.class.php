@@ -214,12 +214,12 @@ class EmailTemplates extends DolibarrApi
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to email templates');
 		}
-		$entity = getEntity('email_template');
+
 		$obj_ret = array();
 
 		$sql = "SELECT e.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS e";
-		$sql .= " WHERE e.entity = ".((int) $entity);
+		$sql .= " WHERE e.entity IN (".getEntity($this->table_element).")";
 		if (!$fk_user == '') {
 			$sql .= " AND e.fk_user = ".((int) $fk_user);
 		}
@@ -457,6 +457,8 @@ class EmailTemplates extends DolibarrApi
 	 */
 	private function _fetch($id, $label = '')
 	{
+		global $conf;
+
 		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to email templates');
@@ -468,10 +470,10 @@ class EmailTemplates extends DolibarrApi
 		}
 		if ($result == 0) {
 			if ($id) {
-				throw new RestException(404, 'Email template with id='.((string) $id).' not found in entity='.((int) getEntity('email_template')));
+				throw new RestException(404, 'Email template with id='.((string) $id).' not found in entity='.(int) $conf->entity);
 			}
 			if ($label) {
-				throw new RestException(404, 'Email template with label '.$label.' not found in entity='.((int) getEntity('email_template')));
+				throw new RestException(404, 'Email template with label '.$label.' not found in entity='.(int) $conf->entity);
 			}
 			throw new RestException(404, 'Email Template not found');
 		} else {
@@ -601,6 +603,7 @@ class EmailTemplates extends DolibarrApi
 		}
 		return $email_template;
 	}
+
 	/**
 	 * function to check for access rights - should probably have 1. parameter which is read/write/delete/...
 	 * Why a separate function? because we probably needs to check so many many different kinds of objects

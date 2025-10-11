@@ -184,7 +184,7 @@ class cEmailTemplate extends CommonObject
 		global $langs;
 
 		$this->db = $db;
-		$this->ismultientitymanaged = 0;
+		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
 
 		// @phan-suppress-next-line PhanTypeMismatchProperty
@@ -233,9 +233,6 @@ class cEmailTemplate extends CommonObject
 		global $conf;
 		$error = 0;
 
-		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
-		$this->entity = setEntity($this);
-
 		dol_syslog(get_class($this)."::create user=".$user->id);
 
 		// Check parameters
@@ -258,7 +255,7 @@ class cEmailTemplate extends CommonObject
 		$sql .= " position, defaultfortype, enabled, active, email_from, email_to,";
 		$sql .= " email_tocc, email_tobcc, topic, joinfiles, content, content_lines)";
 		$sql .= " VALUES (";
-		$sql .= " ".((int) $this->entity).",";
+		$sql .= " ".((int) $conf->entity).",";
 		if (is_null($this->module)) {
 			$sql .= " NULL,";
 		} else {
@@ -366,12 +363,9 @@ class cEmailTemplate extends CommonObject
 	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
-		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
-		$this->entity = setEntity($this);
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " entity=".((int) $this->entity).",";
 		$sql .= " module=".($this->module ? "'".$this->db->escape($this->module)."', " : 'NULL, ');
 		$sql .= " type_template=".($this->type_template ? "'".$this->db->escape($this->type_template)."', " : 'NULL, ');
 		$sql .= " lang=".($this->lang ? "'".$this->db->escape($this->lang)."', " : 'NULL, ');
@@ -434,10 +428,6 @@ class cEmailTemplate extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-
-		global $conf, $langs;
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);
@@ -505,11 +495,6 @@ class cEmailTemplate extends CommonObject
 	 */
 	public function apifetch($id, $label = '')
 	{
-		global $db, $conf;
-
-		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
-		$this->entity = setEntity($this);
-
 		// Check parameters
 		if (($id ==0 || empty($id)) && empty($label)) {
 			dol_syslog(get_class($this)."::apifetch id and label are empty", LOG_DEBUG);
@@ -524,11 +509,12 @@ class cEmailTemplate extends CommonObject
 		$sql .= " e.content_lines FROM ".$this->db->prefix().$this->table_element." as e";
 		if ($id) {
 			$sql .= " WHERE e.rowid = ".((int) $id);
+		} else {
+			$sql .= " WHERE e.entity IN (".getEntity($this->table_element).")";
+			if ($label) {
+				$sql .= " AND e.label = '".$this->db->escape($label)."'";
+			}
 		}
-		if ($label) {
-			$sql .= " WHERE e.label = '".$this->db->escape($label)."'";
-		}
-		$sql .= " AND e.entity = ".((int) $this->entity);
 
 		dol_syslog(get_class($this)."::apifetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -566,8 +552,7 @@ class cEmailTemplate extends CommonObject
 			} else {
 				if ($id) {
 					$this->error = 'Email template with id '.((string) $id).' not found sql='.$sql;
-				}
-				if ($label) {
+				} elseif ($label) {
 					$this->error = 'Email template with label '.$label.' not found sql='.$sql;
 				}
 				return 0;

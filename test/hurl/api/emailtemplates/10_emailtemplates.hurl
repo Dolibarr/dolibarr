@@ -68,3 +68,13 @@ HTTP 404
 {"error":{"code":404,"message":"Not Found: email template with id=0 not found"}}
 
 
+# GET emailtemplates DOLAPIENTITY: 1
+GET http://{{hostnport}}/api/index.php/emailtemplates
+DOLAPIENTITY: 1
+HTTP 200
+
+# GET emailtemplates DOLAPIENTITY: 2
+GET http://{{hostnport}}/api/index.php/emailtemplates
+DOLAPIENTITY: 2
+HTTP 401
+{"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
