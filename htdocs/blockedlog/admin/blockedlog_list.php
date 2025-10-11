@@ -389,10 +389,11 @@ if (GETPOST('withtab', 'alpha')) {
 	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
-print load_fiche_titre($title, $linkback);
+print load_fiche_titre($title, $linkback, 'blockedlog');
 
 if (GETPOST('withtab', 'alpha')) {
 	$head = blockedlogadmin_prepare_head();
+
 	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 

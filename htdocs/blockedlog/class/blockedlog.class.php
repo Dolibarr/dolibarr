@@ -45,6 +45,12 @@ class BlockedLog
 	public $entity;
 
 	/**
+	 * Picto
+	 * @var string
+	 */
+	public $picto = 'blockedlog';
+
+	/**
 	 * @var string Error message
 	 */
 	public $error = '';
@@ -282,7 +288,7 @@ class BlockedLog
 			$sep++;
 			$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("Other").'</span>', 'disabled' => 1);
 		}
-		$this->trackedevents['BLOCKEDLOG_EXPORT'] = array('id' => 'BLOCKEDLOG_EXPORT', 'label' => 'logBLOCKEDLOG_EXPORT', 'labelhtml' => img_picto('', 'generic', 'class="pictofixedwidth").').$langs->trans('logBLOCKEDLOG_EXPORT'));
+		$this->trackedevents['BLOCKEDLOG_EXPORT'] = array('id' => 'BLOCKEDLOG_EXPORT', 'label' => 'logBLOCKEDLOG_EXPORT', 'labelhtml' => img_picto('', $this->picto, 'class="pictofixedwidth").').$langs->trans('logBLOCKEDLOG_EXPORT'));
 
 		return 1;
 	}
