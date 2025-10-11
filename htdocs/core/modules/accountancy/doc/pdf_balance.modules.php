@@ -744,7 +744,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 10,
 			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_BALANCE_ADD_POSITION'),
 			'title' => [
-				'textkey' => '#', // use lang key is useful in somme case with module
+				'textkey' => '#', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -762,7 +762,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 20, // only for desc
 			'status' => true,
 			'title' => [
-				'textkey' => 'AccountNumber', // use lang key is useful in somme case with module
+				'textkey' => 'AccountNumber', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -780,7 +780,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => false,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Label', // use lang key is useful in somme case with module
+				'textkey' => 'Label', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -800,7 +800,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 30,
 			'status' => true,
 			'title' => [
-				'textkey' => 'AccountingDebit', // use lang key is useful in somme case with module
+				'textkey' => 'AccountingDebit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -819,7 +819,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 30,
 			'status' => true,
 			'title' => array(
-				'textkey' => 'AccountingCredit', // use lang key is useful in somme case with module
+				'textkey' => 'AccountingCredit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -838,7 +838,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 32,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Balance', // use lang key is useful in somme case with module
+				'textkey' => 'Balance', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
