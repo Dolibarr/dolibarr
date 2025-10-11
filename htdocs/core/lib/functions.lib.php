@@ -5495,7 +5495,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			return $enabledisablehtml;
 		}
 
-		if (empty($srconly) && !preg_match('/[\.\/@]/', $pictowithouttext)) {	// If picto code does not contains a / and no . inside, it is not a path to an image file on disk
+		if (empty($srconly) && !preg_match('/[\.\/@]/', $picto)) {	// If original picto code does not contains a / and no . inside, it is not a path to an image file on disk
 			$fakey = $pictowithouttext;
 			$facolor = '';
 			$fasize = '';
