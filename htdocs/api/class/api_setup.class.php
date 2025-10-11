@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cregion.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  * API class for dictionaries
@@ -2952,6 +2953,7 @@ class Setup extends DolibarrApi
 	public function getModulesList($status = "active", $origin = 'all')
 	{
 		global $db;
+		$moduleObject = new DolibarrModules($this->db);
 
 		if (!DolibarrApiAccess::$user->admin
 			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
@@ -2974,8 +2976,8 @@ class Setup extends DolibarrApi
 						if (class_exists($modName)) {
 							$objMod = new $modName($db);
 							$moduleName = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-							$publisher = dol_escape_htmltag((string) $objMod->getPublisher());
-							$external = ((string) $objMod->isCoreOrExternalModule() == 'external');
+							$publisher = dol_escape_htmltag((string) $moduleObject->getPublisher());
+							$external = ((string) $moduleObject->isCoreOrExternalModule() == 'external');
 							$active = getDolGlobalString('MAIN_MODULE_'.$moduleName);
 							$version = $objMod->version;
 							if ($status != 'all') {
