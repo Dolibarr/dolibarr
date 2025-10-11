@@ -63,3 +63,22 @@ GET http://{{hostnport}}/api/index.php/setup/modules/status/external?status=disa
 HTTP 200
 [Asserts]
 jsonpath "$.*" count >=0
+
+PUT http://{{hostnport}}/api/index.php/setup/modules/foobar/disable
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Module foobar not found"}}
+
+PUT http://{{hostnport}}/api/index.php/setup/modules/foobar/enable
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Module foobar not found"}}
+
+# GET modules DOLAPIENTITY: 1
+GET http://{{hostnport}}/api/index.php/setup/modules/status/all?status=all
+DOLAPIENTITY: 1
+HTTP 200
+
+# GET modules DOLAPIENTITY: 2
+GET http://{{hostnport}}/api/index.php/setup/modules/status/all?status=all
+DOLAPIENTITY: 2
+HTTP 401
+{"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
