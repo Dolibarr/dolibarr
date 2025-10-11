@@ -11631,7 +11631,7 @@ abstract class CommonObject
 	public function checkActiveProductInLines($status = 'onsale')
 	{
 		global $langs;
-		if (isModEnabled('product')) {
+		if (isModEnabled('product') || isModEnabled('service')) {
 			$langs->load('products');
 			$statustotest = $status == 'onsale' ? 'status' : 'status_buy';
 			$statuskey4lang = $status == 'onsale' ? 'ProductStatusNotOnSell' : 'ProductStatusNotOnBuy';
