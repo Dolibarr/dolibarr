@@ -2060,7 +2060,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function checkRules($type = 0, $seller = '')
 	{
-		global $conf, $db, $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
 		$langs->load('trips');
 
@@ -2070,7 +2070,7 @@ class ExpenseReport extends CommonObject
 			$seller->tva_assuj = 1;		// Most seller uses vat
 		}
 
-		$expensereportrule = new ExpenseReportRule($db);
+		$expensereportrule = new ExpenseReportRule($this->db);
 		$rulestocheck = $expensereportrule->getAllRule($this->line->fk_c_type_fees, $this->line->date, $this->fk_user_author);
 
 		$violation = 0;
@@ -2740,7 +2740,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function computeTotalKm($fk_cat, $qty, $tva)
 	{
-		global $langs, $db, $conf;
+		global $langs, $conf;
 
 		$cumulYearQty = 0;
 		$ranges = array();
@@ -2757,7 +2757,7 @@ class ExpenseReport extends CommonObject
 			return -1;
 		}
 
-		$currentUser = new User($db);
+		$currentUser = new User($this->db);
 		$currentUser->fetch($this->fk_user);
 		$currentUser->loadRights('expensereport');
 		//Clean
