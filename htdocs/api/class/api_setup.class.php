@@ -2935,7 +2935,7 @@ class Setup extends DolibarrApi
 
 		sort($conf->modules);
 
-		return $this->_cleanObjectDatas($conf->modules);
+		return $conf->modules;
 	}
 
 	/**
