@@ -3,6 +3,7 @@
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Schaffhauser sébastien		<sebastien@webmaster67.fr>
+ * Copyright (C) 2025		Abbes Bahfir				<contact@01consulting.eu> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -224,6 +225,22 @@ class Context
 
 		return self::$_instance;
 	}
+	
+	/** Gets Controller Class name
+	 * @param $controller
+	 * @return string
+	 */
+	private static function getControllerClassname($controller){
+		$part2 = '';
+		if (substr($controller, -4) === 'list') {
+			$part1 = substr($controller, 0, -4);
+			$part2 = 'list';
+		} elseif (substr($controller, -4) === 'card') {
+			$part1 = substr($controller, 0, -4);
+			$part2 = 'card';
+		} else $part1 = $controller;
+		return ucfirst($part1) . ucfirst($part2) . 'Controller';
+	}
 
 	/**
 	 * Init controller
@@ -232,23 +249,27 @@ class Context
 	 */
 	public function initController()
 	{
-		global $hookmanager;
+		global $hookmanager,$conf;
 
+		$modulecontrollers=[];
+		foreach ($conf->modules_parts['controllers'] as $module => $controllers) {
+			$path = dol_buildpath('/' . $module . '/webportal/controllers');
+			foreach ($controllers as $controller) {
+				$modulecontrollers[]=$controller;
+
+				$this->addControllerDefinition($controller, $path . "/$controller.controller.class.php", self::getControllerClassname($controller));
+			}
+		}
+
+		$defaulcontrollers=['login','default','document','propallist','orderlist','invoicelist','membercard','partnershipcard','documentlist','documentutile'];
 		$defaultControllersPath = __DIR__ . '/../controllers/';
 
 		// define controllers definition
-		$this->addControllerDefinition('login', $defaultControllersPath . 'login.controller.class.php', 'LoginController');
-		$this->addControllerDefinition('default', $defaultControllersPath . 'default.controller.class.php', 'DefaultController');
-		$this->addControllerDefinition('document', $defaultControllersPath . 'document.controller.class.php', 'DocumentController');
-		$this->addControllerDefinition('propallist', $defaultControllersPath . 'propallist.controller.class.php', 'PropalListController');
-		$this->addControllerDefinition('orderlist', $defaultControllersPath . 'orderlist.controller.class.php', 'OrderListController');
-		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
-		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
-		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
-		//** below the addition of DocumentListController adding files by third party attached documents
-		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
-		//** Below is the addition to the menu of the DocumentUtileController.class.php controller in order to share via the GED (documents) "Documentscomptes"
-		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
+		foreach($defaulcontrollers as $controller){
+			if(!in_array($controller, $modulecontrollers)) {
+				$this->addControllerDefinition($controller, $defaultControllersPath .$controller. '.controller.class.php', self::getControllerClassname($controller));
+			}
+		}
 
 		// Hooks for init controller
 		$hookmanager->initHooks(array('webportaldao'));
