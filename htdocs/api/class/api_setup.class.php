@@ -2974,8 +2974,8 @@ class Setup extends DolibarrApi
 						if (class_exists($modName)) {
 							$objMod = new $modName($db);
 							$moduleName = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-							$publisher = dol_escape_htmltag($objMod->getPublisher());
-							$external = ($objMod->isCoreOrExternalModule() == 'external');
+							$publisher = dol_escape_htmltag((string) $objMod->getPublisher());
+							$external = ((string) $objMod->isCoreOrExternalModule() == 'external');
 							$active = getDolGlobalString('MAIN_MODULE_'.$moduleName);
 							$version = $objMod->version;
 							if ($status != 'all') {
