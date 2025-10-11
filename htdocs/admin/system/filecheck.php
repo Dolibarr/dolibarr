@@ -39,8 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-
 $langs->load("admin");
+
+$mode = GETPOST('mode', 'aZ09');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -139,7 +140,7 @@ if (dol_is_file($xmlfile)) {
 } else {
 	print '<input type="radio" name="target" id="checkboxlocal" value="local"> <label for="checkboxlocal">'.$langs->trans("LocalSignature").' = ';
 	print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'" spellcheck="false">';
-	print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span></label>';
+	print '<br><span class="warning paddingtop inline-block">'.$langs->trans("AvailableOnlyOnPackagedVersions").'</span></label>';
 	print '<br>';
 }
 
@@ -158,7 +159,14 @@ if ($enableremotecheck) {
 }
 print '</div>';
 
-print '<div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
+// Option unalterable log
+print '<div class="center">';
+if ($mysoc->country_code == 'FR') {
+	print '<input type="checkbox" name="mode" id="mode" value="unalterable"'.($mode == 'unalterable' ? ' checked="checked"' : '').'>';
+	print '<label for="mode" class="opacitymedium">'.$langs->trans("AnalyzeUnalterableScopeOnly", $langs->transnoentitiesnoconv("BlockedLog")).'</label><br>';
+}
+print '<input type="submit" name="check" class="button" value="'.$langs->trans("Check").'">';
+print '</div>';
 print '</form>';
 print '<br>';
 print '<br>';
@@ -230,8 +238,9 @@ if (empty($error) && !empty($xml)) {
 
 		$i = 0;
 		foreach ($xml->dolibarr_constants[0]->constant as $constant) {    // $constant is a simpleXMLElement
-			$constname = $constant['name'];
+			$constname = (string) $constant['name'];
 			$constvalue = (string) $constant;
+
 			$constvalue = (empty($constvalue) ? '0' : $constvalue);
 			// Value found
 			$value = '';
@@ -240,7 +249,7 @@ if (empty($error) && !empty($xml)) {
 			}
 			$valueforchecksum = (empty($value) ? '0' : $value);
 
-			$checksumconcat[] = $valueforchecksum;
+			$checksumconcat[$constname] = $valueforchecksum;
 
 			$i++;
 			$out .= '<tr class="oddeven">';
@@ -260,10 +269,20 @@ if (empty($error) && !empty($xml)) {
 		$out .= '<br>';
 	}
 
+
+	$onlymodifiedorremoved = 0;
+	if ($mode == 'unalterable') {
+		$listoffilestoanalyze = $xml->dolibarr_unalterable_files[0];
+		$onlymodifiedorremoved = 1;
+	} else {
+		$listoffilestoanalyze = $xml->dolibarr_htdocs_dir[0];
+		$onlymodifiedorremoved = 0;
+	}
+
 	// Scan htdocs
-	if (is_object($xml->dolibarr_htdocs_dir[0])) {
+	if (is_object($listoffilestoanalyze)) {
 		//var_dump($xml->dolibarr_htdocs_dir[0]['includecustom']);exit;
-		$includecustom = (empty($xml->dolibarr_htdocs_dir[0]['includecustom']) ? 0 : $xml->dolibarr_htdocs_dir[0]['includecustom']);
+		$includecustom = (empty($listoffilestoanalyze['includecustom']) ? 0 : $listoffilestoanalyze['includecustom']);
 
 		// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
 		$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
@@ -271,14 +290,17 @@ if (empty($error) && !empty($xml)) {
 		$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
 		// Fill file_list with files in signature, new files, modified files
-		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat); // Fill array $file_list
+		$ret = getFilesUpdated($file_list, $listoffilestoanalyze, '', DOL_DOCUMENT_ROOT, $checksumconcat); // Fill array $file_list
 		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
-		// Complete with list of new files
-		foreach ($scanfiles as $keyfile => $valfile) {
-			$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
-			if (!in_array($tmprelativefilename, $file_list['insignature'])) {
-				$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
-				$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
+
+		// Complete with list of new files into $file_list['added']
+		if ($onlymodifiedorremoved) {
+			foreach ($scanfiles as $keyfile => $valfile) {
+				$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
+				if (!in_array($tmprelativefilename, $file_list['insignature'])) {
+					$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
+					$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
+				}
 			}
 		}
 
@@ -371,53 +393,55 @@ if (empty($error) && !empty($xml)) {
 		$out .= '<br>';
 
 		// Files added
-		$out .= load_fiche_titre($langs->trans("FilesAdded"));
+		if (empty($onlymodifiedorremoved)) {
+			$out .= load_fiche_titre($langs->trans("FilesAdded"));
 
-		$totalsize = 0;
-		$out .= '<div class="div-table-responsive-no-min">';
-		$out .= '<table class="noborder">';
-		$out .= '<tr class="liste_titre">';
-		$out .= '<td>#</td>';
-		$out .= '<td>'.$langs->trans("Filename").'</td>';
-		$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
-		$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
-		$out .= '<td class="right">'.$langs->trans("Size").'</td>';
-		$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
-		$out .= '</tr>'."\n";
-		$tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
-		if (is_array($tmpfilelist3) && count($tmpfilelist3)) {
-			$i = 0;
-			foreach ($tmpfilelist3 as $file) {
-				$i++;
-				$out .= '<tr class="oddeven">';
-				$out .= '<td>'.$i.'</td>'."\n";
-				$out .= '<td>'.dol_escape_htmltag($file['filename']);
-				if (!preg_match('/^win/i', PHP_OS)) {
-					$htmltext = $langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.$file['filename']); // The slash is included int file['filename']
-					$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
+			$totalsize = 0;
+			$out .= '<div class="div-table-responsive-no-min">';
+			$out .= '<table class="noborder">';
+			$out .= '<tr class="liste_titre">';
+			$out .= '<td>#</td>';
+			$out .= '<td>'.$langs->trans("Filename").'</td>';
+			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
+			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
+			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
+			$out .= '</tr>'."\n";
+			$tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
+			if (is_array($tmpfilelist3) && count($tmpfilelist3)) {
+				$i = 0;
+				foreach ($tmpfilelist3 as $file) {
+					$i++;
+					$out .= '<tr class="oddeven">';
+					$out .= '<td>'.$i.'</td>'."\n";
+					$out .= '<td>'.dol_escape_htmltag($file['filename']);
+					if (!preg_match('/^win/i', PHP_OS)) {
+						$htmltext = $langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.$file['filename']); // The slash is included int file['filename']
+						$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
+					}
+					$out .= '</td>'."\n";
+					$out .= '<td class="center">'.dol_escape_htmltag((string) $file['expectedmd5']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+					$out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
+					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+					$totalsize += $size;
+					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
+					$out .= '<td class="right nowraponall">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
+					$out .= "</tr>\n";
 				}
-				$out .= '</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag((string) $file['expectedmd5']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
-				$out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
-				$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
-				$totalsize += $size;
-				$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
-				$out .= '<td class="right nowraponall">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>'."\n";
+				$out .= '<tr class="liste_total">';
+				$out .= '<td></td>'."\n";
+				$out .= '<td>'.$langs->trans("Total").'</td>'."\n";
+				$out .= '<td class="center"></td>'."\n";
+				$out .= '<td class="center"></td>'."\n";
+				$out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
+				$out .= '<td class="right"></td>'."\n";
 				$out .= "</tr>\n";
+			} else {
+				$out .= '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
-			$out .= '<tr class="liste_total">';
-			$out .= '<td></td>'."\n";
-			$out .= '<td>'.$langs->trans("Total").'</td>'."\n";
-			$out .= '<td class="center"></td>'."\n";
-			$out .= '<td class="center"></td>'."\n";
-			$out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
-			$out .= '<td class="right"></td>'."\n";
-			$out .= "</tr>\n";
-		} else {
-			$out .= '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			$out .= '</table>';
+			$out .= '</div>';
 		}
-		$out .= '</table>';
-		$out .= '</div>';
 	} else {
 		print '<div class="error">';
 		print 'Error: Failed to found <b>dolibarr_htdocs_dir</b> into content of XML file:<br>'.dol_escape_htmltag(dol_trunc($xmlfile, 500));
@@ -436,11 +460,18 @@ if (empty($error) && !empty($xml)) {
 	}*/
 
 
+	// Section Globalchecksum
 	asort($checksumconcat); // Sort list of checksum
-	//var_dump($checksumconcat);
-	$checksumget = md5(implode(',', $checksumconcat));
-	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
+	$checksumget = md5(implode(',', $checksumconcat));
+
+	if ($mode == 'unalterable') {
+		$nameofsection = 'dolibarr_unalterable_files_checksum';
+		$checksumtoget = trim((string) $xml->dolibarr_unalterable_files_checksum);
+	} else {
+		$nameofsection = 'dolibarr_htdocs_dir_checksum';
+		$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
+	}
 	//var_dump(count($file_list['added']));
 	//var_dump($checksumget);
 	//var_dump($checksumtoget);
@@ -450,19 +481,22 @@ if (empty($error) && !empty($xml)) {
 
 	$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
 	if ($checksumget == $checksumtoget) {
-		if (is_array($file_list['added']) && count($file_list['added'])) {
+		if (empty($onlymodifiedorremoved) && is_array($file_list['added']) && count($file_list['added'])) {
 			$resultcode = 'warning';
 			$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
-			$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
+			$outcurrentchecksum = $checksumget;
+			$outcurrentchecksum .= '<br><br>'.img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 		} else {
 			$resultcode = 'ok';
 			$resultcomment = 'Success';
-			$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
+			$outcurrentchecksum = '<span class="'.$resultcode.'" title="Checksum of all current checksums concatenated separated by a comma">'.$checksumget.'</span>';
+			$outcurrentchecksum.= '<br><br>'.img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 		}
 	} else {
 		$resultcode = 'error';
-		$resultcomment = 'Error';
-		$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
+		$resultcomment = 'FileIntegrityIsKO';
+		$outcurrentchecksum = '<span class="'.$resultcode.'" title="Checksum of all current checksums concatenated separated by a comma">'.$checksumget.'</span>';
+		$outcurrentchecksum .= '<br><br>'.img_picto('', 'error').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 	}
 
 	// Show warning
@@ -476,12 +510,39 @@ if (empty($error) && !empty($xml)) {
 		}
 	}
 
-	print load_fiche_titre($langs->trans("GlobalChecksum"));
-	print $langs->trans("ExpectedChecksum").' = '.$outexpectedchecksum.'<br>';
+	if ($mode == 'unalterable') {
+		print load_fiche_titre($langs->trans("UnalterableFilesChecksum"));
+
+		// Print list of files
+		$outforlistoffiles = '<a href="#" onclick="console.log(\'Click\'); jQuery(\'#listofunalterablefiles\').toggle(); return false;">'.$langs->trans("ShowListOfFiles").'</a><br>';
+		$outforlistoffiles .= '<textarea id="listofunalterablefiles" class="hideobject quatrevingtpercent" rows="12">';
+		$i = 0;
+		foreach ($listoffilestoanalyze as $dirtoanalyze) {
+			foreach ($dirtoanalyze->md5file as $filetoanalyze) {
+				if ($i) {
+					$outforlistoffiles .= "\n";
+				}
+				$outforlistoffiles .= (string) $dirtoanalyze['name'];
+				$outforlistoffiles .= '/';
+				$outforlistoffiles .= (string) $filetoanalyze['name'];
+				$i++;
+			}
+		}
+		$outforlistoffiles .= '</textarea>';
+		$outforlistoffiles .= '<br>';
+	} else {
+		print load_fiche_titre($langs->trans("GlobalChecksum"));
+	}
+	print $langs->trans("ExpectedChecksum").' = ';
+	print '<span title="Checksum of all checksums in file separated by a comma and saved into '.$nameofsection.'">';
+	print $outexpectedchecksum;
+	print '</span><br>';
 	print $langs->trans("CurrentChecksum").' = '.$outcurrentchecksum;
 
+	print '<br><br>';
+	print $outforlistoffiles;
 	print '<br>';
-	print '<br>';
+
 
 	// Output detail
 	print $out;
