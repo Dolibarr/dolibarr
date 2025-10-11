@@ -316,7 +316,7 @@ if ($object->id > 0 && $upload_dir !== null) {
 
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
 
-		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatibility, we scan also old dirs
+		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO') && $upload_dirold !== null) {    // For backward compatibility, we scan also old dirs
 			$filearray = array_merge($filearray, dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
 		}
 
