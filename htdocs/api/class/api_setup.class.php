@@ -3005,7 +3005,7 @@ class Setup extends DolibarrApi
 				}
 			}
 		}
-		return $this->_cleanObjectDatas($filename);
+		return $filename;
 	}
 
 	/**
