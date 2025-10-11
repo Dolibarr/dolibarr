@@ -197,7 +197,7 @@ function formatObject($objtoshow, $prefix)
 				if (empty($label) && !empty($otherlabels[$key])) {
 					$label = $langs->trans($otherlabels[$key]);
 				}
-				if (empty($label) && isset($convertkey[$key]) && isset($otherlabels[$convertkey[$key]]) && !empty($otherlabels[$convertkey[$key]])) {
+				if (empty($label) && isset($convertkey[$key]) && isset($otherlabels[$convertkey[$key]])) {
 					$label = $langs->trans($otherlabels[$convertkey[$key]]);
 				}
 				if (empty($label)) {
