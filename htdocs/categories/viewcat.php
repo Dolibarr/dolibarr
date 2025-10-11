@@ -8,7 +8,7 @@
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023-2024	Charlene Benke				<charlene@patas-monkey.com>
  *
@@ -207,7 +207,7 @@ if ($user->hasRight('categorie', 'supprimer') && $action == 'confirm_delete' && 
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie_list.php?type='.$type);
+			header("Location: ".dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['type' => $type]));
 			exit;
 		}
 	} else {
@@ -387,12 +387,12 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	if ($user->hasRight('categorie', 'creer')) {
-		$socid = ($object->socid ? "&socid=".$object->socid : "");
-		print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.urlencode($type).'">'.$langs->trans("Modify").'</a>';
+		$socid = ($object->socid ? $object->socid : "");
+		print '<a class="butAction" href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/edit.php', ['id' => $object->id, 'socid' => $socid, 'type' => $type]).'">'.$langs->trans("Modify").'</a>';
 	}
 
 	if ($user->hasRight('categorie', 'supprimer')) {
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'&backtolist='.urlencode($backtolist).'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id, 'type' => $type, 'backtolist' => $backtolist], true).'">'.$langs->trans("Delete").'</a>';
 	}
 }
 
@@ -400,11 +400,7 @@ print "</div>";
 
 $newcardbutton = '';
 if ($user->hasRight('categorie', 'creer')) {
-	$link = DOL_URL_ROOT.'/categories/card.php';
-	$link .= '?action=create';
-	$link .= '&type='.urlencode($type);
-	$link .= '&catorigin='.((int) $object->id);
-	$link .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.'&id='.$id);
+	$link = dolBuildUrl(DOL_URL_ROOT.'/categories/card.php', ['action'=> 'create', 'type' => $type, 'catorigin' => $object->id, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['type' => $type, 'id' => $id])]);
 
 	$newcardbutton = '<div class="right">';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', $link);
