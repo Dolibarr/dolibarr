@@ -115,7 +115,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (($id > 0 || !empty($ref)) && $upload_dir !== null) {
+	if ($id > 0 || !empty($ref)) {
 		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 			$object->fetchComments();
 		}
@@ -151,7 +151,7 @@ $help_url = '';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_document');
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$projectstatic->fetch_thirdparty();
 
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
