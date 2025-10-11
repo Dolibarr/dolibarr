@@ -1126,7 +1126,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$codeenabledisable .= '<!-- This module is a core module and it may have a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
 					foreach ($arrayofwarnings[$modName] as $keycountry => $cursorwarningmessage) {
 						if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry))) {
-							$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code);
+							if (!is_array($cursorwarningmessage)) {
+								$cursorwarningmessage = array($cursorwarningmessage);
+							}
+							foreach ($cursorwarningmessage as $messagetoshow) {
+								// TODO Use replacement instead of always adding param module name and country code to the string message
+								$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($messagetoshow, $objMod->getName(), $mysoc->country_code);
+							}
 						}
 					}
 				}
@@ -1134,15 +1140,21 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$codeenabledisable .= '<!-- This module is an external module and it may have a warning to show (note: your country is '.$mysoc->country_code.') -->'."\n";
 					foreach ($arrayofwarningsext as $keymodule => $arrayofwarningsextbycountry) {
 						$keymodulelowercase = strtolower(preg_replace('/^mod/', '', $keymodule));
-						if (in_array($keymodulelowercase, $conf->modules)) {    // If module that request warning is on
+						if (preg_match('/^always/', $keymodulelowercase) || in_array($keymodulelowercase, $conf->modules)) {    // If module that trigger the warning is on
 							foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage) {
 								if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry))) {
-									$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+									if (!is_array($cursorwarningmessage)) {
+										$cursorwarningmessage = array($cursorwarningmessage);
+									}
+									foreach ($cursorwarningmessage as $messagetoshow) {
+										// TODO Use replacement instead of always adding param module name to enable and country code to the string message and triggering module
+										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($messagetoshow, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+									}
 									$warningmessage .= ($warningmessage ? "\n" : "").($warningmessage ? "\n" : "").$langs->trans("Module").' : '.$objMod->getName();
 									if (!empty($objMod->editor_name)) {
 										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans("Publisher").' : '.$objMod->editor_name;
 									}
-									if (!empty($objMod->editor_name)) {
+									if ($keymodulelowercase != 'always') {
 										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans("ModuleTriggeringThisWarning").' : '.$modules[$keymodule]->getName();
 									}
 								}

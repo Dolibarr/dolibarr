@@ -9800,11 +9800,13 @@ class Form
 					$tmpcolor = '';
 					$tmppicto = '';
 					$tmplabelhtml = '';
+					$tmpdisabled = '';
 					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
 						$tmpkey = $value['id'];
 						$tmpvalue = empty($value['label']) ? '' : $value['label'];
 						$tmpcolor = empty($value['color']) ? '' : $value['color'];
 						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
+						$tmpdisabled = empty($value['disabled']) ? '' : $value['disabled'];
 						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']) : $value['labelhtml'];
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
@@ -9813,6 +9815,9 @@ class Form
 					$out .= '<option value="' . $tmpkey . '"';
 					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
 						$out .= ' selected';
+					}
+					if ($tmpdisabled) {
+						$out .= ' disabled="disabled"';
 					}
 					if (!empty($tmplabelhtml)) {
 						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml, 0, 0, '', 0, 1) . '"';
