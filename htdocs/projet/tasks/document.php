@@ -115,7 +115,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($id > 0 || !empty($ref)) {
+	if (($id > 0 || !empty($ref)) && $upload_dir !== null) {
 		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 			$object->fetchComments();
 		}
