@@ -601,10 +601,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'addline' && GETPOST('updatealldiscountlinesblock', 'alpha') && GETPOST('discountforblocklines', 'alpha') !== '' && $usercancreate) {
 		$discount = GETPOST('discountforblocklines') ? GETPOST('discountforblocklines') : 0;
 		$object->updateSubtotalLineBlockLines($langs, $object->getRangOfLine($lineid), 'discount', $discount);
-
 	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {		// Set tags
 		$result = $object->setCategories(GETPOST('categories', 'array'));
-
 	}
 
 	// Actions when printing a doc from card
@@ -619,7 +617,6 @@ if (empty($reshook)) {
 	// Actions to build doc
 	$upload_dir = $conf->supplier_proposal->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
 
 	// Go back to draft
 	if ($action == 'modif' && $usercancreate) {
