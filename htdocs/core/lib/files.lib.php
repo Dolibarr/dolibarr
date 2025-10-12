@@ -3844,7 +3844,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 {
 	global $conffile;
 
-	$exclude = 'install';
+	//$exclude = 'install';
 
 	foreach ($dir->md5file as $file) {    // $file is a simpleXMLElement
 		$filename = $path.$file['name'];

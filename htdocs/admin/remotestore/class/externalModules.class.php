@@ -319,6 +319,8 @@ class ExternalModules
 	{
 		global $langs;
 
+		$langs->load("products");
+
 		$html       = "";
 		$last_month = dol_now() - (30 * 24 * 60 * 60);
 		$dolibarrversiontouse = DOL_VERSION;	// full string with version
