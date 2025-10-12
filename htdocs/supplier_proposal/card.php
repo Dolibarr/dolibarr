@@ -1865,7 +1865,14 @@ if ($action == 'create') {
 		$title = "DeleteSubtotalLine";
 		$question = "ConfirmDeleteSubtotalLine";
 		if (GETPOST('type') == 'title') {
-			$formconfirm = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans("DeleteCorrespondingSubtotalLine"), 'value' => 0));
+			$formconfirm = [
+				[
+					'type' => 'checkbox',
+					'name' => 'deletecorrespondingsubtotalline',
+					'label' => $langs->trans("DeleteCorrespondingSubtotalLine"),
+					'value' => 0,
+				],
+			];
 			$title = "DeleteTitleLine";
 			$question = "ConfirmDeleteTitleLine";
 		}
