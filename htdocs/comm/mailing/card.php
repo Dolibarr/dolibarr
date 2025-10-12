@@ -5,6 +5,7 @@
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +63,7 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $urlfrom = GETPOST('urlfrom');
+$projectid = GETPOSTINT('projectid');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 
 // Initialize a technical objects
@@ -74,6 +76,17 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
+
+// Load object->fk_project
+if (isset($object->fk_project))
+{
+	$ret = $object->fetchProject();
+	if ($ret <= 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
+}
+
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 $object->substitutionarray = FormMail::getAvailableSubstitKey('emailing');
@@ -573,6 +586,7 @@ if (empty($reshook)) {
 		$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 		$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
 		$object->bgimage        = (string) GETPOST("bgimage");
+		$object->fk_project		= GETPOSTINT('projectid');
 
 		if (!$object->title) {
 			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
@@ -595,6 +609,23 @@ if (empty($reshook)) {
 
 		setEventMessages('', $mesgs, 'errors');
 		$action = "create";
+	}
+
+	if ($action == 'classin' && $permissiontocreate) {
+		// Set project, copied from comm/propal/card.pgp
+		$object->setProject(GETPOSTINT('projectid'));
+		dol_syslog('Mailing card, action classin, setProject', LOG_DEBUG);
+		if (!$mesg) {
+			$result = $object->update($user);
+			if ($result >= 0) {
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit;
+			}
+			$mesg = $object->error;
+		}
+
+		setEventMessages($mesg, $mesgs, 'errors');
+		$action = "";
 	}
 
 	// Action update description of emailing
@@ -765,6 +796,10 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
+$formproject = null;
+if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
+}
 
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader(
@@ -809,6 +844,17 @@ if ($action == 'create') {	// aaa
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="title" value="'.dol_escape_htmltag(GETPOST('title')).'" autofocus="autofocus"></td></tr>';
+
+	// Project
+	if (isModEnabled('project')) {
+			$langs->load("projects");
+			print '<tr class="field_projectid">';
+			print '<td class="titlefieldcreate">' . $langs->trans("Project") . '</td><td class="valuefieldcreate">';
+			print img_picto('', 'project', 'class="pictofixedwidth"') . $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+			print ' <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $soc->id) . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddProject") . '"></span></a>';
+			print '</td>';
+			print '</tr>';
+	}
 
 	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 		$arrayoftypes = array("email" => "Email", "sms" => "SMS");
