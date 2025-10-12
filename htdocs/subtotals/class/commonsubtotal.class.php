@@ -267,7 +267,6 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 		} elseif ($current_module == 'invoice_supplier' && $this instanceof FactureFournisseur) {
-			/** @var FactureFournisseur $this */
 			$rang = $rang == -1 ? $rang : $rang-1;
 			$result = $this->addline(
 				$desc,					// Description
@@ -278,8 +277,8 @@ trait CommonSubtotal
 				$depth,					// Quantity
 				0,						// FK product
 				0,						// Remise percent
-				null,					// Date start
-				null,					// Date end
+				'',					// Date start
+				'',					// Date end
 				0,						// Code ventilation
 				0,						// info bits
 				'',						// Price base type

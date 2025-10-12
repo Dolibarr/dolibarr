@@ -152,11 +152,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $description;
 
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_start;
+
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_end;
 

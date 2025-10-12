@@ -267,20 +267,20 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		$objecttmp = new MouvementStock($db);
-		$listofobjectid = array();
+		$listofobjectids = array();
 		foreach ($toselect as $toselectid) {
-			$objecttmp = new MouvementStock($db); // must create new instance because instance is saved into $listofobjectref array for future use
+			$objecttmp = new MouvementStock($db); // must create new instance because instance is saved into $listofobjectids array for future use
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$listofobjectid[$toselectid] = $toselectid;
+				$listofobjectids[$toselectid] = $toselectid;
 			}
 		}
 
 		$arrayofinclusion = array();
-		foreach ($listofobjectref as $tmppdf) {
+		foreach ($listofobjectids as $tmppdf) {
 			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
 		}
-		foreach ($listofobjectref as $tmppdf) {
+		foreach ($listofobjectids as $tmppdf) {
 			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9-_]+\.pdf$'; // To include PDF generated from ODX files
 		}
 		$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, 1);
@@ -320,7 +320,7 @@ if (empty($reshook)) {
 
 
 		// Create PDF
-		// TODO Create the pdf including list of movement ids found into $listofobjectid
+		// TODO Create the pdf including list of movement ids found into $listofobjectids
 		// ...
 
 
