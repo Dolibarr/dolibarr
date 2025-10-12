@@ -480,7 +480,6 @@ class CTicketCategory extends CommonObject
 		*/
 		$label = '';
 
-		//$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
 		$url = '';
 
 		if ($option != 'nolink') {
