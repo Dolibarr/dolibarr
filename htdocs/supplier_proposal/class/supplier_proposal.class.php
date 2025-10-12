@@ -10,7 +10,7 @@
  * Copyright (C) 2010-2018  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014  Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014       Marcos García            <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
@@ -642,6 +642,7 @@ class SupplierProposal extends CommonObject
 			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->fk_unit = $fk_unit;
 			$this->line->origin = $origin;
+			$this->line->origin_type = $origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->ref_fourn = $this->db->escape($ref_supplier);
 			$this->line->date_start = $date_start;
@@ -2740,9 +2741,9 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->fk_product = $obj->fk_product;
 				$this->lines[$i]->ref = $obj->ref;
 				$this->lines[$i]->product_label = $obj->product_label;
-				$this->lines[$i]->product_desc		= $obj->product_desc;
+				$this->lines[$i]->product_desc = $obj->product_desc;
 				$this->lines[$i]->fk_product_type = $obj->fk_product_type; // deprecated
-				$this->lines[$i]->product_type		= $obj->product_type;
+				$this->lines[$i]->product_type = $obj->product_type;
 				$this->lines[$i]->qty = $obj->qty;
 				$this->lines[$i]->subprice = $obj->subprice;
 				$this->lines[$i]->fk_remise_except = $obj->fk_remise_except;
