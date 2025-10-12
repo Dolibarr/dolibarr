@@ -20,7 +20,7 @@
 
 /**
  * @var CommonObject $this
- * @var CommonObject $object
+ * @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $object
  * @var CommonObjectLine $line
  * @var Form $form
  * @var HookManager $hookmanager
@@ -33,7 +33,7 @@
  */
 
 '
-@phan-var-force CommonObject $this
+@phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this
 ';
 
 $depth_array = $depth_array ?? array();
@@ -65,7 +65,7 @@ $page = $_SERVER["PHP_SELF"];
 
 if ($object->element == 'facture') {
 	$page .= '?facid=' . $object->id;
-} elseif (in_array($object->element, CommonSubtotal::$ALLOWED_TYPES)) {
+} elseif (in_array($object->element, $object::$ALLOWED_TYPES)) {
 	$page .= '?id=' . $object->id;
 }
 
