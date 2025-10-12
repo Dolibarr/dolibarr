@@ -613,10 +613,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'classin' && $permissiontocreate) {
-		// Set project, copied from comm/propal/card.pgp
-		$object->setProject(GETPOSTINT('projectid'));
+		$mesgs = array();
+		$setResult = $object->setProject(GETPOSTINT('projectid'));
 		dol_syslog('Mailing card, action classin, setProject', LOG_DEBUG);
-		if (!$mesg) {
+		if ($setResult) {
 			$result = $object->update($user);
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
