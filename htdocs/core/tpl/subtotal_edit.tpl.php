@@ -20,7 +20,7 @@
 
 /**
  * @var CommonObject $this
- * @var CommonObject $object
+ * @var Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
  * @var CommonObjectLine $line
  * @var Form $form
  * @var Translate $langs
