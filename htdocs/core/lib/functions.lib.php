@@ -6212,7 +6212,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
 		$titlealt = $langs->trans('Modify');
 	}
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
+	return img_picto($titlealt, 'edit', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
 }
 
 /**
@@ -6252,7 +6252,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $more
 		$titlealt = $langs->trans('Delete');
 	}
 
-	return img_picto($titlealt, 'delete.png', $other, 0, 0, 0, '', $morecss);
+	return img_picto($titlealt, 'delete', $other, 0, 0, 0, '', $morecss);
 }
 
 /**
@@ -6268,7 +6268,7 @@ function img_printer($titlealt = "default", $other = '')
 	if ($titlealt == "default") {
 		$titlealt = $langs->trans("Print");
 	}
-	return img_picto($titlealt, 'printer.png', $other);
+	return img_picto($titlealt, 'printer', $other);
 }
 
 /**
