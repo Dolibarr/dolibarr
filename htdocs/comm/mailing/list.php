@@ -491,13 +491,9 @@ if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "m.titre", $param, "", "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", $param, "", '', $sortfield, $sortorder, 'center ');
-if (!$filteremail) {
-	print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "project_label", $param, "", '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-} else {
-	print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "project_label", $param, "", '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
+
+// Project
+print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "project_label", $param, "", '', $sortfield, $sortorder);
 $totalarray['nbfield']++;
 if (!$filteremail) {
 	$title = $langs->trans("NbOfEMails");
