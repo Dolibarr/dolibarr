@@ -1073,7 +1073,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '</td>';
 									print '<td>';
 									if ($can_update_stock) {
-										print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'-'.$child_line_id.'\')"');
+										print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'-'.$child_line_id.'\')"');
 									}
 									print '</td>';
 
@@ -1233,10 +1233,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 							print '<td>';
 							if ($is_mod_batch_enabled && $objp->tobatch > 0) {
 								$type = 'batch';
-								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 							} else {
 								$type = 'dispatch';
-								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 							}
 
 							print '</td>';

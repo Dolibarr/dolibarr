@@ -6286,7 +6286,7 @@ function img_split($titlealt = 'default', $other = 'class="pictosplit"')
 		$titlealt = $langs->trans('Split');
 	}
 
-	return img_picto($titlealt, 'split.png', $other);
+	return img_picto($titlealt, 'split', $other);
 }
 
 /**
