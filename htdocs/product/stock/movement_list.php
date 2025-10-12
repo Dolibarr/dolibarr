@@ -358,7 +358,7 @@ if ($action == "correct_stock" && $permissiontoadd) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'correction';
 	}
-	if (!is_numeric(GETPOST("nbpiece"))) {
+	if (!GETPOSTFLOAT("nbpiece")) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$action = 'correction';
@@ -384,7 +384,7 @@ if ($action == "correct_stock" && $permissiontoadd) {
 			$result = $product->correct_stock_batch(
 				$user,
 				$id,
-				GETPOSTINT("nbpiece"),
+				GETPOSTFLOAT("nbpiece"),
 				GETPOSTINT("mouvement"),
 				GETPOST("label", 'alphanohtml'),
 				price2num(GETPOST('unitprice'), 'MT'),
@@ -401,7 +401,7 @@ if ($action == "correct_stock" && $permissiontoadd) {
 			$result = $product->correct_stock(
 				$user,
 				$id,
-				GETPOSTINT("nbpiece"),
+				GETPOSTFLOAT("nbpiece"),
 				GETPOSTINT("mouvement"),
 				GETPOST("label", 'alphanohtml'),
 				price2num(GETPOST('unitprice'), 'MT'),
@@ -446,7 +446,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'transfert';
 	}
-	if (!GETPOSTINT("nbpiece")) {
+	if (!GETPOSTFLOAT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action = 'transfert';
@@ -510,7 +510,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					$result1 = $product->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
-						GETPOSTINT("nbpiece"),
+						GETPOSTFLOAT("nbpiece"),
 						1,
 						GETPOST("label", 'san_alpha'),
 						$pricesrc,
@@ -527,7 +527,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					$result2 = $product->correct_stock_batch(
 						$user,
 						GETPOSTINT("id_entrepot_destination"),
-						GETPOSTINT("nbpiece"),
+						GETPOSTFLOAT("nbpiece"),
 						0,
 						GETPOST("label", 'san_alpha'),
 						$pricedest,
@@ -546,9 +546,9 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 				$result1 = $product->correct_stock(
 					$user,
 					$id,
-					GETPOST("nbpiece"),
+					GETPOSTFLOAT("nbpiece"),
 					1,
-					GETPOST("label", 'san_alpha'),
+					GETPOST("label", 'alphanohtml'),
 					$pricesrc,
 					GETPOST('inventorycode', 'alphanohtml'),
 					'',
@@ -561,9 +561,9 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 				$result2 = $product->correct_stock(
 					$user,
 					GETPOST("id_entrepot_destination"),
-					GETPOST("nbpiece"),
+					GETPOSTFLOAT("nbpiece"),
 					0,
-					GETPOST("label", 'san_alpha'),
+					GETPOST("label", 'alphanohtml'),
 					$pricedest,
 					GETPOST('inventorycode', 'alphanohtml'),
 					'',

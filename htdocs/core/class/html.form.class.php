@@ -6736,7 +6736,7 @@ class Form
 			// If SERVICE_ARE_ECOMMERCE_200238EC=1 combo list vat rate of purchaser and seller countries
 			// If SERVICE_ARE_ECOMMERCE_200238EC=2 combo list only the vat rate of the purchaser country
 			$selectVatComboMode = getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC');
-			if (isInEEC($societe_vendeuse) && isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()) {
+			if (is_object($societe_vendeuse) && is_object($societe_acheteuse) && isInEEC($societe_vendeuse) && isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()) {
 				// We also add the buyer country code
 				if (is_numeric($type)) {
 					if ($type == 1) { // We know product is a service
@@ -8851,7 +8851,7 @@ class Form
 				    		},
 				    		cache: true
 				    	},
-		 				language: select2arrayoflanguage,
+		 				language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					    placeholder: "' . dol_escape_js($placeholder) . '",
 				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
@@ -8941,7 +8941,7 @@ class Form
 
 					$(".' . $htmlname . '").select2({
 						data: data,
-						language: select2arrayoflanguage,
+						language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 						placeholder: "' . dol_escape_js($placeholder) . '",
 						escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work

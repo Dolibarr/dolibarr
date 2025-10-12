@@ -201,13 +201,13 @@ class modMyModule extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
-		// 'invoice_supplier' to add a tab in supplier invoice view
+		// 'supplier_invoice' to add a tab in supplier invoice view
 		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sale order view
-		// 'order_supplier'   to add a tab in supplier order view
+		// 'supplier_order'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
-		// 'payment_supplier' to add a tab in supplier payment view
+		// 'supplier_payment' to add a tab in supplier payment view
 		// 'product'          to add a tab in product view
 		// 'propal'           to add a tab in propal view
 		// 'project'          to add a tab in project view

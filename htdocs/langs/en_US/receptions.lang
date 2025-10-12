@@ -54,3 +54,4 @@ RestoreWithCurrentQtySaved=Fill quantities with latest saved values
 ReceptionsRecorded=Receptions recorded
 ReceptionUpdated=Reception successfully updated
 ReceptionDistribution=Reception distribution
+ReceptionMustBeInTheSameCurrencyThanOther=Reception have to be int the same currency than the other

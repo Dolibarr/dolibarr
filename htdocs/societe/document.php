@@ -183,10 +183,11 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-$modulepart = 'societe';
+$modulepart = 'company';
 $permissiontoadd = $user->hasRight('societe', 'creer');
 $permtoedit = $user->hasRight('societe', 'creer');
 $param = '&id='.$object->id;
+$relativepathwithnofile = $object->id . '/';
 include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 
 // End of page

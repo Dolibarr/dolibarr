@@ -354,7 +354,6 @@ class Export
 				}
 				break;
 			case 'Duree':
-				break;
 			case 'Numeric':
 				// if there is a signe +
 				if (strpos($ValueField, "+") > 0) {
@@ -575,7 +574,6 @@ class Export
 				$szMsg = $langs->trans('ExportDateFilter');
 				break;
 			case 'Duree':
-				break;
 			case 'Numeric':
 				$szMsg = $langs->trans('ExportNumericFilter');
 				break;

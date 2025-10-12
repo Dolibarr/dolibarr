@@ -8,6 +8,7 @@
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -294,7 +295,11 @@ class CMailFile
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
 				// This converts an embed file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
-				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
+				$dolibarr_main_data_root_images = $dolibarr_main_data_root;
+				if ((int) $conf->entity !== 1) {
+					$dolibarr_main_data_root_images.='/'.$conf->entity.'/';
+				}
+				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');
 				if ($findimg < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
 					$this->error = 'ErrorInAddAttachmentsImageBaseOnMedia';
@@ -581,7 +586,9 @@ class CMailFile
 			if (!empty($this->atleastonefile)) {
 				foreach ($filename_list as $i => $val) {
 					$content = file_get_contents($filename_list[$i]);
-					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], (empty($cid_list[$i]) ? '' : $cid_list[$i]));
+					if (empty($cid_list[$i])) {
+						$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], (empty($cid_list[$i]) ? '' : $cid_list[$i]));
+					}
 				}
 			}
 
@@ -657,8 +664,8 @@ class CMailFile
 						$adressEmailFrom = array();
 						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
 						$adressEmailFrom = reset($adressEmailFrom);
-						if ($emailMatchs !== false && filter_var($conf->global->MAIN_MAIL_SMTPS_ID, FILTER_VALIDATE_EMAIL) && $conf->global->MAIN_MAIL_SMTPS_ID !== $adressEmailFrom) {
-							$this->message->setFrom($conf->global->MAIN_MAIL_SMTPS_ID);
+						if ($emailMatchs !== false && filter_var(getDolGlobalString('MAIN_MAIL_SMTPS_ID'), FILTER_VALIDATE_EMAIL) && getDolGlobalString('MAIN_MAIL_SMTPS_ID') !== $adressEmailFrom[0]) {
+							$this->message->setFrom(getDolGlobalString('MAIN_MAIL_SMTPS_ID'));
 						} else {
 							$this->message->setFrom($this->getArrayAddress($this->addr_from));
 						}
@@ -1783,15 +1790,17 @@ class CMailFile
 						$mimetype_list[$i] = "application/octet-stream";
 					}
 
+					// Skip files that have a CID (they will be added as inline images instead)
+					if (!empty($cidlist) && is_array($cidlist) && isset($cidlist[$i]) && $cidlist[$i] !== null && $cidlist[$i] !== '') {
+						continue; // Skip this file as it will be processed as inline image
+					}
+
 					$out .= "--".$this->mixed_boundary.$this->eol;
+
 					$out .= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
 					$out .= "Content-Type: ".$mimetype_list[$i]."; name=\"".$filename_list[$i]."\"".$this->eol;
 					$out .= "Content-Transfer-Encoding: base64".$this->eol;
 					$out .= "Content-Description: ".$filename_list[$i].$this->eol;
-					if (!empty($cidlist) && is_array($cidlist) && $cidlist[$i]) {
-						$out .= "X-Attachment-Id: ".$cidlist[$i].$this->eol;
-						$out .= "Content-ID: <".$cidlist[$i].'>'.$this->eol;
-					}
 					$out .= $this->eol;
 					$out .= $encoded;
 					$out .= $this->eol;
@@ -2117,6 +2126,22 @@ class CMailFile
 					$this->html = str_replace('src="data:image/'.$ext.';base64,'.$filecontent.'"', 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
 				}
 				$i++;
+			}
+
+			// Also add cidfromdata images to images_encoded array so they are sent as inline images
+			foreach ($this->html_images as $img) {
+				if ($img['type'] == 'cidfromdata') {
+					$image_content = file_get_contents($img['fullpath']);
+					if ($image_content !== false) {
+						$idx = count($this->images_encoded);
+						$this->images_encoded[$idx]['name'] = $img['name'];
+						$this->images_encoded[$idx]['fullpath'] = $img['fullpath'];
+						$this->images_encoded[$idx]['content_type'] = $img['content_type'];
+						$this->images_encoded[$idx]['cid'] = $img['cid'];
+						$this->images_encoded[$idx]['type'] = 'cidfromdata';
+						$this->images_encoded[$idx]['image_encoded'] = chunk_split(base64_encode($image_content), 68, $this->eol);
+					}
+				}
 			}
 
 			return 1;

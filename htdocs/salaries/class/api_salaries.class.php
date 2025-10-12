@@ -350,7 +350,7 @@ class Salaries extends DolibarrApi
 	 * @param 	array  $request_data    data
 	 * @return 	Object					PaymentSalary object
 	 *
-	 * @url     POST {id}/payments
+	 * @url     PUT {id}/payments
 	 *
 	 * @throws RestException
 	 */

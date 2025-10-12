@@ -81,7 +81,29 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 	}
 }
 
+
 $takeposterminal = isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '';
+
+// When session has expired (selected terminal has been lost from session), redirect to the terminal selection.
+if (empty($takeposterminal)) {
+	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
+		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+		$takeposterminal = 1;
+	} elseif (!empty($_COOKIE["takeposterminal"])) {
+		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
+		$takeposterminal = $_SESSION["takeposterminal"];
+	} else {
+		print <<<SCRIPT
+<script language="javascript">
+	$( document ).ready(function() {
+		ModalBox('ModalTerminal');
+	});
+</script>
+SCRIPT;
+		exit;
+	}
+}
+
 
 /**
  * Abort invoice creation with a given error message

@@ -66,7 +66,7 @@ if (isModEnabled('intervention')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'banks'));
+$langs->loadLangs(array('companies', 'banks', 'commercial'));
 
 if (isModEnabled('contract')) {
 	$langs->load("contracts");
