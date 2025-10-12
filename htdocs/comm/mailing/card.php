@@ -78,8 +78,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Load object->fk_project
-if (isset($object->fk_project))
-{
+if (isset($object->fk_project)) {
 	$ret = $object->fetchProject();
 	if ($ret <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
