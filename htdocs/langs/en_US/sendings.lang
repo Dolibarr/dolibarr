@@ -110,6 +110,7 @@ NonExistentOrder=Nonexistent order
 StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
+ShippingUseItsOwnContacts=Shipping use it's own contacts
 # ModelDocument
 DocumentModelTyphon=More complete document model for delivery receipts (logo...)
 DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
