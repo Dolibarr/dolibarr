@@ -66,12 +66,12 @@ $modules = [
 		'key' => 'SupplierProposal',
 		'old_pdf' => '(aurore model)',
 	],
-	'SUPPLIER_ORDER' => [
+	'ORDER_SUPPLIER' => [
 		'lang' => 'orders',
 		'key' => 'SupplierOrder',
 		'old_pdf' => '(muscadet model)',
 	],
-	'SUPPLIER_INVOICE' => [
+	'INVOICE_SUPPLIER' => [
 		'lang' => 'bills',
 		'key' => 'SupplierInvoice',
 	],
@@ -83,8 +83,8 @@ $conditions = [
 	'FACTURE' => isModEnabled("invoice"),
 	'FACTUREREC' => isModEnabled("invoice"),
 	'SUPPLIER_PROPOSAL' => isModEnabled("supplier_proposal"),
-	'SUPPLIER_ORDER' => isModEnabled("supplier_order"),
-	'SUPPLIER_INVOICE' => isModEnabled("supplier_invoice"),
+	'ORDER_SUPPLIER' => isModEnabled("supplier_order"),
+	'INVOICE_SUPPLIER' => isModEnabled("supplier_invoice"),
 ];
 
 $max_depth = 0;
