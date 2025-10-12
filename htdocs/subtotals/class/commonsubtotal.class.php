@@ -80,7 +80,9 @@ trait CommonSubtotal
 			'shipping',
 			'supplier_proposal',
 			'supplier_order',
+			'order_supplier',
 			'supplier_invoice',
+			'invoice_supplier',
 		];
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
@@ -261,8 +263,34 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
+		} elseif ($current_module == 'invoice_supplier' && $this instanceof FactureFournisseur) {
+			/** @var FactureFournisseur $this */
+			$rang = $rang == -1 ? $rang : $rang-1;
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				$depth,					// Quantity
+				0,						// FK product
+				0,						// Remise percent
+				null,					// Date start
+				null,					// Date end
+				0,						// Code ventilation
+				0,						// info bits
+				'',						// Price base type
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				0,						// no trigger
+				[],						// array_options
+				null,					// fk_unit
+				0,						// origin id
+				0,						// pu ht devise
+				'',						// ref supplier
+				SUBTOTALS_SPECIAL_CODE	// Special code
+			);
 		}
-
 
 		if ($current_module != 'shipping') {
 			foreach ($this->lines as $line) {
