@@ -880,7 +880,7 @@ if (!empty($id) && $action != 'edit') {
 			$resteapayeraffiche = $remaintopay;
 
 			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right'.(!empty($resteapayeraffiche) ? ' amountremaintopay' : '').'">'.price($remaintopay)."</td></tr>\n";
+			print '<td class="right'.(!empty($resteapayeraffiche) ? ' amountremaintopay' : '').'">'.price($resteapayeraffiche)."</td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);
@@ -895,7 +895,8 @@ if (!empty($id) && $action != 'edit') {
 
 	print dol_get_fiche_end();
 
-	$remaintopay = $object->amount - $totalpaid;
+	$remaintopay = price2num($object->amount - $totalpaid, 'MT');
+
 
 	// Actions buttons
 
@@ -928,7 +929,7 @@ if (!empty($id) && $action != 'edit') {
 		}
 
 		// Classify 'paid'
-		if ($object->status == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
+		if ($object->status == $object::STATUS_VALIDATED && $remaintopay == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 		if ($object->status == $object::STATUS_PAID && $object->paid == 1 && $user->hasRight('don', 'creer')) {
@@ -937,10 +938,10 @@ if (!empty($id) && $action != 'edit') {
 
 		// Delete
 		if ($user->hasRight('don', 'supprimer')) {
-			if ($object->status == $object::STATUS_CANCELED || $object->status == $object::STATUS_DRAFT) {
+			if ($object->status != $object::STATUS_PAID && $remaintopay == $object->amount) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantRemovePaymentWithOneInvoicePaid").'">'.$langs->trans("Delete")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DeletionNotPossibleWhenAPaymentExists").'">'.$langs->trans("Delete")."</a></div>";
 			}
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
