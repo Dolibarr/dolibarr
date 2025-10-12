@@ -303,37 +303,69 @@ class pdf_ledger extends ModelePdfAccountancy
 		$accountDebit = $accountCredit = $totalDebit = $totalCredit = 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			// Show total line / title line when account has changed
-			if (empty($account) || $account != $object->lines[$i]->numero_compte) {
-				$accountingAccount = new AccountingAccount($this->db);
-				$accountingAccount->fetch(0, $object->lines[$i]->numero_compte);
+			if ($this->ledgerType == "sub") {
+				if (empty($account) || $account != $object->lines[$i]->subledger_account) {
+					// Add the subtotal line
+					if (!empty($account)) {
+						$this->addTotalLine(
+							$pdf,
+							$curY,
+							$nexY,
+							$default_font_size,
+							$langs->trans('Total'),
+							$tab_top_newpage,
+							$accountDebit,
+							$accountCredit
+						);
+					}
 
-				// Add the subtotal line
-				if (!empty($account)) {
-					$this->addTotalLine(
+					// Add the title line
+					$this->addTitleLine(
 						$pdf,
 						$curY,
 						$nexY,
 						$default_font_size,
-						$langs->trans('Total'),
-						$tab_top_newpage,
-						$accountDebit,
-						$accountCredit
+						'piece_num',
+						$langs->trans('SubledgerAccount') . ' ' . length_accounta($object->lines[$i]->subledger_account) . ' - ' . $object->lines[$i]->subledger_label,
+						$tab_top_newpage
 					);
+
+					$account = $object->lines[$i]->subledger_account;
+					$accountDebit = $accountCredit = 0;
 				}
+			} else {
+				if (empty($account) || $account != $object->lines[$i]->numero_compte) {
+					$accountingAccount = new AccountingAccount($this->db);
+					$accountingAccount->fetch(0, $object->lines[$i]->numero_compte);
 
-				// Add the title line
-				$this->addTitleLine(
-					$pdf,
-					$curY,
-					$nexY,
-					$default_font_size,
-					'piece_num',
-					$langs->trans('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
-					$tab_top_newpage
-				);
+					// Add the subtotal line
+					if (!empty($account)) {
+						$this->addTotalLine(
+							$pdf,
+							$curY,
+							$nexY,
+							$default_font_size,
+							$langs->trans('Total'),
+							$tab_top_newpage,
+							$accountDebit,
+							$accountCredit
+						);
+					}
 
-				$account = $object->lines[$i]->numero_compte;
-				$accountDebit = $accountCredit = 0;
+					// Add the title line
+					$this->addTitleLine(
+						$pdf,
+						$curY,
+						$nexY,
+						$default_font_size,
+						'piece_num',
+						$langs->trans('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
+						$tab_top_newpage
+					);
+
+					$account = $object->lines[$i]->numero_compte;
+					$accountDebit = $accountCredit = 0;
+				}
 			}
 
 			$accountDebit += $object->lines[$i]->debit;
