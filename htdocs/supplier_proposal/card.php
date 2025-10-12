@@ -270,7 +270,7 @@ if (empty($reshook)) {
 				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 			if ($result >= 0) {
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+				header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
 				exit();
 			}
 		} else {
@@ -2220,7 +2220,7 @@ if ($action == 'create') {
 
 		if (!empty($conf->use_javascript_ajax) && $object->status == SupplierProposal::STATUS_DRAFT) {
 			if (isModEnabled('subtotals')) {
-				include DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_ajaxrow.tpl.php';
+				include DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_ajaxrow.tpl.php';
 			} else {
 				include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 			}
@@ -2316,7 +2316,7 @@ if ($action == 'create') {
 						'enabled' => $object->status == SupplierProposal::STATUS_DRAFT,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
-						'url' => '/supplier_proposal/card.php?id='.$object->id.'&action=add_title_line&token='.newToken()
+						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_title_line'], true)
 					);
 
 					$url_button[] = array(
@@ -2324,7 +2324,7 @@ if ($action == 'create') {
 						'enabled' => $object->status == SupplierProposal::STATUS_DRAFT,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
-						'url' => '/supplier_proposal/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
+						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
 					);
 
 					print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
