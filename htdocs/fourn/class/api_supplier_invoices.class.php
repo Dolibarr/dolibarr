@@ -497,7 +497,7 @@ class SupplierInvoices extends DolibarrApi
 		$paiement->paiementid = $payment_mode_id;
 		$paiement->paiementcode = dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
 		$paiement->num_payment = $num_payment;
-		$paiement->note_public = $comment;
+		$paiement->note_private = $comment;
 
 		$paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
 		if ($paiement_id < 0) {
