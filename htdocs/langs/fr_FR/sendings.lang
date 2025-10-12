@@ -109,6 +109,8 @@ NonExistentOrder=Commande inexistante
 StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantités de stock déjà allouées sur les lignes précédentes
 
 # Sending methods
+ShippingUseItsOwnContacts=Les expéditions utilisent leur propre type de contact
+
 # ModelDocument
 DocumentModelTyphon=Modèle de bon de réception/livraison complet (logo…)
 DocumentModelStorm=Modèle de document plus complet des fiches expéditions et compatibilité avec les attributs complémentaires (logo,...)
