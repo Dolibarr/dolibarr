@@ -548,7 +548,7 @@ class Members extends DolibarrApi
 
 		// Remove the subscriptions because they are handled as a subresource.
 		if ($object instanceof Adherent) {
-			unset($object->subscriptions);
+			$object->subscriptions = [];
 			unset($object->fk_incoterms);
 			unset($object->label_incoterms);
 			unset($object->location_incoterms);
