@@ -241,12 +241,6 @@ if ($filteremail) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-if ($search_refproject) {
-	$param .= '&search_refproject='.urlencode($search_refproject);
-}
-if ($search_project) {
-	$param .= '&search_project='.urlencode($search_project);
-}
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
