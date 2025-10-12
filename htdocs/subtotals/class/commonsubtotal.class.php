@@ -51,7 +51,7 @@ trait CommonSubtotal
 	/**
 	 * @var string[] element of allowed module class
 	 */
-	public static $allowed_types = [
+	public static $ALLOWED_TYPES = [
 		'propal',
 		'commande',
 		'facture',
@@ -87,7 +87,7 @@ trait CommonSubtotal
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		if (!in_array($current_module, $this->allowed_types)) {
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}
@@ -330,7 +330,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		if (!in_array($current_module, $this->allowed_types)) {
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}
@@ -400,7 +400,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		if (!in_array($current_module, $this->allowed_types)) {
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}
@@ -587,7 +587,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		if (!in_array($current_module, $this->allowed_types)) {
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}

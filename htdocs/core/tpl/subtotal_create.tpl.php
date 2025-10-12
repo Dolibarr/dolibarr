@@ -65,7 +65,7 @@ $page = $_SERVER["PHP_SELF"];
 
 if ($object->element == 'facture') {
 	$page .= '?facid=' . $object->id;
-} elseif (in_array($object->element, CommonSubtotal::$allowed_types)) {
+} elseif (in_array($object->element, CommonSubtotal::$ALLOWED_TYPES)) {
 	$page .= '?id=' . $object->id;
 }
 
