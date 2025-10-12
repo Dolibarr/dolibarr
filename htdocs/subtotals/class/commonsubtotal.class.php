@@ -277,8 +277,8 @@ trait CommonSubtotal
 				$depth,					// Quantity
 				0,						// FK product
 				0,						// Remise percent
-				'',					// Date start
-				'',					// Date end
+				'',						// Date start
+				'',						// Date end
 				0,						// Code ventilation
 				0,						// info bits
 				'',						// Price base type
