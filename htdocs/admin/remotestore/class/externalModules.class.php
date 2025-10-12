@@ -416,8 +416,8 @@ class ExternalModules
 			}
 
 			// free or pay ?
-			if ($product["price_ttc"] > 0) {
-				$price = '<h3>'.price(price2num($product["price_ttc"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("TTC").'</h3>';
+			if ($product["price_ht"] > 0) {
+				$price = '<h3>'.price(price2num($product["price_ht"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
 
 				$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'">';
 				$download_link .= img_picto('', 'url', 'class="size2x paddingright"');
@@ -973,6 +973,7 @@ class ExternalModules
 					'author' => array_key_exists('author', $package) ? $package['author'] : '',
 					'author_url' => array_key_exists('author_url', $package) ? $package['author_url'] : '',
 					'price_ttc' => 0,
+					'price_ht' => 0,
 					'dolibarr_min' => !empty($package['dolibarrmin'])
 						? $package['dolibarrmin']
 						: 'unknown',
@@ -1028,6 +1029,7 @@ class ExternalModules
 					'author' => array_key_exists('author', $package) ? $package['author'] : '',
 					'author_url' => array_key_exists('author_url', $package) ? $package['author_url'] : '',
 					'price_ttc' => $package['price_ttc'],
+					'price_ht' => $package['price_ht'],
 					'dolibarr_min' => $package['dolibarr_min'],
 					'dolibarr_max' => $package['dolibarr_max'],
 					'phpmin' => empty($package['phpmin']) ? '' : $package['phpmin'],
