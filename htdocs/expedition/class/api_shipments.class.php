@@ -612,6 +612,186 @@ class Shipments extends DolibarrApi
 		return $this->_cleanObjectDatas($this->shipment);
 	}
 
+		/**
+	 * Get contacts of given shipment
+	 *
+	 * Return an array with contact information
+	 *
+	 * @param	int		$id			ID of shipment
+	 * @param	string	$type		Type of the shipment 
+	 * @return	Object				Object with cleaned properties
+	 *
+	 * @url	GET {id}/contacts
+	 *
+	 * @throws	RestException
+	 */
+	public function getContacts($id, $type = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$objectsrc = clone $this->shipment;
+
+		if (!empty($this->shipment->origin)) {
+			$typeobject = $this->shipment->origin;
+			$this->shipment->fetch_origin();
+		}
+
+		// Linked documents
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'commande' && $this->shipment->origin_object->id && isModEnabled('order')) {
+			$objectsrc = new Commande($this->db);
+			$objectsrc->fetch($this->shipment->origin_object->id);
+		}
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'propal' && $this->shipment->origin_object->id && isModEnabled("propal")) {
+			$objectsrc = new Propal($this->db);
+			$objectsrc->fetch($this->shipment->origin_object->id);
+		}
+
+		$contacts = $objectsrc->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $objectsrc->liste_contact(-1, 'internal', 0, $type);
+
+		$contacts = array_merge($contacts, $socpeoples);
+
+		return $this->_cleanObjectDatas($contacts);
+	}
+
+	/**
+	 * Adds a contact to an shipment
+	 *
+	 * @param   int		$id					Order ID
+	 * @param   int		$fk_socpeople			Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
+	 * @param   string	$type_contact           Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
+	 * @param   string  $source					external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 * @param   int     $notrigger              Disable all triggers
+	 *
+	 * @url POST    {id}/contacts
+	 *
+	 * @return  object
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
+		}
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$objectsrc = clone $this->shipment;
+
+		if (!empty($this->shipment->origin)) {
+			$typeobject = $this->shipment->origin;
+			$this->shipment->fetch_origin();
+		}
+
+		// Linked documents
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'commande' && $this->shipment->origin_object->id && isModEnabled('order')) {
+			$objectsrc = new Commande($this->db);
+			$objectsrc->fetch($this->shipment->origin_object->id);
+		}
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'propal' && $this->shipment->origin_object->id && isModEnabled("propal")) {
+			$objectsrc = new Propal($this->db);
+			$objectsrc->fetch($this->shipment->origin_object->id);
+		}
+
+		$result = $objectsrc->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
+		if ($result < 0) {
+			throw new RestException(500, 'Error : '.$objectsrc->error);
+		}
+
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $this->_cleanObjectDatas($this->shipment);
+	}
+
+	/**
+	 * Delete a contact type of given shipment
+	 *
+	 * @param	int    $id             Id of shipment to update
+	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
+	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @return	Object				   Object with cleaned properties
+	 *
+	 * @url	DELETE {id}/contact/{contactid}/{type}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteContact($id, $contactid, $type)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->shipment->fetch($id);
+
+		if (!$result) {
+			throw new RestException(404, 'shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$objectsrc = clone $this->shipment;
+
+		if (!empty($this->shipment->origin)) {
+			$typeobject = $this->shipment->origin;
+			$this->shipment->fetch_origin();
+		}
+
+		// Linked documents
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'commande' && $this->shipment->origin_object->id && isModEnabled('order')) {
+			$objectsrc = new Commande($this->db);
+			$objectsrc->fetch($this->shipment->origin_object->id);
+		}
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'propal' && $this->shipment->origin_object->id && isModEnabled("propal")) {
+			$objectsrc = new Propal($this->db);
+			$objectsrc->fetch($this->shipment->origin_object->id);
+		}
+		
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $objectsrc->liste_contact(-1, $source);
+
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $objectsrc->delete_contact($contact['rowid']);
+					if (!$result) {
+						throw new RestException(500, 'Error when deleted the contact');
+					}
+				}
+			}
+		}
+		return $this->_cleanObjectDatas($this->shipment);
+	}
 
 	// /**
 	//  *  Classify the shipment as invoiced
