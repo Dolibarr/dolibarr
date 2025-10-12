@@ -7,7 +7,7 @@
  * Copyright (C) 2023 		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,21 @@ class pdf_ledger extends ModelePdfAccountancy
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
+
+	/**
+	 * @var int $fromDate Start timestamp
+	 */
+	public $fromDate;
+
+	/**
+	 * @var int $toDate Start timestamp
+	 */
+	public $toDate;
+
+	/**
+	 * @var string $ledgerType Ledger type, default is empty for general ledger, or 'sub' for subsidiary ledger
+	 */
+	public $ledgerType;
 
 	/**
 	 *	Constructor
@@ -218,7 +233,11 @@ class pdf_ledger extends ModelePdfAccountancy
 		}
 
 		$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-		$pdf->SetSubject($outputlangs->transnoentities("AccountancyLedger"));
+		if ($this->ledgerType == "sub") {
+			$pdf->SetSubject($outputlangs->transnoentities("BookkeepingSubAccount"));
+		} else {
+			$pdf->SetSubject($outputlangs->transnoentities("AccountancyLedger"));
+		}
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyLedger"));
@@ -663,8 +682,12 @@ class pdf_ledger extends ModelePdfAccountancy
 		// Page title
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx - 2, $posy + 2);
-		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("PdfLedgerTitle");
+		$pdf->SetTextColor(0, 0, 120);
+		if ($this->ledgerType == "sub") {
+			$title = $outputlangs->transnoentities("BookkeepingSubAccount");
+		} else {
+			$title = $outputlangs->transnoentities("PdfLedgerTitle");
+		}
 		$pdf->MultiCell($w / 3, 3, $title, 0, 'C');
 		$nexY = max($pdf->GetY(), $nexY);
 
@@ -844,7 +867,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Debit', // use lang key is useful in somme case with module
+				'textkey' => 'AccountingDebit', // use lang key is useful in somme case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -863,7 +886,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Credit', // use lang key is useful in somme case with module
+				'textkey' => 'AccountingCredit', // use lang key is useful in somme case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
