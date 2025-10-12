@@ -6308,7 +6308,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 		}
 	}
 
-	return img_picto($usealttitle, 'info.png', 'style="vertical-align: middle;' . ($usehelpcursor == 1 ? ' cursor: help' : ($usehelpcursor == 2 ? ' cursor: pointer' : '')) . '"');
+	return img_picto($usealttitle, 'info', 'style="vertical-align: middle;' . ($usehelpcursor == 1 ? ' cursor: help' : ($usehelpcursor == 2 ? ' cursor: pointer' : '')) . '"');
 }
 
 /**
