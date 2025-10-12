@@ -49,6 +49,21 @@ trait CommonSubtotal
 	public static $SUBTOTAL_OPTIONS = ['subtotalshowtotalexludingvatonpdf'];
 
 	/**
+	 * @var string[] element of allowed module class
+	 */
+	public static $allowed_types = [
+		'propal',
+		'commande',
+		'facture',
+		'facturerec',
+		'shipping',
+		'supplier_proposal',
+		'order_supplier',
+		'invoice_supplier',
+	];
+
+
+	/**
 	 * Adds a subtotals line to a document.
 	 * This function inserts a subtotal line based on the given parameters.
 	 *
@@ -72,19 +87,7 @@ trait CommonSubtotal
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-			'supplier_proposal',
-			'supplier_order',
-			'order_supplier',
-			'supplier_invoice',
-			'invoice_supplier',
-		];
-		if (!in_array($current_module, $allowed_types)) {
+		if (!in_array($current_module, $this->allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}
