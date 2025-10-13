@@ -946,6 +946,9 @@ input.pageplusone {
 .hmirror {
 	transform: scale(-1, 1);
 }
+.undertopmenu {
+	scroll-margin-top: 80px;
+}
 
 select:invalid, select.--error {
 	color: gray;

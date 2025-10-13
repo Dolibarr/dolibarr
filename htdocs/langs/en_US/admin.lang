@@ -429,6 +429,8 @@ PDF=PDF
 PDFDesc=Global options for PDF generation
 PDFOtherDesc=PDF Option specific to some modules
 PDFAddressForging=Rules for address section
+MoreOptionsRelatedToPDF=More options related to PDF generation
+SeeInPDFSetupPage=See on the PDF Setup page
 HideAnyVATInformationOnPDF=Hide all information related to Sales Tax / VAT
 PDFRulesForSalesTax=Rules for Sales Tax / VAT
 PDFLocaltax=Rules for %s
@@ -1419,7 +1421,7 @@ ExtraFieldsSalaries=Complementary attributes (salaries)
 ExtraFieldHasWrongValue=Attribute %s has a wrong value.
 AlphaNumOnlyLowerCharsAndNoSpace=only alphanumericals and lower case characters without space
 SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must contains option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
-PathToDocuments=Path to documents
+PathToDocuments=Document storage directory
 PathDirectory=Directory
 SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail direct" will generate a mail message that might not be parsed correctly by some receiving mail servers. The result is that some mails can't be read by people hosted by those bugged platforms. This is the case for some Internet providers (Ex: Orange in France). This is not a problem with Dolibarr or PHP but with the receiving mail server. You can however add an option MAIN_FIX_FOR_BUGGED_MTA to 1 in Setup - Other to modify Dolibarr to avoid this. However, you may experience problems with other servers that strictly use the SMTP standard. The other solution (recommended) is to use the method "SMTP socket library" which has no disadvantages.
 TranslationSetup=Setup of translation

@@ -247,7 +247,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 if (isModEnabled('propal')) {
-	print '<div id="#proposal"></div>';
+	print '<div id="proposal" class="undertopmenu"></div>';
 
 	print load_fiche_titre($langs->trans("Proposal"), '', 'proposal');
 	print '<div class="div-table-responsive-no-min">';
@@ -335,7 +335,7 @@ if (isModEnabled('propal')) {
 }
 
 if (isModEnabled('order')) {
-	print '<div id="#order"></div>';
+	print '<div id="order" class="undertopmenu"></div>';
 
 	$langs->load("orders");
 	print load_fiche_titre($langs->trans('CustomersOrders'), '', 'order');
@@ -414,7 +414,7 @@ if (isModEnabled('order')) {
 
 
 if (isModEnabled('invoice')) {
-	print '<div id="#invoice"></div>';
+	print '<div id="invoice" class="undertopmenu"></div>';
 
 	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
 
@@ -585,7 +585,7 @@ if (isModEnabled('invoice')) {
 
 
 if (isModEnabled('supplier_proposal')) {
-	print '<div id="#supplier_proposal"></div>';
+	print '<div id="supplier_proposal"></div>';
 
 	$langs->load("supplier_proposal");
 	print load_fiche_titre($langs->trans("SupplierProposal"), '', 'supplier_proposal');
@@ -624,7 +624,7 @@ if (isModEnabled('supplier_proposal')) {
 
 
 if (isModEnabled('supplier_order')) {
-	print '<div id="#supplier_order"></div>';
+	print '<div id="supplier_order"></div>';
 
 	$langs->load("supplier_order");
 	print load_fiche_titre($langs->trans("SupplierOrder"), '', 'supplier_proposal');
@@ -662,7 +662,7 @@ if (isModEnabled('supplier_order')) {
 }
 
 if (isModEnabled('shipping')) {
-	print '<div id="#shipping"></div>';
+	print '<div id="shipping"></div>';
 
 	print load_fiche_titre($langs->trans("Shipments"), '', 'shipment');
 
@@ -687,7 +687,7 @@ if (isModEnabled('shipping')) {
 }
 
 if (isModEnabled('reception')) {
-	print '<div id="#reception"></div>';
+	print '<div id="reception"></div>';
 
 	print load_fiche_titre($langs->trans("Receptions"), '', 'reception');
 
@@ -734,7 +734,7 @@ if (isModEnabled('reception')) {
 }
 
 if (isModEnabled('stocktransfer')) {
-	print '<div id="#stocktransfer"></div>';
+	print '<div id="stocktransfer"></div>';
 
 	print load_fiche_titre($langs->trans("StockTransfer"), '', 'stock');
 
