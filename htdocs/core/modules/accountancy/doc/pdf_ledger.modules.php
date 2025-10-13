@@ -295,7 +295,7 @@ class pdf_ledger extends ModelePdfAccountancy
 						$curY,
 						$nexY,
 						$default_font_size,
-						$langs->trans('Total'),
+						$langs->transnoentities('Total'),
 						$tab_top_newpage,
 						$accountDebit,
 						$accountCredit
@@ -303,13 +303,16 @@ class pdf_ledger extends ModelePdfAccountancy
 				}
 
 				// Add the title line
+				if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+					$this->addDashLine($pdf, $pdf->getPage(), $nexY);
+				}
 				$this->addTitleLine(
 					$pdf,
 					$curY,
 					$nexY,
 					$default_font_size,
 					'piece_num',
-					$langs->trans('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
+					$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
 					$tab_top_newpage
 				);
 
@@ -426,7 +429,7 @@ class pdf_ledger extends ModelePdfAccountancy
 
 			if ($this->getColumnStatus('balance')) {
 				$solde = $object->lines[$i]->credit - $object->lines[$i]->debit;
-				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 				$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 				$nexY = max($pdf->GetY(), $nexY);
 			}
@@ -496,7 +499,7 @@ class pdf_ledger extends ModelePdfAccountancy
 				$curY,
 				$nexY,
 				$default_font_size,
-				$langs->trans('Total'),
+				$langs->transnoentities('Total'),
 				$tab_top_newpage,
 				$accountDebit,
 				$accountCredit
@@ -938,6 +941,8 @@ class pdf_ledger extends ModelePdfAccountancy
 	 */
 	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
 	{
+		global $langs;
+
 		$curY = $nexY;
 		$pageposbefore = $pdf->getPage();
 		$pdf->SetFont('', 'B', $default_font_size - 1);
@@ -972,7 +977,7 @@ class pdf_ledger extends ModelePdfAccountancy
 
 		if ($this->getColumnStatus('balance')) {
 			$solde = $credit - $debit;
-			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 			$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 			$nexY = max($pdf->GetY(), $nexY);
 		}

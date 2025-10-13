@@ -1384,6 +1384,7 @@ Input=Input
 Output=Output
 Approval=Approval
 Validation=Validation
+DeletionNotPossibleWhenAPaymentExists=Deletion is not possible when there is attached payments
 Calculate=Calculate
 ShortLabel=Short label
 Bookmark = Bookmark

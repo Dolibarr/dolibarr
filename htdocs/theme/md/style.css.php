@@ -4588,11 +4588,11 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-style: solid;
 }
 table.liste tr:last-child td:first-child,
-table.liste tr:last-child th:first-child {
+table.liste > tr:last-child th:first-child, table.liste tfoot tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
 table.liste tr:last-child td:last-child,
-table.liste tr:last-child th:last-child {
+table.liste > tr:last-child th:last-child, table.liste tfoot tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 

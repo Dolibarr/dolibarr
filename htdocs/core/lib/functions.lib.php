@@ -4899,7 +4899,6 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
 		if ($countrycode) {	// If success, countrycode is us, fr, ...
 			if (file_exists(DOL_DOCUMENT_ROOT . '/theme/common/flags/' . $countrycode . '.png')) {
 				$ret .= picto_from_langcode($countrycode);
-				// $ret .= img_picto($countrycode.' '.$langs->trans("AccordingToGeoIPDatabase"), DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png', '', 1);
 			} else {
 				$ret .= '(' . $countrycode . ')';
 			}
@@ -5495,7 +5494,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			return $enabledisablehtml;
 		}
 
-		if (empty($srconly) && !preg_match('/[\.\/@]/', $pictowithouttext)) {	// If picto code does not contains a / and no . inside, it is not a path to an image file on disk
+		if (empty($srconly) && !preg_match('/[\.\/@]/', $picto)) {	// If original picto code does not contains a / and no . inside, it is not a path to an image file on disk
 			$fakey = $pictowithouttext;
 			$facolor = '';
 			$fasize = '';
@@ -6326,7 +6325,7 @@ function img_info($titlealt = 'default')
 		$titlealt = $langs->trans('Informations');
 	}
 
-	return img_picto($titlealt, 'info.png', 'style="vertical-align: middle;"');
+	return img_picto($titlealt, 'info', 'style="vertical-align: middle;"');
 }
 
 /**
@@ -6346,7 +6345,7 @@ function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarn
 	}
 
 	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
-	return img_picto($titlealt, 'warning.png', 'class="' . $morecss . '"' . ($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' ' . $moreatt) : ''));
+	return img_picto($titlealt, 'warning', 'class="' . $morecss . '"' . ($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' ' . $moreatt) : ''));
 }
 
 /**
@@ -6363,7 +6362,7 @@ function img_error($titlealt = 'default')
 		$titlealt = $langs->trans('Error');
 	}
 
-	return img_picto($titlealt, 'error.png');
+	return img_picto($titlealt, 'error');
 }
 
 /**
@@ -6496,7 +6495,7 @@ function img_allow($allow, $titlealt = 'default')
 	}
 
 	if ($allow == 1) {
-		return img_picto($titlealt, 'tick.png');
+		return img_picto($titlealt, 'tick');
 	}
 
 	return '-';
@@ -6574,7 +6573,7 @@ function img_search($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'search.png', $other, 0, 1);
+	$img = img_picto($titlealt, 'search', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_search" src="' . $img . '" ';
 	$input .= 'value="' . dol_escape_htmltag($titlealt) . '" title="' . dol_escape_htmltag($titlealt) . '" >';
@@ -6597,7 +6596,7 @@ function img_searchclear($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'searchclear.png', $other, 0, 1);
+	$img = img_picto($titlealt, 'searchclear', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="' . $img . '" ';
 	$input .= 'value="' . dol_escape_htmltag($titlealt) . '" title="' . dol_escape_htmltag($titlealt) . '" >';
