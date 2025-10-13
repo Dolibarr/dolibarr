@@ -382,7 +382,7 @@ trait CommonSubtotal
 		} elseif ($current_module == 'invoice_supplier') {
 			$line = new SupplierInvoiceLine($this->db);
 			$line->id = $id;
-			$result = $line->delete($user);
+			$result = $line->delete();
 		}
 
 		return $result >= 0 ? $result : -1; // Return line ID or false
