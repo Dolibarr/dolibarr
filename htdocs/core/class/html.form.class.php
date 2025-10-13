@@ -216,7 +216,9 @@ class Form
 				$ret .= '<td class="right">';
 			}
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm) {
-				$ret .= '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=edit' . $htmlname . '&token=' . newToken() . '&' . $paramid . '=' . $object->id . $moreparam . '">' . img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)) . '</a>';
+				$ret .= '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=edit' . $htmlname . '&token=' . newToken() . '&' . $paramid . '=' . $object->id . $moreparam . '">';
+				$ret .= img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1));
+				$ret .= '</a>';
 			}
 			if (!empty($notabletag) && $notabletag == 1) {
 				if ($text) {
