@@ -713,7 +713,7 @@ print '<tr class="liste_titre">';
 print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
-print '<td class="right"><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
@@ -801,6 +801,10 @@ if ($mysoc->country_code == 'BE') {
 print "</table>";
 print '</div>';
 
+print '<center>';
+print '<input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'">';
+print '</center>';
+
 print "</form>";
 
 
@@ -811,23 +815,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
-print '<td class="center" width="60"></td>';
+print '<td class="center"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-
-// Force date validation
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.newToken().'" />';
-print '<input type="hidden" name="action" value="setforcedate" />';
-print '<input type="hidden" name="page_y" value="" />';
-print '<tr class="oddeven"><td>';
-print $langs->trans("ForceInvoiceDate");
-print '</td><td width="60" class="center">';
-print $form->selectyesno("forcedate", getDolGlobalInt('FAC_FORCE_DATE_VALIDATION', 0), 1);
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'" />';
-print "</td></tr>\n";
-print '</form>';
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
@@ -871,6 +861,21 @@ print "</td></tr>\n";
 print '</form>';
 
 
+// Force date validation
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
+print '<input type="hidden" name="action" value="setforcedate" />';
+print '<input type="hidden" name="page_y" value="" />';
+print '<tr class="oddeven"><td>';
+print $langs->trans("ForceInvoiceDate");
+print '</td><td>';
+print $form->selectyesno("forcedate", getDolGlobalInt('FAC_FORCE_DATE_VALIDATION', 0), 1);
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'" />';
+print "</td></tr>\n";
+print '</form>';
+
+
 print '<tr class="oddeven"><td>'.$langs->trans("InvoiceCheckPosteriorDate"). '&nbsp;' ;
 print $form->textwithpicto('', $langs->trans("InvoiceCheckPosteriorDateHelp"), 1, 'help') . '</td>';
 print '<td class="left" colspan="2">';
@@ -885,56 +890,32 @@ print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
-// Consistency of Deposit Invoice
-/* Try to avoid optionflation by not showing options to remove features default features.
+
+// Path to documents
+/*
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("LimitDepositInvoicePossibilityForConsistency").'</td>';
+print '<td>'.$langs->trans("PathToDocuments").'</td>';
 print '<td class="left" colspan="2">';
-print ajax_constantonoff('INVOICE_DEPOSIT_INVOICE_ONLY_SAME_LINES', array(), null, 0, 0, 0, 2, 0, 1);
+print $conf->invoice->dir_output;
 print '</td></tr>';
 */
 
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td class="left" colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
+
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td class="left" colspan="2">';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
+
 print '</table>';
 print '</div>';
-
-/*
- *  Repertoire
- */
-print '<br>';
-print load_fiche_titre($langs->trans("PathToDocuments"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">'."\n";
-print '<tr class="liste_titre">'."\n";
-print '<td>'.$langs->trans("Name").'</td>'."\n";
-print '<td></td>'."\n";
-print "</tr>\n";
-print '<tr class="oddeven">'."\n";
-print '<td width="140">'.$langs->trans("PathDirectory").'</td>'."\n";
-print '<td>'.$conf->facture->dir_output.'</td>'."\n";
-print '</tr>'."\n";
-print "</table>\n";
-print "</div>\n";
-
-/*
- * Notifications
- */
-print '<br>';
-print load_fiche_titre($langs->trans("Notifications"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60"></td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
-print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td class="right">';
-print "</td></tr>\n";
-print '</table>';
-print "</div>\n";
 
 
 print dol_get_fiche_end();
