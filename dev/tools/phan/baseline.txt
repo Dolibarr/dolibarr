@@ -12,7 +12,7 @@ return [
     // PhanUndeclaredProperty : 420+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
     // PhanTypeMismatchArgument : 70+ occurrences
-    // PhanUndeclaredGlobalVariable : 70+ occurrences
+    // PhanUndeclaredGlobalVariable : 65+ occurrences
     // PhanTypeMismatchArgumentNullable : 40+ occurrences
     // PhanTypeInvalidDimOffset : 15+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
@@ -230,7 +230,6 @@ return [
         'htdocs/projet/tasks.php' => ['PhanTypeMismatchArgument'],
         'htdocs/projet/tasks/time.php' => ['PhanTypeInvalidDimOffset', 'PhanUndeclaredProperty'],
         'htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/public/eventorganization/subscriptionok.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/members/new.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/payment/newpayment.php' => ['PhanUndeclaredProperty'],
         'htdocs/public/payment/paymentok.php' => ['PhanTypeMismatchArgumentProbablyReal'],

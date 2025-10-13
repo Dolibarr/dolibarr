@@ -17,10 +17,12 @@ if [[ "" != "${DOLISUBURL}" ]]; then
 fi
 
 if [[ -z ${DOLIUSERNAME+x} ]]; then
-	read -rp "Your Dolibarr Username: " DOLIUSERNAME
+	echo "To do GUI tests we need:"
+	read -rp "  Your Dolibarr Username: " DOLIUSERNAME
 fi
 if [[ -z ${DOLIPASSWORD+x} ]]; then
-	read -rsp "Your Dolibarr Password: " DOLIPASSWORD
+	echo "To do GUI tests we need:"
+	read -rsp "  Your Dolibarr Password: " DOLIPASSWORD
 	echo ""
 fi
 
