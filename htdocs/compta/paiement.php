@@ -559,9 +559,9 @@ if ($result >= 0) {
 	print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
 	// Comments
-	print '<tr><td>'.$langs->trans('Comments').'</td>';
-	print '<td class="tdtop">';
-	print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
+	print '<tr><td class="tdtop">'.$langs->trans('Comments').'</td>';
+	print '<td>';
+	print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_2.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
 	print '</td></tr>';
 
 	// Go Source Invoice (useful when there are many invoices)
@@ -990,13 +990,7 @@ if ($result >= 0) {
 		}
 
 		print '<br><div class="center">';
-		print '<input type="checkbox" checked name="closepaidinvoices" id="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices">'.$checkboxlabel.'</label>';
-		/*if (isModEnabled('prelevement')) {
-			$langs->load("withdrawals");
-			if (getDolGlobalString('WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS')) {
-				print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
-			}
-		}*/
+		print '<input type="checkbox" checked name="closepaidinvoices" id="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices" class="opacitymedium">'.$checkboxlabel.'</label>';
 		print '<br><input type="submit" class="button reposition" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
 		print '</div>';
 	}
