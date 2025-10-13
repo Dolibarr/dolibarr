@@ -323,7 +323,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	// Bouton Save payment
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidvat" id="closepaidvat" class="marginrightonly"><label for="closepaidvat">'.$langs->trans("ClosePaidVATAutomatically").'</label>';
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidvat" id="closepaidvat" class="marginrightonly opecitymedium"><label for="closepaidvat">'.$langs->trans("ClosePaidVATAutomatically").'</label>';
 	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

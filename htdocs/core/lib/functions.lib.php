@@ -6144,25 +6144,7 @@ function img_action($titlealt, $numaction, $picto = '', $moreatt = '')
 }
 
 /**
- *  Show pdf logo
- *
- *  @param	string		$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
- *  @return string      			Retourne tag img
- */
-function img_pdf($titlealt = 'default', $size = 3)
-{
-	global $langs;
-
-	if ($titlealt == 'default') {
-		$titlealt = $langs->trans('Show');
-	}
-
-	return img_picto($titlealt, 'pdf' . $size . '.png');
-}
-
-/**
- *	Show logo +
+ *	Show logo "+"
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
@@ -6179,7 +6161,7 @@ function img_edit_add($titlealt = 'default', $other = '')
 	return img_picto($titlealt, 'edit_add.png', $other);
 }
 /**
- *	Show logo -
+ *	Show logo "-"
  *
  *	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
@@ -6212,7 +6194,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
 		$titlealt = $langs->trans('Modify');
 	}
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
+	return img_picto($titlealt, 'edit_add.png', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
 }
 
 /**

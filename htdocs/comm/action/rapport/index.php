@@ -171,7 +171,9 @@ if ($resql) {
 
 			// Button to build doc
 			print '<td class="center">';
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&token='.newToken().'&page='.((int) $page).'&month='.((int) $obj->month).'&year='.((int) $obj->year).'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&token='.newToken().'&page='.((int) $page).'&month='.((int) $obj->month).'&year='.((int) $obj->year).'">';
+			print img_picto($langs->trans('BuildDoc'), 'filenew.png');
+			print '</a>';
 			print '</td>';
 
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
@@ -185,7 +187,6 @@ if ($resql) {
 
 			if (file_exists($file)) {
 				print '<td class="tdoverflowmax300">';
-				//print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a>';
 
 				$filearray = array('name' => basename($file), 'fullname' => $file, 'type' => 'file');
 				$out = '';

@@ -990,7 +990,7 @@ if ($result >= 0) {
 		}
 
 		print '<br><div class="center">';
-		print '<input type="checkbox" checked name="closepaidinvoices" id="closepaidinvoices"><label for="closepaidinvoices"> '.$checkboxlabel.'</label>';
+		print '<input type="checkbox" checked name="closepaidinvoices" id="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices">'.$checkboxlabel.'</label>';
 		/*if (isModEnabled('prelevement')) {
 			$langs->load("withdrawals");
 			if (getDolGlobalString('WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS')) {
