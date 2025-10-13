@@ -490,8 +490,14 @@ if (empty($reshook)) {
 	if (($action == "addline" || $action == "freezone") && $placeid == 0) {
 		$invoice->socid = getDolGlobalString($constforcompanyid);
 
+		$dolnowtzuserrel = dol_now('tzuserrel');	// If user is 02 january 22:00, we want to store '02 january'
+		$monthuser = dol_print_date($dolnowtzuserrel, '%m', 'gmt');
+		$dayuser = dol_print_date($dolnowtzuserrel, '%d', 'gmt');
+		$yearuser = dol_print_date($dolnowtzuserrel, '%Y', 'gmt');
+		$dateinvoice = dol_mktime(0, 0, 0, (int) $monthuser, (int) $dayuser, (int) $yearuser, 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$invoice->date = dol_get_first_hour(dol_now('tzuserrel'));		// Invoice::create() needs a date with no hours
+		$invoice->date = $dateinvoice;		// Invoice::create() needs a date with no hours
 
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
