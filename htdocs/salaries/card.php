@@ -683,13 +683,6 @@ if ($action == 'create' && $permissiontoadd) {
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
-	// Bouton Save payment
-	/*
-	print '<tr class="hide_if_no_auto_create_payment"><td>';
-	print $langs->trans("ClosePaidSalaryAutomatically");
-	print '</td><td><input type="checkbox" checked value="1" name="closepaidsalary"></td></tr>';
-	*/
-
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -705,7 +698,7 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<div class="center">';
 
 	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
-	print '<input type="checkbox" checked value="1" name="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically");
+	print '<input type="checkbox" checked value="1" name="closepaidsalary" id="closepaidsalary" class="marginrightonly"><label for="closepaidsalary" class="opacitymedium">'.$langs->trans("ClosePaidSalaryAutomatically").'</label>';
 	print '</div>';
 
 	print '</div>';
@@ -903,7 +896,7 @@ if ($id > 0) {
 		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
-		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		$morehtmlref .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
 
@@ -913,10 +906,10 @@ if ($id > 0) {
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
 			if ($result > 0) {
-				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
+				$morehtmlref .= '<br>'.$userstatic->getNomUrl(-1);
 			}
 		} else {
-			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $permissiontoadd, 'string', '', 0, 1);
+			$morehtmlref .= '<br>' . $form->editfieldkey("", 'fk_user', $object->label, $object, $permissiontoadd, 'string', '', 0, 1);
 
 			if (!empty($object->fk_user)) {
 				$userstatic = new User($db);
@@ -930,12 +923,12 @@ if ($id > 0) {
 			}
 		}
 	} else {
-		$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
+		$morehtmlref .= '<br>';
 		$morehtmlref .= '<form method="post" action="'.$pageurl.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="setfk_user">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$morehtmlref .= $form->select_dolusers($object->fk_user, 'userid', 1);
-		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		$morehtmlref .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
 

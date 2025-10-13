@@ -648,6 +648,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<th class="center">'.$langs->trans('PaymentAmount').'</th>';
 						print '</tr>';
 						print '</thead>';
+
 						print '<tbody>';
 						$total = 0;
 						$total_ttc = 0;
@@ -777,7 +778,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 									if ($action != 'add_paiement') {
 										if (!empty($conf->use_javascript_ajax)) {
-											print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">'.img_picto("Auto fill", 'rightarrow');
+											print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">';
+											print img_picto("Auto fill", 'rightarrow.png');
+											print '</button>';
 										}
 										print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 										print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount width100" name="'.$namef.'" value="'.GETPOST($namef).'">';
@@ -843,7 +846,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 							if ($action != 'add_paiement') {
 								if (!empty($conf->use_javascript_ajax)) {
-									print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">'.img_picto("Auto fill", 'rightarrow').'</button>';
+									print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">';
+									print img_picto("Auto fill", 'rightarrow.png');
+									print '</button>';
 								}
 								print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 								print '<input '.$max.' '.$min.' type="text" class="amount width100" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
@@ -861,10 +866,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							$totalrecudeposits += $deposits;
 							$i++;
 						}
-						print '</tbody>';
+						//print '</tbody>';
 
 						if ($i > 1) {
-							print '<tfoot>';
+							//print '<tfoot>';
+
 							// Print total
 							print '<tr class="liste_total">';
 							$colspan = 4;
@@ -874,7 +880,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								$colspan++;
 							}
 
-							print '<td colspan="'.$colspan.'" class="left">'.$langs->trans('TotalTTC').':</td>';
+							print '<td colspan="'.$colspan.'" class="left" scope="row">'.$langs->trans('TotalTTC').':</td>';
 							if (isModEnabled("multicurrency")) {
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
@@ -894,8 +900,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<td class="right"><b>'.price((float) price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
 							print '<td class="center" id="result" style="font-weight: bold;"></td>'; // Autofilled
 							print "</tr>\n";
-							print '</tfoot>';
+							//print '</tfoot>';
 						}
+						print '</tbody>';
+
 						print "</table>\n";
 
 						print "</div>";
@@ -909,7 +917,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			// Save + Cancel Buttons
 			if ($action != 'add_paiement') {
 				print '<br><div class="center">';
-				print '<input type="checkbox" checked id="closepaidinvoices" name="closepaidinvoices"> <label for="closepaidinvoices">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
+				print '<input type="checkbox" checked id="closepaidinvoices" name="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices" class="opacitymedium">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
 				print '<input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
 				print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';

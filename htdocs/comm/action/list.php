@@ -434,17 +434,14 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $sql = "SELECT";
-if ($usergroup > 0) {
-	$sql .= " DISTINCT";
-}
-$sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
+$sql .= " a.datep as dp, a.id, a.code, a.label, a.note, a.datep2 as dp2, a.fulldayevent, a.location,";
 $sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
 $sql .= " a.recurid, a.recurrule, a.recurdateend,";
 $sql .= " c.code as type_code, c.libelle as type_label, c.color as type_color, c.type as type_type, c.picto as type_picto,";
-$sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
+$sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail";
+//$sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -463,26 +460,12 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id";
 }
-// We must filter on assignment table
-if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
-	// TODO Replace with a AND EXISTS
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
-	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
-		$sql .= " AND (ar.fk_element IN (".$db->sanitize($filtert).") OR (ar.fk_element IS NULL AND a.fk_user_action = ".((int) $filtert)."))"; // The OR is for backward compatibility
-	} elseif ($filtert == '-3') {
-		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
-	}
-	if ($usergroup > 0) {
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
-	}
-}
-
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -609,6 +592,24 @@ if ($search_categ_cus != -1) {
 		$sql .= " AND NOT EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id)";
 	} elseif ($search_categ_cus > 0) {
 		$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize($search_categ_cus)."))";
+	}
+}
+
+// We must filter on assignment table
+if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+		$sql .= " AND (";
+		$sql .= " a.fk_user_action = ".((int) $filtert)." OR ";		// For old data compatibility (where owner was not assigned as contact)
+		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (".$db->sanitize($filtert)."))";
+		$sql .= ")";
+	} elseif ($filtert == '-3') {
+		$sql .= " AND (";
+		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1)))."))";
+		$sql .= ")";
+	} elseif ($usergroup > 0) {		// Filter on my hierarchy
+		$sql .= " AND (";
+		$sql .= " EXISTS (SELECT ar.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'user' AND ar.fk_element IN (SELECT ugu.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ugu WHERE ugu.fk_usergroup = ".((int) $usergroup)."))";
+		$sql .= ")";
 	}
 }
 
@@ -1086,8 +1087,6 @@ while ($i < $imaxinloop) {
 		}
 		if (isset($cache_user_list[$obj->fk_user_action])) {
 			print $cache_user_list[$obj->fk_user_action]->getNomUrl(-1);
-		} else {
-			print '&nbsp;';
 		}
 		print '</td>';
 	}
@@ -1177,8 +1176,6 @@ while ($i < $imaxinloop) {
 			$societestatic->email = $obj->socemail;
 
 			print $societestatic->getNomUrl(1, '', 28);
-		} else {
-			print '&nbsp;';
 		}
 		print '</td>';
 	}
@@ -1186,8 +1183,7 @@ while ($i < $imaxinloop) {
 	// Contact
 	if (!empty($arrayfields['a.fk_contact']['checked'])) {
 		print '<td class="tdoverflowmax100">';
-
-		if (!empty($actionstatic->socpeopleassigned)) {
+		if (!empty($actionstatic->socpeopleassigned)) {		// $actionstatic->socpeopleassigned is loaded by $actionstatic->fetchResources() if property contact visible
 			$contactList = array();
 			foreach ($actionstatic->socpeopleassigned as $socpeopleassigned) {
 				if (!isset($contactListCache[$socpeopleassigned['id']])) {
@@ -1205,18 +1201,11 @@ while ($i < $imaxinloop) {
 			if (!empty($contactList)) {
 				print implode(', ', $contactList);
 			}
-		} elseif ($obj->fk_contact > 0) { //keep for retrocompatibility with faraway event
-			$contactstatic->id = $obj->fk_contact;
-			$contactstatic->email = $obj->email;
-			$contactstatic->lastname = $obj->lastname;
-			$contactstatic->firstname = $obj->firstname;
-			$contactstatic->phone_pro = $obj->phone_pro;
-			$contactstatic->phone_mobile = $obj->phone_mobile;
-			$contactstatic->phone_perso = $obj->phone_perso;
-			$contactstatic->country_id = $obj->country_id;
+		} elseif ($obj->fk_contact > 0) { // keep for retrocompatibility with faraway events (no more used)
+			$tmpcontact = new Contact($db);			// TODO Add a cache
+			$tmpcontact->fetch($obj->fk_contact);
+
 			print $contactstatic->getNomUrl(1, '', 0);
-		} else {
-			print "&nbsp;";
 		}
 		print '</td>';
 	}
@@ -1228,8 +1217,6 @@ while ($i < $imaxinloop) {
 		if ($obj->fk_element > 0 && !empty($obj->elementtype)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
-		} else {
-			print "&nbsp;";
 		}
 		print '</td>';
 	}

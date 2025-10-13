@@ -95,16 +95,13 @@ $formfile = new FormFile($db);
 llxHeader();
 
 $sql = "SELECT count(*) as cc,";
-$sql .= " date_format(a.datep, '%m/%Y') as df,";
-$sql .= " date_format(a.datep, '%m') as month,";
-$sql .= " date_format(a.datep, '%Y') as year";
-$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
-$sql .= " ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE a.fk_user_author = u.rowid";
-$sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+$sql .= " date_format(a.datep, '%Y-%m') as yearmonth";
+$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+//$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON a.fk_user_author = u.rowid";
+$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 //$sql.= " AND percent = 100";
-$sql .= " GROUP BY year, month, df";
-$sql .= " ORDER BY year DESC, month DESC, df DESC";
+$sql .= " GROUP BY yearmonth";
+$sql .= " ORDER BY yearmonth DESC";
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -161,20 +158,27 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		if ($obj) {
+			$reg = array();
+			preg_match('/(\d+)\-(\d+)/', $obj->yearmonth, $reg);
+			$year = (int) $reg[1];
+			$month = (int) $reg[2];
+
 			print '<tr class="oddeven">';
 
 			// Date
-			print "<td>".$obj->df."</td>\n";
+			print "<td>".sprintf("%04d", $year)."-".sprintf("%02d", $month)."</td>\n";
 
 			// Nb of events
 			print '<td class="center">'.$obj->cc.'</td>';
 
 			// Button to build doc
 			print '<td class="center">';
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&token='.newToken().'&page='.((int) $page).'&month='.((int) $obj->month).'&year='.((int) $obj->year).'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&token='.newToken().'&page='.((int) $page).'&month='.$month.'&year='.$year.'">';
+			print img_picto($langs->trans('BuildDoc'), 'filenew.png');
+			print '</a>';
 			print '</td>';
 
-			$name = "actions-".$obj->month."-".$obj->year.".pdf";
+			$name = "actions-".sprintf("%04d", $year)."-".sprintf("%02d", $month).".pdf";
 			$relativepath = $name;
 			$file = $conf->agenda->dir_temp."/".$name;
 			$modulepart = 'actionsreport';
@@ -185,13 +189,12 @@ if ($resql) {
 
 			if (file_exists($file)) {
 				print '<td class="tdoverflowmax300">';
-				//print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a>';
 
 				$filearray = array('name' => basename($file), 'fullname' => $file, 'type' => 'file');
 				$out = '';
 
 				// Show file name with link to download
-				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				$out .= ' target="_blank" rel="noopener noreferrer">';
 				$out .= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);
