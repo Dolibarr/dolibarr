@@ -6194,7 +6194,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
 		$titlealt = $langs->trans('Modify');
 	}
 
-	return img_picto($titlealt, 'edit_add.png', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
+	return img_picto($titlealt, 'edit', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
 }
 
 /**
