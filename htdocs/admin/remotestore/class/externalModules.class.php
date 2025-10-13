@@ -500,6 +500,8 @@ class ExternalModules
 					).'</span>';
 					$compatible = 'NotCompatible';
 				}
+				// Output the line
+				$html .= '<tr class="app oddeven nohover '.dol_escape_htmltag($compatible).'">';
 			} else {
 				if ($product["dolibarr_min"] == 'auto' || $product["dolibarr_min"] != 'unknown') {
 					// never compatible, module expired
@@ -520,10 +522,9 @@ class ExternalModules
 					).'</span>';
 					$compatible = 'NotCompatible';
 				}
+				// Output the line
+				$html .= '<tr class="app oddeven nohover '.dol_escape_htmltag($compatible).'">';
 			}
-
-			// Output the line
-			$html .= '<tr class="app oddeven nohover '.dol_escape_htmltag($compatible).'">';
 
 			// Logo
 			$html .= '<td class="center width150"><div class="newAppParent">';
