@@ -21,7 +21,7 @@
 /**
  * @var CommonObject $this
  * @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $object
- * @var CommonObjectLine $line
+ * @var PropaleLigne|ContratLigne|OrderLine|FactureLigne|ExpeditionLigne|DeliveryLine|CommandeFournisseurLigne|SupplierInvoiceLine|SupplierProposalLine $line
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs

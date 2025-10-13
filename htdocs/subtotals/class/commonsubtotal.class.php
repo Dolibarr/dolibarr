@@ -375,6 +375,14 @@ trait CommonSubtotal
 			$line = new SupplierProposalLine($this->db);
 			$line->id = $id;
 			$result = $line->delete($user);
+		} elseif ($current_module == 'order_supplier') {
+			$line = new CommandeFournisseurLigne($this->db);
+			$line->id = $id;
+			$result = $line->delete($user);
+		} elseif ($current_module == 'invoice_supplier') {
+			$line = new SupplierInvoiceLine($this->db);
+			$line->id = $id;
+			$result = $line->delete($user);
 		}
 
 		return $result >= 0 ? $result : -1; // Return line ID or false
