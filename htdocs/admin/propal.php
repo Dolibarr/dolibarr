@@ -629,12 +629,12 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
+print '<td class="center">'.$langs->trans("Value")."</td>\n";
 print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
-print '<td width="60" align="center">';
+print '<td>';
 print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_VALIDITY_DURATION\" value=\"" . getDolGlobalString('PROPALE_VALIDITY_DURATION')."\"></td>";
 print '</tr>';
 
@@ -671,14 +671,14 @@ print "</tr>\n";
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
-print '<td class="center">';
+print '<td>';
 print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
 // Allow OnLine Sign
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
-print '<td class="center">';
+print '<td>';
 print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
 print '</td></tr>';
 
@@ -714,6 +714,31 @@ else
 }
 */
 
+
+// Path to documents
+/*
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("PathToDocuments").'</td>';
+print '<td class="left">';
+print $conf->propal->dir_output;
+print '</td></tr>';
+*/
+
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td class="left">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
+
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td class="left">';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
+
+
 print '</table>';
 
 print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></center>';
@@ -723,23 +748,6 @@ print '</form>';
 print "</table>\n<br>";
 
 
-print '<br><br>';
-
-
-/*
- * Other
- */
-
-print '<table class="noborder centpercent">';
-
-print "<tr class=\"oddeven trfirstline\">\n  <td>".$langs->trans("PathToDocuments")."</td>\n  <td>".$conf->propal->multidir_output[$conf->entity]."</td>\n</tr>\n";
-
-print '<tr class="oddeven lastline"><td>';
-print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td class="right">';
-print "</td></tr>\n";
-
-print '</table>';
 
 // End of page
 llxFooter();
