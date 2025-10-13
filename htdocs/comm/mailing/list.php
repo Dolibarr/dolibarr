@@ -142,6 +142,8 @@ if (empty($reshook)) {
 		}*/
 		$search_ref = '';
 		$search_messtype = '';
+		$search_refproject = '';
+		$search_project = '';
 		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
