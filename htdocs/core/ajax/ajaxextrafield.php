@@ -180,8 +180,8 @@ if ($object instanceof CommonObject) {
 		}
 
 		if (!$filter_categorie) {
-			$fields_label = explode('|', $InfoFieldList[1]);
-			if (count($fields_label) > 0) {
+			isset($InfoFieldList[1]) ? $fields_label = explode('|', $InfoFieldList[1]) : $fields_label=array();
+			if (!empty($fields_label)) {
 				$keyList .= ', ';
 				$keyList .= implode(', ', $fields_label);
 			}
