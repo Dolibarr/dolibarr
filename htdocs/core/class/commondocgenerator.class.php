@@ -1616,6 +1616,8 @@ abstract class CommonDocGenerator
 	 */
 	public function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
 	{
+		global $hookmanager;
+
 		// load desc col params
 		$colDef = $this->cols[$colKey];
 		// save current cell padding
@@ -1644,6 +1646,9 @@ abstract class CommonDocGenerator
 		$parameters = array(
 			'curY' => &$curY,
 			'colKey' => $colKey,
+			'object' => $object,
+			'i' => $i,
+			'outputlangs' => $outputlangs,
 			'pdf' => &$pdf,
 		);
 		$reshook = $hookmanager->executeHooks('printColDescContent', $parameters, $this); // Note that $action and $object may have been modified by hook
