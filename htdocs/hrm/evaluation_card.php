@@ -136,9 +136,10 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "validate" && !$_SESSION["TNoteisnotempty"]) {
+	if ($action == "validate" && $permissiontoadd && !$_SESSION["TNoteisnotempty"]) {
 		setEventMessage($langs->trans("EvaluationEmptyValidate"), 'errors');
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		exit;
 	}
 
 	$triggermodname = 'HRM_EVALUATION_MODIFY'; // Name of trigger action code to execute when we modify record
