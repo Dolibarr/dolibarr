@@ -260,7 +260,7 @@ class IntracommReport extends CommonObject
 	 * @param 	int 	$id 			object ID
 	 * @param 	string 	$ref  			Ref
 	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @param	int		$nolines		0=Default to load lines, 1=No lines
 	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
