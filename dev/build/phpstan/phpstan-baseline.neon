@@ -949,12 +949,6 @@ parameters:
 			path: ../../../htdocs/admin/system/dolibarr.php
 
 		-
-			message: '#^Call to function is_array\(\) with non\-empty\-list\<array\{filename\: string\|null, md5\: non\-falsy\-string\|false\}\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
