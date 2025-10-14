@@ -1163,6 +1163,30 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				continue;
 			}
 
+			// InfraS add begin
+			if ($objectclass == 'Salary') {
+				$sqlprelevement 	= "SELECT fk_prelevement_bons, traite";
+				$sqlprelevement 	.= " FROM ".$db->prefix(). "prelevement_demande";
+				$sqlprelevement 	.= " WHERE fk_salary = ". ((int) $objecttmp->id);
+				$resqlprelevement 	= $db->query($sqlprelevement);
+				if ($resqlprelevement) {
+					$objprelevement = $db->fetch_object($resqlprelevement);
+					if ($objprelevement) {
+						if ($objprelevement->traite == 0) {
+							$isErasable = 1;
+						}
+						$isErasable = (int) (-5 . $objprelevement->fk_prelevement_bons);
+					}
+				}
+				if ($permissiontodelete && preg_match('/^-5(\d+)/',$isErasable, $reg)) {
+					$langs->load("errors");
+					$nbignored++;
+					$TMsg[] = '<div class="error">'.$objecttmp->label.': '.$langs->trans('ErrorRecordHasChildren').'</div><br>';
+					continue;
+				}
+			}
+			// InfraS add end
+			
 			if ($objectclass == 'Holiday' && ! in_array($objecttmp->statut, array(Holiday::STATUS_DRAFT, Holiday::STATUS_CANCELED, Holiday::STATUS_REFUSED))) {
 				$langs->load("errors");
 				$nbignored++;
