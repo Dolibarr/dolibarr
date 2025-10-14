@@ -4610,7 +4610,7 @@ if ($action == 'create') {
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td colspan="2" class="maxwidthonsmartphone">';
 			print img_picto('', 'currency', 'class="pictofixedwidth"');
-			print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code', 0, '', false, 'maxwidth100 widthcentpercentminusx');
+			print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code', 0, '', false, 'maxwidth200 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 
@@ -5653,7 +5653,7 @@ if ($action == 'create') {
 				} else {
 					$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->retained_warranty_fk_cond_reglement, 'none');
 					if (!$displayWarranty) {
-						print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
+						print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning', 'class="pictowarning valignmiddle" ');
 					}
 				}
 				print '</td></tr>';
@@ -6281,7 +6281,10 @@ if ($action == 'create') {
 				print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 			}
 			print '</span></td>';
-			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche);
+			// TODO If credit not was converted into discount, we should show a tooltip to explain that remain to pay
+			// is zero because already converted into discount for a future use, so no need to refund.
+			print '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 
 			// Remainder to pay back Multicurrency
