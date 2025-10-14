@@ -159,7 +159,7 @@ function propal_prepare_head($object)
  */
 function propal_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('propal');
@@ -171,11 +171,6 @@ function propal_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/admin/propal.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/admin/propal_pdf.php';
-	$head[$h][1] = $langs->trans("PDF");
-	$head[$h][2] = 'pdf';
 	$h++;
 
 	// Show more tabs from modules

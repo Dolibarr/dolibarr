@@ -30,6 +30,7 @@ The following changes may create regressions for some external modules, but were
 * The directory theme/common/octicons has been removed
 * The library timepicker.js has been removed. Was not used by Dolibarr.
 * Because of new TRIGGER_PREFIX property triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed to PRODUCT_BUYPRICE_XXX.
+* Function img_pdf() has been removed. Replace it with img_picto('', 'pdf.png') if you were using it.
 
 
 ***** ChangeLog for 22.0.2 compared to 22.0.1 *****
