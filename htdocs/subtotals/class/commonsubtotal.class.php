@@ -238,7 +238,7 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'supplier_order' && $this instanceof CommandeFournisseur) {
+		} elseif ($current_module == 'order_supplier' && $this instanceof CommandeFournisseur) {
 			$rang = $rang == -1 ? $rang : $rang-1;
 			$result = $this->addline(
 				$desc,					// Description

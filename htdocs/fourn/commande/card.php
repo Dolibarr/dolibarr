@@ -430,9 +430,7 @@ if (empty($reshook)) {
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	if ($action == 'classifyunbilled' && $usercancreate) {
+	} elseif ($action == 'classifyunbilled' && $usercancreate) {
 		$ret = $object->classifyUnBilled($user);
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -505,7 +503,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
 		exit();
 	} elseif ($action == 'confirm_addsubtotalline' && $usercancreate) {
 		// Handling adding a new subtotal line for subtotals module
