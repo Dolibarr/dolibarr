@@ -1208,7 +1208,34 @@ if ($id > 0) {
 			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
 		}
 
-		if ($permissiontodelete && empty($totalpaid)) {
+		// InfraS add begin
+		$isErasable 		= 0; 
+		$htmltooltip 		= '';
+		$sqlprelevement 	= "SELECT fk_prelevement_bons, traite";
+		$sqlprelevement 	.= " FROM ".$db->prefix(). "prelevement_demande";
+		$sqlprelevement 	.= " WHERE fk_salary = ". ((int) $object->id);
+		$resqlprelevement 	= $db->query($sqlprelevement);
+		if ($resqlprelevement) {
+			$objprelevement = $db->fetch_object($resqlprelevement);
+			if ($objprelevement) {
+				if ($objprelevement->traite == 0) {
+					$isErasable = 1;
+				}
+				$isErasable = (int) (-5 . $objprelevement->fk_prelevement_bons);
+			}
+		}
+		if ($permissiontodelete && preg_match('/^-5(\d+)/',$isErasable, $reg)) {
+			$tmprefbon = '';
+			if ((int) $reg[1] > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+				$tmpbon = new BonPrelevement($db);
+				$tmpbon->fetch((int) $reg[1]);
+				$tmprefbon = '('.$tmpbon->getNomUrl(0, 'nolink', 1).')';
+			}
+			$htmltooltip = $langs->trans("DisabledBecauseSalaryHasPrelevement", $tmprefbon);
+			print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF'].'#', '', -1);
+			// InfraS add end
+		} else if ($permissiontodelete && empty($totalpaid)) { // InfraS change
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 		} else {
 			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
