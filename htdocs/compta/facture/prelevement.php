@@ -68,7 +68,7 @@ if ($user->socid) {
 
 $moreparam = '';
 if ($type == 'bank-transfer') {
-	$object = new FactureFournisseur($db);
+	$object =  FactureFournisseur($db);
 	$moreparam = '&type='.$type;
 } else {
 	$object = new Facture($db);
@@ -117,32 +117,45 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == "new" && $usercancreate) {
-		if ($object->id > 0) {
-			$db->begin();
+		if (price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')) > 0 && price2num(GETPOST('withdraw_request_amount', 'alpha')) <= price2num(GETPOST('remaintopaylesspendingdebit', 'alpha'))) { // Infras add
+			if ($object->id > 0) {
+				$db->begin();
+	
+				$newtype = $type;
+				$sourcetype = 'facture';
+				if ($type == 'bank-transfer') {
+					$sourcetype = 'supplier_invoice';
+					$newtype = 'bank-transfer';
+				}
+				$paymentservice = GETPOST('paymentservice');
+	
+				// Get chosen iban id
+				$iban = GETPOSTINT('accountcustomerid');
+				// InfraS change begin 
+				if($iban < 0){
+					setEventMessages($langs->trans("CustomerAccountNotSelected"), null, 'errors');
+				} else {
+					$amount = GETPOST('withdraw_request_amount', 'alpha');
+					$result = $object->demande_prelevement($user, (float) price2num($amount), $newtype, $sourcetype, 0, $iban ?? 0);
 
-			$newtype = $type;
-			$sourcetype = 'facture';
-			if ($type == 'bank-transfer') {
-				$sourcetype = 'supplier_invoice';
-				$newtype = 'bank-transfer';
+					if ($result > 0) {
+						$db->commit();
+
+						setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+					} else {
+						$db->rollback();
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				// InfraS change end
+				}
 			}
-			$paymentservice = GETPOST('paymentservice');
-
-			// Get chosen iban id
-			$iban = GETPOSTINT('accountcustomerid');
-			$amount = GETPOST('withdraw_request_amount', 'alpha');
-			$result = $object->demande_prelevement($user, (float) price2num($amount), $newtype, $sourcetype, 0, $iban ?? 0);
-
-			if ($result > 0) {
-				$db->commit();
-
-				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-			} else {
-				$db->rollback();
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			$action = '';
+		} // InfraS add begin
+		else {
+			setEventMessages($langs->trans('unprocessedRequest').' '.(price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')) <= 0 ? $langs->trans('paymentsCoveringEntireInvoice') :  $langs->trans('requestedAmountExceedsOutstanding', price2num(GETPOST('withdraw_request_amount', 'alpha')), price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')))), null, 'errors');
 		}
 		$action = '';
+		// InfraS add end																																														 
 	}
 
 	if ($action == "delete" && $usercancreate) {
@@ -815,6 +828,7 @@ if ($object->id > 0) {
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
 				print '<input type="hidden" name="action" value="new" />';
+				print '<input type="hidden" name="remaintopaylesspendingdebit" value="'.$remaintopaylesspendingdebit.'" />';	// InfraS add
 
 				print '<div class="center formconsumeproduce">';
 
@@ -832,8 +846,6 @@ if ($object->id > 0) {
 					}
 				}
 
-				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
-
 				$defaultRibId = $object->thirdparty->getDefaultRib();
 				if ($defaultRibId) {
 					$companyBankAccount = new CompanyBankAccount($db);
@@ -845,7 +857,7 @@ if ($object->id > 0) {
 					print img_warning($langs->trans("NoDefaultIBANFound"));
 				}
 
-
+				$form->selectRib(!empty($selectedRib) ? $selectedRib : (!empty($defaultRibId) ? $defaultRibId : ''), 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1); // InfraS change
 				// Bank Transfer Amount
 				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">';
 				if ($type == 'bank-transfer') {
