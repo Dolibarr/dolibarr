@@ -874,16 +874,16 @@ if ($object->fetch($id) >= 0) {
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			$totalarray['nbfield']++;
 		}
-		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", $param, "", "", $sortfield, $sortorder);
-		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", $param, "", "", $sortfield, $sortorder);
-		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", $param, "", "", $sortfield, $sortorder);
-		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
-		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", '', $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", '', $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", '', $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], '', $param, "", "", $sortfield, $sortorder);
+		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], '', $param, "", '', $sortfield, $sortorder, 'center ');
 		// Date last update
-		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "mc.tms", $param, "", '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "mc.tms", '', $param, '', $sortfield, $sortorder, 'center ');
 		// Date sending
-		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', '', $sortfield, $sortorder, 'center ');
-		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", '', $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", '', $param, '', $sortfield, $sortorder, 'center ');
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";

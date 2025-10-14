@@ -1127,8 +1127,14 @@ if ($action == 'edit') {
 						if ($dnstype == 'DMARC') {
 							$domain = '_dmarc.'.$domain;
 						}
-						$dnsinfo = dns_get_record($domain, DNS_TXT);
+
+						$authns = (getDolGlobalString('MAIN_MAIL_OVERRIDE_AUTHORITATIVE_DNS') ? explode(',', getDolGlobalString('MAIN_MAIL_OVERRIDE_AUTHORITATIVE_DNS')) : null); // eg 8.8.8.8, x.x.x.x
+						$dnsinfo = @dns_get_record($domain, DNS_TXT, $authns);
+						if ($dnsinfo === false) {
+							$text .= ($text ? '<br>' : '').$langs->trans("WarningDNSServerNotAvailable");
+						}
 					}
+
 					if (!empty($dnsinfo) && is_array($dnsinfo)) {
 						foreach ($dnsinfo as $info) {
 							if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
