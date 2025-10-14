@@ -2535,8 +2535,8 @@ class FactureFournisseur extends CommonInvoice
 		// Multicurrency
 		$line->multicurrency_subprice = (float) $pu_ht_devise;
 		$line->multicurrency_total_ht = (float) $multicurrency_total_ht;
-		$line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
-		$line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
+		$line->multicurrency_total_tva = (float) $multicurrency_total_tva;
+		$line->multicurrency_total_ttc = (float) $multicurrency_total_ttc;
 
 		$res = $line->update($notrigger);
 
