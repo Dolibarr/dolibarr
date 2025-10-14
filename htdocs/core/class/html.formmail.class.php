@@ -2346,7 +2346,7 @@ class ModelMail extends CommonObject
 	{
 		// The table llx_c_email_templates has no field ref. The field ref was named "label" instead. So we change the call to fetchCommon.
 		//$result = $this->fetchCommon($id, $ref, '', $noextrafields);
-		$result = $this->fetchCommon($id, '', " AND t.label = '".$this->db->escape($ref)."'", $noextrafields);
+		$this->fetchCommon($id, '', (empty($ref) ? '' : " AND t.label = '".$this->db->escape($ref)."'"), $noextrafields);
 
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
