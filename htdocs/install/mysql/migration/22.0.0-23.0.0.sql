@@ -158,6 +158,7 @@ DELETE FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target'
 ALTER TABLE llx_prelevement_lignes ADD COLUMN bic   varchar(11);   -- 11 according to ISO 9362
 ALTER TABLE llx_prelevement_lignes ADD COLUMN iban	varchar(80);   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
 ALTER TABLE llx_prelevement_lignes ADD COLUMN rum	varchar(32);   -- rum used
+ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_rib integer DEFAULT NULL;  --InfraS add: Added to store the id bank account
 
 
 ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
