@@ -1283,8 +1283,7 @@ if ($mode == 'marketplace') {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
-	print '<td class="hideonsmartphone">'.$form->textwithpicto($langs->trans("Provider"), $langs->trans("WebSiteDesc")).'</td>';
-	print '<td></td>';
+	print '<td colspan="2" class="hideonsmartphone">'.$form->textwithpicto($langs->trans("ModuleProviderSites"), $langs->trans("WebSiteDesc")).'</td>';
 	print '<td>';
 	print '</td>';
 	print '<td></td>';
@@ -1356,7 +1355,7 @@ if ($mode == 'marketplace') {
 		//$remotestore->getRemoteCategories();
 		//$remotestore->getRemoteProducts($options);
 
-		print '<span class="opacitymedium hideonsmartphone">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
+		//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
 		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
@@ -1379,6 +1378,8 @@ if ($mode == 'marketplace') {
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
 		<?php
+		print $form->textwithpicto('', $langs->trans('DOLISTOREdescriptionLong'));
+
 		if ($search_keyword !== '') {
 			print '<a class="buttonreset reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marketplace">'.$langs->trans('Reset').'</a>';
 		}
