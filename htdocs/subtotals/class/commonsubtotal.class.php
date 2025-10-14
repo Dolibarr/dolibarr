@@ -560,6 +560,53 @@ trait CommonSubtotal
 				'',						//
 				self::$PRODUCT_TYPE		// Type
 			);
+		} elseif ($current_module == 'order_supplier' && $this instanceof CommandeFournisseur) {
+			$objectline = new CommandeFournisseurLigne($this->db);
+			$objectline->fetch($lineid);
+			$line_rang = $objectline->rang;
+			// special code comes from old line
+			$result = $this->updateline(
+				$lineid,				// ID of line to change
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// Discount percentage
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				'',						// Price base type
+				0,						// Info bits
+				self::$PRODUCT_TYPE,	// Type
+				0,						// no trigger
+				0,						//
+				0,						//
+				[],						//
+				null					//
+			);
+		} elseif ($current_module == 'invoice_supplier' && $this instanceof FactureFournisseur) {
+			$objectline = new SupplierInvoiceLine($this->db);
+			$objectline->fetch($lineid);
+			$line_rang = $objectline->rang;
+			// TODO TO FIX parameters
+			$result = $this->updateline(
+				$lineid,				// ID of line to change
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// Discount percentage
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				$desc,					// Description
+				'',						// Price base type
+				0,						// Info bits
+				SUBTOTALS_SPECIAL_CODE,	// Special code
+				0,						// FK parent line
+				0,						//
+				0,						//
+				0,						//
+				'',						//
+				self::$PRODUCT_TYPE		// Type
+			);
 		}
 
 		foreach ($this->lines as $line) {
