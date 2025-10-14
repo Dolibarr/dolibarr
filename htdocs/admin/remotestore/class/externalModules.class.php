@@ -480,7 +480,7 @@ class ExternalModules
 			$version = '';
 			$compatible = '';
 			if ($product["status"] == 'soon') {
-				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").'</span>';
+				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").' - '.$langs->trans("StillInDevelopment").'</span>';
 			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
 				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
 					//compatible

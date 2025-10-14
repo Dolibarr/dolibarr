@@ -534,6 +534,7 @@ DolibarrWorkBoard=Tableau de bord des éléments ouverts
 NoOpenedElementToProcess=Aucun élément ouvert à traiter
 Available=Disponible
 NotYetAvailable=Pas encore disponible
+StillInDevelopment=Still in development
 NotAvailable=Non disponible
 Categories=Tags/catégories
 Category=Tag/catégorie
