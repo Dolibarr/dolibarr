@@ -84,6 +84,7 @@ $hookmanager->initHooks(array('documentticketcard', 'globalcard'));
 $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
 
+$upload_dir = null;
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 } else {
@@ -137,7 +138,7 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_documents');
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	/*
 	 * Show tabs
 	 */

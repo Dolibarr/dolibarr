@@ -1481,13 +1481,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Split
 						$type = 'batch';
 						print '<td align="right" class="split">';
-						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
+						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
 						print '</td>';
 
 						// Split All
 						print '<td align="right" class="splitall">';
 						if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
-							print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
+							print img_picto($langs->trans('SplitAllQuantity'), 'split', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
 						}
 						print '</td>';
 
@@ -1922,12 +1922,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								$type = 'batch';
 								print '<td align="right" class="split">';
-								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
+								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
 								print '</td>';
 
 								print '<td align="right"  class="splitall">';
 								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
-									print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"');
+									print img_picto($langs->trans('SplitAllQuantity'), 'split', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"');
 								} //
 								print '</td>';
 							} else {

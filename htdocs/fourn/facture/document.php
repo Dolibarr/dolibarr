@@ -83,6 +83,7 @@ if (!$sortfield) {
 }
 
 $object = new FactureFournisseur($db);
+$upload_dir = null;
 if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$ref = dol_sanitizeFileName($object->ref);
@@ -109,7 +110,7 @@ $title = $object->ref." - ".$langs->trans('Documents');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-card_document');
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$head = facturefourn_prepare_head($object);
 	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, $object->picto);
 

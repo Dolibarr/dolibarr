@@ -822,10 +822,10 @@ if ($id > 0 || !empty($ref)) {
 								print '<td>';
 								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 									$type = 'batch';
-									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+									print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 								} else {
 									$type = 'dispatch';
-									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+									print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 								}
 
 								print '</td>';
@@ -995,10 +995,10 @@ if ($id > 0 || !empty($ref)) {
 							print '<td>';
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 								$type = 'batch';
-								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 							} else {
 								$type = 'dispatch';
-								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 							}
 
 							print '</td>';

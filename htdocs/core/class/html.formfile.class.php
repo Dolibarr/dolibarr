@@ -1062,7 +1062,7 @@ class FormFile
 						if ($printer) {
 							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
 							$out .= ($param ? '&'.$param : '');
-							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
+							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
 						}
 						if ($morepicto) {
 							$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
