@@ -182,27 +182,34 @@ if ($action == 'setbankaccount' && $permissiontoadd) {
 
 if ($action == "add" && $permissiontoadd) {
 	//var_dump($object);exit;
-	if ($object->id > 0) {
-		$db->begin();
-
-		$sourcetype = 'salaire';
-		$newtype = 'salaire';
-
-		$paymentservice = GETPOST('paymentservice');	// value can be 'stripesepa'. not used yet.
-
-		$result = $object->demande_prelevement($user, GETPOSTFLOAT('request_transfer'), $newtype, $sourcetype);
-
-		if ($result > 0) {
-			$db->commit();
-
-			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-		} else {
-			dol_print_error($db, $error);
-			$db->rollback();
-			setEventMessages($obj->error, $obj->errors, 'errors');
+	if (price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')) > 0 && price2num(GETPOST('withdraw_request_amount', 'alpha')) <= price2num(GETPOST('remaintopaylesspendingdebit', 'alpha'))) { // InfraS add 
+		if ($object->id > 0) {
+			$db->begin();
+	
+			$sourcetype = 'salaire';
+			$newtype = 'salaire';
+	
+			$paymentservice = GETPOST('paymentservice');	// value can be 'stripesepa'. not used yet.
+	
+			$result = $object->demande_prelevement($user, GETPOSTFLOAT('withdraw_request_amount'), $newtype, $sourcetype); // InfraS change
+	
+			if ($result > 0) {
+				$db->commit();
+	
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			} else {
+				dol_print_error($db, $error);
+				$db->rollback();
+				setEventMessages($obj->error, $obj->errors, 'errors');
+			}
 		}
+		$action = '';
+	// InfraS add begin
+	} else { 
+		setEventMessages($langs->trans('unprocessedRequest').' '.(price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')) <= 0 ? $langs->trans('paymentsCoveringEntireSalary') :  $langs->trans('requestedAmountExceedsOutstanding', price2num(GETPOST('withdraw_request_amount', 'alpha')), price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')))), null, 'errors');
 	}
 	$action = '';
+	// InfraS add end																																											
 }
 
 if ($action == "delete" && $permissiontodelete) {
@@ -473,6 +480,37 @@ print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 
+// InfraS add begin
+$pending = 0;
+// Get pending requests open with no transfer receipt yet
+$sql = "SELECT SUM(pfd.amount) as amount";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
+$sql .= " AND pfd.traite = 0";
+$resql = $db->query($sql);
+if ($resql) {
+	$obj = $db->fetch_object($resql);
+	if ($obj) {
+		$pending += (float) $obj->amount;
+	}
+} else {
+	dol_print_error($db);
+}
+// Get pending request with a transfer receipt generated but not yet processed
+$sqlPending = "SELECT SUM(pl.amount) as amount";
+$sqlPending .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+$sqlPending .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+$sqlPending .= " WHERE p.fk_salary = ".((int) $object->id);
+$sqlPending .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+$resPending = $db->query($sqlPending);
+if ($resPending) {
+	if ($objPending = $db->fetch_object($resPending)) {
+		$pending += (float) $objPending->amount;
+	}
+}
+$db->free($resPending);
+// InfraS add end
+
 /**button  */
 print '<div class="tabsAction">'."\n";
 
@@ -497,13 +535,16 @@ $hadRequest = $db->num_rows($resql);
 if ($object->paye == 0 && $hadRequest == 0) {
 	if ($resteapayer > 0) {
 		if ($user_perms) {
+			$remaintopaylesspendingdebit = $resteapayer - $pending; // InfraS add
+			
 			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="type" value="'.$type.'" />';
 			print '<input type="hidden" name="action" value="add" />';
+			print '<input type="hidden" name="remaintopaylesspendingdebit" value="'.$remaintopaylesspendingdebit.'" />';	// InfraS add
 			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-			print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
+			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.price($remaintopaylesspendingdebit, 0, $langs, 1, -1, -1).'" size="9" />'; // InfraS change
 			print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 			print '</form>';
 
@@ -519,7 +560,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 				print '<input type="hidden" name="action" value="add" />';
 				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-				print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
+				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />'; // InfraS change
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '</form>';
 			}
