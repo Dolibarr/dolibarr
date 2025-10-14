@@ -1639,7 +1639,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user', 0, '', '', 0, '', 1);
 
 			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
-			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
 
 			$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
