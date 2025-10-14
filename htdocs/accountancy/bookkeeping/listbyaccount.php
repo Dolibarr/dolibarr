@@ -463,11 +463,17 @@ if (empty($reshook)) {
 
 	// Actions
 	if ($action === 'exporttopdf' && $permissiontoadd) {
-		$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		if ($type == "sub") {
+			$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
+		} else {
+			$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		}
 		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_ledger.modules.php';
 		$pdf = new pdf_ledger($db);
 		$pdf->fromDate = $search_date_start;
 		$pdf->toDate = $search_date_end;
+		$pdf->ledgerType = $type;
+
 		$result = $pdf->write_file($object, $langs);
 
 		if ($result < 0) {
@@ -895,7 +901,7 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 
 	$newcardbutton .= dolGetButtonTitleSeparator();
 
