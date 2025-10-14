@@ -184,11 +184,6 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/invoice_pdf.php';
-	$head[$h][1] = $langs->trans("PDF");
-	$head[$h][2] = 'pdf';
-	$h++;
-
 	$head[$h][0] = DOL_URL_ROOT.'/admin/payment.php';
 	$head[$h][1] = $langs->trans("Payments");
 	$head[$h][2] = 'payment';

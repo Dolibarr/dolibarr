@@ -57,6 +57,7 @@ $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $toselect = GETPOST('toselect', 'array:int');
+$show_files = GETPOSTINT('show_files');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 

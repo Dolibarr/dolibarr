@@ -364,6 +364,7 @@ ErrorIsNotInError=%s is not in error
 ErrorFilenameExtensionNotAllowed=File %s has a forbidden file extension
 ErrorNoValueForSelectListType=Error, a value for this type of field is mandatory
 ErrorPaymentAmountMustNotBeNull=Error, payment amount must be defined and not zero
+ErrorCalendarIsNotYetOpenOrHasBeenClosed=This calendar is not yet open or has been closed
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
