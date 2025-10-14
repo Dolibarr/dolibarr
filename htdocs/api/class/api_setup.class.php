@@ -1045,7 +1045,7 @@ class Setup extends DolibarrApi
 		if ($type == 'expedition' && !getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS')) {
 			$type = 'commande';
 		}
-		
+
 		$sql = "SELECT rowid, code, element as type, libelle as label, source, module, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as t";
 		$sql .= " WHERE t.active = ".((int) $active);
