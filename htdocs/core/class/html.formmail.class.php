@@ -2439,7 +2439,7 @@ class ModelMail extends CommonObject
 		//$result = $this->fetchCommon($id, $ref, '', $noextrafields);
 		$this->fetchCommon($id, '', (empty($ref) ? '' : " AND t.label = '".$this->db->escape($ref)."'"), $noextrafields);
 
-        if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
+		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
 		}
 		return $result;
