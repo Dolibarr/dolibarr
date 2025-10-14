@@ -2717,7 +2717,8 @@ class SupplierProposal extends CommonObject
 		$sql .= ' pt.product_type, pt.rang, pt.fk_parent_line, pt.extraparams,';
 		$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql .= ' p.description as product_desc, pt.ref_fourn as ref_supplier,';
-		$sql .= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc, pt.fk_unit';
+		$sql .= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc, pt.fk_unit,';
+		$sql .= ' pt.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pt';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
 		$sql .= ' WHERE pt.fk_supplier_proposal = '.((int) $this->id);
@@ -2750,10 +2751,10 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->remise_percent = $obj->remise_percent;
 				$this->lines[$i]->tva_tx = $obj->tva_tx;
 				$this->lines[$i]->vat_src_code = $obj->vat_src_code;
-				$this->lines[$i]->info_bits			= $obj->info_bits;
+				$this->lines[$i]->info_bits = $obj->info_bits;
 				$this->lines[$i]->total_ht = $obj->total_ht;
-				$this->lines[$i]->total_tva			= $obj->total_tva;
-				$this->lines[$i]->total_ttc			= $obj->total_ttc;
+				$this->lines[$i]->total_tva = $obj->total_tva;
+				$this->lines[$i]->total_ttc = $obj->total_ttc;
 				$this->lines[$i]->fk_fournprice = $obj->fk_fournprice;
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
 				$this->lines[$i]->pa_ht = $marginInfos[0];
@@ -2776,6 +2777,7 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->lines[$i]->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 				$this->lines[$i]->fk_unit = $obj->fk_unit;
+				$this->lines[$i]->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$i++;
 			}

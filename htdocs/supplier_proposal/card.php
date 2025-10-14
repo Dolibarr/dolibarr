@@ -2222,7 +2222,7 @@ if ($action == 'create') {
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="' . $object->id.'">
-		<input type="hidden" name="backtopage" value="'.$backtopage.'">
+		<input type="hidden" name="backtopage" value="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">
 		';
 
 		if (!empty($conf->use_javascript_ajax) && $object->status == SupplierProposal::STATUS_DRAFT) {
