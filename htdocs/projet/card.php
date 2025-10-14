@@ -358,10 +358,23 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+		// If opportunities are used and the customer is not yet a customer
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $object->usage_opportunity) {
 			if ($object->opp_amount && ($object->opp_status <= 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+			}
+
+			if (!$error) {
+				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
+					// Get ID of the special opportunity status code 'WON'
+					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
+
+					if (!$error && $object->opp_status == $idoppstatuswon) {
+						// Switch the thirdparty into a customer
+						$object->thirdparty->setAsCustomer();
+					}
+				}
 			}
 		}
 
@@ -395,7 +408,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Check if we must change status
+		// Check if we must change status of project
 		if (GETPOST('closeproject')) {
 			$resclose = $object->setClose($user);
 			if ($resclose < 0) {
@@ -1265,7 +1278,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 			print '<div id="divtocloseproject" class="inline-block valign clearboth paddingtop" style="display: none;">';
 			print '<input type="checkbox" id="inputcloseproject" name="closeproject" class="valignmiddle" />';
-			print '<label for="inputcloseproject" class="opacitymedium">';
+			print '<label for="inputcloseproject" class="opacitymedium valignmiddle">';
 			print $form->textwithpicto($langs->trans("AlsoCloseAProject"), $langs->trans("AlsoCloseAProjectTooltip")).'</label>';
 			print ' </div>';
 
