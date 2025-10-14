@@ -4804,7 +4804,7 @@ if ($action == 'create') {
 			$resteapayer = price2num((float) $multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
 		}
 	}
-	var_dump($object->status);
+
 	if ($object->paye || $object->status == $object::STATUS_CLOSED) {
 		$resteapayer = 0;
 	}
