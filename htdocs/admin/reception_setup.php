@@ -194,7 +194,7 @@ print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'r
 
 // Reception numbering model
 
-print load_fiche_titre($langs->trans("ReceptionsNumberingModules"));
+print load_fiche_titre($langs->trans("ReceptionsNumberingModules"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -301,7 +301,7 @@ print '<br>';
 /*
  *  Documents models for Receptions Receipt
  */
-print load_fiche_titre($langs->trans("ReceptionsReceiptModel"));
+print load_fiche_titre($langs->trans("ReceptionsReceiptModel"), '', '');
 
 // Defini tableau def de modele invoice
 $type = "reception";
@@ -454,49 +454,34 @@ print '<br>';
 
 /*
  * Other options
- *
  */
-/*
-print load_fiche_titre($langs->trans("OtherOptions"));
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_param">';
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print "</tr>";
+print "<td></td>\n";
+print '</tr>';
 
-$substitutionarray=pdf_getSubstitutionArray($langs);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
-
-print '<tr><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnReceptions"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
-$variablename='RECEPTION_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
-}
-else
-{
-	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor($variablename, getDolGlobalString($variablename),'',80,'dolibarr_notes');
-	print $doleditor->Create();
-}
-print "</td></tr>\n";
-
-print '<tr><td>';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext).'<br>';
-print '<input class="flat minwidth200" type="text" name="RECEPTION_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('RECEPTION_DRAFT_WATERMARK')).'">';
-print "</td></tr>\n";
+// Notifications
+/*
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td>';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
 */
+
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td>';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
+
 print '</table>';
 
-//print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

@@ -212,7 +212,7 @@ class Ticket extends CommonObject
 	public $cache_types_tickets;
 
 	/**
-	 * @var array<int,array{private:0|1|'0'|'1',fk_user_author:int,fk_contact_author?:string,message:string}> cache msgs ticket  // fk_contact_author is email, not key in the cache
+	 * @var array<int,array{private:<0,1>|'0'|'1',fk_user_author:int,fk_contact_author?:string,message:string}> cache msgs ticket  // fk_contact_author is email, not key in the cache
 	 */
 	public $cache_msgs_ticket;
 

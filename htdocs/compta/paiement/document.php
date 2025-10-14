@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2021      Jesus Jerez       	 <jesusballesteros@protonmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,7 +89,7 @@ if ($object->fetch($id, $ref)) {
 	$ref = dol_sanitizeFileName($object->ref);
 	$upload_dir = $conf->compta->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 } else {
-	$upload_dir = '';
+	$upload_dir = null;
 }
 
 
@@ -111,7 +111,7 @@ $form = new Form($db);
 $title = $langs->trans('Payment')." - ".$langs->trans('Documents');
 llxHeader('', $title);
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_prepare_head($object);
 	print dol_get_fiche_head($head, 'documents', $langs->trans("Payment"), -1, 'payment');
 

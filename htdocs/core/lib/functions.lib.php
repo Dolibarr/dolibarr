@@ -757,8 +757,6 @@ function GETPOSTISSET($paramname)
 	}
 	$relativepathstring = ltrim($relativepathstring, '/');
 	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-	//var_dump($relativepathstring);
-	//var_dump($user->default_values);
 
 	// Code for search criteria persistence.
 	// Retrieve values if restore_lastsearch_values
@@ -882,8 +880,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 		$relativepathstring = ltrim($relativepathstring, '/');
 		$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-		//var_dump($relativepathstring);
-		//var_dump($user->default_values);
 
 		// Code for search criteria persistence.
 		// Retrieve saved values if restore_lastsearch_values is set
@@ -940,7 +936,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 									if (!$foundintru) {
 										$qualified = 1;
 									}
-									//var_dump($defkey.'-'.$qualified);
 								} else {
 									$qualified = 1;
 								}
@@ -977,7 +972,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 										if (!$foundintru) {
 											$qualified = 1;
 										}
-										//var_dump($defkey.'-'.$qualified);
 									} else {
 										$qualified = 1;
 									}
@@ -1017,7 +1011,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 									if (!$foundintru) {
 										$qualified = 1;
 									}
-									//var_dump($defkey.'-'.$qualified);
 								} else {
 									$qualified = 1;
 								}
@@ -3912,7 +3905,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
 				$ret
 			);
-			//var_dump($ret);exit;
 		} else {
 			$ret = 'Bad value ' . $time . ' for date';
 		}
@@ -4101,13 +4093,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 	if (empty($localtz)) {
 		$localtz = new DateTimeZone('UTC');
 	}
-	//var_dump($localtz);
-	//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
 	$dt = new DateTime('now', $localtz);
 	$dt->setDate((int) $year, (int) $month, (int) $day);
 	$dt->setTime((int) $hour, (int) $minute, (int) $second);
 	$date = $dt->getTimestamp(); // should include daylight saving time
-	//var_dump($date);
+
 	return $date;
 }
 
@@ -5430,7 +5420,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 		}
 	} else {
 		// $picto can not be null since replaced with 'generic' in that case
-		//$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', (is_null($picto) ? '' : $picto));
+		// $pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', (is_null($picto) ? '' : $picto));
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
@@ -6144,25 +6134,7 @@ function img_action($titlealt, $numaction, $picto = '', $moreatt = '')
 }
 
 /**
- *  Show pdf logo
- *
- *  @param	string		$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
- *  @return string      			Retourne tag img
- */
-function img_pdf($titlealt = 'default', $size = 3)
-{
-	global $langs;
-
-	if ($titlealt == 'default') {
-		$titlealt = $langs->trans('Show');
-	}
-
-	return img_picto($titlealt, 'pdf' . $size . '.png');
-}
-
-/**
- *	Show logo +
+ *	Show logo "+"
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
@@ -6179,7 +6151,7 @@ function img_edit_add($titlealt = 'default', $other = '')
 	return img_picto($titlealt, 'edit_add.png', $other);
 }
 /**
- *	Show logo -
+ *	Show logo "-"
  *
  *	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
@@ -6212,7 +6184,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
 		$titlealt = $langs->trans('Modify');
 	}
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
+	return img_picto($titlealt, 'edit', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
 }
 
 /**
@@ -6252,7 +6224,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $more
 		$titlealt = $langs->trans('Delete');
 	}
 
-	return img_picto($titlealt, 'delete.png', $other, 0, 0, 0, '', $morecss);
+	return img_picto($titlealt, 'delete', $other, 0, 0, 0, '', $morecss);
 }
 
 /**
@@ -6268,7 +6240,7 @@ function img_printer($titlealt = "default", $other = '')
 	if ($titlealt == "default") {
 		$titlealt = $langs->trans("Print");
 	}
-	return img_picto($titlealt, 'printer.png', $other);
+	return img_picto($titlealt, 'printer', $other);
 }
 
 /**
@@ -6286,7 +6258,7 @@ function img_split($titlealt = 'default', $other = 'class="pictosplit"')
 		$titlealt = $langs->trans('Split');
 	}
 
-	return img_picto($titlealt, 'split.png', $other);
+	return img_picto($titlealt, 'split', $other);
 }
 
 /**
@@ -6308,7 +6280,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 		}
 	}
 
-	return img_picto($usealttitle, 'info.png', 'style="vertical-align: middle;' . ($usehelpcursor == 1 ? ' cursor: help' : ($usehelpcursor == 2 ? ' cursor: pointer' : '')) . '"');
+	return img_picto($usealttitle, 'info', 'style="vertical-align: middle;' . ($usehelpcursor == 1 ? ' cursor: help' : ($usehelpcursor == 2 ? ' cursor: pointer' : '')) . '"');
 }
 
 /**
@@ -6419,7 +6391,7 @@ function img_down($titlealt = 'default', $selected = 0, $moreclass = '')
 		$titlealt = $langs->trans('Down');
 	}
 
-	return img_picto($titlealt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgdown' . ($moreclass ? " " . $moreclass : "") . '"');
+	return img_picto($titlealt, ($selected ? '1downarrow_selected' : '1downarrow'), 'class="imgdown' . ($moreclass ? " " . $moreclass : "") . '"');
 }
 
 /**
@@ -6438,7 +6410,7 @@ function img_up($titlealt = 'default', $selected = 0, $moreclass = '')
 		$titlealt = $langs->trans('Up');
 	}
 
-	return img_picto($titlealt, ($selected ? '1uparrow_selected.png' : '1uparrow.png'), 'class="imgup' . ($moreclass ? " " . $moreclass : "") . '"');
+	return img_picto($titlealt, ($selected ? '1uparrow_selected' : '1uparrow'), 'class="imgup' . ($moreclass ? " " . $moreclass : "") . '"');
 }
 
 /**
@@ -6457,7 +6429,7 @@ function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
 		$titlealt = $langs->trans('Left');
 	}
 
-	return img_picto($titlealt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $moreatt);
+	return img_picto($titlealt, ($selected ? '1leftarrow_selected' : '1leftarrow'), $moreatt);
 }
 
 /**
@@ -6476,7 +6448,7 @@ function img_right($titlealt = 'default', $selected = 0, $moreatt = '')
 		$titlealt = $langs->trans('Right');
 	}
 
-	return img_picto($titlealt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $moreatt);
+	return img_picto($titlealt, ($selected ? '1rightarrow_selected' : '1rightarrow'), $moreatt);
 }
 
 /**
@@ -7114,7 +7086,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	$page = (int) $page;
 
 	if ($picto == 'setup') {
-		$picto = 'title_setup.png';
+		$picto = 'title_setup';
 	}
 	if (($conf->browser->name == 'ie') && $picto == 'generic') {
 		$picto = 'title.gif';
@@ -7235,7 +7207,6 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 					$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 				}
 			} else {
-				//var_dump($page.' '.$cpt.' '.$nbpages);
 				$query['page'] = ($nbpages - 1);
 				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 			}
@@ -15532,7 +15503,7 @@ function getTimelineIcon($actionstatic, &$histo, $key)
  */
 function getActionCommEcmList($object)
 {
-	global $conf, $db;
+	global $db;
 
 	$documents = array();
 
