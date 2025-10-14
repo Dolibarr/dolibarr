@@ -1748,6 +1748,7 @@ if ($action == 'create' && $usercancreate) {
 			$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
+			print '</td></tr>';
 
 			// Delivery method
 			print "<tr><td>" . $langs->trans("DeliveryMethod") . "</td>";
