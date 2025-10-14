@@ -369,7 +369,7 @@ if (empty($reshook)) {
 					// Get ID of the special opportunity status code 'WON'
 					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
-					if (!$error && $object->opp_status == $idoppstatuswon) {
+					if ($object->opp_status == $idoppstatuswon) {
 						// Switch the thirdparty into a customer
 						$object->thirdparty->setAsCustomer();
 					}

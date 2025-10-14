@@ -7,7 +7,7 @@
  * Copyright (C) 2023 		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,21 @@ class pdf_ledger extends ModelePdfAccountancy
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
+
+	/**
+	 * @var int $fromDate Start timestamp
+	 */
+	public $fromDate;
+
+	/**
+	 * @var int $toDate Start timestamp
+	 */
+	public $toDate;
+
+	/**
+	 * @var string $ledgerType Ledger type, default is empty for general ledger, or 'sub' for subsidiary ledger
+	 */
+	public $ledgerType;
 
 	/**
 	 *	Constructor
@@ -218,7 +233,11 @@ class pdf_ledger extends ModelePdfAccountancy
 		}
 
 		$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-		$pdf->SetSubject($outputlangs->transnoentities("AccountancyLedger"));
+		if ($this->ledgerType == "sub") {
+			$pdf->SetSubject($outputlangs->transnoentities("BookkeepingSubAccount"));
+		} else {
+			$pdf->SetSubject($outputlangs->transnoentities("AccountancyLedger"));
+		}
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyLedger"));
@@ -284,40 +303,75 @@ class pdf_ledger extends ModelePdfAccountancy
 		$accountDebit = $accountCredit = $totalDebit = $totalCredit = 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			// Show total line / title line when account has changed
-			if (empty($account) || $account != $object->lines[$i]->numero_compte) {
-				$accountingAccount = new AccountingAccount($this->db);
-				$accountingAccount->fetch(0, $object->lines[$i]->numero_compte);
+			if ($this->ledgerType == "sub") {
+				if (empty($account) || $account != $object->lines[$i]->subledger_account) {
+					// Add the subtotal line
+					if (!empty($account)) {
+						$this->addTotalLine(
+							$pdf,
+							$curY,
+							$nexY,
+							$default_font_size,
+							$langs->trans('Total'),
+							$tab_top_newpage,
+							$accountDebit,
+							$accountCredit
+						);
+					}
 
-				// Add the subtotal line
-				if (!empty($account)) {
-					$this->addTotalLine(
+					// Add the title line
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+						$this->addDashLine($pdf, $pdf->getPage(), $nexY);
+					}
+					$this->addTitleLine(
 						$pdf,
 						$curY,
 						$nexY,
 						$default_font_size,
-						$langs->transnoentities('Total'),
-						$tab_top_newpage,
-						$accountDebit,
-						$accountCredit
+						'piece_num',
+						$langs->trans('SubledgerAccount') . ' ' . length_accounta($object->lines[$i]->subledger_account) . ' - ' . $object->lines[$i]->subledger_label,
+						$tab_top_newpage
 					);
-				}
 
-				// Add the title line
-				if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
-					$this->addDashLine($pdf, $pdf->getPage(), $nexY);
+					$account = $object->lines[$i]->subledger_account;
+					$accountDebit = $accountCredit = 0;
 				}
-				$this->addTitleLine(
-					$pdf,
-					$curY,
-					$nexY,
-					$default_font_size,
-					'piece_num',
-					$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
-					$tab_top_newpage
-				);
+			} else {
+				if (empty($account) || $account != $object->lines[$i]->numero_compte) {
+					$accountingAccount = new AccountingAccount($this->db);
+					$accountingAccount->fetch(0, $object->lines[$i]->numero_compte);
 
-				$account = $object->lines[$i]->numero_compte;
-				$accountDebit = $accountCredit = 0;
+					// Add the subtotal line
+					if (!empty($account)) {
+						$this->addTotalLine(
+							$pdf,
+							$curY,
+							$nexY,
+							$default_font_size,
+							$langs->transnoentities('Total'),
+							$tab_top_newpage,
+							$accountDebit,
+							$accountCredit
+						);
+					}
+
+					// Add the title line
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+						$this->addDashLine($pdf, $pdf->getPage(), $nexY);
+					}
+					$this->addTitleLine(
+						$pdf,
+						$curY,
+						$nexY,
+						$default_font_size,
+						'piece_num',
+						$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
+						$tab_top_newpage
+					);
+
+					$account = $object->lines[$i]->numero_compte;
+					$accountDebit = $accountCredit = 0;
+				}
 			}
 
 			$accountDebit += $object->lines[$i]->debit;
@@ -518,9 +572,8 @@ class pdf_ledger extends ModelePdfAccountancy
 			$langs->transnoentities('GrandTotals'),
 			$tab_top_newpage,
 			$totalDebit,
-			$totalCredit,
+			$totalCredit
 		);
-
 
 
 		// Show square
@@ -668,8 +721,12 @@ class pdf_ledger extends ModelePdfAccountancy
 		// Page title
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx - 2, $posy + 2);
-		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("PdfLedgerTitle");
+		$pdf->SetTextColor(0, 0, 120);
+		if ($this->ledgerType == "sub") {
+			$title = $outputlangs->transnoentities("BookkeepingSubAccount");
+		} else {
+			$title = $outputlangs->transnoentities("PdfLedgerTitle");
+		}
 		$pdf->MultiCell($w / 3, 3, $title, 0, 'C');
 		$nexY = max($pdf->GetY(), $nexY);
 
@@ -736,7 +793,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 10,
 			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_LEDGER_ADD_POSITION'),
 			'title' => [
-				'textkey' => '#', // use lang key is useful in somme case with module
+				'textkey' => '#', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -754,7 +811,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 18, // only for desc
 			'status' => true,
 			'title' => [
-				'textkey' => 'Date', // use lang key is useful in somme case with module
+				'textkey' => 'Date', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -772,7 +829,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Journal', // use lang key is useful in somme case with module
+				'textkey' => 'Journal', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -791,7 +848,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Piece', // use lang key is useful in somme case with module
+				'textkey' => 'Piece', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -810,7 +867,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => false,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Label', // use lang key is useful in somme case with module
+				'textkey' => 'Label', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -830,7 +887,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 14,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Lettering', // use lang key is useful in somme case with module
+				'textkey' => 'Lettering', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -849,7 +906,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Debit', // use lang key is useful in somme case with module
+				'textkey' => 'AccountingDebit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -868,7 +925,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 15,
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Credit', // use lang key is useful in somme case with module
+				'textkey' => 'AccountingCredit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -887,7 +944,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'width' => 20,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Balance', // use lang key is useful in somme case with module
+				'textkey' => 'Balance', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
