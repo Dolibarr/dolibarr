@@ -265,7 +265,7 @@ $num = $db->num_rows($resql);
 if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$id);
+	header("Location: ".dol_buildpath('/comm/mailing/card.php', 1).'?id='.((int) $id));
 	exit;
 }
 
@@ -538,7 +538,8 @@ while ($i < $imaxinloop) {
 	}
 
 	// Title
-	print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
+	print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'"><a href="card.php?id='.$object->id.'">'.dol_escape_htmltag($obj->title).'</a></td>';
+
 
 	// Date creation
 	print '<td class="center">';
