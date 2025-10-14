@@ -307,7 +307,7 @@ class IntracommReport extends CommonObject
 		$e = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes"?><INSTAT></INSTAT>');
 
 		$envelope = $e->addChild('Envelope');
-		$envelope->addChild('envelopeId', $conf->global->INTRACOMMREPORT_NUM_AGREMENT);
+		$envelope->addChild('envelopeId', getDolGlobalString('INTRACOMMREPORT_NUM_AGREMENT'));
 		$date_time = $envelope->addChild('DateTime');
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));
