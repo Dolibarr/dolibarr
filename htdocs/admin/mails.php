@@ -1131,6 +1131,7 @@ if ($action == 'edit') {
 						$authns = (getDolGlobalString('MAIN_MAIL_OVERRIDE_AUTHORITATIVE_DNS') ? explode(',', getDolGlobalString('MAIN_MAIL_OVERRIDE_AUTHORITATIVE_DNS')) : null); // eg 8.8.8.8, x.x.x.x
 						$dnsinfo = @dns_get_record($domain, DNS_TXT, $authns);
 						if ($dnsinfo === false) {
+							$langs->load("errors");
 							$text .= ($text ? '<br>' : '').$langs->trans("WarningDNSServerNotAvailable");
 						}
 					}

@@ -538,7 +538,8 @@ while ($i < $imaxinloop) {
 	}
 
 	// Title
-	print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
+	print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'"><a href="card.php?id='.$object->id.'">'.dol_escape_htmltag($obj->title).'</a></td>';
+
 
 	// Date creation
 	print '<td class="center">';
