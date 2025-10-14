@@ -689,9 +689,11 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						setEventMessages($aBill->error, $aBill->errors, 'errors');
 					}
 				} else {
-					$aBill->error = 'WithdrawRequestErrorNilAmount';
-					$aBill->errors[] = $aBill->error;
-					setEventMessages($aBill->error, $aBill->errors, 'errors');
+					// InfraS change begin
+					$aBill->errors[] = 'WithdrawRequestErrorNilAmount';
+					$aBill->errors[]  = 'WithdrawRequestErrorAlreadyTransmitted';
+					setEventMessages($aBill->ref.': ', $aBill->errors, 'errors');
+					// InfraS change end
 				}
 			}
 			if ($nbwithdrawrequestok > 0) {
@@ -2327,7 +2329,7 @@ if ($num > 0) {
 		} else {
 			// Show line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'"';
+			print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->fk_statut > 1) ? 'opacitymedium' : '').'">'; // InfraS change : removing 'row-with-select' and 'status' hides mass actions
 			if ($contextpage == 'poslist') {
 				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
 				if (strpos($obj->ref, 'PROV') !== false) {
