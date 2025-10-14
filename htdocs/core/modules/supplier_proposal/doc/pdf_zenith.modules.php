@@ -485,12 +485,14 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 				$nexY = $tab_top + $this->tabTitleHeight;
 
-				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
-				$pdf_sub_options = array();
-				$pdf_sub_options['titleshowuponpdf'] = 1;
-				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
+				$pdf_sub_options = [
+					'titleshowuponpdf' => 1,
+					'titleshowtotalexludingvatonpdf' => 1,
+				];
+
+				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++) {
 					$sub_options = $object->lines[$i]->extraparams["subtotal"] ?? array();
 
