@@ -189,7 +189,6 @@ if ($action == 'create') {
 	}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
-	print "<br>\n";
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -202,9 +201,9 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$id.'">'.$id.'</a></td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$salary->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("DateStart")."</td><td>".dol_print_date($salary->datesp, 'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("DateEnd")."</td><td>".dol_print_date($salary->dateep, 'day')."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$salary->label."</td></tr>\n";
 	/*print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($salary->date_ech,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($salary->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
@@ -247,7 +246,7 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">';
+	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_2.'">';
 	print GETPOST('note');
 	print '</textarea></td>';
 	print '</tr>';
@@ -256,9 +255,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	/*
-	 * Autres charges impayees
-	 */
+
+	print '<br>';
+
+
+	// List of salaries unpaid
 	$num = 1;
 	$i = 0;
 
@@ -331,7 +332,7 @@ if ($action == 'create') {
 
 	// Bouton Save payment
 	print '<div class="center">';
-	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary"><label for="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
+	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary" class="marginrightonly"><label for="closepaidsalary" class="opacitymedium">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
 	print $form->buttonsSaveCancel("ToMakePayment", "Cancel", array(), true);
 	print '</div>';
 

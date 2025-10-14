@@ -33,6 +33,8 @@ require '../main.inc.php';
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -359,6 +361,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -375,8 +380,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Link to public page
-	print '<tr><td>Link</td>';
-	print '<td><a href="'. DOL_URL_ROOT.'/public/bookcal/index.php?id='.$object->id.'" target="_blank">Public page</a>';
+	print '<tr><td>'.$langs->trans("PublicLinkForBooking").'</td>';
+	print '<td>';
+
+	$linktobook = $urlwithroot.'/public/bookcal/index.php?id='.$object->id;
+	$encodedsecurekey = dol_hash(getDolGlobalString('BOOKCAL_SECUREKEY').'bookcal'.((int) $object->id), 'md5');
+	$linktobook .= '&securekey='.urlencode($encodedsecurekey);
+
+	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linktobook.'" class="quatrevingtpercent">'.$linktobook.'</a></div>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$linktobook.'">'.img_picto('', 'globe').'</a>';
+
 	print '</td></tr>';
 
 	print '</table>';
