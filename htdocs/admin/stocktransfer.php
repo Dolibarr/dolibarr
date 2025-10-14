@@ -497,36 +497,35 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 }
 
 
-if (!empty($setupnotempty)) {
-	print '<br>';
-	print load_fiche_titre($langs->trans("OtherOptions", $myTmpObjectKey), '', '');
+print '<br>';
+print load_fiche_titre($langs->trans("OtherOptions", $myTmpObjectKey), '', '');
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent">';
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td></td>';
-	print '</tr>'."\n";
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td></td>';
+print '</tr>'."\n";
 
-	// Notifications
-	/*
-	print '<tr class="oddeven">';
-	print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
-	print '<td colspan="2">';
-	print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
-	print '</td></tr>';
-	*/
+// Notifications
+/*
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
+*/
 
-	// More PDF options
-	print '<tr class="oddeven">';
-	print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
-	print '<td colspan="2">';
-	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
-	print '</td></tr>';
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td colspan="2">';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
 
-	print '</table></div>';
-}
+print '</table></div>';
+
 
 
 if (empty($setupnotempty)) {

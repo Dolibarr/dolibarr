@@ -398,12 +398,12 @@ class ExternalModules
 
 			// check new product ?
 			$newapp = '';
-			if ($last_month < strtotime($product['datec']) && $newapp == '' && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
+			if ($last_month < strtotime($product['datec']) && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
 				$newapp .= '<span class="newApp" title="'.$product['tms'].'">'.$langs->trans('New').'</span> ';
 			}
 
 			// check updated ?
-			if ($last_month < strtotime($product['tms']) && $newapp == '' && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
+			if ($newapp == '' && $last_month < strtotime($product['tms']) && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
 				$newapp .= '<span class="updatedApp" title="'.$product['tms'].'">'.$langs->trans('UpdatedRecently').'</span> ';
 			}
 

@@ -6281,7 +6281,10 @@ if ($action == 'create') {
 				print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 			}
 			print '</span></td>';
-			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche);
+			// TODO If credit not was converted into discount, we should show a tooltip to explain that remain to pay
+			// is zero because already converted into discount for a future use, so no need to refund.
+			print '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 
 			// Remainder to pay back Multicurrency
