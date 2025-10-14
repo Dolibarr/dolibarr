@@ -250,15 +250,52 @@ if ($massaction == 'withdrawrequest') {
 		if (!$error && !empty($listofSalries)) {
 			$nbwithdrawrequestok = 0;
 			foreach ($listofSalries as $salary) {
-				$db->begin();
-				$result = $salary->demande_prelevement($user, (float) $salary->resteapayer, 'salaire');
-				if ($result > 0) {
-					$db->commit();
-					$nbwithdrawrequestok++;
+				// InfraS add begin
+				$pending = 0;
+				// Get pending requests open with no transfer receipt yet
+				$sql = "SELECT SUM(pfd.amount) as amount";
+				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+				$sql .= " WHERE pfd.fk_salary = ".((int) $salary->id);
+				$sql .= " AND pfd.traite = 0";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$pending += (float) $obj->amount;
+					}
 				} else {
-					$db->rollback();
-					setEventMessages($salary->error, $salary->errors, 'errors');
+					dol_print_error($db);
 				}
+				// Get pending request with a transfer receipt generated but not yet processed
+				$sqlPending = "SELECT SUM(pl.amount) as amount";
+				$sqlPending .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+				$sqlPending .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+				$sqlPending .= " WHERE p.fk_salary = ".((int) $salary->id);
+				$sqlPending .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+				$resPending = $db->query($sqlPending);
+				if ($resPending) {
+					if ($objPending = $db->fetch_object($resPending)) {
+						$pending += (float) $objPending->amount;
+					}
+				}
+				$db->free($resPending);
+
+				$requestAmount = $salary->resteapayer - $pending;
+				if ($requestAmount > 0) { // InfraS add end
+					$db->begin();
+					$result = $salary->demande_prelevement($user, $requestAmount, 'salaire'); // InfraS change
+					if ($result > 0) {
+						$db->commit();
+						$nbwithdrawrequestok++;
+					} else {
+						$db->rollback();
+						setEventMessages($salary->error, $salary->errors, 'errors');
+					}
+				} else { // InfraS add begin
+					$salary->errors[] = 'WithdrawRequestErrorNilAmount';
+					$salary->errors[] = 'WithdrawRequestErrorAlreadyTransmitted';
+					setEventMessages($salary->label.': ', $salary->errors, 'errors');
+				} // InfraS add end
 			}
 			if ($nbwithdrawrequestok > 0) {
 				setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
