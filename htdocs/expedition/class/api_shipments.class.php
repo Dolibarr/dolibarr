@@ -618,7 +618,7 @@ class Shipments extends DolibarrApi
 	 * Return an array with contact information
 	 *
 	 * @param	int		$id			ID of shipment
-	 * @param	string	$type		Type of the shipment 
+	 * @param	string	$type		Type of the shipment
 	 * @return	Object				Object with cleaned properties
 	 *
 	 * @url	GET {id}/contacts
@@ -777,7 +777,7 @@ class Shipments extends DolibarrApi
 			$objectsrc = new Propal($this->db);
 			$objectsrc->fetch($this->shipment->origin_object->id);
 		}
-		
+
 		foreach (array('internal', 'external') as $source) {
 			$contacts = $objectsrc->liste_contact(-1, $source);
 
