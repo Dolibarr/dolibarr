@@ -288,7 +288,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 				}
 
-				if ($realpath && $arephoto) {
+				if (!empty($realpath) && $arephoto) {
 					$realpatharray[$i] = $realpath;
 				}
 			}
