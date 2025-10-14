@@ -9175,12 +9175,6 @@ parameters:
 			path: ../../../htdocs/don/document.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/document.php
-
-		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -10309,12 +10303,6 @@ parameters:
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/document.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -10378,12 +10366,6 @@ parameters:
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/fourn/paiement/document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/fourn/paiement/document.php
 
 		-
@@ -10837,12 +10819,6 @@ parameters:
 			path: ../../../htdocs/hrm/evaluation_card.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/evaluation_document.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -10859,12 +10835,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/job_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/job_document.php
 
 		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
@@ -10889,12 +10859,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/position.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/position_document.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -10937,12 +10901,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/skill_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/skill_document.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -11369,12 +11327,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/knowledgemanagement/knowledgerecord_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/knowledgerecord_document.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -12031,12 +11983,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/myobject_document.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -12221,12 +12167,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/mrp/mo_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/mo_document.php
 
 		-
 			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
@@ -13639,12 +13579,6 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_document.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -14223,12 +14157,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/projet/tasks/document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/tasks/document.php
 
@@ -15733,12 +15661,6 @@ parameters:
 			path: ../../../htdocs/recruitment/recruitmentcandidature_card.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentcandidature_document.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -15782,12 +15704,6 @@ parameters:
 
 		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
@@ -16229,12 +16145,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/societe/consumption.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/document.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -16963,12 +16873,6 @@ parameters:
 			path: ../../../htdocs/ticket/class/ticket.class.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/document.php
-
-		-
 			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -17205,12 +17109,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/user/document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/user/document.php
 
@@ -17843,12 +17741,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/website/websiteaccount_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/workstation/workstation_document.php
 
 		-
 			message: '#^Variable \$val might not be defined\.$#'

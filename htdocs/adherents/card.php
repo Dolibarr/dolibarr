@@ -88,6 +88,7 @@ if (isModEnabled('mailmanspip')) {
 
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
+$upload_dir = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
