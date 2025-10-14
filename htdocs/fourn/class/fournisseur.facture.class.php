@@ -2541,8 +2541,7 @@ class FactureFournisseur extends CommonInvoice
 		$res = $line->update($notrigger);
 
 		if ($res < 1) {
-			$this->errors[] = $line->error;
-			$this->errors = array_merge($this->errors, $line->errors);
+			$this->setErrorsFromObject($line);
 		} else {
 			// Update total price into invoice record
 			$res = $this->update_price(1, 'auto', 0, $this->thirdparty);

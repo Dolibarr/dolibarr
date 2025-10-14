@@ -588,24 +588,20 @@ trait CommonSubtotal
 			$objectline->fetch($lineid);
 			$line_rang = $objectline->rang;
 			// TODO TO FIX parameters
+			/** @var FactureFournisseur $this */
 			$result = $this->updateline(
 				$lineid,				// ID of line to change
+				$desc,					// Description
 				0,						// Unit price
-				$depth,					// Quantity
-				0,						// Discount percentage
 				0,						// VAT rate
 				0,						// Local tax 1
 				0,						// Local tax 2
-				$desc,					// Description
+				$depth,					// Quantity
+				0,						// product id
 				'',						// Price base type
 				0,						// Info bits
-				SUBTOTALS_SPECIAL_CODE,	// Special code
-				0,						// FK parent line
-				0,						//
-				0,						//
-				0,						//
-				'',						//
-				self::$PRODUCT_TYPE		// Type
+				self::$PRODUCT_TYPE,	// Type
+				0						// Discount percentage
 			);
 		}
 
