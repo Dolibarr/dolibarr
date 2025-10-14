@@ -138,6 +138,11 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == "validate" && !$_SESSION["TNoteisnotempty"]) {
+		setEventMessage($langs->trans("EvaluationEmptyValidate"), 'errors');
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+	}
+
 	$triggermodname = 'HRM_EVALUATION_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -168,8 +173,12 @@ if (empty($reshook)) {
 
 	if ($action == 'saveSkill' && $permissiontoadd) {
 		$TNote = GETPOST('TNote', 'array');
+		$_SESSION["TNoteisnotempty"] = false;
 		if (!empty($TNote)) {
 			foreach ($object->lines as $line) {
+				if (!in_array($TNote[$line->fk_skill], array("0", ""))) {
+					$_SESSION["TNoteisnotempty"] = true;
+				}
 				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
 				$line->update($user);
 			}
