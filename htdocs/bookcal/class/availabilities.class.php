@@ -934,6 +934,7 @@ class Availabilities extends CommonObject
 	public function getNextNumRef()
 	{
 		// Not used
+		return '';
 	}
 
 	/**

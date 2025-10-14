@@ -33,6 +33,8 @@ require '../main.inc.php';
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
