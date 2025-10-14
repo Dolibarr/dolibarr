@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Incent Maury TimGroup	<vmaury@timgroup.fr>
  *
@@ -78,6 +78,7 @@ $hookmanager->initHooks(array('projecttaskdocument', 'globalcard'));
 $object = new Task($db);
 $projectstatic = new Project($db);
 
+$upload_dir = null;
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
@@ -150,7 +151,7 @@ $help_url = '';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_document');
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$projectstatic->fetch_thirdparty();
 
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
