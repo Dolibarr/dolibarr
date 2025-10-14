@@ -478,6 +478,7 @@ class ExternalModules
 
 			// Set and check version
 			$version = '';
+			$compatible = '';
 			if ($product["status"] == 'soon') {
 				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").'</span>';
 			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
