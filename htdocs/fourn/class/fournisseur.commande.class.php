@@ -719,7 +719,7 @@ class CommandeFournisseur extends CommonOrder
 
 					// Take better packaging for $objp->qty (first supplier ref quantity <= $objp->qty)
 					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.$this->db->prefix()."product_fournisseur_price";
-					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
+					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('productsupplierprice').")";
 					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
 					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
 					$sqlsearchpackage .= " AND quantity <= ".((float) $objp->qty);	// required to be qualified

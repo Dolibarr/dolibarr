@@ -7,7 +7,7 @@
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Alexandre Spangaro    <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,8 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 }
 
-if ($id > 0 || !empty($ref)) {
+$upload_dir = null;
+if ($object->id > 0) {
 	$upload_dir = $conf->don->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object);
 }
 
@@ -126,7 +127,7 @@ $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:M
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card_documents');
 
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	$object->fetch_thirdparty();
 
 	$head = donation_prepare_head($object);
