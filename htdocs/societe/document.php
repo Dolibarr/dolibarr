@@ -82,6 +82,7 @@ if (!$sortfield) {
 
 // Initialize objects
 $object = new Societe($db);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
@@ -101,7 +102,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'societe', $object->id, '&societe');
 
-if (empty($object->id)) {
+if (empty($object->id) || $upload_dir === null) {
 	accessforbidden();
 }
 
