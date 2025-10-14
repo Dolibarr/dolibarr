@@ -8613,11 +8613,14 @@ table.jPicker {
 }
 .bookcalform {
 	border: 1px solid #000;
-	padding: 15px;
+	padding: 20px;
 	border-radius: 5px;
 	margin-bottom: 15px;
+	box-shadow: 10px 10px 10px #ddd;
 }
-
+.bookcalsearch {
+	padding-bottom: 10px;
+}
 
 
 /* ============================================================================== */

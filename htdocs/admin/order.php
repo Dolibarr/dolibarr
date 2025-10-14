@@ -710,27 +710,17 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 }
 
-
-// Path to documents
-/*
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("PathToDocuments").'</td>';
-print '<td class="left" colspan="2">';
-print $conf->order->dir_output;
-print '</td></tr>';
-*/
-
 // Notifications
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
-print '<td class="left" colspan="2">';
+print '<td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
 print '</td></tr>';
 
 // More PDF options
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
-print '<td class="left" colspan="2">';
+print '<td colspan="2">';
 print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
 print '</td></tr>';
 

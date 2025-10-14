@@ -629,7 +629,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td class="center">'.$langs->trans("Value")."</td>\n";
+print '<td class="center"></td>'."\n";
 print "</tr>";
 
 print '<tr class="oddeven">';
@@ -683,58 +683,17 @@ print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2,
 print '</td></tr>';
 
 
-/* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
-if (isModEnabled('facture'))
-{
-
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
-	if (!empty($conf->use_javascript_ajax))
-	{
-		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');
-	}
-	else
-	{
-		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL))
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		}
-		else
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-		}
-	}
-	print '</td></tr>';
-}
-else
-{
-
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
-*/
-
-
-// Path to documents
-/*
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("PathToDocuments").'</td>';
-print '<td class="left">';
-print $conf->propal->dir_output;
-print '</td></tr>';
-*/
-
 // Notifications
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
-print '<td class="left">';
+print '<td>';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
 print '</td></tr>';
 
 // More PDF options
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
-print '<td class="left">';
+print '<td>';
 print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
 print '</td></tr>';
 
