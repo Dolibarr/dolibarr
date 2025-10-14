@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2017-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2023       Joachim Kueter     		<git-jk@bloxera.com>
+/* Copyright (C) 2017-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "categories"));
+$langs->loadLangs(array("accountancy", "banks", "bills", "categories", "compta", "users"));
 
 // Get parameters
 $id = GETPOSTINT('id');
@@ -148,6 +148,10 @@ if (empty($reshook)) {
 		$object->sens = GETPOSTINT('sens');
 		$object->fk_project = GETPOSTINT('fk_project');
 
+		if (!checkGeneralAccountAllowsAuxiliary($db, $object->accountancy_code, $object->subledger_account)) {
+			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
+			$error++;
+		}
 		if (empty($datep) || empty($datev)) {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
