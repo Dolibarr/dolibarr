@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (c) 2025       Schaffhauser sébastien      <sebastien@webmaster67.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation.
@@ -127,12 +128,18 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// 5. Define functions to build navigation and download links
 		$linkBuilder = array(
-			'dir' => /** @param array<string, mixed> $dir */
+			'dir' => /**
+					  * @param array<string, mixed> $dir
+					  * @return string
+					  */
 				function (array $dir) use ($baseUrl, $sanitized_subdir) {
 					$new_subdir = (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $dir['name'];
 					return $baseUrl . '&subdir=' . urlencode($new_subdir);
 				},
-			'file' => /** @param array<string, mixed> $file */
+			'file' => /**
+					   * @param array<string, mixed> $file
+					   * @return string
+					   */
 				function (array $file) use ($shared_dir_name, $sanitized_subdir) {
 					$file_path = $shared_dir_name . '/' . (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $file['name'];
 					return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($file_path);
