@@ -107,7 +107,7 @@ print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter
 print '<tr><td>'.$langs->trans("Version").'</td><td>';
 
 $arrayphpminversionerror = array(7, 1, 0);
-$arrayphpminversionwarning = array(7, 4, 0);
+$arrayphpminversionwarning = array(7, 1, 0);
 
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {
 	print img_picto('Error', 'error').' '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
