@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       htdocs/salaries/paiement_salary.php
+ *      \file       htdocs/salaries/payment_salary.php
  *      \ingroup    salary
  *      \brief      Page to add payment of a salary
  */

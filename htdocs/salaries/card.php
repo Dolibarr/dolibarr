@@ -1202,7 +1202,7 @@ if ($id > 0) {
 
 		// Emit payment
 		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', dolBuildUrl(DOL_URL_ROOT.'/salaries/paiement_salary.php', ['action' => 'create', 'id' => $object->id], true), '');
+			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', dolBuildUrl(DOL_URL_ROOT.'/salaries/payment_salary.php', ['action' => 'create', 'id' => $object->id], false), '');
 		}
 
 		// Classify 'paid'
