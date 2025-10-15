@@ -253,7 +253,7 @@ return [
         'htdocs/recruitment/recruitmentjobposition_card.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_document.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_note.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/salaries/paiement_salary.php' => ['PhanUndeclaredProperty'],
+        'htdocs/salaries/payment_salary.php' => ['PhanUndeclaredProperty'],
         'htdocs/salaries/virement_request.php' => ['PhanUndeclaredProperty'],
         'htdocs/societe/ajax/company.php' => ['PhanUndeclaredProperty'],
         'htdocs/societe/class/societe.class.php' => ['PhanTypeMismatchProperty'],

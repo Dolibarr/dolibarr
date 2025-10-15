@@ -184,6 +184,11 @@ if (isModEnabled('project')) {
 
 $morehtmlref .= '</div>';
 
+$totalpaid = $object->getSommePaiement();
+
+$object->totalpaid = $totalpaid;
+$object->alreadypaid = $totalpaid;	// Same then $totalpaid because there is no amount of credit note or deposits for salary payments.
+
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
 print '<div class="fichecenter">';
