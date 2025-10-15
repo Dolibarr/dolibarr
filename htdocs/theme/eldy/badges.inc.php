@@ -69,10 +69,16 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	}
 }
 
-.badge-pill, .tabs .badge {
+.tabs .badge {
 	padding-right: .5em;
 	padding-left: .5em;
 	border-radius: 0.25rem;
+}
+
+.badge-pill{
+	padding-right: .8em;
+	padding-left: 0.8em;
+	border-radius: 0.5rem;
 }
 
 .badge-dot {
