@@ -11621,7 +11621,7 @@ abstract class CommonObject
 		return true;
 	}
 
-	/** 
+	/**
 	 * Check if all products have the right status (on sale, on buy) called
 	 * during validation of propal, order, supplier proposal, supplier order
 	 *
