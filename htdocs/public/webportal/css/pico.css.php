@@ -73,8 +73,11 @@ if (empty($dolibarr_nocache)) {
 	"Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
 	"Segoe UI Symbol", "Noto Color Emoji";
 	--line-height: 1.5;
-	--font-weight: 400;
+	--font-weight-light: 200;
 	--font-weight-medium: 300;
+	--font-weight: 400;
+	--font-weight-semibold: 600;
+	--font-weight-bold: 700;
 	--font-size: 16px;
 	--border-radius: 0.25rem;
 	--border-width: 1px;
