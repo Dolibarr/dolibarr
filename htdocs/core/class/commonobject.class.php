@@ -11632,20 +11632,21 @@ abstract class CommonObject
 	public function checkActiveProductInLines($status = 'onsale')
 	{
 		global $langs;
+
 		if (isModEnabled('product') || isModEnabled('service')) {
-			$langs->load('products');
-			$statustotest = $status == 'onsale' ? 'status' : 'status_buy';
-			$statuskey4lang = $status == 'onsale' ? 'ProductStatusNotOnSell' : 'ProductStatusNotOnBuy';
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			
 			$ret = true;
+			$tmpproduct = new Product($this->db);
 			foreach ($this->lines as $line) {
 				if ($line->fk_product > 0) {
-					include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-					$langs->load('products');
-					$product = new Product($this->db);
-					$product->fetch($line->fk_product);
-					if (!$product->$statustotest) {
+					$tmpproduct->fetch($line->fk_product);
+					$statustotest = ($status == 'onsale' ? 'status' : 'status_buy');
+					if (!$tmpproduct->$statustotest) {
+						$langs->load('products');
+						$statuskey4lang = ($status == 'onsale' ? 'ProductStatusNotOnSell' : 'ProductStatusNotOnBuy');
 						$ret = false;
-						$this->errors[] = $langs->trans('ProductRef').' '.$product->ref.' '.$langs->trans($statuskey4lang);
+						$this->errors[] = $langs->trans('ProductRef').' '.$tmpproduct->ref.' '.$langs->trans($statuskey4lang);
 						break;
 					}
 				}
