@@ -900,7 +900,8 @@ class Products extends DolibarrApi
 	 * @return int
 	 *
 	 * @throws RestException 500	System error
-	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 403
 	 *
 	 * @url POST {id}/purchase_prices
 	 */

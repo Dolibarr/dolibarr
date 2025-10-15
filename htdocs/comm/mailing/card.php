@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +41,10 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -58,6 +63,7 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $urlfrom = GETPOST('urlfrom');
+$projectid = GETPOSTINT('projectid');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 
 // Initialize a technical objects
@@ -70,6 +76,17 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
+
+// Load object->fk_project
+if (isset($object->fk_project) && $object->fk_project > 0 ) {
+	dol_syslog('isset($object->fk_project)='.$object->fk_project, LOG_DEBUG);
+	$ret = $object->fetchProject();
+	if ($ret <= 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
+}
+
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 $object->substitutionarray = FormMail::getAvailableSubstitKey('emailing');
@@ -569,6 +586,7 @@ if (empty($reshook)) {
 		$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 		$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
 		$object->bgimage        = (string) GETPOST("bgimage");
+		$object->fk_project		= GETPOSTINT('projectid');
 
 		if (!$object->title) {
 			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
@@ -593,6 +611,23 @@ if (empty($reshook)) {
 		$action = "create";
 	}
 
+	if ($action == 'classin' && $permissiontocreate) {
+		$mesgs = array();
+		$setResult = $object->setProject(GETPOSTINT('projectid'));
+		dol_syslog('Mailing card, action classin, setProject', LOG_DEBUG);
+		if ($setResult) {
+			$result = $object->update($user);
+			if ($result >= 0) {
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				exit;
+			}
+			$mesg = $object->error;
+		}
+
+		setEventMessages($mesg, $mesgs, 'errors');
+		$action = "";
+	}
+
 	// Action update description of emailing
 	if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail_replyto' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontovalidatesend) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
@@ -613,7 +648,7 @@ if (empty($reshook)) {
 			$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 		}
 
-		if (!$mesg) {
+		if (isset($mesg) && !$mesg) {
 			$result = $object->update($user);
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -761,6 +796,10 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
+$formproject = null;
+if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
+}
 
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader(
@@ -805,6 +844,17 @@ if ($action == 'create') {	// aaa
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="title" value="'.dol_escape_htmltag(GETPOST('title')).'" autofocus="autofocus"></td></tr>';
+
+	// Project
+	if (isModEnabled('project')) {
+			$langs->load("projects");
+			print '<tr class="field_projectid">';
+			print '<td class="titlefieldcreate">' . $langs->trans("Project") . '</td><td class="valuefieldcreate">';
+			print img_picto('', 'project', 'class="pictofixedwidth"') . $formproject->select_projects(-1, (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+			print ' <a href="' . DOL_URL_ROOT . '/projet/card.php?action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create') . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddProject") . '"></span></a>';
+			print '</td>';
+			print '</tr>';
+	}
 
 	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 		$arrayoftypes = array("email" => "Email", "sms" => "SMS");
@@ -1026,6 +1076,27 @@ if ($action == 'create') {	// aaa
 					$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 				}
 				$morehtmlstatus .= ') &nbsp; ';
+			}
+			// Project
+			if (isModEnabled('project')) {
+				$langs->load("projects");
+				$morehtmlref .= '<br>';
+				if ($permissiontocreate) {
+					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+					if ($action != 'classify') {
+						$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+					}
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				} else {
+					if (!empty($object->fk_project)) {
+						$proj = new Project($db);
+						$proj->fetch($object->fk_project);
+						$morehtmlref .= $proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= '<span class="opacitymedium"> - ' . dol_escape_htmltag($proj->title) . '</span>';
+						}
+					}
+				}
 			}
 
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
@@ -1381,6 +1452,26 @@ if ($action == 'create') {	// aaa
 					$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 				}
 				$morehtmlstatus .= ') &nbsp; ';
+			}
+
+			// Project
+			if (isModEnabled('project')) {
+				$langs->load("projects");
+				$morehtmlref .= '<br>';
+				if ($permissiontocreate) {
+					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+					$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, -1, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				} else {
+					if (!empty($object->fk_project)) {
+						$proj = new Project($db);
+						$proj->fetch($object->fk_project);
+						$morehtmlref .= $proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= '<span class="opacitymedium"> - ' . dol_escape_htmltag($proj->title) . '</span>';
+						}
+					}
+				}
 			}
 
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);

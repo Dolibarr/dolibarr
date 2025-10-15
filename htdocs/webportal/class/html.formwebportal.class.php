@@ -842,8 +842,8 @@ class FormWebPortal extends Form
 				}
 
 				if (!$filter_categorie) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
+					$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+					if (!empty($fields_label)) {
 						$keyList .= ', ';
 						$keyList .= implode(', ', $fields_label);
 					}

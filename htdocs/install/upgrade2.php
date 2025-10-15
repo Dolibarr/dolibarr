@@ -76,6 +76,7 @@ require_once $dolibarr_main_document_root.'/core/lib/price.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
+require_once $dolibarr_main_document_root.'/user/class/user.class.php';
 
 global $langs;
 
@@ -129,7 +130,6 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
-	$path = __DIR__.'/';
 	if (substr($sapi_type, 0, 3) == 'cli') {
 		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";
 		print 'Example, upgrade from 19 to 20: '.$script_file." 19.0.0 20.0.0\n";
@@ -5380,10 +5380,10 @@ function migrate_accountingbookkeeping(int $entity)
  */
 function migrate_apiresttokens()
 {
-	global $db, $langs;
+	global $conf, $db, $langs;
 
 	print '<tr class="trforrunsql"><td colspan="4">';
-	print '<b>'.$langs->trans('MigrationApiRestTokens')."</b><br>\n";
+	print '<b>'.$langs->trans('MigrationApiRestTokens')."</b>:\n";
 
 	$error = 0;
 	$nbofmigration = 0;
@@ -5408,17 +5408,26 @@ function migrate_apiresttokens()
 	}
 
 	if (!$error) {
-		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, CURRENT_TIMESTAMP AS datec, u.entity";
+		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, u.entity";
 		$sql .= " FROM llx_user AS u";
-		$sql .= " WHERE u.api_key IS NOT NULL";
+		$sql .= " WHERE u.api_key IS NOT NULL AND u.api_key <> ''";
 
 		$result = $db->query($sql);
 
 		if ($result) {
+			$tmpuser = new User($db);
+
 			while ($obj = $db->fetch_object($result)) {
 				if (!in_array(dolDecrypt($obj->token), $allexistingtokens)) {
-					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, fk_user, datec, entity)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape($obj->token)."', ".((int) $obj->fk_user).", '".$db->escape($obj->datec)."', ".((int) $obj->entity).")";
+					// Load the object of the user of token so we can get the API_COUNT_CALL
+					unset($tmpuser->conf); $tmpuser->conf = new stdClass();
+					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
+
+					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, fk_user, datec, entity, apicount_total)";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->token)))."', ";
+					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
+					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
+					$sqlforinsert .= ")";
 
 					$insertresult = $db->query($sqlforinsert);
 					if (!$insertresult) {
@@ -5442,10 +5451,9 @@ function migrate_apiresttokens()
 	}
 
 	if (!$nbofmigration) {
-		print '</td></tr>';
-		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+		print $langs->trans("NothingToDo")."\n";
 	} else {
 		print $langs->trans('MigratedTokens', $nbofmigration);
-		print '</td></tr>';
 	}
+	print '</td></tr>';
 }
