@@ -109,48 +109,43 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 
 	if (!$error) {
 		$paymentid = 0;
+		$db->begin();
+
+		// Create a line of payments
+		$paiement = new PaymentSalary($db);
+		$paiement->fk_salary    = $id;
+		$paiement->chid         = $id;	// deprecated
+		$paiement->datep        = $datepaye;
+		$paiement->amounts      = $amounts; // Tableau de montant
+		$paiement->fk_typepayment = GETPOSTINT("paiementtype");
+		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
+		$paiement->note         = GETPOST("note", 'restricthtml');
+		$paiement->note_private = GETPOST("note", 'restricthtml');
+
+		$paymentid = $paiement->create($user, (GETPOST('closepaidsalary') == 'on' ? 1 : 0));
+		if ($paymentid < 0) {
+			$error++;
+			setEventMessages($paiement->error, null, 'errors');
+			$action = 'create';
+		}
 
 		if (!$error) {
-			$db->begin();
+			$result = $paiement->addPaymentToBank($user, 'payment_salary', '(SalaryPayment)', GETPOSTINT('accountid'), '', '');
 
-			// Create a line of payments
-			$paiement = new PaymentSalary($db);
-			$paiement->fk_salary    = $id;
-			$paiement->chid         = $id;	// deprecated
-			$paiement->datep        = $datepaye;
-			$paiement->amounts      = $amounts; // Tableau de montant
-			$paiement->fk_typepayment = GETPOSTINT("paiementtype");
-			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note         = GETPOST("note", 'restricthtml');
-			$paiement->note_private = GETPOST("note", 'restricthtml');
-
-			if (!$error) {
-				$paymentid = $paiement->create($user, (GETPOST('closepaidsalary') == 'on' ? 1 : 0));
-				if ($paymentid < 0) {
-					$error++;
-					setEventMessages($paiement->error, null, 'errors');
-					$action = 'create';
-				}
+			if (!($result > 0)) {
+				$error++;
+				setEventMessages($paiement->error, null, 'errors');
+				$action = 'create';
 			}
+		}
 
-			if (!$error) {
-				$result = $paiement->addPaymentToBank($user, 'payment_salary', '(SalaryPayment)', GETPOSTINT('accountid'), '', '');
-
-				if (!($result > 0)) {
-					$error++;
-					setEventMessages($paiement->error, null, 'errors');
-					$action = 'create';
-				}
-			}
-
-			if (!$error) {
-				$db->commit();
-				$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$id;
-				header('Location: '.$loc);
-				exit;
-			} else {
-				$db->rollback();
-			}
+		if (!$error) {
+			$db->commit();
+			$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$id;
+			header('Location: '.$loc);
+			exit;
+		} else {
+			$db->rollback();
 		}
 	}
 }
