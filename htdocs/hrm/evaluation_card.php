@@ -110,7 +110,6 @@ if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();
 }
 
-
 /*
  * Actions
  */
@@ -133,6 +132,34 @@ if (empty($reshook)) {
 			} else {
 				$backtopage = dol_buildpath('/hrm/evaluation_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 			}
+		}
+	}
+
+	if ($action == 'saveSkill' && $permissiontoadd) {
+		$TNote = GETPOST('TNote', 'array');
+		if (!empty($TNote)) {
+			foreach ($object->lines as $line) {
+				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
+				$line->update($user);
+			}
+			//setEventMessage($langs->trans("SaveLevelSkill"));
+		}
+
+		$action = 'validate';
+	}
+
+	if ($action == "validate" && $permissiontoadd) {
+		$TNote = GETPOST('TNote', 'array');
+		$emptyTNote = true;
+		foreach ($object->lines as $line) {
+			if (!in_array($TNote[$line->fk_skill], array("0", ""))) {
+				$emptyTNote = false;
+				break;
+			}
+		}
+		if ($emptyTNote) {
+			setEventMessage($langs->trans("WarningEvaluationEmptyValidate"), 'errors');
+			$action = '';
 		}
 	}
 
@@ -163,17 +190,6 @@ if (empty($reshook)) {
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_EVALUATION_TO';
 	$trackid = 'evaluation'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
-	if ($action == 'saveSkill' && $permissiontoadd) {
-		$TNote = GETPOST('TNote', 'array');
-		if (!empty($TNote)) {
-			foreach ($object->lines as $line) {
-				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
-				$line->update($user);
-			}
-			setEventMessage($langs->trans("SaveLevelSkill"));
-		}
-	}
 
 	if ($action == 'close' && $permissiontoadd) {
 		// save evaldet lines to user;
@@ -253,7 +269,6 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formproject = new FormProjets($db);
 
 $title = $langs->trans("Evaluation");
 $help_url = '';
@@ -263,20 +278,11 @@ llxHeader('', $title, $help_url, '', 0, 0, '', $css);
 
 print '<script type="text/javascript" language="javascript">
 	$(document).ready(function() {
-	  $("#btn_valid").click(function(){
+	  $("#btn_valid").click(function() {
+		 console.log("Click on btn_valid");
 		 var form = $("#form_save_rank");
-
-		 $.ajax({
-
-			 type: "POST",
-			 url: form.attr("action"),
-			 data: form.serialize(),
-			 dataType: "json"
-		 }).always(function() {
-             window.location.href = "'.dol_buildpath('/hrm/evaluation_card.php', 1).'?id='.$id.'&action=validate&token='.newToken().'";
-             return false;
-		 });
-
+		 form.submit();
+		 return true;
 	   });
 	});
 </script>';
