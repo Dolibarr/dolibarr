@@ -74,6 +74,7 @@ if (empty($dolibarr_nocache)) {
 	"Segoe UI Symbol", "Noto Color Emoji";
 	--line-height: 1.5;
 	--font-weight: 400;
+	--font-weight-medium: 300;
 	--font-size: 16px;
 	--border-radius: 0.25rem;
 	--border-width: 1px;
@@ -712,7 +713,7 @@ body > footer {
 }
 @media (min-width: 1200px) {
 	.container {
-		max-width: 1130px;
+		max-width: 95%;
 	}
 }
 

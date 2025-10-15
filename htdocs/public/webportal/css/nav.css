@@ -1,0 +1,21 @@
+
+.nav-item.--cart {
+	background-color: #f3f3f3;
+}
+
+nav a, nav  [role=link] {
+	--color : hsl(202deg 13.67% 41.54%);
+}
+
+nav a:is([aria-current], :hover, :active, :focus), [role=link]:is([aria-current], :hover, :active, :focus) {
+	--color: hsl(289.08deg 90% 32%);
+}
+
+nav  a:focus, nav  [role=link]:focus {
+	--background-color: hsl(274.15deg 97% 59% / 12.5%);
+}
+
+
+.primary-top-nav .logout {
+	margin-left: auto;
+}
