@@ -358,7 +358,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		} else {
 			$sql .= "null,";
 		}
-		$sql .= "'".$this->db->escape((string) $this->product_type)."',";
+		$sql .= "'".$this->db->escape((int) $this->product_type)."',";
 		$sql .= ((int) $this->special_code) . ",";
 		$sql .= "'".$this->db->escape((string) $this->rang)."',";
 		$sql .= "'".$this->db->escape((string) $this->qty)."', ";
@@ -383,6 +383,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ", ".($this->multicurrency_total_ttc ? price2num($this->multicurrency_total_ttc) : '0');
 		$sql .= ", ".((!empty($this->fk_parent_line) && $this->fk_parent_line > 0) ? $this->fk_parent_line : 'null');
 		$sql .= ")";
+		
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
 		$resql = $this->db->query($sql);
