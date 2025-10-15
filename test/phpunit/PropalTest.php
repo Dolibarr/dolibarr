@@ -63,7 +63,8 @@ class PropalTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$localobject = new Propal($db);
-		$localobject->initAsSpecimen();
+		$param = array('status' => 1);
+		$localobject->initAsSpecimen($param);
 		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0);
