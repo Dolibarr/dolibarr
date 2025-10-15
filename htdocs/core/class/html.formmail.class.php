@@ -2339,18 +2339,14 @@ class ModelMail extends CommonObject
 	 * @param 	int    	$id   			Id object
 	 * @param 	string 	$ref  			Ref
 	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
 	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
+	public function fetch($id, $ref = null, $noextrafields = 0)
 	{
 		// The table llx_c_email_templates has no field ref. The field ref was named "label" instead. So we change the call to fetchCommon.
-		//$result = $this->fetchCommon($id, $ref, '', $noextrafields);
-		$this->fetchCommon($id, '', (empty($ref) ? '' : " AND t.label = '".$this->db->escape($ref)."'"), $noextrafields);
+		// $result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		$result = $this->fetchCommon($id, '', (empty($ref) ? '' : " AND t.label = '".$this->db->escape($ref)."'"), $noextrafields);
 
-		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
-			$this->fetchLines($noextrafields);
-		}
 		return $result;
 	}
 }
