@@ -56,14 +56,11 @@ $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array:int');
+$toselect = GETPOST('toselect', 'array:aZ09');	// Value can be 'X_Y'
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountancysupplierlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $default_account = GETPOSTINT('default_account');
-
-// Select Box
-$mesCasesCochees = GETPOST('toselect', 'array:int');
 
 // Search Getpost
 $search_lineid = GETPOST('search_lineid', 'alpha');		// Can be '> 100'
@@ -212,14 +209,14 @@ if (empty($reshook)) {
 if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	$msg = '';
 
-	if (!empty($mesCasesCochees)) {
-		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
+	if (!empty($toselect)) {
+		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($toselect).'</div>';
 		$msg .= '<div class="detail">';
 		$cpt = 0;
 		$ok = 0;
 		$ko = 0;
 
-		foreach ($mesCasesCochees as $maLigneCochee) {
+		foreach ($toselect as $maLigneCochee) {
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
 			$monCompte = GETPOSTINT('codeventil'.$monId);

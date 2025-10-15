@@ -56,7 +56,7 @@ class modBlockedLog extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
-		$this->picto = 'technic';
+		$this->picto = 'blockedlog';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -73,18 +73,18 @@ class modBlockedLog extends DolibarrModules
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
 		$this->langfiles = array('blockedlog');
 
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		$this->warnings_unactivation = array('FR'=>'BlockedLogAreRequiredByYourCountryLegislation');
 
 		// Currently, activation is not automatic because only companies (in France) making invoices to non business customers must
 		// enable this module.
 		/*if (getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')) {
-			$tmp=explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
+			$tmp = explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
 			$this->automatic_activation = array();
-			foreach($tmp as $key)
+			foreach($tmp as $countrycodekey)
 			{
-				$this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
+				$this->automatic_activation[$countrycodekey] = 'BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
 			}
 		}*/
 		//var_dump($this->automatic_activation);
