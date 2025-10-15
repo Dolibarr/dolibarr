@@ -255,9 +255,13 @@ a:link, a:visited, a:hover, a:active, .classlink {
   white-space: nowrap;
 }
 
-/**
-Home Styles
- */
+.btn-download-link:not(:first-child){
+	margin-left: 10px;
+}
+
+	/**
+	Home Styles
+	 */
 .home-links-card{
 
 }
