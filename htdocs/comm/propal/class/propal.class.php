@@ -3587,9 +3587,10 @@ class Propal extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
+	 *  @param	array<string|mixed>		$param		Array of options
 	 *  @return	int
 	 */
-	public function initAsSpecimen()
+	public function initAsSpecimen($param = array())
 	{
 		global $conf, $langs;
 
@@ -3599,6 +3600,9 @@ class Propal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		if (array_key_exists('status', $param)) {
+			$sql .= " AND status = ".((int) $param['status']);
+		}
 		$sql .= $this->db->plimit(100);
 
 		$resql = $this->db->query($sql);
@@ -3615,6 +3619,7 @@ class Propal extends CommonObject
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->ref_customer = 'NEMICEPS';
 		$this->ref_client = 'NEMICEPS';
 		$this->specimen = 1;
 		$this->socid = 1;

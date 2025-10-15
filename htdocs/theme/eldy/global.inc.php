@@ -8608,6 +8608,10 @@ div.clipboardCPValue.hidewithsize {
 	white-space: nowrap;
 }
 
+.clipboardCPShowOnHover{
+	cursor: copy;
+}
+
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
 }

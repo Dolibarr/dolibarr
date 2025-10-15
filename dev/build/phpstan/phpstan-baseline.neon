@@ -15850,13 +15850,13 @@ parameters:
 			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
-			path: ../../../htdocs/salaries/paiement_salary.php
+			path: ../../../htdocs/salaries/payment_salary.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/salaries/paiement_salary.php
+			path: ../../../htdocs/salaries/payment_salary.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
