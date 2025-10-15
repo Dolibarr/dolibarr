@@ -76,6 +76,7 @@ if (empty($dolibarr_nocache)) {
 @import "login.css";
 @import "badges.css";
 @import "title-buttons.css";
+@import "nav.css";
 /**
 This file can overwrite default pico css
  */
@@ -261,15 +262,11 @@ Home Styles
 
 }
 
-
-
 :root {
 	--colorbackbody: #fff;
 	--colortext: #000;
 }
 
-
-.width150 { width: 150px; }
 
 
 /* ============================================================================== */
