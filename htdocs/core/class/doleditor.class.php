@@ -207,7 +207,10 @@ class DolEditor
 
 		$fullpage = false;
 
-		$extraAllowedContent = 'a[target];section[contenteditable,id];div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,width,border-top-left-radius,border-top-right-radius,border-bottom-left-radius,border-bottom-right-radius,box-shadow}';
+		$extraAllowedContent = 'a[target];';
+		$extraAllowedContent .= 'section[contenteditable,id];';
+		$extraAllowedContent .= 'div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,width,border-top-left-radius,border-top-right-radius,border-bottom-left-radius,border-bottom-right-radius,box-shadow}';
+
 		if (is_string($restrictContent)) {
 			$extraAllowedContent = $restrictContent;
 		}

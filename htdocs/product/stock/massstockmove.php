@@ -103,6 +103,8 @@ if (!empty($_SESSION['massstockmove'])) {
 
 $error = 0;
 
+$permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer');
+
 
 /*
  * Actions
@@ -522,16 +524,8 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	$_SESSION['massstockmove'] = json_encode($listofdata);
 }
 
-if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontodelete) {
 	$langs->load("other");
-
-	$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
-	if ($excludefirstline) {
-		$param .= '&excludefirstline='.urlencode($excludefirstline);
-	}
-	if ($endatlinenb) {
-		$param .= '&endatlinenb='.urlencode($endatlinenb);
-	}
 
 	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
 	$ret = dol_delete_file($file);

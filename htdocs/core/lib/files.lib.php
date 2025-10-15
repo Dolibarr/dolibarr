@@ -2909,7 +2909,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 					$newmask = getDolGlobalString('MAIN_UMASK');
 				}
 				if (empty($newmask)) {	// This should no happen
-					dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
+					dol_syslog("Warning: dol_compress_dir called with empty value for newmask and no default value defined", LOG_WARNING);
 					$newmask = '0664';
 				}
 

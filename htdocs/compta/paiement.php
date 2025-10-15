@@ -179,7 +179,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTINT($key));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			}
 		}
 
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 	/*
 	 * Action add_paiement
 	 */
-	if ($action == 'add_paiement') {
+	if ($action == 'add_paiement') {	// Test on permission not required
 		if ($error) {
 			$action = 'create';
 		}

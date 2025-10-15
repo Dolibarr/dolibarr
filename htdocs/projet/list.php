@@ -106,6 +106,7 @@ $pagenext = $page + 1;
 
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search_entity = GETPOSTINT('search_entity');
+$search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
@@ -392,6 +393,7 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_all = '';
+		$search_id = "";
 		$search_ref = "";
 		$search_label = "";
 		$search_societe = "";
@@ -628,6 +630,9 @@ if (!$user->hasRight('projet', 'all', 'lire')) {
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid > 0) {
 	$sql .= " AND (p.fk_soc = ".((int) $socid).")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
+}
+if ($search_id) {
+	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
@@ -1054,6 +1059,9 @@ if (!empty($search_category_array)) {
 		$param .= '&search_categegory_project_list[]='.urlencode($tmpval);
 	}
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1300,10 +1308,16 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print $searchpicto;
 	print '</td>';
 }
+// Project ID
+if (!empty($arrayfields['p.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
+}
 // Project ref
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="6">';
+	print '<input type="text" class="flat width75" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 // Project label
@@ -1512,6 +1526,10 @@ $totalarray['nbfield'] = 0;
 print '<tr class="liste_titre">';
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -1917,7 +1935,16 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Project url
+		// Project ID
+		if (!empty($arrayfields['p.rowid']['checked'])) {
+			print '<td class="nowraponall">';
+			print $object->id;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Project ref url
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax200">';
 			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''));

@@ -2062,7 +2062,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
 	 * @throws RestException 500 Internal Server Error: Error updating SocieteAccount entity
 	 *
-	 * @url		PUT		{id}/accounts/{site}
+	 * @url		POST		{id}/accounts/{site}
 	 */
 	public function postSocieteAccount($id, $site, $request_data = null)
 	{

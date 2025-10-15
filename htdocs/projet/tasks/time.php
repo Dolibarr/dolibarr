@@ -417,7 +417,7 @@ if ($id <= 0 && $projectidforalltimes == 0) {
 	$allprojectforuser = $user->id;
 }
 
-if ($action == 'confirm_generateinvoice') {
+if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer')) {
 	if (!empty($projectstatic->socid)) {
 		$projectstatic->fetch_thirdparty();
 	}
@@ -799,7 +799,7 @@ if ($action == 'confirm_generateinvoice') {
 	}
 }
 
-if ($action == 'confirm_generateinter') {
+if ($action == 'confirm_generateinter' && $user->hasRight('fichinter', 'creer')) {
 	$langs->load('interventions');
 
 	if (!empty($projectstatic->socid)) {

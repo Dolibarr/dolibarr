@@ -335,7 +335,7 @@ if (empty($reshook)) {
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
 			$object->email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->url = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
+			$object->url = trim(GETPOST('member_url', 'url'));
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
@@ -485,7 +485,7 @@ if (empty($reshook)) {
 		$phone_perso = GETPOST("phone_perso", 'alpha');
 		$phone_mobile = GETPOST("phone_mobile", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase'));
-		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+		$url = trim(GETPOST('url', 'url'));
 		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'password');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');

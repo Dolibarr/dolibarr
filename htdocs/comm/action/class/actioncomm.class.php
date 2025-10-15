@@ -2338,7 +2338,7 @@ class ActionComm extends CommonObject
 						$assignedUserArray[$key] = $assignedUser;
 					}
 
-					if ($filters['module'] != 'project@eventorganization') {
+					if (!empty($filters['module']) && $filters['module'] != 'project@eventorganization') {
 						$event['assignedUsers'] = $assignedUserArray;
 					}
 
@@ -2725,6 +2725,7 @@ class ActionComm extends CommonObject
 
 							//Topic
 							$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+							$sendTopic = make_substitutions($sendTopic, $substitutionarray);
 
 							// Recipient
 							$recipient = new User($this->db);

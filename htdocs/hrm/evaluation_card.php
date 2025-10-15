@@ -130,7 +130,7 @@ if (empty($reshook)) {
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {		// Test on permission not required
 				$backtopage = $backurlforlist;
 			} else {
 				$backtopage = dol_buildpath('/hrm/evaluation_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
@@ -166,7 +166,7 @@ if (empty($reshook)) {
 	$trackid = 'evaluation'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	if ($action == 'saveSkill') {
+	if ($action == 'saveSkill' && $permissiontoadd) {
 		$TNote = GETPOST('TNote', 'array');
 		if (!empty($TNote)) {
 			foreach ($object->lines as $line) {

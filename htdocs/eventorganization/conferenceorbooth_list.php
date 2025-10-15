@@ -184,10 +184,7 @@ if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && $user->h
 		}
 	}
 }
-/*if ($action=='setaccept_conference_suggestions' && !empty(GETPOST('cancel', 'alpha'))) {
 
-}*/
-//setaccept_booth_suggestions
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
@@ -198,8 +195,6 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend'
 	&& $massaction != 'confirm_presend_attendees') {
 	$massaction = '';
 }
-
-
 
 
 $parameters = array();

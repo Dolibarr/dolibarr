@@ -202,7 +202,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$societe->country_id = GETPOSTINT('country_id');
 		$societe->phone = GETPOST('phone', 'alpha');
 		$societe->fax = GETPOST('fax', 'alpha');
-		$societe->email = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+		$societe->email = trim(GETPOST('email', 'email'));
 		$societe->client = 2 ; // our client is a prospect
 		$societe->code_client = '-1';
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');

@@ -661,8 +661,8 @@ class Members extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(403);
 		}
-		if (is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
-			throw new RestException(422, 'Malformed data');
+		if (!is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
+			throw new RestException(422, 'Malformed data: subscription start or end date, or subscription amount, is not numeric');
 		}
 
 		$member = new Adherent($this->db);

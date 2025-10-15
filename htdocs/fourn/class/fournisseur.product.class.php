@@ -1399,7 +1399,7 @@ class ProductFournisseur extends Product
 			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
 		}
 
-		$logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
+		$logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC', getDolGlobalInt('MAIN_TOOLTIP_PRICELOG_HISTORY_LIMIT', 10)); // set sort order here
 		if (is_array($logPrices) && count($logPrices) > 0) {
 			$label .= '<br><br>';
 			$label .= '<u>'.$langs->trans("History").'</u>';

@@ -7,7 +7,7 @@
  * Copyright (C) 2023 		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,7 +233,12 @@ class pdf_balance extends ModelePdfAccountancy
 		}
 
 		$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-		$pdf->SetSubject($outputlangs->transnoentities("AccountancyBalance"));
+
+		if ($this->balanceType == "sub") {
+			$pdf->SetSubject($outputlangs->transnoentities("AccountBalanceSubAccount"));
+		} else {
+			$pdf->SetSubject($outputlangs->transnoentities("AccountancyBalance"));
+		}
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBalance"));
@@ -341,7 +346,11 @@ class pdf_balance extends ModelePdfAccountancy
 			// No check on column status, this column is mandatory
 			$pdf->startTransaction();
 
-			$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+			if ($this->balanceType == "sub") {
+				$this->printStdColumnContent($pdf, $curY, 'account_label', $object->lines[$i]->subledger_label);
+			} else {
+				$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+			}
 
 			$pageposafter = $pdf->getPage();
 			if ($pageposafter > $pageposbefore) {	// There is a pagebreak
@@ -350,7 +359,11 @@ class pdf_balance extends ModelePdfAccountancy
 				$pdf->AddPage('', '', true);
 				$pdf->setPage($pageposafter);
 				$curY = $tab_top_newpage + $this->tabTitleHeight;
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+				if ($this->balanceType == "sub") {
+					$this->printStdColumnContent($pdf, $curY, 'account_label',  $object->lines[$i]->subledger_label);
+				} else {
+					$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+				}
 
 				$pageposafter = $pdf->getPage();
 				$posyafter = $pdf->GetY();
@@ -398,7 +411,11 @@ class pdf_balance extends ModelePdfAccountancy
 				$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
 			}
 
-			if ($this->getColumnStatus('account_number')) {
+			if ($this->balanceType == 'sub' && $this->getColumnStatus('account_number')) {
+				$text = length_accounta($object->lines[$i]->subledger_account);
+				$this->printStdColumnContent($pdf, $curY, 'account_number', $text);
+				$nexY = max($pdf->GetY(), $nexY);
+			} elseif ($this->getColumnStatus('account_number')) {
 				$text = length_accountg($object->lines[$i]->numero_compte);
 				$this->printStdColumnContent($pdf, $curY, 'account_number', $text);
 				$nexY = max($pdf->GetY(), $nexY);
@@ -655,8 +672,12 @@ class pdf_balance extends ModelePdfAccountancy
 		// Page title
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx - 2, $posy + 2);
-		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("PdfBalanceTitle");
+		$pdf->SetTextColor(0, 0, 120);
+		if ($this->balanceType == "sub") {
+			$title = $outputlangs->transnoentities("AccountBalanceSubAccount");
+		} else {
+			$title = $outputlangs->transnoentities("PdfBalanceTitle");
+		}
 		$pdf->MultiCell($w / 3, 3, $title, 0, 'C');
 		$nexY = max($pdf->GetY(), $nexY);
 
@@ -723,7 +744,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 10,
 			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_BALANCE_ADD_POSITION'),
 			'title' => [
-				'textkey' => '#', // use lang key is useful in somme case with module
+				'textkey' => '#', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -741,7 +762,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 20, // only for desc
 			'status' => true,
 			'title' => [
-				'textkey' => 'AccountNumber', // use lang key is useful in somme case with module
+				'textkey' => 'AccountNumber', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -759,7 +780,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => false,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Label', // use lang key is useful in somme case with module
+				'textkey' => 'Label', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -779,7 +800,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 30,
 			'status' => true,
 			'title' => [
-				'textkey' => 'DebitMovement', // use lang key is useful in somme case with module
+				'textkey' => 'AccountingDebit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -798,7 +819,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 30,
 			'status' => true,
 			'title' => array(
-				'textkey' => 'CreditMovement', // use lang key is useful in somme case with module
+				'textkey' => 'AccountingCredit', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -817,7 +838,7 @@ class pdf_balance extends ModelePdfAccountancy
 			'width' => 32,
 			'status' => true,
 			'title' => [
-				'textkey' => 'Balance', // use lang key is useful in somme case with module
+				'textkey' => 'Balance', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

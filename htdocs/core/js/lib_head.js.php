@@ -568,6 +568,7 @@ function cleanSerialize(expr) {
  * Input:   message
  * Author:  Regis Houssin
  * Licence: GPL
+ * TODO To remove, seems not used
  * ==================================================================
  */
 function displayMessage(fieldId,message) {
@@ -586,6 +587,7 @@ function displayMessage(fieldId,message) {
  * Input:   message
  * Author:  Regis Houssin
  * Licence: GPL
+ * TODO To remove, seems not used
  * ==================================================================
  */
 function hideMessage(fieldId,message) {

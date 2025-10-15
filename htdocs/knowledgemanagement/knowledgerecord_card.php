@@ -161,9 +161,10 @@ if (empty($reshook)) {
 	$trackid = 'knowledgerecord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
-if ($action == 'confirm_validate') {
+if ($action == 'confirm_validate') {	// Test on permission already done into actions_addupdatedelete.inc.php
 	$action = 'edit';
 }
+
 
 /*
  * View
