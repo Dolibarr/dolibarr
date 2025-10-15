@@ -76,6 +76,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 .badge-pill{
+	/* Use the .badge-pill modifier class to make badges more rounded (with a larger border-radius and additional horizontal padding). */
 	padding-right: .8em;
 	padding-left: 0.8em;
 	border-radius: 0.5rem;
