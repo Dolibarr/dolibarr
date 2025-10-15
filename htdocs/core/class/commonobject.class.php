@@ -11621,8 +11621,9 @@ abstract class CommonObject
 		return true;
 	}
 
-	/** check if all products have the right status (on sale, on buy)
-	 * called during validation of propal, order, supplier proposal, supplier order
+	/** 
+	 * Check if all products have the right status (on sale, on buy) called
+	 * during validation of propal, order, supplier proposal, supplier order
 	 *
 	 * @global object $langs
 	 * @param string $status onsale or onbuy
@@ -11645,10 +11646,13 @@ abstract class CommonObject
 					if (!$product->$statustotest) {
 						$ret = false;
 						$this->errors[] = $langs->trans('ProductRef').' '.$product->ref.' '.$langs->trans($statuskey4lang);
+						break;
 					}
 				}
 			}
-			if (!$ret) $this->error = 'ErrorOneLineContainsADisactivatedProduct';
+			if (!$ret) {
+				$this->error = 'ErrorOneLineContainsADisactivatedProduct';
+			}
 			return $ret;
 		} else {
 			return true;
