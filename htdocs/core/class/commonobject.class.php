@@ -11635,7 +11635,7 @@ abstract class CommonObject
 
 		if (isModEnabled('product') || isModEnabled('service')) {
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			
+
 			$ret = true;
 			$tmpproduct = new Product($this->db);
 			foreach ($this->lines as $line) {
