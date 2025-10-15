@@ -508,7 +508,7 @@ print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
+print '<td></td>'."\n";
 print "<td>&nbsp;</td>\n";
 print "</tr>";
 
@@ -553,9 +553,11 @@ print '</form>';
 
 if (isModEnabled('bank')) {
 	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
+	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>';
 	print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL');
-	print '</td></tr>';
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
 } else {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
@@ -563,28 +565,31 @@ if (isModEnabled('bank')) {
 
 // Allow external download
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AllowExternalDownload").'</td><td>&nbsp;</td>';
-print '<td class="right">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td>';
 print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
 print '</td></tr>';
+
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td colspan="2">';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
+
 
 print '</table>';
 
 
-
-/*
- *  Directory
- */
-print '<br>';
-print load_fiche_titre($langs->trans("PathToDocuments"), '', '');
-
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td>".$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Value")."</td>\n";
-print "</tr>\n";
-print "<tr class=\"oddeven\">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
-print "</table>\n<br>";
 
 // End of page
 llxFooter();

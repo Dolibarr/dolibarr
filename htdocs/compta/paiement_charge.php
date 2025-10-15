@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta"));
@@ -249,9 +248,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	/*
-	  * Other unpaid charges
-	 */
+	print '<br>';
+
+
+	// List of unpaid taxes
+
 	$num = 1;
 	$i = 0;
 
@@ -324,7 +325,7 @@ if ($action == 'create') {
 
 	// Save payment button
 	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib" id="closepaidcontrib" class="marginrightonly">';
-	print '<label for="closepaidcontrib">'.$langs->trans("ClosePaidContributionsAutomatically").'</span>';
+	print '<label for="closepaidcontrib" class="opacitymedium">'.$langs->trans("ClosePaidContributionsAutomatically").'</label>';
 	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';

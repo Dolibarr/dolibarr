@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2019		Eric Seigne				<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -162,7 +162,44 @@ function length_accounta($accounta)
 	}
 }
 
+/**
+ * Check if a general accounting account allows the use of an auxiliary account.
+ *
+ * @param DoliDB	$db					Database handler
+ * @param string	$general_account	The general account number (optional if $general_account_id is used)
+ * @param string	$auxiliary_account	The auxiliary account number
+ * @param int		$general_account_id	Optional rowid of the general accounting account
+ * @return bool True if the auxiliary account is allowed, false otherwise
+ */
+function checkGeneralAccountAllowsAuxiliary($db, $general_account, $auxiliary_account, $general_account_id = 0)
+{
+	global $conf;
 
+	if (empty($auxiliary_account)) return true; // No check needed if no auxiliary account used
+
+	// Build SQL to get general account info based on rowid or account number
+	$sql = "SELECT rowid, account_number, centralized";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account";
+	$sql .= " WHERE";
+	if ($general_account_id > 0) {
+		$sql .= " rowid = ".((int) $general_account_id);
+	} else {
+		$sql .= " account_number = '".$db->escape($general_account)."'";
+	}
+	$sql .= " AND entity = ". ((int) $conf->entity);
+	$sql .= " AND fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS')).")";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && empty($obj->centralized)) {
+			// Not a centralized account -> not allowed to use auxiliary
+			return false;
+		}
+	}
+
+	return true;
+}
 
 /**
  *	Show header of a page used to transfer/dispatch data in accounting
