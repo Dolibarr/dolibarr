@@ -47,7 +47,6 @@ PreviewSiteServedByDolibarr=<u>Visualizar %s em uma nova aba.</u><br><br>O %s se
 VirtualHostUrlNotDefined=URL do host virtual veiculado pelo servidor web externo não definido
 NoPageYet=Ainda não há páginas
 SyntaxHelp=Ajuda sobre dicas de sintaxe específicas
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Você pode definir dinamicamente <strong>título de SEO e meta tags</strong> (título, palavras-chave, descrição). Basta definir as seguintes variáveis:<br> <code>$__PAGE_TITLE__ = "Valor do título …";</code><br> <code>$__PAGE_KEYWORDS__ = "palavra-chave1, palavra-chave2, palavra-chave3 …"; // Separados por vírgula</code><br> <code>$__PAGE_DESC__ = "Descrição…";</code><br>
 YouCanEditHtmlSourced=Para um arquivo compartilhado com um link de compartilhamento (acesso aberto usando o hash de compartilhamento chave do arquivo), a sintaxe é:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Para incluir uma <strong>image</strong> armazenada no diretório <strong>medias</strong> (diretório aberto para acesso público), use o caminho relativo começando com <strong>/medias</strong>, exemplo:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Para uma imagem compartilhada com um link de compartilhamento (acesso aberto usando o hash de compartilhamento chave do arquivo), use o wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
@@ -59,7 +58,6 @@ CloneSite=Site Clone
 SiteAdded=Site adicionado
 ConfirmClonePage=Digite o código / alias da nova página e se é uma tradução da página clonada.
 CreateByFetchingExternalPage=Criar página / recipiente obtendo página do URL externo ...
-OrEnterPageInfoManually=Ou você pode criar uma página do zero ou de um modelo de página ...
 FetchAndCreate=Procure e comece a criar
 BlogPost=Postagem do blog
 AddWebsiteAccount=Criar conta do site
@@ -70,7 +68,6 @@ AnotherContainer=É assim que se inclui o conteúdo de outra página / contêine
 SorryWebsiteIsCurrentlyOffLine=Desculpe, este site está fora do ar. Volte mais tarde...
 WEBSITE_USE_WEBSITE_ACCOUNTS=Habilitar a tabela de conta do site para terceiros
 YouMustDefineTheHomePage=Você deve primeiro definir a Home page padrão
-OnlyEditionOfSourceForGrabbedContentFuture=Aviso: A criação de uma página da web importando uma página da web externa é reservada para usuários experientes. Dependendo da complexidade da página de origem, o resultado da importação pode ser diferente do original. Além disso, se a página de origem usar estilos CSS comuns ou JavaScript conflitante, isso pode quebrar a aparência ou os recursos do editor do site ao trabalhar nesta página. Este método é uma maneira mais rápida de criar uma página, mas é recomendado criar criar sua nova página do zero ou de um modelo de página sugerido.<br>Observe também que o editor em linha pode não funcionar corretamente quando usado em uma página externa capturada.
 GrabImagesInto=Pegue também imagens encontradas no css e na página.
 WebsiteRootOfImages=Diretório raiz para imagens do site
 AliasPageAlreadyExists=Página de alias <strong>%s</strong> já existe

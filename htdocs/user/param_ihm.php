@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2015  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -296,10 +296,27 @@ if ($reshook < 0) {
 	$tmparray = array_merge($tmparray, $hookmanager->resArray);
 }
 
+// 1) Normalisation
+foreach ($tmparray as $k => $v) {
+	if (!is_array($v)) {
+		$tmparray[$k] = [
+			'label' => is_string($v) ? $v : (is_string($k) ? $k : (string) $k),
+			'picto' => 'generic',
+		];
+	} else {
+		$tmparray[$k]['label'] = $tmparray[$k]['label'] ?? (is_string($k) ? $k : (string) $k);
+		$tmparray[$k]['picto'] = !empty($tmparray[$k]['picto']) ? $tmparray[$k]['picto'] : 'generic';
+	}
+}
+
 foreach ($tmparray as $key => $val) {
-	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), empty($val['picto']) ? 'generic' : $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
+	$tmparray[$key]['data-html'] = img_picto(
+		$langs->trans($val['label']),
+		$val['picto'],
+		'class="pictofixedwidth"'
+	) . $langs->trans($val['label']);
+
 	$tmparray[$key]['label'] = $langs->trans($val['label']);
-	$tmparray[$key]['picto'] = empty($val['picto']) ? 'generic' : $val['picto'];
 }
 
 $head = user_prepare_head($object);
@@ -485,7 +502,7 @@ if ($action == 'edit') {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);

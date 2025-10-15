@@ -61,6 +61,9 @@
  * @var string $hidedetails
  * @var string $hidedesc
  * @var string $hideref
+ * @var ?string $confirm
+ * @var ?int $lineid
+ * @var ?int $id
  */
 // $action or $cancel must be defined
 // $object must be defined
@@ -443,7 +446,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoed
 		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	} else {
-		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);	// TODO Remove $triggermodname to use $object->TRIGGER_PREFIX.'_MODIFY' instead
 		if ($result > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			$action = 'view';

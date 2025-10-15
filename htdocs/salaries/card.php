@@ -32,6 +32,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
@@ -45,14 +52,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm", "trips"));
@@ -677,13 +676,6 @@ if ($action == 'create' && $permissiontoadd) {
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
-	// Bouton Save payment
-	/*
-	print '<tr class="hide_if_no_auto_create_payment"><td>';
-	print $langs->trans("ClosePaidSalaryAutomatically");
-	print '</td><td><input type="checkbox" checked value="1" name="closepaidsalary"></td></tr>';
-	*/
-
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -699,7 +691,7 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<div class="center">';
 
 	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
-	print '<input type="checkbox" checked value="1" name="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically");
+	print '<input type="checkbox" checked value="1" name="closepaidsalary" id="closepaidsalary" class="marginrightonly"><label for="closepaidsalary" class="opacitymedium">'.$langs->trans("ClosePaidSalaryAutomatically").'</label>';
 	print '</div>';
 
 	print '</div>';
@@ -896,7 +888,7 @@ if ($id > 0) {
 		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
-		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		$morehtmlref .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
 
@@ -906,10 +898,10 @@ if ($id > 0) {
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
 			if ($result > 0) {
-				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
+				$morehtmlref .= '<br>'.$userstatic->getNomUrl(-1);
 			}
 		} else {
-			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $permissiontoadd, 'string', '', 0, 1);
+			$morehtmlref .= '<br>' . $form->editfieldkey("", 'fk_user', $object->label, $object, $permissiontoadd, 'string', '', 0, 1);
 
 			if (!empty($object->fk_user)) {
 				$userstatic = new User($db);
@@ -923,12 +915,12 @@ if ($id > 0) {
 			}
 		}
 	} else {
-		$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
+		$morehtmlref .= '<br>';
 		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="setfk_user">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$morehtmlref .= $form->select_dolusers($object->fk_user, 'userid', 1);
-		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		$morehtmlref .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
 
@@ -959,8 +951,9 @@ if ($id > 0) {
 	$morehtmlref .= '</div>';
 
 	$totalpaid = $object->getSommePaiement();
-	$object->alreadypaid = $totalpaid;
+
 	$object->totalpaid = $totalpaid;
+	$object->alreadypaid = $totalpaid;	// Same then $totalpaid because there is no amount of credit note or deposits for salary payments.
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
@@ -991,15 +984,6 @@ if ($id > 0) {
 		print dol_print_date($object->dateep, 'day');
 		print '</td></tr>';
 	}
-
-	/*print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td>';
-	print dol_print_date($object->datep, 'day');
-	print '</td></tr>';
-
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
-	print dol_print_date($object->datev, 'day');
-	print '</td></tr>';*/
 
 	if ($action == 'edit') {
 		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount) . '"></td></tr>';
@@ -1081,7 +1065,6 @@ if ($id > 0) {
 
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$total = 0;
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder paymenttable">';
@@ -1211,7 +1194,7 @@ if ($id > 0) {
 
 		// Emit payment
 		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php?action=create&token='.newToken().'&id='. $object->id, '');
+			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/payment_salary.php?action=create&id='. $object->id, '');
 		}
 
 		// Classify 'paid'

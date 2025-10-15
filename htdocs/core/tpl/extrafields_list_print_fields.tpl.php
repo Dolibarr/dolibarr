@@ -64,7 +64,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 					$value = $datenotinstring;
 				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
-					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0' ? $obj->$tmpkey : '');
+					$value = $obj->$tmpkey ?? (isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : null) ?? '';
 				} else {
 					// The key may be in $obj->array_options if not in $obj
 					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey :
@@ -79,7 +79,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 				}
 
-				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object);
+				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object ?? null);
 				$title = dol_string_nohtmltag($valuetoshow);
 
 				print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');

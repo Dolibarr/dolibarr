@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009       Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013 	    Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2020-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ asort($listofmethods);
 
 if (!count($listofmethods)) {
 	$descnosms = $langs->trans("NoSmsEngine", '{Dolistore}');
-	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>', $descnosms);
+	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/index.php?controller=search&orderby=position&orderway=desc&website=marketplace&search_query=smsmanager">DoliStore</a>', $descnosms);
 	print '<div class="warning">'.$descnosms.'</div>';
 }
 

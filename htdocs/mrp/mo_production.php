@@ -55,11 +55,11 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
 
 // Get parameters
-$id          = GETPOSTINT('id');
-$ref         = GETPOST('ref', 'alpha');
-$action      = GETPOST('action', 'aZ09');
-$confirm     = GETPOST('confirm', 'alpha');
-$cancel      = GETPOST('cancel', 'aZ09');
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $lineid = GETPOSTINT('lineid');
@@ -372,7 +372,7 @@ if (empty($reshook)) {
 							$stockmove->origin_id = $object->id;
 							$stockmove->context['mrp_role'] = 'toproduce';
 
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, GETPOSTDATE('eatby-'.$line->id.'-'.$i), GETPOSTDATE('sellby-'.$line->id.'-'.$i), GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -503,10 +503,12 @@ if (empty($reshook)) {
 		$moline = new MoLine($db);
 		$res = $moline->fetch(GETPOSTINT('lineid'));
 		if ($result > 0) {
-			$extrafields->fetch_name_optionals_label($moline->element);
-			foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
-				$value = GETPOST('options_'.$key, 'alphanohtml');
-				$moline->array_options["options_".$key] = $value;
+			$extrafields->fetch_name_optionals_label($moline->table_element);
+			if (!empty($extrafields->attributes[$moline->table_element]['label'])) {
+				foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
+					$value = GETPOST('options_'.$key, 'alphanohtml');
+					$moline->array_options["options_".$key] = $value;
+				}
 			}
 			$moline->qty = GETPOSTFLOAT('qty_lineProduce');
 			if (GETPOSTISSET('warehouse_lineProduce')) {
@@ -550,13 +552,13 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-mrp page-card_p
 $newToken = newToken();
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create' && $action != 'reload'))) {
 	$res = $object->fetch_thirdparty();
 	$res = $object->fetch_optionals();
 
 	if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $object->fk_warehouse > 0) {
-		$tmpwarehouse->fetch($object->fk_warehouse);
-		$fk_default_warehouse = $object->fk_warehouse;
+		$tmpwarehouse->fetch((int) $object->fk_warehouse);
+		$fk_default_warehouse = (int) $object->fk_warehouse;
 	}
 
 	$head = moPrepareHead($object);
@@ -596,7 +598,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$object->fetch_product();
 			$numref = $object->getNextNumRef($object->product);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateMo', $numref);
@@ -1479,13 +1481,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Split
 						$type = 'batch';
 						print '<td align="right" class="split">';
-						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
+						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
 						print '</td>';
 
 						// Split All
 						print '<td align="right" class="splitall">';
 						if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
-							print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
+							print img_picto($langs->trans('SplitAllQuantity'), 'split', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
 						}
 						print '</td>';
 
@@ -1533,8 +1535,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="clearboth"></div>';
 
 		$nblinetoproduce = 0;
+		$atLeastOneEatBy = false;
+		$atLeastOneSellBy = false;
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toproduce') {
+				$tmpproduct = new Product($db);
+				$tmpproduct->fetch($line->fk_product);
+				if (
+					$tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY
+					|| $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT
+				) {
+					$atLeastOneEatBy = true;
+				}
+				if (
+					$tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY
+					|| $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT
+				) {
+					$atLeastOneSellBy = true;
+				}
 				$nblinetoproduce++;
 			}
 		}
@@ -1599,6 +1617,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Split All
 			print '<td></td>';
+
+			// sell by
+			if ($atLeastOneEatBy) {
+				print '<td>'.$langs->trans("EatByDate").'</td>';
+			}
+
+			// eat by
+			if ($atLeastOneSellBy) {
+				print '<td>'.$langs->trans("SellByDate").'</td>';
+			}
 		}
 
 		// Action delete
@@ -1894,17 +1922,41 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								$type = 'batch';
 								print '<td align="right" class="split">';
-								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
+								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
 								print '</td>';
 
 								print '<td align="right"  class="splitall">';
 								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
-									print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"');
+									print img_picto($langs->trans('SplitAllQuantity'), 'split', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"');
 								} //
 								print '</td>';
 							} else {
 								print '<td></td>';
 
+								print '<td></td>';
+							}
+						}
+
+						// sell by mandatory
+						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+							print '<td align="right">';
+							$preselectedSellBy = (GETPOSTISSET('sellby-' . $line->id . '-' . $i) ? GETPOSTDATE('sellby-' . $line->id . '-' . $i) : '');
+							print $form->selectDate($preselectedSellBy, 'sellby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
+							print '</td>';
+						} else {
+							if ($atLeastOneSellBy) {
+								print '<td></td>';
+							}
+						}
+
+						// eat by mandatory
+						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+							print '<td align="right">';
+							$preselectedEatBy = (GETPOSTISSET('eatby-' . $line->id . '-' . $i) ? GETPOSTDATE('eatby-' . $line->id . '-' . $i) : '');
+							print $form->selectDate($preselectedEatBy, 'eatby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
+							print '</td>';
+						} else {
+							if ($atLeastOneEatBy) {
 								print '<td></td>';
 							}
 						}

@@ -125,3 +125,5 @@ Signed=وقعت
 SignedOnly=وقعت فقط
 ExpeditionSigned=الشحنة موقعة
 SignExpedition=توقيع الشحنة
+PROPOSAL_SHOW_SHIPPING_ADDRESS=عرض عنوان الشحن
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=إشارة إلزامية في بعض البلدان (فرنسا، ...)

@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=การบัญชี
 Accounting=การบัญชี
+AccountingAccount=บัญชีการบัญชี
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=คั่นคอลัมน์สำหรับแฟ้มส่งออก
 ACCOUNTING_EXPORT_DATE=รูปแบบวันที่สำหรับไฟล์การส่งออก
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -72,7 +74,7 @@ AccountancyAreaDescActionOnce=โดยปกติการดำเนิน�
 AccountancyAreaDescActionOnceBis=ควรดำเนินการขั้นตอนต่อไปเพื่อประหยัดเวลาในอนาคตโดยแนะนำให้คุณใช้บัญชีเริ่มต้นที่ถูกต้องโดยอัตโนมัติเมื่อถ่ายโอนข้อมูลในการบัญชี
 AccountancyAreaDescActionFreq=การดำเนินการต่อไปนี้มักจะดำเนินการทุกเดือน สัปดาห์ หรือวันสำหรับบริษัทขนาดใหญ่มาก...
 AccountancyAreaDescJournalSetup=ขั้นตอน %s: ตรวจสอบเนื้อหาของรายการบันทึกประจำวันของคุณจากเมนู %s
-AccountancyAreaDescChartModel=ขั้นตอน %s: ตรวจสอบว่ามีโมเดลผังบัญชีอยู่หรือสร้างขึ้นจากเมนู %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=ขั้นตอน %s: เลือกและ|หรือกรอกผังบัญชีของคุณจากเมนู %s
 AccountancyAreaDescFiscalPeriod=ขั้นตอน %s: กำหนดรอบระยะเวลาบัญชีซึ่งจะกำหนดช่วงวันที่ที่ยอมรับในการสร้างรายการบัญชี สำหรับขั้นตอนนี้ ให้ใช้รายการเมนู %s
 AccountancyAreaDescVat=ขั้นตอนที่ %s: กำหนดบัญชีทางบัญชีสำหรับอัตรา VAT แต่ละรายการ สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=บัญชี (จากผังบัญชี) �
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้ในการลงทะเบียนสมัครสมาชิก (โมดูลสมาชิก - หากบันทึกสมาชิกโดยไม่มีใบแจ้งหนี้)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=บัญชี (จากผังบัญชี) เพื่อใช้เป็นบัญชีเริ่มต้นในการลงทะเบียนเงินฝากของลูกค้า
 UseAuxiliaryAccountOnCustomerDeposit=จัดเก็บบัญชีลูกค้าเป็นบัญชีแต่ละบัญชีในบัญชีแยกประเภทบริษัทในเครือสำหรับรายการการชำระเงินดาวน์ (ถ้าปิดใช้งาน บัญชีแต่ละบัญชีสำหรับรายการการชำระเงินดาวน์จะยังคงว่างเปล่า)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=บัญชี (จากผังบัญชี) เพื่อใช้เป็นค่าเริ่มต้น
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=บัญชีซัพพลายเออร์ของร้านค้าเป็นบัญชีแต่ละบัญชีในบัญชีแยกประเภทบริษัทในเครือสำหรับรายการการชำระเงินดาวน์ (ถ้าปิดใช้งาน บัญชีแต่ละบัญชีสำหรับรายการการชำระเงินดาวน์จะยังคงว่างเปล่า)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=บัญชีบัญชีตามค่าเริ่มต้นเพื่อลงทะเบียนการรับประกันที่ลูกค้าเก็บไว้
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับผลิตภัณฑ์ที่ซื้อภายในประเทศเดียวกัน (ใช้หากไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
@@ -275,9 +277,10 @@ HideOpeningBalance=ซ่อนยอดคงเหลือเปิด
 ShowSubtotalByGroup=แสดงผลรวมย่อยตามระดับ
 Pcgtype=กลุ่มบัญชี
 PcgtypeDesc=กลุ่มบัญชีถูกใช้เป็นเกณฑ์ 'ตัวกรอง' และ 'การจัดกลุ่ม' ที่กำหนดไว้ล่วงหน้าสำหรับรายงานทางบัญชีบางรายงาน ตัวอย่างเช่น 'รายได้' หรือ 'ค่าใช้จ่าย' ถูกใช้เป็นกลุ่มสำหรับบัญชีการบัญชีของผลิตภัณฑ์เพื่อสร้างรายงานค่าใช้จ่าย/รายได้
-AccountingCategoriesDesc=กลุ่มบัญชีที่กำหนดเองสามารถใช้เพื่อจัดกลุ่มบัญชีบัญชีเป็นชื่อเดียวเพื่อความสะดวกในการใช้ตัวกรองหรือการสร้างรายงานที่กำหนดเอง
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=คืนดีกัน
 Centralized=บัญชีรวมศูนย์
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=อัตรากำไรขั้นต้นรวมยอดขาย
 DescVentilCustomer=ดูรายการบรรทัดใบแจ้งหนี้ของลูกค้าที่ผูก (หรือไม่) กับบัญชีผลิตภัณฑ์จากผังบัญชีได้ที่นี่
@@ -319,7 +322,7 @@ NotReconciled=ไม่คืนดีกัน
 WarningRecordWithoutSubledgerAreExcluded=คำเตือน บรรทัดทั้งหมดที่ไม่มีบัญชีแยกประเภทย่อยที่กำหนดไว้จะถูกกรองและแยกออกจากมุมมองนี้
 AccountRemovedFromCurrentChartOfAccount=บัญชีบัญชีที่ไม่มีอยู่ในผังบัญชีปัจจุบัน
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=คำเตือน หน้านี้มีเฉพาะรายการที่ถูกโอนเข้าสู่ระบบบัญชีเท่านั้น
-BookkeepingNumRefModelDesc = ส่งคืนหมายเลขอ้างอิงในรูปแบบ yyyyjjnnnn โดยที่ yyyy คือปีและ jj คือรหัสวารสาร ส่วน nnnn คือหมายเลขที่เพิ่มขึ้นตามลำดับโดยอัตโนมัติขึ้นอยู่กับปีและรหัสวารสาร
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = แบบจำลองการนับเลขทางบัญชี
 ## Admin
 BindingOptions=ตัวเลือกสำหรับการโอนย้ายเข้าบัญชี
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=เปิดใช้งานกา�
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=เมื่อเปิดใช้งานตัวเลือกนี้ คุณสามารถกำหนดได้ว่าซัพพลายเออร์หรือใบแจ้งหนี้ของผู้จัดจำหน่ายที่กำหนดจะต้องถูกโอนไปยังการบัญชีด้วยวิธีอื่น: เดบิตและวงเงินเครดิตเพิ่มเติมจะถูกสร้างขึ้นในการบัญชีใน 2 บัญชีที่กำหนดจากผังบัญชีที่กำหนดไว้ใน "%s" หน้าการตั้งค่า
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=เปิดใช้งานแท็บบนบัตรบุคคลที่สามเพื่อดูบัญชีแยกประเภทย่อย
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=เมื่อเปิดใช้งานตัวเลือกนี้ แท็บใหม่จะปรากฏในบัตรของบุคคลที่สามเพื่อดูและจัดการการบัญชีสำหรับบุคคลที่สาม เช่น การกระทบยอด การพิมพ์ และอื่นๆ
+
 ## Export
 NotExportLettering=อย่าส่งออกตัวอักษรเมื่อสร้างไฟล์
 NotifiedExportDate=ตั้งค่าสถานะบรรทัดที่ยังไม่ได้ส่งออกเป็นส่งออกแล้ว <span class="warning">(หากต้องการแก้ไขบรรทัดที่ตั้งค่าสถานะว่าส่งออกแล้ว คุณจะต้องลบธุรกรรมทั้งหมดและโอนไปยังบัญชีอีกครั้ง)</span>
@@ -389,6 +393,7 @@ Modelcsv_Gestinumv5=ส่งออกสำหรับ Gestinum (v5)
 Modelcsv_charlemagne=ส่งออกไปยัง Aplim Charlemagne
 ChartofaccountsId=รหัสผังบัญชี
 ExportToPdf = ส่งออกเป็น PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = บัญชีแยกประเภท
 PdfBalanceTitle = ยอดคงเหลือในบัญชีแยกประเภท
 PdfBookkeepingTitle = วารสาร
@@ -440,7 +445,7 @@ AccountRemovedFromGroup=บัญชีถูกลบออกจากกล�
 SaleLocal=ขายในท้องถิ่น
 SaleExport=ขายส่งออก
 SaleEEC=ขายในอีอีซี
-SaleEECWithVAT=การขายจะอยู่ใน EEC โดยที่ภาษีมูลค่าเพิ่มไม่เป็นค่าว่าง ดังนั้นเราจึงถือว่านี่ไม่ใช่การขายภายในชุมชน และบัญชีที่แนะนำคือบัญชีผลิตภัณฑ์มาตรฐาน
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=การขายอยู่ใน EEC โดยไม่มีภาษีมูลค่าเพิ่มแต่ไม่มีการระบุรหัสภาษีมูลค่าเพิ่มของบุคคลที่สาม เราใช้บัญชีสำหรับการขายมาตรฐาน คุณสามารถแก้ไขรหัสภาษีมูลค่าเพิ่มของบุคคลที่สามหรือเปลี่ยนบัญชีผลิตภัณฑ์ที่แนะนำให้ผูกมัดหากจำเป็น
 AnySale=ขายอะไรก็ได้
 ForbiddenTransactionAlreadyExported=ห้าม: ธุรกรรมได้รับการตรวจสอบและ/หรือส่งออกแล้ว
@@ -485,7 +490,7 @@ AccountancyClosureConfirmClose=คุณแน่ใจหรือไม่ว�
 AccountancyClosureConfirmAccountingReversal=คุณแน่ใจหรือไม่ว่าต้องการบันทึกรายการสำหรับ "กำไรสะสม"
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=ธุรกรรมสำหรับ (doc_type=%s, doc_id=%s, doc_det=%s) ได้รับการบันทึกแล้ว
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=ขั้นตอนการตั้งค่าบังคับบางขั้นตอนยังไม่เสร็จสิ้น โปรดดำเนินการให้เสร็จสิ้น
@@ -508,7 +513,7 @@ ErrorNoFiscalPeriodActiveFound=ไม่พบรอบระยะเวลา�
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=วันที่เอกสารการทำบัญชีไม่อยู่ภายในรอบระยะเวลาทางบัญชีที่ใช้งานอยู่
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=วันที่เอกสารการทำบัญชีอยู่ภายในรอบระยะเวลาบัญชีที่ปิด
 Error_BOOKKEEPING_ADDON_NotDefined=ข้อผิดพลาด กฎเกณฑ์สำหรับการอ้างอิงหมายเลขบัญชีทางบัญชีไม่ได้ถูกกำหนดไว้ในการตั้งค่าทั่วไปของโมดูลการบัญชี
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=พยายามแทรกธุรกรรมที่ไม่สมดุลในสมุดบัญชีสำหรับ %s (รหัสการชำระเงิน: %s) ยกเลิกแล้ว น่าจะเป็นข้อผิดพลาดอย่างแน่นอน
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=การใช้งานผลิตภัณฑ์หรือบริการ
 ## Import
 ImportAccountingEntries=รายการบัญชี
@@ -537,15 +542,15 @@ ExpenseReportJournal=วารสารรายงานค่าใช้จ�
 DocsAlreadyExportedAreIncluded=รวมเอกสารที่ส่งออกไปแล้วด้วย
 ClickToShowAlreadyExportedLines=คลิกเพื่อแสดงบรรทัดที่ส่งออกแล้ว
 NAccounts=บัญชี %s
-ACCOUNTING_USE_TREASURY_Desc=นี่คือโหมดสำหรับการทำบัญชีของกระทรวงการคลัง เราใช้เฉพาะการชำระเงินและวันที่เท่านั้นในการทำบัญชี
-ACCOUNTING_USE_NON_TREASURY_Desc=นี่คือโหมดสำหรับการทำบัญชีจริง เราใช้ทั้งใบแจ้งหนี้และการชำระเงินในการทำบัญชี
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=การอ้างอิงเอกสารต้นทางที่สร้างธุรกรรมธนาคารนี้ (อ้างอิงใบแจ้งหนี้, อ้างอิงรายงานค่าใช้จ่าย, ...)
 BankTransactionRef=เอกสารอ้างอิงสำหรับการทำธุรกรรมทางธนาคาร (ไม่บังคับ เพราะระบบจะสร้าง ID อัตโนมัติแล้ว)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=การดำเนินการนี้จะโคลนรายการบัญชี (บรรทัดทั้งหมดที่เชื่อมโยงกับรายการบัญชีนี้จะถูกโคลน) คุณแน่ใจหรือไม่ว่าต้องการโคลนระเบียน %s ที่เลือกไว้
 ConfirmMassCloneBookkeepingWriting=ยืนยันการโคลนจำนวนมาก
-ConfirmMassReturnAccountBookkeepingWriting=ยืนยันการสูญพันธุ์ครั้งใหญ่
-ConfirmMassReturnAccountBookkeepingWritingQuestion=การดำเนินการดังกล่าวจะยกเลิกรายการบัญชี (บรรทัดทั้งหมดที่เชื่อมโยงกับรายการบัญชีนี้จะถูกยกเลิก) คุณแน่ใจหรือไม่ว่าต้องการข้ามระเบียนที่เลือก %s
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=การกระทำนี้จะเปลี่ยนบัญชีของบรรทัดที่เลือกทั้งหมด
 confirmMassAssignAccountBookkeepingWritingConfirm=ยืนยันการเปลี่ยนแปลงบัญชีรวม
 CloningSuccess=การโคลนธุรกรรมสำเร็จ: %s
@@ -560,6 +565,6 @@ NoAccountsChangedWithAccountNumber=ธุรกรรมไม่ได้รั
 HasAlreadyBeenReversed=ได้กลับทิศไปแล้ว
 ErrorWhileCreating=เกิดข้อผิดพลาดระหว่างการสร้าง %s
 ReturnAccount=กลับ
-Clone=โคลนเนอร์
+Clone=โคลน
 AlreadyReturnedAccount=รายการ n°%s ได้รับการย้อนกลับแล้ว
 SuccessReturnedAccount=รายการ n°%s ได้รับการย้อนกลับ

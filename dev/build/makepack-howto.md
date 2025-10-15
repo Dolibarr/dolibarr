@@ -17,23 +17,16 @@ Prerequisites to build autoexe DoliWamp package from Linux (solution seems broke
 `apt-get install wine q4wine`
 
 - Launch "wine cmd" to check a drive Z: pointing to / exists.
-- Install InnoSetup
 
-  For example by running isetup-5.5.8.exe (https://www.jrsoftware.org)  https://files.jrsoftware.org/is/5/
+- Install InnoSetup (For example by running isetup-5.5.8.exe from https://www.jrsoftware.org or https://files.jrsoftware.org/is/5/)
 
-- Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB
+- Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB (For example by running wampserver3.2.6_x64.exe from https://www.wampserver.com, see file dev/build/exe/doliwamp.iss to know the version of Wampserver to install).
 
-  For example by running wampserver3.2.6_x64.exe (https://www.wampserver.com).
-See file dev/build/exe/doliwamp.iss to know the doliwamp version currently setup.
+- Add path to ISCC.exe into the PATH windows var (You can do this by launching wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`)
 
-- Add path to ISCC into PATH windows var:
+- To manually build the .exe from Windows (Note: running from makepack-dolibarr.pl script is however recommended):
 
-  Launch wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`
-
-- To manually build the .exe from Windows
-
-  Note: running from makepack-dolibarr.pl script is however recommended
-  open file dev/build/exe/doliwamp.iss and click on button "Compile".
+  Open the file dev/build/exe/doliwamp.iss and click on button "Compile".
   The .exe file will be build into directory build.
 
 
@@ -64,7 +57,8 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 
 This section describes steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
 
-- Check all files are committed.
+- Check that all files on local working repository are committed.
+
 - Update version/info in ChangeLog, for this you can:
 
 To generate a changelog of a **major new version** x.y.0 (from a repo on branch develop), you can do
@@ -98,7 +92,7 @@ git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //
 
 - Run `makepack-dolibarr.pl` to check the generation of all packages. No need to publish them.
 
-- Post a news message on dolibarr.org about the freeze by cloning a past news + relay the news url on social networks
+- Post a news message on dolibarr.org about the freeze by cloning a past news + relay the news url on social networks. Include the content of the previously generated ChangeLog file into the news.
 
 - Create a branch x.y (but only when version seems stable enough).
 
@@ -114,7 +108,7 @@ We suppose the branch x.y has already been created during the beta (see previous
 
 - Check there is no pending open security issue: List can be found here: https://github.com/Dolibarr/dolibarr/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Priority%20-%20Critical%20or%20Security%22
 
-- Check all files are committed.
+- Check that all files on local working repository are committed.
 
 - Update version/info in ChangeLog, for this:
 

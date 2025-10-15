@@ -158,7 +158,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "deliveries", "sendings", "productbatch", "compta"));
+			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "sendings", "productbatch", "compta"));
 		}
 
 		$nblines = count($object->lines);
@@ -302,7 +302,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 						$curY,
 						$nexY,
 						$default_font_size,
-						"{$langs->trans('Total')} {$journal}",
+						"{$langs->transnoentities('Total')} {$journal}",
 						$tab_top_newpage,
 						$journalDebit,
 						$journalCredit
@@ -310,13 +310,16 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 				}
 
 				// Add the title line
+				if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+					$this->addDashLine($pdf, $pdf->getPage(), $nexY);
+				}
 				$this->addTitleLine(
 					$pdf,
 					$curY,
 					$nexY,
 					$default_font_size,
 					'piece_num',
-					"{$langs->trans('Journal')} {$object->lines[$i]->code_journal}",
+					"{$langs->transnoentities('Journal')} {$object->lines[$i]->code_journal}",
 					$tab_top_newpage
 				);
 
@@ -495,7 +498,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 				$curY,
 				$nexY,
 				$default_font_size,
-				"{$langs->trans('Total')} {$journal}",
+				"{$langs->transnoentities('Total')} {$journal}",
 				$tab_top_newpage,
 				$journalDebit,
 				$journalCredit
@@ -544,6 +547,8 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		if ($reshook < 0) {
 			$this->error = $hookmanager->error;
 			$this->errors = $hookmanager->errors;
+			dolChmod($file);
+			return -1;
 		}
 
 		dolChmod($file);
@@ -915,6 +920,8 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	 */
 	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
 	{
+		global $langs;
+
 		$curY = $nexY;
 		$pageposbefore = $pdf->getPage();
 		$pdf->SetFont('', 'B', $default_font_size - 1);
@@ -949,7 +956,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 
 		if ($this->getColumnStatus('balance')) {
 			$solde = $credit - $debit;
-			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 			$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 			$nexY = max($pdf->GetY(), $nexY);
 		}

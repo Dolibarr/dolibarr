@@ -68,6 +68,7 @@ create table llx_societe
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT NULL,                 -- type ent
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
+  birth                    date,				            			-- date of company creation
   fk_currency			   varchar(3),									-- default currency
   siren	                   varchar(128),                         		-- IDProf1: depends on country (example: siren or RCS for france, ...)
   siret                    varchar(128),                         		-- IDProf2: depends on country (example: siret for france, ...)
@@ -125,15 +126,15 @@ create table llx_societe
   accountancy_code_sell         varchar(32),                            -- Selling accountancy code
   accountancy_code_buy          varchar(32),                            -- Buying accountancy code
 
-  tms                      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,									-- last modification date
   datec	                   datetime,                            		-- creation date
-  fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info
-  fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info
+  tms                      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,									-- last modification date
+  fk_user_creat            integer NULL,                        		-- creation user
+  fk_user_modif            integer,                             		-- last modification user
 
   fk_multicurrency		   integer,
   multicurrency_code	   varchar(3),
 
-  ip                     varchar(250),                              --ip used to create record (for public submission page)
+  ip                       varchar(250),                              	-- ip used to create record (for public submission page)
 
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

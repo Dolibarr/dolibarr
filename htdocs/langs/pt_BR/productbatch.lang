@@ -34,4 +34,3 @@ QCFrequency=Frequência do controle de qualidade (em dias)
 HideLots=Ocultar lotes
 CantMoveNonExistantSerial=Erro. Você solicitou um movimento em um registro para um serial que não existe mais. Pode ser que você leve o mesmo serial no mesmo depósito várias vezes na mesma remessa ou tenha sido usado por outra remessa. Remova esta remessa e prepare outra.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparo de execução incompleta da tabela do lote com parâmetro '...repair.php?standard=confirmed'
-ErrorBatchesNeedStockManagement=Erro. ​​Um produto com gerenciamento de lote deve ser gerenciado em estoque.

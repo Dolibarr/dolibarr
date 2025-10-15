@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -496,7 +496,7 @@ print dol_get_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'us
 $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
-$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
 dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
@@ -631,7 +631,7 @@ if (isModEnabled('societe')) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<table class="nobordernopadding">';
 		print '<tr><td>';
-		print $form->select_company($object->fk_soc, 'socid', '', 1);
+		print $form->select_company($object->socid, 'socid', '', 1);
 		print '</td>';
 		print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 		print '</tr></table></form>';
@@ -1055,11 +1055,11 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(!empty($invoiceonly) ? ' checked' : '');
 				//if (empty($object->fk_soc)) print ' disabled';
 				print '><label for="invoiceonly"> '.$langs->trans("MoreActionInvoiceOnly");
-				if ($object->fk_soc) {
+				if ($object->socid) {
 					print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
 				} else {
 					print ' (';
-					if (empty($object->fk_soc)) {
+					if (empty($object->socid)) {
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
@@ -1083,7 +1083,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			// Add invoice with payments
 			if (isModEnabled('bank') && isModEnabled('societe') && isModEnabled('invoice')) {
 				print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
-				//if (empty($object->fk_soc)) print ' disabled';
+				//if (empty($object->socid)) print ' disabled';
 				print '><label for="bankviainvoice">  '.$langs->trans("MoreActionBankViaInvoice");
 				if ($object->socid) {
 					print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
@@ -1187,7 +1187,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 		$tmp = '<input name="sendmail" type="checkbox"'.(GETPOST('sendmail', 'alpha') ? ' checked' : (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? ' checked' : '')).'>';
 		$helpcontent = '';
-		$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
+		$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'<br>'."\n";
 		$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 		$helpcontent .= '<b>'.$langs->trans("MailTopic").'</b>:<br>'."\n";
 		if ($subjecttosend) {

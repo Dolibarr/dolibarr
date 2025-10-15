@@ -69,10 +69,17 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	}
 }
 
-.badge-pill, .tabs .badge {
+.tabs .badge {
 	padding-right: .5em;
 	padding-left: .5em;
 	border-radius: 0.25rem;
+}
+
+.badge-pill{
+	/* Use the .badge-pill modifier class to make badges more rounded (with a larger border-radius and additional horizontal padding). */
+	padding-right: .8em;
+	padding-left: 0.8em;
+	border-radius: 0.5rem;
 }
 
 .badge-dot {
@@ -283,7 +290,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		if (in_array((string) $statusName, array('4b', '7'))) {
 			$thisBadgeTextColor = '#25a580';
 		}
-		if (in_array((string) $statusName, array('0', '5', '9'))) {
+		if (in_array((string) $statusName, array('0', '5', '9', '10'))) {
 			$thisBadgeTextColor = '#999999';
 		}
 		if (in_array((string) $statusName, array('6'))) {

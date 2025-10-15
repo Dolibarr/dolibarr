@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,6 +284,11 @@ llxHeaderVierge('BookingCalendar');
 
 print '<center><br><h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2></center>';
 
+if ($object->status == $object::STATUS_DRAFT) {
+	$langs->trans("errors");
+	$errmsg = $langs->trans("ErrorCalendarIsNotYetOpenOrHasBeenClosed");
+}
+
 dol_htmloutput_errors($errmsg);
 
 if ($action == 'create') {
@@ -308,7 +313,7 @@ if ($action == 'afteradd') {
 	print '<tr>';
 	print '<td>';
 	if ($action != 'create') {
-		print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form name="formsearch" class="bookcalsearch" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 
 		$nav = '<a href="?id='.$id."&year=".$prev_year."&month=".$prev_month.$param.'"><i class="fa fa-chevron-left"></i></a> &nbsp;'."\n";
@@ -411,8 +416,8 @@ if ($action == 'afteradd') {
 			setEventMessages($availability->error, $availability->errors, 'errors');
 		} else {
 			foreach ($arrayofavailabilities as $key => $value) {
-				$startarray = dol_getdate($value->start);
-				$endarray = dol_getdate($value->end);
+				$startarray = dol_getdate((int) $value->start);
+				$endarray = dol_getdate((int) $value->end);
 				for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
 					if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
 						$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);

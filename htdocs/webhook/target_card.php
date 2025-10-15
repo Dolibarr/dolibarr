@@ -85,20 +85,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Permissions
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = getDolGlobalBool("WEBHOOK_ENABLE_PERMISSION_CHECK");
-if ($enablepermissioncheck) {
-	$permissiontoread = (bool) $user->hasRight('webhook', 'target', 'read');
-	$permissiontoadd = (bool) $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = (bool) $user->hasRight('webhook', 'target', 'delete') || ((bool) $permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-	$permissionnote = (bool) $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_setnotes.inc.php
-	$permissiondellink = (bool) $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_dellink.inc.php
-} else {
-	$permissiontoread = true;
-	$permissiontoadd = true; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = true;
-	$permissionnote = true;
-	$permissiondellink = true;
-}
+$permissiontoread = $permissiontoadd = $permissiontodelete = $permissionnote = $permissiondellink = (!empty($user->admin) ? 1 : 0);
 
 $upload_dir = $conf->webhook->multidir_output[isset($object->entity) ? $object->entity : 1].'/target';
 

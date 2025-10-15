@@ -60,7 +60,7 @@ $socid = GETPOSTINT('socid');
 $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'customer'); // Only for tab view
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $type = GETPOST('type', 'alpha');
 if ($type == 'sub') {
 	$context_default = 'bookkeepingbysubaccountlist';
@@ -463,11 +463,17 @@ if (empty($reshook)) {
 
 	// Actions
 	if ($action === 'exporttopdf' && $permissiontoadd) {
-		$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		if ($type == "sub") {
+			$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
+		} else {
+			$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		}
 		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_ledger.modules.php';
 		$pdf = new pdf_ledger($db);
 		$pdf->fromDate = $search_date_start;
 		$pdf->toDate = $search_date_end;
+		$pdf->ledgerType = $type;
+
 		$result = $pdf->write_file($object, $langs);
 
 		if ($result < 0) {
@@ -895,14 +901,14 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 
 	$newcardbutton .= dolGetButtonTitleSeparator();
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 }
 
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+if ($contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {

@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Alexis Algoud			<alexis@atm-consulting.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,11 +54,6 @@ class UserGroup extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'group';
-
-	/**
-	 * @var int Entity of group
-	 */
-	public $entity;
 
 	/**
 	 * @var string
@@ -758,7 +753,7 @@ class UserGroup extends CommonObject
 			}
 		}
 
-		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+		$ret .= dolGetFirstLastname((string) $firstname, (string) $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
 	}
@@ -852,10 +847,11 @@ class UserGroup extends CommonObject
 		}
 
 		if ($option == 'permissions') {
-			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/perms.php';
 		} else {
-			$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/card.php';
 		}
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -864,9 +860,10 @@ class UserGroup extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = "";
 		if (empty($notooltip)) {

@@ -57,12 +57,14 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminihm'; // To manage different context of search
-
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'other'; // 'template', 'dashboard', 'login', 'other'
 
 if (!defined("MAIN_MOTD")) {
 	define("MAIN_MOTD", "");
 }
+
+$object = new stdClass();
+
 
 /*
  * Action
@@ -323,10 +325,8 @@ if ($action == 'update') {
 	}
 
 	if ($mode == 'css') {
-		//file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
-		//dol_chmod(DOL_DATA_ROOT.'/admin/customcss.css');
-		$csscontent = GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml');
-		$csscontent = dol_string_nohtmltag($csscontent, 2);
+		$csscontent = GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml');	// Will return a sanitized HTML content (so with double spaes that may be replaced with one, ...
+		$csscontent = dol_string_nohtmltag($csscontent, 2, 'UTF-8', 0, 0);
 
 		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", $csscontent, 'chaine', 0, '', $conf->entity);
 
