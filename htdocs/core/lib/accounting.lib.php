@@ -77,9 +77,9 @@ function accounting_prepare_head(AccountingAccount $object)
  *	Prepare array with list of tabs for accounting transaction
  *
  *	@param	BookKeeping	$object		Bookkeeping
- *	@param	$mode		string		Mode _tmp if operation are drafted
- *	@param	$type		string		Type of list "sub" (for subsidiary list) or not
- *	@param	$backtopage array		Back to page
+ *	@param	string		$mode		Mode _tmp if operation are drafted
+ *	@param	string		$type		Type of list "sub" (for subsidiary list) or not
+ *	@param	array		$backtopage Back to page
  *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function accounting_transaction_prepare_head(BookKeeping $object, $mode = '', $type = '', $backtopage = '')
