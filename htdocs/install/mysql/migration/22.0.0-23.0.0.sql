@@ -241,4 +241,6 @@ ALTER TABLE llx_receptiondet_batch ADD COLUMN rang integer DEFAULT 0 AFTER cost_
 
 ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_src_object_type_id (src_object_type, src_object_id);
 
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '511', 'eGbR - eingetragene Gesellschaft bürgerlichen Rechts', 1);
+
 -- end of migration

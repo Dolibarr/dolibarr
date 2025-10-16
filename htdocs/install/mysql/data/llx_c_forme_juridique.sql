@@ -170,6 +170,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '507', 'Lt
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '508', 'OHG - Offene Handelsgesellschaft');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '509', 'eG - eingetragene Genossenschaft');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '510', 'e.V. - eingetragener Verein');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '511', 'eGbR - eingetragene Gesellschaft bürgerlichen Rechts');
 
 -- Denmark
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8001', 'Aktieselvskab A/S');
