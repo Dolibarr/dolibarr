@@ -48,17 +48,17 @@ class PaymentLoan extends CommonObject
 	public $picto = 'money-bill-alt';
 
 	/**
-	 * @var int Loan ID
+	 * @var ?int Loan ID
 	 */
 	public $fk_loan;
 
 	/**
-	 * @var string Create date
+	 * @var int|'' Create date
 	 */
 	public $datec = '';
 
 	/**
-	 * @var string Payment date
+	 * @var int|'' Payment date
 	 */
 	public $datep = '';
 
@@ -83,7 +83,7 @@ class PaymentLoan extends CommonObject
 	public $amount_interest;
 
 	/**
-	 * @var int Payment mode ID
+	 * @var ?int Payment mode ID
 	 */
 	public $fk_typepayment;
 
@@ -94,7 +94,7 @@ class PaymentLoan extends CommonObject
 	public $num_payment;
 
 	/**
-	 * @var int Bank ID
+	 * @var ?int Bank ID
 	 */
 	public $fk_bank;
 
