@@ -79,10 +79,10 @@ function accounting_prepare_head(AccountingAccount $object)
  *	@param	BookKeeping	$object		Bookkeeping
  *	@param	string		$mode		Mode _tmp if operation are drafted
  *	@param	string		$type		Type of list "sub" (for subsidiary list) or not
- *	@param	array		$backtopage Back to page
+ *	@param	string		$backtopage Back to page (return on ledger by default)
  *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function accounting_transaction_prepare_head(BookKeeping $object, $mode = '', $type = '', $backtopage = '')
+function accounting_transaction_prepare_head(BookKeeping $object, $mode = '', $type = '', $backtopage = '%2Faccountancy%2Fbookkeeping%2Flistbyaccount.php')
 {
 	global $langs, $conf;
 
