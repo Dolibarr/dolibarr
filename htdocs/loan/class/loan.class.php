@@ -627,7 +627,7 @@ class Loan extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("ShowLoan");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
