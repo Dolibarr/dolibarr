@@ -2398,7 +2398,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function initAsSpecimen($param = array())
 	{
-		global $langs;
+		global $conf, $langs;
 
 		// Load array of products prodids
 		$num_prods = 0;
@@ -2406,8 +2406,8 @@ class SupplierProposal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
-		if (array_key_exists('status', $param)) {
-			$sql .= " AND status = ".((int) $param['status']);
+		if (array_key_exists('tosell', $param)) {
+			$sql .= " AND tosell = ".((int) $param['tosell']);
 		}
 		$sql .= $this->db->plimit(100);
 
@@ -2435,6 +2435,10 @@ class SupplierProposal extends CommonObject
 		$this->mode_reglement_code = 'CHQ';
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
+
+		$this->multicurrency_tx = 1;
+		$this->multicurrency_code = $conf->currency;
+
 		// Lines
 		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
