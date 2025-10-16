@@ -9241,18 +9241,20 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					}
 
 					$dom = new DOMDocument();
+					// Remove the br tags at the end of the lines
+					$outWithoutBrAtEnd = preg_replace('/(<br\s*\/?>\s*)+/i', "\r\n", $out);
 					// Add a trick '<div class="tricktoremove">' to solve pb with text without parent tag
 					//  like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
 					// I don't know what the xml encoding is the trick for
-					if (dol_textishtml($out)) {
+					if (dol_textishtml($outWithoutBrAtEnd)) {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . $out . '</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
-						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . dol_nl2br($out) . '</div></body></html>';
+						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . dol_nl2br($outWithoutBrAtEnd) . '</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
