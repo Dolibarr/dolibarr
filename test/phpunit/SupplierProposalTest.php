@@ -105,7 +105,7 @@ class SupplierProposalTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$localobject = new SupplierProposal($db);
-		$param = array('status' => 1);
+		$param = array('tosell' => 1);
 		$localobject->initAsSpecimen($param);
 		$result = $localobject->create($user);
 
