@@ -1022,7 +1022,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 		}
 
-		$paramsButton = array('badgeParams' => array('attr' => array(
+		$paramsBadge = array('badgeParams' => array('attr' => array(
 			'data-status-element' => $this->element,
 			'data-already-paid' => $alreadypaid > 0 ? 1 : 0,
 			'data-status' => (int) $status
@@ -1034,7 +1034,7 @@ abstract class CommonInvoice extends CommonObject
 			'paye'        => $paye,
 			'alreadypaid' => $alreadypaid,
 			'type'        => $type,
-			'paramsButton'=>& $paramsButton
+			'paramsBadge'=>& $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -1059,7 +1059,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			//$paramsbutton = array('badgeParams' => array('attr' => array('title' => 'rrrr')));
-			$paramsButton['badgeParams' ]['attr']['title'] = $titlestringtoshow;
+			$paramsBadge['badgeParams' ]['attr']['title'] = $titlestringtoshow;
 		}
 
 		/*
@@ -1072,7 +1072,7 @@ abstract class CommonInvoice extends CommonObject
 			$statusType = 'status8';
 		}
 
-		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsButton);
+		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsBadge);
 
 		return $statusbadge;
 	}
