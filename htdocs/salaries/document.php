@@ -122,6 +122,7 @@ $permissiontoread = $user->hasRight('salaries', 'read');
 $permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('salaries', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 
+
 /*
  * Actions
  */
@@ -217,6 +218,11 @@ if ($object->id) {
 	}
 
 	$morehtmlref .= '</div>';
+
+	$totalpaid = $object->getSommePaiement();
+
+	$object->totalpaid = $totalpaid;
+	$object->alreadypaid = $totalpaid;	// Same then $totalpaid because there is no amount of credit note or deposits for salary payments.
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 

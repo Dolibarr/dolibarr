@@ -284,6 +284,11 @@ llxHeaderVierge('BookingCalendar');
 
 print '<center><br><h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2></center>';
 
+if ($object->status == $object::STATUS_DRAFT) {
+	$langs->trans("errors");
+	$errmsg = $langs->trans("ErrorCalendarIsNotYetOpenOrHasBeenClosed");
+}
+
 dol_htmloutput_errors($errmsg);
 
 if ($action == 'create') {
@@ -308,7 +313,7 @@ if ($action == 'afteradd') {
 	print '<tr>';
 	print '<td>';
 	if ($action != 'create') {
-		print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form name="formsearch" class="bookcalsearch" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 
 		$nav = '<a href="?id='.$id."&year=".$prev_year."&month=".$prev_month.$param.'"><i class="fa fa-chevron-left"></i></a> &nbsp;'."\n";

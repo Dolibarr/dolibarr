@@ -452,7 +452,7 @@ class User extends CommonObject
 	public $default_range;
 
 	/**
-	 *@var int id of warehouse
+	 *@var ?int id of warehouse
 	 */
 	public $fk_warehouse;
 
@@ -523,7 +523,7 @@ class User extends CommonObject
 	 * 	@param  string	$login       		If defined, login to used for search
 	 *	@param  string	$sid				If defined, sid to used for search
 	 * 	@param	int<0,1>	$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
-	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
+	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depends on default setup.
 	 *  @param	string	$email       		If defined, email to used for search
 	 *  @param	int		$fk_socpeople		If defined, id of contact for search
 	 *  @param	int<0,1>	$use_email_oauth2	1=Use also email_oauth2 to fetch on email
@@ -761,7 +761,7 @@ class User extends CommonObject
 
 		// To get back the global configuration unique to the user
 		if ($loadpersonalconf) {
-			$result = $this->loadPersonalConf();
+			$result = $this->loadPersonalConf($entity);
 
 			$result = $this->loadDefaultValues();
 
@@ -784,16 +784,18 @@ class User extends CommonObject
 	/**
 	 *  Load const values from database table user_param and set it into user->conf->XXX
 	 *
+	 *  @param	int		$entity			If >=0, force the entity, if -1, use the default entity
 	 *  @return int						>= 0 if OK, < 0 if KO
 	 */
-	public function loadPersonalConf()
+	public function loadPersonalConf($entity = -1)
 	{
 		global $conf;
 
 		// Load user->conf for user
 		$sql = "SELECT param, value FROM ".$this->db->prefix()."user_param";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
-		$sql .= " AND entity = ".((int) $conf->entity);
+		$sql .= " AND entity = ".($entity == -1 ? (int) $conf->entity : (int) $entity);
+
 		//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3161,11 +3163,11 @@ class User extends CommonObject
 			$label = '';
 		}
 
-		$url = DOL_URL_ROOT.'/user/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT . '/user/card.php';
 		if ($option == 'leave') {
-			$url = DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT . '/holiday/list.php';
 		}
-
+		$query = ['id' => $this->id];
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -3173,9 +3175,10 @@ class User extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkclose = "";

@@ -29,5 +29,7 @@ create table llx_subscription
   fk_bank         integer DEFAULT NULL,     -- id of bank transaction in llx_bank
   fk_user_creat   integer DEFAULT NULL,
   fk_user_valid   integer DEFAULT NULL,
-  note            text
+  ref_ext 		  varchar(128),				-- reference into an external system (not used by dolibarr)
+  note            text,						-- public note
+  note_private    text						-- private note
 )ENGINE=innodb;

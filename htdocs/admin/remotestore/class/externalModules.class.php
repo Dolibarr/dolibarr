@@ -319,6 +319,8 @@ class ExternalModules
 	{
 		global $langs;
 
+		$langs->load("products");
+
 		$html       = "";
 		$last_month = dol_now() - (30 * 24 * 60 * 60);
 		$dolibarrversiontouse = DOL_VERSION;	// full string with version
@@ -396,12 +398,12 @@ class ExternalModules
 
 			// check new product ?
 			$newapp = '';
-			if ($last_month < strtotime($product['datec'])) {
+			if ($last_month < strtotime($product['datec']) && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
 				$newapp .= '<span class="newApp" title="'.$product['tms'].'">'.$langs->trans('New').'</span> ';
 			}
 
 			// check updated ?
-			if ($last_month < strtotime($product['tms']) && $newapp == '') {
+			if ($newapp == '' && $last_month < strtotime($product['tms']) && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
 				$newapp .= '<span class="updatedApp" title="'.$product['tms'].'">'.$langs->trans('UpdatedRecently').'</span> ';
 			}
 
@@ -414,15 +416,30 @@ class ExternalModules
 			}
 
 			// free or pay ?
-			if ($product["price_ttc"] > 0) {
-				$price = '<h3>'.price(price2num($product["price_ttc"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("TTC").'</h3>';
+			if (array_key_exists('price_ht', $product) && price2num($product["price_ht"]) > 0) {
+				$price = '<h3>'.price(price2num($product["price_ht"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
 
 				$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'">';
 				$download_link .= img_picto('', 'url', 'class="size2x paddingright"');
 				$download_link .= '</a>';
 			} else {
 				$download_link = '#';
-				$price         = '<h3>'.$langs->trans('Free').'</h3>';
+				if ($product['source'] === 'dolistore') {	// 0 on dolistore may mean 0 or a complementary fee to subscribe
+					$urlview = $this->shop_url.'/product.php?id='.((int) $product["id"]);
+					$price = '<h3><a href="'.$urlview.'" target="_blank">'.$langs->trans('SeeOnDoliStore').'</a></h3>';
+				} elseif ($product['source'] === 'githubcommunity') {
+					if (array_key_exists('price_ht', $product) && empty($product['price_ht'])) {
+						$price = '<h3>'.$langs->trans('Free').'</h3>';
+					} else {
+						if ($product["dolistore-download"]) {
+							$price = '<h3><a href="'.$product["dolistore-download"].'" target="_blank">'.$langs->trans('SeeOnDoliStore').'</a></h3>';
+						} else {
+							$price = '<h3>'.$langs->trans('Unknown').'</h3>';
+						}
+					}
+				} else {
+					$price = '<h3>'.$langs->trans('Unknown').'</h3>';
+				}
 
 				if ($product['source'] === 'githubcommunity') {
 					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Sources").'"  href="'.$product["link"].'">';
@@ -447,8 +464,9 @@ class ExternalModules
 						}
 					}
 				} elseif ($product['source'] === 'dolistore') {
+					$urlview = $this->shop_url.'/product.php?id='.((int) $product["id"]);
 					$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $product['id'];
-					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product["id"]).'">';
+					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'">';
 					$download_link .= img_picto('', 'url', 'class="size2x"');
 					$download_link .= '</a>';
 					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
@@ -460,7 +478,11 @@ class ExternalModules
 
 			// Set and check version
 			$version = '';
-			if ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
+			$compatible = '';
+			if ($product["status"] == 'soon' || $product["status"] == 'development' || $product["status"] == 'experimental') {
+				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").' - '.$langs->trans("StillInDevelopment").'</span>';
+				$compatible = 'NotCompatible';
+			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
 				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
 					//compatible
 					$version = '<span class="compatible">'.$langs->trans(
@@ -472,7 +494,7 @@ class ExternalModules
 					$compatible = '';
 				} else {
 					// never compatible, module expired
-					$version = '<span class="warning">'.$langs->trans(
+					$version = '<span class="warning hideonsmartphone">'.$langs->trans(
 						'NotCompatible',
 						$dolibarrversiontouse,
 						$product["dolibarr_min"],
@@ -504,31 +526,71 @@ class ExternalModules
 
 			// Output the line
 			$html .= '<tr class="app oddeven nohover '.dol_escape_htmltag($compatible).'">';
+
+			// Logo
 			$html .= '<td class="center width150"><div class="newAppParent">';
 			$html .= $newapp.$images;	// No dol_escape_htmltag, it is already escape html
 			$html .= '</div></td>';
-			$html .= '<td class="margeCote"><h2 class="appTitle">';
-			$html .= dolPrintHTML(dol_string_nohtmltag($product["label"]));
-			$html .= '<br><small>';
-			$html .= $version;			// No dol_escape_htmltag, it is already escape html
-			$html .= '</small></h2>';
-			$html .= '<small> ';
-			if (empty($product['tms'])) {
-				$html .= '<span class="opacitymedium">'.$langs->trans("DateCreation").': '.$langs->trans("Unknown").'</span>';
-			} else {
-				$html .= '<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
+
+			// Description
+			$html .= '<td class="margeCote minwidth500imp"><h2 class="appTitle">';
+			$html .= dolPrintHTML(dol_string_nohtmltag(ucfirst($product["label"])));
+			if (!empty($product['author']) && $product['author'] != 'unkownauthor') {
+				$html .= '<small> &nbsp; - &nbsp; '.img_picto('', 'company', 'class="pictofixedwidth"');
+				if (!empty($product['author_url'])) {
+					$html .= '<a href="'.$product['author_url'].'" target="_blank">'.$product['author'].'</a>';
+				} else {
+					$html .= $product['author'];
+				}
+				$html .= '</small>';
 			}
-			$html .= ' - '.$langs->trans('Ref').' '.dolPrintHTML($product["ref"]);
+			$html .= '<br><small>';
+			$html .= $version;			// Version Dolibarr. No dol_escape_htmltag, it is already escape html
+			$html .= '</small>';
+			$html .= '</h2>';
+
+			$html .= '<small class="appDateCreation appRef"> ';
+			if (empty($product['tms'])) {
+				$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium"><span class="hideonsmartphone">'.$langs->trans("DateCreation").': </span>';
+				$html .= (!empty($product['datec']) ? dol_print_date(dol_stringtotime($product['datec']), 'day') : $langs->trans("Unknown")).'</span>';
+			} else {
+				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
+			}
+			$html .= ' &nbsp; '.$langs->trans('Ref').' '.dolPrintHTML(preg_replace('/@.*$/', '', $product["ref"]));
 			//$html .= ' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]);
 			$html .= '</small><br>';
-			$html .= '<small>'.$langs->trans('Source').': '.$product["source"].'</small><br>';
-			$html .= '<br>'.dolPrintHTML(dol_string_nohtmltag($product["description"]));
+			//$html .= '<div class="appSource valignmiddle inline-block">'.$langs->trans('Source').' &nbsp; </div>';
+			$html .= '<div class="appSource valignmiddle inline-block">';
+			if ($product["source"] == 'dolistore') {
+				//$html .= img_picto('DoliStore', 'shop', 'class="pictofixedwidth"');
+				$html .= '<img border="0" title="'.dolPrintHTML($langs->trans('Source').": DoliStore").'" class="imgautosize imgmaxwidth100 valignmiddle" style="height: 14px" src="'.DOL_URL_ROOT.'/theme/dolistore_squarred.svg">';
+			} elseif ($product["source"] == 'githubcommunity') {
+				$html .= img_picto($langs->trans('Source').': GitHub community repo', 'group', 'class="pictofixedwidth valignmiddle"');
+			} else {
+				$html .= img_picto($langs->trans('Source').': '.$langs->trans('Other'), 'generic', 'class="pictofixedwidth"');
+			}
+			//$html .= $product["source"];
+			$html .= '</div> &nbsp;';
+			if (!empty($product['phpmin']) && $product['phpmin'] != 'unknown') {
+				$html .= ' <span class="badge-secondary small" style="padding: 3px; border-radius: 5px">PHP min '.$product['phpmin'].'</span>';
+			}
+			if (!empty($product['phpmax']) && $product['phpmax'] != 'unknown') {
+				$html .= ' <span class="badge-secondary small" style="padding: 3px; border-radius: 5px">PHP max '.$product['phpmax'].'</span>';
+			}
+			$html .= '<br>';
+
+			$html .= '<br>';
+			$html .= '<div class="storedesc">'.dolPrintHTML(dol_string_nohtmltag($product["description"])).'</div>';
 			$html .= '</td>';
-			// do not load if display none
+
+			// Price - do not load if display none
 			$html .= '<td class="margeCote center amount">';
 			$html .= $price;
 			$html .= '</td>';
+
+			// Links
 			$html .= '<td class="margeCote nowraponall">'.$download_link.'</td>';
+
 			$html .= '</tr>';
 		}
 
@@ -723,7 +785,7 @@ class ExternalModules
 				if ($this->categorie != 0) {
 					$pagelist .= '<input type="hidden" name="categorie" value="' . $this->categorie . '">';
 				}
-				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input" oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'">';
+				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input right" oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'">';
 				$pagelist .= ' / '.$nbpages;
 				$pagelist .= '</li>';
 
@@ -847,7 +909,7 @@ class ExternalModules
 			if (preg_match('/^\s*-\s*modulename:\s*["\']?(.*?)["\']?$/', $trimmedLine, $matches)) {
 				if ($currentPackage !== null) {
 					// Add the package to $data
-					if (!empty($currentPackage['status']) && $currentPackage['status'] == 'enabled') {
+					if (!empty($currentPackage['status']) && in_array($currentPackage['status'], array('enabled', 'soon'))) {
 						$data[] = $currentPackage;
 					}
 				}
@@ -885,7 +947,7 @@ class ExternalModules
 
 		// Add the last package if available
 		if ($currentPackage !== null) {
-			if (!empty($currentPackage['status']) && $currentPackage['status'] == 'enabled') {
+			if (!empty($currentPackage['status']) && in_array($currentPackage['status'], array('enabled', 'soon'))) {
 				$data[] = $currentPackage;
 			}
 		}
@@ -896,8 +958,8 @@ class ExternalModules
 	/**
 	 * Adapter data fetched from github remote source to the expected format
 	 *
-	 * @param array<string, mixed>|list<array<string, array<string, string|null>|string|null>> $data Data fetched from github remote source
-	 * @param string $source Source of the data
+	 * @param array<string, mixed>|list<array<string, array<string, string|null>|string|null>> $data 	Data fetched from github remote source
+	 * @param string $source 	Source of the data
 	 * @return list<array<string, array<string, string|null>|string|null>> Data adapted to the expected format
 	 */
 	public function adaptData($data, $source)
@@ -913,6 +975,7 @@ class ExternalModules
 				if (empty($package['modulename'])) {
 					continue;
 				}
+
 				$adaptedPackage = [
 					'ref' => str_replace(' ', '', $package['modulename'] . '-' . $package['current_version'] . '@' .
 						(array_key_exists('author', $package) ? $package['author'] : 'unkownauthor')),
@@ -928,7 +991,8 @@ class ExternalModules
 					'tms' => (!empty($package['last_updated_at']) && is_string($package['last_updated_at']))
 						? date('Y-m-d H:i:s', strtotime($package['last_updated_at']))
 						: '',
-					'price_ttc' => 0,
+					'author' => array_key_exists('author', $package) ? $package['author'] : '',
+					'author_url' => array_key_exists('author_url', $package) ? $package['author_url'] : '',
 					'dolibarr_min' => !empty($package['dolibarrmin'])
 						? $package['dolibarrmin']
 						: 'unknown',
@@ -954,6 +1018,7 @@ class ExternalModules
 						? $package['git']
 						: '#',
 					'source' => 'githubcommunity',
+					'status' => !empty($package['status']) ? $package['status'] : '',
 					'direct-download' => !empty($package['direct-download'])
 						? $package['direct-download']
 						: '',
@@ -961,6 +1026,11 @@ class ExternalModules
 						? $package['dolistore-download']
 						: '',
 				];
+
+				// If a price entry exists
+				if (array_key_exists('price', $package) && $package['price'] != null) {
+					$adaptedPackage['price_ht'] = $package['price'];
+				}
 
 				$adaptedData[] = $adaptedPackage;
 			}
@@ -981,14 +1051,18 @@ class ExternalModules
 					'description' => $package['description'],
 					'datec' => $package['datec'],
 					'tms' => $package['tms'],
+					'author' => array_key_exists('author', $package) ? $package['author'] : '',
+					'author_url' => array_key_exists('author_url', $package) ? $package['author_url'] : '',
 					'price_ttc' => $package['price_ttc'],
+					'price_ht' => $package['price_ht'],
 					'dolibarr_min' => $package['dolibarr_min'],
 					'dolibarr_max' => $package['dolibarr_max'],
 					'phpmin' => empty($package['phpmin']) ? '' : $package['phpmin'],
 					'phpmax' => empty($package['phpmax']) ? '' : $package['phpmax'],
 					'module_version' => $package['module_version'],
 					'cover_photo_url' => $urlphoto,
-					'source' => 'dolistore'
+					'source' => 'dolistore',
+					'status' => empty($package['status']) ? '' : $package['status']
 				];
 
 				$adaptedData[] = $adaptedPackage;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -702,7 +702,7 @@ print '<td></td>'."\n";
 // loop to show the delete link
 if ($user->hasRight('opensurvey', 'write')) {
 	for ($i = 0; isset($toutsujet[$i]); $i++) {
-		print '<td class=somme><input type="image" class="buttonwebsite" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete.png', '', 0, 1).'"></td>'."\n";
+		print '<td class=somme><input type="image" class="buttonwebsite" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete', '', 0, 1).'"></td>'."\n";
 	}
 }
 
@@ -849,7 +849,7 @@ while ($compteur < $num) {
 	print '<tr><td>'."\n";
 
 	if ($user->hasRight('opensurvey', 'write')) {
-		print '<input type="image" class="reposition" name="effaceligne'.$compteur.'" src="'.img_picto('', 'delete.png', '', 0, 1).'">'."\n";
+		print '<input type="image" class="reposition" name="effaceligne'.$compteur.'" src="'.img_picto('', 'delete', '', 0, 1).'">'."\n";
 	}
 
 	// Name

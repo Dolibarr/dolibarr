@@ -1308,7 +1308,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<input type="hidden" name="user_mobile" value="'.dol_escape_htmltag($ldap_mobile).'">';
 		print $ldap_mobile;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'">';
+		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'" spellcheck="false">';
 	}
 	print '</td></tr>';
 
@@ -1332,7 +1332,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<input type="hidden" name="email" value="'.dol_escape_htmltag($ldap_mail).'">';
 		print $ldap_mail;
 	} else {
-		print '<input type="text" name="email" class="maxwidth500 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('email', 'alphanohtml')).'">';
+		print '<input type="text" name="email" class="maxwidth500 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('email', 'alphanohtml')).'" spellcheck="false">';
 	}
 	print '</td></tr>';
 
@@ -1639,7 +1639,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user', 0, '', '', 0, '', 1);
 
 			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
-			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
 
 			$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
@@ -2377,7 +2377,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "<tr>".'<td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
 			print '<td>';
 			if ($user->admin && !$object->ldap_sid) {
-				print '<input maxlength="50" type="text" class="flat" name="login" value="'.$object->login.'">';
+				   print '<input maxlength="50" type="text" class="flat" name="login" value="'.$object->login.'" spellcheck="false">';
 			} else {
 				print '<input type="hidden" name="login" value="'.$object->login.'">';
 				print $object->login;
@@ -2769,7 +2769,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>';
 			print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="user_mobile" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->user_mobile.'">';
+				   print '<input type="text" name="user_mobile" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->user_mobile.'" spellcheck="false">';
 			} else {
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;

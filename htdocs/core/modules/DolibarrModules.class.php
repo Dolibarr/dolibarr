@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -423,7 +423,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
 	/**
-	 * @var string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @var null|string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
 	 * 				Another example : array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 * Note: Example in modTakePos:  array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 *       Example in modAccounting: array("modFacture", "modBanque", "modTax");
@@ -439,27 +439,27 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $requiredby;
 
 	/**
-	 * @var string[] List of module class names as string this module is in conflict with.
+	 * @var null|string[] List of module class names as string this module is in conflict with.
 	 * @see $depends
 	 */
 	public $conflictwith;
 
 	/**
-	 * @var string[] Module language files
+	 * @var null|string[] Module language files
 	 */
 	public $langfiles;
 
 	/**
-	 * @var array<string,string> Array of warnings to show when we activate the module
+	 * @var array<string,mixed> 	Array of warnings to show when we activate the module
 	 *
-	 * array('always'='text') or array('FR'='text')
+	 * array('always'=>'text') or array('FR'=>array('text1', 'text2))
 	 */
 	public $warnings_activation;
 
 	/**
-	 * @var array<string,string> Array of warnings to show when we activate an external module
+	 * @var array<string,mixed> 	Array of warnings to show when we activate a module if another module is on
 	 *
-	 * array('always'='text') or array('FR'='text')
+	 * array('modOtherModule' => array('always'=>'text')) or array('modOtherModule' => array('FR'=>array('text1', 'text2)))
 	 */
 	public $warnings_activation_ext;
 
@@ -471,7 +471,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $warnings_unactivation;
 
 	/**
-	 * @var int[] Minimum version of PHP required by module.
+	 * @var null|int[] Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
@@ -482,7 +482,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $phpmax;
 
 	/**
-	 * @var int[] Minimum version of Dolibarr required by module.
+	 * @var null|int[] Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;

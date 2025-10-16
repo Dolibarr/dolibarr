@@ -172,6 +172,9 @@ ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_adherent (fk_adherent
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_bank (fk_bank);
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_dateadh (dateadh);
 
+ALTER TABLE llx_subscription ADD COLUMN ref_ext varchar(128);
+ALTER TABLE llx_subscription ADD COLUMN note_private text;
+
 ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account; -- OFX Financial Institution Transaction ID "FITID"
 
 ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id;
@@ -179,5 +182,63 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 -- default deposit % if payment term needs it on supplier
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
+CREATE TABLE llx_categorie_propal
+(
+  fk_categorie integer NOT NULL,
+  fk_propal integer NOT NULL,
+  import_key varchar(14)
+) ENGINE=innodb;
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_propal ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_propal);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_propal ADD INDEX idx_categorie_propal_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_propal ADD INDEX idx_categorie_propal_fk_propal (fk_propal);
+ALTER TABLE llx_categorie_propal ADD CONSTRAINT fk_categorie_propal_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_propal ADD CONSTRAINT fk_categorie_propal_fk_propal_rowid FOREIGN KEY (fk_propal) REFERENCES llx_propal (rowid);
+
+create table llx_categorie_supplier_proposal
+(
+  fk_categorie        integer NOT NULL,
+  fk_supplier_proposal integer NOT NULL,
+  import_key          varchar(14)
+)ENGINE=innodb;
+
+CREATE TABLE llx_accounting_bookkeeping_piece
+(
+	rowid               integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	entity              integer DEFAULT 1 NOT NULL,
+	ref             	varchar(128),
+	tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	datec				datetime,
+	datep				date NOT NULL,
+	statut				smallint DEFAULT 0,
+
+	note_private		text,
+	note_public			text,
+
+	fk_user_author		integer,
+	fk_user_modif		integer,
+	fk_user_valid		integer,
+	fk_user_closing		integer,
+
+	import_key          varchar(14),
+	extraparams         varchar(255)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_bookkeeping_piece ADD UNIQUE INDEX uk_accounting_bookkeeping_piece_ref (ref, entity);
+
+ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_author (fk_user_author);
+ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_modif (fk_user_modif);
+ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_closing (fk_user_closing);
+
+ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
+UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
+
+ALTER TABLE llx_receptiondet_batch ADD COLUMN description text AFTER fk_product;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN fk_unit integer AFTER qty;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN rang integer DEFAULT 0 AFTER cost_price;
+
+ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_src_object_type_id (src_object_type, src_object_id);
 
 -- end of migration

@@ -241,12 +241,12 @@ class Societe extends CommonObject
 		'outstanding_limit' => array('type' => 'double(24,8)', 'label' => 'OutstandingBill', 'enabled' => 1, 'visible' => -1, 'position' => 310, 'isameasure' => 1),
 		'order_min_amount' => array('type' => 'double(24,8)', 'label' => 'Order min amount', 'enabled' => 'isModEnabled("order") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible' => -1, 'position' => 315, 'isameasure' => 1),
 		'supplier_order_min_amount' => array('type' => 'double(24,8)', 'label' => 'Supplier order min amount', 'enabled' => 'isModEnabled("order") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible' => -1, 'position' => 320, 'isameasure' => 1),
-		'fk_shipping_method' => array('type' => 'integer', 'label' => 'Fk shipping method', 'enabled' => 1, 'visible' => -1, 'position' => 330),
-		'tva_assuj' => array('type' => 'tinyint(4)', 'label' => 'Tva assuj', 'enabled' => 1, 'visible' => -1, 'position' => 335),
-		'localtax1_assuj' => array('type' => 'tinyint(4)', 'label' => 'Localtax1 assuj', 'enabled' => 1, 'visible' => -1, 'position' => 340),
-		'localtax1_value' => array('type' => 'double(6,3)', 'label' => 'Localtax1 value', 'enabled' => 1, 'visible' => -1, 'position' => 345),
-		'localtax2_assuj' => array('type' => 'tinyint(4)', 'label' => 'Localtax2 assuj', 'enabled' => 1, 'visible' => -1, 'position' => 350),
-		'localtax2_value' => array('type' => 'double(6,3)', 'label' => 'Localtax2 value', 'enabled' => 1, 'visible' => -1, 'position' => 355),
+		'fk_shipping_method' => array('type' => 'integer', 'label' => 'ShippingMode', 'enabled' => 1, 'visible' => -1, 'position' => 330),
+		'tva_assuj' => array('type' => 'tinyint(4)', 'label' => 'VATIsUsed', 'enabled' => 1, 'visible' => -1, 'position' => 335),
+		'localtax1_assuj' => array('type' => 'tinyint(4)', 'label' => 'LocalTax1IsUsed', 'enabled' => 1, 'visible' => -1, 'position' => 340),
+		'localtax1_value' => array('type' => 'double(6,3)', 'label' => 'LocalTax1 value', 'enabled' => 1, 'visible' => -1, 'position' => 345),
+		'localtax2_assuj' => array('type' => 'tinyint(4)', 'label' => 'LocalTax2IsUsed', 'enabled' => 1, 'visible' => -1, 'position' => 350),
+		'localtax2_value' => array('type' => 'double(6,3)', 'label' => 'LocalTax2 value', 'enabled' => 1, 'visible' => -1, 'position' => 355),
 		'vat_reverse_charge' => array('type' => 'tinyint(4)', 'label' => 'Vat reverse charge', 'enabled' => 1, 'visible' => -1, 'position' => 335),
 		'barcode' => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 1, 'visible' => -1, 'position' => 360),
 		'price_level' => array('type' => 'integer', 'label' => 'Price level', 'enabled' => '$conf->global->PRODUIT_MULTIPRICES || getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES") || getDolGlobalString("PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES")', 'visible' => -1, 'position' => 365),
@@ -872,7 +872,7 @@ class Societe extends CommonObject
 
 	// Warehouse
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_warehouse;
 
@@ -1091,7 +1091,7 @@ class Societe extends CommonObject
 			$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 			$sql .= ", ".(int) $this->fk_multicurrency;
 			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-			$sql .= ", '".$this->db->escape($this->ip)."'";
+			$sql .= ", ".(empty($this->ip) ? "null" : "'".$this->db->escape($this->ip)."'");
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
@@ -4949,36 +4949,49 @@ class Societe extends CommonObject
 	 *  Check if we must use localtax feature or not according to country (country of $mysoc in most cases).
 	 *
 	 *	@param		int<-1,2>		$localTaxNum	Use 1 or 2 to get info for only localtax1 or localtax2, 0 to get both a boolean using a OR, -1 to get array for each case.
+	 * 	@param		int<0,1>		$mode			0=Check according to vat dictionary, 1=Check according to ->localtaxX_assuj field of $thirdparty
+	 *  @param      Societe|null	$thirdparty		Object thirdparty
 	 *  @return		boolean|array<int,boolean>		true or false or array of 2 booleans if $localTaxNum == -1
 	 */
-	public function useLocalTax($localTaxNum = 0)
+	public function useLocalTax($localTaxNum = 0, $mode = 0, $thirdparty = null)
 	{
-		$sql  = "SELECT t.localtax1, t.localtax2";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
-		$sql .= " AND t.active = 1";
-		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
-		if (empty($localTaxNum) || $localTaxNum == -1) {
-			$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
-		} elseif ($localTaxNum == 1) {
-			$sql .= " AND t.localtax1_type <> '0'";
-		} elseif ($localTaxNum == 2) {
-			$sql .= " AND t.localtax2_type <> '0'";
-		}
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($mode == 1 && $thirdparty instanceof Societe) {
 			if ($localTaxNum == -1) {
-				$obj = $this->db->fetch_object($resql);
-				if ($obj) {
-					return array(1 => ($obj->localtax1 ? true : false), 2 => ($obj->localtax2 ? true : false));
-				}
-				return array(1 => false, 2 => false);
-			} else {
-				return ($this->db->num_rows($resql) > 0);
+				return array(1 => ($thirdparty->localtax1_assuj ? true : false), 2 => ($thirdparty->localtax2_assuj ? true : false));
+			} elseif ($localTaxNum == 1) {
+				return $thirdparty->localtax1_assuj ? true : false;
+			} elseif ($localTaxNum == 2) {
+				return $thirdparty->localtax2_assuj ? true : false;
 			}
-		} else {
 			return false;
+		} else {
+			$sql  = "SELECT t.localtax1, t.localtax2";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
+			$sql .= " AND t.active = 1";
+			$sql .= " AND t.entity IN (".getEntity('c_tva').")";
+			if (empty($localTaxNum) || $localTaxNum == -1) {
+				$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
+			} elseif ($localTaxNum == 1) {
+				$sql .= " AND t.localtax1_type <> '0'";
+			} elseif ($localTaxNum == 2) {
+				$sql .= " AND t.localtax2_type <> '0'";
+			}
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($localTaxNum == -1) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						return array(1 => ($obj->localtax1 ? true : false), 2 => ($obj->localtax2 ? true : false));
+					}
+					return array(1 => false, 2 => false);
+				} else {
+					return ($this->db->num_rows($resql) > 0);
+				}
+			} else {
+				return false;
+			}
 		}
 	}
 
@@ -5725,7 +5738,7 @@ class Societe extends CommonObject
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-					$tab[$i] = array(
+					$tab[$obj->id] = array(
 						'source' => $obj->source,
 						'socid' => $obj->socid,
 						'id' => $obj->id,
@@ -5745,7 +5758,7 @@ class Societe extends CommonObject
 						'fk_c_type_contact' => $obj->fk_c_type_contact
 					);
 				} else {
-					$tab[$i] = $obj->id;
+					$tab[$obj->id] = $obj->id;
 				}
 
 				$i++;

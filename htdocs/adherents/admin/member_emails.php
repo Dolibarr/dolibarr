@@ -65,17 +65,17 @@ $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL_
 
 // Editing global variables not related to a specific theme
 $constantes = array(
-	'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
-	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>array('type'=>'emailtemplate:member','label'=>''),
-	'ADHERENT_MAIL_FROM'							=>array('type'=>'string','label'=>''),
-	'ADHERENT_CC_MAIL_FROM'							=>array('type'=>'string','label'=>''),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>array('type'=>'string','label'=>''),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>array('type'=>'html', 'tooltip'=>$helptext,'label'=>'')
+	'MEMBER_REMINDER_EMAIL'                         => array('type'=>'yesno', 'label' => $langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")), 'help' => $langs->trans('MEMBER_REMINDER_EMAILHelp', $langs->transnoentities("Module2300Name"))),
+	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=> array('type'=>'emailtemplate:member', 'label'=>''),
+	'ADHERENT_MAIL_FROM'							=> array('type'=>'string', 'label'=>''),
+	'ADHERENT_CC_MAIL_FROM'							=> array('type'=>'string', 'label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=> array('type'=>'string', 'label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=> array('type'=>'html', 'tooltip' => $helptext, 'label' => '')
 );
 
 
@@ -166,7 +166,131 @@ print '<input type="hidden" name="action" value="updateall">';
 
 print '<br>';
 
-form_constantes($constantes, 3, '');
+// TODO Try to use the formsetup class.
+
+$tableau = $constantes;
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td class="">'.$langs->trans("Description").'</td>';
+print '<td>';
+print '</td>';
+print "</tr>\n";
+
+foreach ($tableau as $key => $const) {	// Loop on each param
+	$label = '';
+	$type = $const['type'];
+	$label = $const['label'];
+	$help = empty($const['help']) ? '' : $const['help'];
+	$const = $key;
+
+	$sql = "SELECT rowid, ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value, type, note";
+	$sql .= " FROM ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE ".$db->decrypt('name')." = '".$db->escape($const)."'";
+	$sql .= " AND entity IN (0, ".$conf->entity.")";
+	$sql .= " ORDER BY name ASC, entity DESC";
+	$resql = $db->query($sql);
+
+	dol_syslog("List params", LOG_DEBUG);
+
+	if ($resql) {
+		$obj = $db->fetch_object($resql); // Take first result of select
+
+		if (empty($obj)) {	// If not yet into table
+			$obj = (object) array('rowid' => '', 'name' => $const, 'value' => '', 'type' => $type, 'note' => '');
+		}
+		if ($const == 'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' && !getDolGlobalString('MEMBER_REMINDER_EMAIL')) {
+			continue;
+		}
+
+		print '<tr class="oddeven">';
+
+		// Show label of parameter
+		print '<td>';
+		print '<input type="hidden" name="rowid[]" value="'.$obj->rowid.'">';
+		print '<input type="hidden" name="constname[]" value="'.$const.'">';
+		print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+		print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
+
+		$picto = '';
+		$tmparray = explode(':', $obj->type);
+		if (!empty($tmparray[1])) {
+			$picto = preg_replace('/_send$/', '', $tmparray[1]);
+		}
+		if ($picto) {
+			print img_picto('', $picto, 'class="pictofixedwidth"');
+		}
+
+		if (!empty($tableau[$key]['tooltip'])) {
+			print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
+		} else {
+			print($label ? $label : $langs->trans('Desc'.$const));
+		}
+
+		if (in_array($const, ['ADHERENT_MAIL_FROM', 'ADHERENT_CC_MAIL_FROM'])) {
+			print ' '.img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
+		}
+		if ($help) {
+			print '<br><span class="opacitymedium">';
+			//print $langs->trans("MEMBER_REMINDER_EMAILHelp");
+			print $help;
+			print '</span>';
+		}
+
+		print "</td>\n";
+
+		// Value
+		print '<td>';
+		print '<input type="hidden" name="consttype_'.$const.'" value="'.($obj->type ? $obj->type : 'string').'">';
+		print '<input type="hidden" name="constnote_'.$const.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+		if ($obj->type == 'textarea') {
+			print '<textarea class="flat" name="constvalue_'.$const.'" cols="50" rows="5" wrap="soft">'."\n";
+			print $obj->value;
+			print "</textarea>\n";
+		} elseif ($obj->type == 'html') {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$doleditor = new DolEditor('constvalue_'.$const, $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
+			$doleditor->Create();
+		} elseif ($obj->type == 'yesno') {
+			print $form->selectyesno('constvalue_'.$const, $obj->value, 1, false, 0, 1);
+		} elseif (preg_match('/emailtemplate/', $obj->type)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+
+			$tmp = explode(':', $obj->type);
+
+			$formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
+			$arrayofmessagename = array();
+			if (is_array($formmail->lines_model)) {
+				foreach ($formmail->lines_model as $modelmail) {
+					//var_dump($modelmail);
+					$moreonlabel = '';
+					if (!empty($arrayofmessagename[$modelmail->label])) {
+						$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+					}
+					// The 'label' is the key that is unique if we exclude the language
+					$arrayofmessagename[$modelmail->label.':'.$tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+				}
+			}
+			//var_dump($arraydefaultmessage);
+			//var_dump($arrayofmessagename);
+			print $form->selectarray('constvalue_'.$const, $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+
+			print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/mails_templates.php', ['action' => 'create', 'type_template' => $tmp[1], 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"])]).'">'.img_picto('', 'add').'</a>';
+		} elseif (preg_match('/MAIL_FROM$/i', $const)) {
+			print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue_'.$const.'" value="'.dol_escape_htmltag($obj->value).'">';
+		} else { // type = 'string' ou 'chaine'
+			print '<input type="text" class="flat minwidth300" name="constvalue_'.$const .'" value="'.dol_escape_htmltag($obj->value).'">';
+		}
+		print '</td>';
+
+		print "</tr>\n";
+	}
+}
+print '</table>';
+print '</div>';
+
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 print '</form>';

@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2007 Patrick Raguin     <patrick.raguin@gmail.com>
--- Copyright (C) 2012 Juanjo Menent      <jmenent@2byte.es>
--- Copyright (C) 2022 Solution Libre SAS <contact@solution-libre.fr>
+-- Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,9 +16,24 @@
 --
 -- ============================================================================
 
-create table llx_categorie_supplier_proposal 
+CREATE TABLE llx_accounting_bookkeeping_piece
 (
-  fk_categorie        integer NOT NULL,
-  fk_supplier_proposal integer NOT NULL,
-  import_key          varchar(14)
-)ENGINE=innodb;
+  rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity                integer DEFAULT 1 NOT NULL,
+  ref             		varchar(128),
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  datec					datetime,
+  datep					date NOT NULL,
+  statut				smallint DEFAULT 0,
+
+  note_private			text,
+  note_public			text,
+
+  fk_user_author		integer,
+  fk_user_modif			integer,
+  fk_user_valid			integer,
+  fk_user_closing		integer,
+
+  import_key            varchar(14),
+  extraparams           varchar(255)
+) ENGINE=innodb;

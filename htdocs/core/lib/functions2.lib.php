@@ -1927,7 +1927,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0, $showempty = 0)
 					$docmodels[0] = $obj->label.': '.$langs->trans("None");
 				}
 			} else {
-				if ($type == 'member' && $obj->doc_template_name == 'standard') {   // Special case, if member template, we add variant per format
+				if ($type == 'member' && $obj->doc_template_name == 'standard_member') {   // Special case, if member template, we add variant per format
 					global $_Avery_Labels;
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 					foreach ($_Avery_Labels as $key => $val) {
@@ -2905,7 +2905,7 @@ function acceptLocalLinktoMedia()
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
 
-	// By default we acceptto add medias from emails templates but this may be refused if later
+	// By default we accept to add medias from emails templates but this may be refused in the future
 	// we detect we are not on a public url that we can access remotely (if we are on a private network, such files can't be reached),
 	// except if MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK is net, in which case we accept also if instance has a local or private network URL.
 

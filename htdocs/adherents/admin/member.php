@@ -77,8 +77,6 @@ $error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-global $conf;
-
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
@@ -121,6 +119,8 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFMember $module';
+		/** @var ModelePDFMember $module */
 
 		if ($module->write_file($adherentspecimen, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=member&file=SPECIMEN.pdf");
@@ -341,6 +341,7 @@ foreach ($dirModMember as $dirroot) {
 					continue;
 				}
 				$modCodeMember = new $file();
+				/** @var ModeleNumRefMembers $modCodeMember */
 				// Show modules according to features level
 				if ($modCodeMember->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
@@ -358,6 +359,7 @@ foreach ($dirModMember as $dirroot) {
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
 '@phan-var-force array<string,ModeleNumRefMembers> $arrayofmodules';
+/** @var array<string,ModeleNumRefMembers> $arrayofmodules */
 
 foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
@@ -460,6 +462,7 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 							'@phan-var-force doc_generic_member_odt|pdf_standard_member $module';
+							/** @var doc_generic_member_odt|pdf_standard_member $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
