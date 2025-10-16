@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2017 Maxime Kohlhaas <support@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2025	Christophe Battarel	<christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +17,9 @@
  */
 
 /**
- * \file       htdocs/core/modules/member/mod_member_free.php
+ * \file       htdocs/core/modules/member/mod_member_custom.php
  * \ingroup    member
- * \brief      Fichier contenant la class du modele de numerotation de reference de note de frais Free
+ * \brief      Fichier contenant la class du modele de numerotation d'ahérent Custom
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
@@ -29,9 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 
 /**
- *	Class to manage member report numbering rules Free
+ *	Class to manage member report numbering rules Custom
  */
-class mod_member_free extends ModeleNumRefMembers
+class mod_member_custom extends ModeleNumRefMembers
 {
 	/**
 	 * Dolibarr version of the loaded document
@@ -49,12 +47,12 @@ class mod_member_free extends ModeleNumRefMembers
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom = 'Free';
+	public $nom = 'Custom';
 
 	/**
 	 * @var string model name
 	 */
-	public $name = 'Free';
+	public $name = 'Custom';
 
 
 	/**
@@ -75,7 +73,7 @@ class mod_member_free extends ModeleNumRefMembers
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconst" value="MEMBER_FREE_MASK">';
+		$texte .= '<input type="hidden" name="maskconst" value="MEMBER_CUSTOM_MASK">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 
 		$texte .= '<table class="nobordernopadding centpercent">';
@@ -91,7 +89,7 @@ class mod_member_free extends ModeleNumRefMembers
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$mask = getDolGlobalString('MEMBER_FREE_MASK');
+		$mask = getDolGlobalString('MEMBER_CUSTOM_MASK');
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
@@ -139,7 +137,7 @@ class mod_member_free extends ModeleNumRefMembers
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = getDolGlobalString('MEMBER_FREE_MASK');
+		$mask = getDolGlobalString('MEMBER_CUSTOM_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -154,7 +152,10 @@ class mod_member_free extends ModeleNumRefMembers
 			$fuser->fetch($object->fk_user_author);
 		}
 
-		$numFinal = get_next_value($db, $mask, 'adherent', 'ref', '', null, $date, 'next', true, $fuser);
+		// Get entities
+		$entity = getEntity('membernumber', 1, $object);
+
+		$numFinal = get_next_value($db, $mask, 'adherent', 'ref', '', null, $date, 'next', true, $fuser, $entity);
 
 		return $numFinal;
 	}
