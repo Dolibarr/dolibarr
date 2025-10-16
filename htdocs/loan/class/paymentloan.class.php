@@ -535,7 +535,7 @@ class PaymentLoan extends CommonObject
 				$this->datep,
 				$this->paymenttype, // Payment mode ID or code ("CHQ or VIR for example") it's integer in db
 				$label,
-				$total,
+				(float) $total,
 				$this->num_payment,
 				0,
 				$user,
