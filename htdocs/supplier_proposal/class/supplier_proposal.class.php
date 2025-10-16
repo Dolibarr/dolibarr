@@ -2482,7 +2482,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function loadStateBoard()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
 		$clause = "WHERE";
