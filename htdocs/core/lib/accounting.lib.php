@@ -82,14 +82,14 @@ function accounting_prepare_head(AccountingAccount $object)
  *	@param	string		$backtopage Back to page (return on ledger by default)
  *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function accounting_transaction_prepare_head(BookKeeping $object, $mode = '', $type = '', $backtopage = '%2Faccountancy%2Fbookkeeping%2Flistbyaccount.php')
+function accounting_transaction_prepare_head(BookKeeping $object, $mode = '', $type = '', $backtopage = '/accountancy/bookkeeping/listbyaccount.php')
 {
 	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/accountancy/bookkeeping/card.php".'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/accountancy/bookkeeping/card.php', ['piece_num' => $object->piece_num, 'mode' => $mode, 'type' => $type, 'backtopage' => $backtopage]);
 	$head[$h][1] = $langs->trans("Transaction");
 	$head[$h][2] = 'transaction';
 	$h++;
