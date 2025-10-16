@@ -525,7 +525,7 @@ class PaymentLoan extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total = $this->amount_capital;
+			$total = (float) $this->amount_capital;
 			if ($mode == 'payment_loan') {
 				$total = -$total;
 			}
@@ -535,7 +535,7 @@ class PaymentLoan extends CommonObject
 				$this->datep,
 				$this->paymenttype, // Payment mode ID or code ("CHQ or VIR for example") it's integer in db
 				$label,
-				(float) $total,
+				$total,
 				$this->num_payment,
 				0,
 				$user,
