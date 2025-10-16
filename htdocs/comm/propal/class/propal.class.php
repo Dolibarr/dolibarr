@@ -3596,7 +3596,7 @@ class Propal extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
 		if (array_key_exists('status', $param)) {
-			$sql .= " AND status = ".((int) $param['status']);
+			$sql .= " AND tosell = ".((int) $param['status']);
 		}
 		$sql .= $this->db->plimit(100);
 
