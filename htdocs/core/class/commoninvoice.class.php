@@ -1912,7 +1912,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$idofbankaccountouse = $this->fk_account;
 		if (empty($idofbankaccountouse)) {
-			$idofbankaccountouse = $this->fk_bank;
+			$idofbankaccountouse = $this->fk_bank;	// for backward compatibility
 		}
 		if (empty($idofbankaccountouse)) {
 			$idofbankaccountouse = getDolGlobalInt('FACTURE_RIB_NUMBER');

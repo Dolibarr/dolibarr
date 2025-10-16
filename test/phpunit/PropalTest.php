@@ -63,7 +63,7 @@ class PropalTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$localobject = new Propal($db);
-		$param = array('status' => 1);
+		$param = array('tosell' => 1);
 		$localobject->initAsSpecimen($param);
 		$result = $localobject->create($user);
 
