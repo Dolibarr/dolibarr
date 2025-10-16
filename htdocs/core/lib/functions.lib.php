@@ -9201,6 +9201,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		do {
 			$oldstringtoclean = $out;
 
+			$outishtml = 0;
+			if (dol_textishtml($out)) {
+				$outishtml = 1;
+			}
+
+			// HTML sanitizer by DOMDocument
 			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
@@ -9217,7 +9223,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
 					// I don't know what the xml encoding is the trick for
-					if (dol_textishtml($out)) {
+					if ($outishtml) {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . $out . '</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
@@ -9240,6 +9246,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
 					//                  $out = preg_replace('/<\/div>$/', '', $out);
 					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);
+
+					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
+						$out = str_replace('<br>', '', $out);
+					}
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
@@ -9247,8 +9257,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				}
 			}
 
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript'))) {
-				// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
+			// HTML sanitizer by Tidy
+			// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
+			// Tidy can't be used for non html text content as it is corrupting the new lines fields.
+			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
 				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
 					//var_dump($out);
@@ -9662,6 +9674,8 @@ function dol_textishtml($msg, $option = 0)
 			return true; // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		} elseif (preg_match('/&#[0-9]{2,3};/i', $msg)) {
 			return true; // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
+		} elseif (preg_match('/&#x[a-f0-9][a-f0-9];/i', $msg)) {
+			return true; // Html entities numbers in hexa
 		}
 
 		return false;
