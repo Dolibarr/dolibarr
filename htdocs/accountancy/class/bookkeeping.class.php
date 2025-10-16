@@ -3547,7 +3547,7 @@ class BookKeeping extends CommonObject
 	 */
 	public function newCloneMass($toselect, $code_journal, $docdate)
 	{
-		global $langs;
+		global $langs, $user;
 
 		$error = 0;
 		$this->db->begin();
@@ -3608,6 +3608,7 @@ class BookKeeping extends CommonObject
 							if ($resql) {
 								while ($obj = $this->db->fetch_object($resql)) {
 									$docRef = $langs->trans("CloneOf", $obj->doc_ref);
+									$fk_user_author = $user->id;
 
 									$sql_insert = "INSERT INTO ".$this->db->prefix()."accounting_bookkeeping (";
 									$sql_insert .= " piece_num";
@@ -3616,14 +3617,14 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", label_compte";
 									$sql_insert .= ", subledger_account";
 									$sql_insert .= ", subledger_label";
-									//$sql_insert .= ", doc_type";
+									$sql_insert .= ", doc_type";
 									$sql_insert .= ", code_journal";
 									$sql_insert .= ", doc_date";
 									$sql_insert .= ", date_creation";
 									$sql_insert .= ", fk_user_author";
 									$sql_insert .= ", doc_ref";
-									//$sql_insert .= ", fk_doc";
-									//$sql_insert .= ", fk_docdet";
+									$sql_insert .= ", fk_doc";
+									$sql_insert .= ", fk_docdet";
 									$sql_insert .= ", debit";
 									$sql_insert .= ", credit";
 									$sql_insert .= ", journal_label";
@@ -3631,20 +3632,20 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", montant";
 									$sql_insert .= ")";
 									$sql_insert .= " VALUES (";
-									$sql_insert .= " ((int) $pieceNumNext)";
+									$sql_insert .=  $pieceNumNext;
 									$sql_insert .= ", '" . $this->db->escape($obj->label_operation) . "'";
 									$sql_insert .= ", '" . $this->db->escape($obj->numero_compte) . "'";
 									$sql_insert .= ", '" . $this->db->escape($obj->label_compte) . "'";
 									$sql_insert .= ", '" . $this->db->escape($obj->subledger_account) . "'";
 									$sql_insert .= ", '" . $this->db->escape($obj->subledger_label) . "'";
-									//$sql_insert .= ", '" . $this->db->escape($obj->doc_type) . "'";
+									$sql_insert .= ", ''";
 									$sql_insert .= ", '" . $this->db->escape($code_journal) . "'";
 									$sql_insert .= ", '" . $this->db->idate($docdate)."'";
 									$sql_insert .= ", '" . $this->db->idate($now)."'";
-									$sql_insert .= ", '" . $this->db->escape($obj->fk_user_author) . "'";
+									$sql_insert .= ", '" . $this->db->escape($fk_user_author) . "'";
 									$sql_insert .= ", '" . $this->db->escape($docRef) . "'";
-									//$sql_insert .= ", " . ((int) $obj->fk_doc);
-									//$sql_insert .= ", " . ((int) $obj->fk_docdet);
+									$sql_insert .= ", '0'";
+									$sql_insert .= ", '0'";
 									$sql_insert .= ", " . (float) $obj->debit;
 									$sql_insert .= ", " . (float) $obj->credit;
 									$sql_insert .= ", '" . $this->db->escape($journal_label) . "'";
