@@ -68,12 +68,12 @@ class PaymentLoan extends CommonObject
 	public $amounts = array();
 
 	/**
-	 * @var float|int  Total amount of payment
+	 * @var null|float|int  Total amount of payment
 	 */
 	public $amount_capital;
 
 	/**
-	 * @var float|int
+	 * @var null|float|int
 	 */
 	public $amount_insurance;
 
@@ -99,12 +99,12 @@ class PaymentLoan extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var int User ID
+	 * @var ?int User ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int user ID
+	 * @var ?int user ID
 	 */
 	public $fk_user_modif;
 
@@ -112,14 +112,17 @@ class PaymentLoan extends CommonObject
 	 * @var string
 	 */
 	public $type_code;
+
 	/**
 	 * @var string
 	 */
 	public $type_label;
+
 	/**
 	 * @var int
 	 */
 	public $chid;
+
 	/**
 	 * @var string
 	 */
