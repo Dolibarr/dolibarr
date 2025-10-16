@@ -128,4 +128,26 @@ class WebPortalTheme
 			$this->primaryColorHsl = colorHexToHsl($outColor, 1, true);
 		}
 	}
+
+	/**
+	 * return current icons folder url
+	 *
+	 * @return string
+	 */
+	static public function getIconImagesUrl()
+	{
+		// TODO : add hook Or const override
+		return Context::getInstance()->getControllerUrl().'/img/icons/';
+	}
+
+	/**
+	 * return current icons folder path
+	 *
+	 * @return string
+	 */
+	static public function getIconImagesPath()
+	{
+		// TODO : add hook Or const override
+		return DOL_DOCUMENT_ROOT . '/public/webportal/img/icons';
+	}
 }
