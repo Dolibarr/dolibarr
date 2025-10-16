@@ -3686,12 +3686,19 @@ class Product extends CommonObject
 
 					// For every order having invoice already validated we need to decrease stock cause it's in physical stock
 					$adeduire = 0;
-					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet as fd ";
-					$sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON fd.fk_facture = f.rowid";
-					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
-					$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
+					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count";
+					$sql .= " FROM " . $this->db->prefix() . "facturedet as fd";
+					$sql .= " JOIN " . $this->db->prefix() . "facture as f ON fd.fk_facture = f.rowid";
+					$sql .= " JOIN " . $this->db->prefix() . "element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture' AND el.sourcetype = 'commande'";
+					$sql .= " JOIN " . $this->db->prefix() . "commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product = ".((int) $this->id);
-
+					$sql .= " UNION ALL";
+					$sql .= " SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count";
+					$sql .= " FROM " . $this->db->prefix() . "facturedet as fd";
+					$sql .= " JOIN " . $this->db->prefix() . "facture as f ON fd.fk_facture = f.rowid";
+					$sql .= " JOIN " . $this->db->prefix() . "element_element as el ON el.fk_source = f.rowid AND el.targettype = 'commande' AND el.sourcetype = 'facture'";
+					$sql .= " JOIN " . $this->db->prefix() . "commande as c ON el.fk_source = c.rowid";
+					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product =".((int) $this->id);
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
 					if ($resql) {
