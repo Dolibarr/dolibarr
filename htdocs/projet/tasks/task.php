@@ -700,7 +700,7 @@ if ($id > 0 || !empty($ref)) {
 		$genallowed = ($user->rights->projet->lire);
 		$delallowed = ($user->hasRight('projet', 'creer'));
 
-		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
+		print $formfile->showdocuments('project_task', dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref), $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 		print '</div><div class="fichehalfright">';
 
