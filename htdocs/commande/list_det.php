@@ -678,7 +678,11 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query('SELECT COUNT(*) as numrows ' .  $sql);
 	$obj = $db->fetch_object($result);
-	$nbtotalofrecords = $obj->numrows;
+    if (empty($obj)) {
+        $nbtotalofrecords = 0;
+    } else {
+        $nbtotalofrecords = $obj->numrows;
+    }
 
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
