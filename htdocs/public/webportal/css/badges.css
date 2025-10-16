@@ -1,0 +1,87 @@
+
+.badge {
+	--font-weight-medium: 300;
+	--text-xs : 0.75rem;
+	--text-xs--line-height: calc(1 / .75);
+	--spacing : 0.25rem;
+	--tw-font-weight: var(--font-weight-medium);
+	--radius-sm : 0.25rem;
+	font-weight: var(--font-weight-medium);
+
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	padding-block: calc(var(--spacing) * .5);
+	padding-inline: calc(var(--spacing) * 2.5);
+	margin-inline-end: calc(var(--spacing) * 2);
+	border-radius: var(--radius-sm);
+
+	color: #1e40af;
+	background-color: #dbeafe;
+	white-space:  nowrap;
+	--badge-color-border : #60a5fa;
+}
+
+.badge.--rounded {
+	border-radius: 9999999px;
+}
+.badge.--border {
+	border: 1px solid var(--badge-color-border);
+}
+.badge.--border-dashed {
+	border: 1px dashed var(--badge-color-border);
+}
+.badge.--border.--no-bg, .badge.--border-dashed.--no-bg {
+	background-color: #f3f4f6;
+	color: #1f2937;
+}
+
+
+.badge.--yellow {
+	--badge-color-border : #fcd34d;
+	color: #92400e;
+	background-color: #fef3c7;
+}
+
+.badge.--dark {
+	--badge-color-border : #1f2937;
+	color: #1f2937;
+	background-color: #f3f4f6;
+}
+
+.badge.--red {
+	--badge-color-border :#f87171;
+	color: #991b1b;
+	background-color: #fee2e2;
+}
+
+.badge.--green {
+	--badge-color-border :#34d399;
+	color: #065f46;
+	background-color: #d1fae5;
+}
+
+.badge.--indigo{
+	--badge-color-border :#818cf8;
+	color: #3730a3;
+	background-color: #e0e7ff;
+}
+
+.badge.--purple{
+	--badge-color-border :#818cf8;
+	color: #5b21b6;
+	background-color: #ede9fe;
+}
+
+.badge.--pink{
+	--badge-color-border :#f472b6;
+	color: #9d174d;
+	background-color: #fce7f3;
+}
+
+.badge.--cart {
+	color: #ffffff;
+	font-size: 12px;
+	background-color: #bd0000;
+	font-weight: bold;
+	border-radius: 30px;
+}
