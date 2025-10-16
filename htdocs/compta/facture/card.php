@@ -4785,9 +4785,8 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 
-			// For situation invoice with excess received
+			// For situation invoice
 			if ($object->statut > Facture::STATUS_DRAFT
-			    && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) > 0
 			    && $user->rights->facture->creer
 			    && !$objectidnext
 			    && $object->is_last_in_cycle()
