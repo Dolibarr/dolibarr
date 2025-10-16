@@ -3,6 +3,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Pierre Ardoin			<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,13 +334,13 @@ if ($user->hasRight('ticket', 'read')) {
 	 */
 
 	$sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut as status, t.progress,";
-	$sql .= " type.code as type_code, type.label as type_label,";
-	$sql .= " category.code as category_code, category.label as category_label,";
-	$sql .= " severity.code as severity_code, severity.label as severity_label";
+	$sql .= " ty.code as type_code, ty.label as type_label,";
+	$sql .= " cat.code as category_code, cat.label as category_label,";
+	$sql .= " sev.code as severity_code, sev.label as severity_label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
+	$sql .= " LEFT JOIN ( SELECT code, MIN(label) AS label FROM ".MAIN_DB_PREFIX."c_ticket_type WHERE active = 1 GROUP BY code )  as ty ON ty.code=t.type_code";
+	$sql .= " LEFT JOIN ( SELECT code, MIN(label) AS label FROM ".MAIN_DB_PREFIX."c_ticket_category WHERE active = 1 GROUP BY code ) as cat ON cat.code=t.category_code";
+	$sql .= " LEFT JOIN ( SELECT code, MIN(label) AS label FROM ".MAIN_DB_PREFIX."c_ticket_severity WHERE active = 1 GROUP BY code ) as sev ON sev.code=t.severity_code";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
