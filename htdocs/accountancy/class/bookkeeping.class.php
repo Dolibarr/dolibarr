@@ -3608,7 +3608,6 @@ class BookKeeping extends CommonObject
 							if ($resql) {
 								while ($obj = $this->db->fetch_object($resql)) {
 									$docRef = $langs->trans("CloneOf", $obj->doc_ref);
-									$fk_user_author = $user->id;
 
 									$sql_insert = "INSERT INTO ".$this->db->prefix()."accounting_bookkeeping (";
 									$sql_insert .= " piece_num";
@@ -3642,7 +3641,7 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", '" . $this->db->escape($code_journal) . "'";
 									$sql_insert .= ", '" . $this->db->idate($docdate)."'";
 									$sql_insert .= ", '" . $this->db->idate($now)."'";
-									$sql_insert .= ", '" . $this->db->escape($fk_user_author) . "'";
+									$sql_insert .= ", ".($user->id > 0 ? ((int) $user->id) : "NULL");
 									$sql_insert .= ", '" . $this->db->escape($docRef) . "'";
 									$sql_insert .= ", '0'";
 									$sql_insert .= ", '0'";
