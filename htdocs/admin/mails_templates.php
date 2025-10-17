@@ -885,7 +885,7 @@ if ($action == 'create') {
 		if ($tmpfieldlist == 'topic') {
 			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'">';
 		} elseif ($tmpfieldlist == 'email_from') {
-			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'">';
+			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
 		} elseif ($tmpfieldlist == 'joinfiles') {
 			print $form->selectyesno($tmpfieldlist, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, false, 0, 1);
 		} else {
@@ -986,9 +986,9 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 foreach ($fieldlist as $field => $value) {
 	if ($value == 'module') {
-		print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'"></td>';
+		print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'" spellcheck="false"></td>';
 	} elseif ($value == 'label') {
-		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth75" value="'.dol_escape_htmltag($search_label).'"></td>';
+		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth75" value="'.dol_escape_htmltag($search_label).'" spellcheck="false"></td>';
 	} elseif ($value == 'lang') {
 		print '<td class="liste_titre">';
 		print $formadmin->select_language($search_lang, 'search_lang', 0, array(), 1, 0, 0, 'maxwidth100');
@@ -998,7 +998,7 @@ foreach ($fieldlist as $field => $value) {
 		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'maxwidth100', 1);
 		print '</td>';
 	} elseif ($value == 'topic') {
-		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
+		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'" spellcheck="false"></td>';
 	} elseif ($value == 'type_template') {
 		print '<td class="liste_titre center">';
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -1186,7 +1186,7 @@ if ($num) {
 						}
 						if ($tmpfieldlist == 'email_from') {
 							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').'>';
+							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
 							print '<br>'."\n";
 						}
 						if ($tmpfieldlist == 'joinfiles') {
@@ -1537,7 +1537,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 					print $form->selectyesno($value, (isset($obj->$value) ? $obj->$value : ''), 1, false, 0, 1);
 				}
 			} else {
-				print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->$value) ? $obj->$value : '').'" name="'. $value .'"'.($context == 'preview' ? ' disabled' : '').'>';
+				print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->$value) ? $obj->$value : '').'" name="'. $value .'"'.($context == 'preview' ? ' disabled' : '').' spellcheck="false">';
 			}
 			print '</td>';
 			$nboffieldsprinted++;

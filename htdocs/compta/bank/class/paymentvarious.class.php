@@ -565,7 +565,7 @@ class PaymentVarious extends CommonObject
 					);
 
 					// Update fk_bank into llx_payment_various
-					// So we know the payment which has generate the banking ecriture
+					// So we know the payment which has generate the banking transaction
 					if ($bank_line_id > 0) {
 						$this->update_fk_bank($bank_line_id);
 					} else {

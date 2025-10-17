@@ -3582,9 +3582,10 @@ class Propal extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
+	 *  @param	array<string|mixed>		$param		Array of options
 	 *  @return	int
 	 */
-	public function initAsSpecimen()
+	public function initAsSpecimen($param = array())
 	{
 		global $conf, $langs;
 
@@ -3594,6 +3595,9 @@ class Propal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		if (array_key_exists('tosell', $param)) {
+			$sql .= " AND tosell = ".((int) $param['tosell']);
+		}
 		$sql .= $this->db->plimit(100);
 
 		$resql = $this->db->query($sql);
@@ -3610,6 +3614,7 @@ class Propal extends CommonObject
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->ref_customer = 'NEMICEPS';
 		$this->ref_client = 'NEMICEPS';
 		$this->specimen = 1;
 		$this->socid = 1;
@@ -3873,16 +3878,19 @@ class Propal extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = '';
+		$baseurl = '';
+		$query = [];
 		if ($user->hasRight('propal', 'lire')) {
+			parse_str($get_params, $query);
+			$query = array_merge($query, ['id' => $this->id]);
 			if ($option == '') {
-				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/card.php';
 			} elseif ($option == 'compta') {  // deprecated
-				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/card.php';
 			} elseif ($option == 'expedition') {
-				$url = DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/expedition/propal.php';
 			} elseif ($option == 'document') {
-				$url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/document.php';
 			}
 
 			if ($option != 'nolink') {
@@ -3892,10 +3900,11 @@ class Propal extends CommonObject
 					$add_save_lastsearch_values = 1;
 				}
 				if ($add_save_lastsearch_values) {
-					$url .= '&save_lastsearch_values=1';
+					$query = array_merge($query, ['save_lastsearch_values' => 1]);
 				}
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('propal', 'lire')) {

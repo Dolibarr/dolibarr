@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  */
 
 /**
@@ -128,12 +128,12 @@ if (!empty($object->comments)) {
 		} else {
 			if ($fk_user == $user->id || $user->admin == 1) {
 				print '<a class="comment-edit comment-cell" href="'.$varpage.'?action=editcomment&token='.newToken().'&id='.$id.'&withproject=1&idcomment='.$comment->id.'#comment" title="'.$langs->trans('Edit').'">';
-				print img_picto('', 'edit.png');
+				print img_picto('', 'edit');
 				print '</a>';
 			}
 			if (($first && $fk_user == $user->id) || $user->admin == 1) {
 				print '<a class="comment-delete comment-cell" href="'.$varpage.'?action=deletecomment&token='.newToken().'&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
-				print img_picto('', 'delete.png');
+				print img_picto('', 'delete');
 				print '</a>';
 			}
 		}

@@ -56,6 +56,7 @@ if (file_exists($conffile)) {
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
+require_once $dolibarr_main_document_root.'/core/class/html.form.class.php';
 require_once 'lib/repair.lib.php';
 
 $ok = 0;
@@ -93,6 +94,8 @@ if (!is_object($conf)) {
 /*
  * View
  */
+
+$form = new Form($db);
 
 pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 
@@ -219,7 +222,8 @@ $sections = [
 		],
 		[
 			'name' => 'repair_mailing_path',
-			'info' => 'Repair path of mailing files.<br>Should be applied when using emailing module with > 99 mailings.<br>In that case, please also set MAILING_USE_NEW_PATH_FOR_FILES.'
+			'info' => 'Repair path of mailing files',
+			'tooltip' => 'Should be applied when using emailing module with > 99 mailings. In that case, please also set MAILING_USE_NEW_PATH_FOR_FILES.'
 		]
 	],
 	'Clean tables and data' => [
@@ -280,18 +284,27 @@ $sections = [
 	]
 ];
 
+$conf->use_javascript_ajax = 1;
+
 foreach ($sections as $section => $options) {
 	print '<tr style="background:#f4f4f4;font-weight:bold"><td colspan="5">'.$section.'</td></tr>';
 	foreach ($options as $opt) {
 		$option = $opt['name'];
 		$info = $opt['info'];
+		$tooltip = empty($opt['tooltip']) ? '' : $opt['tooltip'];
 		$value = GETPOST($option, 'alpha') ? GETPOST($option, 'alpha') : 'undefined';
 		// Generate links with the right option and value
 		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test';
 		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed';
 		print '<tr>';
 		print '<td>' . $option . '</td>';
-		print '<td>' . $info . '</td>';
+		print '<td>';
+		if ($tooltip) {
+			print $form->textwithpicto($info, $tooltip);
+		} else {
+			print $info;
+		}
+		print '</td>';
 		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (X)' : '').'</td>';
 		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch confirmed on option '.$option.'">confirmed</a>'.($value == 'confirmed' ? ' (X)' : '').'</td>';
 		print '</tr>';
@@ -301,8 +314,7 @@ print '</table>';
 
 
 print '<br id="sectionresult">';
-
-print '<table cellspacing="0" cellpadding="1" class="centpercent">';
+print '<br>';
 
 
 $conf->setValues($db);
@@ -324,10 +336,17 @@ $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_l
 
 if ($ok && $oneoptionset) {
 	// Show wait message
-	print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'<br><br></td></tr>';
+	print $langs->trans("PleaseBePatient").'<br><br>';
+
+	// Flush (some browser need a certain amount of data)
+	print str_repeat(' ', 1024);
+	ob_flush();
 	flush();
 }
 
+
+
+print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 
 // run_sql: Run repair SQL file
 if ($ok && GETPOST('standard', 'alpha')) {
@@ -371,6 +390,13 @@ if ($ok && GETPOST('standard', 'alpha')) {
 // sync_extrafields: Search list of fields declared and list of fields created into databases, then create fields missing
 
 if ($ok && GETPOST('standard', 'alpha')) {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
+
+	print '<tr><td colspan="2"><br>*** Update denormalized_lower_planned_end_date.</td></tr>';
+	$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
+	$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+	$resqltoupdatecontract = $db->query($sqltoupdatecontract);
+
 	$extrafields = new ExtraFields($db);
 
 	// List of tables that has an extrafield table
@@ -385,7 +411,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				'adherent_type' => 'adherent_type', 'user' => 'user', 'partnership' => 'partnership', 'projet' => 'projet', 'projet_task' => 'projet_task', 'ticket' => 'ticket');
 	//$listofmodulesextra = array('fichinter'=>'fichinter');
 
-	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
+	print '<tr><td colspan="2"><br>*** Check that fields into the extra table structure match the table of definition. If not, add column into table</td></tr>';
 	foreach ($listofmodulesextra as $tablename => $elementtype) {
 		// Get list of fields
 		$tableextra = MAIN_DB_PREFIX.$tablename.'_extrafields';
@@ -2148,7 +2174,9 @@ if (empty($actiondone)) {
 }
 
 if ($oneoptionset) {
+	print '<br>';
 	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
+	print img_picto('', 'url', 'class="pictofixedwidth"');
 	print $langs->trans("GoToDolibarr");
 	print '</a></div>';
 }

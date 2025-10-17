@@ -315,8 +315,7 @@ class Availabilities extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -489,7 +488,7 @@ class Availabilities extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -795,10 +794,6 @@ class Availabilities extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
-		if (property_exists($this, 'amount')) {
-			$return .= '<br>';
-			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
-		}
 		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
@@ -938,55 +933,8 @@ class Availabilities extends CommonObject
 	 */
 	public function getNextNumRef()
 	{
-		global $langs, $conf;
-		$langs->load("agenda");
-
-		if (!getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON')) {
-			$conf->global->BOOKCAL_AVAILABILITIES_ADDON = 'mod_availabilities_standard';
-		}
-
-		if (getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON')) {
-			$mybool = false;
-
-			$file = getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON') . ".php";
-			$classname = getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON');
-
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/bookcal/");
-
-				// Load file with numbering class (if found)
-				$mybool = ((bool) @include_once $dir.$file) || $mybool;
-			}
-
-			if (!$mybool) {
-				dol_print_error(null, "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				'@phan-var-force CommonNumRefGenerator $obj';
-				/** @var CommonNumRefGenerator $obj */
-
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
-			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
-				return "";
-			}
-		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
-			return "";
-		}
+		// Not used
+		return '';
 	}
 
 	/**
@@ -1002,7 +950,7 @@ class Availabilities extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 

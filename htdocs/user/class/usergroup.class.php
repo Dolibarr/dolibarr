@@ -847,10 +847,11 @@ class UserGroup extends CommonObject
 		}
 
 		if ($option == 'permissions') {
-			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/perms.php';
 		} else {
-			$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/card.php';
 		}
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -859,9 +860,10 @@ class UserGroup extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = "";
 		if (empty($notooltip)) {
