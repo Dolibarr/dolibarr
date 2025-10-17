@@ -85,6 +85,7 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 			$sql = "SELECT ctt.rowid, ctt.label, ctt.code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
 			$sql .= " WHERE ctt.active = 1";
+			$sql .= " AND ctt.entity = $conf->entity";
 			$sql .= $this->db->order('ctt.rowid', 'ASC');
 			$resql = $this->db->query($sql);
 
