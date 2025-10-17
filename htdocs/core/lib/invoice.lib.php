@@ -42,14 +42,14 @@ function facture_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('CustomerInvoice');
 	$head[$h][2] = 'compta';
 	$h++;
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?id='.urlencode((string) ($object->id));
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/contact.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -75,7 +75,7 @@ function facture_prepare_head($object)
 		}
 		$langs->load("banks");
 
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?id='.urlencode((string) ($object->id));
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/prelevement.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
@@ -98,7 +98,7 @@ function facture_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -112,7 +112,7 @@ function facture_prepare_head($object)
 	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -120,7 +120,7 @@ function facture_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/agenda.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/agenda.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
@@ -179,12 +179,12 @@ function invoice_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/invoice.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/invoice.php');
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/payment.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/payment.php');
 	$head[$h][1] = $langs->trans("Payments");
 	$head[$h][2] = 'payment';
 	$h++;
@@ -195,7 +195,7 @@ function invoice_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'invoice_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/invoice_cust_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoice_cust_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoices");
 	$nbExtrafields = $extrafields->attributes['facture']['count'];
 	if ($nbExtrafields > 0) {
@@ -204,7 +204,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/invoicedet_cust_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoicedet_cust_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['facturedet']['count'];
 	if ($nbExtrafields > 0) {
@@ -213,7 +213,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/invoice_rec_cust_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoice_rec_cust_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoicesRec");
 	$nbExtrafields = $extrafields->attributes['facture_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -222,7 +222,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributesrec';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/invoicedet_rec_cust_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoicedet_rec_cust_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsLinesRec");
 	$nbExtrafields = $extrafields->attributes['facturedet_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -232,7 +232,7 @@ function invoice_admin_prepare_head()
 	$h++;
 
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 0) {	// Warning, implementation with value 1 is seriously bugged and a new one not compatible is expected to become stable
-		$head[$h][0] = DOL_URL_ROOT.'/admin/invoice_situation.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/invoice_situation.php');
 		$head[$h][1] = $langs->trans("InvoiceSituation");
 		$head[$h][2] = 'situation';
 		$h++;
@@ -257,12 +257,12 @@ function invoice_rec_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/card-rec.php?id=' . $object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/compta/facture/card-rec.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("RepeatableInvoice");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/list.php?search_fk_fac_rec_source=' . $object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/compta/facture/list.php', ['search_fk_fac_rec_source' => $object->id]);
 	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
 	//count facture rec
 	$nbFacture = 0;
@@ -290,7 +290,7 @@ function invoice_rec_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note-rec.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/note-rec.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -299,7 +299,7 @@ function invoice_rec_prepare_head($object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/agenda-rec.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/agenda-rec.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
@@ -357,7 +357,7 @@ function supplier_invoice_rec_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/card-rec.php?id=' . $object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/fourn/facture/card-rec.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("RepeatableSupplierInvoice");
 	$head[$h][2] = 'card';
 	$h++;
@@ -370,7 +370,7 @@ function supplier_invoice_rec_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note-rec.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/note-rec.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -378,7 +378,7 @@ function supplier_invoice_rec_prepare_head($object)
 		$head[$h][2] = 'note';
 		$h++;
 	}
-	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/list.php?search_fk_fac_rec_source=' . $object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/fourn/facture/list.php', ['search_fk_fac_rec_source' => $object->id]);
 	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
 
 	//count facture rec
@@ -473,12 +473,14 @@ function getNumberInvoicesPieChart($mode)
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				/*
-				$dataseries = array(array($langs->trans('InvoiceLate30Days'), $obj->nblate30)
-									,array($langs->trans('InvoiceLate15Days'), $obj->nblate15 - $obj->nblate30)
-									,array($langs->trans('InvoiceLateMinus15Days'), $obj->nblatenow - $obj->nblate15)
-									,array($langs->trans('InvoiceNotLate'), $obj->nbnotlatenow - $obj->nbnotlate15)
-									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
-									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
+				$dataseries = array(
+					array($langs->trans('InvoiceLate30Days'), $obj->nblate30),
+					array($langs->trans('InvoiceLate15Days'), $obj->nblate15 - $obj->nblate30),
+					array($langs->trans('InvoiceLateMinus15Days'), $obj->nblatenow - $obj->nblate15),
+					array($langs->trans('InvoiceNotLate'), $obj->nbnotlatenow - $obj->nbnotlate15),
+					array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30),
+					array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30),
+				);
 				*/
 				$dataseries[$i] = array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->late30, $obj->late15, $obj->latenow, $obj->notlatenow, $obj->notlate15, $obj->notlate30);
 				$i++;
@@ -516,7 +518,6 @@ function getNumberInvoicesPieChart($mode)
 			$result .= '</tr>';
 
 			if ($conf->use_javascript_ajax) {
-				//var_dump($dataseries);
 				$dolgraph = new DolGraph();
 				$dolgraph->SetData($dataseries);  // @phan-suppress-current-line PhanTypeMismatchArgument
 
@@ -572,7 +573,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 		if ($user->socid > 0) {
 			$socid = $user->socid;
 		}
-		$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+		$maxofloop = getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500);
 
 		$tmpinvoice = new Facture($db);
 
@@ -627,7 +628,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 			$result .= '<tr class="liste_titre">';
 			$result .= '<th colspan="3">';
 			$result .= $langs->trans("CustomersDraftInvoices");
-			$result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status='.Facture::STATUS_DRAFT.'">';
+			$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/compta/facture/list.php', ['search_status' => Facture::STATUS_DRAFT]).'">';
 			$result .= '<span class="badge marginleftonly">'.$num.'</span>';
 			$result .= '</a>';
 			$result .= '</th>';
@@ -726,7 +727,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 		if ($user->socid > 0) {
 			$socid = $user->socid;
 		}
-		$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+		$maxofloop = getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500);
 
 		$facturesupplierstatic = new FactureFournisseur($db);
 
@@ -764,7 +765,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 			$result .= '<tr class="liste_titre">';
 			$result .= '<th colspan="3">';
 			$result .= $langs->trans("SuppliersDraftInvoices");
-			$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_DRAFT.'">';
+			$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/list.php', ['search_status' => FactureFournisseur::STATUS_DRAFT]).'">';
 			$result .= '<span class="badge marginleftonly">'.$num.'</span>';
 			$result .= '</a>';
 			$result .= '</th>';
@@ -1002,7 +1003,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$result .= '<table class="noborder centpercent">';
 	$result .= '<tr class="liste_titre">';
 	$result .= '<th colspan="3">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).' ';
-	$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=DESC">';
+	$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/list.php', ['sortfield' => 'f.tms', 'sortorder' => 'DESC']).'">';
 	$result .= '<span class="badge">...</span>';
 	$result .= '</a>';
 	$result .= '</th>';
@@ -1328,7 +1329,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			print '<tr class="liste_titre">';
 			print '<th colspan="2">';
 			print $langs->trans("BillsSuppliersUnpaid", $num).' ';
-			print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_VALIDATED.'">';
+			print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/list.php', ['search_status' => FactureFournisseur::STATUS_VALIDATED]).'">';
 			print '<span class="badge">'.$num.'</span>';
 			print '</a>';
 			print '</th>';

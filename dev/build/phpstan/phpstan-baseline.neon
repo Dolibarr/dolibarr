@@ -811,12 +811,6 @@ parameters:
 			path: ../../../htdocs/admin/modules.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/modules.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 2
@@ -5271,7 +5265,7 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 9
+			count: 8
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
@@ -5823,7 +5817,7 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 11
+			count: 10
 			path: ../../../htdocs/core/class/extrafields.class.php
 
 		-
@@ -8959,18 +8953,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/objectline_title.tpl.php
 
 		-
-			message: '#^Variable \$outputalsopricetotalwithtax might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
-			message: '#^Variable \$usemargins might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -9167,24 +9149,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/document.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/document.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/info.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/note.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -11377,96 +11341,6 @@ parameters:
 			path: ../../../htdocs/loan/class/loanschedule.class.php
 
 		-
-			message: '#^Property LoanSchedule\:\:\$fk_bank \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_loan \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_payment_loan \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_typepayment \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_user_creat \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_user_modif \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$num_payment \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$amount_capital \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$amount_insurance \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_bank \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_loan \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_typepayment \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_user_creat \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_user_modif \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$num_payment \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -13431,12 +13305,6 @@ parameters:
 		-
 			message: '#^Variable \$diroutputmassaction in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$listofobjectref might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/movement_list.php
 
@@ -15847,18 +15715,6 @@ parameters:
 			path: ../../../htdocs/salaries/list.php
 
 		-
-			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 1
-			path: ../../../htdocs/salaries/payment_salary.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/salaries/payment_salary.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
@@ -17451,7 +17307,7 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 8
+			count: 7
 			path: ../../../htdocs/webportal/class/html.formwebportal.class.php
 
 		-
