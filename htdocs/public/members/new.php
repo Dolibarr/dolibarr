@@ -765,14 +765,13 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								break;
 
 							default:';
-							if ($action != "subscription") {
-								print '
-								$phyInput.prop({disabled: false, checked: false});
-								$morInput.prop({disabled: false, checked: false});
-								$span1.removeClass("member-individual-back").addClass("nonature-back");
-								$span2.removeClass("member-company-back").addClass("nonature-back");';
-							}
-print'					}
+			if ($action != "subscription") {
+				print ' $phyInput.prop({disabled: false, checked: false});
+				$morInput.prop({disabled: false, checked: false});
+				$span1.removeClass("member-individual-back").addClass("nonature-back");
+				$span2.removeClass("member-company-back").addClass("nonature-back");';
+			}
+			print'}
 					});
 
 					// Initial state
