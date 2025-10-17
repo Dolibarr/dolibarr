@@ -58,12 +58,8 @@ top_httphead();
 	print '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">'."\n";
 
 	?>
-	<link rel="stylesheet" href="<?php print $context->rootUrl.'css/style.css.php'; ?>">
-	<?php
-	if (getDolGlobalString('WEBPORTAL_CUSTOM_CSS')) {
-		print '<link rel="stylesheet" type="text/css" href="'.$context->rootUrl.'css/themes/custom.css.php?revision='.getDolGlobalInt('WEBPORTAL_PARAMS_REV').'">'."\n";
-	}
-	?>
+	<link rel="stylesheet" href="<?php print $context->rootUrl.'css/style.css.php?revision='.getDolGlobalInt('WEBPORTAL_PARAMS_REV'); ?>">
+	<link rel="stylesheet" type="text/css" href="<?php print $context->rootUrl.'css/themes/custom.css.php?revision='.getDolGlobalInt('WEBPORTAL_PARAMS_REV'); ?>">
 
 	<link rel="stylesheet" href="<?php print dirname($context->rootUrl).'/theme/common/fontawesome-5/css/all.min.css?layout=classic'; ?>">
 	<?php

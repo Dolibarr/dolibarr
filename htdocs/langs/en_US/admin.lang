@@ -2729,3 +2729,5 @@ MCPServer=MCP Server
 AnalyzeUnalterableScopeOnly=Analyze only files implicated into the feature of the module %s (otherwise all files are scanned)
 UnalterableFilesChecksum=Cheksum of unalterable files
 ShowListOfFiles=Show list of analyzed files...
+ModuleProviderSites=Module providers
+StillInDevelopment=Still in development

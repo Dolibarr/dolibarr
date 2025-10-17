@@ -9,7 +9,7 @@
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
@@ -1207,7 +1207,7 @@ if ($contextpage == 'lead') {
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

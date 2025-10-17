@@ -712,23 +712,20 @@ class Adherent extends CommonObject
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
 			if ($id > 0) {
 				$this->id = $id;
-				if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == '') {
-					// keep old numbering
-					$this->ref = (string) $id;
-				} else {
-					// auto code
-					$modfile = dol_buildpath('core/modules/member/'.getDolGlobalString('MEMBER_CODEMEMBER_ADDON').'.php', 0);
-					try {
-						require_once $modfile;
-						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
-						$modCodeMember = new $modname();
-						'@phan-var-force ModeleNumRefMembers $modCodeMember';
-						/** @var ModeleNumRefMembers $modCodeMember */
-						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
-					} catch (Exception $e) {
-						dol_syslog($e->getMessage(), LOG_ERR);
-						$error++;
-					}
+
+				$modulenum = getDolGlobalString('MEMBER_CODEMEMBER_ADDON', 'mod_member_simple');
+
+				$modfile = dol_buildpath('core/modules/member/'.$modulenum.'.php', 0);
+				try {
+					require_once $modfile;
+					$modname = $modulenum;
+					$modCodeMember = new $modname();
+					'@phan-var-force ModeleNumRefMembers $modCodeMember';
+					/** @var ModeleNumRefMembers $modCodeMember */
+					$this->ref = $modCodeMember->getNextValue($mysoc, $this);
+				} catch (Exception $e) {
+					dol_syslog($e->getMessage(), LOG_ERR);
+					$error++;
 				}
 
 				// Update minor fields
@@ -2778,10 +2775,10 @@ class Adherent extends CommonObject
 				$warning_delay = getWarningDelay('member', 'subscription') / 60 / 60 / 24;
 				$label = $langs->trans("MembersWithSubscriptionToReceive");
 				$labelShort = $langs->trans("MembersWithSubscriptionToReceiveShort");
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_VALIDATED.'&amp;filter=outofdate';
+				$url = dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['mainmenu' => 'members', 'statut' => self::STATUS_VALIDATED, 'filter' => 'outofdate']);
 			} elseif ($mode == 'shift') {
 				$warning_delay = getWarningDelay('member', 'subscription') / 60 / 60 / 24;
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_DRAFT;
+				$url = dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['mainmenu' => 'members', 'statut' => self::STATUS_DRAFT]);
 				$label = $langs->trans("MembersListToValid");
 				$labelShort = $langs->trans("ToValidate");
 			}

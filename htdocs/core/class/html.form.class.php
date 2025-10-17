@@ -216,7 +216,7 @@ class Form
 				$ret .= '<td class="right">';
 			}
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm) {
-				$ret .= '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=edit' . $htmlname . '&token=' . newToken() . '&' . $paramid . '=' . $object->id . $moreparam . '">';
+				$ret .= '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit' . $htmlname, $paramid => $object->id], true) . $moreparam . '">';
 				$ret .= img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1));
 				$ret .= '</a>';
 			}
@@ -9986,7 +9986,7 @@ class Form
 
         <dl class="dropdown">
             <dt>
-            <a href="#' . $htmlname . '">
+            <a href="#' . $htmlname . '" class="multiselectpicto">
               ' . img_picto('', 'list') . '
             </a>
             <input type="hidden" class="' . $htmlname . '" name="' . $htmlname . '" value="' . $listcheckedstring . '">

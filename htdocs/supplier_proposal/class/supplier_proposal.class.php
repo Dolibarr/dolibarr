@@ -10,7 +10,7 @@
  * Copyright (C) 2010-2018  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014  Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014       Marcos García            <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
@@ -642,6 +642,7 @@ class SupplierProposal extends CommonObject
 			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->fk_unit = $fk_unit;
 			$this->line->origin = $origin;
+			$this->line->origin_type = $origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->ref_fourn = $this->db->escape($ref_supplier);
 			$this->line->date_start = $date_start;
@@ -2392,11 +2393,12 @@ class SupplierProposal extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
+	 *  @param	array<string|mixed>		$param		Array of options
 	 *  @return int
 	 */
-	public function initAsSpecimen()
+	public function initAsSpecimen($param = array())
 	{
-		global $user, $langs, $conf;
+		global $conf, $langs;
 
 		// Load array of products prodids
 		$num_prods = 0;
@@ -2404,6 +2406,9 @@ class SupplierProposal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		if (array_key_exists('tosell', $param)) {
+			$sql .= " AND tosell = ".((int) $param['tosell']);
+		}
 		$sql .= $this->db->plimit(100);
 
 		$resql = $this->db->query($sql);
@@ -2420,6 +2425,7 @@ class SupplierProposal extends CommonObject
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->ref_supplier = 'NEMICEPS';
 		$this->specimen = 1;
 		$this->socid = 1;
 		$this->date = time();
@@ -2429,6 +2435,10 @@ class SupplierProposal extends CommonObject
 		$this->mode_reglement_code = 'CHQ';
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
+
+		$this->multicurrency_tx = 1;
+		$this->multicurrency_code = $conf->currency;
+
 		// Lines
 		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
@@ -2476,7 +2486,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function loadStateBoard()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
 		$clause = "WHERE";
@@ -2740,9 +2750,9 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->fk_product = $obj->fk_product;
 				$this->lines[$i]->ref = $obj->ref;
 				$this->lines[$i]->product_label = $obj->product_label;
-				$this->lines[$i]->product_desc		= $obj->product_desc;
+				$this->lines[$i]->product_desc = $obj->product_desc;
 				$this->lines[$i]->fk_product_type = $obj->fk_product_type; // deprecated
-				$this->lines[$i]->product_type		= $obj->product_type;
+				$this->lines[$i]->product_type = $obj->product_type;
 				$this->lines[$i]->qty = $obj->qty;
 				$this->lines[$i]->subprice = $obj->subprice;
 				$this->lines[$i]->fk_remise_except = $obj->fk_remise_except;
