@@ -1,0 +1,5 @@
+[allowlist]
+    # Exclure un fichier spécifique par son chemin
+    paths = [
+        '''^htdocs/includes/php-jwt/README.md$''',
+    ]
