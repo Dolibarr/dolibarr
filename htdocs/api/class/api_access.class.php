@@ -139,8 +139,8 @@ class DolibarrApiAccess implements iAuthenticate
 				if ($decoded->exp < time()) {
 					throw new RestException(401, 'Token has expired');
 				}
-				$foundJwtToken = true;
 				$useridjwt = $decoded->data->user_id;
+				$foundJwtToken = true;
 			} catch (Exception $e) {
 				$foundDolApiKey = true;
 			}
@@ -152,7 +152,7 @@ class DolibarrApiAccess implements iAuthenticate
 			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
 		}
 
-		if ($api_key) {
+		if ($api_key && ($foundDolApiKey || $foundJwtToken)) {
 			$userentity = 0;
 
 			$sql = "SELECT u.login, u.datec, u.api_key,";
