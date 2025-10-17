@@ -66,7 +66,7 @@ class Token
 	 *
 	 * @url POST /
 	 */
-	public function index($login, $password, $entity = '')
+	public function post($login, $password, $entity = '')
 	{
 		global $dolibarr_main_authentication, $dolibarr_auto_user, $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $langs;
 
@@ -176,7 +176,7 @@ class Token
 	 *
 	 * @url PUT /
 	 */
-	public function refresh($token, $refreshtoken)
+	public function put($token, $refreshtoken)
 	{
 		global $dolibarr_main_authentication, $dolibarr_auto_user, $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $langs;
 
