@@ -58,8 +58,8 @@ class Token
 	 * @param   string  $password		User password
 	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
 	 * @return  array                   Response status and user jwt token
-	 * @phan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
-	 * @phpstan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
+	 * @phan-return array{success:array{code:int,message:string,token:string,refresh-token:string,entity:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,token:string,refresh-token:string,entity:int}}
 	 *
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 500 System error

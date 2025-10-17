@@ -137,6 +137,7 @@ class DolibarrApiAccess implements iAuthenticate
 			$api_key = preg_replace('/^Bearer\s+/i', '', $authHeader);
 			try {
 				$decoded = JWT::decode($api_key, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
+				'@phan-var-force stdClass $decoded';
 				// Token is valid, continue with Token verification
 				// throw new RestException(401, var_export($decoded));
 				if ($decoded->exp < $now) {
