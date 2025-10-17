@@ -1176,7 +1176,7 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int<0,1>	$notrigger			disable line update trigger
 	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
-	 * 	@param		int		    $fk_fournprice		Id of origin supplier price
+	 * 	@param		?int		$fk_fournprice		Id of origin supplier price
 	 * 	@param		float|string	$pa_ht			Price (without tax) of product for margin calculation (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int			$fk_parent_line		Id of parent line
 	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
@@ -1306,7 +1306,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ", total_ttc='".price2num($total_ttc)."'";
 		$sql .= ", date_start_fill=".((int) $date_start_fill);
 		$sql .= ", date_end_fill=".((int) $date_end_fill);
-		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : 'null');
+		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? (int) $fk_fournprice : 'null');
 		$sql .= ", buy_price_ht=".($pa_ht ? price2num($pa_ht) : 0);
 		$sql .= ", info_bits=".((int) $info_bits);
 		$sql .= ", rang=".((int) $rang);
