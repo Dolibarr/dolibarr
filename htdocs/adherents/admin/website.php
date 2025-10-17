@@ -312,6 +312,13 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, getDolGlobalString('MEMBER_NEWFORM_PAYONLINE'), 0);
 	print "</td></tr>\n";
 
+	// Search a member after member creation form
+	print '<tr class="oddeven" id="trpayment"><td>';
+	print $langs->trans("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE");
+	print '</td><td>';
+	print $form->selectyesno("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE"); // Reverse the logic "hide -> show" for retrocompatibility
+	print "</td></tr>\n";
+
 	print '</table>';
 	print '</div>';
 

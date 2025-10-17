@@ -195,7 +195,7 @@ if ($reshook < 0) {
 }
 
 // Verify if we can find member
-if (empty($reshook) && $action == 'add' && !GETPOSTISSET("nofetchmember")) {
+if (empty($reshook) && getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE") && $action == 'add' && !GETPOSTISSET("nofetchmember")) {
 	$memberfound = false;
 	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') && GETPOSTISSET('login')) {
 		$sql = "SELECT rowid as id";
