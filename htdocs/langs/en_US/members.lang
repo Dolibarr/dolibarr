@@ -262,3 +262,5 @@ MergeMembers=Merge members
 ConfirmMergeMembers=Are you sure you want to merge the chosen member with the current one ?
 ErrorMembersMerge=There was an error when merging the members. Please check the log. Changes have been reverted.
 ConfirmCreateMember=Confirm create member
+CorrespondingMemberFound=Corresponding member found
+CorrespondingMemberFoundQuestion=A member has been found with the given information.<br>Do you want to renew your membership?
