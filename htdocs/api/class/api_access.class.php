@@ -45,6 +45,7 @@ use Luracast\Restler\Defaults;
 use Luracast\Restler\RestException;
 use Firebase\JWT\JWT;
 
+
 /**
  * Dolibarr API access class
  */
@@ -94,7 +95,7 @@ class DolibarrApiAccess implements iAuthenticate
 	public function __isAllowed()
 	{
 		// phpcs:enable
-		global $conf, $db, $langs, $user;
+		global $conf, $db, $dolibarr_main_instance_unique_id, $langs, $user;
 
 		$login = '';
 		$stored_key = '';
@@ -118,13 +119,24 @@ class DolibarrApiAccess implements iAuthenticate
 		}
 
 		// TODO Can filter on user agent.
-		//$api_useragent = $_SERVER['HTTP_USER_AGENT'];
+		// $api_useragent = $_SERVER['HTTP_USER_AGENT'];
+		$foundDolApiKey = false;
+		$foundJwtToken = false;
 
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {        // HTTP Header entry "DOLAPIKEY: ..." can be read with $_SERVER["HTTP_DOLAPIKEY"]
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; 		// With header method (recommended)
+			$foundDolApiKey = true;
 		} elseif (empty($api_key)) {
 			$headers = getallheaders();					// HTTP Header entry "Authorization: Bearer ..." can be read with getallheaders
-			$api_key = preg_replace('/^Bearer\s+/i', '', empty($headers['Authorization']) ? '' : $headers['Authorization']);
+			$authHeader = $headers['Authorization'] ?? '';
+			$api_key = preg_replace('/^Bearer\s+/i', '', $authHeader);
+			try {
+				$decoded = JWT::decode($api_key, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
+				// Token is valid, continue with Token verification
+				$foundJwtToken = true;
+			} catch (Exception $e) {
+				$foundDolApiKey = true;
+			}
 		};
 
 		$api_key = dol_string_nounprintableascii($api_key, 1);
@@ -133,7 +145,7 @@ class DolibarrApiAccess implements iAuthenticate
 			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
 		}
 
-		if ($api_key) {
+		if ($api_key && $foundDolApiKey) {
 			$userentity = 0;
 
 			$sql = "SELECT u.login, u.datec, u.api_key,";
