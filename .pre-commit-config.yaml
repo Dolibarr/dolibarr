@@ -63,6 +63,7 @@ repos:
     rev: v8.24.0
     hooks:
       - id: gitleaks
+
   # Check github actions
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.7
