@@ -218,17 +218,17 @@ class Token
 				$useridjwt_refresh = (int) $decoded_refresh->data->user_id;
 			}
 		} catch (Exception $e) {
-			throw new RestException(403, 'Failed to validate refresh token');
+			throw new RestException(403, 'Failed to validate refresh token.');
 		}
 		// check if we find refresh token for the user in db (use md5 to find it) so we can invalidate it if needed
 		// TODO
 
 		// compare user_id of the two tokens
 		if ($useridjwt !== $useridjwt_refresh) {
-			throw new RestException(500, 'Failed to refresh token');
+			throw new RestException(500, 'Failed to refresh token.');
 		}
 		if ($jwtexpire_refresh) {
-			throw new RestException(500, 'Token refresh has expired');
+			throw new RestException(500, 'Token refresh has expired.');
 		}
 
 		$tmpuser = new User($this->db);
@@ -273,7 +273,7 @@ class Token
 				'token' => $accessToken,
 				'refresh-token' => $refreshToken,
 				'entity' => $tmpuser->entity,
-				'message' => 'Welcome ' . $tmpuser->login . ' - This is your jwt token. You can use it to make any REST API call.',
+				'message' => 'Welcome ' . $tmpuser->login . ' - This is your new jwt token. You can use it to make any REST API call.',
 			]
 		];
 	}
