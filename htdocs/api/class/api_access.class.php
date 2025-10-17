@@ -140,7 +140,7 @@ class DolibarrApiAccess implements iAuthenticate
 				if ($decoded->exp < time()) {
 					throw new RestException(401, 'Token has expired');
 				}
-				$useridjwt = $decoded->data->user_id;
+				$useridjwt = (int) $decoded->data->user_id;
 				$foundJwtToken = true;
 			} catch (Exception $e) {
 				$foundDolApiKey = true;

@@ -184,6 +184,9 @@ if (empty($reshook)) {
 				$errors = $nuser->errors;
 				$db->rollback();
 			}
+			if ($error) {
+				setEventMessage($langs->trans('ImpossibleToCreateUserFromContact').' : '.$nuser->errorsToString(), 'errors');
+			}
 		} else {
 			$error = $object->error;
 			$errors = $object->errors;
