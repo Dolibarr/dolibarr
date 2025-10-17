@@ -327,7 +327,7 @@ class Mo extends CommonObject
 		if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && !getDolGlobalString('ALLOW_USE_KITS_INTO_BOM_AND_MO') && $this->fk_product > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($this->fk_product);
+			$tmpproduct->fetch((int) $this->fk_product);
 			if ($tmpproduct->hasFatherOrChild(1) > 0) {
 				$this->error = 'ErrorAVirtualProductCantBeUsedIntoABomOrMo';
 				$this->errors[] = $this->error;
@@ -742,13 +742,13 @@ class Mo extends CommonObject
 
 		// Line to produce
 		$moline->fk_mo = $this->id;
-		$moline->qty = $this->qty;
-		$moline->fk_product = $this->fk_product;
+		$moline->qty = (int) $this->qty;
+		$moline->fk_product = (int) $this->fk_product;
 		$moline->position = 1;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpproduct = new Product($this->db);
-		$tmpproduct->fetch($this->fk_product);
+		$tmpproduct->fetch((int) $this->fk_product);
 		$moline->fk_unit = $tmpproduct->fk_unit;
 
 		if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
