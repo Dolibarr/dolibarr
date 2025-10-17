@@ -142,10 +142,10 @@ class Token
 				'random_string' => bin2hex(random_bytes(32)) // For more security
 			]
 		];
-		$accessToken= JWT::encode($payloadToken, $dolibarr_main_instance_unique_id, 'HS256');
+		$accessToken = JWT::encode($payloadToken, $dolibarr_main_instance_unique_id, 'HS256');
 		// TODO store user refresh-token in db for control
 		$refreshToken = JWT::encode($payloadRefreshToken, $dolibarr_main_instance_unique_id, 'HS256');
-		$sql = 'INSERT INTO '.$this->db->prefix().'oauth_token (service, token, fk_user, expire_at) VALUES ("dolibarr_refresh_token_api", "'.$this->db->escape(dolEncrypt($refreshToken)).'", '.(int) $tmpuser->id . ', "'.$this->db->idate($expire_at).'")';
+		$sql = 'INSERT INTO ' . $this->db->prefix() . 'oauth_token (service, token, tokenstring, fk_user, expire_at) VALUES ("dolibarr_refresh_token_api", "' . $this->db->escape(dolEncrypt($refreshToken)) . '", "' . md5($refreshToken) . '", ' . (int) $tmpuser->id . ', "' . $this->db->idate($expire_at) . '")';
 		$this->db->query($sql);
 
 		return [
