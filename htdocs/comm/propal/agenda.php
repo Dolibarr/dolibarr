@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -154,8 +154,8 @@ if ($object->id > 0) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1);
 	// Project
@@ -165,7 +165,7 @@ if ($object->id > 0) {
 		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+				$morehtmlref .= '<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -201,20 +201,26 @@ if ($object->id > 0) {
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin=' . urlencode((string) ($object->element . (property_exists($object, 'module') ? '@' . $object->module : ''))) . '&originid=' . urlencode((string) ($object->id));
-	$urlbacktopage = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
-	$out .= '&backtopage=' . urlencode($urlbacktopage);
+	$query = [
+		'action' => 'create',
+		'origin' => ($object->element . (property_exists($object, 'module') && !empty($object->module) ? '@' . $object->module : '')),
+		'originid' => $object->id,
+		'backtopage' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]),
+	];
 	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) == 'Societe') {
-			$out .= '&socid=' . urlencode((string) ($objthirdparty->id));
+			$query += ['socid' => $objthirdparty->id];
 		}
-		$out .= (!empty($objcon->id) ? '&contactid=' . urlencode($objcon->id) : '');
+		if (!empty($objcon->id)) {
+			$query += ['contactid' => $objcon->id];
+		}
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
 		//$out.="</a>";
 	}
+	$url = dolBuildUrl(DOL_URL_ROOT . '/comm/action/card.php', $query);
 
 	$morehtmlright = '';
 
@@ -224,26 +230,23 @@ if ($object->id > 0) {
 	//$messagingUrl = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	//$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
-	$messagingUrl = DOL_URL_ROOT . '/comm/propal/messaging.php?id=' . $object->id;
+	$messagingUrl = dolBuildUrl(DOL_URL_ROOT . '/comm/propal/messaging.php', ['id' => $object->id]);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 
-	$messagingUrl = DOL_URL_ROOT . '/comm/propal/agenda.php?id=' . $object->id;
+	$messagingUrl = dolBuildUrl(DOL_URL_ROOT . '/comm/propal/agenda.php', ['id' => $object->id]);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 
 	if (isModEnabled('agenda')) {
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url);
 		} else {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out, '', 0);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', 0);
 		}
 	}
 
-
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
-
-
 
 		$param = '&id=' . $object->id . (!empty($socid) ? '&socid=' . $socid : '');
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {

@@ -1309,9 +1309,9 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 		// Prospects
 		if (isModEnabled('societe') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 			$langs->load("commercial");
-			$newmenu->add("/societe/list.php?type=p&amp;leftmenu=prospects", $langs->trans("Prospects"), 2, $user->hasRight('societe', 'lire'), '', $mainmenu, 'prospects', 5);
+			$newmenu->add(dolBuildUrl('/societe/list.php', ['type' => 'p', 'leftmenu' => 'prospects']), $langs->trans("Prospects"), 2, $user->hasRight('societe', 'lire'), '', $mainmenu, 'prospects', 5);
 
-			$newmenu->add("/societe/card.php?leftmenu=prospects&action=create&type=p", $langs->trans("MenuNewProspect"), 3, $user->hasRight('societe', 'creer'));
+			$newmenu->add(dolBuildUrl('/societe/card.php', ['leftmenu' => 'prospects', 'action' => 'create', 'type' => 'p']), $langs->trans("MenuNewProspect"), 3, $user->hasRight('societe', 'creer'));
 		}
 
 		// Customers/Prospects
@@ -2554,7 +2554,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 			$newmenu->add(dolBuildUrl('/categories/index.php', ['leftmenu' => 'category']), $titleindex, 0, $user->hasRight('category', 'read'), '', $mainmenu, 'category', 5, '', '', '', img_picto('', 'category', 'class="paddingright pictofixedwidth"'));
 		}
 
-		if (empty($user->socid)) { // limit to internal users
+		if (!getDolGlobalInt('MENU_HIDE_EMAIL_TEMPLATES') && empty($user->socid)) { // limit to internal users
 			$langs->load("mails");
 			$newmenu->add(dolBuildUrl('/admin/mails_templates.php', ['leftmenu' => 'email_templates']), $langs->trans("EMailTemplates"), 0, 1, '', $mainmenu, 'email_templates', 10, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
 		}

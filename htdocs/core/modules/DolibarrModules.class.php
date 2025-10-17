@@ -477,7 +477,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $phpmin;
 
 	/**
-	 * @var int[] Maximum version of PHP ensured compatible with module.
+	 * @var null|int[] Maximum version of PHP ensured compatible with module.
 	 */
 	public $phpmax;
 

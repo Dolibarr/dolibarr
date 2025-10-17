@@ -1593,27 +1593,27 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		// Confirmation reinitialisation password
 		if ($action == 'password') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("ReinitPassword"), $langs->trans("ConfirmReinitPassword", $object->login), "confirm_password", '', 0, 1);
+			print $form->formconfirm(dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]), $langs->trans("ReinitPassword"), $langs->trans("ConfirmReinitPassword", $object->login), "confirm_password", '', 0, 1);
 		}
 
 		// Confirmation envoi password
 		if ($action == 'passwordsend') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("SendNewPassword"), $langs->trans("ConfirmSendNewPassword", $object->login), "confirm_passwordsend", '', 0, 1);
+			print $form->formconfirm(dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]), $langs->trans("SendNewPassword"), $langs->trans("ConfirmSendNewPassword", $object->login), "confirm_passwordsend", '', 0, 1);
 		}
 
 		// Confirm deactivation
 		if ($action == 'disable') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DisableAUser"), $langs->trans("ConfirmDisableUser", $object->login), "confirm_disable", '', 0, 1);
+			print $form->formconfirm(dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]), $langs->trans("DisableAUser"), $langs->trans("ConfirmDisableUser", $object->login), "confirm_disable", '', 0, 1);
 		}
 
 		// Confirm activation
 		if ($action == 'enable') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("EnableAUser"), $langs->trans("ConfirmEnableUser", $object->login), "confirm_enable", '', 0, 1);
+			print $form->formconfirm(dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]), $langs->trans("EnableAUser"), $langs->trans("ConfirmEnableUser", $object->login), "confirm_enable", '', 0, 1);
 		}
 
 		// Confirmation delete
 		if ($action == 'delete') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
+			print $form->formconfirm(dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]), $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
 		}
 
 		// Confirmation clone
@@ -1638,7 +1638,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user', 0, '', '', 0, '', 1);
 
-			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+			$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/vcard.php', ['id' => $object->id, 'output' => 'file', 'file' => dol_sanitizeFileName($object->getFullName($langs).'.vcf')]).'" class="refid valignmiddle" rel="noopener">';
 			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
 
@@ -1655,7 +1655,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Login
 			print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").'</td>';
-			if (!empty($object->ldap_sid) && $object->statut == 0) {
+			if (!empty($object->ldap_sid) && $object->status == User::STATUS_DISABLED) {
 				print '<td class="error">';
 				print $langs->trans("LoginAccountDisableInDolibarr");
 				print '</td>';
@@ -2136,21 +2136,21 @@ if ($action == 'create' || $action == 'adduserldap') {
 						$langs->load("mails");
 						$params['attr']['title'] = $langs->trans('NoEMail');
 					}
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle', '', $canSendMail, $params);
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init']) . '#formmailbeforetitle', '', $canSendMail, $params);
 				}
 
 				if ($permissiontoedit && (!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 						$params['attr']['title'] = $langs->trans('DisabledInMonoUserMode');
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF']).'#', '', false, $params);
 					} else {
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'edit'], true), '', true, $params);
 					}
 				} elseif ($permissiontoeditpasswordandsee && !$object->ldap_sid &&
 				(!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit', '', true, $params);
+					print dolGetButtonAction($langs->trans('Modify'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'edit'], true), '', true, $params);
 				}
 
 				// If we have a password generator engine enabled
@@ -2176,7 +2176,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
 					if ($object->status == $object::STATUS_DISABLED) {
 						$params['attr']['title'] = $langs->trans('UserDisabled');
-						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
+						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF']).'#', '', false, $params);
 					} elseif (($user->id != $id && $permissiontoeditpasswordandsee) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						unset($params['attr']['title']);
@@ -2198,13 +2198,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				}
 
-				if ($user->id != $id && $permissiontodisable && $object->statut == 0 &&
+				if ($user->id != $id && $permissiontodisable && $object->status == User::STATUS_DISABLED &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=enable&token='.newToken(), '', true, $params);
 				}
 				// Disable user
-				if ($user->id != $id && $permissiontodisable && $object->statut == 1 &&
+				if ($user->id != $id && $permissiontodisable && $object->status == User::STATUS_ENABLED &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable&token='.newToken(), '', true, $params);
@@ -2304,7 +2304,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 								print '</td>';
 								print '<td class="right">';
 								if ($permissiontoeditgroup) {
-									print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=removegroup&token='.newToken().'&group='.((int) $group->id).'">';
+									print '<a class="reposition" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'removegroup', 'group' => $group->id], true).'">';
 									print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 									print '</a>';
 								} else {
