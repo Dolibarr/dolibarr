@@ -137,6 +137,8 @@ repos:
         files: \.(php)$
         args: [--standard=dev/setup/codesniffer/ruleset.xml]
       - id: php-cs
+        exclude: |
+          (?x)^(htdocs/includes/.*)$
         files: \.(php)$
         args:
           [
@@ -147,8 +149,6 @@ repos:
           ]
       - alias: php-cs-with-cache
         id: php-cs
-        exclude: |
-          (?x)^(htdocs/includes/.*)$
         # Configuration for ci - run on all files with cache
         stages: [manual]
         args:
