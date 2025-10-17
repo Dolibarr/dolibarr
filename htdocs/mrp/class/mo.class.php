@@ -780,7 +780,7 @@ class Mo extends CommonObject
 		if ($this->fk_bom > 0 && is_object($bom)) {	// If a BOM is defined, we know what to consume.
 			if ($bom->id > 0) {
 				// process lines to consume, this needs to recurse through BOM's
-				$error += $this->processBOM($user, $role, $bom, $this->qty);
+				$error += $this->processBOM($user, $role, $bom, (float) $this->qty);
 			}
 		}
 
