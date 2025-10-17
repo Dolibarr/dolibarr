@@ -252,4 +252,6 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '5
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '519', 'gGmbH - gemeinnützige Gesellschaft mit beschränkter Haftung', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '520', 'gUG - gemeinnützige Unternehmergesellschaft (haftungsbeschränkt)', 1);
 
+ALTER TABLE llx_oauth_token ADD COLUMN expire_at DATETIME NULL AFTER lastaccess;
+
 -- end of migration

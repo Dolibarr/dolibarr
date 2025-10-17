@@ -118,25 +118,41 @@ class Token
 		}
 		$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
 		$url = $urlwithouturlroot . DOL_URL_ROOT . '/api/index.php/';
-
-		$payload = [
+		$now = dol_now();
+		$payloadToken = [
 			"iss" => $dolibarr_main_url_root,
 			"aud" => $url,
 			"name" => $tmpuser->getFullName($langs),
-			"iat" => time(),
-			"nbf" => time(),
-			"exp" => time() + getDolGlobalInt('MAIN_SESSION_TIMEOUT', 3600), // Expire in 1 hour by default
+			"iat" => $now,
+			"nbf" => $now,
+			"exp" => $now + getDolGlobalInt('MAIN_SESSION_TIMEOUT', 3600), // Expire in 1 hour by default
 			"data" => [
 				"user_id" => $tmpuser->id,
 				"email" => $tmpuser->email,
 			]
 		];
-		$jwt = JWT::encode($payload, $dolibarr_main_instance_unique_id, 'HS256');
+		$expire_at = $now + 86400;
+		$payloadRefreshToken = [
+			'iss' => $dolibarr_main_url_root,
+			'iat' => $now,
+			'exp' => $expire_at,
+			'data' => [
+				"user_id" => $tmpuser->id,
+				"email" => $tmpuser->email,
+				'random_string' => bin2hex(random_bytes(32)) // For more security
+			]
+		];
+		$accessToken= JWT::encode($payloadToken, $dolibarr_main_instance_unique_id, 'HS256');
+		// TODO store user refresh-token in db for control
+		$refreshToken = JWT::encode($payloadRefreshToken, $dolibarr_main_instance_unique_id, 'HS256');
+		$sql = 'INSERT INTO '.$this->db->prefix().'oauth_token (service, token, fk_user, expire_at) VALUES ("dolibarr_refresh_token_api", "'.$this->db->escape(dolEncrypt($refreshToken)).'", '.(int) $tmpuser->id . ', "'.$this->db->idate($expire_at).'")';
+		$this->db->query($sql);
 
 		return [
 			'success' => [
 				'code' => 200,
-				'token' => $jwt,
+				'token' => $accessToken,
+				'refresh-token' => $refreshToken,
 				'entity' => $tmpuser->entity,
 				'message' => 'Welcome ' . $login . ' - This is your jwt token. You can use it to make any REST API call.',
 			]

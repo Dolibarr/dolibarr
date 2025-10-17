@@ -101,6 +101,7 @@ class DolibarrApiAccess implements iAuthenticate
 		$stored_key = '';
 		$foundDolApiKey = false;
 		$foundJwtToken = false;
+		$useridjwt = 0;
 
 		$userClass = Defaults::$userIdentifierClass;
 
