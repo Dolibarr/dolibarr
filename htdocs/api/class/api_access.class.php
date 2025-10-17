@@ -102,6 +102,7 @@ class DolibarrApiAccess implements iAuthenticate
 		$foundDolApiKey = false;
 		$foundJwtToken = false;
 		$useridjwt = 0;
+		$now = dol_now();
 
 		$userClass = Defaults::$userIdentifierClass;
 
@@ -137,11 +138,13 @@ class DolibarrApiAccess implements iAuthenticate
 				$decoded = JWT::decode($api_key, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
 				// Token is valid, continue with Token verification
 				// throw new RestException(401, var_export($decoded));
-				if ($decoded->exp < time()) {
+				if ($decoded->exp < $now) {
 					throw new RestException(401, 'Token has expired');
 				}
-				$useridjwt = (int) $decoded->data->user_id;
-				$foundJwtToken = true;
+				if (is_object($decoded->data) && !empty($decoded->data->user_id)) {
+					$useridjwt = (int) $decoded->data->user_id;
+					$foundJwtToken = true;
+				}
 			} catch (Exception $e) {
 				$foundDolApiKey = true;
 			}
