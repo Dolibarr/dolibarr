@@ -124,13 +124,13 @@ class Token
 			"name" => $tmpuser->getFullName($langs),
 			"iat" => time(),
 			"nbf" => time(),
-			"exp" => time() + 3600, // Expiration dans 1 heure
+			"exp" => time() + getDolGlobalInt('MAIN_SESSION_TIMEOUT', 3600), // Expire in 1 hour by default
 			"data" => [
 				"user_id" => $tmpuser->id,
 				"email" => $tmpuser->email,
 			]
 		];
-		$jwt = JWT::encode($payload, $dolibarr_main_instance_unique_id, 'HS256');
+		$jwt = Firebase\JWT\JWT::encode($payload, $dolibarr_main_instance_unique_id, 'HS256');
 
 		return [
 			'success' => [
