@@ -1021,9 +1021,9 @@ if (empty($reshook)) {
 			$result = $object->updateline(
 				GETPOSTINT('lineid'),
 				$description,
-				$pu_ht,
-				$qty,
-				$vat_rate,
+				(float) $pu_ht,
+				(float) $qty,
+				(float) $vat_rate,
 				$localtax1_rate,
 				$localtax1_rate,
 				GETPOSTINT('productid'),
@@ -1041,9 +1041,9 @@ if (empty($reshook)) {
 				0,
 				$date_start_fill,
 				$date_end_fill,
-				$fournprice,
-				$buyingprice,
-				$fk_parent_line
+				(int) $fournprice,
+				(float) $buyingprice,
+				(int) $fk_parent_line
 			);
 
 			if ($result >= 0) {
