@@ -259,9 +259,9 @@ a:link, a:visited, a:hover, a:active, .classlink {
 	margin-left: 10px;
 }
 
-	/**
-	Home Styles
-	 */
+/**
+Home Styles
+ */
 .home-links-card{
 
 }
