@@ -200,7 +200,8 @@ class Token
 			// throw new RestException(401, var_export($decoded));
 			if ($decoded->exp < $now) {
 				$jwtexpire = true; // can expire
-			} elseif (is_object($decoded->data) && property_exists($decoded->data, 'user_id') && !empty($decoded->data->user_id)) {
+			}
+			if (is_object($decoded->data) && property_exists($decoded->data, 'user_id') && !empty($decoded->data->user_id)) {
 				$useridjwt = (int) $decoded->data->user_id;
 			}
 		} catch (Exception $e) {
