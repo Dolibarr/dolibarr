@@ -694,13 +694,18 @@ foreach ($arrayofmodules as $module) {
 }
 print '</table>';
 print '</div>';
-
+print '</form>';
 
 // Show advanced options
 print '<br><br><br>';
 
 
 // Advanced params
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update2">';
+print '<input type="hidden" name="page_y" value="">';
+
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';

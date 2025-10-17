@@ -98,7 +98,6 @@ if (!empty($useragent)) {
 	$browserversion = $tmp['browserversion'];
 	$browsername = $tmp['browsername'];
 	if ($browsername == 'ie' && $browserversion < 7) {
-		//print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> ';
 		print img_picto('', 'warning', 'class="pictofixedwidth warning"');
 		print $langs->trans("WarningBrowserTooOld")."<br>\n";
 	}
@@ -109,18 +108,15 @@ if (!empty($useragent)) {
 $arrayphpminversionerror = array(7, 0, 0);
 $arrayphpminversionwarning = array(7, 1, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
-	//print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
 	print img_picto('', 'warning', 'class="pictofixedwidth error"');
 	print $langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning
 } elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0) {    // Minimum supported (warning if lower)
-	//print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
 	print img_picto('', 'warning', 'class="pictofixedwidth warning"');
 	print $langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
 	$checksok = 1; // 0=error, 1=warning
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
-	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 	print $langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
 if (empty($force_install_nophpinfo) && (!file_exists($lockfile) && !file_exists($lockfile2))) {		// Do not show sensible information in update process, only in install process.
@@ -135,7 +131,6 @@ print "<br>\n";
 $arrayphpmaxversionwarning = array(8, 4, 0);
 if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
 	print img_picto('', 'warning', 'class="pictofixedwidth error"');
-	//print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
 	print $langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
 	$checksok = 1; // 0=error, 1=warning
 	print "<br>\n";
@@ -145,26 +140,23 @@ if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && version
 // Check PHP support for $_GET and $_POST
 if (!isset($_GET["testget"]) && !isset($_POST["testpost"])) {	// We must keep $_GET and $_POST here
 	print img_picto('', 'warning', 'class="pictofixedwidth warning"');
-	//print '<img src="../theme/eldy/img/warning.png" alt="Warning" class="valignmiddle pictofixedwidth"> ';
 	print $langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 	print "<br>\n";
 	$checksok = 0;
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
-	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 	print $langs->trans("PHPSupportPOSTGETOk")."<br>\n";
 }
 
 
 // Check if session_id is enabled
 if (!function_exists("session_id")) {
-	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
+	print img_picto('', 'warning', 'class="pictofixedwidth error"');
 	print $langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
 	$checksok = 0;
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
-	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 	print $langs->trans("PHPSupportSessions")."<br>\n";
 }
 
@@ -287,11 +279,9 @@ if ($memmaxorig != '') {
 	}
 	if ($memmax >= $memrequired || $memmax == -1) {
 		print img_picto('', 'tick', 'class="pictofixedwidth"');
-		//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 		print $langs->trans("PHPMemoryOK", $memmaxorig, $memrequiredorig)."<br>\n";
 	} else {
 		print img_picto('', 'warning', 'class="pictofixedwidth warning"');
-		//print '<img src="../theme/eldy/img/warning.png" alt="Warning" class="valignmiddle pictofixedwidth"> ';
 		print $langs->trans("PHPMemoryTooLow", $memmaxorig, $memrequiredorig)."<br>\n";
 	}
 }
@@ -351,7 +341,6 @@ if (!file_exists($conffile)) {
 } else {
 	if (dol_is_dir($conffile)) {
 		print img_picto('', 'warning', 'class="pictofixedwidth error"');
-		//print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle pictofixedwidth"> ';
 		print $langs->trans("ConfFileMustBeAFileNotADir", $conffiletoshow);
 
 		$allowinstall = 0;
@@ -359,16 +348,13 @@ if (!file_exists($conffile)) {
 		// File exists but cannot be modified
 		if ($confexists) {
 			print img_picto('', 'tick', 'class="pictofixedwidth"');
-			//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 			print $langs->trans("ConfFileExists", $conffiletoshow);
 		} else {
 			print img_picto('', 'tick', 'class="pictofixedwidth"');
-			//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 			print $langs->trans("ConfFileCouldBeCreated", $conffiletoshow);
 		}
 		print "<br>";
 		print img_picto('', 'tick', 'class="pictofixedwidth warning"');
-		//print '<img src="../theme/eldy/img/tick.png" alt="Warning" class="valignmiddle pictofixedwidth"> ';
 		print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
 		print "<br>\n";
 
@@ -377,16 +363,13 @@ if (!file_exists($conffile)) {
 		// File exists and can be modified
 		if ($confexists) {
 			print img_picto('', 'tick', 'class="pictofixedwidth"');
-			//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 			print $langs->trans("ConfFileExists", $conffiletoshow);
 		} else {
 			print img_picto('', 'tick', 'class="pictofixedwidth"');
-			//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 			print $langs->trans("ConfFileCouldBeCreated", $conffiletoshow);
 		}
 		print "<br>";
 		print img_picto('', 'tick', 'class="pictofixedwidth"');
-		//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 		print $langs->trans("ConfFileIsWritable", $conffiletoshow);
 		print "<br>\n";
 
@@ -497,7 +480,6 @@ if (!file_exists($conffile)) {
 			$choice .= '<br>';
 			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
 			$choice .= '<div class="center"><div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div></div>';
-			// <img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> ';
 		}
 
 		$choice .= '</td>';

@@ -3757,6 +3757,12 @@ class Commande extends CommonOrder
 
 		$labelTooltip = '';
 
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-billed' => (int) $billed,
+			'data-status' => (int) $status
+		)));
+
 		if ($status == self::STATUS_CANCELED) {
 			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderCanceled');
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderCanceledShort');
@@ -3788,11 +3794,14 @@ class Commande extends CommonOrder
 			$mode = 0;
 		}
 
+		$paramsBadge['tooltip'] = $labelTooltip;
+
 		$parameters = array(
 			'status'          => $status,
 			'mode'            => $mode,
 			'billed'          => $billed,
-			'donotshowbilled' => $donotshowbilled
+			'donotshowbilled' => $donotshowbilled,
+			'paramsBadge'	  =>& $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -3801,7 +3810,7 @@ class Commande extends CommonOrder
 			return $hookmanager->resPrint;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', array('tooltip' => $labelTooltip));
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**

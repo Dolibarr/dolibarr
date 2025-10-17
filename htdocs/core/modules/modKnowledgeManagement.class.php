@@ -299,9 +299,9 @@ class modKnowledgeManagement extends DolibarrModules
 			'langs' => 'knowledgemanagement',
 			'position' => 101,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->knowledgemanagement->enabled',
+			'enabled' => 'isModEnabled("knowledgemanagement")',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -319,9 +319,9 @@ class modKnowledgeManagement extends DolibarrModules
 			'langs' => 'knowledgemanagement',
 			'position' => 111,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->knowledgemanagement->enabled',
+			'enabled' => 'isModEnabled("knowledgemanagement")',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -339,7 +339,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'langs' => 'knowledgemanagement',
 			'position' => 110,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->knowledgemanagement->enabled',
+			'enabled' => 'isModEnabled("knowledgemanagement")',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
 			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "write")',
 			'target' => '',
@@ -354,8 +354,8 @@ class modKnowledgeManagement extends DolibarrModules
 			'url' => '/categories/categorie_list.php?type=13',
 			'langs' => 'knowledgemanagement',
 			'position' => 112,
-			'enabled' => '$conf->knowledgemanagement->enabled',
-			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'enabled' => 'isModEnabled("knowledgemanagement") && isModenabled("category")',
+			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
 			'target' => '',
 			'user' => 0
 		);

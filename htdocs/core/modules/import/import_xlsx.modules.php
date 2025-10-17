@@ -782,6 +782,7 @@ class ImportXlsx extends ModeleImports
 											$sql .= ' WHERE ' . $filter;
 										}
 
+
 										$resql = $this->db->query($sql);
 										if ($resql) {
 											$num = $this->db->num_rows($resql);
@@ -881,22 +882,22 @@ class ImportXlsx extends ModeleImports
 						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $key)) {
 							continue; // Not a field of current table
 						}
-						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
-
-						if (in_array($keyfield, $listfields)) {	// avoid duplicates in insert
+						$keyfieldcache = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+						if (in_array($keyfieldcache, $listfields)) {	// avoid duplicates in insert
 							continue;
 						} elseif ($val == 'user->id') {
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
 							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $val)) {
 							$tmp = explode('-', $val);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
+							$keyfield = $keyfieldcache;
 							$listvalues[] = (int) $lastinsertid;
 							//print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $val)) {
 							$tmp = explode('-', $val, 2);
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $val)) {
 							$fieldname = $key;
