@@ -2406,8 +2406,8 @@ class SupplierProposal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
-		if (array_key_exists('tosell', $param)) {
-			$sql .= " AND tosell = ".((int) $param['tosell']);
+		if (array_key_exists('tobuy', $param)) {
+			$sql .= " AND tobuy = ".((int) $param['tobuy']);
 		}
 		$sql .= $this->db->plimit(100);
 
