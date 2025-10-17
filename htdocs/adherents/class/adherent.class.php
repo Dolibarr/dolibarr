@@ -314,7 +314,6 @@ class Adherent extends CommonObject
 	 */
 	public $invoice;
 
-
 	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',

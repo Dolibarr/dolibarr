@@ -182,6 +182,12 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 -- default deposit % if payment term needs it on supplier
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
+
+
+-- import key for subscriptions
+ALTER TABLE llx_subscription ADD COLUMN import_key varchar(14) NULL;
+
+
 CREATE TABLE llx_categorie_propal
 (
   fk_categorie integer NOT NULL,
