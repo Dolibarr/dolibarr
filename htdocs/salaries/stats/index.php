@@ -3,7 +3,7 @@
  * Copyright (C) 2018      Fidesio            <contact@fidesio.com>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Show filter box
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';

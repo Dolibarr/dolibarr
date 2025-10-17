@@ -170,6 +170,16 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '507', 'Lt
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '508', 'OHG - Offene Handelsgesellschaft');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '509', 'eG - eingetragene Genossenschaft');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '510', 'e.V. - eingetragener Verein');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '511', 'eGbR - eingetragene Gesellschaft bürgerlichen Rechts');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '512', 'Einzelunternehmen');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '513', 'PartG - Partnerschaftsgesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '514', 'PartG mbB - Partnerschaftsgesellschaft mit beschränkter Berufshaftung');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '515', 'KGaA - Kommanditgesellschaft auf Aktien');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '516', 'GmbH & Co. KGaA - Gesellschaft mit beschränkter Haftung & Compagnie Kommanditgesellschaft auf Aktien');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '517', 'SE - Societas Europaea');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '518', 'Stiftung');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '519', 'gGmbH - gemeinnützige Gesellschaft mit beschränkter Haftung');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '520', 'gUG - gemeinnützige Unternehmergesellschaft (haftungsbeschränkt)');
 
 -- Denmark
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8001', 'Aktieselvskab A/S');

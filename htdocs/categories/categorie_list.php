@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -448,7 +448,10 @@ if ($mode == 'hierarchy') {
 		if (empty($conf->main_checkbox_left_column)) {
 			$entry .= '<td class="right" width="30px;">';
 			if ($user->hasRight('categorie', 'creer')) {
-				$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"].'?type='.urlencode($type).'&'.$param).'">' . img_edit() . '</a>';
+				$query = [];
+				parse_str($param, $query);
+				$query = array_merge($query, ['id' => $val['id'], 'backtopage' => (dolBuildUrl($_SERVER["PHP_SELF"], ['type' => $type]).$param)]);
+				$entry .= '<a class="editfielda" href="' . dolBuildUrl(DOL_URL_ROOT . '/categories/edit.php', $query).'">' . img_edit() . '</a>';
 			}
 			$entry .= '</td>';
 

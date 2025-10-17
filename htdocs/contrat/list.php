@@ -12,6 +12,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2025		Charlene Benke				<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,9 @@ $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $search_signed_status = GETPOST('search_signed_status', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
+$search_note_private = GETPOST('search_note_private', 'alpha');
+
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
@@ -198,6 +202,8 @@ $arrayfields = array(
 	'c.date_contrat' => array('label' => $langs->trans("DateContract"), 'checked' => '1', 'position' => 45),
 	'c.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'c.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'c.note_public' => array('label' => $langs->trans("NotePublic"), 'checked' => '0', 'position' => 520, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'c.note_private' => array('label' => $langs->trans("NotePrivate"), 'checked' => '0', 'position' => 521, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'lower_planned_end_date' => array('label' => $langs->trans("LowerDateEndPlannedShort"), 'checked' => '1', 'position' => 900, 'help' => $langs->trans("LowerDateEndPlannedShort")),
 	'status' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 	'c.signed_status' => array('label' => $langs->trans('SignedStatus'), 'checked' => '0', 'position' => 1001),
@@ -284,6 +290,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_modif_end = "";
 	$search_status = "";
 	$search_signed_status = '';
+	$search_note_public = "";
+	$search_note_private = "";
 	$toselect = array();
 	$searchCategoryCustomerList = array();
 	$search_array_options = array();
@@ -315,7 +323,7 @@ $title = "";
 $sql = 'SELECT';
 $sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
-$sql .= " typent.code as typent_code,";
+$sql .= " typent.code as typent_code, c.note_public, c.note_private,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove the HAVING and then,
 // remove completely the SUM and GROUP BY (faster). Status of each service can be read into the loop that build the list.
@@ -393,6 +401,16 @@ if ($search_town) {
 if ($search_country && $search_country != '-1') {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
+if (!empty($search_note_private)) {
+	$sql .= natural_search(array('c.note_private'), $search_note_private);
+}
+if (!empty($search_note_public)) {
+	$sql .= natural_search(array('c.note_public'), $search_note_public);
+}
+
+/*if ($search_sale > 0) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
+}*/
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -507,7 +525,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
 $sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
-$sql .= " typent.code,";
+$sql .= " typent.code, c.note_public, c.note_private,";
 $sql .= " state.code_departement, state.nom";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -650,6 +668,12 @@ if ($search_ref_customer != '') {
 }
 if ($search_ref_supplier != '') {
 	$param .= '&search_ref_supplier='.urlencode($search_ref_supplier);
+}
+if ($search_note_private != '') {
+	$param .= '&search_note_private='.urlencode($search_note_private);
+}
+if ($search_note_public != '') {
+	$param .= '&search_note_public='.urlencode($search_note_public);
 }
 if ($search_op2df != '') {
 	$param .= '&search_op2df='.urlencode($search_op2df);
@@ -956,6 +980,18 @@ if (!empty($arrayfields['c.signed_status']['checked'])) {
 	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status');
 	print '</td>';
 }
+// Public note
+if (!empty($arrayfields['c.note_public']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="flat" size="10" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
+	print '</td>';
+}
+// Private note
+if (!empty($arrayfields['c.note_private']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="flat" size="10" type="text" name="search_note_private" value="'.dol_escape_htmltag($search_note_private).'">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -1071,6 +1107,14 @@ if (!empty($arrayfields['c.date_contrat']['checked'])) {
 }
 if (!empty($arrayfields['c.signed_status']['checked'])) {
 	print_liste_field_titre($arrayfields['c.signed_status']['label'], $_SERVER["PHP_SELF"], "c.signed_status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['c.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['c.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Extra fields
@@ -1328,6 +1372,20 @@ while ($i < $imaxinloop) {
 		// Signed Status
 		if (!empty($arrayfields['c.signed_status']['checked'])) {
 			print '<td class="center">'.$contracttmp->getLibSignedStatus(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// public note
+		if (!empty($arrayfields['c.note_public']['checked'])) {
+			print '<td class="center">'.$obj->note_public.'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// private note
+		if (!empty($arrayfields['c.note_private']['checked'])) {
+			print '<td class="center">'.$obj->note_private.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

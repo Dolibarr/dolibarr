@@ -757,6 +757,9 @@ input.pageplusone {
 .hmirror {
 	transform: scale(-1, 1);
 }
+.undertopmenu {
+	scroll-margin-top: 80px;
+}
 
 select:invalid, select.--error {
 	color: gray;
@@ -8605,6 +8608,10 @@ div.clipboardCPValue.hidewithsize {
 	white-space: nowrap;
 }
 
+.clipboardCPShowOnHover{
+	cursor: copy;
+}
+
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
 }
@@ -8760,9 +8767,13 @@ table.jPicker {
 }
 .bookcalform {
 	border: 1px solid #000;
-	padding: 15px;
+	padding: 20px;
 	border-radius: 5px;
 	margin-bottom: 15px;
+	box-shadow: 10px 10px 10px #ddd;
+}
+.bookcalsearch {
+	padding-bottom: 10px;
 }
 
 .topmenuimage {
@@ -9139,6 +9150,10 @@ table.jPicker {
 		text-align: start;
 	}
 
+	.bookcalform {
+		padding: 8px;
+		box-shadow: none;
+	}
 	.bookcalform.boxtable .minwidth75 {
 		min-width: auto;
 	}

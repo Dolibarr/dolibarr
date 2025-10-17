@@ -7,6 +7,7 @@
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1056,7 +1057,7 @@ class ExpenseReport extends CommonObject
 
 					print '<tr>';
 					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$objp->rowid.'">'.$objp->ref_num.'</a>';
+					print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/expensereport/card.php', ['id' => $objp->rowid]).'">'.$objp->ref_num.'</a>';
 					print '</td>';
 					print '<td class="center">'.dol_print_date($objp->date, 'day').'</td>';
 					print '<td>'.$author->getNomUrl(1).'</td>';
@@ -1501,16 +1502,16 @@ class ExpenseReport extends CommonObject
 		$now = dol_now();
 		$error = 0;
 
-		// date approval
-		$this->date_approve = $now;
 		if ($this->status != self::STATUS_APPROVED) {
 			$this->db->begin();
-
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".((int) $fuser->id).",";
-			$sql .= " date_approve='".$this->db->idate($this->date_approve)."'";
+			$sql .= " date_approve='".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
+				$this->status = self::STATUS_APPROVED;
+				$this->date_approve = $now;
+				$this->fk_user_approve = $fuser->id;
 				if (!$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('EXPENSE_REPORT_APPROVE', $fuser);
@@ -1827,10 +1828,11 @@ class ExpenseReport extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/expensereport/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/expensereport/card.php';
+		$query = ['id' => $this->id];
 
 		if ($short) {
-			return $url;
+			return dolBuildUrl($baseurl, $query);
 		}
 
 		$params = [
@@ -1857,9 +1859,10 @@ class ExpenseReport extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$ref = $this->ref;
 		if (empty($ref)) {
@@ -2616,12 +2619,12 @@ class ExpenseReport extends CommonObject
 				$response->warning_delay = $conf->expensereport->approve->warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("ExpenseReportsToApprove");
 				$response->labelShort = $langs->trans("ToApprove");
-				$response->url = DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut='.self::STATUS_VALIDATED;
+				$response->url = dolBuildUrl(DOL_URL_ROOT.'/expensereport/list.php', ['mainmenu' => 'hrm', 'statut' => self::STATUS_VALIDATED]);
 			} else {
 				$response->warning_delay = $conf->expensereport->payment->warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("ExpenseReportsToPay");
 				$response->labelShort = $langs->trans("StatusToPay");
-				$response->url = DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut='.self::STATUS_APPROVED;
+				$response->url = dolBuildUrl(DOL_URL_ROOT.'/expensereport/list.php', ['mainmenu' => 'hrm', 'statut' => self::STATUS_APPROVED]);
 			}
 			$response->img = img_object('', "trip");
 

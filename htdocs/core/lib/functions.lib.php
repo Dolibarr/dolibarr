@@ -757,8 +757,6 @@ function GETPOSTISSET($paramname)
 	}
 	$relativepathstring = ltrim($relativepathstring, '/');
 	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-	//var_dump($relativepathstring);
-	//var_dump($user->default_values);
 
 	// Code for search criteria persistence.
 	// Retrieve values if restore_lastsearch_values
@@ -882,8 +880,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 		$relativepathstring = ltrim($relativepathstring, '/');
 		$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-		//var_dump($relativepathstring);
-		//var_dump($user->default_values);
 
 		// Code for search criteria persistence.
 		// Retrieve saved values if restore_lastsearch_values is set
@@ -940,7 +936,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 									if (!$foundintru) {
 										$qualified = 1;
 									}
-									//var_dump($defkey.'-'.$qualified);
 								} else {
 									$qualified = 1;
 								}
@@ -977,7 +972,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 										if (!$foundintru) {
 											$qualified = 1;
 										}
-										//var_dump($defkey.'-'.$qualified);
 									} else {
 										$qualified = 1;
 									}
@@ -1017,7 +1011,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 									if (!$foundintru) {
 										$qualified = 1;
 									}
-									//var_dump($defkey.'-'.$qualified);
 								} else {
 									$qualified = 1;
 								}
@@ -1681,7 +1674,9 @@ function dolBuildUrl($url, $params = [], $addtoken = false)
 		$params = array_merge($params, ['token' => newToken()]);
 	}
 	// TODO TO REMOVE
-	$params = array_merge($params, ['debug' => 'debug']);
+	if (getDolGlobalString('MAIN_DEBUG_DOL_BUILDURL')) {
+		$params = array_merge($params, ['debug' => 'debug']);
+	}
 	if ($params) {
 		$url .= '?' . http_build_query($params);
 	}
@@ -3912,7 +3907,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
 				$ret
 			);
-			//var_dump($ret);exit;
 		} else {
 			$ret = 'Bad value ' . $time . ' for date';
 		}
@@ -4101,13 +4095,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 	if (empty($localtz)) {
 		$localtz = new DateTimeZone('UTC');
 	}
-	//var_dump($localtz);
-	//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
 	$dt = new DateTime('now', $localtz);
 	$dt->setDate((int) $year, (int) $month, (int) $day);
 	$dt->setTime((int) $hour, (int) $minute, (int) $second);
 	$date = $dt->getTimestamp(); // should include daylight saving time
-	//var_dump($date);
+
 	return $date;
 }
 
@@ -5430,7 +5422,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 		}
 	} else {
 		// $picto can not be null since replaced with 'generic' in that case
-		//$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', (is_null($picto) ? '' : $picto));
+		// $pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', (is_null($picto) ? '' : $picto));
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
@@ -6144,25 +6136,7 @@ function img_action($titlealt, $numaction, $picto = '', $moreatt = '')
 }
 
 /**
- *  Show pdf logo
- *
- *  @param	string		$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
- *  @return string      			Retourne tag img
- */
-function img_pdf($titlealt = 'default', $size = 3)
-{
-	global $langs;
-
-	if ($titlealt == 'default') {
-		$titlealt = $langs->trans('Show');
-	}
-
-	return img_picto($titlealt, 'pdf' . $size . '.png');
-}
-
-/**
- *	Show logo +
+ *	Show logo "+"
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
@@ -6179,7 +6153,7 @@ function img_edit_add($titlealt = 'default', $other = '')
 	return img_picto($titlealt, 'edit_add.png', $other);
 }
 /**
- *	Show logo -
+ *	Show logo "-"
  *
  *	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
@@ -6212,7 +6186,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
 		$titlealt = $langs->trans('Modify');
 	}
 
-	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
+	return img_picto($titlealt, 'edit', ($float ? 'style="float: ' . ($langs->tab_translate["DIRECTION"] == 'rtl' ? 'left' : 'right') . '"' : "") . ($other ? ' ' . $other : ''));
 }
 
 /**
@@ -6252,7 +6226,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $more
 		$titlealt = $langs->trans('Delete');
 	}
 
-	return img_picto($titlealt, 'delete.png', $other, 0, 0, 0, '', $morecss);
+	return img_picto($titlealt, 'delete', $other, 0, 0, 0, '', $morecss);
 }
 
 /**
@@ -6268,7 +6242,7 @@ function img_printer($titlealt = "default", $other = '')
 	if ($titlealt == "default") {
 		$titlealt = $langs->trans("Print");
 	}
-	return img_picto($titlealt, 'printer.png', $other);
+	return img_picto($titlealt, 'printer', $other);
 }
 
 /**
@@ -6286,7 +6260,7 @@ function img_split($titlealt = 'default', $other = 'class="pictosplit"')
 		$titlealt = $langs->trans('Split');
 	}
 
-	return img_picto($titlealt, 'split.png', $other);
+	return img_picto($titlealt, 'split', $other);
 }
 
 /**
@@ -6308,7 +6282,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 		}
 	}
 
-	return img_picto($usealttitle, 'info.png', 'style="vertical-align: middle;' . ($usehelpcursor == 1 ? ' cursor: help' : ($usehelpcursor == 2 ? ' cursor: pointer' : '')) . '"');
+	return img_picto($usealttitle, 'info', 'style="vertical-align: middle;' . ($usehelpcursor == 1 ? ' cursor: help' : ($usehelpcursor == 2 ? ' cursor: pointer' : '')) . '"');
 }
 
 /**
@@ -6419,7 +6393,7 @@ function img_down($titlealt = 'default', $selected = 0, $moreclass = '')
 		$titlealt = $langs->trans('Down');
 	}
 
-	return img_picto($titlealt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgdown' . ($moreclass ? " " . $moreclass : "") . '"');
+	return img_picto($titlealt, ($selected ? '1downarrow_selected' : '1downarrow'), 'class="imgdown' . ($moreclass ? " " . $moreclass : "") . '"');
 }
 
 /**
@@ -6438,7 +6412,7 @@ function img_up($titlealt = 'default', $selected = 0, $moreclass = '')
 		$titlealt = $langs->trans('Up');
 	}
 
-	return img_picto($titlealt, ($selected ? '1uparrow_selected.png' : '1uparrow.png'), 'class="imgup' . ($moreclass ? " " . $moreclass : "") . '"');
+	return img_picto($titlealt, ($selected ? '1uparrow_selected' : '1uparrow'), 'class="imgup' . ($moreclass ? " " . $moreclass : "") . '"');
 }
 
 /**
@@ -6457,7 +6431,7 @@ function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
 		$titlealt = $langs->trans('Left');
 	}
 
-	return img_picto($titlealt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $moreatt);
+	return img_picto($titlealt, ($selected ? '1leftarrow_selected' : '1leftarrow'), $moreatt);
 }
 
 /**
@@ -6476,7 +6450,7 @@ function img_right($titlealt = 'default', $selected = 0, $moreatt = '')
 		$titlealt = $langs->trans('Right');
 	}
 
-	return img_picto($titlealt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $moreatt);
+	return img_picto($titlealt, ($selected ? '1rightarrow_selected' : '1rightarrow'), $moreatt);
 }
 
 /**
@@ -7114,7 +7088,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	$page = (int) $page;
 
 	if ($picto == 'setup') {
-		$picto = 'title_setup.png';
+		$picto = 'title_setup';
 	}
 	if (($conf->browser->name == 'ie') && $picto == 'generic') {
 		$picto = 'title.gif';
@@ -7235,7 +7209,6 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 					$pagelist .= '<li class="pagination"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 				}
 			} else {
-				//var_dump($page.' '.$cpt.' '.$nbpages);
 				$query['page'] = ($nbpages - 1);
 				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="' . dolBuildUrl($file, $query) . '">' . $nbpages . '</a></li>';
 			}
@@ -9230,6 +9203,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		do {
 			$oldstringtoclean = $out;
 
+			$outishtml = 0;
+			if (dol_textishtml($out)) {
+				$outishtml = 1;
+			}
+
+			// HTML sanitizer by DOMDocument
 			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
@@ -9248,7 +9227,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
 					// I don't know what the xml encoding is the trick for
-					if (dol_textishtml($outWithoutBrAtEnd)) {
+					if ($outishtml) {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . $out . '</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
@@ -9271,6 +9250,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
 					//                  $out = preg_replace('/<\/div>$/', '', $out);
 					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);
+
+					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
+						$out = str_replace('<br>', '', $out);
+					}
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
@@ -9278,8 +9261,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				}
 			}
 
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript'))) {
-				// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
+			// HTML sanitizer by Tidy
+			// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
+			// Tidy can't be used for non html text content as it is corrupting the new lines fields.
+			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
 				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
 					//var_dump($out);
@@ -9693,6 +9678,8 @@ function dol_textishtml($msg, $option = 0)
 			return true; // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		} elseif (preg_match('/&#[0-9]{2,3};/i', $msg)) {
 			return true; // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
+		} elseif (preg_match('/&#x[a-f0-9][a-f0-9];/i', $msg)) {
+			return true; // Html entities numbers in hexa
 		}
 
 		return false;
@@ -12384,7 +12371,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 				$url = preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]);
 				$link = parse_url($url);
 				$query = [];
-				parse_str($link['query'], $query);
+				if (isset($link['query'])) {
+					parse_str($link['query'], $query);
+				}
 				$newtab[0] = dolBuildUrl(dol_buildpath($link['path'], 1), $query);
 				$newtab[1] = $label;
 				$newtab[2] = str_replace('+', '', $values[1]);
@@ -15534,7 +15523,7 @@ function getTimelineIcon($actionstatic, &$histo, $key)
  */
 function getActionCommEcmList($object)
 {
-	global $conf, $db;
+	global $db;
 
 	$documents = array();
 

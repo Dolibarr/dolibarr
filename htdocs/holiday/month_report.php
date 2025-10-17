@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2011		François Legastelois		<flegastelois@teclib.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
@@ -224,7 +224,7 @@ if (!empty($search_year)) {
 	$param .= '&search_year='.((int) $search_year);
 }
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

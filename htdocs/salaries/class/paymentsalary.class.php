@@ -639,7 +639,7 @@ class PaymentSalary extends CommonObject
 				$this->datev
 			);
 
-			// Update fk_bank into llx_paiement_salary.
+			// Update fk_bank into llx_payment_salary.
 			// so we know the payment that was used to generated the bank entry.
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);

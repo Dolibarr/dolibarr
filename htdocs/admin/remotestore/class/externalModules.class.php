@@ -352,10 +352,13 @@ class ExternalModules
 			'lang' 			=> $this->lang
 		];
 
+
+		$this->numberTotalOfProducts = 0;
+
 		// Fetch the products from Dolistore source
+
 		$dolistoreProducts = array();
 		$dolistoreProductsTotal = 0;
-		$this->numberTotalOfProducts = 0;
 		if ($this->dolistoreApiStatus > 0 && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
 			$getDolistoreProducts = $this->callApi('products', $data);
 
@@ -370,6 +373,7 @@ class ExternalModules
 		}
 
 		// Fetch the products from the github repo
+
 		$fileProducts = array();
 		$fileProductsTotal = 0;
 		if (!empty($this->githubFileStatus) && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
@@ -389,8 +393,22 @@ class ExternalModules
 		// Number of pages
 		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $dolistoreProductsTotal / $this->per_page));
 
-		// merge both sources
-		$this->products = array_values(array_merge($fileProducts, $dolistoreProducts));
+		// Merge both sources (github community modules have priority on dolistore).
+		$this->products = $dolistoreProducts;
+		foreach ($fileProducts as $fileProduct) {
+			$id = $fileProduct['id'];
+			if ($id > 0) {
+				if (empty($this->products[$id])) {		// Not already present in array
+					array_unshift($this->products, $fileProduct);
+				} else {
+					$this->products[$id] = $fileProduct;
+					$this->products[$id]['category'] = $fileProduct['category'];
+				}
+			} else {
+				array_unshift($this->products, $fileProduct);
+			}
+		}
+
 
 		$i = 0;
 		foreach ($this->products as $product) {
@@ -398,12 +416,12 @@ class ExternalModules
 
 			// check new product ?
 			$newapp = '';
-			if ($last_month < strtotime($product['datec'])) {
+			if ($last_month < strtotime($product['datec']) && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
 				$newapp .= '<span class="newApp" title="'.$product['tms'].'">'.$langs->trans('New').'</span> ';
 			}
 
 			// check updated ?
-			if ($last_month < strtotime($product['tms']) && $newapp == '') {
+			if ($newapp == '' && $last_month < strtotime($product['tms']) && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
 				$newapp .= '<span class="updatedApp" title="'.$product['tms'].'">'.$langs->trans('UpdatedRecently').'</span> ';
 			}
 
@@ -478,8 +496,10 @@ class ExternalModules
 
 			// Set and check version
 			$version = '';
-			if ($product["status"] == 'soon') {
-				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").'</span>';
+			$compatible = '';
+			if ($product["status"] == 'soon' || $product["status"] == 'development' || $product["status"] == 'experimental') {
+				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").' - '.$langs->trans("StillInDevelopment").'</span>';
+				$compatible = 'NotCompatible';
 			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
 				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
 					//compatible
@@ -974,7 +994,15 @@ class ExternalModules
 					continue;
 				}
 
+				// Check if there is a known ID
+				$reg = array();
+				$id = 0;
+				if (!empty($package['dolistore-download']) && preg_match('/www\.dolistore\.com\/product\.php\?id=(\d+)/', (string) $package['dolistore-download'], $reg)) {
+					$id = $reg[1];
+				}
+
 				$adaptedPackage = [
+					'id' => $id,
 					'ref' => str_replace(' ', '', $package['modulename'] . '-' . $package['current_version'] . '@' .
 						(array_key_exists('author', $package) ? $package['author'] : 'unkownauthor')),
 					'label' => !empty($package['label'][substr($this->lang, 0, 2)])
@@ -1063,7 +1091,7 @@ class ExternalModules
 					'status' => empty($package['status']) ? '' : $package['status']
 				];
 
-				$adaptedData[] = $adaptedPackage;
+				$adaptedData[$package['id']] = $adaptedPackage;
 			}
 		}
 
