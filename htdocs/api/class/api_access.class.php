@@ -99,6 +99,8 @@ class DolibarrApiAccess implements iAuthenticate
 
 		$login = '';
 		$stored_key = '';
+		$foundDolApiKey = false;
+		$foundJwtToken = false;
 
 		$userClass = Defaults::$userIdentifierClass;
 
@@ -112,16 +114,16 @@ class DolibarrApiAccess implements iAuthenticate
 		if (isset($_GET['api_key'])) {	// For backward compatibility. Keep $_GET here.
 			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['api_key'];
+			$foundDolApiKey = true;
 		}
 		if (isset($_GET['DOLAPIKEY'])) {
 			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['DOLAPIKEY']; // With GET method
+			$foundDolApiKey = true;
 		}
 
 		// TODO Can filter on user agent.
 		// $api_useragent = $_SERVER['HTTP_USER_AGENT'];
-		$foundDolApiKey = false;
-		$foundJwtToken = false;
 
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {        // HTTP Header entry "DOLAPIKEY: ..." can be read with $_SERVER["HTTP_DOLAPIKEY"]
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; 		// With header method (recommended)
@@ -133,7 +135,12 @@ class DolibarrApiAccess implements iAuthenticate
 			try {
 				$decoded = JWT::decode($api_key, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
 				// Token is valid, continue with Token verification
+				// throw new RestException(401, var_export($decoded));
+				if ($decoded->exp < time()) {
+					throw new RestException(401, 'Token has expired');
+				}
 				$foundJwtToken = true;
+				$useridjwt = $decoded->data->user_id;
 			} catch (Exception $e) {
 				$foundDolApiKey = true;
 			}
@@ -145,13 +152,17 @@ class DolibarrApiAccess implements iAuthenticate
 			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
 		}
 
-		if ($api_key && $foundDolApiKey) {
+		if ($api_key) {
 			$userentity = 0;
 
 			$sql = "SELECT u.login, u.datec, u.api_key,";
 			$sql .= " u.tms as date_modification, u.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+			if ($foundDolApiKey) {
+				$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+			} elseif ($foundJwtToken) {
+				$sql .= " WHERE u.rowid = ".(int) $useridjwt;
+			}
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -226,7 +237,7 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error);
 			}
 
-			if ($login && $stored_key != $api_key) {		// This should not happen since we did a search on api_key
+			if ($login && ($foundDolApiKey && $stored_key != $api_key)) {		// This should not happen since we did a search on api_key
 				$userClass::setCacheIdentifier($api_key);
 				return false;
 			}
@@ -276,7 +287,6 @@ class DolibarrApiAccess implements iAuthenticate
 			if (getDolGlobalString('API_COUNTER_ENABLED')) {
 				include DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 				dolibarr_set_const($this->db, 'API_COUNTER_COUNT', getDolGlobalInt('API_COUNTER_COUNT') + 1);
-				//var_dump('eeee');exit;
 			}
 
 			// User seems valid
