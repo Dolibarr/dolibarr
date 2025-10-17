@@ -146,7 +146,7 @@ class Token
 		// TODO store user refresh-token in db for control
 		$refreshToken = JWT::encode($payloadRefreshToken, $dolibarr_main_instance_unique_id, 'HS256');
 		// we store a md5 of the token to avoid to store non crypted and to make easy retrieve when checking
-		$sql = 'INSERT INTO ' . $this->db->prefix() . 'oauth_token (service, token, tokenstring, fk_user, expire_at) VALUES ("dolibarr_refresh_token_api", "' . $this->db->escape(dolEncrypt($refreshToken)) . '", "' . md5($refreshToken) . '", ' . (int) $tmpuser->id . ', "' . $this->db->idate($expire_at) . '")';
+		$sql = "INSERT INTO " . $this->db->prefix() . "oauth_token (service, token, tokenstring, fk_user, expire_at) VALUES ('dolibarr_refresh_token_api', '" . $this->db->escape(dolEncrypt($refreshToken)) . "', '" . md5($refreshToken) . "', " . (int) $tmpuser->id . ", '" . $this->db->idate($expire_at) . "')";
 		$this->db->query($sql);
 
 		return [
@@ -192,7 +192,7 @@ class Token
 		$url = $urlwithouturlroot . DOL_URL_ROOT . '/api/index.php/';
 		$now = dol_now();
 		// remove expired refresh token from db
-		$sql = 'DELETE FROM ' . $this->db->prefix() . 'oauth_token WHERE service = "dolibarr_refresh_token_api" AND expire_at < "'.$this->db->idate($now) . '"';
+		$sql = "DELETE FROM " . $this->db->prefix() . "oauth_token WHERE service = 'dolibarr_refresh_token_api' AND expire_at < '".$this->db->idate($now) . "'";
 		$this->db->query($sql);
 		try {
 			$decoded = JWT::decode($token, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
@@ -265,7 +265,7 @@ class Token
 		// store user refresh-token in db for control
 		$refreshToken = JWT::encode($payloadRefreshToken, $dolibarr_main_instance_unique_id, 'HS256');
 		// we store a md5 of the token to avoid to store non crypted and to make easy retrieve when checking
-		$sql = 'INSERT INTO ' . $this->db->prefix() . 'oauth_token (service, token, tokenstring, fk_user, expire_at) VALUES ("dolibarr_refresh_token_api", "' . $this->db->escape(dolEncrypt($refreshToken)) . '", "' . md5($refreshToken) . '", ' . (int) $tmpuser->id . ', "' . $this->db->idate($expire_at) . '")';
+		$sql = "INSERT INTO " . $this->db->prefix() . "oauth_token (service, token, tokenstring, fk_user, expire_at) VALUES ('dolibarr_refresh_token_api', '" . $this->db->escape(dolEncrypt($refreshToken)) . "', '" . md5($refreshToken) . "', " . (int) $tmpuser->id . ", '" . $this->db->idate($expire_at) . "')";
 		$this->db->query($sql);
 
 		return [
