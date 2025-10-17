@@ -74,7 +74,9 @@ if (empty($dolibarr_nocache)) {
 @import "pico.css.php";
 @import "mixin.css";
 @import "login.css";
-
+@import "badges.css";
+@import "title-buttons.css";
+@import "nav.css";
 /**
 This file can overwrite default pico css
  */
@@ -224,7 +226,7 @@ a:link, a:visited, a:hover, a:active, .classlink {
 .btn-filter-icon{
   --icon-url : var(--icon-time);
   --icon-size : 16px;
-
+  vertical-align: middle;
   display: inline-block;
   width: auto;
 }
@@ -260,15 +262,11 @@ Home Styles
 
 }
 
-
-
 :root {
 	--colorbackbody: #fff;
 	--colortext: #000;
 }
 
-
-.width150 { width: 150px; }
 
 
 /* ============================================================================== */
@@ -436,4 +434,17 @@ table.dp {
 .ui-button-text
 {
 	line-height: 1em !important;
+}
+
+
+
+/* ============================================================================== */
+/*  Text utilities                                                                */
+/* ============================================================================== */
+
+.text-center {
+	text-align: center;
+}
+.text-right {
+	text-align: right;
 }

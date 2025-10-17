@@ -1020,7 +1020,7 @@ class Evaluation extends CommonObject
 		$langs->load("hrm");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+			$modele = 'standard_evaluation';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;

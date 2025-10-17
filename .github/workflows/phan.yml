@@ -1,4 +1,7 @@
 ---
+# This is a basic workflow to check code with PHPSTAN tool
+name: Phan
+
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:
@@ -12,6 +15,7 @@ on:
 concurrency:
   group: phan-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
   PHAN_CONFIG: dev/tools/phan/config.php
@@ -20,7 +24,6 @@ env:
   PHAN_QUICK: ${{ github.event.schedule && '' || '--quick' }}
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 
-name: phan
 jobs:
   phan:
     name: Run phan

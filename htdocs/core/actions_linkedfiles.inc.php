@@ -66,22 +66,32 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 	if (!empty($_FILES) && is_array($_FILES['userfile'])) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		if (is_array($_FILES['userfile']['tmp_name'])) {
+		if (is_array($_FILES['userfile']['tmp_name'])) {	// When form has a input type="file" field with name="userfile[]"
 			$userfiles = $_FILES['userfile']['tmp_name'];
+			$filearrayis = 'array';
 		} else {
-			$userfiles = array($_FILES['userfile']['tmp_name']);
+			$userfiles = array(0 => $_FILES['userfile']['tmp_name']);
+			$filearrayis = 'string';
 		}
 
 		foreach ($userfiles as $key => $userfile) {
-			if (empty($_FILES['userfile']['tmp_name'][$key])) {
+			if ($filearrayis == 'array') {
+				$fileerror = $_FILES['userfile']['error'][$key];
+				$fileoriginname = $_FILES['userfile']['name'][$key];
+			} else {
+				$fileerror = $_FILES['userfile']['error'];
+				$fileoriginname = $_FILES['userfile']['name'];
+			}
+
+			if (empty($userfile)) {
 				$error++;
-				if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
+				if ($fileerror == 1 || $fileerror == 2) {
 					setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
 				} else {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 				}
 			}
-			if (preg_match('/__.*__/', $_FILES['userfile']['name'][$key])) {
+			if (preg_match('/__.*__/', $fileoriginname)) {
 				$error++;
 				setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
 			}

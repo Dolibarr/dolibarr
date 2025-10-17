@@ -595,7 +595,8 @@ class BookKeeping extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$this->piece_num;
+		$baseurl = DOL_URL_ROOT.'/accountancy/bookkeeping/card.php';
+		$query = ['piece_num' => $this->piece_num];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -604,9 +605,10 @@ class BookKeeping extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {

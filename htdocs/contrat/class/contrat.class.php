@@ -1676,10 +1676,10 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Mets a jour une ligne de contrat
+	 *  Update a contract line
 	 *
-	 *  @param	int			$rowid            	Id de la ligne de facture
-	 *  @param  string		$desc             	Description de la ligne
+	 *  @param	int			$rowid            	Id of contract line
+	 *  @param  string		$desc             	Description of line
 	 *  @param  float		$pu               	Prix unitaire
 	 *  @param  float		$qty              	Quantite
 	 *  @param  float		$remise_percent   	Percentage discount of the line
@@ -1701,7 +1701,7 @@ class Contrat extends CommonObject
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0)
 	{
-		global $user, $conf, $langs, $mysoc;
+		global $user, $langs, $mysoc;
 
 		$error = 0;
 
@@ -1820,6 +1820,17 @@ class Contrat extends CommonObject
 					$this->errors[] = $contractline->error;
 					$error++;
 				}
+			}
+
+			// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
+			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
+			$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->id)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+			$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->id);
+			$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
+			if (!$resqltoupdatecontract) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
 			}
 
 			if (empty($error)) {
@@ -2073,7 +2084,8 @@ class Contrat extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/contrat/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT . '/contrat/card.php';
+		$query = ['id' => $this->id];
 
 		//if ($option !== 'nolink')
 		//{
@@ -2083,9 +2095,10 @@ class Contrat extends CommonObject
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
+			$query = array_merge($query, ['save_lastsearch_values' => 1]);
 		}
 		//}
+		$url = dolBuildUrl($baseurl, $query);
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
@@ -2759,7 +2772,6 @@ class Contrat extends CommonObject
 					// Load contract
 					$object = new Contrat($this->db);
 					$object->fetch($obj->rowid);		// fetch also lines
-					//$object->fetch_thirdparty();
 
 					if ($object->id <= 0) {
 						$error++;
@@ -2827,6 +2839,17 @@ class Contrat extends CommonObject
 							$resqlupdate = $this->db->query($sqlupdate);
 							if ($resqlupdate) {
 								$contractlineprocessed[$obj->lid] = $object->ref;
+
+								// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
+								$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
+								$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $object->id)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+								$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $object->id);
+								$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
+								if (!$resqltoupdatecontract) {
+									$this->error = $this->db->lasterror();
+									$this->db->rollback();
+									return -1;
+								}
 
 								$actioncode = 'RENEW_CONTRACT';
 								$now = dol_now();

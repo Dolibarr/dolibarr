@@ -2,9 +2,9 @@
 /* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021-2023  Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +151,7 @@ class box_members_by_tags extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => '<a href="'.DOL_MAIN_URL_ROOT.'/adherents/list.php?search_categ='.$adhtag->id.'&sortfield=d.datefin,t.subscription&sortorder=desc,desc&backtopage='.urlencode($_SERVER['PHP_SELF']).'">'.dol_trunc(($adhtag->ref ? $adhtag->ref : $adhtag->label), dol_size(32)).'</a>',
+						'text' => '<a href="'.dolBuildUrl(DOL_MAIN_URL_ROOT.'/adherents/list.php', ['search_categ' => $adhtag->id, 'sortfield' => 'd.datefin,t.subscription', 'sortorder' => 'desc,desc', 'backtopage' => dolBuildUrl($_SERVER['PHP_SELF'])]).'">'.dol_trunc(($adhtag->ref ? $adhtag->ref : $adhtag->label), dol_size(32)).'</a>',
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
