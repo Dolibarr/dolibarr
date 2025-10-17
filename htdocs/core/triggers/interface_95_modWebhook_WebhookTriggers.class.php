@@ -124,7 +124,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				}
 				if (property_exists($resobject->object, 'linkedObjects')) {
 					foreach ($resobject->object->linkedObjects as $key => $linkedObject) {
-						foreach ($linkedObject as $k => $obj) {
+						foreach ($linkedObject as $obj) {
 							if (property_exists($obj, 'db')) {
 								unset($obj->db);
 							}
