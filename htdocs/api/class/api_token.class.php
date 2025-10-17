@@ -159,4 +159,122 @@ class Token
 			]
 		];
 	}
+
+	/**
+	 * Token
+	 *
+	 * Request the API refreshened jwt token for a couple token / refreshtoken.
+	 *
+	 * @param   string  $token			the expired token
+	 * @param   string  $refreshtoken	the non expired refresh token
+	 * @return  array                   Response status and user jwt token
+	 * @phan-return array{success:array{code:int,message:string,token:string,refresh-token:string,entity:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,token:string,refresh-token:string,entity:int}}
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 500 System error
+	 *
+	 * @url PUT /
+	 */
+	public function refresh($token, $refreshtoken)
+	{
+		global $dolibarr_main_authentication, $dolibarr_auto_user, $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $langs;
+
+		// Is the login API disabled ? The token must be generated from backoffice only.
+		if (getDolGlobalString('API_DISABLE_JWT_TOKEN')) {
+			dol_syslog("Warning: A try to use the token API has been done while the token API is disabled.", LOG_WARNING);
+			throw new RestException(403, "Error, the token API has been disabled for security purpose.");
+		}
+		$jwtexpire_refresh = true;
+		$useridjwt = -1;
+		$useridjwt_refresh = 0;
+		$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
+		$url = $urlwithouturlroot . DOL_URL_ROOT . '/api/index.php/';
+		$now = dol_now();
+		// remove expired refresh token from db
+		$sql = 'DELETE FROM ' . $this->db->prefix() . 'oauth_token WHERE service = "dolibarr_refresh_token_api" AND expire_at < "'.$this->db->idate($now) . '"';
+		$this->db->query($sql);
+		try {
+			$decoded = JWT::decode($token, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
+			// Token is valid, continue with Token verification
+			// throw new RestException(401, var_export($decoded));
+			if ($decoded->exp < $now) {
+				$jwtexpire = true; // can expire
+			} elseif (is_object($decoded->data) && property_exists($decoded->data, 'user_id') && !empty($decoded->data->user_id)) {
+				$useridjwt = (int) $decoded->data->user_id;
+			}
+		} catch (Exception $e) {
+			throw new RestException(403, 'Failed to validate token');
+		}
+
+		try {
+			$decoded_refresh = JWT::decode($refreshtoken, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
+			// Token is valid, continue with Token verification
+			// throw new RestException(401, var_export($decoded));
+			if ($decoded_refresh->exp > $now) {
+				$jwtexpire_refresh = false; // CAN'T be expired
+			}
+			if (is_object($decoded_refresh->data) && property_exists($decoded_refresh->data, 'user_id') && !empty($decoded_refresh->data->user_id)) {
+				$useridjwt_refresh = (int) $decoded_refresh->data->user_id;
+			}
+		} catch (Exception $e) {
+			throw new RestException(403, 'Failed to validate refresh token');
+		}
+		// check if we find refresh token for the user in db (use md5 to find it) so we can invalidate it if needed
+		// TODO
+
+		// compare user_id of the two tokens
+		if ($useridjwt !== $useridjwt_refresh) {
+			throw new RestException(500, 'Failed to refresh token');
+		}
+		if ($jwtexpire_refresh) {
+			throw new RestException(500, 'Token refresh has expired');
+		}
+
+		$tmpuser = new User($this->db);
+		$tmpuser->fetch($useridjwt);
+		if (empty($tmpuser->id)) {
+			throw new RestException(500, 'Failed to load user');
+		}
+
+		$payloadToken = [
+			"iss" => $dolibarr_main_url_root,
+			"aud" => $url,
+			"name" => $tmpuser->getFullName($langs),
+			"iat" => $now,
+			"nbf" => $now,
+			"exp" => $now + getDolGlobalInt('MAIN_SESSION_TIMEOUT', 3600), // Expire in 1 hour by default
+			"data" => [
+				"user_id" => $tmpuser->id,
+				"email" => $tmpuser->email,
+			]
+		];
+		$expire_at = $now + 86400;
+		$payloadRefreshToken = [
+			'iss' => $dolibarr_main_url_root,
+			'iat' => $now,
+			'exp' => $expire_at,
+			'data' => [
+				"user_id" => $tmpuser->id,
+				"email" => $tmpuser->email,
+				'random_string' => bin2hex(random_bytes(32)) // For more security
+			]
+		];
+		$accessToken = JWT::encode($payloadToken, $dolibarr_main_instance_unique_id, 'HS256');
+		// store user refresh-token in db for control
+		$refreshToken = JWT::encode($payloadRefreshToken, $dolibarr_main_instance_unique_id, 'HS256');
+		// we store a md5 of the token to avoid to store non crypted and to make easy retrieve when checking
+		$sql = 'INSERT INTO ' . $this->db->prefix() . 'oauth_token (service, token, tokenstring, fk_user, expire_at) VALUES ("dolibarr_refresh_token_api", "' . $this->db->escape(dolEncrypt($refreshToken)) . '", "' . md5($refreshToken) . '", ' . (int) $tmpuser->id . ', "' . $this->db->idate($expire_at) . '")';
+		$this->db->query($sql);
+
+		return [
+			'success' => [
+				'code' => 200,
+				'token' => $accessToken,
+				'refresh-token' => $refreshToken,
+				'entity' => $tmpuser->entity,
+				'message' => 'Welcome ' . $tmpuser->login . ' - This is your jwt token. You can use it to make any REST API call.',
+			]
+		];
+	}
 }
