@@ -357,7 +357,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_fieldshidden_array;
 	/**
-	 * @var array<array<array{rule:string,file:string,class:string,method:string}>>
+	 * @var array<array<array<string,string>>>
 	 */
 	public $import_convertvalue_array;
 	/**
