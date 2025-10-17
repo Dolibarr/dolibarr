@@ -11953,42 +11953,6 @@ parameters:
 			path: ../../../htdocs/mrp/class/mo.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$mrptype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$qty \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
