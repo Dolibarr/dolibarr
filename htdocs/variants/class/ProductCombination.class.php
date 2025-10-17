@@ -749,9 +749,10 @@ class ProductCombination
 	 * @param false|float               $forced_weightvar       Value of the weight variation if it is forced
 	 * @param false|string              $forced_refvar          Value of the reference if it is forced
 	 * @param string                    $ref_ext                External reference
+	 * @param bool                      $clone_categories       Add parent product categories to the created variant
 	 * @return int<-1,1>                                        Return integer <0 KO, >0 OK
 	 */
-	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '', $clone_categories = false)
 	{
 		global $conf;
 
@@ -947,6 +948,16 @@ class ProductCombination
 		}
 
 		$newcomb->fk_product_child = $newproduct->id;
+
+		if ($clone_categories) {
+			$clone_result = $newproduct->cloneCategories($product->id, $newproduct->id);
+			if ($clone_result < 0) {
+				$this->error = $newproduct->error;
+				$this->errors = $newproduct->errors;
+				$this->db->rollback();
+				return -1;
+			}
+		}
 
 		if ($newcomb->update($user) < 0) {
 			$this->error = $newcomb->error;
