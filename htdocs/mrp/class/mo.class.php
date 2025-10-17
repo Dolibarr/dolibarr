@@ -742,7 +742,7 @@ class Mo extends CommonObject
 
 		// Line to produce
 		$moline->fk_mo = $this->id;
-		$moline->qty = (int) $this->qty;
+		$moline->qty = (float) $this->qty;
 		$moline->fk_product = (int) $this->fk_product;
 		$moline->position = 1;
 
