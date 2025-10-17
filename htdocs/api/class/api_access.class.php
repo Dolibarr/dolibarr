@@ -102,6 +102,7 @@ class DolibarrApiAccess implements iAuthenticate
 		$foundDolApiKey = false;
 		$foundJwtToken = false;
 		$useridjwt = 0;
+		$jwtexpire = false;
 		$now = dol_now();
 
 		$userClass = Defaults::$userIdentifierClass;
@@ -139,9 +140,8 @@ class DolibarrApiAccess implements iAuthenticate
 				// Token is valid, continue with Token verification
 				// throw new RestException(401, var_export($decoded));
 				if ($decoded->exp < $now) {
-					throw new RestException(401, 'Token has expired');
-				}
-				if (is_object($decoded->data) && property_exists($decoded->data, 'user_id') && !empty($decoded->data->user_id)) {
+					$jwtexpire = true;
+				} elseif (is_object($decoded->data) && property_exists($decoded->data, 'user_id') && !empty($decoded->data->user_id)) {
 					$useridjwt = (int) $decoded->data->user_id;
 					$foundJwtToken = true;
 				}
@@ -149,6 +149,10 @@ class DolibarrApiAccess implements iAuthenticate
 				$foundDolApiKey = true;
 			}
 		};
+
+		if ($jwtexpire) {
+			throw new RestException(401, 'Token has expired');
+		}
 
 		$api_key = dol_string_nounprintableascii($api_key, 1);
 
