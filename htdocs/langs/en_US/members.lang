@@ -262,3 +262,6 @@ MergeMembers=Merge members
 ConfirmMergeMembers=Are you sure you want to merge the chosen member with the current one ?
 ErrorMembersMerge=There was an error when merging the members. Please check the log. Changes have been reverted.
 ConfirmCreateMember=Confirm create member
+CorrespondingMemberFound=Corresponding member found
+CorrespondingMemberFoundQuestion=A member has been found with the given information.<br>Do you want to renew your membership?
+MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE=Searches for a member matching the information entered in the public member creation form. If a member is found, redirects the user to the membership payment form
