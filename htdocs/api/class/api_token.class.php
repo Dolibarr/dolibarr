@@ -18,12 +18,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Luracast\Restler\RestException;
-use Firebase\JWT\JWT;
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/php-jwt/autoload.php';
+
+use Luracast\Restler\RestException;
+use Firebase\JWT\JWT;
 
 /**
  * API that allows to get a jwt token with an user account and password.
@@ -130,7 +131,7 @@ class Token
 				"email" => $tmpuser->email,
 			]
 		];
-		$jwt = Firebase\JWT\JWT::encode($payload, $dolibarr_main_instance_unique_id, 'HS256');
+		$jwt = JWT::encode($payload, $dolibarr_main_instance_unique_id, 'HS256');
 
 		return [
 			'success' => [
