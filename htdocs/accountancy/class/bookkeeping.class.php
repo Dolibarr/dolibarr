@@ -3643,8 +3643,8 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", '" . $this->db->idate($now)."'";
 									$sql_insert .= ", ".($user->id > 0 ? ((int) $user->id) : "NULL");
 									$sql_insert .= ", '" . $this->db->escape($docRef) . "'";
-									$sql_insert .= ", '0'";
-									$sql_insert .= ", '0'";
+									$sql_insert .= ", 0";
+									$sql_insert .= ", 0";
 									$sql_insert .= ", " . (float) $obj->debit;
 									$sql_insert .= ", " . (float) $obj->credit;
 									$sql_insert .= ", '" . $this->db->escape($journal_label) . "'";
