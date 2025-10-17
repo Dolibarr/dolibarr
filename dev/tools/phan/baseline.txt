@@ -12,11 +12,11 @@ return [
     // PhanUndeclaredProperty : 420+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
     // PhanTypeMismatchArgument : 70+ occurrences
-    // PhanUndeclaredGlobalVariable : 65+ occurrences
+    // PhanUndeclaredGlobalVariable : 60+ occurrences
     // PhanTypeMismatchArgumentNullable : 40+ occurrences
     // PhanTypeInvalidDimOffset : 15+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
-    // PhanUndeclaredMethod : 9 occurrences
+    // PhanUndeclaredMethod : 8 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
@@ -31,7 +31,6 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/bookcal/class/availabilities.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/bookcal/class/calendar.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/categories/viewcat.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/index.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
@@ -157,10 +156,7 @@ return [
         'htdocs/delivery/class/delivery.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/don/admin/donation.php' => ['PhanUndeclaredMethod'],
         'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
-        'htdocs/don/document.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/don/info.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/don/list.php' => ['PhanTypeMismatchProperty'],
-        'htdocs/don/note.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/emailcollector/class/emailcollector.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/eventorganization/class/conferenceorboothattendee.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/eventorganization/conferenceorbooth_list.php' => ['PhanTypeMismatchArgument'],
@@ -217,7 +213,7 @@ return [
         'htdocs/product/reassort.php' => ['PhanTypeExpectedObjectPropAccessButGotNull'],
         'htdocs/product/stock/info.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/list.php' => ['PhanUndeclaredProperty'],
-        'htdocs/product/stock/movement_list.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/product/stock/movement_list.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanUndeclaredProperty'],
         'htdocs/product/stock/productlot_card.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/stats/commande_fournisseur.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/stats/expedition.php' => ['PhanUndeclaredProperty'],

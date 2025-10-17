@@ -555,7 +555,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->editfieldkey("DefaultCategoryCar", 'default_c_exp_tax_cat', (string) $object->default_c_exp_tax_cat, $object, $user->hasRight('user', 'user', 'creer'));
 		print '</td><td>';
 		if ($action == 'editdefault_c_exp_tax_cat') {
-			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			$ret = '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$ret .= '<input type="hidden" name="action" value="setdefault_c_exp_tax_cat">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -577,7 +577,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->editfieldkey("DefaultRangeNumber", 'default_range', (string) $object->default_range, $object, $user->hasRight('user', 'user', 'creer'));
 		print '</td><td>';
 		if ($action == 'editdefault_range') {
-			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			$ret = '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$ret .= '<input type="hidden" name="action" value="setdefault_range">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';

@@ -997,7 +997,7 @@ class ExternalModules
 				// Check if there is a known ID
 				$reg = array();
 				$id = 0;
-				if (!empty($package['dolistore-download']) && preg_match('/www\.dolistore\.com\/product\.php\?id=(\d+)/', $package['dolistore-download'], $reg)) {
+				if (!empty($package['dolistore-download']) && preg_match('/www\.dolistore\.com\/product\.php\?id=(\d+)/', (string) $package['dolistore-download'], $reg)) {
 					$id = $reg[1];
 				}
 
