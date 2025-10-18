@@ -200,6 +200,7 @@ class Token
 		$sql = "DELETE FROM " . $this->db->prefix() . "oauth_token WHERE service = 'dolibarr_refresh_token_api' AND expire_at < '" . $this->db->idate($now) . "'";
 		$this->db->query($sql);
 
+		// check if we find refresh token for the user in db (use md5 to find it) so we can invalidate it if needed
 		$sql = "SELECT rowid FROM " . $this->db->prefix() . "oauth_token WHERE service = 'dolibarr_refresh_token_api' AND tokenstring = '" . $this->db->escape(md5($refreshtoken)) . "' LIMIT 1";
 		$res = $this->db->getRows($sql);
 		if ($res === false || !count($res)) {
@@ -225,8 +226,6 @@ class Token
 		} catch (Exception $e) {
 			throw new RestException(403, 'Failed to validate refresh token.');
 		}
-		// check if we find refresh token for the user in db (use md5 to find it) so we can invalidate it if needed
-		// TODO
 
 		if ($jwtexpire) {
 			throw new RestException(500, 'Token refresh has expired.');
