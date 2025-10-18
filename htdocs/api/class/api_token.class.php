@@ -195,6 +195,12 @@ class Token
 		$sql = "DELETE FROM " . $this->db->prefix() . "oauth_token WHERE service = 'dolibarr_refresh_token_api' AND expire_at < '" . $this->db->idate($now) . "'";
 		$this->db->query($sql);
 
+		$sql = "SELECT rowid FROM " . $this->db->prefix() . "oauth_token WHERE service = 'dolibarr_refresh_token_api' AND tokenstring = '" . $this->db->escape(md5($refreshtoken)) . "' LIMIT 1";
+		$res = $this->db->getRows($sql);
+		if ($res === false || !count($res)) {
+			throw new RestException(403, 'Failed to validate refresh token.');
+		}
+
 		try {
 			$decoded = JWT::decode($refreshtoken, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
 			// Token is valid, continue with Token verification
