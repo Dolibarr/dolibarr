@@ -7411,12 +7411,6 @@ parameters:
 			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
 
 		-
-			message: '#^Parameter \#2 \$object of method BordereauChequeBlochet\:\:_pagefoot\(\) expects CommonObject, null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
 			message: '#^Property Commande\:\:\$availability \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -15605,24 +15599,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/societe/class/companybankaccount.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Societe\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Societe\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Societe\) and ''code_client'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
 
 		-
 			message: '#^Loose comparison using \!\= between ''email''\|''mobile'' and ''poste'' will always evaluate to true\.$#'

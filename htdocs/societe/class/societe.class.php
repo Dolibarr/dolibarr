@@ -5652,43 +5652,41 @@ class Societe extends CommonObject
 	{
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-		$return = '<div class="box-flex-item box-flex-grow-zero">';
-		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$out = '<div class="box-flex-item box-flex-grow-zero">';
+		$out .= '<div class="info-box info-box-sm">';
+		$out .= '<span class="info-box-icon bg-infobox-action">';
 		if (!empty($this->logo) && class_exists('Form')) {
-			$return .= Form::showphoto('societe', $this, 0, 40, 0, 'photokanban', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$out .= Form::showphoto('societe', $this, 0, 40, 0, 'photokanban', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
 		} else {
-			$return .= img_picto('', $this->picto);
+			$out .= img_picto('', $this->picto);
 		}
-		$return .= '</span>';
-		$return .= '<div class="info-box-content">';
-		$return .= '<div class="info-box-ref inline-block tdoverflowmax125 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref);
-		$return .= '</div>';
+		$out .= '</span>';
+		$out .= '<div class="info-box-content">';
+		$out .= '<div class="info-box-ref inline-block tdoverflowmax125 valignmiddle">' . $this->getNomUrl(1);
+		$out .= '</div>';
 		if (!empty($this->phone)) {
-			$return .= '<div class="inline-block valignmiddle">';
+			$out .= '<div class="inline-block valignmiddle">';
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$return .= dol_print_phone($this->phone, $this->country_code, 0, $this->id, 'tel', 'hidenum', 'phone', $this->phone, 0, 'paddingleft paddingright');
-			$return .= '</div>';
+			$out .= dol_print_phone($this->phone, $this->country_code, 0, $this->id, 'tel', 'hidenum', 'phone', $this->phone, 0, 'paddingleft paddingright');
+			$out .= '</div>';
 		}
 		if (!empty($this->email)) {
-			$return .= '<div class="inline-block valignmiddle">';
-			$return .= dol_print_email($this->email, 0, $this->id, 'thirdparty', -1, 1, 2, 'paddingleft paddingright');
-			$return .= '</div>';
+			$out .= '<div class="inline-block valignmiddle">';
+			$out .= dol_print_email($this->email, 0, $this->id, 'thirdparty', -1, 1, 2, 'paddingleft paddingright');
+			$out .= '</div>';
 		}
 		if ($selected >= 0) {
-			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			$out .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'code_client')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->code_client.'</span>';
+		if (!empty($this->code_client)) {
+			$out .= '<br><span class="info-box-label opacitymedium">'.$this->code_client.'</span>';
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
-		$return .= '</div>';	// end info-box-content
-		$return .= '</div>';
-		$return .= '</div>';
+		$out .= '<br><div class="info-box-status">' . $this->getLibStatut(3) . '</div>';
+		$out .= '</div>';	// end info-box-content
+		$out .= '</div>';
+		$out .= '</div>';
 
-		return $return;
+		return $out;
 	}
 
 	/**
