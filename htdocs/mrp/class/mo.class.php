@@ -795,14 +795,14 @@ class Mo extends CommonObject
 
 
 	/**
-	* Recurse through BOM only adding products to list to consume/produce
-	*
-	* @param  User $user      User that modifies
-	* @param  string $role    MoLine Role that products are added as
-	* @param  BOM $bom        BOM to parse lines from
-	* @param  float $quantity Quantity modifier for sub products/BOM
-	* @return int             Return integer <0 if KO, >0 if OK
-	*/
+	 * Recurse through BOM only adding products to list to consume/produce
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  string $role    MoLine Role that products are added as
+	 * @param  BOM $bom        BOM to parse lines from
+	 * @param  float $quantity Quantity modifier for sub products/BOM
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
 	public function processBOM(User $user, $role, $bom, $quantity)
 	{
 		$error = 0;
@@ -850,7 +850,9 @@ class Mo extends CommonObject
 					}
 				}
 			}
-			if ($error) break;
+			if ($error) {
+				break;
+			}
 		}
 		return $error;
 	}
@@ -968,6 +970,7 @@ class Mo extends CommonObject
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
 
 		$result = 0;
+		$error = 0;
 
 		$this->db->begin();
 
@@ -997,7 +1000,7 @@ class Mo extends CommonObject
 					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
 				}
 				if ($idstockmove < 0) {
-					$this->error++;
+					$error++;
 					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 				} else {
 					$result = $moline->delete($user, $notrigger);
@@ -1020,7 +1023,7 @@ class Mo extends CommonObject
 						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
-						$this->error++;
+						$error++;
 						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 					} else {
 						$moline = new MoLine($this->db);
@@ -1028,13 +1031,13 @@ class Mo extends CommonObject
 
 						$resdel = $moline->delete($user, $notrigger);
 						if ($resdel < 0) {
-							$this->error++;
+							$error++;
 							setEventMessages($moline->error, $moline->errors, 'errors');
 						}
 					}
 				}
 
-				if (empty($this->error)) {
+				if ($error == 0) {
 					$result = $this->deleteLineCommon($user, $idline, $notrigger);
 				}
 			}
@@ -1043,7 +1046,7 @@ class Mo extends CommonObject
 			$result = $this->deleteLineCommon($user, $idline, $notrigger);
 		}
 
-		if (!empty($this->error) || $result <= 0) {
+		if ($error != 0 || $result <= 0) {
 			$this->db->rollback();
 		} else {
 			$this->db->commit();
