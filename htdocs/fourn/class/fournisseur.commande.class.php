@@ -1588,7 +1588,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $conf;
 
 		$this->db->begin();
 
@@ -1698,7 +1698,7 @@ class CommandeFournisseur extends CommonOrder
 						$line->localtax2_tx,
 						$line->fk_product,
 						0,
-						$line->ref_fourn, // $line->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
+						$line->ref_supplier ? $line->ref_supplier : $line->ref_fourn, 			// $line->ref_fourn comes from field ref into table of lines. Value may be a ref that does not exists anymore, so we first try with value of product
 						$line->remise_percent,
 						'HT',
 						0,
