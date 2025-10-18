@@ -8653,12 +8653,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
 
 		-
-			message: '#^Variable \$obj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
-
-		-
 			message: '#^Variable \$totalarray might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
