@@ -7411,12 +7411,6 @@ parameters:
 			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
 
 		-
-			message: '#^Parameter \#2 \$object of method BordereauChequeBlochet\:\:_pagefoot\(\) expects CommonObject, null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
 			message: '#^Property Commande\:\:\$availability \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
