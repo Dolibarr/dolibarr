@@ -63,7 +63,7 @@ $permissiontodelete = $user->hasRight('cron', 'delete');
 if (!$permissiontoadd) {
 	accessforbidden();
 }
-// after this test $permissiontoadd is always true and can't be never false
+// after this test $permissiontoadd is always true and never can't be false
 
 /*
  * Actions
