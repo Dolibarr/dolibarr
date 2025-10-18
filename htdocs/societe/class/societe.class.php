@@ -545,14 +545,17 @@ class Societe extends CommonObject
 	 * @var int Type thirdparty
 	 */
 	public $typent_id = 0;
+
 	/**
 	 * @var string
 	 */
 	public $typent_code;
+
 	/**
 	 * @var int
 	 */
 	public $effectif;
+
 	/**
 	 * @var int
 	 */
@@ -722,7 +725,7 @@ class Societe extends CommonObject
 
 	/**
 	 * Status prospect id
-	 * @var int
+	 * @var ?int
 	 */
 	public $stcomm_id;
 

@@ -15637,12 +15637,6 @@ parameters:
 			path: ../../../htdocs/societe/class/societe.class.php
 
 		-
-			message: '#^Property Societe\:\:\$stcomm_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
 			message: '#^Property Societe\:\:\$typent_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
