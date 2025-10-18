@@ -5085,7 +5085,7 @@ class Societe extends CommonObject
 	 */
 	public function getLibProspCommStatut($mode = 0, $label = '')
 	{
-		return $this->LibProspCommStatut($this->stcomm_id, $mode, $label, $this->stcomm_picto);
+		return $this->LibProspCommStatut((int) $this->stcomm_id, $mode, $label, $this->stcomm_picto);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
