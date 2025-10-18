@@ -73,7 +73,7 @@ class Token
 		global $dolibarr_main_authentication, $dolibarr_auto_user, $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $langs;
 
 		// Is the login API disabled ? The token must be generated from backoffice only.
-		if (getDolGlobalString('API_DISABLE_JWT_TOKEN')) {
+		if (!getDolGlobalString('API_ALLOW_UNSECURED_TOKEN_ADMIN_FROM_LOGINPASS')) {
 			dol_syslog("Warning: A try to use the token API has been done while the token API is disabled.", LOG_WARNING);
 			throw new RestException(403, "Error, the token API has been disabled for security purpose.");
 		}
