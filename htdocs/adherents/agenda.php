@@ -181,13 +181,13 @@ if ($object->id > 0) {
 
 	$newcardbutton = '';
 
-	$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
+	$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/adherents/messaging.php', ['rowid' => $object->id]);
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-	$messagingUrl = DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id;
+	$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/adherents/agenda.php', ['id' => $object->id]);
 	$newcardbutton .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 	if (isModEnabled('agenda')) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).($object->id > 0 ? '?id='.$object->id : '').'&origin=member&originid='.$id);
+		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/comm/action/card.php', ['action' => 'create', 'backtopage' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'origin' => 'member', 'originid' => $id])]));
 	}
 
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {

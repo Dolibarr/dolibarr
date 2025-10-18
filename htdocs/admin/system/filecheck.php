@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -128,7 +128,7 @@ if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || getDolGlobalString('MAIN_ALLO
 }
 $enableremotecheck = true;
 
-print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="check" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
 

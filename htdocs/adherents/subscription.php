@@ -493,7 +493,7 @@ print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
 print dol_get_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
@@ -951,7 +951,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 
 
-	print '<form name="subscription" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="subscription" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="subscription">';
 	print '<input type="hidden" name="rowid" value="'.$rowid.'">';

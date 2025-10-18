@@ -610,8 +610,8 @@ class Loan extends CommonObject
 			$label .= '<br><strong>'.$langs->trans("DateEnd").':</strong> '.dol_print_date($this->dateend, 'day');
 		}
 
-		$url = DOL_URL_ROOT.'/loan/card.php?id='.$this->id;
-
+		$baseurl = DOL_URL_ROOT.'/loan/card.php';
+		$query = ['id' => $this->id];
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -619,14 +619,15 @@ class Loan extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("ShowLoan");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';

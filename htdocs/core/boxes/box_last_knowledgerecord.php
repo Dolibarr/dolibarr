@@ -93,7 +93,7 @@ class box_last_knowledgerecord extends ModeleBoxes
 		if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			$sql = 'SELECT k.rowid as id, k.date_creation, k.ref, k.lang, k.question, k.status as status';
 			$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k";
-			$sql .= " WHERE k.entity IN (".getEntity('knowledgemanagement').")";
+			$sql .= " WHERE k.entity IN (".getEntity('knowledgerecord').")";
 
 			if ($user->socid) {
 				$sql .= " AND k.fk_soc= ".((int) $user->socid);

@@ -1497,7 +1497,10 @@ class SupplierProposal extends CommonObject
 			if ($result < 0) {
 				return -1;
 			}
-
+			if (!getDolGlobalBool('SUPPLIER_PROPOSAL_NOCHECK_ONBUY_PRODUCTS_ONVALID') && !$this->checkActiveProductInLines('onbuy')) {
+				dol_syslog(get_class($this)."::valid checkActiveProductInLines ".$this->error, LOG_INFO);
+				return -1;
+			}
 			// Define new ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
@@ -2393,11 +2396,12 @@ class SupplierProposal extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
+	 *  @param	array<string|mixed>		$param		Array of options
 	 *  @return int
 	 */
-	public function initAsSpecimen()
+	public function initAsSpecimen($param = array())
 	{
-		global $user, $langs, $conf;
+		global $conf, $langs;
 
 		// Load array of products prodids
 		$num_prods = 0;
@@ -2405,6 +2409,9 @@ class SupplierProposal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		if (array_key_exists('tobuy', $param)) {
+			$sql .= " AND tobuy = ".((int) $param['tobuy']);
+		}
 		$sql .= $this->db->plimit(100);
 
 		$resql = $this->db->query($sql);
@@ -2421,6 +2428,7 @@ class SupplierProposal extends CommonObject
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->ref_supplier = 'NEMICEPS';
 		$this->specimen = 1;
 		$this->socid = 1;
 		$this->date = time();
@@ -2430,6 +2438,10 @@ class SupplierProposal extends CommonObject
 		$this->mode_reglement_code = 'CHQ';
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
+
+		$this->multicurrency_tx = 1;
+		$this->multicurrency_code = $conf->currency;
+
 		// Lines
 		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
@@ -2477,7 +2489,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function loadStateBoard()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
 		$clause = "WHERE";

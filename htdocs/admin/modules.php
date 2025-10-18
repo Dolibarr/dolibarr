@@ -738,7 +738,7 @@ $head = modules_prepare_head($nbofactivatedmodules, count($modules), $nbmodulesn
 if ($mode == 'common' || $mode == 'commonkanban') {
 	dol_set_focus('#search_keyword');
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if (isset($optioncss) && $optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -1063,22 +1063,26 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Set $codetoconfig
 			if (!empty($objMod->config_page_url) && !$disableSetup) {
-				$backtourlparam = '';
+				$backtourlquery = [];
 				if ($search_keyword != '') {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_keyword='.urlencode($search_keyword); // No urlencode here, done later
+					$backtourlquery += ['search_keyword' => $search_keyword]; // No urlencode here, done later
 				}
 				if ($search_nature > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.urlencode($search_nature); // No urlencode here, done later
+					$backtourlquery += ['search_nature' => $search_nature]; // No urlencode here, done later
 				}
 				if ($search_version > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.urlencode($search_version); // No urlencode here, done later
+					$backtourlquery += ['search_version' => $search_version]; // No urlencode here, done later
 				}
 				if ($search_status > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.urlencode($search_status); // No urlencode here, done later
+					$backtourlquery += ['search_status' => $search_status]; // No urlencode here, done later
 				}
-				$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
+				$backtourl = dolBuildUrl($_SERVER["PHP_SELF"], $backtourlquery);
 
 				$regs = array();
+				$query = [
+					'save_lastsearch_values' => 1,
+					'backtopage' => $backtourl,
+				];
 				if (is_array($objMod->config_page_url)) {
 					$i = 0;
 					foreach ($objMod->config_page_url as $page) {
@@ -1359,7 +1363,7 @@ if ($mode == 'marketplace') {
 
 		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
-		$products_list = $remotestore->getProducts($options);
+		$products_list = $remotestore->getProducts($options);	// Get list of product from all sources
 
 		$previouslink = $remotestore->get_previous_link();
 
@@ -1373,7 +1377,7 @@ if ($mode == 'marketplace') {
 					<input type="hidden" name="mode" value="marketplace">
 					<input type="hidden" name="page_y" value="">
 					<div class="divsearchfield">
-						<input name="search_keyword" spellcheck="false" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>">
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>" spellcheck="false">
 					</div>
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
