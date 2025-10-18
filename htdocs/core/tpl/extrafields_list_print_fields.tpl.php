@@ -20,6 +20,7 @@
 /**
  * @var Conf $conf
  * @var CommonObject $object
+ * @var DoliDB $db
  * @var ExtraFields $extrafields
  *
  * @var string	$extrafieldsobjectkey
