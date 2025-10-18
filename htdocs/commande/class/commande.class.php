@@ -1538,7 +1538,7 @@ class Commande extends CommonOrder
 	 *	@param      string			$desc            	Description of line
 	 *	@param      float			$pu_ht    	        Unit price (without tax)
 	 *	@param      float			$qty             	Quantite
-	 * 	@param    	float			$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 	@param    	float|string	$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *	@param      int				$fk_product      	Id of product
@@ -3101,7 +3101,7 @@ class Commande extends CommonOrder
 	 *  @param    	float			$pu               	Unit price
 	 *  @param    	float			$qty              	Quantity
 	 *  @param    	float			$remise_percent   	Percent of discount
-	 *  @param    	float			$txtva           	Taux TVA
+	 *  @param    	float|string	$txtva	 			VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate
 	 *  @param		float			$txlocaltax2		Local tax 2 rate
 	 *  @param    	string			$price_base_type	HT or TTC
