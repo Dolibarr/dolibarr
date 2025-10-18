@@ -25,7 +25,8 @@ require_once DOL_DOCUMENT_ROOT . '/includes/php-jwt/autoload.php';
 
 use Luracast\Restler\RestException;
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use Firebase\JWT\BeforeValidException;
+use Firebase\JWT\ExpiredException;
 
 /**
  * API that allows to get a jwt token with an user account and password.
@@ -164,11 +165,10 @@ class Token
 	/**
 	 * Token
 	 *
-	 * Request the API refreshened jwt token for a couple token / refreshtoken.
+	 * Request the API refreshened jwt token for a refreshtoken.
 	 *
-	 * @param   string  $token			the expired token
 	 * @param   string  $refreshtoken	the non expired refresh token
-	 * @return  array                   Response status and user jwt token
+	 * @return  array                   Response status and user jwt token and new refresh-token
 	 * @phan-return array{success:array{code:int,message:string,token:string,refresh-token:string,entity:int}}
 	 * @phpstan-return array{success:array{code:int,message:string,token:string,refresh-token:string,entity:int}}
 	 *
@@ -177,7 +177,7 @@ class Token
 	 *
 	 * @url PUT /
 	 */
-	public function put($token, $refreshtoken)
+	public function put($refreshtoken)
 	{
 		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $langs;
 
@@ -186,50 +186,38 @@ class Token
 			dol_syslog("Warning: A try to use the token API has been done while the token API is disabled.", LOG_WARNING);
 			throw new RestException(403, "Error, the token API has been disabled for security purpose.");
 		}
-		$jwtexpire_refresh = true;
-		$useridjwt = -1;
-		$useridjwt_refresh = 0;
+		$jwtexpire = true;
+		$useridjwt = 0;
 		$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
 		$url = $urlwithouturlroot . DOL_URL_ROOT . '/api/index.php/';
 		$now = dol_now();
 		// remove expired refresh token from db
 		$sql = "DELETE FROM " . $this->db->prefix() . "oauth_token WHERE service = 'dolibarr_refresh_token_api' AND expire_at < '" . $this->db->idate($now) . "'";
 		$this->db->query($sql);
-		try {
-			$decoded = JWT::decode($token, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
-			// Token is valid, continue with Token verification
-			// throw new RestException(401, var_export($decoded));
-			if ($decoded->exp < $now) {
-				$jwtexpire = true; // can expire
-			}
-			if (is_object($decoded->data) && property_exists($decoded->data, 'user_id') && !empty($decoded->data->user_id)) {
-				$useridjwt = (int) $decoded->data->user_id;
-			}
-		} catch (Exception $e) {
-			throw new RestException(403, 'Failed to validate token');
-		}
 
 		try {
-			$decoded_refresh = JWT::decode($refreshtoken, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
+			$decoded = JWT::decode($refreshtoken, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
 			// Token is valid, continue with Token verification
-			// throw new RestException(401, var_export($decoded));
-			if ($decoded_refresh->exp > $now) {
-				$jwtexpire_refresh = false; // CAN'T be expired
+			$decoded_array = json_decode(json_encode($decoded), true);
+			if (!empty($decoded_array['data']['user_id'])) {
+				$useridjwt = (int) $decoded_array['data']['user_id'];
 			}
-			if (is_object($decoded_refresh->data) && property_exists($decoded_refresh->data, 'user_id') && !empty($decoded_refresh->data->user_id)) {
-				$useridjwt_refresh = (int) $decoded_refresh->data->user_id;
-			}
+			$jwtexpire = false;
+		} catch (BeforeValidException $e) {
+			// provided JWT is trying to be used before "nbf" claim OR
+			// provided JWT is trying to be used before "iat" claim.
+			$jwtexpire = true;
+		} catch (ExpiredException $e) {
+			$jwtexpire = true;
+		} catch (UnexpectedValueException $e) {
+			//
 		} catch (Exception $e) {
 			throw new RestException(403, 'Failed to validate refresh token.');
 		}
 		// check if we find refresh token for the user in db (use md5 to find it) so we can invalidate it if needed
 		// TODO
 
-		// compare user_id of the two tokens
-		if ($useridjwt !== $useridjwt_refresh) {
-			throw new RestException(500, 'Failed to refresh token.');
-		}
-		if ($jwtexpire_refresh) {
+		if ($jwtexpire) {
 			throw new RestException(500, 'Token refresh has expired.');
 		}
 

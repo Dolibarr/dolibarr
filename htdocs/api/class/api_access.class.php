@@ -139,14 +139,20 @@ class DolibarrApiAccess implements iAuthenticate
 			$api_key = preg_replace('/^Bearer\s+/i', '', $authHeader);
 			try {
 				$decoded = JWT::decode($api_key, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
-				$decoded_array = (array) $decoded;
-				// Token is valid, continue with Token verification
-				throw new RestException(401, var_export($decoded_array));
-				if (!empty($decoded_array['data']['user_id'])) {
+				$decoded_array = json_decode(json_encode($decoded), true);
+				// Token is valid and verified, we can try to find userid
+				if (!empty($decoded_array['data']['user_id']) && !empty($decoded_array['aud'])) { // refresh token has no 'aud'
 					$useridjwt = (int) $decoded_array['data']['user_id'];
 					$foundJwtToken = true;
 				}
 			} catch (InvalidArgumentException $e) {
+				// provided key/key-array is empty or malformed.
+			} catch (SignatureInvalidException $e) {
+				// provided JWT signature verification failed.
+			} catch (BeforeValidException $e) {
+				// provided JWT is trying to be used before "nbf" claim OR
+				// provided JWT is trying to be used before "iat" claim.
+				$jwtexpire = true;
 			} catch (ExpiredException $e) {
 				$jwtexpire = true;
 			} catch (UnexpectedValueException $e) {
