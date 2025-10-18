@@ -46,7 +46,7 @@ class Token
 		global $db;
 		$this->db = $db;
 
-		if (getDolGlobalString('API_DISABLE_JWT_TOKEN')) {
+		if (!getDolGlobalString('API_ALLOW_UNSECURED_TOKEN_ADMIN_FROM_LOGINPASS')) {
 			throw new RestException(403, "Error token APIs are disabled. You must get the token from backoffice to be able to use APIs");
 		}
 	}
