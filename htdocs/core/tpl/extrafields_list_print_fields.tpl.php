@@ -20,7 +20,7 @@
 /**
  * @var Conf $conf
  * @var CommonObject $object
- * @var CommonObject $obj
+ * @var stdClass $obj
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  *
@@ -29,7 +29,7 @@
 
 '
 @phan-var-force CommonObject $object
-@phan-var-force CommonObject $obj
+@phan-var-force stdClass $obj
 ';
 
 // Protection to avoid direct call of template
