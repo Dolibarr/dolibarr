@@ -891,7 +891,7 @@ class Societe extends CommonObject
 
 
 	/**
-	 * @var Account|string Default BAN account
+	 * @var null|Account|string Default BAN account
 	 */
 	public $bank_account;
 
@@ -1108,7 +1108,7 @@ class Societe extends CommonObject
 				$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
 
 				// update accountancy for this entity
-				if (!$error && getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+				if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
 
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
@@ -1208,19 +1208,19 @@ class Societe extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contact = new Contact($this->db);
 
-		$contact->name              = $this->name_bis;
-		$contact->firstname         = $this->firstname;
-		$contact->civility_id       = $this->civility_id;
-		$contact->socid             = $this->id; // fk_soc
-		$contact->statut            = 1; // deprecated
-		$contact->status            = 1;
-		$contact->priv              = 0;
-		$contact->country_id        = $this->country_id;
-		$contact->state_id          = $this->state_id;
-		$contact->address           = $this->address;
-		$contact->email             = $this->email;
-		$contact->zip               = $this->zip;
-		$contact->town              = $this->town;
+		$contact->name            = $this->name_bis;
+		$contact->firstname       = $this->firstname;
+		$contact->civility_id     = $this->civility_id;
+		$contact->socid           = $this->id; // fk_soc
+		$contact->statut          = 1; // deprecated
+		$contact->status          = 1;
+		$contact->priv            = 0;
+		$contact->country_id      = $this->country_id;
+		$contact->state_id        = $this->state_id;
+		$contact->address         = $this->address;
+		$contact->email           = $this->email;
+		$contact->zip             = $this->zip;
+		$contact->town            = $this->town;
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro = $this->phone;
 		if (getDolGlobalString('CONTACTS_DEFAULT_ROLES')) {
@@ -1489,13 +1489,13 @@ class Societe extends CommonObject
 		$this->email		= trim((string) $this->email);
 		$this->url			= $this->url ? clean_url($this->url, 0) : '';
 		$this->note_private = (empty($this->note_private) ? '' : trim($this->note_private));
-		$this->note_public  = (empty($this->note_public) ? '' : trim($this->note_public));
-		$this->idprof1		= trim((string) $this->idprof1);
-		$this->idprof2		= trim((string) $this->idprof2);
-		$this->idprof3		= trim((string) $this->idprof3);
-		$this->idprof4		= trim((string) $this->idprof4);
-		$this->idprof5		= (!empty($this->idprof5) ? trim($this->idprof5) : '');
-		$this->idprof6		= (!empty($this->idprof6) ? trim($this->idprof6) : '');
+		$this->note_public = (empty($this->note_public) ? '' : trim($this->note_public));
+		$this->idprof1 = trim((string) $this->idprof1);
+		$this->idprof2 = trim((string) $this->idprof2);
+		$this->idprof3 = trim((string) $this->idprof3);
+		$this->idprof4 = trim((string) $this->idprof4);
+		$this->idprof5 = (!empty($this->idprof5) ? trim($this->idprof5) : '');
+		$this->idprof6 = (!empty($this->idprof6) ? trim($this->idprof6) : '');
 		$this->prefix_comm = trim((string) $this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
 		$this->order_min_amount = price2num($this->order_min_amount);
@@ -1769,7 +1769,7 @@ class Societe extends CommonObject
 
 				$nbrowsaffected = $this->db->affected_rows($resql);
 
-				if (!$error && $nbrowsaffected) {
+				if ($nbrowsaffected) {
 					// Update information on linked member if it is an update
 					if (!$nosyncmember && isModEnabled('member')) {
 						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -2415,7 +2415,7 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			// User is mandatory for trigger call
-			if (!$error && $call_trigger) {
+			if ($call_trigger) {
 				// Call trigger
 				$result = $this->call_trigger('COMPANY_DELETE', $fuser);
 				if ($result < 0) {
@@ -2972,15 +2972,13 @@ class Societe extends CommonObject
 		if ($this->id > 0 && $commid > 0) {
 			$this->db->begin();
 
-			if (!$error) {
-				$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
-				$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
+			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
+			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
 
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
-					$error++;
-				}
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+				$error++;
 			}
 
 			if (!$error) {
@@ -5789,7 +5787,7 @@ class Societe extends CommonObject
 
 		dol_syslog("mergeCompany merge thirdparty id=".$soc_origin_id." (will be deleted) into the thirdparty id=".$this->id);
 
-		if (!$error && $soc_origin->fetch($soc_origin_id) < 1) {
+		if ($soc_origin->fetch($soc_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');
 			$error++;
 		}
@@ -5933,7 +5931,7 @@ class Societe extends CommonObject
 
 					require_once DOL_DOCUMENT_ROOT.$object_file;
 
-					if (!$error && !$object_name::replaceThirdparty($this->db, $soc_origin->id, $this->id)) {
+					if (!$object_name::replaceThirdparty($this->db, $soc_origin->id, $this->id)) {
 						$error++;
 						$this->error = $this->db->lasterror();
 						break;
