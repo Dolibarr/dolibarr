@@ -118,6 +118,11 @@ class Token
 		if (empty($tmpuser->id)) {
 			throw new RestException(500, 'Failed to load user');
 		}
+		$tmpuser->loadRights();
+		if (!$tmpuser->hasRight('api', 'apikey', 'generate')) {
+			throw new RestException(403, 'User need generate api key permission to create API token');
+		}
+
 		$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
 		$url = $urlwithouturlroot . DOL_URL_ROOT . '/api/index.php/';
 		$now = dol_now();
@@ -231,6 +236,9 @@ class Token
 		$tmpuser->fetch($useridjwt);
 		if (empty($tmpuser->id)) {
 			throw new RestException(500, 'Failed to load user');
+		}
+		if (!$tmpuser->hasRight('api', 'apikey', 'generate')) {
+			throw new RestException(403, 'User need generate api key permission to create API token');
 		}
 
 		$payloadToken = [
