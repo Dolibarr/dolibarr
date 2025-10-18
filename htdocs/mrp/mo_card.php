@@ -139,7 +139,7 @@ if (empty($reshook)) {
 
 	$backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
 
-	$object->oldQty = $object->qty;
+	$object->oldQty = (float) $object->qty;
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {

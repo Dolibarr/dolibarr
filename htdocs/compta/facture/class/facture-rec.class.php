@@ -1306,7 +1306,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ", total_ttc='".price2num($total_ttc)."'";
 		$sql .= ", date_start_fill=".((int) $date_start_fill);
 		$sql .= ", date_end_fill=".((int) $date_end_fill);
-		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : 'null');
+		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? (int) $fk_fournprice : 'null');
 		$sql .= ", buy_price_ht=".($pa_ht ? price2num($pa_ht) : 0);
 		$sql .= ", info_bits=".((int) $info_bits);
 		$sql .= ", rang=".((int) $rang);

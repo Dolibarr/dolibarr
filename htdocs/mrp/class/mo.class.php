@@ -122,26 +122,30 @@ class Mo extends CommonObject
 	public $ref;
 
 	/**
-	 * @var int mrptype
+	 * @var ?int mrptype
 	 */
 	public $mrptype;
+
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $label;
 
 	/**
-	 * @var float Quantity
+	 * @var ?float Quantity
 	 */
 	public $qty;
+
 	/**
 	 * @var ?int
 	 */
 	public $fk_warehouse;
+
 	/**
 	 * @var int
 	 */
 	public $fk_soc;
+
 	/**
 	 * @var int
 	 */
@@ -175,12 +179,12 @@ class Mo extends CommonObject
 	 */
 	public $import_key;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
 	/**
-	 * @var int ID of product
+	 * @var ?int ID of product
 	 */
 	public $fk_product;
 
@@ -323,7 +327,7 @@ class Mo extends CommonObject
 		if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && !getDolGlobalString('ALLOW_USE_KITS_INTO_BOM_AND_MO') && $this->fk_product > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($this->fk_product);
+			$tmpproduct->fetch((int) $this->fk_product);
 			if ($tmpproduct->hasFatherOrChild(1) > 0) {
 				$this->error = 'ErrorAVirtualProductCantBeUsedIntoABomOrMo';
 				$this->errors[] = $this->error;
@@ -342,11 +346,10 @@ class Mo extends CommonObject
 			$this->mrptype = $tmpbom->bomtype;
 		}
 
-		if (!$error) {
-			$idcreated = $this->createCommon($user, $notrigger);
-			if ($idcreated <= 0) {
-				$error++;
-			}
+
+		$idcreated = $this->createCommon($user, $notrigger);
+		if ($idcreated <= 0) {
+			$error++;
 		}
 
 		if (!$error) {
@@ -620,9 +623,9 @@ class Mo extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$resarray[] = array(
-						'rowid' => $obj->rowid,
+						'rowid' => (int) $obj->rowid,
 						'date' => $this->db->jdate($obj->date_creation),
-						'qty' => $obj->qty,
+						'qty' => (float) $obj->qty,
 						'role' => $obj->role,
 						'fk_product' => $obj->fk_product,
 						'fk_warehouse' => $obj->fk_warehouse,
@@ -731,55 +734,53 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		// Insert lines in mrp_production table from BOM data
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.((int) $this->id);
-			$this->db->query($sql);
 
-			$moline = new MoLine($this->db);
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.((int) $this->id);
+		$this->db->query($sql);
 
-			// Line to produce
-			$moline->fk_mo = $this->id;
-			$moline->qty = $this->qty;
-			$moline->fk_product = $this->fk_product;
-			$moline->position = 1;
+		$moline = new MoLine($this->db);
 
-			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($this->fk_product);
-			$moline->fk_unit = $tmpproduct->fk_unit;
+		// Line to produce
+		$moline->fk_mo = $this->id;
+		$moline->qty = (float) $this->qty;
+		$moline->fk_product = (int) $this->fk_product;
+		$moline->position = 1;
 
-			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
-				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new BOM($this->db);
-				$bom->fetch($this->fk_bom);
-				if ($bom->bomtype == 1) {
-					$role = 'toproduce';
-					$moline->role = 'toconsume';
-				} else {
-					$role = 'toconsume';
-					$moline->role = 'toproduce';
-				}
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$tmpproduct = new Product($this->db);
+		$tmpproduct->fetch((int) $this->fk_product);
+		$moline->fk_unit = $tmpproduct->fk_unit;
+
+		if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
+			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+			$bom = new BOM($this->db);
+			$bom->fetch($this->fk_bom);
+			if ($bom->bomtype == 1) {
+				$role = 'toproduce';
+				$moline->role = 'toconsume';
 			} else {
-				$bom = null;
-				if ($this->mrptype == 1) {
-					$moline->role = 'toconsume';
-				} else {
-					$moline->role = 'toproduce';
-				}
+				$role = 'toconsume';
+				$moline->role = 'toproduce';
 			}
-
-			$resultline = $moline->create($user, 0); // Never use triggers here
-			if ($resultline <= 0) {
-				$error++;
-				$this->error = $moline->error;
-				$this->errors = $moline->errors;
+		} else {
+			$bom = null;
+			if ($this->mrptype == 1) {
+				$moline->role = 'toconsume';
+			} else {
+				$moline->role = 'toproduce';
 			}
+		}
 
-			if ($this->fk_bom > 0 && is_object($bom)) {	// If a BOM is defined, we know what to consume.
-				if ($bom->id > 0) {
-					// process lines to consume, this needs to recurse through BOM's
-					$error += $this->processBOM($user, $role, $bom, $this->qty);
-				}
+		$resultline = $moline->create($user, 0); // Never use triggers here
+		if ($resultline <= 0) {
+			$error++;
+			$this->setErrorsFromObject($moline);
+		}
+
+		if ($this->fk_bom > 0 && is_object($bom)) {	// If a BOM is defined, we know what to consume.
+			if ($bom->id > 0) {
+				// process lines to consume, this needs to recurse through BOM's
+				$error += $this->processBOM($user, $role, $bom, (float) $this->qty);
 			}
 		}
 

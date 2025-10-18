@@ -1042,7 +1042,7 @@ if (empty($reshook)) {
 				$date_start_fill,
 				$date_end_fill,
 				(int) $fournprice,
-				(int) $buyingprice,
+				(float) $buyingprice,
 				(int) $fk_parent_line
 			);
 

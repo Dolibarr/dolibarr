@@ -7861,52 +7861,10 @@ parameters:
 			path: ../../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''compute'', type\: ''double'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''cleanAmount''\|''computeAmount'', element\: ''Accountancy''\}\|array\{rule\: ''compute'', type\: ''int'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''computePieceNum'', element\: ''Accountancy''\}\|array\{rule\: ''compute'', type\: ''varchar'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''computeDirection'', element\: ''Accountancy''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAccounting.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/accountancy/class…'', class\: ''AccountancyCategory'', method\: ''fetch'', dict\: ''DictionaryAccountan…''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/accountancy/class…'', class\: ''AccountingAccount'', method\: ''fetch'', element\: ''AccountingAccount''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAccounting.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAccounting.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryStateCode''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: ''getrefifauto'', class\: string, path\: non\-falsy\-string\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryStateCode''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''getrefifauto'', class\: string, path\: non\-falsy\-string\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
 			message: '#^Variable \$user in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
 			path: ../../../htdocs/core/modules/modAgenda.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeandl…'', classfile\: ''/categories/class…'', class\: ''Categorie'', method\: ''fetch'', element\: ''category'', codefromfield\: ''ca\.type''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCategorie.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/categories/class…'', class\: ''Categorie'', method\: ''fetch'', element\: ''category''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/class…'', class\: ''Product'', method\: ''fetch'', element\: ''Product''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCategorie.class.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -8107,36 +8065,6 @@ parameters:
 			path: ../../../htdocs/core/modules/modPrelevement.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', dict\: ''DictionaryUnits''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''CProductNature'', method\: ''fetch'', dict\: ''DictionaryProductNa…''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''CProductNature'', method\: ''fetch'', dict\: ''DictionaryProductNa…''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''CProductNature'', method\: ''fetch'', dict\: ''DictionaryProductNa…''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/product/class…'', class\: ''Product'', method\: ''fetch'', element\: ''Product''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Entrepot''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/projet/class…'', class\: ''Project'', method\: ''fetch'', element\: ''Project''\}\|array\{rule\: ''getrefifauto'', class\: mixed, path\: non\-falsy\-string\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProjet.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PROPALE_ADDON'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -8221,40 +8149,10 @@ parameters:
 			path: ../../../htdocs/core/modules/modRecruitment.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''Ctyperesource'', method\: ''fetch'', dict\: ''DictionaryResourceT…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modResource.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 2
 			path: ../../../htdocs/core/modules/modSalaries.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', dict\: ''DictionaryUnits''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modService.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modService.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modService.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/product/class…'', class\: ''Product'', method\: ''fetch'', element\: ''Product''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modService.class.php
 
 		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''COMPANY_ADDON_PDF…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
@@ -8290,18 +8188,6 @@ parameters:
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 5
-			path: ../../../htdocs/core/modules/modSociete.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/user/class/user…'', class\: ''User'', method\: ''fetch'', element\: ''User''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modSociete.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../../../htdocs/core/modules/modSociete.class.php
 
 		-
@@ -8341,18 +8227,6 @@ parameters:
 			path: ../../../htdocs/core/modules/modStock.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryStateCode''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''ref''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modStock.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/product/class…'', class\: ''Product'', method\: ''fetch'', element\: ''product''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''ref''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modStock.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''SUPPLIER_PROPOSAL…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 3
@@ -8365,25 +8239,7 @@ parameters:
 			path: ../../../htdocs/core/modules/modSupplierProposal.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/compta/paiement…'', class\: ''Cpaiement'', method\: ''fetch'', element\: ''Cpaiement''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modTax.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/compta/sociales…'', class\: ''Cchargesociales'', method\: ''fetch'', element\: ''Cchargesociales''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modTax.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$export_permission \(array\<array\<array\{string, string\}\>\>\) does not accept non\-empty\-array\<array\<array\{0\: string, 1\?\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modUser.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryState''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''numeric''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/modUser.class.php
@@ -11953,42 +11809,6 @@ parameters:
 			path: ../../../htdocs/mrp/class/mo.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$mrptype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$qty \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -12031,18 +11851,6 @@ parameters:
 			path: ../../../htdocs/mrp/mo_agenda.php
 
 		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/mo_card.php
-
-		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/mo_movements.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -12064,12 +11872,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between ''consumeandproduceall'' and ''consumeandproduceall'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 2
-			path: ../../../htdocs/mrp/mo_production.php
-
-		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/mrp/mo_production.php
 
 		-
