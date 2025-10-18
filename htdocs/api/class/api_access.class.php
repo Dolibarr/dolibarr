@@ -20,7 +20,7 @@
  */
 
 // Create the autoloader for Luracast
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
+require_once DOL_DOCUMENT_ROOT . '/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 call_user_func(
 	/**
 	 * @return Luracast\Restler\AutoLoader
@@ -32,11 +32,11 @@ call_user_func(
 	}
 );
 
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iAuthenticate.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUseAuthentication.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Resources.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Defaults.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
+require_once DOL_DOCUMENT_ROOT . '/includes/restler/framework/Luracast/Restler/iAuthenticate.php';
+require_once DOL_DOCUMENT_ROOT . '/includes/restler/framework/Luracast/Restler/iUseAuthentication.php';
+require_once DOL_DOCUMENT_ROOT . '/includes/restler/framework/Luracast/Restler/Resources.php';
+require_once DOL_DOCUMENT_ROOT . '/includes/restler/framework/Luracast/Restler/Defaults.php';
+require_once DOL_DOCUMENT_ROOT . '/includes/restler/framework/Luracast/Restler/RestException.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/php-jwt/autoload.php';
 
 use Luracast\Restler\iAuthenticate;
@@ -44,7 +44,9 @@ use Luracast\Restler\Resources;
 use Luracast\Restler\Defaults;
 use Luracast\Restler\RestException;
 use Firebase\JWT\JWT;
-
+use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\BeforeValidException;
+use Firebase\JWT\ExpiredException;
 
 /**
  * Dolibarr API access class
@@ -137,15 +139,18 @@ class DolibarrApiAccess implements iAuthenticate
 			$api_key = preg_replace('/^Bearer\s+/i', '', $authHeader);
 			try {
 				$decoded = JWT::decode($api_key, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
-				'@phan-var-force stdClass $decoded';
+				$decoded_array = (array) $decoded;
 				// Token is valid, continue with Token verification
-				// throw new RestException(401, var_export($decoded));
-				if ($decoded->exp < $now) {
-					$jwtexpire = true;
-				} elseif (is_object($decoded->data) && property_exists($decoded->data, 'user_id') && !empty($decoded->data->user_id)) {
-					$useridjwt = (int) $decoded->data->user_id;
+				throw new RestException(401, var_export($decoded_array));
+				if (!empty($decoded_array['data']['user_id'])) {
+					$useridjwt = (int) $decoded_array['data']['user_id'];
 					$foundJwtToken = true;
 				}
+			} catch (InvalidArgumentException $e) {
+			} catch (ExpiredException $e) {
+				$jwtexpire = true;
+			} catch (UnexpectedValueException $e) {
+				$foundDolApiKey = true;
 			} catch (Exception $e) {
 				$foundDolApiKey = true;
 			}
@@ -166,11 +171,11 @@ class DolibarrApiAccess implements iAuthenticate
 
 			$sql = "SELECT u.login, u.datec, u.api_key,";
 			$sql .= " u.tms as date_modification, u.entity";
-			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "user as u";
 			if ($foundDolApiKey) {
-				$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				$sql .= " WHERE u.api_key = '" . $this->db->escape($api_key) . "' OR u.api_key = '" . $this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr')) . "'";
 			} elseif ($foundJwtToken) {
-				$sql .= " WHERE u.rowid = ".(int) $useridjwt;
+				$sql .= " WHERE u.rowid = " . (int) $useridjwt;
 			}
 
 			$result = $this->db->query($sql);
@@ -185,12 +190,12 @@ class DolibarrApiAccess implements iAuthenticate
 					if (!defined("DOLENTITY") && $conf->entity != ($obj->entity ? $obj->entity : 1)) {		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
 						$conf->entity = ($obj->entity ? $obj->entity : 1);
 						// We must also reload global conf to get params from the entity
-						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommended for performance purpose), so we switch now on entity of user (".$conf->entity.") and we have to reload configuration.", LOG_WARNING);
+						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommended for performance purpose), so we switch now on entity of user (" . $conf->entity . ") and we have to reload configuration.", LOG_WARNING);
 						$conf->setValues($this->db);
 
 						// set global mysoc after setting conf entity (the entity can be changed with the user logged)
 						// see master.inc.php
-						require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+						require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 						$fmysoc = new Societe($db);
 						$fmysoc->setMysoc($conf);
@@ -243,7 +248,7 @@ class DolibarrApiAccess implements iAuthenticate
 					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');
 				}
 			} else {
-				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error);
+				throw new RestException(503, 'Error when fetching user api_key :' . $this->db->error);
 			}
 
 			if ($login && ($foundDolApiKey && $stored_key != $api_key)) {		// This should not happen since we did a search on api_key
@@ -251,7 +256,7 @@ class DolibarrApiAccess implements iAuthenticate
 				return false;
 			}
 
-			$genericmessageerroruser = 'Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity='.$conf->entity.')';
+			$genericmessageerroruser = 'Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=' . $conf->entity . ')';
 
 			if (!$login) {
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for api key: Error when searching login user from api key", LOG_NOTICE);
@@ -262,7 +267,7 @@ class DolibarrApiAccess implements iAuthenticate
 			$fuser = new User($this->db);
 			$result = $fuser->fetch(0, $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
 			if ($result <= 0) {
-				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': Failed to fetch on entity", LOG_NOTICE);
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '" . $login . "': Failed to fetch on entity", LOG_NOTICE);
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
 				throw new RestException(401, $genericmessageerroruser);
 			}
@@ -270,7 +275,7 @@ class DolibarrApiAccess implements iAuthenticate
 			// Check if user status is enabled
 			if ($fuser->status != $fuser::STATUS_ENABLED) {
 				// Status is disabled
-				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has been disabled", LOG_NOTICE);
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '" . $login . "': The user has been disabled", LOG_NOTICE);
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
 				throw new RestException(401, $genericmessageerroruser);
 			}
@@ -278,7 +283,7 @@ class DolibarrApiAccess implements iAuthenticate
 			// Check if session was unvalidated by a password change
 			if (($fuser->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $fuser->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
 				// Session is no more valid
-				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has a date for session invalidation = ".$fuser->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '" . $login . "': The user has a date for session invalidation = " . $fuser->flagdelsessionsbefore . " and a session date = " . $_SESSION["dol_logindate"] . ". We must invalidate its sessions.");
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
 				throw new RestException(401, $genericmessageerroruser);
 			}
@@ -286,7 +291,7 @@ class DolibarrApiAccess implements iAuthenticate
 			// Check date validity
 			if ($fuser->isNotIntoValidityDateRange()) {
 				// User validity dates are no more valid
-				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], current date is ".dol_now());
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '" . $login . "': The user login has a validity between [" . $fuser->datestartvalidity . " and " . $fuser->dateendvalidity . "], current date is " . dol_now());
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
 				throw new RestException(401, $genericmessageerroruser);
 			}
@@ -294,7 +299,7 @@ class DolibarrApiAccess implements iAuthenticate
 			// TODO
 			// Increase counter of API access
 			if (getDolGlobalString('API_COUNTER_ENABLED')) {
-				include DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				include DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 				dolibarr_set_const($this->db, 'API_COUNTER_COUNT', getDolGlobalInt('API_COUNTER_COUNT') + 1);
 			}
 
@@ -348,8 +353,8 @@ class DolibarrApiAccess implements iAuthenticate
 	public static function verifyAccess(array $m)
 	{
 		$requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])
-				? $m['class']['DolibarrApiAccess']['properties']['requires']
-				: false;
+			? $m['class']['DolibarrApiAccess']['properties']['requires']
+			: false;
 
 
 		return $requires

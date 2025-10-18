@@ -25,6 +25,7 @@ require_once DOL_DOCUMENT_ROOT . '/includes/php-jwt/autoload.php';
 
 use Luracast\Restler\RestException;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 /**
  * API that allows to get a jwt token with an user account and password.
@@ -178,7 +179,7 @@ class Token
 	 */
 	public function put($token, $refreshtoken)
 	{
-		global $dolibarr_main_authentication, $dolibarr_auto_user, $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $langs;
+		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $langs;
 
 		// Is the login API disabled ? The token must be generated from backoffice only.
 		if (getDolGlobalString('API_DISABLE_JWT_TOKEN')) {
@@ -192,7 +193,7 @@ class Token
 		$url = $urlwithouturlroot . DOL_URL_ROOT . '/api/index.php/';
 		$now = dol_now();
 		// remove expired refresh token from db
-		$sql = "DELETE FROM " . $this->db->prefix() . "oauth_token WHERE service = 'dolibarr_refresh_token_api' AND expire_at < '".$this->db->idate($now) . "'";
+		$sql = "DELETE FROM " . $this->db->prefix() . "oauth_token WHERE service = 'dolibarr_refresh_token_api' AND expire_at < '" . $this->db->idate($now) . "'";
 		$this->db->query($sql);
 		try {
 			$decoded = JWT::decode($token, new \Firebase\JWT\Key($dolibarr_main_instance_unique_id, 'HS256'));
