@@ -361,6 +361,7 @@ ErrorThisGroupIsAlreadyDefinedAsThisType=Les contacts avec ce groupe sont déjà
 ErrorIsNotInError=%s n'est pas en erreur
 ErrorFilenameExtensionNotAllowed=Le fichier %s a une extension interdite
 ErrorNoValueForSelectListType=Erreur, une valeur pour ce type de champ est obligatoire
+ErrorOneLineContainsADisactivatedProduct=Erreur, au moins un produit n'a pas le bon statut
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

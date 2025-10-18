@@ -1497,7 +1497,10 @@ class SupplierProposal extends CommonObject
 			if ($result < 0) {
 				return -1;
 			}
-
+			if (!getDolGlobalBool('SUPPLIER_PROPOSAL_NOCHECK_ONBUY_PRODUCTS_ONVALID') && !$this->checkActiveProductInLines('onbuy')) {
+				dol_syslog(get_class($this)."::valid checkActiveProductInLines ".$this->error, LOG_INFO);
+				return -1;
+			}
 			// Define new ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
