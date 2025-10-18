@@ -11,20 +11,20 @@ return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 420+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
-    // PhanTypeMismatchArgument : 70+ occurrences
+    // PhanTypeMismatchArgument : 65+ occurrences
     // PhanUndeclaredGlobalVariable : 60+ occurrences
     // PhanTypeMismatchArgumentNullable : 40+ occurrences
     // PhanTypeInvalidDimOffset : 15+ occurrences
-    // PhanTypeMismatchDimFetch : 15+ occurrences
+    // PhanTypeMismatchDimFetch : 10+ occurrences
     // PhanUndeclaredMethod : 8 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
     // PhanTypeExpectedObjectPropAccess : 5 occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanParamTooMany : 3 occurrences
     // PhanPluginUndeclaredVariableIsset : 3 occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 2 occurrences
     // PhanPossiblyUndeclaredVariable : 1 occurrence
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
     // PhanTypeMismatchReturn : 1 occurrence
@@ -34,7 +34,7 @@ return [
         'htdocs/bookcal/class/calendar.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/categories/viewcat.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/index.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/action/pertype.php' => ['PhanTypeComparisonFromArray', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchDimFetch'],
+        'htdocs/comm/action/pertype.php' => ['PhanTypeComparisonFromArray', 'PhanTypeExpectedObjectPropAccess'],
         'htdocs/comm/action/peruser.php' => ['PhanTypeComparisonFromArray', 'PhanTypeMismatchArgument'],
         'htdocs/comm/card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
@@ -53,7 +53,6 @@ return [
         'htdocs/compta/clients.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/compta/facture/card-rec.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/facture/card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/facture/class/api_invoices.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/compta/facture/class/facture-rec.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/facture/class/facture.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/localtax/card.php' => ['PhanUndeclaredGlobalVariable'],
@@ -72,7 +71,7 @@ return [
         'htdocs/compta/tva/index.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/tva/quadri_detail.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgument'],
         'htdocs/contrat/card.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanTypeMismatchDimFetch', 'PhanUndeclaredProperty'],
+        'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_sendmails.inc.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/core/ajax/ajaxdirtree.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
@@ -105,7 +104,6 @@ return [
         'htdocs/core/menus/standard/auguria.lib.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/asset/mod_asset_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/bom/mod_bom_advanced.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/cheque/doc/pdf_blochet.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/cheque/modules_chequereceipts.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/commande/doc/pdf_einstein.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
@@ -228,7 +226,6 @@ return [
         'htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/public/members/new.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/payment/newpayment.php' => ['PhanUndeclaredProperty'],
-        'htdocs/public/payment/paymentok.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/public/project/suggestbooth.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/public/project/suggestconference.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/public/project/viewandvote.php' => ['PhanUndeclaredGlobalVariable'],
