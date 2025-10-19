@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class LoanSchedule extends CommonObject
 	public $table_element = 'loan_schedule';
 
 	/**
-	 * @var int Loan ID
+	 * @var ?int Loan ID
 	 */
 	public $fk_loan;
 
@@ -50,6 +50,7 @@ class LoanSchedule extends CommonObject
 	 * @var int
 	 */
 	public $bank_account;
+
 	/**
 	 * @var int
 	 */
@@ -83,33 +84,33 @@ class LoanSchedule extends CommonObject
 	public $amount_interest;
 
 	/**
-	 * @var int Payment Type ID
+	 * @var ?int Payment Type ID
 	 */
 	public $fk_typepayment;
 
 	/**
-	 * @var string      Payment reference
+	 * @var ?string      Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
 	/**
-	 * @var int Bank ID
+	 * @var ?int Bank ID
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int Loan Payment ID
+	 * @var ?int Loan Payment ID
 	 */
 	public $fk_payment_loan;
 
 	/**
-	 * @var int Bank ID
+	 * @var ?int Bank ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int User ID
+	 * @var ?int User ID
 	 */
 	public $fk_user_modif;
 

@@ -71,6 +71,7 @@ class modUser extends DolibarrModules
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("main", "users", "companies", "members", "salaries", "hrm");
 		$this->always_enabled = true; // Can't be disabled
+		//$this->auto_enabled = true;	// always_enabled already set
 
 		// Constants
 		$this->const = array();

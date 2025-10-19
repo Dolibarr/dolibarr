@@ -633,6 +633,10 @@ DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country)
 UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
 
 
+-- Fix status of thirdparty when there is at least one win opportunity
+UPDATE llx_societe as s SET s.client = 1 WHERE s.client = 0 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
+UPDATE llx_societe as s SET s.client = 3 WHERE s.client = 2 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
+
 -- Drop duplicate indexes not named correctly and create the only one we should have
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_2;

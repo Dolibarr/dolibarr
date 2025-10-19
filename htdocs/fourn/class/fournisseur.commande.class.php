@@ -719,7 +719,7 @@ class CommandeFournisseur extends CommonOrder
 
 					// Take better packaging for $objp->qty (first supplier ref quantity <= $objp->qty)
 					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.$this->db->prefix()."product_fournisseur_price";
-					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
+					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('productsupplierprice').")";
 					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
 					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
 					$sqlsearchpackage .= " AND quantity <= ".((float) $objp->qty);	// required to be qualified
@@ -800,6 +800,10 @@ class CommandeFournisseur extends CommonOrder
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_order_advance", "validate"))) {
 			$this->db->begin();
 
+			if (!getDolGlobalBool('SUPPLIER_ORDER_NOCHECK_ONBUY_PRODUCTS_ONVALID') && !$this->checkActiveProductInLines('onbuy')) {
+				dol_syslog(get_class($this)."::valid checkActiveProductInLines ".$this->error, LOG_INFO);
+				return -1;
+			}
 			// Definition of supplier order numbering model name
 			$soc = new Societe($this->db);
 			$soc->fetch($this->fourn_id);
@@ -1588,7 +1592,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $conf;
 
 		$this->db->begin();
 
@@ -1698,7 +1702,7 @@ class CommandeFournisseur extends CommonOrder
 						$line->localtax2_tx,
 						$line->fk_product,
 						0,
-						$line->ref_fourn, // $line->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
+						$line->ref_supplier ? $line->ref_supplier : $line->ref_fourn, 			// $line->ref_fourn comes from field ref into table of lines. Value may be a ref that does not exists anymore, so we first try with value of product
 						$line->remise_percent,
 						'HT',
 						0,

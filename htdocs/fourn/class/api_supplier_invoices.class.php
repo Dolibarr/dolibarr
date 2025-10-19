@@ -573,7 +573,7 @@ class SupplierInvoices extends DolibarrApi
 		$paiement->paiementid = $payment_mode_id;
 		$paiement->paiementcode = (string) dol_getIdFromCode($this->db, (string) $payment_mode_id, 'c_paiement', 'id', 'code', 1);
 		$paiement->num_payment = $num_payment;
-		$paiement->note_public = $comment;
+		$paiement->note_private = $comment;
 
 		$paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
 		if ($paiement_id < 0) {
@@ -592,6 +592,96 @@ class SupplierInvoices extends DolibarrApi
 		$this->db->commit();
 
 		return $paiement_id;
+	}
+
+	/**
+	 * Sets a supplier invoice as paid
+	 *
+	 * @param   int     $id             Supplier invoice ID
+	 * @param   string  $close_code     Optional close code (e.g. discount/escompte case)
+	 * @param   string  $close_note     Optional close note/comment
+	 * @return  Object                  Object with cleaned properties
+	 *
+	 * @url POST {id}/settopaid
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function settopaid($id, $close_code = '', $close_note = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'facture', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->invoice->setPaid(DolibarrApiAccess::$user, $close_code, $close_note);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. Maybe object is already paid or not payable.');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error: ' . $this->invoice->error);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
+
+		return $this->_cleanObjectDatas($this->invoice);
+	}
+
+	/**
+	 * Sets a supplier invoice as unpaid
+	 *
+	 * @param   int     $id             Supplier invoice ID
+	 * @return  Object                  Object with cleaned properties
+	 *
+	 * @url POST {id}/settounpaid
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function settounpaid($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'facture', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->invoice->setUnpaid(DolibarrApiAccess::$user);
+		if ($result == 0) {
+			throw new RestException(304, 'Nothing done.');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error: ' . $this->invoice->error);
+		}
+
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
+
+		return $this->_cleanObjectDatas($this->invoice);
 	}
 
 	/**

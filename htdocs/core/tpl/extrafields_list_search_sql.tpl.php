@@ -24,7 +24,9 @@
 /**
  * @var Conf $conf
  * @var CommonObject $object
+ * @var DoliDB $db
  * @var ExtraFields $extrafields
+ * @var string $sql
  */
 
 // Protection to avoid direct call of template
