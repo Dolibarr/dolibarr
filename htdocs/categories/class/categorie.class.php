@@ -71,6 +71,7 @@ class Categorie extends CommonObject
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
 	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
 	const TYPE_PROPOSAL	            = 'propal';
+	const TYPE_PROJECT_TASK			= 'project_task';
 
 
 	/**
@@ -103,7 +104,8 @@ class Categorie extends CommonObject
 		'supplier_order'		=> 20,
 		'supplier_invoice'		=> 21,
 		'supplier_proposal'		=> 22,
-		'propal'				=> 23
+		'propal'				=> 23,
+		'project_task'			=> 24
 	);
 
 	/**
@@ -132,6 +134,7 @@ class Categorie extends CommonObject
 		17 => 'invoice',
 		20 => 'supplier_order',
 		21 => 'supplier_invoice'
+		24 => 'project_task'
 	);
 	*/
 
@@ -177,8 +180,9 @@ class Categorie extends CommonObject
 		'invoice'				=> 'Facture',
 		'supplier_order'		=> 'CommandeFournisseur',
 		'supplier_invoice'		=> 'FactureFournisseur',
-		'supplier_proposal' => 'SupplierProposal',
-		'propal' => 'Propal',
+		'supplier_proposal' 	=> 'SupplierProposal',
+		'propal' 				=> 'Propal',
+		'project_task'			=> 'Task'
 	);
 
 	/**
@@ -205,8 +209,9 @@ class Categorie extends CommonObject
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
 		'supplier_invoice'		=> 'SuppliersInvoices',
-		'propal' => 'Proposals',
-		'supplier_proposal' => 'SupplierProposals',
+		'propal' 				=> 'Proposals',
+		'supplier_proposal' 	=> 'SupplierProposals',
+		'project_task'			=> 'Tasks'
 	);
 
 	/**
@@ -226,7 +231,8 @@ class Categorie extends CommonObject
 		'order'					=> 'commande',
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
-		'supplier_invoice'		=> 'facture_fourn'
+		'supplier_invoice'		=> 'facture_fourn',
+		'project_task'			=> 'projet_task'
 	);
 
 	/**
@@ -295,6 +301,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
 	 * @see Categorie::TYPE_SUPPLIER_INVOICE
+	 * @see Categorie::TYPE_PROJECT_TASK
 	 */
 	public $type;
 
@@ -766,6 +773,7 @@ class Categorie extends CommonObject
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
 			'categorie_project' => 'fk_categorie',
+			'categorie_project_task' => 'fk_categorie',
 			'categorie_societe' => 'fk_categorie',
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
 			'categorie_warehouse' => 'fk_categorie',
