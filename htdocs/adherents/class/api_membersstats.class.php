@@ -45,7 +45,7 @@ class Membersstats extends DolibarrApi
 	{
 		global $db, $conf;
 		$this->db = $db;
-		$this->memberstats = new AdherentStats($this->db);
+		$this->memberstats = new AdherentStats($this->db, DolibarrApiAccess::$user->socid, DolibarrApiAccess::$user->id);
 	}
 
 	/**
