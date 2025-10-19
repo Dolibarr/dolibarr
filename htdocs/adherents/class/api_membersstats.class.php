@@ -49,25 +49,19 @@ class Membersstats extends DolibarrApi
 	}
 
 	/**
-	 * List subscriptions
+	 * Last Modified Members
 	 *
-	 * Get a list of subscriptions
+	 * Get an array of statistics for last modified members
 	 *
 	 * @param int    $max  		Max numbers of members
-	 * @return array 			Array of statistics for lest modified members
+	 * @return array 			Array of statistics for last modified members
 	 * @phan-return array<int,array{id:int,ref:string,firstname:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>
 	 * @phpstan-return array<int,array{id:int,ref:string,firstname:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>
 	 *
 	 * @throws	RestException	403		Access denied
-	 * @throws	RestException	404		No Subscription found
-	 * @throws	RestException	503		Error when retrieving Subscription list
 	 */
 	public function getLastModifiedMembers($max)
 	{
-		global $conf;
-
-		$obj_ret = array();
-
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(403);
 		}
