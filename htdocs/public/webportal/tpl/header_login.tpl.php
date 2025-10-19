@@ -73,7 +73,7 @@ top_httphead();
 	}
 
 	$langs->load("main", 0, 1);
-	$bodyClass[] = ($langs->trans("DIRECTION") == 'rtl' ? 'direction-rtl' : 'direction-rtl');
+	$bodyClass[] = ($langs->trans("DIRECTION") == 'rtl' ? 'direction-rtl' : 'direction-ltr');
 
 	// TODO add HOOK here to allow customise headers add body class
 
