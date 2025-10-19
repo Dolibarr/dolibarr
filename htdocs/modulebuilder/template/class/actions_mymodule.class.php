@@ -102,12 +102,9 @@ class ActionsMyModule extends CommonHookActions
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $user, $langs;
-
 		$error = 0; // Error counter
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		// @phan-suppress-next-line PhanPluginEmptyStatementIf
 		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {	    // do something only for the context 'somecontext1' or 'somecontext2'
 			// Do what you want here...
 			// You can for example load and use call global vars like $fieldstosearchall to overwrite them, or update the database depending on $action and GETPOST values.
@@ -216,7 +213,8 @@ class ActionsMyModule extends CommonHookActions
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
 		// @phan-suppress-next-line PhanPluginEmptyStatementIf
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {
+			// do something only for the context 'somecontext1' or 'somecontext2'
 		}
 
 		return $ret;
@@ -303,13 +301,14 @@ class ActionsMyModule extends CommonHookActions
 	 * Overload the restrictedArea function : check permission on an object
 	 *
 	 * @param	array<string,mixed>	$parameters		Hook metadata (context, etc...)
+	 * @param   CommonObject    	$object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param	string				$action			Current action (if set). Generally create or edit or null
 	 * @param	HookManager			$hookmanager	Hook manager propagated to allow calling another hook
 	 * @return	int									Return integer <0 if KO,
 	 *												=0 if OK but we want to process standard actions too,
 	 *												>0 if OK and we want to replace standard actions.
 	 */
-	public function restrictedArea($parameters, &$action, $hookmanager)
+	public function restrictedArea($parameters, $object, &$action, $hookmanager)
 	{
 		global $user;
 
@@ -332,7 +331,7 @@ class ActionsMyModule extends CommonHookActions
 	 * @param	array<string,mixed>	$parameters		Array of parameters
 	 * @param	CommonObject		$object			The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param	string				$action			'add', 'update', 'view'
-	 * @param	Hookmanager			$hookmanager	Hookmanager
+	 * @param	HookManager			$hookmanager	Hookmanager
 	 * @return	int									Return integer <0 if KO,
 	 *												=0 if OK but we want to process standard actions too,
 	 *												>0 if OK and we want to replace standard actions.
@@ -382,7 +381,7 @@ class ActionsMyModule extends CommonHookActions
 
 
 	/**
-	 * Overload the showLinkToObjectBlock function : add or replace array of object likable
+	 * Overload the showLinkToObjectBlock function : add or replace array of object linkable
 	 *
 	 * @param	array<string,mixed>	$parameters		Hook metadata (context, etc...)
 	 * @param	CommonObject		$object			The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)

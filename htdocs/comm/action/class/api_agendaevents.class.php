@@ -130,7 +130,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		// case of external user
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;

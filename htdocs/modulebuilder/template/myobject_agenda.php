@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,20 +76,19 @@ if (!$res && file_exists("../../../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
-
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+dol_include_once('/mymodule/class/myobject.class.php');
+dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "other"));
@@ -232,7 +231,7 @@ if ($object->id > 0) {
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			}
 			$morehtmlref.=' : ';
 			if ($action == 'classify') {

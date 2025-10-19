@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'salaries', '', '', '');
+//restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
@@ -78,7 +78,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
@@ -97,7 +97,7 @@ $moreforfilter = '';
 $totalnboflines = -1;
 
 if (!$rowid) {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}

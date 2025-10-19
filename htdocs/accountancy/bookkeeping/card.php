@@ -606,13 +606,7 @@ if ($action == 'create') {
 			print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
 		}*/
 
-		$head = array();
-		$h = 0;
-		$head[$h][0] = DOL_URL_ROOT."/accountancy/bookkeeping/card.php".'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
-		$head[$h][1] = $langs->trans("Transaction");
-		$head[$h][2] = 'transaction';
-		$h++;
-
+		$head = accounting_transaction_prepare_head($object, $mode, $type, $backtopage);
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
 		//$object->label = $object->doc_ref;

@@ -3,10 +3,10 @@ MenuFinancial=Obračunavanje | Plačilo
 TaxModuleSetupToModifyRules=Pojdite na nastavitev <a href="%s">Davčnega modula</a>  za spremembo kalkulacijskih pravil
 TaxModuleSetupToModifyRulesLT=Pojdite na <a href="%s"> Nastavitev podjetja </a>, da spremenite pravila za izračun
 OptionMode=Opcija za računovodstvo
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=V tem kontekstu je letni promet kalkuliran na osnovi računov (datumov potrditve). Ko računi zapadejo, ne glede ali so bili plačani ali ne, se upoštevajo v prikazu letnega prometa.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=Funkcija je na voljo samo pri računovodskem načinu KREDIT-DEBIT (Glejte konfiguracijo računovodskega modula)
 VATReportBuildWithOptionDefinedInModule=Tukaj prikazani zneski so preračunani po pravilih, ki so definirana v nastavitvah modula davkov.
 LTReportBuildWithOptionDefinedInModule=Zneski, prikazani tukaj, so izračunani z uporabo pravil, ki jih določi nastavitev podjetja.
@@ -302,7 +302,6 @@ ByVatRate=Po stopnji prometnega davka
 TurnoverbyVatrate=Promet fakturiran po stopnji prometnega davka
 TurnoverCollectedbyVatrate=Promet, zbran po stopnji prometnega davka
 PurchasebyVatrate=Nakup po stopnji prometnega davka
-LabelToShow=Kratek naziv
 PurchaseTurnover=Nabavni promet
 PurchaseTurnoverCollected=Zbrani promet od nabave
 RulesPurchaseTurnoverDue=- Vključuje zapadle račune dobavitelja, ne glede na to, ali so plačani ali ne. <br> - Temelji na datumu računa teh računov. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Janniaux <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -217,7 +217,7 @@ class AccountingJournal extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/accountancy/admin/journals_list.php?id=35';
+		$url = dolBuildUrl(DOL_URL_ROOT.'/accountancy/admin/journals_list.php', ['id' => 35]);
 
 		$label = '<u>'.$langs->trans("ShowAccountingJournal").'</u>';
 		if (!empty($this->code)) {

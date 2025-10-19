@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Puede crear una nueva página o importar una pl
 SyntaxHelp=Ayuda en la sintaxis del código
 YouCanEditHtmlSourceckeditor=Puede editar código fuente HTML utilizando el botón "Origen" en el editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Puede incluir código PHP en esta fuente usando las etiquetas <strong>&lt;?php ?&gt;</strong>. Las siguientes variables globales están disponibles: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> También puede incluir el contenido de otra página/contenedor con la siguiente sintaxis:<br><strong>&lt;?php includeContainer('alias_del_contenedor_a_incluir'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Puede realizar una redirección a otra página/contenedor con la siguiente sintaxis (Nota: no muestre ningún contenido antes de una redirección):<br><strong>&lt;?php redirectToContainer('alias_del_contenedor_al_que_redireccionar'); ?&gt;</strong><br>También puede realizar una redirección con parámetros GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Para agregar un enlace a otra página, use la sintaxis:<br><strong>&lt;a href="alias_de_página_a_la_que_enlaza.php"&gt;mienlace&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Puede establecer dinámicamente el <strong>título SEO y las metaetiquetas</strong> (título, palabras clave, descripción). Simplemente defina las siguientes variables: <br> <code>$__PAGE_TITLE__ = "Valor del título …"; </code><br> <code>$__PAGE_KEYWORDS__ = "palabraclave1, palabraclave2, palabraclave3 …"; // Separados por comas</code><br> <code>$__PAGE_DESC__ = "Descripción ...";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Puede establecer dinámicamente el título SEO y las metaetiquetas <strong> (título, palabras clave, descripción). Simplemente defina las siguientes variables: <br> <code>define('__SEO_PAGE_TITLE__', "Valor del título …"); </code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'palabra clave1, palabra clave2, palabra clave3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Descripción ...");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Para incluir un enlace <strong>para descargar</strong> un archivo almacenado en el directorio <strong>documents</strong>, use el archivo <strong>document.php</strong> contenedor: <br>Ejemplo, para un archivo en documentos/ecm (que debe registrarse), la sintaxis es: <br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un archivo en documentos/medios (directorio abierto para acceso público), la sintaxis es: <br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Para un archivo compartido con un enlace compartido (acceso abierto usando la clave hash de uso compartido del archivo), la sintaxis es: <br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Para incluir una <strong>image</strong> almacenada en el directorio <strong>medias</strong> (directorio abierto para acceso público), use la ruta relativa que comienza con <strong>/medias</strong>, ejemplo:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Usted clona una página como una traducción
 ParentPageId=ID de la página principal
 WebsiteId=ID del sitio web
 CreateByFetchingExternalPage=Crear página/contenedor mediante la búsqueda de la página de la URL externa ...
-OrEnterPageInfoManually=O crear una página vacía desde cero ...
+OrEnterPageInfoManually=Crear página desde cero o desde una plantilla de página...
 FetchAndCreate=Buscar y crear
 ExportSite=Exportar sitio web
 ImportSite=Importar plantilla de sitio web
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Lo sentimos, este sitio web está actualmente fue
 WEBSITE_USE_WEBSITE_ACCOUNTS=Habilitar la tabla de cuentas del sitio web para terceros
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Habilitar la tabla para almacenar las cuentas del sitio web (inicio de sesión/contraseña) para cada tercero
 YouMustDefineTheHomePage=Antes debe definir la página de inicio por defecto
-OnlyEditionOfSourceForGrabbedContentFuture=Advertencia: La creación de una página web mediante la importación de una página web externa está reservada para usuarios experimentados. Según la complejidad de la página de origen, el resultado de la importación puede diferir del original. Además, si la página de origen utiliza estilos CSS comunes o JavaScript conflictivo, puede afectar el aspecto o las funciones del editor de sitios web al trabajar en esta página. Este método es una forma más rápida de crear una página, pero se recomienda crear la página nueva desde cero o a partir de una plantilla de página sugerida.<br>Ten en cuenta también que el editor en línea puede no funcionar correctamente cuando se utiliza en una página externa capturada.
+OnlyEditionOfSourceForGrabbedContentFuture=Advertencia: La creación de una página web mediante la importación de una página externa está reservada para usuarios experimentados y solo funciona con páginas renderizadas con HTML y CSS. No se admite la importación de páginas renderizadas con frameworks JS. Dependiendo de la complejidad de la página de origen, el resultado de la importación probablemente difiera del de la página original. Además, si la página de origen utiliza estilos CSS comunes o JavaScript conflictivo, podría afectar la apariencia o las funciones del editor web al trabajar en ella. Este método es una forma rápida de crear una página para usuarios muy avanzados cuando la página de origen lo permite, pero se recomienda crear la página desde cero o a partir de una plantilla sugerida. <br>Tenga en cuenta que el editor en línea podría no funcionar correctamente al utilizarlo en una página que se ha capturado.
 OnlyEditionOfSourceForGrabbedContent=Solo es posible modificar el código fuente HTML cuando el contenido se obtiene de un sitio externo
 GrabImagesInto=Obtener también imágenes encontradas en css y página.
 ImagesShouldBeSavedInto=Las imágenes deben guardarse en el directorio
@@ -423,8 +423,8 @@ contactFormPhone = Teléfono
 contactFormSubjectEntered = Asunto ingresado
 contactFormMessageLabel = Mensaje
 contactFormSuccessAlert = Gracias por su mensaje. Nos pondremos en contacto con usted en breve.
-socials=Red social
-rgpd=RGPD
+socials=Redes sociales
+rgpd=GDPR
 joinUs=Únase a nosotros
 home=Inicio
 anonymous=Anónimo
@@ -455,3 +455,4 @@ SampleGoalOne=Promover la cooperación y la solidaridad entre los miembros.
 SampleGoaltwo=Fomentar prácticas responsables y sostenibles en todas las actividades.
 SampleGoalthree=Apoye proyectos impactantes que beneficien a la sociedad en su conjunto.
 SHOW_LANG_SELECTOR=Menú desplegable de selección de idioma para mostrar
+ForAdvancedWebmastersOnly=Sólo para webmasters técnicos

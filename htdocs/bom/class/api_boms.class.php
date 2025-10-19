@@ -116,7 +116,7 @@ class Boms extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new BOM($this->db);
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -164,9 +164,10 @@ class Boms extends DolibarrApi
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$bom_static = new BOM($this->db);
 				if ($bom_static->fetch($obj->rowid)) {

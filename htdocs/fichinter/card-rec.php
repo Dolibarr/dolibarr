@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -510,11 +510,11 @@ if ($action == 'create') {
 			$object->fetch_thirdparty();
 
 			$author = new User($db);
-			$author->fetch((int) $object->user_author);
+			$author->fetch((int) $object->user_author_id);
 
 			$head = fichinter_rec_prepare_head($object);
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, 'intervention');
+			print dol_get_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, $object->picto);
 
 			// Intervention card
 			$linkback = '<a href="card-rec.php">'.$langs->trans("BackToList").'</a>';
@@ -530,7 +530,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->hasRight('ficheinter', 'creer')) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">';
 						$morehtmlref .= img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
@@ -747,8 +747,7 @@ if ($action == 'create') {
 
 				// TODO: $objp is not set here, so why test?
 				if (isset($objp) && is_object($objp)) {  // $objp always null @phpstan-ignore-line
-					// Try to enhance type detection using date_start and date_end for free lines when type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines when type was not saved.
 					if (!empty($objp->date_start)) {
 						$type = 1;
 					}

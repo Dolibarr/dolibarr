@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011       Regis Houssin     	<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW				    <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,18 +41,18 @@ function categories_prepare_head(Categorie $object, $type)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&amp;type='.$type;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/viewcat.php', ['id' => $object->id, 'type' => $type]);
 	$head[$h][1] = $langs->trans("Category");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/categories/photos.php?id='.$object->id.'&amp;type='.$type;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/photos.php', ['id' => $object->id, 'type' => $type]);
 	$head[$h][1] = $langs->trans("Photos");
 	$head[$h][2] = 'photos';
 	$h++;
 
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/traduction.php', ['id' => $object->id, 'type' => $type]);
 		$head[$h][1] = $langs->trans("Translation");
 		$nbTranslations = (!is_null($object->multilangs) && is_countable($object->multilangs)) ? count($object->multilangs) : 0;
 		if ($nbTranslations > 0) {
@@ -62,7 +62,7 @@ function categories_prepare_head(Categorie $object, $type)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/categories/info.php?id='.$object->id.'&amp;type='.$type;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/info.php', ['id' => $object->id, 'type' => $type]);
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -96,12 +96,12 @@ function categoriesadmin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/categories/admin/categorie.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/admin/categorie.php');
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'setup';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/categories/admin/categorie_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/admin/categorie_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsCategories");
 	$nbExtrafields = $extrafields->attributes['categorie']['count'];
 	if ($nbExtrafields > 0) {

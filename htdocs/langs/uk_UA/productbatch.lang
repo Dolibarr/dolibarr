@@ -50,4 +50,5 @@ ToReplace=Замінити
 CantMoveNonExistantSerial=Помилка. Ви просите перенести платівку для серіалу, який більше не існує. Можливо, ви берете один і той же серійний номер на тому самому складі кілька разів в одній відправці або він використовувався іншим відправленням. Видаліть цю відправку та підготуйте іншу.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Таблиця lot незавершила відновлення з параметром '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Потрібна корекція запасу через унікальний серійний номер.
-ErrorBatchesNeedStockManagement=Помилка. Продукт з керуванням партіями/лотами має керуватися на складі.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

@@ -526,7 +526,8 @@ if ($action == 'create') {
 
 	print '<div class="center">';
 	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
-	print '<input type="checkbox" checked value="1" name="closepaidtva"> <span class="">'.$langs->trans("ClosePaidVATAutomatically").'</span>';
+	print '<input type="checkbox" checked value="1" id="closepaidtva" name="closepaidtva" class="marginrightonly">';
+	print '<label for="closepaidtva">'.$langs->trans("ClosePaidVATAutomatically").'</label>';
 	print '<br>';
 	print '</div>';
 
@@ -556,7 +557,7 @@ if ($id > 0) {
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVAT', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVAT', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 0);
 	}
 
 	if ($action == 'paid') {

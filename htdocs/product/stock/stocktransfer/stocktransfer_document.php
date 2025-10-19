@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +80,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 //if ($id > 0 || !empty($ref)) $upload_dir = $conf->stocktransfer->multidir_output[$object->entity?$object->entity:$conf->entity] . "/stocktransfer/" . dol_sanitizeFileName((string) $object->id);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->stocktransfer->multidir_output[$object->entity ? $object->entity : $conf->entity]."/stocktransfer/".dol_sanitizeFileName($object->ref);
 }
@@ -87,7 +88,7 @@ if ($id > 0 || !empty($ref)) {
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'stocktransfer', $object->id);
+//restrictedArea($user, 'stocktransfer', $object->id);
 
 $permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
@@ -111,7 +112,7 @@ $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock-stocktransfer_stocktransfer_document');
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	/*
 	 * Show tabs
 	 */

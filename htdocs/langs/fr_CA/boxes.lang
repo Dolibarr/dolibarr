@@ -62,7 +62,6 @@ NoRecordedProspects=Aucune perspective enregistrée
 NoRecordedContracts=Aucun contrat enregistré
 NoRecordedInterventions=Aucune intervention enregistrée
 NoRecordedBankAccounts=Aucun compte financier enregistré
-NoSupplierOrder=Aucune commande d'achat enregistrée
 BoxLatestSupplierOrders=Dernières commandes d'achat
 BoxLatestSupplierOrdersAwaitingReception=Derniers bons de commande (avec une réception en attente)
 BoxSuppliersInvoicesPerMonth=Factures des fournisseurs par mois

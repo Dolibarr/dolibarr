@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -294,7 +294,7 @@ class ContratLigne extends CommonObjectLine
 		//'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
 		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
 		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'Product', 'enabled' => 1, 'visible' => -1, 'position' => 75),
-		//'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
+		//'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
 		'note_private' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 105),
 		'note_public' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
@@ -395,7 +395,7 @@ class ContratLigne extends CommonObjectLine
 
 		$datas = [];
 		$datas['label'] = $langs->trans("ShowContractOfService").': '.$this->label;
-		if (empty($datas['label'])) {
+		if (empty($this->label)) {
 			$datas['label'] = $this->description;
 		}
 
@@ -415,7 +415,7 @@ class ContratLigne extends CommonObjectLine
 
 		$result = '';
 		$label = $langs->trans("ShowContractOfService").': '.$this->label;
-		if (empty($label)) {
+		if (empty($this->label)) {
 			$label = $this->description;
 		}
 		$classfortooltip = 'classfortooltip';
@@ -540,11 +540,6 @@ class ContratLigne extends CommonObjectLine
 				$this->date_start_real = $this->db->jdate($obj->date_start_real);
 				$this->date_end = $this->db->jdate($obj->date_end);
 				$this->date_end_real = $this->db->jdate($obj->date_end_real);
-				// For backward compatibility
-				//$this->date_ouverture_prevue = $this->db->jdate($obj->date_ouverture_prevue);
-				//$this->date_ouverture = $this->db->jdate($obj->date_ouverture);
-				//$this->date_fin_validite = $this->db->jdate($obj->date_fin_validite);
-				//$this->date_cloture = $this->db->jdate($obj->date_cloture);
 
 				$this->tva_tx = $obj->tva_tx;
 				$this->vat_src_code = $obj->vat_src_code;
@@ -877,12 +872,10 @@ class ContratLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
 
 			// Insert of extrafields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$this->db->rollback();
-					return -1;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
 			}
 
 			if (!$notrigger) {
@@ -922,13 +915,14 @@ class ContratLigne extends CommonObjectLine
 		$this->db->begin();
 
 		$this->statut = ContratLigne::STATUS_OPEN;
+		$this->status = ContratLigne::STATUS_OPEN;
 		$this->date_start_real = $date;
 		$this->date_end = $date_end;
 		$this->fk_user_ouverture = $user->id;
 		$this->date_end_real = null;
 		$this->commentaire = $comment;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) $this->statut).",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) $this->status).",";
 		$sql .= " date_ouverture = ".(dol_strlen((string) $this->date_start_real) != 0 ? "'".$this->db->idate($this->date_start_real)."'" : "null").",";
 		if ($date_end >= 0) {
 			$sql .= " date_fin_validite = ".(dol_strlen($this->date_end) != 0 ? "'".$this->db->idate($this->date_end)."'" : "null").",";
@@ -941,6 +935,19 @@ class ContratLigne extends CommonObjectLine
 		dol_syslog(get_class($this)."::active_line", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			if ($date_end >= 0) {
+				// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
+				$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
+				$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+				$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+				$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
+				if (!$resqltoupdatecontract) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
+			}
+
 			// Call trigger
 			$result = $this->call_trigger('LINECONTRACT_ACTIVATE', $user);
 			if ($result < 0) {
@@ -994,6 +1001,17 @@ class ContratLigne extends CommonObjectLine
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
+			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
+			$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+			$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+			$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
+			if (!$resqltoupdatecontract) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('LINECONTRACT_CLOSE', $user);

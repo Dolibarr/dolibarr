@@ -3,10 +3,10 @@ MenuFinancial=Faturimi | Pagesa
 TaxModuleSetupToModifyRules=Shko te <a href="%s">Konfigurimi i modulit të taksave</a> për të modifikuar rregullat për llogaritjen
 TaxModuleSetupToModifyRulesLT=Shko te <a href="%s">Konfigurimi i kompanisë</a> për të modifikuar rregullat për llogaritjen
 OptionMode=Opsioni për kontabilitet
-OptionModeTrue=Kontabiliteti akrual
-OptionModeVirtual=Kontabiliteti i parave të gatshme
-OptionModeTrueDesc=Në këtë kontekst, xhiroja llogaritet mbi pagesat (data e pagesave). Vlefshmëria e shifrave sigurohet vetëm nëse kontabiliteti kontrollohet nëpërmjet të dhënave hyrëse/dalëse të pagesave.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Në këtë kontekst, qarkullimi llogaritet mbi fatura (data e validimit). Kur këto fatura janë të paguara, pavarësisht nëse janë paguar apo jo, ato renditen në xhiron e prodhimit.
+OptionModeTrueDesc=Në këtë kontekst, xhiroja llogaritet mbi pagesat (data e pagesave). Vlefshmëria e shifrave sigurohet vetëm nëse kontabiliteti kontrollohet nëpërmjet të dhënave hyrëse/dalëse të pagesave.
 FeatureIsSupportedInInOutModeOnly=Funksioni disponohet vetëm në modalitetin e kontabilitetit KREDITË-BORXHET (Shihni konfigurimin e modulit të kontabilitetit)
 VATReportBuildWithOptionDefinedInModule=Shumat e paraqitura këtu llogariten duke përdorur rregullat e përcaktuara nga konfigurimi i modulit tatimor.
 LTReportBuildWithOptionDefinedInModule=Shumat e paraqitura këtu llogariten duke përdorur rregullat e përcaktuara nga konfigurimi i Kompanisë.
@@ -302,7 +302,6 @@ ByVatRate=Sipas normës së taksës së shitjes
 TurnoverbyVatrate=Qarkullimi i faturuar sipas normës tatimore të shitjes
 TurnoverCollectedbyVatrate=Qarkullimi i mbledhur nga norma e tatimit mbi shitjen
 PurchasebyVatrate=Norma tatimore e blerjes sipas shitjes
-LabelToShow=Etiketë e shkurtër
 PurchaseTurnover=Blerja e qarkullimit
 PurchaseTurnoverCollected=Qarkullimi i blerjes i mbledhur
 RulesPurchaseTurnoverDue=- Përfshin faturat e papaguara të furnizuesit pavarësisht nëse ato janë paguar apo jo. <br>- Bazohet në datën e faturës së këtyre faturave.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rregulli për datat e rreshtave
 Prepaid=Parapaguar
 Postpaid=Postpaid
 SetRuleForLinesDates=Vendos rregullin për datat e rreshtave
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

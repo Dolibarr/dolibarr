@@ -1,17 +1,13 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Configuración del módulo ReceiptPrinter
 PrinterAdded=Impresora %s agregada
 TestSentToPrinter=Prueba enviada a la impresora %s
 ReceiptPrinter=Impresoras de recibos
-ReceiptPrinterDesc=Configuración de impresoras de recibos
-ReceiptPrinterProfileDesc=Descripción del perfil de la impresora de recibos
 ListPrinters=Lista de impresoras
 SetupReceiptTemplate=Configuración de plantilla
 CONNECTOR_DUMMY=Impresora ficticia
 CONNECTOR_FILE_PRINT=Impresora local
 CONNECTOR_CUPS_PRINT=Impresora de tazas
 CONNECTOR_DUMMY_HELP=Impresora falsa para prueba, no hace nada
-CONNECTOR_WINDOWS_PRINT_HELP=LPT1, COM1, smb://FooUser:secret@nombre de la computadora/grupo de trabajo/Impresora de recibos
 CONNECTOR_CUPS_PRINT_HELP=Nombre de la impresora CUPS, ejemplo: HPRT_TP805L
 PROFILE_SIMPLE=perfil sencillo
 PROFILE_STAR=Perfil de estrella
@@ -35,7 +31,6 @@ DateInvoiceWithTime=Fecha y hora de la factura
 DOL_VALUE_MONTH_LETTERS=Mes de la factura en letras
 DOL_VALUE_MONTH=Mes de la factura
 DOL_VALUE_DAY=día de la factura
-DOL_VALUE_DAY_LETTERS=Inovice day en letras
 DOL_LINE_FEED_REVERSE=Avance de línea inverso
 InvoiceID=identificación de la factura
 DOL_PRINT_OBJECT_LINES=Líneas de factura

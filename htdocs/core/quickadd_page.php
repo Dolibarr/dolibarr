@@ -103,7 +103,7 @@ $hookmanager->initHooks(array('quickaddform'));
 
 // Show all forms
 print "\n";
-print "<!-- Begin SearchForm -->\n";
+print "<!-- Begin QuickAddForm -->\n";
 print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
@@ -112,7 +112,7 @@ print printDropdownQuickadd(1);
 
 print '</div>'."\n";
 print '</div></div>';
-print "\n<!-- End SearchForm -->\n";
+print "\n<!-- End QuickAddForm -->\n";
 
 
 print '</div>';

@@ -4,7 +4,7 @@
  * Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,17 +62,18 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
-require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ *
+ * @var string $dolibarr_main_db_readonly
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
+require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Check parameters
 if (!isset($argv[1]) || !$argv[1]) {
@@ -109,12 +110,6 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=
 $ini_path = php_ini_loaded_file();
 print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
-// Check module cron is activated
-if (!isModEnabled('cron')) {
-	print "Error: module Scheduled jobs (cron) not activated\n";
-	exit(1);
-}
-
 // Check security key
 if ($key != getDolGlobalString('CRON_KEY')) {
 	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
@@ -128,7 +123,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 
 // If param userlogin is reserved word 'firstadmin'
 if ($userlogin == 'firstadmin') {
-	$sql = 'SELECT login, entity from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
+	$sql = 'SELECT login, entity FROM '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -202,7 +197,7 @@ $db->query($sql);
 dol_syslog("cron_run_jobs.php search qualified job using filter: ".json_encode($filter), LOG_DEBUG);
 echo "cron_run_jobs.php search qualified job using filter: ".json_encode($filter)."\n";
 
-$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, ($forcequalified ? -1 : 0));
+$result = $object->fetchAll('ASC,ASC,ASC', 't.entity,t.priority,t.rowid', 0, 0, 1, $filter, ($forcequalified ? -1 : 0));
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error ".$object->error, LOG_ERR);
@@ -220,7 +215,9 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
-		'@phan-var-force CronJob $line';
+		/** @var Cronjob $line */
+		'@phan-var-force Cronjob $line';
+
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -237,6 +234,13 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
 			$conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
 			$mysoc->setMysoc($conf);
+
+			// Check module cron is activated
+			if (!isModEnabled('cron')) {
+				print "Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
+				dol_syslog("cron_run_jobs.php: Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity, LOG_INFO);
+				continue;
+			}
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
 			if ($conf->entity != $user->entity) {

@@ -65,6 +65,16 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -76,17 +86,8 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
 
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
@@ -352,6 +353,10 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 //}
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
+	/**
+	 * @var array<strint,mixed>		$stripearrayofkeys
+	 * @var array<int,mixed>		$stripearrayofkeysbyenv
+	 */
 }
 
 // Initialize $validpaymentmethod
@@ -608,7 +613,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 
 				$service = 'StripeTest';
 				$servicestatus = 0;
-				if (getDolGlobalString('STRIPE_LIVE') && !GETPOSTINT('forcesandbox')) {
+				if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOSTINT('forcesandbox') */) {
 					$service = 'StripeLive';
 					$servicestatus = 1;
 				}
@@ -818,7 +823,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 		$service = 'StripeTest';
 		$servicestatus = 0;
-		if (getDolGlobalString('STRIPE_LIVE') && !GETPOSTINT('forcesandbox')) {
+		if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOSTINT('forcesandbox') */) {
 			$service = 'StripeLive';
 			$servicestatus = 1;
 		}
@@ -970,10 +975,10 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 
 
 // Show sandbox warning
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal') && (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOSTINT('forcesandbox'))) {		// We can force sand box with param 'forcesandbox'
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal') && (getDolGlobalString('PAYPAL_API_SANDBOX')/* || GETPOSTINT('forcesandbox')*/)) {		// We can force sand box with param 'forcesandbox'
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), array(), 'warning');
 }
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOSTINT('forcesandbox'))) {
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOSTINT('forcesandbox')*/)) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), array(), 'warning');
 }
 
@@ -987,7 +992,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECUREKEY).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
+//print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 print '<input type="hidden" name="ws" value="'.$ws.'">';
 print "\n";
@@ -1190,7 +1195,9 @@ if ($source == 'order') {
 
 	// Creditor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow2">';
+	print '</td><td class="CTableRow2"';
+	print ' title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Country").'='.$mysoc->country_code.' - '.$langs->transnoentitiesnoconv("VATIntra").'='.$mysoc->tva_intra).'"';
+	print '>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
@@ -1198,7 +1205,9 @@ if ($source == 'order') {
 
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow2">';
+	print '</td><td class="CTableRow2"';
+	print ' title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Country").'='.$order->thirdparty->country_code.' - '.$langs->transnoentitiesnoconv("VATIntra").'='.$order->thirdparty->tva_intra).'"';
+	print '>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>'.$order->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
@@ -1318,17 +1327,21 @@ if ($source == 'invoice') {
 	}
 	$fulltag = dol_string_unaccent($fulltag);
 
-	// Creditor
+	// Creditor (seller)
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow2">';
+	print '</td><td class="CTableRow2"';
+	print ' title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Country").'='.$mysoc->country_code.' - '.$langs->transnoentitiesnoconv("VATIntra").'='.$mysoc->tva_intra).'"';
+	print '>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag((string) $creditor).'">';
 	print '</td></tr>'."\n";
 
-	// Debitor
+	// Debitor (buyer)
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow2">';
+	print '</td><td class="CTableRow2"';
+	print ' title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Country").'='.$invoice->thirdparty->country_code.' - '.$langs->transnoentitiesnoconv("VATIntra").'='.$invoice->thirdparty->tva_intra).'"';
+	print '>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>'.$invoice->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
@@ -2425,7 +2438,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		print '<input type="hidden" name="e" value="'.$entity.'" />'."\n";
 		print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
 		print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
-		print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
+		//print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOSTINT('thirdparty_id').'" />';
 		print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
@@ -2456,7 +2469,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 
 			$service = 'StripeLive';
 			$servicestatus = 1;
-			if (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha')) {
+			if (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */) {
 				$service = 'StripeTest';
 				$servicestatus = 0;
 			}
@@ -2722,7 +2735,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 					?>
 			var paymentElement = elements.create("payment");
 
-			// Add an instance of the card Element into the `card-element` <div>
+			// Add an instance of the card Element into the div #payment-element
 			paymentElement.mount("#payment-element");
 
 			// Handle form submission
@@ -2795,7 +2808,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 					?>
 			var cardElement = elements.create('card', {style: style});
 
-			// Add an instance of the card Element into the `card-element` <div>
+			// Add an instance of the card Element into the div #card-element
 			cardElement.mount('#card-element');
 
 			// Handle real-time validation errors from the card Element.

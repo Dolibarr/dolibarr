@@ -88,6 +88,7 @@ if (isModEnabled('mailmanspip')) {
 
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
+$upload_dir = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -240,6 +241,7 @@ if (empty($reshook)) {
 			$tmpuser = dol_clone($object, 2);
 			if (GETPOST('internalorexternal', 'aZ09') == 'internal') {
 				$tmpuser->fk_soc = 0;
+				$tmpuser->socid = 0;
 			}
 
 			$result = $nuser->create_from_member($tmpuser, GETPOST('login', 'alphanohtml'));
@@ -270,6 +272,29 @@ if (empty($reshook)) {
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('adherent', 'creer')) {
+		$member_origin_id = GETPOSTINT('member_origin');
+		$member_origin = new Adherent($db);		// The thirdparty that we will delete
+
+		if ($member_origin_id <= 0) {
+			$langs->load('errors');
+			setEventMessages($langs->trans('MergeOriginMemberIsMAndatory'), null, 'errors');
+		} else {
+			if (!$error && $member_origin->fetch($member_origin_id) < 1) {
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+				$error++;
+			}
+			if (!$error) {
+				$result = $object->mergeMembers($member_origin_id);
+				if ($result < 0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					setEventMessages($langs->trans('MemberMergeSuccess'), null, 'mesgs');
+				}
+			}
 		}
 	}
 
@@ -335,7 +360,7 @@ if (empty($reshook)) {
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
 			$object->email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->url = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
+			$object->url = trim(GETPOST('member_url', 'url'));
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
@@ -485,7 +510,7 @@ if (empty($reshook)) {
 		$phone_perso = GETPOST("phone_perso", 'alpha');
 		$phone_mobile = GETPOST("phone_mobile", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase'));
-		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+		$url = trim(GETPOST('url', 'url'));
 		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'password');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');
@@ -519,18 +544,18 @@ if (empty($reshook)) {
 			}
 		}
 
-		$object->email       = $email;
-		$object->url       	 = $url;
-		$object->login       = $login;
-		$object->pass        = $pass;
-		$object->birth       = $birthdate;
-		$object->photo       = $photo;
-		$object->typeid      = $typeid;
-		//$object->note        = $comment;
-		$object->morphy      = $morphy;
-		$object->user_id     = $userid;
+		$object->email = $email;
+		$object->url = $url;
+		$object->login = $login;
+		$object->pass = $pass;
+		$object->birth = $birthdate;
+		$object->photo = $photo;
+		$object->typeid = $typeid;
+		//$object->note = $comment;
+		$object->morphy = $morphy;
+		$object->user_id = $userid;
 		$object->socid = $socid;
-		$object->public      = $public;
+		$object->public = $public;
 		$object->default_lang = $default_lang;
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -593,10 +618,6 @@ if (empty($reshook)) {
 		if (!empty($object->url) && !isValidUrl($object->url)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
-		}
-		$public = 0;
-		if (isset($public)) {
-			$public = 1;
 		}
 
 		if (!$error) {
@@ -1051,50 +1072,103 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}
 		if ($user->hasRight('member', 'configurer')) {
-			print ' <a href="'.DOL_URL_ROOT.'/adherents/type.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&typeid=--IDFORBACKTOPAGE--').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
+			print ' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/type.php', ['action' => 'create', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'typeid' => '--IDFORBACKTOPAGE--'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
 		}
 		print "</td>\n";
 
-		// Morphy
-		$morphys = array();
-		$morphys["phy"] = $langs->trans("Physical");
-		$morphys["mor"] = $langs->trans("Moral");
+		// Legal entity or natural person
+		$morphys = [
+			"phy" => $langs->trans("Physical"),
+			"mor" => $langs->trans("Moral"),
+		];
 		$checkednature = GETPOST("morphy", 'alpha');
+		$listetype_natures = $adht->morphyByType(1);
+		$listetype_natures_json = json_encode($listetype_natures);
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
 		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
 		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
 
-		// Add js to manage the background of nature
+		// Add JS to manage the background of nature
 		if ($conf->use_javascript_ajax) {
+			print "<script>
+				var listetype_natures = $listetype_natures_json;
+			</script>";
 			print '<script>
+			jQuery(function($) {
 				function refreshNatureCss() {
-					jQuery(".spannature").each(function( index ) {
-						console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
-						if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
-							if (index+1 == 1) {
-								jQuery("#spannature"+(index+1)).addClass("member-individual-back").removeClass("nonature-back");
-							}
-							if (index+1 == 2) {
-								jQuery("#spannature"+(index+1)).addClass("member-company-back").removeClass("nonature-back");
+					$(".spannature").each(function(index) {
+						let $span = $("#spannature" + (index + 1));
+						let checked = $span.find(".checkforselect").is(":checked");
+
+						if (checked) {
+							if (index === 0) {
+								$span.addClass("member-individual-back").removeClass("nonature-back member-company-back");
+							} else if (index === 1) {
+								$span.addClass("member-company-back").removeClass("nonature-back member-individual-back");
 							}
 						} else {
-							jQuery("#spannature"+(index+1)).removeClass("member-individual-back").removeClass("member-company-back").addClass("nonature-back");
+							$span.removeClass("member-individual-back member-company-back")
+								.addClass("nonature-back");
 						}
 					});
 				}
-				jQuery(".spannature").click(function(){
-					console.log("We click on a nature");
+
+				$(".spannature").on("click", function() {
+					console.log("Nature clicked");
 					refreshNatureCss();
 				});
+
+				$("#typeid").on("change", function() {
+					let morphy = listetype_natures[$(this).val()];
+
+					let $phyInput = $("#phisicalinput");
+					let $morInput = $("#moralinput");
+					let $tdLast = $("#tdlastname");
+					let $tdFirst = $("#tdfirstname");
+					let $tdCompany = $("#tdcompany");
+					let $span1 = $("#spannature1");
+					let $span2 = $("#spannature2");
+
+					switch (morphy) {
+						case "phy":
+							$phyInput.prop({disabled: false, checked: true});
+							$morInput.prop({disabled: true, checked: false});
+							$span1.addClass("member-individual-back").removeClass("nonature-back");
+							$span2.removeClass("member-company-back").addClass("nonature-back");
+							$tdLast.addClass("fieldrequired");
+							$tdFirst.addClass("fieldrequired");
+							$tdCompany.removeClass("fieldrequired");
+							break;
+
+						case "mor":
+							$phyInput.prop({disabled: true, checked: false});
+							$morInput.prop({disabled: false, checked: true});
+							$span2.addClass("member-company-back").removeClass("nonature-back");
+							$span1.removeClass("member-individual-back").addClass("nonature-back");
+							$tdCompany.addClass("fieldrequired");
+							$tdLast.removeClass("fieldrequired");
+							$tdFirst.removeClass("fieldrequired");
+							break;
+
+						default:
+							$phyInput.prop({disabled: false, checked: false});
+							$morInput.prop({disabled: false, checked: false});
+							$span1.removeClass("member-individual-back").addClass("nonature-back");
+							$span2.removeClass("member-company-back").addClass("nonature-back");
+					}
+				});
+
+				// Initial state
 				refreshNatureCss();
-				</script>';
+			});
+		</script>';
 		}
 
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1118,11 +1192,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// EMail
 		print '<tr><td>'.(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '</span>' : '').'</td>';
-		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
@@ -1328,7 +1402,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1615,10 +1689,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
+			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'</b>, ';
 			$tmp .= '<br>'.$langs->trans("MailRecipient").': <b>'.$object->email.'</b>';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1679,10 +1753,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1740,10 +1814,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnExclude()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1777,6 +1851,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action == 'add_spip') {
 			print $form->formconfirm("card.php?rowid=".$id, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
+
+		// Confirm merge
+		if ($action == 'merge') {
+			$formquestion = array(
+				array(
+					'name' => 'member_origin',
+					'label' => $langs->trans('MergeOriginMember'),
+					'type' => 'other',
+					'value' => $form->selectMembers('', 'member_origin', '', 0, 1, '', 0, array(), 0, 'SelectMember', 0, 'minwidth200', array(), 1, array($object->id))
+				)
+			);
+
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeMembers"), $langs->trans("ConfirmMergeMembers"), "confirm_merge", $formquestion, 'no', 1, 300);
+		}
+
 		// Confirm removed from spip
 		if ($action == 'del_spip') {
 			print $form->formconfirm("card.php?rowid=$id", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
@@ -1793,7 +1882,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 
@@ -2086,6 +2175,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=add_spip&token='.newToken().'">'.$langs->trans("AddIntoSpip").'</a>'."\n";
 					}
 				}
+
+				// Merge
+				print dolGetButtonAction($langs->trans('MergeMembers'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $user->hasRight('adherent', 'supprimer'));
 
 				// Delete
 				if ($user->hasRight('adherent', 'supprimer')) {

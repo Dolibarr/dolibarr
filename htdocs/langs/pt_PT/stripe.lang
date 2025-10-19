@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Clique aqui para tentar novamente...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Devido às fortes regras cliente Autenticação, a criação de um cartão deve ser feita no back office do Stripe. Você pode clicar aqui para ativar o registro Stripe cliente: %s
 STRIPE_CARD_PRESENT=Presente de cartão para terminais Stripe
 TERMINAL_LOCATION=Localização (endereço) dos Terminais Stripe
-RequestDirectDebitWithStripe=Solicitação Débito direto com Stripe
-RequesCreditTransferWithStripe=Solicitar transferência de crédito com Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Habilite os pagamentos Débito direto através do Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Habilite os pagamentos usando Klarna
 STRIPE_BANCONTACT=Habilitar pagamentos usando BANCONTACT
 STRIPE_IDEAL=Habilitar pagamentos usando IDEAL
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Somente para alemão clientes
 ExampleOnlyForNLCustomers=Somente para holandês clientes
 ExampleOnlyForATBEDEITNLESCustomers=Somente para clientes da Áustria, Bélgica, Alemanha, Itália, Holanda, Espanha
 ListOfSupportedHooksToActivate=Lista de ganchos suportados para ativação
+# Paybox
+PayBoxSetup=Configurar módulo PayBox
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=Você será redirecionado para a página Paybox não se esqueça de introduzir a informação do seu cartão de crédito
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=Esta página confirma que o pagamento tenha sido gravada. Obrigado.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url de Paybox módulo CGI para pagamento
+NewPayboxPaymentReceived=Novo pagamento Paybox recebido
+NewPayboxPaymentFailed=Nova tentativa de pagamento Paybox falhou
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=Valor para PBX SITE
+PAYBOX_PBX_RANG=Valor para PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Valor para ID de PBX
+PAYBOX_HMAC_KEY=HMAC key

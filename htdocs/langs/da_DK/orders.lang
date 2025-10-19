@@ -213,3 +213,4 @@ ExistingDipatchLines = Der er allerede linjer, der har genereret lagerbevægelse
 ConfirmDeleteDispatchedLines = Vil du også tilbageføre alle allerede udførte lagerbevægelser?
 SupplierOrderDeletion = Leverandørordre %s Sletning
 OrderStatusMakeOperationForbidden = Ordrestatus forbudt for denne handling.
+CreateRemoteOrder=Opret fjernbestilling

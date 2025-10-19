@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Siz yangi sahifa yaratishingiz yoki to'liq veb-
 SyntaxHelp=Sintaksis bo'yicha aniq maslahatlar bo'yicha yordam bering
 YouCanEditHtmlSourceckeditor=HTML manba kodini tahrirlashdagi "Manba" tugmasi yordamida tahrirlashingiz mumkin.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Ulashish havolasi (faylning ulashish xesh kaliti yordamida ochiq ruxsat) bilan ulashilgan fayl uchun sintaksis:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Siz sahifani tarjima sifatida klonlashtirasi
 ParentPageId=Asosiy sahifa identifikatori
 WebsiteId=Veb-sayt identifikatori
 CreateByFetchingExternalPage=Tashqi URL manzilidan sahifani olib, sahifa / konteyner yarating ...
-OrEnterPageInfoManually=Yoki sahifani noldan yoki sahifa shablonidan yarating ...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Olish va yaratish
 ExportSite=Veb-saytni eksport qilish
 ImportSite=Veb-sayt shablonini import qilish
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Kechirasiz, ushbu veb-sayt hozirda o'chirilgan. I
 WEBSITE_USE_WEBSITE_ACCOUNTS=Uchinchi shaxslar uchun veb-sayt hisobi jadvalini yoqing
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Har bir uchinchi tomon uchun veb-sayt hisoblarini (kirish/o'tish) saqlash uchun jadvalni yoqing
 YouMustDefineTheHomePage=Avval standart uy sahifasini belgilashingiz kerak
-OnlyEditionOfSourceForGrabbedContentFuture=Ogohlantirish: Tashqi veb-sahifani import qilish orqali veb-sahifa yaratish tajribali foydalanuvchilar uchun ajratilgan. Manba sahifasining murakkabligiga qarab, import natijasi asl nusxadan farq qilishi mumkin. Shuningdek, agar manba sahifa umumiy CSS uslublari yoki ziddiyatli JavaScript-dan foydalansa, bu sahifada ishlashda veb-sayt muharririning ko'rinishi yoki xususiyatlarini buzishi mumkin. Bu usul sahifa yaratishning tezroq usulidir, lekin yangi sahifangizni noldan yoki tavsiya etilgan sahifa shablonidan yaratish tavsiya etiladi.<br>Shuningdek, ushlangan tashqi sahifada inline muharriri to‘g‘ri ishlamasligi mumkinligini ham unutmang.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Kontent tashqi saytdan olinganda faqat HTML manbasini o'zgartirish mumkin
 GrabImagesInto=CSS va sahifada joylashgan rasmlarni ham oling.
 ImagesShouldBeSavedInto=Rasmlar katalogga saqlanishi kerak
@@ -423,8 +423,8 @@ contactFormPhone = Telefon
 contactFormSubjectEntered = Mavzu kiritildi
 contactFormMessageLabel = Xabar
 contactFormSuccessAlert = Xabaringiz uchun rahmat. Tez orada sizga qaytamiz.
-socials=Reseau sociaux
-rgpd=RGPD
+socials=Social networks
+rgpd=GDPR
 joinUs=AQShga qo'shiling
 home=Uy
 anonymous=Anonim
@@ -455,3 +455,4 @@ SampleGoalOne=A'zolar o'rtasida hamkorlik va birdamlikni rivojlantirish.
 SampleGoaltwo=Barcha faoliyatlarda mas'uliyatli va barqaror amaliyotlarni rag'batlantirish.
 SampleGoalthree=Jamiyatga foyda keltiradigan ta'sirli loyihalarni qo'llab-quvvatlash.
 SHOW_LANG_SELECTOR=Til tanlash ochiladigan menyusini ko'rsatish
+ForAdvancedWebmastersOnly=For technical webmasters only

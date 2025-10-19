@@ -35,7 +35,6 @@ CloneSite=Site Clone
 SiteAdded=Site adicionado
 ConfirmClonePage=Digite o código / alias da nova página e se é uma tradução da página clonada.
 CreateByFetchingExternalPage=Criar página / recipiente obtendo página do URL externo ...
-OrEnterPageInfoManually=Ou você pode criar uma página do zero ou de um modelo de página ...
 FetchAndCreate=Procure e comece a criar
 BlogPost=Postagem do blog
 WebsiteAccounts=Conta do website
