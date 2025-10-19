@@ -52,7 +52,7 @@ dev/build/node_modules/
 node_modules/
 
 vendor/
-php-vendor/
+php-vendor
 tmp/
 
 #yarn
