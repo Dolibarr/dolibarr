@@ -101,7 +101,7 @@ class box_members_last_modified extends ModeleBoxes
 				$memberstatic->status = $data['status'];
 				$memberstatic->date_creation = $data['datec'];
 				$memberstatic->date_modification = $data['datem'];
-				$memberstatic->need_subscription = $data['subscription'];
+				$memberstatic->need_subscription = (int) $data['need_subscription'];
 				$memberstatic->datefin = $data['date_end_subscription'];
 				if (!empty($data['fk_soc'])) {
 					$memberstatic->socid = $data['fk_soc'];
@@ -132,8 +132,8 @@ class box_members_last_modified extends ModeleBoxes
 				);
 
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
-					'text' => dol_print_date($datem, "day", 'tzuserrel'),
+					'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($data['datem'], 'dayhour', 'tzuserrel')).'"',
+					'text' => dol_print_date($data['datem'], "day", 'tzuserrel'),
 				);
 
 				$this->info_box_contents[$line][] = array(

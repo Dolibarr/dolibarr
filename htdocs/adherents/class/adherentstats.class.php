@@ -336,10 +336,10 @@ class AdherentStats extends Stats
 	}
 
 	/**
-	 *	Return array of last modifed members
+	 *	Return array of last modified members
 	 *
 	 * @param	int		$max    Max Number of result
-	 * @return	array<string,array{id:int,ref:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,subscription:int,label:string}>		Array of last modifed members
+	 * @return	array<int,array{id:int,ref:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>		Array of last modifed members
 	 */
 	public function getLastModifiedMembers($max = 0)
 	{
@@ -366,11 +366,11 @@ class AdherentStats extends Stats
 				$objp = $this->db->fetch_object($result);
 				$lastModifiedMembers[] = [
 					'id' => (int) $objp->rowid,
-					'ref' => $objp->ref,
-					'lastname' => $objp->lastname,
-					'firstname' => $objp->firstname,
-					'company' => $objp->company,
-					'fk_soc' => $objp->fk_soc,
+					'ref' => (string) $objp->ref,
+					'lastname' => (string) $objp->lastname,
+					'firstname' => (string) $objp->firstname,
+					'company' => (string) $objp->company,
+					'fk_soc' => $objp->fk_soc ? (int) $objp->fk_soc : null,
 					'datec' => $this->db->jdate($objp->datec),
 					'datem' => $this->db->jdate($objp->datem),
 					'status' => (int) $objp->status,
@@ -380,7 +380,8 @@ class AdherentStats extends Stats
 					'gender' => $objp->gender,
 					'morphy' => $objp->morphy,
 					'typeid' => $objp->typeid,
-					'subscription' => $objp->subscription,
+					'need_subscription' => isset($objp->subscription) ? ($objp->subscription ? 1 : 0) : null,
+					'subscription' => isset($objp->subscription) ? ($objp->subscription ? '1' : '0') : null,
 					'label' => $objp->label,
 				];
 
