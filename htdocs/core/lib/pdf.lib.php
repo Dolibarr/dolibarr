@@ -1035,9 +1035,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  * 	@param	float		$marge_basse	Margin bottom we use for the autobreak
  * 	@param	float		$marge_gauche	Margin left (no more used)
  * 	@param	float		$page_hauteur	Page height
- * 	@param	CommonObject	$object			Object shown in PDF
+ * 	@param	?CommonObject	$object		Object shown in PDF
  * 	@param	int<0,3>	$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
- *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
+ *  @param	int<0,1>	$hidefreetext	1=Hide free text, 0=Show free text
  *  @param	float		$page_largeur	Page width
  *  @param	string		$watermark		Watermark text to print on page
  * 	@return	int							Return height of bottom margin including footer text

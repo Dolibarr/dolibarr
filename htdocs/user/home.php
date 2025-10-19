@@ -156,7 +156,7 @@ if ($resql) {
 	$lastcreatedbox .= '<table class="noborder centpercent">';
 	$lastcreatedbox .= '<tr class="liste_titre"><td colspan="3" class="valignmiddle">';
 	$lastcreatedbox .= '<span class="valignmiddle">'.$langs->trans("LastUsersCreated", min($num, $max)).'</span>';
-	$lastcreatedbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+	$lastcreatedbox .= '<a class="valignmiddle marginleftonlyshort" href="'.dolBuildUrl(DOL_URL_ROOT.'/user/list.php', ['sortfield' => 'u.datec', 'sortorder' => 'DESC']).'" title="'.$langs->trans("FullList").'">';
 	$lastcreatedbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
 	$lastcreatedbox .= '</a>';
 	$lastcreatedbox .= '</td>';

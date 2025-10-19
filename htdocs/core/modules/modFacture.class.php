@@ -69,8 +69,8 @@ class modFacture extends DolibarrModules
 		$this->requiredby = array("modComptabilite", "modAccounting");
 		$this->conflictwith = array();
 		$this->langfiles = array("bills", "companies", "compta", "products");
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 
 		// Config pages
 		$this->config_page_url = array("invoice.php");

@@ -1,6 +1,7 @@
 includes:
 	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
+	phpVersion: 80200 # PHP 8.2
 	tmpDir: ./.github/tmp
 	parallel:
 		# Commented some of the settings, reminding the defaults:

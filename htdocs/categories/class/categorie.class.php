@@ -176,7 +176,9 @@ class Categorie extends CommonObject
 		'order'					=> 'Commande',
 		'invoice'				=> 'Facture',
 		'supplier_order'		=> 'CommandeFournisseur',
-		'supplier_invoice'		=> 'FactureFournisseur'
+		'supplier_invoice'		=> 'FactureFournisseur',
+		'supplier_proposal' => 'SupplierProposal',
+		'propal' => 'Propal',
 	);
 
 	/**
@@ -202,7 +204,9 @@ class Categorie extends CommonObject
 		'order'					=> 'Orders',
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
-		'supplier_invoice'		=> 'SuppliersInvoices'
+		'supplier_invoice'		=> 'SuppliersInvoices',
+		'propal' => 'Proposals',
+		'supplier_proposal' => 'SupplierProposals',
 	);
 
 	/**
@@ -1892,7 +1896,7 @@ class Categorie extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("ShowCategory");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
