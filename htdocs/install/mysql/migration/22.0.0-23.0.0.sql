@@ -43,6 +43,20 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_T
 
 -- V23 migration
 
+create table llx_categorie_project_task (
+  fk_categorie  	integer NOT NULL,
+  fk_project_task   integer NOT NULL,
+  import_key    	varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_task);
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_task);
+
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_task) REFERENCES llx_projet (rowid);
+
+
 ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_ticket ADD COLUMN note_public text after resolution;
