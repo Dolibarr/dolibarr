@@ -18,7 +18,7 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
+require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherentstats.class.php';
 
 /**
  * API class for members stats
