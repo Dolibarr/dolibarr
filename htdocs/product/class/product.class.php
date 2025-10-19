@@ -221,7 +221,7 @@ class Product extends CommonObject
 	 */
 	public $multiprices_min_ttc = array();
 	/**
-	 * @var array<int,null|int|float|string>
+	 * @var array<int,int|float|string>
 	 */
 	public $multiprices_tva_tx = array();
 	/**
