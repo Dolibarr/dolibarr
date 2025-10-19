@@ -49,7 +49,9 @@ create table llx_categorie_project_task (
   import_key    	varchar(14)
 ) ENGINE=innodb;
 
-ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_project (fk_categorie, fk_task);
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_task);
+--noqa:enable=PRS
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_task);
 
