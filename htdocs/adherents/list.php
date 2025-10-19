@@ -665,7 +665,7 @@ if ($search_all != "") {
 	$query += ['search_all' => $search_all];
 }
 if ($search_ref) {
-	$query += ['search-ref' => $search_ref];
+	$query += ['search_ref' => $search_ref];
 }
 if ($search_civility) {
 	$query += ['search_civility' => $search_civility];
