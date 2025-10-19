@@ -136,6 +136,8 @@ class Pacchetto extends CommonObject
 		"ore_usufruite" => array("type" => "integer", "label" => "Ore Usufruite", "enabled" => "1", 'position' => 46, 'notnull' => 1, "visible" => "1", "isameasure" => "1", "help" => "Ore di lezione utilizzate",),
 		"ore_rimanenti" => array("type" => "integer", "label" => "Ore Rimanenti", "enabled" => "1", 'position' => 47, 'notnull' => 0, "visible" => "1", "noteditable" => "1", "searchall" => "1", "isameasure" => "1", "help" => "Ore di lezione rimanentii (campo auto-calcolato durante il salvataggio))",),
 		"stato_pacchetto" => array("type" => "integer", "label" => "Stato Pacchetto", "enabled" => "1", 'position' => 48, 'notnull' => 1, "visible" => "1", "noteditable" => "1", "index" => "1", "searchall" => "1", "help" => "Stato del pacchetto lezioni (Campo auto-calcolato durante il salvataggio)", "arrayofkeyval" => array("0" => "In Corso", "1" => "Terminato"), "comment" => "Stato del pacchetto lezioni"),
+		"bank_account" => array("type" => "integer", "label" => "bank_account", "enabled" => "1", 'position' => 53, 'notnull' => 0, "visible" => "0", "help" => "Id Conto Bancario", "comment" => "Riferimento al conto bancario del pagamento"),
+		"bank_transaction" => array("type" => "integer", "label" => "Transazione Bancaria", "enabled" => "1", 'position' => 54, 'notnull' => 0, "visible" => "0", "help" => "Id transazione bancaria del pagamento", "comment" => "Transazione bancaria associata al pagamento pacchetto"),
 	);
 	public $rowid;
 	public $ref;
@@ -159,6 +161,8 @@ class Pacchetto extends CommonObject
 	public $ore_usufruite;
 	public $ore_rimanenti;
 	public $stato_pacchetto;
+	public $bank_account;
+	public $bank_transaction;
 	// END MODULEBUILDER PROPERTIES
 
 
