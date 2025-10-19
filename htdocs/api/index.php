@@ -102,6 +102,8 @@ if (!$res) {
 
 require_once DOL_DOCUMENT_ROOT.'/to_curl.php';
 dol_logRequestAsCurl();
+dol_registerHurlShutdownLog();
+
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
 call_user_func(
