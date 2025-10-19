@@ -215,7 +215,7 @@ input.login__input {
 	}
 
 	:where(.login-form-right) .login__logo {
-		height: 150px;
+		max-height: 150px;
 		margin-bottom: 30px;
 		max-width: 100%;
 		background-position: center;
