@@ -2224,19 +2224,19 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Update an expense report line.
 	 *
-	 * @param   int         $rowid                  Line to edit
-	 * @param   int         $type_fees_id           Type payment
-	 * @param   int         $projet_id              Project id
-	 * @param   double      $vatrate                Vat rate. Can be '8.5' or '8.5* (8.5NPROM...)'
-	 * @param   string      $comments               Description
-	 * @param   float       $qty                    Qty
-	 * @param   double      $value_unit             Unit price (with taxes)
-	 * @param   int         $date                   Date
-	 * @param   int         $expensereport_id       Expense report id
-	 * @param   int         $fk_c_exp_tax_cat       Id of category of car
-	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
-	 * @param   int     	$notrigger      		1=No trigger
-	 * @return  int                                 Return integer <0 if KO, >0 if OK
+	 * @param   int         	$rowid                  Line to edit
+	 * @param   int         	$type_fees_id           Type payment
+	 * @param   int         	$projet_id              Project id
+	 * @param   float|string	$vatrate                Vat rate. Can be '8.5' or '8.5* (8.5NPROM...)'
+	 * @param   string      	$comments               Description
+	 * @param   float      		$qty                    Qty
+	 * @param   float      		$value_unit             Unit price (with taxes)
+	 * @param   int         	$date                   Date
+	 * @param   int         	$expensereport_id       Expense report id
+	 * @param   int         	$fk_c_exp_tax_cat       Id of category of car
+	 * @param   int         	$fk_ecm_files           Id of ECM file to link to this expensereport line
+	 * @param   int     		$notrigger      		1=No trigger
+	 * @return  int             	                    Return integer <0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0, $notrigger = 0)
 	{
