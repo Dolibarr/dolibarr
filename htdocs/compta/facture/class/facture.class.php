@@ -1533,7 +1533,7 @@ class Facture extends CommonInvoice
 	/**
 	 *  Load an object from a contract and create a new invoice into database
 	 *
-	 *  @param      Facture			$object         	Object source
+	 *  @param      Contrat			$object         	Object source
 	 *  @param		User			$user				Object user
 	 * 	@param		int[]			$lines				Ids of lines to use for invoice. If empty, all lines will be used.
 	 *  @return     int             					Return integer <0 if KO, 0 if nothing done, 1 if OK

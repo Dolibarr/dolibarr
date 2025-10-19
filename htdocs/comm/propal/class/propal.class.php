@@ -2102,6 +2102,11 @@ class Propal extends CommonObject
 			return -1;
 		}
 
+		if (!getDolGlobalBool('PROPALE_NOCHECK_ONSALE_PRODUCTS_ONVALID') && !$this->checkActiveProductInLines()) {
+			dol_syslog(get_class($this)."::valid checkActiveProductInLines ".$this->error, LOG_INFO);
+			return -1;
+		}
+
 		$now = dol_now();
 
 		$this->db->begin();

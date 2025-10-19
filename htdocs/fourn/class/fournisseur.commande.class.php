@@ -800,6 +800,10 @@ class CommandeFournisseur extends CommonOrder
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_order_advance", "validate"))) {
 			$this->db->begin();
 
+			if (!getDolGlobalBool('SUPPLIER_ORDER_NOCHECK_ONBUY_PRODUCTS_ONVALID') && !$this->checkActiveProductInLines('onbuy')) {
+				dol_syslog(get_class($this)."::valid checkActiveProductInLines ".$this->error, LOG_INFO);
+				return -1;
+			}
 			// Definition of supplier order numbering model name
 			$soc = new Societe($this->db);
 			$soc->fetch($this->fourn_id);
