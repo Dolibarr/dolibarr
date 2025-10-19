@@ -89,9 +89,6 @@ class box_members_last_modified extends ModeleBoxes
 			$line = 0;
 			$num = count($listOfMembers);
 			foreach ($listOfMembers as $data) {
-				$datec = $data['datec'];
-				$datem = $data['datem'];
-
 				$memberstatic->lastname = $data['lastname'];
 				$memberstatic->firstname = $data['firstname'];
 				$memberstatic->id = $data['id'];
@@ -102,10 +99,10 @@ class box_members_last_modified extends ModeleBoxes
 				$memberstatic->morphy = $data['morphy'];
 				$memberstatic->company = $data['company'];
 				$memberstatic->status = $data['status'];
-				$memberstatic->date_creation = $datec;
-				$memberstatic->date_modification = $datem;
+				$memberstatic->date_creation = $data['datec'];
+				$memberstatic->date_modification = $data['datem'];
 				$memberstatic->need_subscription = $data['subscription'];
-				$memberstatic->datefin = $this->db->jdate($data['date_end_subscription']);
+				$memberstatic->datefin = $data['date_end_subscription'];
 				if (!empty($data['fk_soc'])) {
 					$memberstatic->socid = $data['fk_soc'];
 					$memberstatic->fetch_thirdparty();
