@@ -339,7 +339,7 @@ class AdherentStats extends Stats
 	 *	Return array of last modified members
 	 *
 	 * @param	int		$max    Max Number of result
-	 * @return	array<int,array{id:int,ref:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>		Array of last modified members
+	 * @return	array<int,array{id:int,ref:string,firstname:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>		Array of last modified members
 	 */
 	public function getLastModifiedMembers($max = 0)
 	{
