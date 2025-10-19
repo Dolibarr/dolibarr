@@ -14040,6 +14040,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
+	// TODO replace $TCompiledAttr generation by commonHtmlAttributeBuilder given below
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
@@ -14053,11 +14054,11 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 		$TCompiledAttr[] = $key . '="' . $value . '"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
 	}
-
+	// TODO replace $TCompiledAttr generation by uncomment line below and remove old code
+	//  $TCompiledAttr = commonHtmlAttributeBuilder($attr,$params['use_unsecured_unescapedattr'] ?? []);
 	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
-
 
 	$parameters = array(
 		'TCompiledAttr' => $TCompiledAttr,				// array
@@ -14087,6 +14088,121 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	} else {
 		return $hookmanager->resPrint;
 	}
+}
+
+/**
+ * Builds an array of safe and properly escaped HTML attributes from a key-value pair list.
+ *
+ * This function ensures that HTML attributes are correctly encoded for safe output,
+ * while allowing certain attributes to remain unescaped if explicitly specified.
+ * Special handling is applied for attributes such as `href`, which are processed
+ * using `dolPrintHTMLForAttributeUrl()`. All other attributes are escaped using
+ * `dolPrintHTMLForAttribute()`.
+ *
+ * ⚠️ Note: Disabling escaping (via `$unescapedAttr`) is **not recommended** unless you
+ * fully trust the input data, as it may lead to XSS vulnerabilities.
+ *
+ * Example:
+ * ```php
+ * $attr = [
+ *     'href' => 'https://example.com?a=1&b=2',
+ *     'class' => 'btn btn-primary',
+ *     'title' => 'View details'
+ * ];
+ * $result = commonHtmlAttributeBuilder($attr);
+ *
+ * // Output:
+ * // [
+ * //   'href' => 'href="https://example.com?a=1&amp;b=2"',
+ * //   'class' => 'class="btn btn-primary"',
+ * //   'title' => 'title="View details"'
+ * // ]
+ * ```
+ *
+ * @param array<string, string|int|float|null> $attr          Associative array of attribute names and their values.
+ * @param string[]                            $unescapedAttr  Optional list of attribute names that should **not** be escaped.
+ *
+ * @return array<string, string> An array where each key corresponds to the attribute name
+ *                               and each value is a full `key="escaped_value"` string ready for HTML output.
+ *
+ */
+function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
+{
+	$TCompiledAttr = array();
+	foreach ($attr as $key => $value) {
+		// special boolean attributes case
+		if (in_array($key, getListOfHtmlBooleanAttributes())) {
+			if ($value) { $TCompiledAttr[$key] = $key; }
+			continue;
+		}
+
+		if (!empty($unescapedAttr) && in_array($key, $unescapedAttr)) {
+			// Not recommended
+			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
+		} elseif ($key == 'href') {
+			$value = dolPrintHTMLForAttributeUrl($value);
+		} else {
+			$value = dolPrintHTMLForAttribute($value);
+		}
+
+		$TCompiledAttr[$key] = $key . '="' . $value . '"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
+	}
+
+	return 	$TCompiledAttr;
+}
+
+/**
+ * Returns a list of HTML boolean attributes.
+ *
+ * Boolean attributes are attributes whose presence on an HTML element
+ * represents a true value, and absence represents false. They do not
+ * require a value like name="value"; simply including the attribute
+ * enables its behavior.
+ *
+ * Examples of usage:
+ * <input type="checkbox" checked>
+ * <input type="text" readonly>
+ *
+ * @return string[] An array of HTML boolean attribute names.
+ */
+function getListOfHtmlBooleanAttributes(): array
+{
+	return [
+		// Input / Form
+		'checked',
+		'disabled',
+		'readonly',
+		'required',
+		'autofocus',
+		'multiple',
+
+		// Option
+		'selected',
+
+		// Form / General
+		'novalidate',
+		'formnovalidate',
+
+		// Media
+		'autoplay',
+		'controls',
+		'loop',
+		'muted',
+		'playsinline',
+
+		// Other elements
+		'hidden',
+		'open',
+		'ismap',
+		'reversed',
+		'allowfullscreen',
+		'itemscope',
+		'nomodule',
+		'defer',
+		'async',
+		'default',
+		'inert',
+	];
 }
 
 
@@ -16474,4 +16590,46 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 		}
 	}
 	exit(0);
+}
+
+/**
+ * Recursively merges two arrays while preserving keys and replacing existing values.
+ *
+ * Unlike PHP's native array_merge_recursive(), this function does not combine values
+ * into an array when duplicate keys are found. Instead, values from the second array
+ * will override values from the first array, unless both values are arrays, in which
+ * case the function will merge them recursively.
+ *
+ * Note : function name is not in camelCase because of name of native php function named array_merge_recursive
+ * this approach will help developers to find this function
+ *
+ * Example:
+ *  $a = ['color' => 'blue', 'style' => ['font' => 'Arial', 'size' => 10]];
+ *  $b = ['color' => 'red', 'style' => ['size' => 12]];
+ *  Result:
+ *  [
+ *      'color' => 'red',
+ *      'style' => [
+ *          'font' => 'Arial',
+ *          'size' => 12
+ *      ]
+ *  ]
+ *
+ * @param array $array1  The base array (default parameters).
+ * @param array $array2  The array with values to override or extend the base array.
+ * @return array         The merged array with recursive replacement.
+ */
+function array_merge_recursive_distinct(array $array1, array $array2): array
+{
+	$merged = $array1;
+
+	foreach ($array2 as $key => $value) {
+		if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
+			$merged[$key] = array_merge_recursive_distinct($merged[$key], $value);
+		} else {
+			$merged[$key] = $value;
+		}
+	}
+
+	return $merged;
 }
