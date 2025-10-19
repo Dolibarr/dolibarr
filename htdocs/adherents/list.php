@@ -50,7 +50,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "categories"));
 
-
 // Get parameters
 $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -65,10 +64,10 @@ $mode 		= GETPOST('mode', 'alpha');
 $groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 // Search fields
-$search 			= GETPOST("search", 'alpha');
+$search = GETPOST("search", 'alpha');
 $search_id = GETPOST('search_id', 'int');
-$search_ref 		= GETPOST("search_ref", 'alpha');
-$search_lastname 	= GETPOST("search_lastname", 'alpha');
+$search_ref = GETPOST("search_ref", 'alpha');
+$search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname 	= GETPOST("search_firstname", 'alpha');
 $search_gender 		= GETPOST("search_gender", 'alpha');
 $search_civility 	= GETPOST("search_civility", 'alpha');
@@ -678,6 +677,9 @@ if ($search_lastname) {
 }
 if ($search_gender) {
 	$query += ['search_gender' => $search_gender];
+}
+if ($search_morphy != '' && $search_morphy != '-1') {
+	$query += ['search_morphy' => $search_morphy];
 }
 if ($search_login) {
 	$query += ['search_login' => $search_login];
