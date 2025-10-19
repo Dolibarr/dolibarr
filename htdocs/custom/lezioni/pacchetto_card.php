@@ -805,9 +805,45 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $formfile->showdocuments('lezioni:Pacchetto', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 
+		// Show list of Lezioni linked to this Pacchetto
+		if (!empty($object->id)) {
+			require_once __DIR__.'/class/lezione.class.php';
+			$lez = new Lezione($db);
+			// fetch lezioni where fk_pacchetto = this pacchetto id
+			$filter = array('customsql' => 't.fk_pacchetto = '.((int) $object->id));
+			$lista = $lez->fetchAll('ASC', 'datalezione', 0, 0, $filter);
+
+			if (is_array($lista) && count($lista) > 0) {
+				//print '<h3>'.$langs->trans('LezioniCollegate').'</h3>';
+				print '<table class="centpercent notopnoleftnoright table-fiche-title showlinkedobjectblock">
+				<tbody>
+				<tr class="toptitle">
+					<td class="nobordernopadding valignmiddle col-title">
+						<div class="titre inline-block"><span class="inline-block valignmiddle">Lezioni collegate</span></div>
+					</td>
+				</tr>
+				</tbody>
+				</table>';
+				print '<table class="noborder" width="100%">';
+				print '<tr class="liste_titre"><th>'.$langs->trans('Ref').'</th><th>'.$langs->trans('Date').'</th><th>'.$langs->trans('Titolo').'</th><th>'.$langs->trans('NumeroOre').'</th><th>'.$langs->trans('Pagato').'</th></tr>';
+				foreach ($lista as $l) {
+					// $l is Lezione object
+					$ref = $l->getNomUrl(1);
+					$datalez = isset($l->datalezione) ? dol_print_date($l->datalezione, '%d/%m/%Y') : '';
+					$tit = dol_escape_htmltag($l->label);
+					$ore = isset($l->numeroore) ? $l->numeroore : '';
+					$pag = (isset($l->pagato) && $l->pagato) ? $langs->trans('Yes') : $langs->trans('No');
+					print '<tr class="oddeven"><td>'.$ref.'</td><td>'.$datalez.'</td><td>'.$tit.'</td><td class="right">'.$ore.'</td><td>'.$pag.'</td></tr>';
+				}
+				print '</table>';
+			}
+		}
+
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('pacchetto'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+
 
 
 		print '</div><div class="fichehalfright">';
