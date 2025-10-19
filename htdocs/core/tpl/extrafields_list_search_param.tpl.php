@@ -28,7 +28,7 @@
  *
  * @var array<string,mixed>			$search_array_options
  * @var string						$search_options_pattern
- * @var string 						$param
+ * @var null|string 						$param
  * @var null|array{string:mixed}	$query
  * @var string						$extrafieldsobjectkey
  */
@@ -40,6 +40,9 @@ if (empty($conf) || !is_object($conf)) {
 }
 if (!isset($query)) {
 	$query = [];
+}
+if (!isset($param)) {
+	$param = '';
 }
 
 // Loop to complete $param for extrafields

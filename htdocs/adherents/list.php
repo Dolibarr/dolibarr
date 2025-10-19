@@ -742,9 +742,9 @@ if ($search_datem_end) {
 	];
 }
 
-$param = http_build_query($query);
 // Add $query from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+$param = http_build_query($query);
 
 // List of mass actions available
 $arrayofmassactions = array(
