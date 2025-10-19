@@ -666,7 +666,6 @@ class FormAccounting extends Form
 	public static function printJournalLine($langs, $date, $ref, $accountAccounting, $labelOperation, $paymentMode, $amount)
 	{
 		$out = '<tr class="oddeven">';
-		$out .= '<td></td>';
 		$out .= '<td>'.$date.'</td>';
 		$out .= '<td>'.$ref.'</td>';
 		// Ledger account

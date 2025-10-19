@@ -357,14 +357,32 @@ if ($modulepart == 'barcode') {
 	$reg = array();
 	if (preg_match('/^virtualcard_([^_]+)_(\d+)\.vcf$/', $code, $reg)) {
 		$vcffile = '';
-		if ($reg[1] == 'user') {
+		$id = 0;
+		$login = '';
+		if ($reg[1] == 'user' && (int) $reg[2] > 0) {
 			$vcffile = $conf->user->dir_temp.'/'.$code;
-		} elseif ($reg[1] == 'contact') {
+			$id = (int) $reg[2];
+			$tmpuser = new User($db);
+			$tmpuser->fetch($id);
+			$login = $tmpuser->login;
+		} elseif ($reg[1] == 'contact' && (int) $reg[2] > 0) {
 			$vcffile = $conf->contact->dir_temp.'/'.$code;
+			$id = (int) $reg[2];
 		}
 
-		if ($vcffile) {
-			$code = file_get_contents($vcffile);
+		$code = '';
+		if ($vcffile && $id) {
+			// Case of use of viewimage to get the barcode for user pubic profile,
+			// we must check the securekey that protet against forging url
+			if ($reg[1] == 'user' && (int) $reg[2] > 0) {
+				$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$id.'-'.$login, 'md5');
+				if ($encodedsecurekey != GETPOST('securekey')) {
+					$code = 'badvalueforsecurekey';
+				}
+			}
+			if (empty($code)) {
+				$code = file_get_contents($vcffile);
+			}
 		}
 	}
 

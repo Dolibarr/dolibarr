@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +17,12 @@
  */
 
 /**
- *	\file       htdocs/core/class/commonobject.class.php
+ *	\file       htdocs/core/class/objectlink.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
@@ -30,39 +31,44 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
  */
 class ObjectLink extends CommonObject
 {
-	const TRIGGER_PREFIX = 'OBJECTLINK';
 	/**
-	 * @var string ID to identify managed object
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'OBJECTLINK';
+
+	/**
+	 * @var string 		ID to identify managed object
 	 */
 	public $element = 'objectlink';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element = 'element_element';
 
 	/**
-	 * @var int source id is a foreign key
+	 * @var int 		Source id is a foreign key
 	 */
 	public $fk_source;
 
 	/**
-	 * @var string source type
+	 * @var string 		Source type
 	 */
 	public $sourcetype;
 
 	/**
-	 * @var int target id is a foreign key
+	 * @var int 		Target id is a foreign key
 	 */
 	public $fk_target;
 
 	/**
-	 * @var string source type
+	 * @var string 		Target type
 	 */
 	public $targettype;
 
 	/**
-	 * @var  null|string relation type, not sure if ever used, but it is in the database
+	 * @var  null|string 	Relation type, not sure if ever used, but it is in the database
 	 */
 	public $relationtype;
 
@@ -183,7 +189,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_DELETE', $user);
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_DELETE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -261,7 +267,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_CREATE', $user);
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_CREATE', $user);
 			if ($result < 0) {
 				$error++;
 			}

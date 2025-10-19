@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2018 Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -88,6 +88,21 @@ if (!empty($batchnumber)) {
 	$batchnumber = trim($batchnumber);
 }
 $cost_price = GETPOST('cost_price', 'alpha');
+
+
+// Load variable for pagination
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 // Security check
 if ($user->socid) {
@@ -434,7 +449,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
-						$pricesrc,
+						(float) $pricesrc,
 						$eatby,
 						$sellby,
 						$batch,
@@ -452,7 +467,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
-						$pricedest,
+						(float) $pricedest,
 						$eatby,
 						$sellby,
 						(string) $batch,
@@ -471,7 +486,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
-						$pricesrc,
+						(float) $pricesrc,
 						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result1 < 0) {
@@ -486,7 +501,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
-						$pricedest,
+						(float) $pricedest,
 						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result2 < 0) {
@@ -688,7 +703,7 @@ if ($id > 0 || $ref) {
 
 
 			// AWP
-			print '<tr><td class="titlefield">';
+			print '<tr><td class="titlefieldmiddle">';
 			print $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc"));
 			print '</td>';
 			print '<td>';
@@ -1353,7 +1368,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 	$comb2val = new ProductCombination2ValuePair($db);
 	$productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="massaction">';
 	print '<input type="hidden" name="id" value="'.$id.'">';

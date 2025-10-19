@@ -76,7 +76,7 @@ if (!empty($user->socid) && $user->socid > 0) {
 $total = 0;
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
-$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+$maxofloop = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $now = dol_now();
 
 //restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
@@ -1187,7 +1187,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 				//$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
-				$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
+				$warning = ($db->jdate($obj->dfv) < ($now - getWarningDelay('propal', 'cloture'))) ? img_warning($langs->trans("Late")) : '';
 
 				print '<tr class="oddeven">';
 
@@ -1264,7 +1264,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($o
 	if ($resql) {
 		$total = $total_ttc = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
 		startSimpleTable("OrdersOpened", "commande/list.php", "search_status=".Commande::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {

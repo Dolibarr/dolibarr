@@ -90,6 +90,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		$tooltip .= $langs->trans("GenericMaskCodes2");
 		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");

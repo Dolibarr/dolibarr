@@ -6,9 +6,9 @@ ProductStatusNotOnBatch=Ei (erä / sarja ei ole käytössä)
 ProductStatusOnBatchShort=erä
 ProductStatusOnSerialShort=Sarja
 ProductStatusNotOnBatchShort=Ei
-BatchSellOrEatByMandatoryList=Make %s or %s mandatory
+BatchSellOrEatByMandatoryList=%s tai %s on pakollinen
 BatchSellOrEatByMandatoryNone=Ei mitään
-BatchSellOrEatByMandatoryAll=%s and %s
+BatchSellOrEatByMandatoryAll=%s ja %s
 Batch=Erä/Sarjanumero
 atleast1batchfield=Syö päiväys tai Myyjä päiväys tai Erä/Sarjanumero
 batch_number=Erä / sarjanumero
@@ -50,3 +50,5 @@ ToReplace=Korvata
 CantMoveNonExistantSerial=Virhe. Pyydät siirtymistä levylle sarjalle, jota ei enää ole. Saattaa olla, että otat saman sarjan samassa varastossa useita kertoja samassa lähetyksessä tai sitä käytettiin toisessa lähetyksessä. Poista tämä lähetys ja valmistele toinen.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Erätaulukon epätäydellinen suorituksen korjaus parametrilla '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Varastokorjaus vaaditaan, koska yksilöllinen Sarjanumero.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

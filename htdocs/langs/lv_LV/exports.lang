@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Eksports
 ImportArea=Imports
 NewExport=Jauns eksports
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv rakstzīmju atdalītājs
 ImportCsvSeparator=Csv rakstzīmju atdalītājs
 Step=Solis
 FormatedImport=Importa palīgs
-FormatedImportDesc1=Šis modulis ļauj atjaunināt esošos datus vai pievienot jaunus objektus datu bāzē no faila bez tehniskām zināšanām, izmantojot palīgu.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=Pirmais solis ir izvēlēties datu veidu, kuru vēlaties importēt, pēc tam avota faila formātu, pēc tam laukus, kurus vēlaties importēt.
 FormatedExport=Eksporta palīgs
-FormatedExportDesc1=Šie rīki ļauj personalizētus datus eksportēt, izmantojot palīgu, lai palīdzētu jums šajā procesā, nepieprasot tehniskās zināšanas.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=Pirmais solis ir izvēlēties iepriekš noteiktu datu kopu, pēc tam - kādus laukus vēlaties eksportēt un kādā kārtībā.
 FormatedExportDesc3=Kad tiek atlasīti dati eksportēšanai, varat izvēlēties izejas faila formātu.
 Sheet=Lapa

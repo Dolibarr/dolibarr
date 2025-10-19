@@ -82,7 +82,10 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("InterventionCard"), $langs->transnoentities("InterventionCard"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("InterventionCard"), $langs->transnoentities("InterventionCard"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");

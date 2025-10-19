@@ -213,3 +213,4 @@ ExistingDipatchLines = There are already lines that has generated stock movement
 ConfirmDeleteDispatchedLines = Revert also all stock movements already done ?
 SupplierOrderDeletion = Supplier order %s Deletion
 OrderStatusMakeOperationForbidden = Order status forbidden for this operation.
+CreateRemoteOrder=Create remote order

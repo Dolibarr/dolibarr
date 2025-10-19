@@ -136,35 +136,37 @@ class HookManager
 					$arrayhooks = explode(':', $hooks); // Old system (for backward compatibility)
 				}
 
-				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks)) {    // We instantiate action class only if initialized hook is handled by the module
-					// Include actions class overwriting hooks
-					if (empty($this->hooks[$context][$module]) || !is_object($this->hooks[$context][$module])) {	// If set to an object value, class was already loaded so we do nothing.
-						$path = '/'.$module.'/class/';
-						$actionfile = 'actions_'.$module.'.class.php';
+				if (!in_array($context, $arrayhooks) && !in_array('all', $arrayhooks)) {
+					// We instantiate action class only if initialized hook is handled by the module
+					// Hook was already initialized for this context and module
+					continue;
+				}
 
-						$resaction = dol_include_once($path.$actionfile);
-						if ($resaction) {
-							$controlclassname = 'Actions'.ucfirst($module);
+				// Include actions class overwriting hooks
+				if (empty($this->hooks[$context][$module]) || !is_object($this->hooks[$context][$module])) {	// If set to an object value, class was already loaded so we do nothing.
+					$path = '/'.$module.'/class/';
+					$actionfile = 'actions_'.$module.'.class.php';
 
-							$actionInstance = new $controlclassname($this->db);
-							'@phan-var-force CommonHookActions $actionInstance';
+					$resaction = dol_include_once($path.$actionfile);
+					if ($resaction) {
+						$controlclassname = 'Actions'.ucfirst($module);
 
-							// @phan-suppress-next-line PhanUndeclaredProperty
-							$priority = (!property_exists($actionInstance, 'priority') || empty($actionInstance->priority)) ? 50 : $actionInstance->priority;
+						$actionInstance = new $controlclassname($this->db);
+						'@phan-var-force CommonHookActions $actionInstance';
 
-							$this->hooks[$context][$module] = $actionInstance;
-							$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;
+						// @phan-suppress-next-line PhanUndeclaredProperty
+						$priority = (!property_exists($actionInstance, 'priority') || empty($actionInstance->priority)) ? 50 : $actionInstance->priority;
 
-							$foundcontextmodule = true;
+						$this->hooks[$context][$module] = $actionInstance;
+						$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;
 
-							// Hook has been initialized with another couple $context/$module
-							$stringtolog = 'context='.$context.'-path='.$path.$actionfile.'-priority='.$priority;
-							dol_syslog(get_class($this)."::initHooks Loading hooks: ".$stringtolog, LOG_DEBUG);
-						} else {
-							dol_syslog(get_class($this)."::initHooks Failed to load hook in ".$path.$actionfile, LOG_WARNING);
-						}
+						$foundcontextmodule = true;
+
+						// Hook has been initialized with another couple $context/$module
+						$stringtolog = 'context='.$context.'-path='.$path.$actionfile.'-priority='.$priority;
+						dol_syslog(get_class($this)."::initHooks Loading hooks: ".$stringtolog, LOG_DEBUG);
 					} else {
-						// Hook was already initialized for this context and module
+						dol_syslog(get_class($this)."::initHooks Failed to load hook in ".$path.$actionfile, LOG_WARNING);
 					}
 				}
 			}
@@ -187,14 +189,14 @@ class HookManager
 	/**
 	 *  Execute hooks (if they were initialized) for the given method
 	 *
-	 *  @param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
+	 *  @param		string				$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
 	 *  @param		array<string,mixed>	$parameters		Array of parameters
-	 *  @param		null|Object|string	$object			Object to use hooks on  @phan-ignore-reference
-	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-	 *  @return		int<-1,1>				For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-	 *                                      All types can also return some values into an array ->results that will be merged into this->resArray for caller.
-	 *                                      $this->error or this->errors are also defined by class called by this function if error.
+	 *  @param		null|Object|array<string,mixed>|string	$object			Object to use hooks on  @phan-ignore-reference
+	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
+	 *  @return		int<-1,1>							For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *                                  			    For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *                                  			    All types can also return some values into an array ->results that will be merged into this->resArray for caller.
+	 * 													$this->error or this->errors are also defined by class called by this function if error.
 	 */
 	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{

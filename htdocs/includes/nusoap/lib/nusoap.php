@@ -3705,7 +3705,7 @@ class nusoap_server extends nusoap_base
     /**
      * wsdl instance (if one)
      *
-     * @var mixed
+     * @var mixed|wsdl
      * @access private
      */
     var $wsdl = false;
@@ -4790,6 +4790,9 @@ class wsdl extends nusoap_base
     /** @var mixed */
     var $serviceName;
     var $wsdl_info;
+
+    /** @var string */
+    var $schemaTargetNamespace;
 
     /**
      * constructor

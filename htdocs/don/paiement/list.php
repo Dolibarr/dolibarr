@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +87,8 @@ if (!$sortfield) {
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
+$object = new Don($db);
+
 $morejs = array();
 $morecss = array();
 
@@ -163,7 +165,6 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$donationstatic = new Don($db);
 $companystatic = new Societe($db);
 $bankline = new AccountLine($db);
 $accountstatic = new Account($db);
@@ -241,7 +242,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -316,7 +317,7 @@ if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -471,7 +472,7 @@ if (!empty($arrayfields['c.code']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.num_paiement']['checked'])) {
-	print_liste_field_titre($arrayfields['pd.num_paiement']['label'], $_SERVER["PHP_SELF"], "pd.num_payment", '', $param, '', $sortfield, $sortorder, '', $arrayfields['p.num_paiement']['tooltip']);
+	print_liste_field_titre($arrayfields['pd.num_paiement']['label'], $_SERVER["PHP_SELF"], "pd.num_payment", '', $param, '', $sortfield, $sortorder, '', $arrayfields['pd.num_paiement']['tooltip']);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['transaction']['checked'])) {
@@ -565,7 +566,7 @@ while ($i < $imaxinloop) {
 		if ($obj->soc_id > 0) {
 			print $companystatic->getNomUrl(1, '', 24);
 		} else {
-			print $donationstatic->societe = $obj->societe;
+			print $object->societe = $obj->societe;
 		}
 		print '</td>';
 		if (!$i) {

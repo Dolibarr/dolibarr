@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->asset->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->asset->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
 }
 
 $permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php

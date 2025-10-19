@@ -555,33 +555,37 @@ if ($modecompta == 'CREANCES-DETTES') {
 							$yeartoprocess++;
 						}
 
-						//var_dump($monthtoprocess.'_'.$yeartoprocess);
-						if (isset($cpt['account_number'])) {
-							$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
-							if ($return < 0) {
-								setEventMessages(null, $AccCat->errors, 'errors');
-								$resultM = 0;
+						if (($yeartoprocess == $start_year && ($k + 1) >= $date_startmonth && $k < $date_endmonth) ||
+							($yeartoprocess == $start_year + 1 && ($k + 1) < $date_startmonth)
+						) {
+							//var_dump($monthtoprocess.'_'.$yeartoprocess);
+							if (isset($cpt['account_number'])) {
+								$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
+								if ($return < 0) {
+									setEventMessages(null, $AccCat->errors, 'errors');
+									$resultM = 0;
+								} else {
+									$resultM = $AccCat->sdc;
+								}
 							} else {
-								$resultM = $AccCat->sdc;
+								$resultM = 0;
 							}
-						} else {
-							$resultM = 0;
-						}
-						if (empty($totCat['M'][$k])) {
-							$totCat['M'][$k] = $resultM;
-						} else {
-							$totCat['M'][$k] += $resultM;
-						}
-						if (empty($sommes[$code]['M'][$k])) {
-							$sommes[$code]['M'][$k] = $resultM;
-						} else {
-							$sommes[$code]['M'][$k] += $resultM;
-						}
-						if (isset($cpt['account_number'])) {
-							$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
-						}
+							if (empty($totCat['M'][$k])) {
+								$totCat['M'][$k] = $resultM;
+							} else {
+								$totCat['M'][$k] += $resultM;
+							}
+							if (empty($sommes[$code]['M'][$k])) {
+								$sommes[$code]['M'][$k] = $resultM;
+							} else {
+								$sommes[$code]['M'][$k] += $resultM;
+							}
+							if (isset($cpt['account_number'])) {
+								$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
+							}
 
-						$resultN += $resultM;
+							$resultN += $resultM;
+						}
 					}
 
 					if (empty($totCat)) {

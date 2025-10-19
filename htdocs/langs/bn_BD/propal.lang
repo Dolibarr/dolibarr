@@ -23,7 +23,10 @@ AllPropals=সব প্রস্তাব
 SearchAProposal=একটি প্রস্তাব অনুসন্ধান করুন
 NoProposal=কোনো প্রস্তাব নেই
 ProposalsStatistics=বাণিজ্যিক প্রস্তাবের পরিসংখ্যান
+NumberOfProposals=প্রস্তাবের সংখ্যা
 NumberOfProposalsByMonth=মাস অনুযায়ী সংখ্যা
+AmountOfProposals=প্রস্তাবের পরিমাণ
+AmountOfProposalsHT=প্রস্তাবের পরিমাণ (কর ব্যতীত)
 AmountOfProposalsByMonthHT=মাস অনুযায়ী পরিমাণ (ট্যাক্স বাদে)
 NbOfProposals=বাণিজ্যিক প্রস্তাবের সংখ্যা
 ShowPropal=প্রস্তাব দেখান
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 সপ্তাহ
 AvailabilityTypeAV_2W=২ সপ্তাহ
 AvailabilityTypeAV_3W=3 সপ্তাহ
 AvailabilityTypeAV_1M=1 মাস
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=প্রতিনিধি অনুসরণ-আপ প্রস্তাব
 TypeContact_propal_external_BILLING=Customer invoice contact
 TypeContact_propal_external_CUSTOMER=গ্রাহক যোগাযোগ অনুসরণ আপ প্রস্তাব
 TypeContact_propal_external_SHIPPING=ডেলিভারির জন্য গ্রাহকের সাথে যোগাযোগ করুন
-
 # Document models
 CantBeNoSign=স্বাক্ষরিত না সেট করা যাবে না
 CaseFollowedBy=মামলা অনুসরণ করে
@@ -122,3 +123,5 @@ SignSociete_rib=আদেশ স্বাক্ষর করুন
 SignPropal=প্রস্তাব গ্রহণ করুন
 Signed=স্বাক্ষরিত
 SignedOnly=শুধুমাত্র স্বাক্ষরিত
+ExpeditionSigned=চালান স্বাক্ষরিত
+SignExpedition=চালানের স্বাক্ষর করুন

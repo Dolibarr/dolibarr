@@ -147,7 +147,7 @@ class KnowledgeManagement extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -208,7 +208,8 @@ class KnowledgeManagement extends DolibarrApi
 		$i = 0;
 		if ($result) {
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new KnowledgeRecord($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
@@ -457,7 +458,7 @@ class KnowledgeManagement extends DolibarrApi
 	public function validate($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->knowledgerecord->fetch($id);
 		if (!$result) {
@@ -494,7 +495,7 @@ class KnowledgeManagement extends DolibarrApi
 	public function cancel($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->knowledgerecord->fetch($id);
 		if (!$result) {

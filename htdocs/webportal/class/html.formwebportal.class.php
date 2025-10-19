@@ -3,7 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ class FormWebPortal extends Form
 		$out .= '>';
 		*/
 
-		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '');
+		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '', '', '', '', 1, '', $placeholder);
 
 		return $out;
 	}
@@ -327,7 +327,8 @@ class FormWebPortal extends Form
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
+
+				$tmpout .= '<a href="' . $url . '"  class="btn-download-link ' . $morecss . '" role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
@@ -627,17 +628,21 @@ class FormWebPortal extends Form
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField for common object
 	 *
+	 * @param Object			$object			Common object
 	 * @param array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val Array of properties for field to show
-	 * @param string 		$key 			Key of attribute
+	 * @param string 			$key 			Key of attribute
 	 * @param string|mixed[]	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param string 		$moreparam 		To add more parameters on html input tag
-	 * @param string 		$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string 		$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string 		$morecss 		Value for css to define style/length of field. May also be a numeric.
+	 * @param string 			$moreparam 		To add more parameters on html input tag
+	 * @param string 			$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$morecss 		Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
-	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	public function showInputFieldForObject($object, $val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		// TODO Replace code with
+		//return $object->showInputField($val, $key, $value, '', '', '', 0);
+
 		global $conf, $langs;
 
 		$out = '';
@@ -838,8 +843,8 @@ class FormWebPortal extends Form
 				}
 
 				if (!$filter_categorie) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
+					$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+					if (!empty($fields_label)) {
 						$keyList .= ', ';
 						$keyList .= implode(', ', $fields_label);
 					}
@@ -944,9 +949,12 @@ class FormWebPortal extends Form
 				} else {
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 					$categorytype = $InfoFieldList[5];
-					if (is_numeric($categorytype)) {
-						$categorytype = Categorie::$MAP_ID_TO_CODE[(int) $categorytype]; // For backward compatibility
+					if (is_numeric($categorytype)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+						$tmpcategory = new Categorie($this->db);
+						$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+						$categorytype = $MAP_ID_TO_CODE[(int) $categorytype];
 					}
+
 					$data = $this->select_all_categories($categorytype, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
@@ -991,6 +999,10 @@ class FormWebPortal extends Form
 	 */
 	public function showOutputFieldForObject($object, $val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		// TODO Replace code with
+		//return $object->showOutputField($val, $key, $value, '', '', '', 0);
+		// We must just implement different case like output a ref that must not include the link into backoffice
+
 		global $conf, $langs;
 
 		$label = empty($val['label']) ? '' : $val['label'];
@@ -1066,7 +1078,7 @@ class FormWebPortal extends Form
 		//
 		if (in_array($key, array('rowid', 'ref'))) {
 			if (property_exists($object, 'ref')) {
-				$value = $object->ref;
+				$value = (string) $object->ref;
 			} elseif (property_exists($object, 'id')) {
 				$value = $object->id;
 			} else {
@@ -1346,15 +1358,16 @@ class FormWebPortal extends Form
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						'@phan-var-force CommonObject $object';
+						/** @var CommonObject $object */
 						$result = $object->fetch($value);
 						$value = '';
 						if ($result > 0) {
 							if (property_exists($object, 'label')) {
-								$value = $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'libelle')) {
-								$value = $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
-								$value = $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}
