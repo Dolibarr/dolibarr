@@ -51,16 +51,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 $langs->loadLangs(array("members", "companies", "categories"));
 
 // Get parameters
-$action 	= GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
-$confirm 	= GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array:int');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
-$optioncss 	= GETPOST('optioncss', 'aZ');
-$mode 		= GETPOST('mode', 'alpha');
+$optioncss = GETPOST('optioncss', 'aZ');
+$mode = GETPOST('mode', 'alpha');
 $groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 // Search fields
@@ -68,32 +68,32 @@ $search = GETPOST("search", 'alpha');
 $search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
-$search_firstname 	= GETPOST("search_firstname", 'alpha');
-$search_gender 		= GETPOST("search_gender", 'alpha');
-$search_civility 	= GETPOST("search_civility", 'alpha');
-$search_company 	= GETPOST('search_company', 'alphanohtml');
-$search_login 		= GETPOST("search_login", 'alpha');
-$search_address 	= GETPOST("search_address", 'alpha');
-$search_zip 		= GETPOST("search_zip", 'alpha');
-$search_town 		= GETPOST("search_town", 'alpha');
-$search_state 		= GETPOST("search_state", 'alpha');  // county / departement / federal state
-$search_country 	= GETPOST("search_country", 'alpha');
-$search_phone 		= GETPOST("search_phone", 'alpha');
+$search_firstname = GETPOST("search_firstname", 'alpha');
+$search_gender = GETPOST("search_gender", 'alpha');
+$search_civility = GETPOST("search_civility", 'alpha');
+$search_company = GETPOST('search_company', 'alphanohtml');
+$search_login = GETPOST("search_login", 'alpha');
+$search_address = GETPOST("search_address", 'alpha');
+$search_zip = GETPOST("search_zip", 'alpha');
+$search_town = GETPOST("search_town", 'alpha');
+$search_state = GETPOST("search_state", 'alpha');  // county / departement / federal state
+$search_country = GETPOST("search_country", 'alpha');
+$search_phone = GETPOST("search_phone", 'alpha');
 $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
-$search_type 		= GETPOST("search_type", 'alpha');
-$search_email 		= GETPOST("search_email", 'alpha');
-$search_categ 		= GETPOST("search_categ", 'intcomma');
-$search_morphy 		= GETPOST("search_morphy", 'alpha');
-$search_import_key  = trim(GETPOST("search_import_key", 'alpha'));
+$search_type = GETPOST("search_type", 'alpha');
+$search_email = GETPOST("search_email", 'alpha');
+$search_categ = GETPOST("search_categ", 'intcomma');
+$search_morphy = GETPOST("search_morphy", 'alpha');
+$search_import_key = trim(GETPOST("search_import_key", 'alpha'));
 
 $socid 		= GETPOSTINT('socid');
 if (GETPOSTINT('catid') && empty($search_categ)) {
 	$search_categ = GETPOSTINT('catid');
 }
 
-$search_filter 		= GETPOST("search_filter", 'alpha');
-$search_status 		= GETPOST("search_status", 'intcomma');  // status
+$search_filter = GETPOST("search_filter", 'alpha');
+$search_status = GETPOST("search_status", 'intcomma');  // status
 $search_datec_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datec_start_month'), GETPOSTINT('search_datec_start_day'), GETPOSTINT('search_datec_start_year'));
 $search_datec_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datec_end_month'), GETPOSTINT('search_datec_end_day'), GETPOSTINT('search_datec_end_year'));
 $search_datem_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datem_start_month'), GETPOSTINT('search_datem_start_day'), GETPOSTINT('search_datem_start_year'));
