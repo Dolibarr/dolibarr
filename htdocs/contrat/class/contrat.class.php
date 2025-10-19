@@ -1451,29 +1451,29 @@ class Contrat extends CommonObject
 	/**
 	 *  Ajoute une ligne de contrat en base
 	 *
-	 *  @param	string		$desc            	Description of line
-	 *  @param  float		$pu_ht              Unit price net
-	 *  @param  float	 	$qty             	Quantity
-	 *  @param  float		$txtva           	Vat rate
-	 *  @param  float		$txlocaltax1        Local tax 1 rate
-	 *  @param  float		$txlocaltax2        Local tax 2 rate
-	 *  @param  int			$fk_product      	Id produit
-	 *  @param  float		$remise_percent  	Percentage discount of the line
-	 *  @param  int			$date_start      	Date de debut prevue
-	 *  @param  int			$date_end        	Date de fin prevue
-	 *	@param	string		$price_base_type	HT or TTC
-	 * 	@param  float		$pu_ttc             Prix unitaire TTC
-	 * 	@param  int			$info_bits			Bits of type of lines
-	 * 	@param  int			$fk_fournprice		Fourn price id
+	 *  @param	string			$desc            	Description of line
+	 *  @param  float			$pu_ht              Unit price net
+	 *  @param  float	 		$qty             	Quantity
+	 *  @param  float|string	$txtva           	Vat rate. Can be '19.6' or '19.6 (CODE)'
+	 *  @param  float			$txlocaltax1        Local tax 1 rate
+	 *  @param  float			$txlocaltax2        Local tax 2 rate
+	 *  @param  int				$fk_product      	Id produit
+	 *  @param  float			$remise_percent  	Percentage discount of the line
+	 *  @param  int				$date_start      	Date de debut prevue
+	 *  @param  int				$date_end        	Date de fin prevue
+	 *	@param	string			$price_base_type	HT or TTC
+	 * 	@param  float			$pu_ttc             Prix unitaire TTC
+	 * 	@param  int				$info_bits			Bits of type of lines
+	 * 	@param  int				$fk_fournprice		Fourn price id
 	 *  @param  float|string			$pa_ht				Buying price HT (Can be '' to keep AWP unchanged or a float value)
 	 *  @param	array<string,mixed>		$array_options		extrafields array
-	 * 	@param 	?int		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param 	int			$rang 				Position
-	 *  @return int             				Return integer <0 if KO, >0 if OK
+	 * 	@param 	?int			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 	int				$rang 				Position
+	 *  @return int             					Return integer <0 if KO, >0 if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0)
 	{
-		global $user, $langs, $conf, $mysoc;
+		global $user, $langs, $mysoc;
 		$error = 0;
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits, $rang");

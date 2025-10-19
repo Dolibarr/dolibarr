@@ -52,6 +52,9 @@ define('ISLOADEDBYSTEELSHEET', '1');
 session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
+/**
+ * @var Conf $conf
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Define css type
