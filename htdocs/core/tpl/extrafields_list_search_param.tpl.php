@@ -28,10 +28,14 @@
  *
  * @var array<string,mixed>			$search_array_options
  * @var string						$search_options_pattern
- * @var null|string 						$param
+ * @var null|string 				$param
  * @var null|array{string:mixed}	$query
  * @var string						$extrafieldsobjectkey
  */
+
+'
+@phan-var-force null|array{string:mixed}	$query
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
