@@ -47,6 +47,24 @@ POST http://{{hostnport}}/api/index.php/emailtemplates
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: label field missing"}}
 
+# POST topic required
+POST http://{{hostnport}}/api/index.php/emailtemplates
+{ "id" : 42, "label" : "automatic test using 10_emailtemplates.hurl"}
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: topic field missing"}}
+
+# POST type_template field required
+POST http://{{hostnport}}/api/index.php/emailtemplates
+{ "id" : 42, "label" : "automatic test using 10_emailtemplates.hurl", "topic" : "automatic test using 10_emailtemplates.hurl" }
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: type_template field missing"}}
+
+# POST No id in post request data
+POST http://{{hostnport}}/api/index.php/emailtemplates
+{ "id" : 42, "label" : "automatic test using 10_emailtemplates.hurl", "topic" : "automatic test using 10_emailtemplates.hurl", "type_template" : "all" }
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: Creating with id field is forbidden"}}
+
 # DELETE
 DELETE http://{{hostnport}}/api/index.php/emailtemplates/
 HTTP 405
