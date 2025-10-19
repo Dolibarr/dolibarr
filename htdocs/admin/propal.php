@@ -251,7 +251,7 @@ llxHeader('', $langs->trans("PropalSetup"), '', '', 0, 0, '', '', '', 'mod-admin
 
 //if ($mesg) print $mesg;
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("PropalSetup"), $linkback, 'title_setup');
 
@@ -621,7 +621,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="action" value="update">';
@@ -629,12 +629,12 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
+print '<td class="center"></td>'."\n";
 print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
-print '<td width="60" align="center">';
+print '<td>';
 print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_VALIDITY_DURATION\" value=\"" . getDolGlobalString('PROPALE_VALIDITY_DURATION')."\"></td>";
 print '</tr>';
 
@@ -671,48 +671,32 @@ print "</tr>\n";
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
-print '<td class="center">';
+print '<td>';
 print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
 // Allow OnLine Sign
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
-print '<td class="center">';
+print '<td>';
 print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
 print '</td></tr>';
 
 
-/* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
-if (isModEnabled('facture'))
-{
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td>';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
-	if (!empty($conf->use_javascript_ajax))
-	{
-		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');
-	}
-	else
-	{
-		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL))
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		}
-		else
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-		}
-	}
-	print '</td></tr>';
-}
-else
-{
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td>';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
-*/
 
 print '</table>';
 
@@ -723,23 +707,6 @@ print '</form>';
 print "</table>\n<br>";
 
 
-print '<br><br>';
-
-
-/*
- * Other
- */
-
-print '<table class="noborder centpercent">';
-
-print "<tr class=\"oddeven trfirstline\">\n  <td>".$langs->trans("PathToDocuments")."</td>\n  <td>".$conf->propal->multidir_output[$conf->entity]."</td>\n</tr>\n";
-
-print '<tr class="oddeven lastline"><td>';
-print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td class="right">';
-print "</td></tr>\n";
-
-print '</table>';
 
 // End of page
 llxFooter();

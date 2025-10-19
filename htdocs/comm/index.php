@@ -1264,7 +1264,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($o
 	if ($resql) {
 		$total = $total_ttc = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
 		startSimpleTable("OrdersOpened", "commande/list.php", "search_status=".Commande::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {

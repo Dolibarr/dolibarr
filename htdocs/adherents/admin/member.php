@@ -293,7 +293,7 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
@@ -367,7 +367,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
 	print '<td class="nowrap">'.$modCodeMember->getExample().'</td>'."\n";
 
-	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
+	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON', 'mod_member_simple') == "$file") {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";

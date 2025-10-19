@@ -56,14 +56,14 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $securitykey = GETPOST('securitykey', 'alpha');
 
-if (!$user->hasRight('cron', 'create')) {
-	accessforbidden();
-}
-
 $permissiontoadd = $user->hasRight('cron', 'create');
 $permissiontoexecute = $user->hasRight('cron', 'execute');
 $permissiontodelete = $user->hasRight('cron', 'delete');
 
+if (!$permissiontoadd) {
+	accessforbidden();
+}
+// after this test $permissiontoadd is always true and never can't be false
 
 /*
  * Actions
@@ -131,7 +131,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 }
 
 
-if ($action == 'add' && $permissiontoadd) {
+if ($action == 'add'/*  && $permissiontoadd */) {
 	$object->jobtype = GETPOST('jobtype');
 	$object->label = GETPOST('label');
 	$object->command = GETPOST('command');
@@ -167,7 +167,7 @@ if ($action == 'add' && $permissiontoadd) {
 }
 
 // Save parameters
-if ($action == 'update' && $permissiontoadd) {
+if ($action == 'update'/*  && $permissiontoadd */) {
 	$object->id = $id;
 	$object->jobtype = GETPOST('jobtype');
 	$object->label = GETPOST('label');
@@ -201,7 +201,7 @@ if ($action == 'update' && $permissiontoadd) {
 	}
 }
 
-if ($action == 'activate' && $permissiontoadd) {
+if ($action == 'activate'/*  && $permissiontoadd */) {
 	$object->status = 1;
 
 	// Add cron task
@@ -217,7 +217,7 @@ if ($action == 'activate' && $permissiontoadd) {
 	}
 }
 
-if ($action == 'inactive' && $permissiontoadd) {
+if ($action == 'inactive'/*  && $permissiontoadd */) {
 	$object->status = 0;
 	$object->processing = 0;
 
@@ -235,7 +235,8 @@ if ($action == 'inactive' && $permissiontoadd) {
 }
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
+if ($action == 'confirm_clone' && $confirm == 'yes'/*  && $permissiontoadd */) {
+	// @phpstan-ignore-next-line
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
@@ -799,11 +800,7 @@ if (($action == "create") || ($action == "edit")) {
 
 
 	print "\n\n".'<div class="tabsAction">'."\n";
-	if (!$user->hasRight('cron', 'create')) {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
-	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
-	}
+	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 
 	if ((!$user->hasRight('cron', 'execute'))) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronExecute").'</a>';
@@ -813,17 +810,15 @@ if (($action == "create") || ($action == "edit")) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&token='.newToken().'&id='.$object->id.(!getDolGlobalString('CRON_KEY') ? '' : '&securitykey='.urlencode(getDolGlobalString('CRON_KEY'))).'">'.$langs->trans("CronExecute").'</a>';
 	}
 
-	if (!$user->hasRight('cron', 'create')) {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronStatusActiveBtn").'/'.$langs->trans("CronStatusInactiveBtn").'</a>';
-	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 
-		if (empty($object->status)) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
-		} else {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
-		}
+	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+
+	if (empty($object->status)) {
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
+	} else {
+		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	}
+
 
 	if (!$user->hasRight('cron', 'delete')) {
 		print '<a class="butActionDeleteRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</a>';

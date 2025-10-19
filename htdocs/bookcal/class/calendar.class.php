@@ -1014,7 +1014,7 @@ class Calendar extends CommonObject
 		global $langs;
 
 		$result = 0;
-
+		/*
 		$langs->load("agenda");
 
 		if (!dol_strlen($modele)) {
@@ -1032,7 +1032,7 @@ class Calendar extends CommonObject
 		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
-
+		*/
 		return $result;
 	}
 }

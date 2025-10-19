@@ -182,6 +182,12 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 -- default deposit % if payment term needs it on supplier
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
+
+
+-- import key for subscriptions
+ALTER TABLE llx_subscription ADD COLUMN import_key varchar(14) NULL;
+
+
 CREATE TABLE llx_categorie_propal
 (
   fk_categorie integer NOT NULL,
@@ -240,5 +246,18 @@ ALTER TABLE llx_receptiondet_batch ADD COLUMN fk_unit integer AFTER qty;
 ALTER TABLE llx_receptiondet_batch ADD COLUMN rang integer DEFAULT 0 AFTER cost_price;
 
 ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_src_object_type_id (src_object_type, src_object_id);
+
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '511', 'eGbR - eingetragene Gesellschaft bürgerlichen Rechts', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '512', 'Einzelunternehmen', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '513', 'PartG - Partnerschaftsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '514', 'PartG mbB - Partnerschaftsgesellschaft mit beschränkter Berufshaftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '515', 'KGaA - Kommanditgesellschaft auf Aktien', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '516', 'GmbH & Co. KGaA - Gesellschaft mit beschränkter Haftung & Compagnie Kommanditgesellschaft auf Aktien', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '517', 'SE - Societas Europaea', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '518', 'Stiftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '519', 'gGmbH - gemeinnützige Gesellschaft mit beschränkter Haftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '520', 'gUG - gemeinnützige Unternehmergesellschaft (haftungsbeschränkt)', 1);
+
+ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
 -- end of migration
