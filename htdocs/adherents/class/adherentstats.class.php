@@ -387,6 +387,7 @@ class AdherentStats extends Stats
 
 				$line++;
 			}
+			$this->db->free($result);
 		}
 
 		return $lastModifiedMembers;
