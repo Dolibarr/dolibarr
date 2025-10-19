@@ -49,6 +49,30 @@ class Membersstats extends DolibarrApi
 	}
 
 	/**
+	 * Return the number of members by month for a given year
+	 *
+	 * Get an array of number of members by month for a given year
+	 *
+	 * @param	int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text
+	 *                              1=Label of abscissa is month number
+	 *                              2=Label of abscissa is first letter of month
+	 * @return array 			Array of statistics for last modified members
+	 * @phan-return array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
+	 * @phpstan-return array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
+	 *
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getNbByMonth($year, $format = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getNbByMonth($year, $format);
+	}
+
+	/**
 	 * Last Modified Members
 	 *
 	 * Get an array of statistics for last modified members

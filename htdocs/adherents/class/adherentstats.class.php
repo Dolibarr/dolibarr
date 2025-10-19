@@ -97,7 +97,7 @@ class AdherentStats extends Stats
 
 
 	/**
-	 * Return the number of proposition by month for a given year
+	 * Return the number of members by month for a given year
 	 *
 	 *	@param	int		$year       Year
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
@@ -375,7 +375,7 @@ class AdherentStats extends Stats
 					'datem' => $this->db->jdate($objp->datem),
 					'status' => (int) $objp->status,
 					'date_end_subscription' => $this->db->jdate($objp->date_end_subscription),
-					'photo' => $objp->photo,
+					'photo' => isset($objp->photo) ? (string) $objp->photo : null,
 					'email' => $objp->email,
 					'gender' => $objp->gender,
 					'morphy' => $objp->morphy,
