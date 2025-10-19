@@ -981,6 +981,55 @@ class modProduct extends DolibarrModules
 				'pr.date_price' => '2020-12-31');
 		}
 
+
+		if (getDolGlobalInt('PRODUIT_CUSTOMER_PRICES')) {
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_productcustomerprice';
+			$this->import_label[$r] = "ProductsPricePerCustomer"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('sp' => $this->db->prefix().'product_customer_price', 'extra' => $this->db->prefix().'product_customer_price_extrafields');
+			$this->import_tables_creator_array[$r] = array('sp' => 'fk_user'); // Fields to store import user id
+			$this->import_fields_array[$r] = array(
+				'sp.fk_product' => "Products*",
+				'sp.fk_soc' => "Customer*",
+				'sp.ref_customer' => "RefCustomer",
+				'sp.date_begin' => "AppliedPricesFrom*",
+				'sp.date_end' => "AppliedPricesTo",
+				'sp.tva_tx' => "VATRate*",
+				'sp.default_vat_code' => 'PriceVATCode',
+				'sp.discount_percent' => 'Discount',
+				'sp.price_base_type' => "PriceBase*",
+				'sp.price' => "SellingUnitPriceHT*",
+				'sp.price_min' => "SellingUnitMinPriceHT",
+				'sp.price_ttc' => "SellingUnitPriceTTC",
+				'sp.price_min_ttc' => "SellingUnitMinPriceTTC",
+				'sp.datec' => "DateCreation");
+
+			$this->import_convertvalue_array[$r] = array(
+				'sp.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
+				'sp.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
+			);
+
+			$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+			$this->import_examplevalues_array[$r] = array(
+				'sp.fk_product' => "ref:PRODUCT_REF or id:123456",
+				'sp.fk_soc' => "My Supplier",
+				'sp.ref_customer' => "XYZ-F123456",
+				'sp.date_begin' => "2025-06-30",
+				'sp.date_end' => "2027-06-30",
+				'sp.tva_tx' => '20',
+				'sp.default_vat_code' => '5',
+				'sp.discount_percent' => '30',
+				'sp.price_base_type'=> 'HT (for excl tax) or TTC (for inc tax)',
+				'sp.price' => "100",
+				'sp.price_min' => "80",
+				'sp.price_ttc' => "120",
+				'sp.price_min_ttc' => "96",
+				'sp.datec' => "2025-09-30"
+			);
+		}
+
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			// Import translations of product names and descriptions
 			$r++;

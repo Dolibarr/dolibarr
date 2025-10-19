@@ -32,7 +32,7 @@
  */
 function websiteconfigPrepareHead($object)
 {
-	global $db, $langs, $conf;
+	global $langs, $conf;
 
 	$h = 0;
 	$head = array();

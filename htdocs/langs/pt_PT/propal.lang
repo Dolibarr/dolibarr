@@ -23,7 +23,10 @@ AllPropals=Todos os orçamentos
 SearchAProposal=Procurar um orçamento
 NoProposal=Nenhum orçamento
 ProposalsStatistics=Estatísticas de orçamentos
+NumberOfProposals=Número de orçamentos
 NumberOfProposalsByMonth=Número por Mês
+AmountOfProposals=Quantidade de orçamentos
+AmountOfProposalsHT=Quantidade de orçamentos (sem impostos)
 AmountOfProposalsByMonthHT=Montante por Mês (sem IVA)
 NbOfProposals=Número de orçamentos
 ShowPropal=Mostrar orçamento
@@ -56,7 +59,7 @@ ErrorPropalNotFound=Orçamento %s inexistente
 AddToDraftProposals=Adicionar ao orçamento rascunho
 NoDraftProposals=Sem orçamentos rascunho
 CopyPropalFrom=Criar orçamento copiando um orçamento existente
-CreateEmptyPropal=Criar novo orçamento ou a partir da lista de produtos/serviços 
+CreateEmptyPropal=Criar novo orçamento ou a partir da lista de produtos/serviços
 DefaultProposalDurationValidity=Prazo de validade predefinido do orçamento (em dias)
 DefaultPuttingPricesUpToDate=Na duplicação de uma proposta, por defeito, atualize os preços com os preços atuais conhecidos.
 DefaultPuttingDescUpToDate=Por padrão, atualize as descrições com as descrições atualmente conhecidas na clonagem de um orçamento
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 semana
 AvailabilityTypeAV_2W=2 semanas
 AvailabilityTypeAV_3W=3 semanas
 AvailabilityTypeAV_1M=1 mês
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Representante que dá seguimento ao orçamento
 TypeContact_propal_external_BILLING=Contacto na fatura do cliente
 TypeContact_propal_external_CUSTOMER=Contacto do cliente que dá seguimento ao orçamento
 TypeContact_propal_external_SHIPPING=cliente contato para entrega
-
 # Document models
 CantBeNoSign=Não pode ser definido como não assinado
 CaseFollowedBy=Caso seguido de
@@ -122,3 +123,5 @@ SignSociete_rib=Mandato de assinatura
 SignPropal=Aceite orçamento
 Signed=assinado
 SignedOnly=Somente assinado
+ExpeditionSigned=Expedição assinado
+SignExpedition=Assine Expedição

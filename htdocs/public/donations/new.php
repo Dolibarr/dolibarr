@@ -403,8 +403,9 @@ if (!$action || $action == 'create') {
 	}
 
 	// Anonymous
+	/*
 	print '<tr>';
-	print '<td>'.$form->textwithpicto($langs->trans("donAnonymous"), $langs->trans("AnonymousDonationTooltip")).'</td>';
+	print '<td class="titlefieldcreate"><label for="anonymous">'.$form->textwithpicto($langs->trans("donAnonymous"), $langs->trans("AnonymousDonationTooltip")).'</label></td>';
 	print '<td><input type="checkbox" name="anonymous" id="anonymous" '.(GETPOST('anonymous') ? 'checked' : '').'></td>';
 	print '</tr>'."\n";
 	print '<script type="text/javascript">
@@ -426,6 +427,12 @@ if (!$action || $action == 'create') {
 		});
 	});
 	</script>';
+	*/
+
+	// EMail
+	print '<tr id="tremail"><td class="fieldrequired" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").'</td><td>';
+	//print img_picto('', 'email', 'class="pictofixedwidth"');
+	print '<input type="email" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email', "aZ09arobase")).'"></td></tr>'."\n";
 
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td>';
@@ -437,11 +444,6 @@ if (!$action || $action == 'create') {
 
 	// Lastname
 	print '<tr id="trlastname"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
-
-	// EMail
-	print '<tr id="tremail"><td class="" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").'</td><td>';
-	//print img_picto('', 'email', 'class="pictofixedwidth"');
-	print '<input type="email" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email', "aZ09arobase")).'"></td></tr>'."\n";
 
 	// Address
 	print '<tr id="tradress"><td>'.$langs->trans("Address").'</td><td>'."\n";
@@ -491,7 +493,8 @@ if (!$action || $action == 'create') {
 
 	// Public
 	$publiclabel = $langs->trans("publicDonationFieldHelp", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
-	print '<tr><td>'.$form->textwithpicto($langs->trans("donationPublic"), $publiclabel).'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
+	print '<tr><td><label for="public">'.$form->textwithpicto($langs->trans("donationPublic"), $publiclabel).'</label></td>';
+	print '<td><input type="checkbox" name="public" id="public"></td></tr>'."\n";
 
 	if (getDolGlobalString('DONATION_NEWFORM_PAYONLINE')) {
 		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');

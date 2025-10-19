@@ -17,6 +17,7 @@ AccountancyCodeAsset=Сметководствен код (средство)
 AccountancyCodeDepreciationAsset=Сметководствена шифра (сметка за амортизација на средството)
 AccountancyCodeDepreciationExpense=Сметководствена шифра (сметка на трошоци за амортизација)
 AssetsLines=Средства
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=Delete
 DeleteAnAssetType=Избришете модел на средство
 ConfirmDeleteAssetType=Дали сте сигурни дека сакате да го избришете овој модел на средство?
@@ -70,6 +71,7 @@ AssetDisposal=Отстранување
 AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
 AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
 # Asset status
+AssetInDraft=Нацрт
 AssetInProgress=Во тек
 AssetDisposed=Отстранети
 AssetRecorded=Сметано

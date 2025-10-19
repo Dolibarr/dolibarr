@@ -45,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 /**
  * @var Conf $conf
@@ -99,6 +100,8 @@ if (!isModEnabled("recruitment")) {
 $object->fetch(0, $ref);
 $user->loadDefaultValues();
 $errmsg = "";
+
+$extrafields = new ExtraFields($db);
 
 /*
  * Actions
@@ -174,6 +177,15 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 			$error++;
 			$errmsg .= implode('<br>', $candidature->errors);
 		}
+
+		// Fill array 'array_options' with data from add form
+		$extrafields->fetch_name_optionals_label($candidature->table_element);
+		$ret = $extrafields->setOptionalsFromPost(null, $candidature);
+		if ($ret < 0) {
+			$error++;
+			$errmsg .= $candidature->error;
+		}
+
 		if (!$error) {
 			$result = $candidature->create($user);
 			if ($result <= 0) {
@@ -414,6 +426,13 @@ if ($action != 'dosubmit') {
 		print '<tr><td class="titlefieldcreate left">'.$langs->trans("RequestedRemuneration").'</td><td class="left">';
 		print '<input type="text" class="flat minwidth100 --success" name="requestedremuneration" value="'.$requestedremuneration.'">';
 		print '</td></tr>'."\n";
+
+		// Other attributes
+		$object = new RecruitmentCandidature($db);
+		$parameters['tpl_context'] = 'public';	// define template context to public
+		$parameters['tdclass'] = 'left';
+		$extrafields->fetch_name_optionals_label("recruitment_recruitmentcandidature");
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Message").'</td><td class="left">';
 		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_5.'" name="message">'.$message.'</textarea>';

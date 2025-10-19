@@ -37,8 +37,11 @@
 // $diroutputmassaction may be defined
 /**
  * @var Conf $conf
+ * @var CommonObject $object
  * @var DoliDB $db
+ * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $massaction
  * @var string $objectclass
@@ -66,13 +69,13 @@ if (empty($objectclass) || empty($uploaddir)) {
 $error = 0;
 
 // Mass actions. Controls on number of lines checked.
-$maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
+$maxformassaction = getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
 }
 if (!$error && is_array($toselect) && count($toselect) > $maxformassaction) {
-	setEventMessages($langs->trans('TooManyRecordForMassAction', $maxformassaction), null, 'errors');
+	setEventMessages($langs->trans('TooManyRecordForMassAction', (string) $maxformassaction), null, 'errors');
 	$error++;
 }
 
@@ -94,23 +97,21 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 	$listofselectedid = array();
 	$listofselectedref = array();
-	if (!$error) {
-		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
-		$attendee = new ConferenceOrBoothAttendee($db);
-		$objecttmp = new $objectclass($db);
-		'@phan-var-force CommonObject $objecttmp';
+	require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
+	$attendee = new ConferenceOrBoothAttendee($db);
+	$objecttmp = new $objectclass($db);
+	'@phan-var-force CommonObject $objecttmp';
 
-		foreach ($toselect as $toselectid) {
-			$result = $objecttmp->fetch($toselectid);
-			if ($result > 0) {
-				$attendees = $attendee->fetchAll();
-				if (is_array($attendees) && count($attendees) > 0) {
-					foreach ($attendees as $attmail) {
-						if (!empty($attmail->email)) {
-							$attmail->fetch_thirdparty();
-							$listofselectedid[$attmail->email] = $attmail;
-							$listofselectedref[$attmail->email] = $objecttmp;
-						}
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			$attendees = $attendee->fetchAll();
+			if (is_array($attendees) && count($attendees) > 0) {
+				foreach ($attendees as $attmail) {
+					if (!empty($attmail->email)) {
+						$attmail->fetch_thirdparty();
+						$listofselectedid[$attmail->email] = $attmail;
+						$listofselectedref[$attmail->email] = $objecttmp;
 					}
 				}
 			}
@@ -193,6 +194,8 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
 					$from = dol_string_nospecial($obj->label, ' ', array(",")) . ' <' . $obj->email . '>';
+				} else {
+					$from = '';
 				}
 			} else {
 				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")) . ' <' . GETPOST('frommail') . '>';
@@ -239,7 +242,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 			// Send mail (substitutionarray must be done just before this)
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, array(), array(), array(), $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', "attendees_".$attendees->id, '', $sendcontext);
+			$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, array(), array(), array(), $sendtocc, $sendtobcc, 0, -1, '', '', "attendees_".$attendees->id, '', $sendcontext);
 			if ($mailfile->error) {
 				$resaction .= '<div class="error">' . $mailfile->error . '</div>';
 			} else {
@@ -269,24 +272,22 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					$objectobj2->elementtype = $objectobj2->element;
 
 					$triggername = 'CONFERENCEORBOOTHATTENDEE_SENTBYMAIL';
-					if (!empty($triggername)) {
-						// Call trigger
-						$result = $objectobj2->call_trigger($triggername, $user);
-						if ($result < 0) {
-							$error++;
-						}
-						// End call triggers
+					// Call trigger
+					$result = $objectobj2->call_trigger($triggername, $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 
-						if ($error) {
-							setEventMessages($db->lasterror(), $objectobj2->errors, 'errors');
-							dol_syslog("Error in trigger " . $triggername . ' ' . $db->lasterror(), LOG_ERR);
-						}
+					if ($error) {
+						setEventMessages($db->lasterror(), $objectobj2->errors, 'errors');
+						dol_syslog("Error in trigger " . $triggername . ' ' . $db->lasterror(), LOG_ERR);
 					}
 
 					$nbsent++; // Nb of object sent
 				} else {
 					$langs->load("other");
-					if ($mailfile->error) {
+					if ($mailfile->error) { // @phpstan-ignore-line
 						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 						$resaction .= '<br><div class="error">' . $mailfile->error . '</div>';
 					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
@@ -294,6 +295,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					} else {
 						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
 					}
+					$nbignored++;
 				}
 			}
 		}  // foreach ($listofselectedid as $email => $attendees)

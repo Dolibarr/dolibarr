@@ -24,6 +24,7 @@
 
 /**
  *	\file 		htdocs/core/class/ldap.class.php
+ *  \ingroup	ldap
  *	\brief 		File of class to manage LDAP features
  *
  *  Note:

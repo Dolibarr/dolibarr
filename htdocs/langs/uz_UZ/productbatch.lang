@@ -6,7 +6,7 @@ ProductStatusNotOnBatch=Yo'q (lot / seriya ishlatilmadi)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Ketma-ket
 ProductStatusNotOnBatchShort=Yo'q
-BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryList=%s yoki %s majburiy
 BatchSellOrEatByMandatoryNone=None
 BatchSellOrEatByMandatoryAll=%s va %s
 Batch=Lot / ketma-ket
@@ -50,3 +50,5 @@ ToReplace=O'zgartiring
 CantMoveNonExistantSerial=Xato. Siz endi mavjud bo'lmagan serial uchun rekordni ko'chirishni so'raysiz. Balki siz bir xil seriyani bitta omborda bir necha marta bir jo'natishda olgansiz yoki u boshqa jo'natmada ishlatilgan. Ushbu yukni olib tashlang va boshqasini tayyorlang.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=“...repair.php?standard=confirmed” parametri bilan lot jadvali toʻliq bajarilmagan taʼmirlash
 IlligalQtyForSerialNumbers= Aktsiyalarni tuzatish talab qilinadi, chunki noyob seriya raqami.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

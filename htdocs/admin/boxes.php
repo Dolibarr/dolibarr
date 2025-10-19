@@ -79,7 +79,7 @@ if ($action == 'add') {
 					$sql = "SELECT fk_user";
 					$sql .= " FROM ".MAIN_DB_PREFIX."user_param";
 					$sql .= " WHERE param = 'MAIN_BOXES_".$db->escape($pos)."' AND value = '1'";
-					$sql .= " AND entity = ".$conf->entity;
+					$sql .= " AND entity = ".((int) $conf->entity);
 					dol_syslog("boxes.php search fk_user to activate box for", LOG_DEBUG);
 					$resql = $db->query($sql);
 					if ($resql) {

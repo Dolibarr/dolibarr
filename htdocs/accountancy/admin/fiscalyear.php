@@ -131,7 +131,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -202,7 +202,7 @@ if ($result) {
 			if (getDolGlobalString('ACCOUNTANCY_FISCALYEAR_DEFAULT') == (int) $fiscalyearstatic->ref) {
 				print img_picto($langs->trans("Default"), 'on');
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdefault&token='.newToken().'&value='.urlencode($fiscalyearstatic->ref).'&label='.urlencode($fiscalyearstatic->label).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
+				print '<a class="reposition" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'setdefault', 'value' => $fiscalyearstatic->ref, 'label'=>$fiscalyearstatic->label], true).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
 			}
 			print '</td>';
 

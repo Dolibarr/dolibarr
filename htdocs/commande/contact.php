@@ -141,7 +141,7 @@ if ($id > 0 || !empty($ref)) {
 		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_contact');
 
 		$head = commande_prepare_head($object);
-		print dol_get_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, $object->picto);
 
 		// Order card
 
@@ -157,10 +157,10 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {
+			if (0) {	// @phpstan-ignore-line
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -185,9 +185,12 @@ if ($id > 0 || !empty($ref)) {
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 		foreach ($dirtpls as $reldir) {
-			$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-			if ($res) {
-				break;
+			$file = dol_buildpath($reldir.'/contacts.tpl.php');
+			if (file_exists($file)) {
+				$res = @include $file;
+				if ($res) {
+					break;
+				}
 			}
 		}
 	} else {

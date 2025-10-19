@@ -51,7 +51,7 @@ if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
+restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
@@ -257,13 +257,13 @@ if ($mode && !count($data)) {
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("MembersStatisticsDesc").'</span><br>';
 		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
+		print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['mode' => 'memberbycountry']).'">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
 		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbystate">'.$langs->trans("MembersStatisticsByState").'</a><br>';
+		print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['mode' => 'memberbystate']).'">'.$langs->trans("MembersStatisticsByState").'</a><br>';
 		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbytown">'.$langs->trans("MembersStatisticsByTown").'</a><br>';
+		print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['mode' => 'memberbytown']).'">'.$langs->trans("MembersStatisticsByTown").'</a><br>';
 		print '<br>'; //+
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbyregion">'.$langs->trans("MembersStatisticsByRegion").'</a><br>'; //+
+		print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['mode' => 'memberbyregion']).'">'.$langs->trans("MembersStatisticsByRegion").'</a><br>'; //+
 	}
 	print '<br>';
 }

@@ -331,7 +331,7 @@ class Account extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -385,7 +385,7 @@ class Account extends CommonObject
 		'comment' => array('type' => 'text', 'label' => 'Comment', 'enabled' => 1, 'visible' => -1, 'position' => 155),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 156),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 157),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'position' => 160),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 160),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 165),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 170),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 175),
@@ -474,8 +474,6 @@ class Account extends CommonObject
 	 */
 	public function canBeConciliated()
 	{
-		global $conf;
-
 		if (empty($this->rappro)) {
 			return -1;
 		}
@@ -585,7 +583,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *  Add an entry into table ".MAIN_DB_PREFIX."bank
+	 *  Add an entry into table llx_bank
 	 *
 	 *  @param	int	        $date					Date operation
 	 *  @param	string		$oper					'VIR','PRE','LIQ','VAD','CB','CHQ'...
@@ -597,12 +595,13 @@ class Account extends CommonObject
 	 *  @param	string		$emetteur				Name of cheque writer
 	 *  @param	string		$banque					Bank of cheque writer
 	 *  @param	string		$accountancycode		When we record a free bank entry, we must provide accounting account if accountancy module is on.
-	 *  @param	int			$datev					Date value
+	 *  @param	?int		$datev					Date value
 	 *  @param  string      $num_releve     		Label of bank receipt for reconciliation
-	 *  @param	float		$amount_main_currency	Amount
+	 *  @param	?float		$amount_main_currency	Amount
+	 *  @param	string		$note_private			Note private
 	 *  @return	int									Rowid of added entry, <0 if KO
 	 */
-	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
+	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null, $note_private = '')
 	{
 		global $langs;
 
@@ -668,6 +667,7 @@ class Account extends CommonObject
 		$accline->fk_type = $oper;
 		$accline->numero_compte = $accountancycode;
 		$accline->num_releve = $num_releve;
+		$accline->note_private = $note_private;
 
 		if ($num_chq) {
 			$accline->num_chq = $num_chq;
@@ -686,7 +686,7 @@ class Account extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= ((int) $accline->id).", '".$this->db->escape((string) $categorie)."'";
+				$sql .= ((int) $accline->id).", ".((int) $categorie);
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -982,7 +982,7 @@ class Account extends CommonObject
 
 			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bank/".$this->db->escape($this->ref)."'";
-				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type='bank_account' and entity = ".((int) $conf->entity);
+				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type = 'bank_account' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1500,7 +1500,7 @@ class Account extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}
@@ -1510,9 +1510,11 @@ class Account extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array<string,mixed> $params params to construct tooltip data
-	 * @since v18
+	 *
+	 * @param array<string,mixed> 	$params 	Params to construct tooltip data
 	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 *
+	 * @since v18
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1528,11 +1530,12 @@ class Account extends CommonObject
 			$pictos .= ' '.$this->getLibStatut(5);
 		}
 		$datas['picto'] = $pictos;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		$datas['accountnumber'] = '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
+		$datas['accountnumber'] = '<br><br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
 		$datas['iban'] = '<br><b>'.$langs->trans('IBAN').':</b> '.getIbanHumanReadable($this);
 		$datas['bic'] = '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
-		$datas['accountcurrency'] = '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
+		$datas['accountcurrency'] = '<br><br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
 
 		if (isModEnabled('accounting')) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -1555,7 +1558,7 @@ class Account extends CommonObject
 	 *
 	 *	@param	int		$withpicto					Include picto into link
 	 *  @param  string	$mode           			''=Link to card, 'transactions'=Link to transactions card
-	 *  @param  string  $option         			''=Show ref, 'reflabel'=Show ref+label
+	 *  @param  string  $option         			''=Show ref, 'nolink'=No link, 'reflabel'=Show ref+label
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param	int  	$notooltip		 			1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
@@ -1971,7 +1974,6 @@ class Account extends CommonObject
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
-		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
 		$this->type            = Account::TYPE_CURRENT;
 		$this->status          = Account::STATUS_OPEN;
@@ -2004,7 +2006,7 @@ class Account extends CommonObject
 	 */
 	public static function replaceThirdparty($dbs, $origin_id, $dest_id)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type = 'company'";
 
 		if ($dbs->query($sql)) {
 			return true;
@@ -2120,7 +2122,7 @@ class AccountLine extends CommonObjectLine
 	public $amount;
 
 	/**
-	 * @var float		Amount in the currency of company if bank account use another currency
+	 * @var ?float		Amount in the currency of the main company if the bank account uses another currency
 	 */
 	public $amount_main_currency;
 
@@ -2145,7 +2147,7 @@ class AccountLine extends CommonObjectLine
 	public $fk_bordereau;
 
 	/**
-	 * @var int 		ID of bank account
+	 * @var ?int 		ID of bank account
 	 */
 	public $fk_account;
 
@@ -2321,6 +2323,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", rappro";
 		$sql .= ", numero_compte";
 		$sql .= ", num_releve";
+		$sql .= ", note";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->dateo)."'";
@@ -2337,6 +2340,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", ".(int) $this->rappro;
 		$sql .= ", ".($this->numero_compte ? "'".$this->db->escape($this->numero_compte)."'" : "''");
 		$sql .= ", ".($this->num_releve ? "'".$this->db->escape($this->num_releve)."'" : "null");
+		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ")";
 
 
@@ -2811,13 +2815,13 @@ class AccountLine extends CommonObjectLine
 			$result .= yn($this->rappro);
 		}
 		if (isModEnabled('accounting') && ($option == 'showall' || $option == 'showconciliatedandaccounted')) {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+			$sql = "SELECT COUNT(rowid) as nb, MAX(piece_num) as banktransactionid FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
 			$sql .= " WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj && $obj->nb) {
-					$result .= ' - '.$langs->trans("Accounted").': '.yn(1);
+					$result .= ' - '.$langs->trans("Accounted").': <span title="'.$langs->trans("TransactionNumShort").' '.$obj->banktransactionid.'">'.yn(1).'</span>';
 				} else {
 					$result .= ' - '.$langs->trans("Accounted").': '.yn(0);
 				}

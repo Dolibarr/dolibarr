@@ -74,3 +74,5 @@ NewPartnershipRequest=Novi zahtjev za partnerstvo
 NewPartnershipRequestDesc=Ovaj obrazac vam omogućuje da zatražite da budete dio jednog od naših partnerskih programa. Ako trebate pomoć za ispunjavanje ovog obrasca, kontaktirajte putem e-pošta <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ova stranica mora sadržavati barem jednu vezu na jednu od sljedećih domena: %s
 IPOfApplicant=IP podnositelja zahtjeva
+PartnershipToReopen=Za ponovno otvaranje
+PartnershipConfirmReOpenAsk=Jeste li sigurni da želite za ponovno otvaranje ovog partnerstva <b> %s</b>?

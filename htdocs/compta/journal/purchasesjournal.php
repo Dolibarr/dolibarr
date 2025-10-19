@@ -5,7 +5,7 @@
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2025  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -118,8 +118,7 @@ $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
-$p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
-$idpays = $p[0];
+$idpays = $mysoc->country_id;
 
 
 $sql = "SELECT f.rowid, f.ref_supplier, f.type, f.datef, f.libelle as label,";
@@ -154,8 +153,8 @@ $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 	// les variables
-	$cptfour = ((getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
-	$cpttva = (getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+	$cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', $langs->trans("CodeNotDef"));
+	$cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 
 	$tabht = array();
 	$tabtva = array();
@@ -172,9 +171,9 @@ if ($result) {
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 			} else {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 			}
 		}
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
@@ -260,8 +259,8 @@ foreach ($tabfac as $key => $val) {
 		foreach ($line['var'] as $k => $mt) {
 			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
-				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+				print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td>";
 				print "<td>".$line['label']."</td>";
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin          <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW					   <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France        <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -174,7 +174,7 @@ class pdf_standard_actions
 	 *
 	 * @param  ?CommonObject	$object			Order/...
 	 * @param  Translate		$outputlangs    Lang object for output language
-	 * @return int<0,1>     			    	1=OK, 0=KO
+	 * @return int<-1,1>     			    	1 => OK, <=0 => KO
 	 */
 	public function write_file($object, $outputlangs)
 	{
@@ -193,7 +193,7 @@ class pdf_standard_actions
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
 		$dir = $conf->agenda->dir_temp."/";
-		$file = $dir."actions-".sprintf("%02d", $this->month)."-".sprintf("%04d", $this->year).".pdf";
+		$file = $dir."actions-".sprintf("%04d", $this->year)."-".sprintf("%02d", $this->month).".pdf";
 
 		if (!file_exists($dir)) {
 			if (dol_mkdir($dir) < 0) {
@@ -263,6 +263,8 @@ class pdf_standard_actions
 			if ($reshook < 0) {
 				$this->error = $hookmanager->error;
 				$this->errors = $hookmanager->errors;
+				dolChmod($file);
+				return -1;
 			}
 
 			dolChmod($file);

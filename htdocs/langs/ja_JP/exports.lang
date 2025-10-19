@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=輸入/輸出
 ExportsArea=エクスポート
 ImportArea=インポート
 NewExport=新規エクスポート
@@ -31,10 +32,10 @@ ExportCsvSeparator=CSV文字区切り文字
 ImportCsvSeparator=CSV文字区切り文字
 Step=ステップ
 FormatedImport=インポートアシスタント
-FormatedImportDesc1=このモジュールを使用すると、アシスタントを使用して、技術的な知識がなくても、ファイルから既存のデータを更新したり、データベースに新規オブジェクトを追加したりできる。
+FormatedImportDesc1=アシスタントを使用して既存のデータを更新したり、ファイル からデータベースに新しいオブジェクトを追加したりするには、ここをクリックしてください。
 FormatedImportDesc2=最初のステップは、インポートするデータの種類を選択し、次にソースファイルの形式を選択し、次にインポートするフィールドを選択すること 。
 FormatedExport=エクスポートアシスタント
-FormatedExportDesc1=これらのツールを使用すると、アシスタントを使用してパーソナライズされたデータをエクスポートできるため、技術的な知識がなくてもプロセスを支援できる。
+FormatedExportDesc1=アシスタントを使用してサポートされている形式でデータをエクスポートするには、ここをクリックしてください
 FormatedExportDesc2=最初のステップは、事前定義されたデータセットを選択し、次にエクスポートするフィールドとその順序を選択すること 。
 FormatedExportDesc3=エクスポートするデータを選択すると、出力ファイルの形式を選択できる。
 Sheet=シート

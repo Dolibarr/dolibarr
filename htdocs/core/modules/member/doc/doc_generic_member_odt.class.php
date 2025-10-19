@@ -202,7 +202,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
@@ -343,6 +343,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				$tmparray = array_merge($array_member, $array_soc, $array_thirdparty, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+
 				// Call the ODTSubstitution hook
 				$parameters = array(
 					'file' => $file,
@@ -354,7 +355,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				// retrieve the constant to apply a ratio for image size or set the ratio to 1
 				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
 				} else {
 					$ratio = 1;
 				}

@@ -17,6 +17,7 @@ AccountancyCodeAsset=Λογιστικός Κωδικός (Ενεργητικό)
 AccountancyCodeDepreciationAsset=Λογιστικός κωδικός (λογαριασμού απόσβεσης ενεργητικού)
 AccountancyCodeDepreciationExpense=Λογιστικός κωδικός (λογαριασμός απόσβεσης εξόδων)
 AssetsLines=Περιουσιακά στοιχεία
+ConfirmValidateAsset=Είστε σίγουροι ότι θέλετε σε να επικυρώσετε αυτό το περιουσιακό στοιχείο με την αναφορά <b>%s</b>;
 DeleteType=Διαγραφή
 DeleteAnAssetType=Διαγραφή ενός τύπου ενεργητικού
 ConfirmDeleteAssetType=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό τον τύπο ενεργητικού;
@@ -70,6 +71,7 @@ AssetDisposal=Διάθεση
 AssetConfirmDisposalAsk=Είστε σίγουροι ότι θέλετε να διαθέσετε αυτό το περιουσιακό στοιχείο <b> %s </b>;
 AssetConfirmReOpenAsk=Είστε βέβαιοι ότι θέλετε να ανοίξετε ξανά αυτό το στοιχείο <b> %s </b>;
 # Asset status
+AssetInDraft=Προσχέδιο
 AssetInProgress=Σε εξέλιξη
 AssetDisposed=Διατεθειμένο
 AssetRecorded=Καταγεγραμμένο

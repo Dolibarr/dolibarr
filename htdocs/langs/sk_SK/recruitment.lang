@@ -64,3 +64,7 @@ NoPositionOpen=Momentálne nie sú otvorené žiadne pozície
 ConfirmClose=Potvrďte zrušenie
 ConfirmCloseAsk=Naozaj chcete zrušiť túto náborovú kandidatúru?
 Recruitment=Nábor
+ApplyJobCandidature=Uchádzajte sa o túto prácu
+ErrorRecruitmmentCandidatureAlreadyExists= Kandidátka na zamestnanie s e-mailovou adresou %s už existuje.
+RecruitmentCandidatureSaved=Kandidatúra na nábor bola úspešne uložená
+NoOpenJobOffer=Momentálne nie sú žiadne otvorené pracovné ponuky

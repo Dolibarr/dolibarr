@@ -372,7 +372,7 @@ class FormWebsite
 				$arrayofsamples[$key] = $labelkey;
 			}
 		}
-		$out = '<div id="template-selector" class="template-container hidden">';
+		$out = '<div id="template-selector" class="template-selector template-container hidden">';
 
 		// We disable some not ready templates
 		unset($arrayofsamples['dynamiccontent']);
