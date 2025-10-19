@@ -457,7 +457,10 @@ class FormAccounting extends Form
 						$selected = $select_value_out;
 					}
 
-					$options[$select_value_out] = $label;
+					$options[$select_value_out] = array(
+						'label' => $label,
+						'data-centralized' => $obj->centralized ? 1 : 0
+					);
 				}
 			}
 
