@@ -662,7 +662,7 @@ if ($groupby != '') {
 	$query += ['groupby' => $groupby];
 }
 if ($search_all != "") {
-	$query += ['search_all' => $serach_all];
+	$query += ['search_all' => $search_all];
 }
 if ($search_ref) {
 	$query += ['search-ref' => $search_ref];
@@ -674,7 +674,7 @@ if ($search_firstname) {
 	$query += ['search_firstname' => $search_firstname];
 }
 if ($search_lastname) {
-	$query += ['search_lastname' => $serach_lastname];
+	$query += ['search_lastname' => $search_lastname];
 }
 if ($search_gender) {
 	$query += ['search_gender' => $search_gender];
