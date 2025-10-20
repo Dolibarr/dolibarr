@@ -931,6 +931,7 @@ class FormSetupItem
 		} elseif ($this->type == 'product') {
 			if (isModEnabled("product") || isModEnabled("service")) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
+				$out .= img_picto('', 'product', 'class="pictofixedwidth"');
 				$out .= $this->form->select_produits((int) $selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} elseif ($this->type == 'selectBankAccount') {
@@ -942,6 +943,12 @@ class FormSetupItem
 			$out .= $this->generateInputFieldPassword('dolibarr');
 		} elseif ($this->type == 'genericpassword') {
 			$out .= $this->generateInputFieldPassword('generic');
+		} elseif ($this->type == 'price') {
+			$out .= $this->generateInputFieldPrice();
+		} elseif ($this->type == 'email') {
+			$out .= $this->generateInputFieldEmail();
+		} elseif ($this->type == 'url') {
+			$out .= $this->generateInputFieldUrl();
 		} else {
 			$out .= $this->generateInputFieldText();
 		}
@@ -960,6 +967,48 @@ class FormSetupItem
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
 		}
 		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+	}
+
+	/**
+	 * Generate default input field
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldPrice()
+	{
+		global $langs, $mysoc;
+
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
+			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth40 maxwidth75' : $this->cssClass);
+		}
+		//return img_picto('', 'currency', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' /> '.$langs->getCurrencySymbol($mysoc->currency_code);
+		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' /> '.$langs->getCurrencySymbol($mysoc->currency_code);
+	}
+
+	/**
+	 * Generate default input field
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldEmail()
+	{
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
+			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth100 maxwidth500' : $this->cssClass);
+		}
+		return img_picto('', 'email', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+	}
+
+	/**
+	 * Generate default input field
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldUrl()
+	{
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
+			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth100 maxwidth500' : $this->cssClass);
+		}
+		return img_picto('', 'url', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 	}
 
 	/**
@@ -1450,6 +1499,17 @@ class FormSetupItem
 	}
 
 	/**
+	 * Set type of input as string
+	 *
+	 * @return self
+	 */
+	public function setAsUrl()
+	{
+		$this->type = 'url';
+		return $this;
+	}
+
+	/**
 	 * Set type of input as color
 	 *
 	 * @return self
@@ -1535,6 +1595,17 @@ class FormSetupItem
 	public function setAsProduct()
 	{
 		$this->type = 'product';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as product
+	 *
+	 * @return self
+	 */
+	public function setAsPrice()
+	{
+		$this->type = 'price';
 		return $this;
 	}
 

@@ -194,6 +194,73 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// Verify if we can find member
+if (empty($reshook) && getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE") && $action == 'add' && !GETPOSTISSET("nofetchmember")) {	// Test on permission not required here
+	$memberfound = false;
+	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') && GETPOSTISSET('login')) {
+		$sql = "SELECT rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
+		$sql .= " WHERE a.login = '".$db->escape(GETPOST('login'))."'";
+		$sql .= " AND statut = 1";
+		$sql .= " AND entity IN (".getEntity($object->element).")";
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) == 1) {
+				$obj = $db->fetch_object($resql);
+				$object->fetch($obj->id);
+				$memberfound = true;
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	if (!$memberfound && GETPOST("morphy") == 'mor' && GETPOSTISSET("societe") ) {
+		$sql = "SELECT a.rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " ON a.fk_soc = s.rowid";
+		$sql .= " WHERE s.nom = '".$db->escape(GETPOST("societe", 'alphanohtml'))."'";
+		$sql .= " AND a.email = '".$db->escape(preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase')))."'";
+		$sql .= " AND a.statut = 1";
+		$sql .= " AND a.entity IN (".getEntity($object->element).")";
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) == 1) {
+				$obj = $db->fetch_object($resql);
+				$object->fetch($obj->id);
+				$memberfound = true;
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	if (!$memberfound && GETPOST("morphy") == 'phy' && GETPOSTISSET("lastname") && GETPOSTISSET("firstname") && !empty(GETPOST("member_email", 'aZ09arobase'))) {
+		$sql = "SELECT rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
+		$sql .= " WHERE firstname = '".$db->escape(GETPOST("firstname", 'alphanohtml'))."'";
+		$sql .= " AND lastname = '".$db->escape(GETPOST("lastname", 'alphanohtml'))."'";
+		$sql .= " AND email = '".$db->escape(preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase')))."'";
+		$sql .= " AND statut = 1";
+		$sql .= " AND entity IN (".getEntity($object->element).")";
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) == 1) {
+				$obj = $db->fetch_object($resql);
+				$object->fetch($obj->id);
+				$memberfound = true;
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	if ($memberfound) {
+		$action = 'subscription';
+	}
+}
+
 // Action called when page is submitted
 if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous form. Check is done on constant to enable and mitigation.
 	$error = 0;
@@ -546,13 +613,21 @@ print '</div>';
 dol_htmloutput_errors($errmsg);
 dol_htmloutput_events();
 
+if ($action == "subscription") {
+	$urltocall = DOL_URL_ROOT.'/public/payment/newpayment.php?source=member&ref='.$object->id;
+	print $form->formconfirm($urltocall, $langs->trans("CorrespondingMemberFound"), $langs->trans("CorrespondingMemberFoundQuestion"), "confirm_subscription", '', 'no', 1);
+}
+
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="page_y" value="" />';
 
-if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFORM_FORCETYPE') || $action == 'create') {
+if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFORM_FORCETYPE') || in_array($action, array('create', 'subscription'))) {
+	if ($action == 'subscription') {
+		print '<input type="hidden" name="nofetchmember" value="nofetchmember" />';
+	}
 	print '<input type="hidden" name="action" value="add" />';
 	print '<br>';
 
@@ -689,12 +764,14 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$tdFirst.removeClass("fieldrequired");
 								break;
 
-							default:
-								$phyInput.prop({disabled: false, checked: false});
-								$morInput.prop({disabled: false, checked: false});
-								$span1.removeClass("member-individual-back").addClass("nonature-back");
-								$span2.removeClass("member-company-back").addClass("nonature-back");
-						}
+							default:';
+			if ($action != "subscription") {
+				print ' $phyInput.prop({disabled: false, checked: false});
+				$morInput.prop({disabled: false, checked: false});
+				$span1.removeClass("member-individual-back").addClass("nonature-back");
+				$span2.removeClass("member-company-back").addClass("nonature-back");';
+			}
+			print'}
 					});
 
 					// Initial state

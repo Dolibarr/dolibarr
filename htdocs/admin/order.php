@@ -269,7 +269,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader("", $langs->trans("OrdersSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-order');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("OrdersSetup"), $linkback, 'title_setup');
 
@@ -682,7 +682,7 @@ print '</form>';
 
 //Use draft Watermark
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_COMMANDE_DRAFT_WATERMARK">';
 print '<tr class="oddeven"><td>';
@@ -710,77 +710,26 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 }
 
-/*
-// Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
-// TODO Must be implemented by PDF templates
-// Ask for payment bank during order
-if (isModEnabled("banque")) {
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (!empty($conf->use_javascript_ajax)) {
-		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
-	} else {
-		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-		}
-	}
-	print '</td></tr>';
-} else {
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td colspan="2">';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
-
-// Ask for warehouse during order
-if (isModEnabled('stock')) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (!empty($conf->use_javascript_ajax)) {
-		print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
-	} else {
-		if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-		}
-	}
-	print '</td></tr>';
-} else {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
-*/
 
 print '</table>';
 print '</div>';
 
 print '<br>';
 
-
-/*
- * Notifications
- */
-
-print load_fiche_titre($langs->trans("Notifications"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60"></td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
-
-print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td class="right">';
-print "</td></tr>\n";
-
-print '</table>';
-print '</div>';
 
 // End of page
 llxFooter();

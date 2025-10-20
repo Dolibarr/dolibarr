@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
 
 /**
  *	Class to manage emailings module
@@ -175,10 +176,20 @@ class Mailing extends CommonObject
 	public $substitutionarrayfortest;
 
 	/**
+	 * @var MailingTarget[]
+	 */
+	public $targets = array();
+
+	/**
 	 * @var ?int 			The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
+
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
+	);
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -621,7 +632,7 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 0, fk_user_modif=".$user->id;
+		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);

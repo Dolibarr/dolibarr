@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2013  Regis Houssin   <regis.houssin@inodbox.com>
  * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,6 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -24,7 +29,7 @@ if (empty($conf) || !is_object($conf)) {
 
 $objectUrl = $object->getNomUrl(0, '', '0', 1);
 if ($object->element == 'propal') {
-	$objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
+	$objectUrl = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/card.php', ['id' => $object->id]);
 }
 
 ?>
@@ -94,12 +99,7 @@ $(document).ready(function(){
 		{
 			$.jnotify("<?php echo $langs->trans('ErrorNoUrl'); ?>", "error", true);
 		}
-
 	});
-
-
-
-
 });
 
 </script>

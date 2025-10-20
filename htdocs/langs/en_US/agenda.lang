@@ -211,3 +211,5 @@ ReadLess = Read less
 RecurringEvent=Recurring event
 EventPartOfARecurringSerie=Event is part of a recurring series with ID %s
 BookCalSystem=Online booking
+BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
+PublicLinkForBooking=Public link for booking
