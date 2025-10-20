@@ -2661,7 +2661,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'comm/action';
 	} elseif ($moduleobject == 'mailing') {
 		$moduledirforclass = 'comm/mailing';
-	} elseif (in_array($moduleobject, ['adherent', 'members', 'memberstypes', 'subscriptions', 'membersstats'])) {
+	} elseif (in_array($moduleobject, ['adherent', 'members', 'memberstypes', 'subscriptions'])) {
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';
