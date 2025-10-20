@@ -2835,17 +2835,17 @@ class Project extends CommonObject
 	/**
 	 * Check if contact already exist in the project
 	 *
-	 * @param array $contactlistExternalCurrent List of contacts from project to merge
-	 * @param array $contactTmp Contacts to check
+	 * @param array<int, Contact> $contactListExternalCurrent List of contacts from project to merge
+	 * @param array<string, mixed> $contactTmp Contacts to check
 	 * @return bool True if contact exist, false otherwise
 	 */
-	public function contactExistsInCurrentList($contactlistExternalCurrent, $contactTmp) : bool
+	public function contactExistsInCurrentList(array $contactListExternalCurrent, array $contactTmp) : bool
 	{
-		if (!is_array($contactlistExternalCurrent)) {
+		if (!is_array($contactListExternalCurrent)) {
 			return false;
 		}
 
-		foreach ($contactlistExternalCurrent as $contactCurrent) {
+		foreach ($contactListExternalCurrent as $contactCurrent) {
 			if ($contactCurrent['id'] == $contactTmp['id']) {
 				dol_syslog("Contact " . $contactTmp['id'] . " with role " . $contactTmp['fk_c_type_contact'] . " already exists in current project, keeping current project contact");
 				return true;
@@ -2872,7 +2872,7 @@ class Project extends CommonObject
 
 		dol_syslog("mergeProject merge project id=".$projectId." (will be deleted) into the project id=".$this->id);
 
-		if (!$error && $tmpProject->fetch($projectId) < 1) {
+		if ($error == 0 && $tmpProject->fetch($projectId) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');
 			$error++;
 		} elseif ($projectId == $this->id) {
@@ -2880,7 +2880,7 @@ class Project extends CommonObject
 			$error++;
 		}
 
-		if (!$error) {
+		if ($error == 0) {
 			$this->db->begin();
 
 			// Merge project data - keep current project data in case of duplicates
@@ -2894,13 +2894,13 @@ class Project extends CommonObject
 			);
 
 			foreach ($listofproperties as $property) {
-				if (empty($this->$property) || null) {
+				if (empty($this->$property)) {
 					$this->$property = $tmpProject->$property;
 				}
 			}
 
 			// Merge project contacts - keep current project contacts and roles in case of duplicates
-			if (!$error) {
+			if ($error == 0) {
 				// Get contacts from both projects
 				$contactlistExternalTmp = $tmpProject->liste_contact(-1);
 				$contactlistInternalTmp = $tmpProject->liste_contact(-1, 'internal');
@@ -2995,7 +2995,7 @@ class Project extends CommonObject
 				$cats = $static_cat->containing($this->id, 'project', 'id');
 				$cats = array_merge($cats, $cats_ori);
 				if (!empty($cats)) {
-					$this->setCategories($cats, 'project');
+					$this->setCategories($cats);
 				}
 			}
 
@@ -3013,7 +3013,7 @@ class Project extends CommonObject
 			}
 
 			// Move project tasks from old project to current project
-			if (!$error) {
+			if ($error == 0) {
 				$sql = "UPDATE " . $this->db->prefix() . "projet_task SET fk_projet = " . intval($this->id);
 				$sql .= " WHERE fk_projet = " . intval($projectId);
 
@@ -3027,7 +3027,7 @@ class Project extends CommonObject
 			}
 
 			// Move other related objects
-			if (!$error) {
+			if ($error == 0) {
 				$objects = array(
 					'ActionComm' => array(
 						'table' => 'actioncomm',
@@ -3133,7 +3133,7 @@ class Project extends CommonObject
 			}
 
 			// External modules should update their tables too
-			if (!$error) {
+			if ($error == 0) {
 				$parameters = array('projectOrigin' => $projectId, 'projectDest' => $this->id);
 				$reshook = $hookmanager->executeHooks('replaceProject', $parameters, $this, $action);
 
@@ -3145,7 +3145,7 @@ class Project extends CommonObject
 			}
 
 			// Move files from the project directory to delete into the directory of the project to keep
-			if (!$error) {
+			if ($error == 0) {
 				if (!empty($conf->project->multidir_output[$this->entity])) {
 					$srcdir = $conf->project->multidir_output[$this->entity] . "/" . dol_sanitizeFileName($tmpProject->ref);
 					$destdir = $conf->project->multidir_output[$this->entity] . "/" . dol_sanitizeFileName($this->ref);
@@ -3160,8 +3160,10 @@ class Project extends CommonObject
 				}
 			}
 
+			$uploadDirCurrent = '';
+			$filearray = [];
 			// Merge attached files from project upload directories
-			if (!$error) {
+			if ($error == 0) {
 				// Get upload directories for both projects
 				$uploadDirTmp = $conf->project->multidir_output[$tmpProject->entity] . '/' . get_exdir(0, 0, 0, 1, $tmpProject, 'project');
 				$uploadDirCurrent = $conf->project->multidir_output[$this->entity] . '/' . get_exdir(0, 0, 0, 1, $this, 'project');
@@ -3177,53 +3179,52 @@ class Project extends CommonObject
 				}
 			}
 			if (is_array($filearray) && !empty($filearray)) {
-				if (is_array($filearray) && count($filearray) > 0) {
-					foreach ($filearray as $file) {
-						$srcfile = $file['fullname'];
-						$destfile = $uploadDirCurrent . '/' . $file['name'];
+				foreach ($filearray as $file) {
+					$srcfile = $file['fullname'];
+					$destfile = $uploadDirCurrent . '/' . $file['name'];
 
-						// Check if file already exists in destination
+					// Check if file already exists in destination
+					if (dol_is_file($destfile)) {
+						// If file exists, rename it using the old project reference as suffix
+						$pathinfo = pathinfo($file['name']);
+						$filename = $pathinfo['filename'];
+						$extension = isset($pathinfo['extension']) ? '.' . $pathinfo['extension'] : '';
+						$suffix = '_' . dol_sanitizeFileName($tmpProject->ref);
+
+						$newFilename = $filename . $suffix . $extension;
+						$destfile = $uploadDirCurrent . '/' . $newFilename;
+
+						// If even with the project ref suffix the file exists, add a counter
 						if (dol_is_file($destfile)) {
-							// If file exists, rename it using the old project reference as suffix
-							$pathinfo = pathinfo($file['name']);
-							$filename = $pathinfo['filename'];
-							$extension = isset($pathinfo['extension']) ? '.' . $pathinfo['extension'] : '';
-							$suffix = '_' . dol_sanitizeFileName($tmpProject->ref);
-
-							$newFilename = $filename . $suffix . $extension;
-							$destfile = $uploadDirCurrent . '/' . $newFilename;
-
-							// If even with the project ref suffix the file exists, add a counter
-							if (dol_is_file($destfile)) {
-								$counter = 1;
-								do {
-									$newFilename = $filename . $suffix . '_' . $counter . $extension;
-									$destfile = $uploadDirCurrent . '/' . $newFilename;
-									$counter++;
-								} while (dol_is_file($destfile));
-							}
-
-							dol_syslog("File " . $file['name'] . " already exists, renaming to " . $newFilename . " using old project reference " . $tmpProject->ref);
+							$counter = 1;
+							do {
+								$newFilename = $filename . $suffix . '_' . $counter . $extension;
+								$destfile = $uploadDirCurrent . '/' . $newFilename;
+								$counter++;
+							} while (dol_is_file($destfile));
 						}
 
-						// Move the file
-						$result = dol_move($srcfile, $destfile, '0', 1, 0, 1);
-						if ($result) {
-							dol_syslog("Successfully moved file " . $file['name'] . " from project " . $projectId . " to project " . $this->id);
+						dol_syslog("File " . $file['name'] . " already exists, renaming to " . $newFilename . " using old project reference " . $tmpProject->ref);
+					}
 
-							// Also move associated .meta file if it exists
-							$metafileSrc = $srcfile . '.meta';
-							$metafileDest = $destfile . '.meta';
-							if (dol_is_file($metafileSrc)) {
-								dol_move($metafileSrc, $metafileDest, '0', 1, 0, 1);
-								dol_syslog("Also moved meta file for " . $file['name']);
-							}
-						} else {
-							dol_syslog("Error moving file " . $file['name'] . " from project " . $projectId . " to project " . $this->id, LOG_WARNING);
-							// Don't stop the merge for file errors, just log them
+					// Move the file
+					$result = dol_move($srcfile, $destfile, '0', 1, 0, 1);
+					if ($result) {
+						dol_syslog("Successfully moved file " . $file['name'] . " from project " . $projectId . " to project " . $this->id);
+
+						// Also move associated .meta file if it exists
+						$metafileSrc = $srcfile . '.meta';
+						$metafileDest = $destfile . '.meta';
+						if (dol_is_file($metafileSrc)) {
+							dol_move($metafileSrc, $metafileDest, '0', 1, 0, 1);
+							dol_syslog("Also moved meta file for " . $file['name']);
 						}
+					} else {
+						dol_syslog("Error moving file " . $file['name'] . " from project " . $projectId . " to project " . $this->id, LOG_WARNING);
+						// Don't stop the merge for file errors, just log them
 					}
 				}
+
 			} else {
 				$this->error .= $langs->trans('NoFilesFound');
 			}
@@ -3236,7 +3237,7 @@ class Project extends CommonObject
 			}
 
 			// Call trigger
-			if (!$error) {
+			if ($error == 0) {
 				$this->context = array('merge' => 1, 'mergefromid' => $tmpProject->id, 'mergefromtitle' => $tmpProject->title);
 
 				$result = $this->call_trigger('PROJECT_MODIFY', $user);
@@ -3246,7 +3247,7 @@ class Project extends CommonObject
 			}
 
 			// Move files from the project directory to delete into the directory of the project to keep
-			if (!$error) {
+			if ($error == 0) {
 				if (!empty($conf->project->multidir_output[$this->entity])) {
 					$srcdir = $conf->project->multidir_output[$this->entity] . "/" . dol_sanitizeFileName($tmpProject->ref);
 					$destdir = $conf->project->multidir_output[$this->entity] . "/" . dol_sanitizeFileName($this->ref);
@@ -3262,7 +3263,7 @@ class Project extends CommonObject
 			}
 
 			// Finally remove the old project
-			if (!$error) {
+			if ($error == 0) {
 				if ($tmpProject->delete($user, 1) < 1) {
 					$this->error = $tmpProject->error;
 					$this->errors = $tmpProject->errors;
@@ -3271,7 +3272,7 @@ class Project extends CommonObject
 			}
 		}
 
-		if (!$error) {
+		if ($error == 0) {
 			$this->db->commit();
 			return 0;
 		} else {
