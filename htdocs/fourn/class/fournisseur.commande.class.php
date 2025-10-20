@@ -1997,31 +1997,31 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Add order line
 	 *
-	 *	@param      string		$desc            		Description
-	 *	@param      float		$pu_ht              	Unit price (used if $price_base_type is 'HT')
-	 *	@param      float		$qty             		Quantity
-	 *	@param      float		$txtva           		VAT Rate
-	 *	@param      float		$txlocaltax1        	Localtax1 tax
-	 *	@param      float		$txlocaltax2        	Localtax2 tax
-	 *	@param      int			$fk_product      		Id product
-	 *	@param      int			$fk_prod_fourn_price	Id supplier price
-	 *	@param      string		$ref_supplier			Supplier reference price
-	 *	@param      float		$remise_percent  		Remise
-	 *	@param      string		$price_base_type		HT or TTC
-	 *	@param		float		$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
-	 *	@param		int			$type					Type of line (0=product, 1=service)
-	 *	@param		int			$info_bits				More information
-	 *	@param		int			$notrigger				Disable triggers
-	 *	@param		?int		$date_start				Date start of service
-	 *	@param		?int		$date_end				Date end of service
+	 *	@param      string			$desc            		Description
+	 *	@param      float			$pu_ht              	Unit price (used if $price_base_type is 'HT')
+	 *	@param      float			$qty             		Quantity
+	 *	@param      float|string	$txtva           		VAT rate. Can be '19.6' or '19.6 (CODE)'
+	 *	@param      float			$txlocaltax1        	Localtax1 tax
+	 *	@param      float			$txlocaltax2        	Localtax2 tax
+	 *	@param      int				$fk_product      		Id product
+	 *	@param      int				$fk_prod_fourn_price	Id supplier price
+	 *	@param      string			$ref_supplier			Supplier reference price
+	 *	@param      float			$remise_percent  		Remise
+	 *	@param      string			$price_base_type		HT or TTC
+	 *	@param		float			$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
+	 *	@param		int				$type					Type of line (0=product, 1=service)
+	 *	@param		int				$info_bits				More information
+	 *	@param		int				$notrigger				Disable triggers
+	 *	@param		?int			$date_start				Date start of service
+	 *	@param		?int			$date_end				Date end of service
 	 *	@param		array<string,null|int|float|string>	$array_options	extrafields array
-	 *	@param 		?int		$fk_unit 				Code of the unit to use. Null to use the default one
-	 *	@param 		float		$pu_ht_devise			Amount in currency
-	 *	@param		string		$origin					'order', ...
-	 *	@param		int			$origin_id				Id of origin object
-	 *	@param		int			$rang					Rank
-	 *	@param		int			$special_code			Special code
-	 *	@return     int     	        				Return integer <=0 if KO, >0 if OK
+	 *	@param 		?int			$fk_unit 				Code of the unit to use. Null to use the default one
+	 *	@param 		float			$pu_ht_devise			Amount in currency
+	 *	@param		string			$origin					'order', ...
+	 *	@param		int				$origin_id				Id of origin object
+	 *	@param		int				$rang					Rank
+	 *	@param		int				$special_code			Special code
+	 *	@return     int     	    	    				Return integer <=0 if KO, >0 if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = 0, $date_start = null, $date_end = null, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
 	{
@@ -3075,25 +3075,25 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Update line
 	 *
-	 *	@param     	int			$rowid           	ID de la ligne de facture
-	 *	@param     	string		$desc            	Line description
-	 *	@param     	int|float	$pu              	Unit price
-	 *	@param     	int|float	$qty             	Quantity
-	 *	@param     	int|float	$remise_percent  	Percent discount on line
-	 *	@param     	int|float	$txtva          	VAT rate
-	 *  @param     	int|float	$txlocaltax1	    Localtax1 tax
-	 *  @param     	int|float	$txlocaltax2   		Localtax2 tax
-	 *  @param     	string		$price_base_type 	Type of price base
-	 *	@param		int			$info_bits			Miscellaneous information
-	 *	@param		int			$type				Type of line (0=product, 1=service)
-	 *  @param		int			$notrigger			Disable triggers
-	 *  @param      int			$date_start     	Date start of service
-	 *  @param      int			$date_end       	Date end of service
+	 *	@param     	int					$rowid           	ID de la ligne de facture
+	 *	@param     	string				$desc            	Line description
+	 *	@param     	int|float			$pu              	Unit price
+	 *	@param     	int|float			$qty             	Quantity
+	 *	@param     	int|float			$remise_percent  	Percent discount on line
+	 *	@param     	int|float|string	$txtva          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
+	 *  @param     	int|float			$txlocaltax1	    Localtax1 tax
+	 *  @param     	int|float			$txlocaltax2   		Localtax2 tax
+	 *  @param     	string				$price_base_type 	Type of price base
+	 *	@param		int					$info_bits			Miscellaneous information
+	 *	@param		int					$type				Type of line (0=product, 1=service)
+	 *  @param		int					$notrigger			Disable triggers
+	 *  @param      int					$date_start     	Date start of service
+	 *  @param      int					$date_end       	Date end of service
 	 *  @param		array<string,mixed|mixed[]>		$array_options		Extrafields array
-	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param		int|float	$pu_ht_devise		Unit price in currency
-	 *  @param		string		$ref_supplier		Supplier ref
-	 *	@return    	int         	    			Return integer < 0 if error, > 0 if ok
+	 * 	@param 		int|null			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param		int|float			$pu_ht_devise		Unit price in currency
+	 *  @param		string				$ref_supplier		Supplier ref
+	 *	@return    	int         	    					Return integer < 0 if error, > 0 if ok
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = 0, $date_end = 0, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{

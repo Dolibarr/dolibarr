@@ -615,7 +615,7 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, (float) $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
+			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
 		$langs->load('errors');
@@ -883,7 +883,7 @@ if (empty($reshook)) {
 					$desc,
 					(float) $pu_ht,
 					(float) $qty,
-					(float) $tva_tx,
+					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
 					$idprod,
@@ -1083,7 +1083,7 @@ if (empty($reshook)) {
 				$ht,
 				(float) price2num(GETPOST('qty'), 'MS', 2),
 				(float) price2num(GETPOST('remise_percent'), '', 2),
-				(float) $vat_rate,
+				$vat_rate,
 				$localtax1_rate,
 				$localtax2_rate,
 				$description,

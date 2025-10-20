@@ -679,7 +679,7 @@ if (empty($reshook)) {
 					$desc,
 					(float) $pu_ht,
 					(float) $qty,
-					(float) $tva_tx,
+					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
 					$idprod,
