@@ -9362,13 +9362,12 @@ class Form
 	/**
 	 * Generates a set of HTML radio inputs from an array of key-value items.
 	 *
-	 * @param string $htmlName            Name of the HTML input group (try starting with "multi" or "search_multi" for multiselects)
-	 * @param array<string,array{label:string,value?:string|int,attr?:array,unescapedAttr?:string[],attrLabel?:array,unescapedAttrLabel?:string[],disabled?:bool,css?:string}>|string[] $radioItems definition of radio items
-	 *                                                                                                                                                                                              Array of items in the form key => label or key => array of item properties
-	 * @param string|string[]|int $selected Preselected key(s) for selection. Use 'ifone' to auto-select if only one item exists.
-	 * @param array $moreGlobalParams     Additional global parameters applied to all items (e.g., attributes)
+	 * @param string $htmlName Name of the HTML input group
+	 * @param array<string, string|array{label: string,value?: string|int,attr?: array<string, string|int|bool|null>, unescapedAttr?: string[],attrLabel?: array<string, string|int|bool|null>,unescapedAttrLabel?: string[],disabled?: bool,css?: string,labelIsHtml?: bool}> $radioItems Array of items in the form key => label or key => array of item properties
+	 * @param string|int $selected Preselected key for selection.
+	 * @param array<string, array<string, string|int|bool|null>|string|bool> $moreGlobalParams Additional global parameters applied to all items (e.g., attributes)
 	 *
-	 * @return string                     HTML string containing all radio inputs wrapped in <label> tags
+	 * @return string HTML string containing all radio inputs wrapped in <label> tags
 	 */
 	public static function radio($htmlName, $radioItems, $selected = '', $moreGlobalParams = [])
 	{
