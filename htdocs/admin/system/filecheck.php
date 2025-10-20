@@ -252,7 +252,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= '<td></td>'."\n";
 			$out .= '<td>'.$langs->trans("ModuleMustBeEnabled", $langs->transnoentitiesnoconv("BlockedLog")).'</td>'."\n";
 			$out .= '<td class="center">'.yn(1).'</td>'."\n";
-			$out .= '<td class="center">'.yn(isModEnabled('blockedlog')).'</td>'."\n";
+			$out .= '<td class="center">'.yn(isModEnabled('blockedlog') ? 1 : 0).'</td>'."\n";
 			$out .= "</tr>\n";
 		}
 
