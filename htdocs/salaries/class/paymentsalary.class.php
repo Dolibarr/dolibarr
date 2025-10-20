@@ -639,7 +639,7 @@ class PaymentSalary extends CommonObject
 				$this->datev
 			);
 
-			// Update fk_bank into llx_paiement_salary.
+			// Update fk_bank into llx_payment_salary.
 			// so we know the payment that was used to generated the bank entry.
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
@@ -848,13 +848,12 @@ class PaymentSalary extends CommonObject
 	 *  @param  int     $notooltip      			1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  string  $option         			''=Show ref, 'nolink'=No link
 	 *	@return	string								Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1, $option = '')
 	{
 		global $conf, $langs, $hookmanager;
-
-		$option = '';
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -901,19 +900,17 @@ class PaymentSalary extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		// if ($option == 'nolink') {
-		// 	$linkstart = '<span';
-		// } else {
-		// 	$linkstart = '<a href="'.$url.'"';
-		// }
-		// $linkstart .= $linkclose.'>';
-		// if ($option == 'nolink') {
-		// 	$linkend = '</span>';
-		// } else {
-		// 	$linkend = '</a>';
-		// }
-		$linkstart = '<a href="'.$url.'"';
-		$linkend = '</a>';
+		if ($option == 'nolink') {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
+		$linkstart .= $linkclose.'>';
+		if ($option == 'nolink') {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
 
 		$result .= $linkstart;
 

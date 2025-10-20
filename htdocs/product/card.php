@@ -962,7 +962,7 @@ if (empty($reshook)) {
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required
 		$action = '';
 	}
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
@@ -1087,7 +1087,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a product
-	if ($action == 'confirm_delete' && $confirm != 'yes') {
+	if ($action == 'confirm_delete' && $confirm != 'yes') {	// Test on permission not required
 		$action = '';
 	}
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {

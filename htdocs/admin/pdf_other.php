@@ -6,7 +6,7 @@
  * Copyright (C) 2019	   	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-205   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -242,11 +242,13 @@ if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
 }
 
 
-print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form enctype="multipart/form-data" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 if (isModEnabled('propal')) {
+	print '<div id="proposal" class="undertopmenu"></div>';
+
 	print load_fiche_titre($langs->trans("Proposal"), '', 'proposal');
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
@@ -333,6 +335,8 @@ if (isModEnabled('propal')) {
 }
 
 if (isModEnabled('order')) {
+	print '<div id="order" class="undertopmenu"></div>';
+
 	$langs->load("orders");
 	print load_fiche_titre($langs->trans('CustomersOrders'), '', 'order');
 
@@ -410,6 +414,8 @@ if (isModEnabled('order')) {
 
 
 if (isModEnabled('invoice')) {
+	print '<div id="invoice" class="undertopmenu"></div>';
+
 	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -579,6 +585,8 @@ if (isModEnabled('invoice')) {
 
 
 if (isModEnabled('supplier_proposal')) {
+	print '<div id="supplier_proposal"></div>';
+
 	$langs->load("supplier_proposal");
 	print load_fiche_titre($langs->trans("SupplierProposal"), '', 'supplier_proposal');
 
@@ -616,6 +624,8 @@ if (isModEnabled('supplier_proposal')) {
 
 
 if (isModEnabled('supplier_order')) {
+	print '<div id="supplier_order"></div>';
+
 	$langs->load("supplier_order");
 	print load_fiche_titre($langs->trans("SupplierOrder"), '', 'supplier_proposal');
 
@@ -652,6 +662,8 @@ if (isModEnabled('supplier_order')) {
 }
 
 if (isModEnabled('shipping')) {
+	print '<div id="shipping"></div>';
+
 	print load_fiche_titre($langs->trans("Shipments"), '', 'shipment');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -675,6 +687,8 @@ if (isModEnabled('shipping')) {
 }
 
 if (isModEnabled('reception')) {
+	print '<div id="reception"></div>';
+
 	print load_fiche_titre($langs->trans("Receptions"), '', 'reception');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -720,6 +734,8 @@ if (isModEnabled('reception')) {
 }
 
 if (isModEnabled('stocktransfer')) {
+	print '<div id="stocktransfer"></div>';
+
 	print load_fiche_titre($langs->trans("StockTransfer"), '', 'stock');
 
 	print '<div class="div-table-responsive-no-min">';

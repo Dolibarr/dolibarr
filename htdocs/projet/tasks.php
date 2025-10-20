@@ -117,8 +117,6 @@ $search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
 $search_date_end_endday = GETPOSTINT('search_date_end_endday');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
 $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields = new ExtraFields($db);

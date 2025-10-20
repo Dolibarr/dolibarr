@@ -45,7 +45,6 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 $mine = (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 

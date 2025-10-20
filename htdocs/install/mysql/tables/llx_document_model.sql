@@ -27,10 +27,11 @@ create table llx_document_model
   	entity			integer DEFAULT 1 NOT NULL,	-- multi company id
   	type			varchar(64) NOT NULL,
   	libelle			varchar(255),
+  	tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   	description		text
 )ENGINE=innodb;
 
--- 
+--
 -- List of codes for the field entity
 --
 -- 1 : first company document model

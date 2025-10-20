@@ -38,17 +38,18 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
-require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
-require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_db_readonly
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
+require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
 
 // Global variables
 $version = DOL_VERSION;
@@ -72,6 +73,7 @@ if (!isset($argv[1]) || !$argv[1]) {
 }
 
 foreach ($argv as $key => $val) {
+	$reg = array();
 	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
 	}

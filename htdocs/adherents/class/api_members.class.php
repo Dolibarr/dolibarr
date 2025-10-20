@@ -655,14 +655,15 @@ class Members extends DolibarrApi
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found
+	 * @throws	RestException	422		Malformed data
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(403);
 		}
-		if (is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
-			throw new RestException(422, 'Malformed data');
+		if (!is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
+			throw new RestException(422, 'Malformed data: subscription start or end date, or subscription amount, is not numeric');
 		}
 
 		$member = new Adherent($this->db);

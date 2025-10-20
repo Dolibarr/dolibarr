@@ -208,7 +208,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$this->Body($pdf, $pagenb, $pages, $outputlangs);
 
-		// Pied de page
+		// Page footer
 		$this->_pagefoot($pdf, null, $outputlangs);
 		if (method_exists($pdf, 'AliasNbPages')) {
 			$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
@@ -427,7 +427,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *  Show footer of page. Need this->emetteur object
 	 *
 	 *  @param	TCPDF			$pdf     			PDF
-	 *  @param	CommonObject	$object				Object to show
+	 *  @param	?CommonObject	$object				Object to show
 	 *  @param	Translate		$outputlangs		Object lang for output
 	 *  @param	int<0,1>		$hidefreetext		1=Hide free text
 	 *  @return	int

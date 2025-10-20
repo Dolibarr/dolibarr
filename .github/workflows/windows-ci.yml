@@ -1,5 +1,6 @@
 ---
 name: Win CI
+
 # yamllint disable-line rule:truthy
 on:
   # workflow called by the parent workflow ci.yml
@@ -25,6 +26,7 @@ env:
   PHP_INI_SCAN_DIR: C:\myphpini
   CKEY: win-ci-2
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+
 jobs:
   win-test:
     strategy:
