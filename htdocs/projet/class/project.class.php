@@ -3224,7 +3224,6 @@ class Project extends CommonObject
 						// Don't stop the merge for file errors, just log them
 					}
 				}
-
 			} else {
 				$this->error .= $langs->trans('NoFilesFound');
 			}
