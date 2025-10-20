@@ -404,10 +404,10 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of supplier order
-	 * @param	string	$source		Source of the contact (internal, external, all).
-	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
-	 * @return	Object				Object with cleaned properties
+	 * @param	int					$id			ID of supplier order
+	 * @param	string				$source		Source of the contact (internal, external, all).
+	 * @param	string				$type		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
+	 * @return	array<int,mixed>				Array of contacts
 	 *
 	 * @url	GET {id}/contacts
 	 *
@@ -439,7 +439,7 @@ class SupplierOrders extends DolibarrApi
 			$contacts = array_merge($contacts, $tmpContacts);
 		}
 
-		return $this->_cleanObjectDatas($contacts);
+		return $contacts;
 	}
 
 	/**

@@ -29,6 +29,7 @@ CREATE TABLE llx_oauth_token (
     tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     entity 			integer DEFAULT 1,
     lastaccess    	datetime NULL,						-- updated at each api access
+    expire_at 		datetime NULL,
     apicount_previous_month BIGINT UNSIGNED DEFAULT 0,
     apicount_month BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess
     apicount_total BIGINT UNSIGNED DEFAULT 0			-- increased by 1 at each page access, no reset

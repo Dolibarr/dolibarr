@@ -526,7 +526,7 @@ if ($id > 0) {		// For user tab
 		$childids = $user->getAllChildIds(1);
 
 		$canedit = ((in_array($user_id, $childids) && $user->hasRight('expensereport', 'creer'))
-			|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->hasRight('expensereport', 'writeall_advance')));
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')));
 
 		// Buttons for actions
 		if ($canedit) {
@@ -843,7 +843,7 @@ if ($num > 0) {
 		} else {
 			// Show line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

@@ -946,6 +946,9 @@ input.pageplusone {
 .hmirror {
 	transform: scale(-1, 1);
 }
+.undertopmenu {
+	scroll-margin-top: 80px;
+}
 
 select:invalid, select.--error {
 	color: gray;
@@ -1306,6 +1309,9 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .nopadding {
 	padding: 0;
+}
+.nopaddingimp {
+	padding: 0 !important;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0;
@@ -2072,8 +2078,8 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	flex:1;
 }
 .flex-item-uploadfile {
-	/* border: 2px solid #888; */
-	box-shadow: 2px 3px 10px #ccc;
+	border: 2px dashed #aaa;
+	/* box-shadow: 2px 3px 10px #ccc; */
 	border-radius: 5px;
 	cursor: pointer;
 	text-align: center;
@@ -2397,7 +2403,11 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	div.fiche {
 		margin-top: <?php print($dol_hide_topmenu ? '12' : '6'); ?>px !important;
 	}
-	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+	.border tbody tr,
+	.border tbody tr td,
+	.border tfoot tr,
+	.border tfoot tr td,
+	div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
 	}
 	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
@@ -4354,7 +4364,10 @@ table.borderplus {
 	border: 1px solid #BBB;
 }
 
-.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
+.border tbody tr,
+.bordernooddeven tbody tr,
+.border tbody tr td,
+.bordernooddeven tbody tr td,
 div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 	height: 28px;
@@ -4578,11 +4591,11 @@ div.liste_titre_bydiv_nothingafter {
 	border-bottom-style: solid;
 }
 table.liste tr:last-child td:first-child,
-table.liste tr:last-child th:first-child {
+table.liste > tr:last-child th:first-child, table.liste tfoot tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
 table.liste tr:last-child td:last-child,
-table.liste tr:last-child th:last-child {
+table.liste > tr:last-child th:last-child, table.liste tfoot tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
@@ -4634,7 +4647,9 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 	padding: 8px 8px 8px 10px;			/* t r b l */
 }
 
-table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
+table.liste td, table.noborder > tr > td,
+table.noborder > tbody > tr > td,
+div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 8px 4px 10px;			/* t r b l */
 	height: 28px;
 }
@@ -4839,32 +4854,6 @@ table.hidepaginationnext .paginationnext {
 	/* filter: invert(0.3); */
 	font-size: 1.03em;
 }
-
-
-/* Prepare to remove class pair - impair
-.noborder > tbody > tr:nth-child(even) td {
-	background: linear-gradient(to bottom, var(--colorbacklineimpai2) 85%, var(--colorbacklineimpair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 85%, var(--colorbacklineimpair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 85%, var(--colorbacklineimpair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 85%, var(--colorbacklineimpair2) 100%);
-	font-family: <?php print $fontlist ?>;
-	border: 0px;
-	margin-bottom: 1px;
-	color: #202020;
-	min-height: 18px;
-}
-
-.noborder > tbody > tr:nth-child(odd) td {
-	background: linear-gradient(to bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
-	font-family: <?php print $fontlist ?>;
-	border: 0px;
-	margin-bottom: 1px;
-	color: #202020;
-}
-*/
 
 ul.noborder li:nth-child(odd):not(.liste_titre) {
 	background-color: var(--colorbacklinepair2) !important;
@@ -7471,11 +7460,11 @@ select.multiselectononeline {
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
-		min-width: 240px !important;
+		min-width: 260px !important;
 	}
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
-		min-width: 240px !important;
+		min-width: 260px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
@@ -8624,11 +8613,14 @@ table.jPicker {
 }
 .bookcalform {
 	border: 1px solid #000;
-	padding: 15px;
+	padding: 20px;
 	border-radius: 5px;
 	margin-bottom: 15px;
+	box-shadow: 10px 10px 10px #ddd;
 }
-
+.bookcalsearch {
+	padding-bottom: 10px;
+}
 
 
 /* ============================================================================== */
@@ -8816,9 +8808,6 @@ table.jPicker {
 		width: auto !important;		/* We want to ignore the 30%, try to use more if you can */
 		min-width: unset;
 	}
-	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
-		/* max-width: 100px; */			/* but no more than 100px */
-	}
 	.tableforfield>tr>td:nth-child(2), .tableforfield>tbody>tr>td:nth-child(2), div.tableforfield div.tagtr>div.tagtd:nth-child(2) {
 		word-break: break-word;
 	}
@@ -8882,6 +8871,10 @@ table.jPicker {
 
 @media only screen and (max-width: 767px)
 {
+	td.widthpictotitle,	table.titlemodulehelp tr td img.widthpictotitle {
+		width: 30px;
+	}
+
 	.ai_dropdown{
 		min-width : 280px !important;
 	}
@@ -8900,8 +8893,6 @@ table.jPicker {
 		border-right: none;
 		border-left: none;
 	}
-
-	td.widthpictotitle { width: 30px; }
 
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
@@ -8940,6 +8931,11 @@ table.jPicker {
 
 	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 		padding: 10px 3px 10px;
+	}
+
+	pre {
+		white-space: normal;
+		word-break: break-word;
 	}
 }
 
@@ -8998,9 +8994,18 @@ if (is_object($db)) {
 }
 ::-webkit-scrollbar-thumb {
 	background: #ddd;
-}​
+}
 
-
+/* Remove text selection - Intuitive table selection */
+.row-with-select[data-is-last-changed] * {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
+			  supported by Chrome, Edge, Opera and Firefox */
+}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

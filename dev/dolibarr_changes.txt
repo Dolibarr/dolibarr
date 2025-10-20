@@ -234,7 +234,7 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 
 PHP TCPDI:
 ----------
-Add file fpdf_tpl.php 1.2
+Add file fpdf_tpl.php 1.2.3
 
 Add file tcpdi.php
 

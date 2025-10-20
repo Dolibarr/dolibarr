@@ -175,7 +175,6 @@ Child of
 ClassNotFound
 Clear
 ClickToDial
-Clients
 Clone
 CloneAffectation
 CloneChanges
@@ -198,8 +197,6 @@ ConfirmActionMyObject
 ConfirmActionTarget
 ConfirmCloneMyObject
 ConfirmCloneTask
-ConfirmCreateAdherent
-ConfirmDeleteAdherent
 ConfirmDeleteIndividual
 ConfirmDeleteReport
 ConfirmDeleteWebsiteAccount
@@ -287,7 +284,6 @@ EmailcollectorFilter
 EmailingTargetSelector
 Empty
 End
-EnterAnIP
 EnterNameOfDictionnaryToDeleteDesc
 Entries
 ErrSCAAuthentication
@@ -428,7 +424,6 @@ Gzip
 HTTPBasicPassword
 HelpAbandonProductReturned
 HideVersionLink
-HolidayStarted
 Hook
 Hooks
 IBANNotDefined
@@ -630,17 +625,13 @@ Poll
 Posts
 PredefinedInterventional
 PrevRangeToThisRange
-PreviousFingerprint
 Print
 PrintDriver
 PrintModule
 PrintUserConfDesc
 PrinterId
 PrinterIdEmpty
-PrinterLocation
-PrinterNameEmpty
 PrinterParameterEmpty
-Printers
 Printing
 ProductCodeDesc
 ProductFournisseurPrice

@@ -214,7 +214,7 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 	if ($result < 0) {
 		$mesg = '<div class="error">'.$object->error.'</div>';
 	}
-} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
+} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
 	// Set incoterm
 	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 }
@@ -284,11 +284,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 // Actions to send emails
 
-$triggersendname = 'RECEPTION_SENTBYMAIL';
+$triggersendname = 'DELIVERY_SENTBYMAIL';
 $paramname = 'id';
-$autocopy = 'MAIN_MAIL_AUTOCOPY_RECEPTION_TO';
-$mode = 'emailfromreception';
-$trackid = 'bl' . $object->id;
+$autocopy = 'MAIN_MAIL_AUTOCOPY_DELIVERY_TO';
+$mode = 'emailfromdelivery';
+$trackid = 'del' . $object->id;
 include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 
 
@@ -380,7 +380,7 @@ if ($action == 'create') {
 				if (0) {	// @phpstan-ignore-line  Do not change on shipment
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
 					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
@@ -759,10 +759,10 @@ if ($action == 'create') {
 	}
 
 	// Presend form
-	$modelmail = 'reception_send';
-	$defaulttopic = 'SendReceptionRef';
-	$diroutput = $conf->expedition->dir_output.'/receipt';
-	$trackid = 'bl'.$object->id;
+	$modelmail = 'delivery_send';
+	$defaulttopic = 'SendDeliveryRef';
+	$diroutput = $conf->expedition->dir_output . '/receipt';
+	$trackid = 'del' . $object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }

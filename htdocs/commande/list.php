@@ -454,7 +454,7 @@ if (empty($reshook)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}
 
-				if (empty($objecttmp->note_public)) {
+				if (empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
@@ -839,7 +839,7 @@ if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 					} else {
 						$idwarehouse = 0;
 					}
-					if ($objecttmp->valid($user, $idwarehouse)) {
+					if ($objecttmp->valid($user, $idwarehouse) > 0) {
 						setEventMessages($langs->trans('hasBeenValidated', $objecttmp->ref), null, 'mesgs');
 					} else {
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1562,6 +1562,9 @@ $arrayofmassactions = array(
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
+if (isModEnabled('category') && $user->hasRight("commande", "lire")) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if ($permissiontovalidate) {
 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 }
@@ -2416,7 +2419,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

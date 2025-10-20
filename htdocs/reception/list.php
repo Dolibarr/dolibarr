@@ -7,7 +7,7 @@
  * Copyright (C) 2023-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $toselect = GETPOST('toselect', 'array:int');
+$show_files = GETPOSTINT('show_files');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -518,7 +519,7 @@ if (empty($reshook)) {
 								$date_start,
 								$date_end,
 								0,
-								$lines[$i]->info_bits,
+								(int) $lines[$i]->info_bits,
 								'HT',
 								$product_type,
 								$rang,

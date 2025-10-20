@@ -80,7 +80,7 @@ class Ai
 	 * Generate response of instructions
 	 *
 	 * @param   string  		$instructions   Instruction to generate content
-	 * @param   string  		$model          Model name ('gpt-3.5-turbo', 'gpt-4-turbo', 'dall-e-3', ...)
+	 * @param   string  		$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
 	 * @param   string  		$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation')
 	 * @param	string			$format			Format for output ('', 'html', ...)
 	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
@@ -139,6 +139,8 @@ class Ai
 		}
 
 		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
+
+		$response = null;
 
 		try {
 			if (empty($this->apiEndpoint)) {
@@ -240,6 +242,7 @@ class Ai
 					$fp = fopen($outputfile, "w");	// overwrite
 
 					if ($fp) {
+						fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following HTTP headers and Payload:\n");
 						fwrite($fp, var_export($headers, true)."\n");
 						fwrite($fp, var_export($payload, true)."\n");
 
@@ -270,7 +273,7 @@ class Ai
 						);
 					}
 				}
-				throw new Exception('API request on AI endpoint '.$this->apiEndpoint.' failed with status code '.$response['http_code'].(empty($response['content']) ? '' : ' - '.$response['content']));
+				throw new Exception('API request on AI endpoint '.$this->apiEndpoint.' failed with status code '.$response['http_code']);
 			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
@@ -320,12 +323,30 @@ class Ai
 			return $generatedContent;
 		} catch (Exception $e) {
 			$errormessage = $e->getMessage();
+			$errormessagelog = $e->getMessage();
 			if (!empty($response['content'])) {
 				$decodedResponse = json_decode($response['content'], true);
+				$errormessagelog .= ' - '.$response['content'];
 
-				// With OpenAI, error is into an object error into the content
 				if (!empty($decodedResponse['error']['message'])) {
+					// With OpenAI, error is into an object error into the content
 					$errormessage .= ' - '.$decodedResponse['error']['message'];
+				} else {
+					$errormessage .= ' - '.$response['content'];
+				}
+			}
+
+			if (getDolGlobalString("AI_DEBUG")) {
+				if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+					$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
+					$fp = fopen($outputfile, "a");
+
+					if ($fp) {
+						fwrite($fp, "Error: ".$errormessagelog."\n");
+
+						fclose($fp);
+						dolChmod($outputfile);
+					}
 				}
 			}
 

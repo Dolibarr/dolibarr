@@ -73,7 +73,11 @@ if (empty($dolibarr_nocache)) {
 	"Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
 	"Segoe UI Symbol", "Noto Color Emoji";
 	--line-height: 1.5;
+	--font-weight-light: 200;
+	--font-weight-medium: 300;
 	--font-weight: 400;
+	--font-weight-semibold: 600;
+	--font-weight-bold: 700;
 	--font-size: 16px;
 	--border-radius: 0.25rem;
 	--border-width: 1px;
@@ -272,7 +276,7 @@ kbd {
 
 :where(:root) {
 	--background-color: #fff;
-	--color: hsl(<?php echo $webPortalTheme->primaryColorHsl['h']; ?>, <?php echo $webPortalTheme->primaryColorHsl['s']; ?>%, <?php echo $webPortalTheme->primaryColorHsl['l']; ?>%);
+	--color: hsl(202, 13.67%, 41.54%); /* This is default TEXT color not Primary color */
 	--h1-color: hsl(205, 30%, 15%);
 	--h2-color: #24333e;
 	--h3-color: hsl(205, 25%, 23%);
@@ -510,7 +514,7 @@ kbd {
 
 [data-theme=dark] {
 	--background-color: #11191f;
-	--color: hsl(205, 16%, 77%);
+	--color: hsl(202deg 13.67% 41.54%);
 	--h1-color: hsl(205, 20%, 94%);
 	--h2-color: #e1e6eb;
 	--h3-color: hsl(205, 18%, 86%);
@@ -695,24 +699,24 @@ body > footer {
 
 @media (min-width: 576px) {
 	.container {
-		max-width: 510px;
+		max-width: 90%;
 		padding-right: 0;
 		padding-left: 0;
 	}
 }
 @media (min-width: 768px) {
 	.container {
-		max-width: 700px;
+		max-width: 90%;
 	}
 }
 @media (min-width: 992px) {
 	.container {
-		max-width: 920px;
+		max-width: 90%;
 	}
 }
 @media (min-width: 1200px) {
 	.container {
-		max-width: 1130px;
+		max-width: min(95%, 1800px);
 	}
 }
 

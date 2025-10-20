@@ -786,8 +786,7 @@ class Website extends CommonObject
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
@@ -1062,6 +1061,9 @@ class Website extends CommonObject
 
 		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, '0', 1, $arrayreplacementinfilename, 2, array('old', 'back'), 1);
+
+		// Remove non required files (will be re-generated during the import)
+		dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/master.inc.php');
 
 		// Copy file README.md and LICENSE from directory containers into directory root
 		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {

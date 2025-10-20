@@ -1558,7 +1558,7 @@ class Account extends CommonObject
 	 *
 	 *	@param	int		$withpicto					Include picto into link
 	 *  @param  string	$mode           			''=Link to card, 'transactions'=Link to transactions card
-	 *  @param  string  $option         			''=Show ref, 'reflabel'=Show ref+label
+	 *  @param  string  $option         			''=Show ref, 'nolink'=No link, 'reflabel'=Show ref+label
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param	int  	$notooltip		 			1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link

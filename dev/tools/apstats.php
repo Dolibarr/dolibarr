@@ -124,14 +124,14 @@ $urlgit = 'https://github.com/Dolibarr/dolibarr/blob/develop/';
 $output_arrproj = array();
 $output_arrdep = array();
 if ($dirscc != 'disabled') {
-	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/custom,htdocs/includes,htdocs/public/includes,htdocs/theme/common/fontawesome-5,htdocs/public/theme/common/fontawesome-5';
+	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/custom,htdocs/includes,htdocs/public/includes,htdocs/theme/common/fontawesome-5,htdocs/public/theme/common/fontawesome-5 --cocomo-project-type semi-detached';
 	print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
 	$resexecproj = 0;
 	exec($commandcheck, $output_arrproj, $resexecproj);
 
 
 	// Count lines of code of dependencies
-	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/public/includes htdocs/theme/common/fontawesome-5 htdocs/public/theme/common/fontawesome-5';
+	$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/public/includes htdocs/theme/common/fontawesome-5 htdocs/public/theme/common/fontawesome-5 --cocomo-project-type semi-detached';
 	print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
 	$resexecdep = 0;
 	exec($commandcheck, $output_arrdep, $resexecdep);
@@ -742,19 +742,19 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 
-// Project value
+// Project value (COCOMO Model, use Basic / Semi-detached
 
 $html .= '<section class="chapter" id="projectvalue">'."\n";
 $html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Project value</h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="box inline-box back1">';
-$html .= 'COCOMO value<br><span class="small opacitymedium">(Basic organic model)</span><br>';
+$html .= 'COCOMO value<br><span class="small opacitymedium">(Basic/Semi-detached model)</span><br>';
 $html .= '<b>$'.formatNumber((empty($arraycocomo['proj']['currency']) ? 0 : $arraycocomo['proj']['currency']) + (empty($arraycocomo['dep']['currency']) ? 0 : $arraycocomo['dep']['currency']), 2).'</b>';
 $html .= '</div>';
 if (array_key_exists('proj', $arraycocomo)) {
 	$html .= '<div class="box inline-box back2">';
-	$html .= 'COCOMO effort<br><span class="small opacitymedium">(Basic organic model)</span><br>';
+	$html .= 'COCOMO effort<br><span class="small opacitymedium">(Basic/Semi-detached model)</span><br>';
 	$html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
 	$html .= ' months people</b>';
 	$html .= '</div>';
