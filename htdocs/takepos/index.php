@@ -1343,7 +1343,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 <?php
 
 // Dependency modulecheck
-if (!isModEnabled('facture')) {
+if (!isModEnabled('invoice')) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice")), null, 'errors');
 }
 
