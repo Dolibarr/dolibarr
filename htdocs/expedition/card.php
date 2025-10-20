@@ -294,6 +294,12 @@ if (empty($reshook)) {
 	if ($action == 'add' && $permissiontoadd) {
 		$db->begin();
 
+		if (GETPOSTINT('socid') < 1) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
+			$action = 'create';
+		}
+
 		if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
 			$object->socid = GETPOSTINT('socid');
 			$object->fetch_thirdparty();
@@ -1575,39 +1581,34 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Note Public
-		print '<tr><td>'.$langs->trans("NotePublic").'</td>';
-		print '<td colspan="3">';
-		$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+		$htmltext ='';
+		print '<tr>';
+		print '<td class="tdtop">';
+		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
+		print '</td>';
+		print '<td valign="top" colspan="2">';
+		$doleditor = new DolEditor('note_public', (string) $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
-		print "</td></tr>";
 
 		// Note Private
-		if ($object->note_private && !$user->socid) {
-			print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
-			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		if (!$user->socid) {
+			print '<tr>';
+			print '<td class="tdtop">';
+			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext);
+			print '</td>';
+			print '<td valign="top" colspan="2">';
+			$doleditor = new DolEditor('note_private', (string) $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 		}
 
-		print '<br>';
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-
-		print "</table>";
+		print "</table>\n";
 
 		print dol_get_fiche_end();
 
-		print "</table>";
-		print '</div>';
-
-		print '<br>';
-
 		print $form->buttonsSaveCancel("CreateDraft");
 
-		print '</form>';
-		print '<br>';
+		print "</form>\n";
 	} elseif ($origin) {
 		$classname = ucfirst($origin);
 
