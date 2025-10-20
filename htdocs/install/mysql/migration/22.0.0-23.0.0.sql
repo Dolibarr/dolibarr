@@ -262,5 +262,7 @@ ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
 ALTER TABLE llx_blockedlog ADD COLUMN linktoref varchar(255);
 ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
+ALTER TABLE llx_blockedlog ADD COLUMN vat double(24,8) DEFAULT NULL;
+
 
 -- end of migration
