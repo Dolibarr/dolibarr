@@ -458,7 +458,7 @@ if (isModEnabled('receiptprinter')) {
 	print ' <span class="opacitymedium">('.$langs->trans("MainPrinterToUseMore").')</span>';
 	print '</td>';
 	print '<td>';
-	if (!$customprinterallowed) {
+	if (!$customprinterallowed) {	// @phpstan-ignore-line
 		print '<span class="opacitymedium">'.$langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name')).'</span>';
 	} else {
 		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
