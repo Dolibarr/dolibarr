@@ -1345,7 +1345,11 @@ class BlockedLog
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT = $fingerprint;
 		}
 
-		return $conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT;
+		if (!getDolGlobalString('BLOCKEDLOG_LAST_RECORD_FINGERPRINT')) {
+			dolibarr_set_const($db, 'BLOCKEDLOG_LAST_RECORD_FINGERPRINT', '0:none', 'chaine', 0, 'Last record fingerprint', $conf->entity);
+		}
+
+		return getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT');
 	}
 
 
