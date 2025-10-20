@@ -24,6 +24,7 @@ CREATE TABLE llx_blockedlog
 	date_creation	datetime,			-- field included into line signature
 	action varchar(50),				-- field included into line signature
 	amounts double(24,8) NOT NULL,			-- field included into line signature
+	vat double(24,8) NULL,			-- TODO
 	ref_object varchar(255),			-- field included into line signature
 	date_object	datetime,			-- field included into line signature
 	user_fullname varchar(255),			-- field included into line signature
