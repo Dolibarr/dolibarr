@@ -330,6 +330,7 @@ CloneFile=Clone files
 ConfirmCloneTask=Do you want to clone this task?
 TaskBackToDraft=Task status is back to draft
 TaskValidated=Task validated
+EventStartOrEndDateNotDefined=Event start or end date not defined
 #Merge projects
 MergeOriginProject= Project to merge :
 ConfirmMergeProjects=Are you sure you want to merge this project with the current project? All its related objects (invoices, orders, tasks ...) will be moved to the current project, and the selected project will be deleted.
