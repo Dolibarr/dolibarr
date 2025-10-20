@@ -78,10 +78,25 @@ class BlockedLog
 	public $amounts = null;
 
 	/**
+	 * @var float|string|null
+	 */
+	public $vat = null;
+
+	/**
 	 * trigger action
 	 * @var string
 	 */
 	public $action = '';
+
+	/**
+	 * @var string $linktype. Example 'paymentofinvoice'
+	 */
+	public $linktype = '';
+
+	/**
+	 * @var string $linktoref
+	 */
+	public $linktoref = '';
 
 	/**
 	 * Object element
@@ -862,15 +877,15 @@ class BlockedLog
 				$this->id 				= $obj->rowid;
 				$this->entity 			= $obj->entity;
 
-				$this->date_creation 	= $this->db->jdate($obj->date_creation);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_creation 	= $this->db->jdate($obj->date_creation);	// TODO Use gmt ?
+				$this->date_modification = $this->db->jdate($obj->tms);				// TODO Use gmt ?
 
 				$this->amounts			= (float) $obj->amounts;
 				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
 				$this->fk_object = $obj->fk_object;
-				$this->date_object = $this->db->jdate($obj->date_object);
+				$this->date_object = $this->db->jdate($obj->date_object);			// TODO Use gmt ?
 				$this->ref_object = $obj->ref_object;
 
 				$this->fk_user = $obj->fk_user;
@@ -1102,7 +1117,7 @@ class BlockedLog
 
 		//$signature_line = dol_hash($concatenatedata, '5'); // Not really useful
 		$signature = dol_hash($previoushash.$concatenatedata, 'sha256');
-		//var_dump($previoushash); var_dump($concatenatedata); var_dump($signature_line); var_dump($signature);
+
 
 		$res = ($signature === $this->signature);
 
