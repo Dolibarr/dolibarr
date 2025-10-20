@@ -132,6 +132,7 @@ function generateHurlEntry($comment = null, $asserts = [], $output = null)
 	$excludeHeaders = [
 		'X-Forwarded-For', 'X-Forwarded-Host', 'X-Host',
 		'X-Forwarded-Proto', 'Connection', 'Host',
+		'User-Agent', 'Dolapikey'
 	];
 	$hurlEntry = '';
 
@@ -143,7 +144,6 @@ function generateHurlEntry($comment = null, $asserts = [], $output = null)
 	$uri = $_SERVER['REQUEST_URI'];
 	$scheme = (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https' : 'http';
 	$hurlEntry .= strtoupper($method) . " {$scheme}://{{hostnport}}{$uri}\n";
-	$hurlEntry .= "HTTP " . http_response_code() . "\n";
 
 	$userAgentHeaderAdded = false;
 	foreach ($_SERVER as $name => $value) {
@@ -153,13 +153,7 @@ function generateHurlEntry($comment = null, $asserts = [], $output = null)
 				continue;
 			}
 			$hurlEntry .= "{$headerName}: {$value}\n";
-			if ($headerName === 'User-Agent') {
-				$userAgentHeaderAdded = true;
-			}
 		}
-	}
-	if (!$userAgentHeaderAdded) {
-		$hurlEntry .= "User-Agent:\n";
 	}
 
 	$data = file_get_contents('php://input');
@@ -167,9 +161,12 @@ function generateHurlEntry($comment = null, $asserts = [], $output = null)
 		$hurlEntry .= "\n" . $data . "\n";
 	}
 
-	if ($output !== null && $method !== 'GET' && trim($output) !== '') {
+	// Expected HTTP result code
+	$hurlEntry .= "HTTP " . http_response_code() . "\n";
+	if ($output !== null && trim($output) !== '') {
 		$hurlEntry .= "\n" . $output . "\n";
 	}
+
 
 	if (!empty($asserts)) {
 		$hurlEntry .= "[Asserts]\n";
