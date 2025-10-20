@@ -652,7 +652,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		$this->db->begin();
 
 		if (!$notrigger) {
-		// Call triggers
+			// Call triggers
 			$result = $this->call_trigger('LINERECEPTION_DELETE', $user);
 			if ($result < 0) {
 				$error++;
