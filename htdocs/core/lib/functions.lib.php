@@ -14644,6 +14644,20 @@ function getElementProperties($elementType)
 		$classname = 'Fournisseur';
 		$table_element = 'societe';
 		$subelement = '';
+	} elseif ($elementType == 'recruitmentcandidature') {
+		$module = 'recruitment';
+		$classfile = 'recruitmentcandidature';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentCandidature';
+		$subelement = 'recruitmentcandidature';
+		$subdir = '/recruitmentcandidature';
+	} elseif ($elementType == 'recruitmentjobposition') {
+		$module = 'recruitment';
+		$classfile = 'recruitmentjobposition';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentJobPosition';
+		$subelement = 'recruitmentjobposition';
+		$subdir = '/recruitmentjobposition';
 	}
 
 
