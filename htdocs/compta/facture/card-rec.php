@@ -1023,7 +1023,7 @@ if (empty($reshook)) {
 				$description,
 				(float) $pu_ht,
 				(float) $qty,
-				(float) $vat_rate,
+				$vat_rate,
 				$localtax1_rate,
 				$localtax1_rate,
 				GETPOSTINT('productid'),

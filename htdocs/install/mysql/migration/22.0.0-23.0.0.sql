@@ -260,4 +260,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '5
 
 ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
+ALTER TABLE llx_blockedlog ADD COLUMN linktoref varchar(255);
+ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
+
 -- end of migration

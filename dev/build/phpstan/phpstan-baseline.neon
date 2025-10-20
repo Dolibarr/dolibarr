@@ -8791,30 +8791,6 @@ parameters:
 			path: ../../../htdocs/core/website.inc.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$websitekey might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/website.inc.php
-
-		-
 			message: '#^Variable \$mc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -8831,12 +8807,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 10
-			path: ../../../htdocs/cron/list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -15983,12 +15953,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 5
 			path: ../../../htdocs/takepos/ajax/ajax.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/css/pos.css.php
 
 		-
 			message: '#^Right side of && is always true\.$#'

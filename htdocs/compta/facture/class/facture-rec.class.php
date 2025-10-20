@@ -949,30 +949,30 @@ class FactureRec extends CommonInvoice
 	/**
 	 * 	Add a line to invoice
 	 *
-	 *	@param    	string		$desc            	Description de la ligne
-	 *	@param    	float		$pu_ht              Prix unitaire HT (> 0 even for credit note)
-	 *	@param    	float		$qty             	Quantite
-	 *	@param    	float		$txtva           	Taux de tva force, sinon -1
-	 * 	@param		float		$txlocaltax1		Local tax 1 rate (deprecated)
-	 *  @param		float		$txlocaltax2		Local tax 2 rate (deprecated)
-	 *	@param    	int			$fk_product      	Product/Service ID predefined
-	 *	@param    	float		$remise_percent  	Percentage discount of the line
-	 *	@param		string		$price_base_type	HT or TTC
-	 *	@param    	int			$info_bits			VAT npr or not ?
-	 *	@param    	int			$fk_remise_except	Id remise
-	 *	@param    	float		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
-	 *	@param		int			$type				Type of line (0=product, 1=service)
-	 *	@param      int			$rang               Position of line
-	 *	@param		int			$special_code		Special code
-	 *	@param		string		$label				Label of the line
-	 *	@param		?int		$fk_unit			Unit
-	 * 	@param		float		$pu_ht_devise		Unit price in currency
-	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
-	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
+	 *	@param    	string			$desc            	Description de la ligne
+	 *	@param    	float			$pu_ht              Prix unitaire HT (> 0 even for credit note)
+	 *	@param    	float			$qty             	Quantite
+	 *	@param    	float|string	$txtva           	VAT rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  @param		float			$txlocaltax2		Local tax 2 rate (deprecated)
+	 *	@param    	int				$fk_product      	Product/Service ID predefined
+	 *	@param    	float			$remise_percent  	Percentage discount of the line
+	 *	@param		string			$price_base_type	HT or TTC
+	 *	@param    	int				$info_bits			VAT npr or not ?
+	 *	@param    	int				$fk_remise_except	Id remise
+	 *	@param    	float			$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+	 *	@param		int				$type				Type of line (0=product, 1=service)
+	 *	@param      int				$rang               Position of line
+	 *	@param		int				$special_code		Special code
+	 *	@param		string			$label				Label of the line
+	 *	@param		?int			$fk_unit			Unit
+	 * 	@param		float			$pu_ht_devise		Unit price in currency
+	 *  @param		int				$date_start_fill	1=Flag to fill start date when generating invoice
+	 *  @param		int				$date_end_fill		1=Flag to fill end date when generating invoice
 	 * 	@param		int|string|null	$fk_fournprice		Supplier price id (to calculate margin) or string
-	 * 	@param		float		$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
-	 *  @param		int			$fk_parent_line		Id of parent line
-	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
+	 * 	@param		float			$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
+	 *  @param		int				$fk_parent_line		Id of parent line
+	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
 	{
@@ -1154,32 +1154,32 @@ class FactureRec extends CommonInvoice
 	/**
 	 * 	Update a line to invoice
 	 *
-	 *  @param     	int			$rowid           	Id of line to update
-	 *	@param    	string		$desc            	Description de la ligne
-	 *	@param    	float		$pu_ht              Prix unitaire HT (> 0 even for credit note)
-	 *	@param    	float		$qty             	Quantite
-	 *	@param    	float		$txtva           	Taux de tva force, sinon -1
-	 * 	@param		float		$txlocaltax1		Local tax 1 rate (deprecated)
-	 *  @param		float		$txlocaltax2		Local tax 2 rate (deprecated)
-	 *	@param    	int			$fk_product      	Product/Service ID predefined
-	 *	@param    	float		$remise_percent  	Percentage discount of the line
-	 *	@param		string		$price_base_type	HT or TTC
-	 *	@param    	int			$info_bits			Bits of type of lines
-	 *	@param    	int			$fk_remise_except	Id remise
-	 *	@param    	float		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
-	 *	@param		int			$type				Type of line (0=product, 1=service)
-	 *	@param      int			$rang               Position of line
-	 *	@param		int			$special_code		Special code
-	 *	@param		string		$label				Label of the line
-	 *	@param		?int		$fk_unit			Unit
-	 * 	@param		float		$pu_ht_devise		Unit price in currency
-	 * 	@param		int<0,1>	$notrigger			disable line update trigger
-	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
-	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
-	 * 	@param		?int		$fk_fournprice		Id of origin supplier price
-	 * 	@param		float|string	$pa_ht			Price (without tax) of product for margin calculation (Can be '' to keep AWP unchanged or a float value)
-	 *  @param		int			$fk_parent_line		Id of parent line
-	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
+	 *  @param     	int				$rowid           	Id of line to update
+	 *	@param    	string			$desc            	Description de la ligne
+	 *	@param    	float			$pu_ht              Prix unitaire HT (> 0 even for credit note)
+	 *	@param    	float			$qty             	Quantite
+	 *	@param    	float|string	$txtva				VAT Rate (Can be '1.23' or '1.23 (ABC)')
+	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  @param		float			$txlocaltax2		Local tax 2 rate (deprecated)
+	 *	@param    	int				$fk_product      	Product/Service ID predefined
+	 *	@param    	float			$remise_percent  	Percentage discount of the line
+	 *	@param		string			$price_base_type	HT or TTC
+	 *	@param    	int				$info_bits			Bits of type of lines
+	 *	@param    	int				$fk_remise_except	Id remise
+	 *	@param    	float			$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+	 *	@param		int				$type				Type of line (0=product, 1=service)
+	 *	@param      int				$rang               Position of line
+	 *	@param		int				$special_code		Special code
+	 *	@param		string			$label				Label of the line
+	 *	@param		?int			$fk_unit			Unit
+	 * 	@param		float			$pu_ht_devise		Unit price in currency
+	 * 	@param		int<0,1>		$notrigger			disable line update trigger
+	 *  @param		int				$date_start_fill	1=Flag to fill start date when generating invoice
+	 *  @param		int				$date_end_fill		1=Flag to fill end date when generating invoice
+	 * 	@param		?int			$fk_fournprice		Id of origin supplier price
+	 * 	@param		float|string	$pa_ht				Price (without tax) of product for margin calculation (Can be '' to keep AWP unchanged or a float value)
+	 *  @param		int				$fk_parent_line		Id of parent line
+	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
 	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
 	{

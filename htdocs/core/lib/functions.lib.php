@@ -4342,7 +4342,7 @@ function getArrayOfSocialNetworks()
 		$socialnetworks = $dataretrieved;
 	} else {
 		$sql = "SELECT rowid, code, label, url, icon, active FROM " . MAIN_DB_PREFIX . "c_socialnetworks";
-		$sql .= " WHERE entity=" . $conf->entity;
+		$sql .= " WHERE entity =" . ((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
@@ -4357,7 +4357,8 @@ function getArrayOfSocialNetworks()
 		}
 		dol_setcache($cachekey, $socialnetworks); // If setting cache fails, this is not a problem, so we do not test result.
 	}
-	return $socialnetworks;
+
+	return (is_array($socialnetworks) ? $socialnetworks : array());
 }
 
 /**

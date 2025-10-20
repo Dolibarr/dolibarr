@@ -610,6 +610,7 @@ function Reduction() {
 	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
 	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
+
 var closeBillParams="";
 function CloseBill() {
 	<?php
@@ -962,7 +963,7 @@ function Edit(number) {
 
 
 function TakeposPrintingOrder(){
-	console.log("TakeposPrintingOrder");
+	console.log("TakeposPrintingOrder output invoice to print order");
 	$("#poslines").load("invoice.php?action=order&token=<?php echo newToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
@@ -991,6 +992,7 @@ function OpenDrawer(){
 	});
 }
 
+/* Click on button to open drawer */
 function DolibarrOpenDrawer() {
 	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
 	$.ajax({
@@ -1340,6 +1342,11 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 
 <?php
 
+// Dependency modulecheck
+if (!isModEnabled('facture')) {
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice")), null, 'errors');
+}
+
 // TakePOS setup check
 if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 	$sql = "SELECT code, libelle FROM " . MAIN_DB_PREFIX . "c_paiement";
@@ -1411,7 +1418,7 @@ if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
 	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
 }
 
-// BAR RESTAURANT specific menu
+// BAR RESTAURANT specific menu "Print on Order printer"
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
 		$menus[$r++] = array('title' => '<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action' => 'TakeposPrintingOrder();');
@@ -1428,9 +1435,11 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	// Button to print receipt before payment
 	$customprinterallowed = true;
+	$customprinttemplateallowed = true;
 	$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
 	if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
-		$customprinterallowed = false;
+		$customprinterallowed = true;
+		$customprinttemplateallowed = false;
 	}
 
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
@@ -1459,7 +1468,7 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action' => 'OpenDrawer();');
 }
-if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+if (getDolGlobalInt('TAKEPOS_ADD_BUTTON_OPEN_DRAWER'.$term) > 0) {
 	$menus[$r++] = array(
 		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
 		'action' => 'DolibarrOpenDrawer();',
@@ -1519,6 +1528,24 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 
 ?>
 		<!-- Show buttons -->
+		<div id="dialogforpopuptakepos"></div>
+		<style>
+		/* Style de la popup */
+		#dialogforpopuptakepos {
+			display: none;
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			background: #333;
+			color: #fff;
+			padding: 15px 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			z-index: 1000;
+			font-family: sans-serif;
+		}
+		</style>
+
 		<div class="div3">
 		<?php
 		$i = 0;
