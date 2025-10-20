@@ -651,16 +651,15 @@ class FormMail extends Form
 			$helpforsubstitution = '';
 			if (is_array($this->substit) && count($this->substit)) {
 				$helpforsubstitution .= $langs->trans('AvailableVariables').' :<br><br><span class="small">'."\n";
-			}
-			foreach ($this->substit as $key => $val) {
-				// Do not show deprecated variables into the tooltip help of substitution variables
-				if (in_array($key, array('__NEWREF__', '__REFCLIENT__', '__REFSUPPLIER__', '__SUPPLIER_ORDER_DATE_DELIVERY__', '__SUPPLIER_ORDER_DELAY_DELIVERY__'))) {
-					continue;
+				foreach ($this->substit as $key => $val) {
+					// Do not show deprecated variables into the tooltip help of substitution variables
+					if (in_array($key, array('__NEWREF__', '__REFCLIENT__', '__REFSUPPLIER__', '__SUPPLIER_ORDER_DATE_DELIVERY__', '__SUPPLIER_ORDER_DELAY_DELIVERY__'))) {
+						continue;
+					}
+					if (is_array($val)) $val = implode(', ', $val); // key __MULTICURRENCY_CODE__ is an array and crashes dolGetFirstLineOfText function which accept only text
+					$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
+					$helpforsubstitution .= '</span>';
 				}
-				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
-			}
-			if (is_array($this->substit) && count($this->substit)) {
-				$helpforsubstitution .= '</span>';
 			}
 
 			/*
