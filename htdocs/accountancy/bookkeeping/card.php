@@ -520,6 +520,29 @@ if ($action == 'delete') {
 	print $formconfirm;
 }
 
+// Update fields properties in realtime
+if (!empty($conf->use_javascript_ajax)) {
+	print "\n" . '<script type="text/javascript">';
+	print '$(document).ready(function () {
+			function toggleSubledger() {
+				var isCentral = $("#accountingaccount_number option:selected").data("centralized");
+				console.log("the selected general ledger account is centralised?", isCentral);
+				if (isCentral) {
+					$("#subledger_account, #subledger_label").prop("disabled", false);
+				} else {
+					$("#subledger_account, #subledger_label").prop("disabled", true);
+				}
+			}
+
+			toggleSubledger();
+
+			$("#accountingaccount_number").on("change", toggleSubledger);
+			$("#accountingaccount_number").on("select2:select", toggleSubledger);
+		';
+	print '	});' . "\n";
+	print '	</script>' . "\n";
+}
+
 if ($action == 'create') {
 	print load_fiche_titre($title);
 
@@ -995,7 +1018,7 @@ if ($action == 'create') {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 						}
 						// Add also input for subledger label
-						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
+						print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
 						print '<td class="right"><input type="text" class="right width50" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
@@ -1022,7 +1045,7 @@ if ($action == 'create') {
 							} else {
 								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
 							}
-							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+							print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . dol_escape_htmltag($label_operation) . '"/></td>';
 							print '<td class="right"><input type="text" class="right width50" name="debit" value=""/></td>';
