@@ -94,9 +94,9 @@ class BlockedLog
 	public $linktype = '';
 
 	/**
-	 * @var string $linkref
+	 * @var string $linktoref
 	 */
-	public $linkref = '';
+	public $linktoref = '';
 
 	/**
 	 * Object element
