@@ -3113,6 +3113,10 @@ class Project extends CommonObject
 						'table' => 'loan',
 						'field' => 'fk_projet'
 					),
+					'Mailing' => array(
+						'table' => 'mailing',
+						'field' => 'fk_project'
+					),
 
 				);
 
