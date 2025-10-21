@@ -234,7 +234,7 @@ print '<div style="width: 50%; float:center;background-color:#606060">';
 print '<center>';
 
 // Call takepos/receipt.php
-print '<iframe id="iframe" allowtransparency="true" style="background: #FFFFFF;" src="'.DOL_URL_ROOT.'/takepos/receipt.php?forcenoautoopen=1" width="80%" height="600"></iframe>';
+print '<iframe id="iframe" allowtransparency="true" style="background: #FFFFFF;" src="'.DOL_URL_ROOT.'/takepos/receipt.php?forcenoautoopen=1&specimen=1" width="80%" height="600"></iframe>';
 
 print '</center>';
 print '</div>';

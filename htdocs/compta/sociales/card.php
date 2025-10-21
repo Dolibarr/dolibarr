@@ -714,7 +714,6 @@ if ($id > 0) {
 
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$total = 0;
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder paymenttable">';
@@ -855,7 +854,7 @@ if ($id > 0) {
 			$action = 'presend';
 		}
 
-		if ($action != 'presend') {
+		if ($action != 'edit' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 

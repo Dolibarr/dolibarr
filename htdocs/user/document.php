@@ -157,7 +157,7 @@ if ($object->id && $upload_dir !== null) {
 	}
 	$head = user_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
+	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user', 0, '', '', 0, '', 1);
 
 	$linkback = '';
 	if ($user->hasRight("user", "user", "read") || $user->admin) {

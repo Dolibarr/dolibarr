@@ -68,11 +68,11 @@ class AdherentStats extends Stats
 
 
 	/**
-	 *	Constructor
+	 * Constructor
 	 *
-	 *	@param 		DoliDB		$db			Database handler
-	 * 	@param 		int			$socid	   	Id third party
-	 * 	@param   	int			$userid    	Id user for filter
+	 * @param 		DoliDB		$db			Database handler
+	 * @param 		int			$socid	   	Id third party
+	 * @param   	int			$userid    	Id user for filter
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
 	{
@@ -97,11 +97,11 @@ class AdherentStats extends Stats
 
 
 	/**
-	 * Return the number of proposition by month for a given year
+	 * Return the number of members by month for a given year
 	 *
-	 *	@param	int		$year       Year
-	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
+	 * @param	int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -136,7 +136,7 @@ class AdherentStats extends Stats
 	 *
 	 * @param   int		$year       Year
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -375,7 +375,7 @@ class AdherentStats extends Stats
 					'datem' => $this->db->jdate($objp->datem),
 					'status' => (int) $objp->status,
 					'date_end_subscription' => $this->db->jdate($objp->date_end_subscription),
-					'photo' => $objp->photo,
+					'photo' => isset($objp->photo) ? (string) $objp->photo : null,
 					'email' => $objp->email,
 					'gender' => $objp->gender,
 					'morphy' => $objp->morphy,
