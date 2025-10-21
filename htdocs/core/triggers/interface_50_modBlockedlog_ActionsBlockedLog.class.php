@@ -144,16 +144,14 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		//var_dump($b); exit;
 
 		if ($result < 0) {
-			$this->error = $b->error;
-			$this->errors = $b->errors;
+			$this->setErrorsFromObject($b);
 			return -1;
 		}
 
-		$res = $b->create($user);
+		$res = $b->create($user);		// Insert event in unalterable log. We are in a trigger so inside a global db transaction.
 
 		if ($res < 0) {
-			$this->error = $b->error;
-			$this->errors = $b->errors;
+			$this->setErrorsFromObject($b);
 			return -1;
 		} else {
 			return 1;

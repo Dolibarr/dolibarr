@@ -174,12 +174,12 @@ class BOM extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var int Id User modifying
+	 * @var int Id User validating
 	 */
 	public $fk_user_valid;
 
 	/**
-	 * @var int Id User modifying
+	 * @var ?int Id of warehouse
 	 */
 	public $fk_warehouse;
 
@@ -369,8 +369,7 @@ class BOM extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -1440,7 +1439,7 @@ class BOM extends CommonObject
 							return -1;
 						}
 
-						$line->total_cost = (float) price2num($line->unit_cost * $line->qty / $line->efficiency, 'MT');
+						$line->total_cost = (float) $line->unit_cost * $line->qty / $line->efficiency;
 
 						$this->total_cost += $line->total_cost;
 					} else {
@@ -1449,7 +1448,7 @@ class BOM extends CommonObject
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;
-							$line->total_cost = (float) price2num($bom_child->unit_cost * $line->qty / $line->efficiency, 'MT');
+							$line->total_cost = (float) $bom_child->unit_cost * $line->qty / $line->efficiency;
 							$this->total_cost += $line->total_cost;
 						} else {
 							$this->error = $bom_child->error;
@@ -1470,7 +1469,7 @@ class BOM extends CommonObject
 						$res = $workstation->fetch($line->fk_default_workstation);
 
 						if ($res > 0) {
-							$line->total_cost = (float) price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+							$line->total_cost = (float) $qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated);
 						} else {
 							$this->error = $workstation->error;
 							return -3;
@@ -1484,9 +1483,9 @@ class BOM extends CommonObject
 						}
 
 						if ($qtyhourservice) {
-							$line->total_cost = (float) price2num($qtyhourforline / $qtyhourservice * $line->unit_cost, 'MT');
+							$line->total_cost = (float) $qtyhourforline / $qtyhourservice * $line->unit_cost;
 						} else {
-							$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
+							$line->total_cost = (float) $line->qty * $line->unit_cost;
 						}
 					}
 

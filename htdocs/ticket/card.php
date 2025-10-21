@@ -281,7 +281,7 @@ if (empty($reshook)) {
 				$object->origin_email = null;
 				$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 				$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
-				$object->context['contact_id'] = GETPOSTINT('contact_id');
+				$object->context['contact_id'] = GETPOSTINT('contactid');
 				$id = $object->create($user);
 			} else {
 				$id = $object->update($user);
@@ -473,7 +473,7 @@ if (empty($reshook)) {
 	if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
-			$object->context['contact_id'] = GETPOSTINT('contact_id');
+			$object->context['contact_id'] = GETPOSTINT('contactid');
 
 			$object->close($user);
 
@@ -928,7 +928,7 @@ if ($action == 'create' || $action == 'presend') {
 		if ($action != 'editsubject') {
 			$morehtmlref .= dolPrintLabel($object->subject);
 		} else {
-			$morehtmlref .= '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			$morehtmlref .= '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
 			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$morehtmlref .= '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -1012,7 +1012,7 @@ if ($action == 'create' || $action == 'presend') {
 				$object->fetchProject();
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project'.((is_object($object->project) && $object->project->public) ? 'pub' : ''), 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {

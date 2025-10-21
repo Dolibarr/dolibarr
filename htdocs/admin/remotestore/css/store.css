@@ -13,46 +13,46 @@ div.divsearchfield {
     padding-left: 2px;
 }
 
-.margeCoteGauche,.margeCote{
-    padding-right: 20px!important;
+.margeCote, .margeCoteGauche {
+    padding-right: 10px !important;
 }
-.margeCote,.margeCoteDroite{
-    padding-left: 20px!important;
+.margeCote, .margeCoteDroite {
+    padding-left: 30px !important;
 }
 .margeCote {
 	padding-bottom: 10px;
 }
-.nomargesupinf{
+.nomargesupinf {
     margin-top: 0;
     margin-bottom: 0;
 }
-#category-tree-left{
+#category-tree-left {
     display: none;
     vertical-align: top;
     width: 24%;
 }
-#category-tree-left .active{
+#category-tree-left .active {
     background: var(--colorbacktitle1);
     color: #999 !important;
     border-radius: 3px;
     padding: 0 10px;
 }
-#listing-content{
+#listing-content {
     box-sizing: border-box;
     display: inline-block;
     width: 100%;
 }
-.tree{
+.tree {
     margin: 0px 0px 0px 0px;
     padding:0px;
     list-style: none; line-height: 2em; font-family: Arial;
     margin-left: 15px;
 }
-.tree li{
+.tree li {
     font-size: 16px;
     position: relative;list-style: none;
 }
-.tree li:before{
+.tree li:before {
     position: absolute;
     left: -15px;
     top: -4px;
@@ -63,7 +63,7 @@ div.divsearchfield {
     border-bottom: 1px solid #ddd;
     width: 10px;
 }
-.tree li:after{
+.tree li:after {
     position: absolute;
     left: -15px;
     bottom: -7px;
@@ -73,20 +73,20 @@ div.divsearchfield {
     height: 100%;
 }
 
-.tree li.root{
+.tree li.root {
     margin: 0px 0px 0px 0px;
 }
-.tree li.root:before{
+.tree li.root:before {
     display: none;
 }
 
-.tree li.root:after{
+.tree li.root:after {
     display: none;
 }
-.tree li:last-child:after{
+.tree li:last-child:after {
     display: none
 }
-.newAppParent{
+.newAppParent {
     position: relative;
     overflow: hidden;
     padding: 10px;
@@ -202,7 +202,7 @@ tr.NotCompatible:hover{
     opacity: 0.7;
 }
 span.details{
-    font-size: 12px;
+    font-size: 1em;
     margin-left: 10px;
     vertical-align: super;
 }
@@ -223,7 +223,13 @@ span.details{
 
 @media only screen and (max-width: 724px) {
     .imgstore {
-    	max-height: 50px;
-    	width: 50px;
+    	max-height: 32px;
+    	width: 32px;
     }
+    .margeCote, .margeCoteDroite {
+    	padding-left: 20px !important;
+	}
+	h2.appTitle small{
+	    font-size: 1em;
+	}
 }

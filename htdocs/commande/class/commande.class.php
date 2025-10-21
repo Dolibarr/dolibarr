@@ -529,7 +529,10 @@ class Commande extends CommonOrder
 			$this->error = 'ErrorWrongParameters';
 			return -1;
 		}
-
+		if (!getDolGlobalBool('ORDER_NOCHECK_ONSALE_PRODUCTS_ONVALID') && !$this->checkActiveProductInLines()) {
+			dol_syslog(get_class($this)."::valid checkActiveProductInLines ".$this->error, LOG_INFO);
+			return -1;
+		}
 		$now = dol_now();
 
 		$this->db->begin();
@@ -1553,7 +1556,7 @@ class Commande extends CommonOrder
 	 *	@param      string			$desc            	Description of line
 	 *	@param      float			$pu_ht    	        Unit price (without tax)
 	 *	@param      float			$qty             	Quantite
-	 * 	@param    	float			$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 	@param    	float|string	$txtva           	Force VAT rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *	@param      int				$fk_product      	Id of product
@@ -2212,9 +2215,11 @@ class Commande extends CommonOrder
 		$sql .= ' l.fk_unit, l.extraparams,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch, p.barcode as product_barcode,';
+		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units, p.packaging';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_country';
 		$sql .= ' WHERE l.fk_commande = '.((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
@@ -2278,7 +2283,10 @@ class Commande extends CommonOrder
 				$line->product_tobuy    = $objp->product_tobuy;
 				$line->product_desc     = $objp->product_desc;
 				$line->product_tobatch  = $objp->product_tobatch;
-				$line->product_barcode  = $objp->product_barcode;
+				$line->product_barcode = $objp->product_barcode;
+				$line->product_custom_code = $objp->customcode;
+				$line->product_custom_country_id = $objp->country_id;
+				$line->product_custom_country_code = $objp->country_code;
 
 				$line->fk_product_type  = $objp->fk_product_type; // Produit ou service
 				$line->fk_unit          = $objp->fk_unit;
@@ -3103,7 +3111,7 @@ class Commande extends CommonOrder
 	 *  @param    	float			$pu               	Unit price
 	 *  @param    	float			$qty              	Quantity
 	 *  @param    	float			$remise_percent   	Percent of discount
-	 *  @param    	float			$txtva           	Taux TVA
+	 *  @param    	float|string	$txtva           	VAT rate. Can be '19.6' or '19.6 (CODE)'
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate
 	 *  @param		float			$txlocaltax2		Local tax 2 rate
 	 *  @param    	string			$price_base_type	HT or TTC
@@ -3752,6 +3760,12 @@ class Commande extends CommonOrder
 
 		$labelTooltip = '';
 
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-billed' => (int) $billed,
+			'data-status' => (int) $status
+		)));
+
 		if ($status == self::STATUS_CANCELED) {
 			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderCanceled');
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderCanceledShort');
@@ -3783,11 +3797,14 @@ class Commande extends CommonOrder
 			$mode = 0;
 		}
 
+		$paramsBadge['tooltip'] = $labelTooltip;
+
 		$parameters = array(
 			'status'          => $status,
 			'mode'            => $mode,
 			'billed'          => $billed,
-			'donotshowbilled' => $donotshowbilled
+			'donotshowbilled' => $donotshowbilled,
+			'paramsBadge'	  =>& $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -3796,7 +3813,7 @@ class Commande extends CommonOrder
 			return $hookmanager->resPrint;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', array('tooltip' => $labelTooltip));
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**
@@ -3885,11 +3902,11 @@ class Commande extends CommonOrder
 		$result = '';
 
 		if (isModEnabled("shipping") && ($option == '1' || $option == '2')) {
-			$url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT . '/expedition/shipment.php';
 		} else {
-			$url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT . '/commande/card.php';
 		}
-
+		$query = ['id' => $this->id];
 		if (!$user->hasRight('commande', 'lire')) {
 			$option = 'nolink';
 		}
@@ -3901,9 +3918,10 @@ class Commande extends CommonOrder
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		if ($short) {
 			return $url;
@@ -4031,9 +4049,10 @@ class Commande extends CommonOrder
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
+	 *  @param	array<string|mixed>		$param		Array of options
 	 *  @return	int
 	 */
-	public function initAsSpecimen()
+	public function initAsSpecimen($param = array())
 	{
 		global $conf, $langs;
 
@@ -4045,6 +4064,9 @@ class Commande extends CommonOrder
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		if (array_key_exists('tosell', $param)) {
+			$sql .= " AND tosell = ".((int) $param['tosell']);
+		}
 		$sql .= $this->db->plimit(100);
 
 		$resql = $this->db->query($sql);

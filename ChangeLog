@@ -11,6 +11,7 @@ For users:
 
 For developers:
 ---------------
+* Introducing the TRIGGER_PREFIX property to force developers to use unique triggerkey per business object, limit also code to business CRUD events and identity when it is not.
 
 
 
@@ -28,6 +29,10 @@ The following changes may create regressions for some external modules, but were
   same path than the core path without using a mymodule directory is now forbidden.
 * The directory theme/common/octicons has been removed
 * The library timepicker.js has been removed. Was not used by Dolibarr.
+* Because of new TRIGGER_PREFIX property triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed to PRODUCT_BUYPRICE_XXX.
+* Function img_pdf() has been removed. Replace it with img_picto('', 'pdf.png') if you were using it.
+* The method run_trigger() was deprecated 10+ years ago in favor of runTrigger(). It has been removed. Change your trigger file if you still use it.
+* Property ->picto of module descriptors must contains the image extension if it is not a font awesome tag. Example: $this->picto="mymoduleimg.png";
 
 
 ***** ChangeLog for 22.0.2 compared to 22.0.1 *****
@@ -41,8 +46,8 @@ FIX: #35407 After updating to version 22, local taxes were no longer applied (#3
 FIX: #35425 (#35426)
 FIX: accountancy general ledger: bad handling of hook return (#34029)
 FIX: Add security test for show terminal selection if no terminal selected when invoice.php is call (#34717)
-FIX: allow to create First Sutuation Invoice (#35228)
-FIX: api orders : forward database error on failure (backpot commit d9e81cb) (#35478)
+FIX: allow to create First Situation Invoice (#35228)
+FIX: api orders : forward database error on failure (backport commit d9e81cb) (#35478)
 FIX: Can't edit tags of a user.
 FIX: can't reset intracomm transport mode
 FIX: can't save setup of odt template for stock
@@ -58,7 +63,7 @@ FIX: Generation of member cards (file not found and substitution broken)
 FIX: invoice not set to closed when we add a credit note to close it
 FIX: missing check constant PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS (#33277)
 FIX: missing entity filter (#35461)
-FIX: missing quick edit for extrafields (baclport commit 4fc66c6) (#35160)
+FIX: missing quick edit for extrafields (backport commit 4fc66c6) (#35160)
 FIX: Missing sentence part (#35144)
 FIX: Remove perms to access commerce tab when the only active permission is fournisseur:lire (#35467)
 FIX: Restore decimal quantity for stock correction/transfer

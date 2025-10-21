@@ -1250,6 +1250,12 @@ if ($action == 'create') {
 		// $objectsrc is Commande|Facture
 		$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
 		$object = $expe;
+		// Propagate extrafieldsvalue from source object to shipment object
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+			if (array_key_exists('options_'.$key, $objectsav->array_options)) {  // We take value from order only if extrafield has the same name/key.
+				$object->array_options['options_'.$key] = $objectsav->array_options['options_'.$key];
+			}
+		}
 		$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 		$object = $objectsav;
@@ -2135,7 +2141,7 @@ if ($action == 'create') {
 			'label'		=> '<span class="fieldrequired">' . $langs->trans('SignStatus') . '</span>',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SignShipping'), $text, 'confirm_sign', $formquestion, 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('SignShipping'), $text, 'confirm_sign', $formquestion, 0, 1);
 	}
 
 	// Confirm unsign
@@ -2147,7 +2153,7 @@ if ($action == 'create') {
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('SHIPPING_MODIFY', $object->socid, $object);
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UnsignShipping'), $text, 'confirm_unsign', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('UnsignShipping'), $text, 'confirm_unsign', '', 0, 1);
 	}
 
 	// Call Hook formConfirm

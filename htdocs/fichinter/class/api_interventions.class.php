@@ -732,13 +732,50 @@ class Interventions extends DolibarrApi
 		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
-		/**
+	/**
+	 * Get contacts of given interventional
+	 *
+	 * Return an array with contact information
+	 *
+	 * @param	int					$id			ID of interventional
+	 * @param	string				$type		Type of the interventional
+	 * @return	array<int,mixed>				Object with cleaned properties
+	 *
+	 * @url	GET {id}/contacts
+	 *
+	 * @throws	RestException
+	 */
+	public function getContacts($id, $type = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->fichinter->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Interventional not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$contacts = $this->fichinter->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $this->fichinter->liste_contact(-1, 'internal', 0, $type);
+
+		$contacts = array_merge($contacts, $socpeoples);
+
+		return $contacts;
+	}
+
+
+	/**
 	 * Delete a contact type of given interventional
 	 *
-	 * @param	int    $id             Id of interventional to update
-	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
-	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
-	 * @return	Object				   Object with cleaned properties
+	 * @param	int    				$id             Id of interventional to update
+	 * @param	int    				$contactid      Row key of the contact in the array contact_ids.
+	 * @param	string 				$type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @return	Object								Object deleted
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
@@ -792,7 +829,6 @@ class Interventions extends DolibarrApi
 	 */
 	public function updateInterventionalLine($id, $lineid, $request_data)
 	{
-
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Interventional not found');

@@ -4,6 +4,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->load('mails');
@@ -68,8 +71,13 @@ $pagenext = $page + 1;
 // Search Fields
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : GETPOST("sref", "alpha");
+$search_title = GETPOST("search_title", "alpha");
+$search_subject = GETPOST("search_subject", "alpha");
 $search_messtype = GETPOST("search_messtype", "alpha");
 $filteremail = GETPOST('filteremail', 'alpha');
+
+$search_refproject = GETPOST('search_refproject', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
 
 // Initialize a technical objects
 $object = new Mailing($db);
@@ -134,7 +142,11 @@ if (empty($reshook)) {
 			$search[$key]='';
 		}*/
 		$search_ref = '';
+		$search_title = '';
+		$search_subject = '';
 		$search_messtype = '';
+		$search_refproject = '';
+		$search_project = '';
 		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
@@ -157,6 +169,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$projectstatic = new Project($db);
 
 $now = dol_now();
 
@@ -168,22 +181,36 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 if ($filteremail) {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
-	$sql .= " mc.statut as sendstatut";
+	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql .= " mc.statut as sendstatut,";
+	$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label";
 
 	$sqlfields = $sql; // $sql fields to remove for count total
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
 	$sql .= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
 	$sql .= " AND mc.email = '".$db->escape($filteremail)."'";
 	if ($search_ref) {
-		$sql .= " AND m.rowid = '".$db->escape($search_ref)."'";
+		$sql .= natural_search("m.rowid", $search_ref, 1);
+	}
+	if ($search_title) {
+		$sql .= " AND (m.titre LIKE '%".$db->escape($search_title)."%')";
+	}
+	if ($search_subject) {
+		$sql .= " AND (m.sujet LIKE '%".$db->escape($search_subject)."%')";
 	}
 	if ($search_messtype) {
 		$sql .= " AND m.messtype LIKE '".$db->escape($search_messtype)."'";
 	}
 	if ($search_all) {
 		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
+	}
+	if ($search_refproject) {
+		$sql .= natural_search('pr.ref', $search_refproject);
+	}
+	if ($search_project) {
+		$sql .= natural_search('pr.title', $search_project);
 	}
 	if (!$sortorder) {
 		$sortorder = "ASC";
@@ -192,20 +219,34 @@ if ($filteremail) {
 		$sortfield = "m.rowid";
 	}
 } else {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi";
+	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label";
 
 	$sqlfields = $sql; // $sql fields to remove for count total
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
 	$sql .= " WHERE m.entity = ".((int) $conf->entity);
 	if ($search_ref) {
-		$sql .= " AND m.rowid = '".$db->escape($search_ref)."'";
+		$sql .= natural_search("m.rowid", $search_ref, 1);
+	}
+	if ($search_title) {
+		$sql .= " AND m.titre LIKE '%".$db->escape($search_title)."%'";
+	}
+	if ($search_subject) {
+		$sql .= " AND m.sujet LIKE '%".$db->escape($search_subject)."%'";
 	}
 	if ($search_messtype) {
-		$sql .= " AND m.messtype LIKE '".$db->escape($search_messtype)."'";
+		$sql .= " AND m.messtype LIKE '%".$db->escape($search_messtype)."%'";
 	}
 	if ($search_all) {
 		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
+	}
+	if ($search_refproject) {
+		$sql .= natural_search('pr.ref', $search_refproject);
+	}
+	if ($search_project) {
+		$sql .= natural_search('pr.title', $search_project);
 	}
 	if (!$sortorder) {
 		$sortorder = "ASC";
@@ -265,7 +306,7 @@ $num = $db->num_rows($resql);
 if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$id);
+	header("Location: ".dol_buildpath('/comm/mailing/card.php', 1).'?id='.((int) $id));
 	exit;
 }
 
@@ -300,6 +341,12 @@ if ($search_ref != '') {
 }
 if ($search_messtype != '') {
 	$param .= '&search_type='.urlencode($search_messtype);
+}
+if ($search_refproject != '') {
+	$param .= '&search_refproject='.urlencode($search_refproject);
+}
+if ($search_project != '') {
+	$param .= '&search_project='.urlencode($search_project);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -412,9 +459,20 @@ if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 }
 // Title
 print '<td class="liste_titre">';
-print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="search_all" value="'.dol_escape_htmltag($search_all).'">';
+print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="search_title" value="'.dol_escape_htmltag($search_title).'">';
 print '</td>';
+// Subject
+print '<td class="liste_titre">';
+print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="search_subject" value="'.dol_escape_htmltag($search_subject).'">';
+print '</td>';
+// Creation date
 print '<td class="liste_titre">&nbsp;</td>';
+
+// Project
+print '<td class="liste_titre">';
+print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
+print '</td>';
+
 if (!$filteremail) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
@@ -454,8 +512,15 @@ if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 }
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "m.titre", $param, "", "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
+print_liste_field_titre("Subject", $_SERVER["PHP_SELF"], "m.sujet", $param, "", "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", $param, "", '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
+
+// Project
+print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "project_label", $param, "", '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
+
 if (!$filteremail) {
 	$title = $langs->trans("NbOfEMails");
 	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
@@ -486,10 +551,6 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-$totalarray = array();
-$totalarray['nbfield'] = 0;
-
-
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
@@ -506,8 +567,11 @@ while ($i < $imaxinloop) {
 	$object->id = $obj->rowid;
 	$object->ref = $obj->rowid;
 
+	$projectstatic->id = $obj->project_id;
+	$projectstatic->ref = $obj->project_ref;
+	$projectstatic->title = $obj->project_label;
+
 	// Show here line of result
-	$j = 0;
 	print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -529,21 +593,54 @@ while ($i < $imaxinloop) {
 	print '<td>';
 	print $object->getNomUrl(1);
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Message type
 	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 		print '<td>';
 		print dol_escape_htmltag($obj->messtype);
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Title
-	print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
+	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+	$savref = $object->ref;
+	$object->ref = $obj->title;
+	print $object->getNomUrl(0);
+	$object->ref = $savref;
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
+	// Topic
+	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->subject).'">';
+	print $obj->subject;
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Date creation
 	print '<td class="center">';
 	print dol_print_date($db->jdate($obj->datec), 'day');
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
+	// Project
+	print '<td class="nowraponall">';
+	print '<a href="/projet/card.php?id='.((int) $projectstatic->id).'">'.dol_escape_htmltag($projectstatic->title).'</a>';
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Nb of email
 	if (!$filteremail) {
@@ -560,11 +657,17 @@ while ($i < $imaxinloop) {
 		}*/
 		print $nbemail;
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Last send
 	print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->date_envoi), 'day').'</td>';
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Status
 	print '<td class="nowrap center">';
@@ -574,6 +677,9 @@ while ($i < $imaxinloop) {
 		print $object->LibStatut($obj->status, 5);
 	}
 	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -601,10 +707,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found
 if (empty($num)) {
-	$colspan = 6;
-	if (!$filteremail) {
-		$colspan++;
-	}
+	$colspan = $savnbfield;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
