@@ -171,7 +171,7 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}elseif ($action == 'updateoptions') {
+} elseif ($action == 'updateoptions') {
 	if (GETPOST('BOM_USE_SEARCH_TO_SELECT')) {
 		$bomsearch = GETPOST('activate_BOM_USE_SEARCH_TO_SELECT', 'alpha');
 		if (dolibarr_set_const($db, "BOM_USE_SEARCH_TO_SELECT", $bomsearch, 'chaine', 0, '', $conf->entity)) {
