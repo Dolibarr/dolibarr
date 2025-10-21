@@ -30,7 +30,7 @@
  /**
  * Truncate number instead of rounding.
  *
- * @param	float $val unversally formatted number
+ * @param	string $val unversally formatted number
  * @param	int $f number of decimals to keep
  * @return	float truncated number
  */
