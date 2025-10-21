@@ -51,7 +51,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 * Function called on Dolibarr payment or invoice event.
 	 *
 	 * @param string		$action		Event action code
-	 * @param CommonObject	$object     Object
+	 * @param Object		$object     Object
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
@@ -105,8 +105,10 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
+					/** @var Don|Subscription $object */
 				$amounts = (float) $object->amount;
 			} elseif ($action == 'CASHCONTROL_VALIDATE') {
+				/** @var CashControl $object */
 				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
 			} elseif (property_exists($object, 'total_ttc')) {
 				$amounts = (float) $object->total_ttc;
