@@ -164,10 +164,10 @@ abstract class DolibarrTriggers
 	/**
 	 * setErrorsFromObject
 	 *
-	 * @param	CommonObject	$object		Object
+	 * @param	CommonObject|BlockedLog	$object		Object
 	 * @return	void
 	 */
-	public function setErrorsFromObject(CommonObject $object)
+	public function setErrorsFromObject($object)
 	{
 		if (!empty($object->error)) {
 			$this->errors = array_merge($this->errors, array($object->error));
