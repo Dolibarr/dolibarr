@@ -272,6 +272,16 @@ $checksumconcat = array();
 
 fputs($fp, '<dolibarr_unalterable_files version="'.$release.'">'."\n");
 
+// TODO Use this array to make the scan
+$arrayofunalterablefiles = array(
+	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'files' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'files' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'files' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'files' => 'interfaces.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'files' => 'commontrigger.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'files' => 'receipt.php')
+);
+
 $regextoinclude = '(\.php|\.sql)$';
 $regextoexclude = '';  // Exclude dirs
 $files = dol_dir_list(dirname(__FILE__).'/../../htdocs/blockedlog', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');

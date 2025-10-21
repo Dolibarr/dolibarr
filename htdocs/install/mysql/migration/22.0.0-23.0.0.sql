@@ -258,11 +258,16 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '5
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '519', 'gGmbH - gemeinnützige Gesellschaft mit beschränkter Haftung', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '520', 'gUG - gemeinnützige Unternehmergesellschaft (haftungsbeschränkt)', 1);
 
+ALTER TABLE llx_oauth_token ADD COLUMN tokenstring_refresh text NULL AFTER tokenstring;
 ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
 ALTER TABLE llx_blockedlog ADD COLUMN linktoref varchar(255);
 ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
 ALTER TABLE llx_blockedlog ADD COLUMN vat double(24,8) DEFAULT NULL;
+
+
+-- Fix a wrong migration script
+UPDATE llx_oauth_token SET tokenstring = token, token = NULL WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
 
 
 -- end of migration
