@@ -1396,7 +1396,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// TODO Use update method of ExpenseReportLine
-			$result = $object->updateline($rowid, $type_fees_id, $projet_id, (float) $vatrate, $comments, (float) $qty, (float) $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
+			$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, (float) $qty, (float) $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
 			if ($result >= 0) {
 				if ($result > 0) {
 					// Define output language

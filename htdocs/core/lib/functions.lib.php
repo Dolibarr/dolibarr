@@ -4342,7 +4342,7 @@ function getArrayOfSocialNetworks()
 		$socialnetworks = $dataretrieved;
 	} else {
 		$sql = "SELECT rowid, code, label, url, icon, active FROM " . MAIN_DB_PREFIX . "c_socialnetworks";
-		$sql .= " WHERE entity=" . $conf->entity;
+		$sql .= " WHERE entity =" . ((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
@@ -4357,7 +4357,8 @@ function getArrayOfSocialNetworks()
 		}
 		dol_setcache($cachekey, $socialnetworks); // If setting cache fails, this is not a problem, so we do not test result.
 	}
-	return $socialnetworks;
+
+	return (is_array($socialnetworks) ? $socialnetworks : array());
 }
 
 /**
@@ -8477,7 +8478,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 /**
  *	Return yes or no in current language
  *
- *	@param	int<0, 1>|'yes'|'true'|'no'|'false'	$yesno	Value to test (1, 'yes', 'true' or 0, 'no', 'false')
+ *	@param	boolean|int<0, 1>|'yes'|'true'|'no'|'false'	$yesno	Value to test (true, 1, 'yes', 'true' or false, 0, 'no', 'false')
  *	@param	integer|string	$format						1=Yes/No, 0=yes/no, 2=Disabled/enabled checkbox, 3=Disabled/enabled checkbox + Yes/No, 4 or Text=Use picto
  *	@param	int				$color						0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
  *	@return	string										HTML string
@@ -8488,7 +8489,7 @@ function yn($yesno, $format = 1, $color = 0)
 
 	$result = 'unknown';
 	$classname = '';
-	if ($yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// To set to 'no' before the test because of the '== 0'
+	if ($yesno === true || (int) $yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// To set to 'no' before the test because of the '== 0'
 		$result = $langs->trans('yes');
 		if ($format == 1 || $format == 3) {
 			$result = $langs->trans("Yes");
@@ -8504,7 +8505,7 @@ function yn($yesno, $format = 1, $color = 0)
 		}
 
 		$classname = 'ok';
-	} elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false') {
+	} else {
 		$result = $langs->trans("no");
 		if ($format == 1 || $format == 3) {
 			$result = $langs->trans("No");
@@ -14643,6 +14644,20 @@ function getElementProperties($elementType)
 		$classname = 'Fournisseur';
 		$table_element = 'societe';
 		$subelement = '';
+	} elseif ($elementType == 'recruitmentcandidature') {
+		$module = 'recruitment';
+		$classfile = 'recruitmentcandidature';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentCandidature';
+		$subelement = 'recruitmentcandidature';
+		$subdir = '/recruitmentcandidature';
+	} elseif ($elementType == 'recruitmentjobposition') {
+		$module = 'recruitment';
+		$classfile = 'recruitmentjobposition';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentJobPosition';
+		$subelement = 'recruitmentjobposition';
+		$subdir = '/recruitmentjobposition';
 	}
 
 

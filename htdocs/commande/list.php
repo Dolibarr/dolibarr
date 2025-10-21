@@ -1857,7 +1857,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 }
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 	print '</td>';
 }
@@ -2598,7 +2598,7 @@ while ($i < $imaxinloop) {
 
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center tdoverflowmax100">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
 			print $tmparray['label'];
 			print '</td>';
