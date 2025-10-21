@@ -2685,7 +2685,7 @@ if ($action == 'create' && $usercancreate) {
 			'label'		=> '<span class="fieldrequired">' . $langs->trans('SignStatus') . '</span>',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SignShipping'), $text, 'confirm_sign', $formquestion, 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('SignShipping'), $text, 'confirm_sign', $formquestion, 0, 1);
 	}
 
 	// Confirm unsign
@@ -2697,7 +2697,7 @@ if ($action == 'create' && $usercancreate) {
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('SHIPPING_MODIFY', $object->socid, $object);
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UnsignShipping'), $text, 'confirm_unsign', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('UnsignShipping'), $text, 'confirm_unsign', '', 0, 1);
 	}
 
 	// Call Hook formConfirm

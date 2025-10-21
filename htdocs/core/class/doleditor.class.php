@@ -207,8 +207,12 @@ class DolEditor
 
 		$fullpage = false;
 
+		// syntax is [] for attributes and {} for value inside style
 		$extraAllowedContent = 'a[target];';
 		$extraAllowedContent .= 'section[contenteditable,id];';
+		$extraAllowedContent .= 'table{border-spacing};';
+		$extraAllowedContent .= 'td{padding};';
+		$extraAllowedContent .= 'p{margin-left,margin-right,margin-top,margin-bottom,padding,line-height};';
 		$extraAllowedContent .= 'div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,padding-left,padding-right,padding-top,padding-bottom,width,border-top-left-radius,border-top-right-radius,border-bottom-left-radius,border-bottom-right-radius,box-shadow}';
 
 		if (is_string($restrictContent)) {

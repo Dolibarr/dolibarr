@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -67,9 +67,12 @@ print '<div class="opacitymedium justify">'.$langs->trans("FileCheckDesc").'</di
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td></td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
+$htmltooltip = '';
+$htmltooltip .= $langs->trans("VersionLastInstall").': '.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'<br>'."\n";
+$htmltooltip .= $langs->trans("VersionLastUpgrade").': '.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'<br>'."\n";
+
+print '<tr class="oddeven nohover"><td width="300">'.$langs->trans("VersionProgram").'</td><td>';
+print '<span class="valignmiddle">'.DOL_VERSION.'</span>';
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)
@@ -82,6 +85,7 @@ if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }
+print ' '.$form->textwithpicto('', $htmltooltip);
 print '</td></tr>'."\n";
 print '</table>';
 print '</div>';
@@ -128,7 +132,7 @@ if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || getDolGlobalString('MAIN_ALLO
 }
 $enableremotecheck = true;
 
-print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="check" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
 
@@ -225,17 +229,32 @@ if (empty($error) && !empty($xml)) {
 	$out = '';
 
 	// Forced constants
-	if (is_object($xml->dolibarr_constants[0])) {
+	if (is_object($xml->dolibarr_constants[0]) || $mode == 'unalterable') {
 		$out .= load_fiche_titre($langs->trans("ForcedConstants"));
 
 		$out .= '<div class="div-table-responsive-no-min">';
 		$out .= '<table class="noborder">';
 		$out .= '<tr class="liste_titre">';
 		$out .= '<td>#</td>';
-		$out .= '<td>'.$langs->trans("Constant").'</td>';
+		$out .= '<td>'.$langs->trans("Parameter").'</td>';
 		$out .= '<td class="center">'.$langs->trans("ExpectedValue").'</td>';
-		$out .= '<td class="center">'.$langs->trans("Value").'</td>';
+		$out .= '<td class="center">'.$langs->trans("CurrentValue").'</td>';
 		$out .= '</tr>'."\n";
+
+		if ($mode == 'unalterable') {
+			$out .= '<tr class="oddeven">';
+			$out .= '<td></td>'."\n";
+			$out .= '<td>'.$langs->trans("Country").'</td>'."\n";
+			$out .= '<td class="center"></td>'."\n";
+			$out .= '<td class="center">'.$mysoc->country_code.'</td>'."\n";
+			$out .= "</tr>\n";
+			$out .= '<tr class="oddeven">';
+			$out .= '<td></td>'."\n";
+			$out .= '<td>'.$langs->trans("ModuleMustBeEnabled", $langs->transnoentitiesnoconv("BlockedLog")).'</td>'."\n";
+			$out .= '<td class="center">'.yn(1).'</td>'."\n";
+			$out .= '<td class="center">'.yn(isModEnabled('blockedlog') ? 1 : 0).'</td>'."\n";
+			$out .= "</tr>\n";
+		}
 
 		$i = 0;
 		foreach ($xml->dolibarr_constants[0]->constant as $constant) {    // $constant is a simpleXMLElement
@@ -261,7 +280,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= "</tr>\n";
 		}
 
-		if ($i == 0) {
+		if ($i == 0 && $mode != 'unalterable') {
 			$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';

@@ -45,7 +45,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/card.php', ['id' => $project->id]).($moreparam ? '&'.$moreparam : '');
 	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'project';
 	$h++;
@@ -61,7 +61,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$nbContacts = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external'));
 		dol_setcache($cachekey, $nbContacts, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 	}
-	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/contact.php', ['id' => $project->id]).($moreparam ? '&'.$moreparam : '');
 	$head[$h][1] = $langs->trans("ProjectContact");
 	if ($nbContacts > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContacts.'</span>';
@@ -85,7 +85,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$nbTasks = count($taskstatic->getTasksArray(null, null, $project->id, 0, 0));
 			dol_setcache($cachekey, $nbTasks, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/tasks.php', ['id' => $project->id]).($moreparam ? '&'.$moreparam : '');
 		$head[$h][1] = $langs->trans("Tasks");
 		if ($nbTasks > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTasks).'</span>';
@@ -119,7 +119,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			}
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.((int) $project->id).($moreparam ? '&'.$moreparam : '');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/tasks/time.php', ['withproject' => 1, 'projectid' => $project->id]).($moreparam ? '&'.$moreparam : '');
 		$head[$h][1] = $langs->trans("TimeSpent");
 		if ($nbTimeSpent > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -204,7 +204,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			}
 			dol_setcache($cachekey, $nbElements, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$project->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/element.php', ['id' => $project->id]);
 		$head[$h][1] = $langs->trans("ProjectOverview");
 		if ($nbElements > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbElements.'</span>';
@@ -217,7 +217,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$Tickettatic = new Ticket($db);
 		$nbTicket = $Tickettatic->getCountOfItemsLinkedByObjectID($project->id, 'fk_project', 'ticket');
-		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?projectid='.((int) $project->id);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/list.php', ['projectid' => $project->id]);
 		$head[$h][1] = $langs->trans("Ticket");
 		if ($nbTicket > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTicket).'</span>';
@@ -228,7 +228,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	if (isModEnabled('eventorganization') && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
-		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php', ['projectid' => $project->id]);
 		$head[$h][1] = $langs->trans("EventOrganization");
 
 		// Enable caching of conf or booth count
@@ -293,7 +293,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!empty($project->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$project->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/note.php', ['id' => $project->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -319,7 +319,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$totalAttached = $nbFiles + $nbLinks;
 		dol_setcache($cachekey, $totalAttached, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 	}
-	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$project->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/document.php', ['id' => $project->id]);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($totalAttached) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($totalAttached).'</span>';
@@ -340,7 +340,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$nbComments = $project->getNbComments();
 			dol_setcache($cachekey, $nbComments, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/projet/comment.php?id='.$project->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/comment.php', ['id' => $project->id]);
 		$head[$h][1] = $langs->trans("CommentLink");
 		if ($nbComments > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbComments.'</span>';
@@ -349,7 +349,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/messaging.php?id='.$project->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/messaging.php', ['id' => $project->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
@@ -2582,7 +2582,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	global $langs, $conf, $user;
 	global $theme_datacolor;
 
-	$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+	$maxofloop = getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500);
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -2701,7 +2701,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$total_declaredprogressworkload = 0;
 
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
 		$i = 0;
 
 		print '<tr class="liste_titre">';
@@ -2903,7 +2903,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 	if (getDolGlobalString('PROJECT_LIMIT_YEAR_RANGE')) {
 		//Add the year filter input
-		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="get" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<table width="100%">';
 		print '<tr>';
 		print '<td>'.$langs->trans("Year").'</td>';
