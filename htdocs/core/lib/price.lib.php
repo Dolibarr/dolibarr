@@ -30,15 +30,15 @@
  /**
  * Truncate number instead of rounding.
  *
- * @param	float $val
- * @param	int $f nombre de décimales à trancher
+ * @param	float $val unversally formatted number
+ * @param	int $f number of decimals to keep
  */
-function numTruncate($val, $f="0")
+function numTruncate($val, $f = "0")
 {
-    if(($p = strpos($val, '.')) !== false) {
-        $val = floatval(substr($val, 0, $p + 1 + $f));
-    }
-    return $val;
+	if (($p = strpos($val, '.')) !== false) {
+		$val = floatval(substr($val, 0, $p + 1 + $f));
+	}
+	return $val;
 }
 
 /**
@@ -271,15 +271,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	$dolMaxDecimalUnits = (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
 
 	if ($uselocaltax1_rate && $apply_tax) {
-		$tmpResult14 = numTruncate(price2num(($tot_sans_remise_withvat * (1 + ($localtax1_rate / 100))),''),$dolMaxDecimalUnits);
+		$tmpResult14 = numTruncate(price2num(($tot_sans_remise_withvat * (1 + ($localtax1_rate / 100))), ''), $dolMaxDecimalUnits);
 		$result[14] = price2num($tmpResult14 - $tot_sans_remise_withvat, 'MT');
 		$localtaxes[0] += $result[14];
 
-		$tmpResult9 = numTruncate(price2num(($tot_avec_remise_withvat * (1 + ($localtax1_rate / 100))),''),$dolMaxDecimalUnits);
+		$tmpResult9 = numTruncate(price2num(($tot_avec_remise_withvat * (1 + ($localtax1_rate / 100))), ''), $dolMaxDecimalUnits);
 		$result[9] = price2num($tmpResult9 - $tot_avec_remise_withvat, 'MT');
 		$localtaxes[1] += $result[9];
 
-		$tmpResult11 = numTruncate(price2num(($pu_withmainvat * (1 + ($localtax1_rate / 100))),''),$dolMaxDecimalUnits);
+		$tmpResult11 = numTruncate(price2num(($pu_withmainvat * (1 + ($localtax1_rate / 100))), ''), $dolMaxDecimalUnits);
 		$result[11] = price2num($tmpResult11 - $pu_withmainvat, 'MU');
 		$localtaxes[2] += $result[11];
 	}
@@ -301,15 +301,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			break;
 	}
 	if ($uselocaltax2_rate && $apply_tax) {
-		$tmpResul15 = numTruncate(price2num(($tot_sans_remise_withvat * (1 + ($localtax2_rate / 100))),''),$dolMaxDecimalUnits);
+		$tmpResul15 = numTruncate(price2num(($tot_sans_remise_withvat * (1 + ($localtax2_rate / 100))), ''), $dolMaxDecimalUnits);
 		$result[15] = price2num($tmpResul15 - $tot_sans_remise_withvat, 'MT');
 		$localtaxes[0] += $result[15];
 
-		$tmpResult10 = numTruncate(price2num(($tot_avec_remise_withvat * (1 + ($localtax2_rate / 100))),''),$dolMaxDecimalUnits);
+		$tmpResult10 = numTruncate(price2num(($tot_avec_remise_withvat * (1 + ($localtax2_rate / 100))), ''), $dolMaxDecimalUnits);
 		$result[10] = price2num($tmpResult10 - $tot_avec_remise_withvat, 'MT');
 		$localtaxes[1] += $result[10];
 
-		$tmpResult12 = numTruncate(price2num(($pu_withmainvat * (1 + ($localtax2_rate / 100))),''),$dolMaxDecimalUnits);
+		$tmpResult12 = numTruncate(price2num(($pu_withmainvat * (1 + ($localtax2_rate / 100))), ''), $dolMaxDecimalUnits);
 		$result[12] = price2num($tmpResult12 - $pu_withmainvat, 'MU');
 		$localtaxes[2] += $result[12];
 	}
@@ -323,8 +323,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		// en ajoutant des quantités.
 		$result[6] = price2num($tot_sans_remise, 'MT');
 
-		$tmpResult8 = numTruncate(price2num($tot_sans_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)),''),$dolMaxDecimalUnits);
-		$tmpREsult8bis = numTruncate(price2num($tot_sans_remise * (1 + ($txtva / 100)),''),$dolMaxDecimalUnits);
+		$tmpResult8 = numTruncate(price2num($tot_sans_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), ''), $dolMaxDecimalUnits);
+		$tmpREsult8bis = numTruncate(price2num($tot_sans_remise * (1 + ($txtva / 100)), ''), $dolMaxDecimalUnits);
 
 		$result[8] = price2num($tmpResult8 + $localtaxes[0], 'MT'); // Selon TVA NPR ou non
 		$result8bis = price2num($tmpREsult8bis + $localtaxes[0], 'MT'); // Si TVA consideree normal (non NPR)
@@ -333,8 +333,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[0] = price2num($tot_avec_remise, 'MT');
 		// Le terme $tot_avec_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100) doit être tronqué au
 		// nombre de décimales des totaux
-		$tmpResult2 = numTruncate(price2num($tot_avec_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)),''),$dolMaxDecimalUnits);
-		$tmpResult2bis = numTruncate(price2num($tot_avec_remise * (1 + ($txtva / 100)),''),$dolMaxDecimalUnits);
+		$tmpResult2 = numTruncate(price2num($tot_avec_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), ''), $dolMaxDecimalUnits);
+		$tmpResult2bis = numTruncate(price2num($tot_avec_remise * (1 + ($txtva / 100)), ''), $dolMaxDecimalUnits);
 
 		$result[2] = price2num($tmpResult2 + $localtaxes[1], 'MT'); // Selon TVA NPR ou non
 		$result2bis = price2num($tmpResult2bis + $localtaxes[1], 'MT'); // Si TVA consideree normal (non NPR)
