@@ -616,7 +616,7 @@ if ($resql) {
 }
 // Bom combo list
 $sql = "SELECT COUNT(*) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as s";
+$sql .= " FROM ".$db->prefix()."bom_bom as s";
 $resql = $db->query($sql);
 if ($resql) {
 	$limitforoptim = 5000;
