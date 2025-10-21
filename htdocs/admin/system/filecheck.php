@@ -134,7 +134,7 @@ $enableremotecheck = true;
 
 print '<form name="check" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
+print img_picto('', 'search', 'class="pictofixedwidth"').$langs->trans("MakeIntegrityAnalysisFrom").'...<br><br>';
 
 print '<div class="divsection">';
 print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
@@ -245,14 +245,52 @@ if (empty($error) && !empty($xml)) {
 			$out .= '<tr class="oddeven">';
 			$out .= '<td></td>'."\n";
 			$out .= '<td>'.$langs->trans("Country").'</td>'."\n";
-			$out .= '<td class="center"></td>'."\n";
+			$out .= '<td class="center"><span class="opacitymedium">'.$langs->trans("YourCountryCode").'</span></td>'."\n";
 			$out .= '<td class="center">'.$mysoc->country_code.'</td>'."\n";
 			$out .= "</tr>\n";
 			$out .= '<tr class="oddeven">';
 			$out .= '<td></td>'."\n";
-			$out .= '<td>'.$langs->trans("ModuleMustBeEnabled", $langs->transnoentitiesnoconv("BlockedLog")).'</td>'."\n";
-			$out .= '<td class="center">'.yn(1).'</td>'."\n";
-			$out .= '<td class="center">'.yn(isModEnabled('blockedlog') ? 1 : 0).'</td>'."\n";
+			$out .= '<td>'.$langs->trans("StatusOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td>'."\n";
+			$out .= '<td class="center">'.$langs->trans("Enabled").'</td>'."\n";
+			$out .= '<td class="center">';
+			$out .= isModEnabled('blockedlog') ? '<span class="ok">'.$langs->trans("Enabled").'</span>' : '<span class="warning">'.$langs->trans("Disabled").'</span>';
+
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/modBlockedLog.class.php';
+			$objMod = new modBlockedLog($db);
+			$modulename = $objMod->getName();
+			$moduledesc = $objMod->getDesc();
+			$moduleauthor = $objMod->getPublisher();
+			$moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
+			$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+
+			$text = '<span class="opacitymedium">'.$langs->trans("LastActivationDate").':</span> ';
+			if (getDolGlobalString($const_name)) {
+				$text .= dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+			} else {
+				$text .= $langs->trans("Disabled");
+			}
+			$tmp = $objMod->getLastActivationInfo();
+			$authorid = (empty($tmp['authorid']) ? '' : $tmp['authorid']);
+			if ($authorid > 0) {
+				$tmpuser = new User($db);
+				$tmpuser->fetch($authorid);
+				$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
+				$text .= $tmpuser->getNomUrl(0, 'nolink', -1, 1);
+			}
+			$ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
+			if ($ip) {
+				$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
+				$text .= $ip;
+			}
+			$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
+			if ($lastactivationversion && $lastactivationversion != 'dolibarr') {
+				$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
+				$text .= $lastactivationversion;
+			}
+
+			$out .= $form->textwithpicto('', $text);
+
+			$out . '</td>'."\n";
 			$out .= "</tr>\n";
 		}
 
@@ -500,23 +538,24 @@ if (empty($error) && !empty($xml)) {
 	$resultcomment = '';
 
 	$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
+	$outcurrentchecksumtext = '';
 	if ($checksumget == $checksumtoget) {
 		if (empty($onlymodifiedorremoved) && !empty($file_list['added'])) {
 			$resultcode = 'warning';
 			$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
 			$outcurrentchecksum = $checksumget;
-			$outcurrentchecksum .= '<br><br>'.img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
+			$outcurrentchecksumtext .= img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 		} else {
 			$resultcode = 'ok';
 			$resultcomment = 'Success';
 			$outcurrentchecksum = '<span class="'.$resultcode.'" title="Checksum of all current checksums concatenated separated by a comma">'.$checksumget.'</span>';
-			$outcurrentchecksum.= '<br><br>'.img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
+			$outcurrentchecksumtext.= img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 		}
 	} else {
 		$resultcode = 'error';
 		$resultcomment = 'FileIntegrityIsKO';
 		$outcurrentchecksum = '<span class="'.$resultcode.'" title="Checksum of all current checksums concatenated separated by a comma">'.$checksumget.'</span>';
-		$outcurrentchecksum .= '<br><br>'.img_picto('', 'error').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
+		$outcurrentchecksumtext .= img_picto('', 'error').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 	}
 
 	// Show warning
@@ -554,13 +593,27 @@ if (empty($error) && !empty($xml)) {
 	} else {
 		print load_fiche_titre($langs->trans("GlobalChecksum"));
 	}
-	print $langs->trans("ExpectedChecksum").' = ';
+
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("ExpectedChecksum").'</td>';
+	print '<td>'.$langs->trans("CurrentChecksum").'</td>';
+	print '</tr>'."\n";
+
+	print '<tr><td>';
 	print '<span title="Checksum of all checksums in file separated by a comma and saved into '.$nameofsection.'">';
 	print $outexpectedchecksum;
-	print '</span><br>';
-	print $langs->trans("CurrentChecksum").' = '.$outcurrentchecksum;
+	print '</span>';
+	print '</td><td>';
+	print $outcurrentchecksum;
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+	print $outcurrentchecksumtext.'<br>';
 
-	print '<br><br>';
+	print '<br>';
 	print $outforlistoffiles;
 	print '<br>';
 

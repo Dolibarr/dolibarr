@@ -431,7 +431,6 @@ $s = $langs->trans("FilesIntegrityDesc", '{s}');
 $s = str_replace('{s}', DOL_URL_ROOT.'/admin/system/filecheck.php', $s);
 print $s;
 print "<br>\n";
-
 print "</div>\n";
 
 print '<br>';
@@ -548,7 +547,7 @@ print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth200', 1);
+print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth150', 1);
 print '</td>';
 
 // Ref
