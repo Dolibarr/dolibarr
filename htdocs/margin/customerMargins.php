@@ -75,7 +75,7 @@ $hookmanager->initHooks(array('margincustomerlist'));
 // Security check
 $socid = GETPOSTINT('socid');
 $TSelectedProducts = GETPOST('products', 'array');
-$TSelectedCats = GETPOST('categories', 'array');
+$TSelectedCats = GETPOST('categories', 'array:int');
 
 if (!empty($user->socid)) {
 	$socid = $user->socid;
@@ -93,7 +93,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Clients"), '', '', 0, 0, '', '', '', 'mod-margin page-customermargins');
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("ThirdPartyCustomers"), '', '', 0, 0, '', '', '', 'mod-margin page-customermargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);

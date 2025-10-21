@@ -83,8 +83,8 @@ function dolFIGenerateInvoiceBarcodeData($recipient_account, $amount, $bank_refe
 			$recipient_account = str_pad($recipient_account, 16, '0', STR_PAD_LEFT); // Add leading zeros if necessary
 			$referencetobarcode = preg_replace('/[^0-9]/', '', $bank_reference); // Remove non-numeric characters (spaces)
 			$referencetobarcode = substr($referencetobarcode, 0, 2) . str_pad(substr($referencetobarcode, 2), 21, '0', STR_PAD_LEFT);
-			$euros = floor(floatval($amount)); // Separate euros and cents
-			$cents = round((floatval($amount) - $euros) * 100);
+			$euros = floor((float) $amount); // Separate euros and cents
+			$cents = round(((float) $amount - $euros) * 100);
 			$due_date = date('ymd', (int) $due_date); // Format the due date to YYMMDD
 			$barcodeData = '5'; // Version number // Construct the string
 			$barcodeData .= $recipient_account; // Recipient's account number (IBAN)
@@ -96,8 +96,8 @@ function dolFIGenerateInvoiceBarcodeData($recipient_account, $amount, $bank_refe
 			$recipient_account = preg_replace('/[^0-9]/', '', $recipient_account); // Remove non-numeric characters from account number
 			$recipient_account = str_pad($recipient_account, 16, '0', STR_PAD_LEFT); // Add leading zeros if necessary
 			$referencetobarcode = preg_replace('/[^0-9]/', '', $bank_reference); // Remove non-numeric characters (spaces)
-			$euros = floor(floatval($amount)); // Separate euros and cents
-			$cents = round((floatval($amount) - $euros) * 100);
+			$euros = floor((float) $amount); // Separate euros and cents
+			$cents = round(((float) $amount - $euros) * 100);
 			$due_date = date('ymd', (int) $due_date); // Format the due date to YYMMDD
 			$barcodeData = '4'; // Version number // Construct the string
 			$barcodeData .= $recipient_account; // Recipient's account number (IBAN)

@@ -177,7 +177,7 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
-					$categories = GETPOST('categories', 'array');
+					$categories = GETPOST('categories', 'array:int');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
 						$backtopage = str_replace("__ID__", (string) $id, $backtopage);
@@ -245,7 +245,7 @@ if (empty($reshook)) {
 				$action = 'edit';
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 				$action = '';
 			}
@@ -471,7 +471,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<br>'.img_picto('', 'project', 'class="pictofixedwidth"').' '.$langs->trans('Project').' ';
 				if ($usercancreate) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
 						$projectid = $object->fk_project;

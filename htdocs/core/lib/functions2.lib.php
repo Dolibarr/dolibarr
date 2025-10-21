@@ -185,8 +185,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Creation (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_creation) || !empty($object->user_creation_id) || !empty($object->date_creation)) {
+	// Creation
+	if (!empty($object->user_creation_id) || !empty($object->date_creation)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -196,27 +196,18 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (! empty($object->user_creation) && is_object($object->user_creation)) {	// deprecated mode
-			if ($object->user_creation->id) {
-				print $object->user_creation->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
-		} else {
+		print '<div class="valignmiddle inline-block">';
+		if ($object->user_creation_id > 0) {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_creation_id);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+		} else {
+			print $langs->trans("Unknown");
 		}
-
-		if ((!empty($object->user_creation) || !empty($object->user_creation_id)) && !empty($object->date_creation)) {
-			print ' - ';
-		}
+		print '</div>';
 
 		if (!empty($object->date_creation)) {
+			print ' - ';
 			print '<div class="valignmiddle inline-block">';
 			print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
@@ -232,8 +223,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Last modification (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_modification) || !empty($object->user_modification_id) || !empty($object->date_modification)) {
+	// Last modification
+	if (!empty($object->user_modification_id) || !empty($object->date_modification)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -244,20 +235,12 @@ function dol_print_object_info($object, $usetable = 0)
 			print ': ';
 		}
 		print '<div class="valignmiddle inline-block">';
-		if (is_object($object->user_modification)) {
-			if ($object->user_modification->id) {
-				print $object->user_modification->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
-		} else {
+		if ($object->user_modification_id > 0) {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_modification_id);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+		} else {
+			print $langs->trans("Unknown");
 		}
 		print '</div>';
 
@@ -278,8 +261,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Validation (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_validation) || !empty($object->user_validation_id) || !empty($object->date_validation)) {
+	// Validation
+	if (!empty($object->user_validation_id) || !empty($object->date_validation)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -289,20 +272,12 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_validation)) {
-			if ($object->user_validation->id) {
-				print $object->user_validation->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+		$userstatic = new User($db);
+		$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $langs->trans("Unknown");
 		}
 
 		if (!empty($object->date_validation)) {
@@ -1952,7 +1927,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0, $showempty = 0)
 					$docmodels[0] = $obj->label.': '.$langs->trans("None");
 				}
 			} else {
-				if ($type == 'member' && $obj->doc_template_name == 'standard') {   // Special case, if member template, we add variant per format
+				if ($type == 'member' && $obj->doc_template_name == 'standard_member') {   // Special case, if member template, we add variant per format
 					global $_Avery_Labels;
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 					foreach ($_Avery_Labels as $key => $val) {
@@ -2132,6 +2107,9 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$myobject = 'commande';
+	} elseif ($objecttype == 'mailing') {
+		$langs->load('mailing');
+		$classpath = 'comm/mailing/class';
 	} elseif ($objecttype == 'propal') {
 		$langs->load('propal');
 		$classpath = 'comm/propal/class';
@@ -2675,13 +2653,15 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'contrat';
 	} elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents', 'objectlinks'))) {
 		$moduledirforclass = 'api';
-	} elseif ($moduleobject == 'contact' || $moduleobject == 'contacts' || $moduleobject == 'customer' || $moduleobject == 'thirdparty' || $moduleobject == 'thirdparties') {
+	} elseif (in_array($moduleobject, ['contact', 'contacts', 'customer', 'thirdparty', 'thirdparties'])) {
 		$moduledirforclass = 'societe';
 	} elseif ($moduleobject == 'propale' || $moduleobject == 'proposals') {
 		$moduledirforclass = 'comm/propal';
 	} elseif ($moduleobject == 'agenda' || $moduleobject == 'agendaevents') {
 		$moduledirforclass = 'comm/action';
-	} elseif ($moduleobject == 'adherent' || $moduleobject == 'members' || $moduleobject == 'memberstypes' || $moduleobject == 'subscriptions') {
+	} elseif ($moduleobject == 'mailing') {
+		$moduledirforclass = 'comm/mailing';
+	} elseif (in_array($moduleobject, ['adherent', 'members', 'memberstypes', 'subscriptions'])) {
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';
@@ -2925,7 +2905,7 @@ function acceptLocalLinktoMedia()
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
 
-	// By default we acceptto add medias from emails templates but this may be refused if later
+	// By default we accept to add medias from emails templates but this may be refused in the future
 	// we detect we are not on a public url that we can access remotely (if we are on a private network, such files can't be reached),
 	// except if MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK is net, in which case we accept also if instance has a local or private network URL.
 

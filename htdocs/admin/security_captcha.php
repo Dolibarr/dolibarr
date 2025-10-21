@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Juanjo Menent 		    <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
@@ -134,8 +134,13 @@ print dol_get_fiche_head($head, 'captcha', '', -1);
 
 print '<br>';
 
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Captcha").'</td>';
+print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
+print '</tr>';
 
-print $langs->trans("UseCaptchaCode").' - Login';
+print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Login</td><td class="right" width="100">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA', array(), null, 0, 0, 1);
 } else {
@@ -145,10 +150,10 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
+print '</td></tr>';
 
 if (isModEnabled('societe')) {
-	print '<br>';
-	print $langs->trans("UseCaptchaCode").' - Thirdparty public contact form';
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Thirdparty public contact form</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY', array(), null, 0, 0, 1);
 	} else {
@@ -159,10 +164,10 @@ if (isModEnabled('societe')) {
 		}
 	}
 }
+print '</td></tr>';
 
 if (isModEnabled('ticket')) {
-	print '<br>';
-	print $langs->trans("UseCaptchaCode").' - Public ticket creation';
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Public ticket creation</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_TICKET', array(), null, 0, 0, 1);
 	} else {
@@ -173,10 +178,10 @@ if (isModEnabled('ticket')) {
 		}
 	}
 }
+print '</td></tr>';
 
 if (isModEnabled('member')) {
-	print '<br>';
-	print $langs->trans("UseCaptchaCode").' - Membership public subcription';
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Membership public subscription</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_MEMBER', array(), null, 0, 0, 1);
 	} else {
@@ -187,10 +192,10 @@ if (isModEnabled('member')) {
 		}
 	}
 }
+print '</td></tr>';
 
 if (isModEnabled('don')) {
-	print '<br>';
-	print $langs->trans("UseCaptchaCode").' - Donation public form';
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Donation public form</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_DONATION', array(), null, 0, 0, 1);
 	} else {
@@ -201,7 +206,9 @@ if (isModEnabled('don')) {
 		}
 	}
 }
+print '</td></tr>';
 
+print '</table>';
 // Set if a captcha is used on at least one place
 $showavailablecaptcha = 0;
 if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {

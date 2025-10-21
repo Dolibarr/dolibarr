@@ -351,7 +351,7 @@ FTPFailedToUploadFile=Failed to upload the file <b>%s</b>.
 AddFolder=Create folder
 FileWasCreateFolder=Folder <b>%s</b> has been created
 FTPFailedToCreateFolder=Failed to create folder <b>%s</b>.
-SelectADay=Select a day in calendar
+SelectADay=Select an available slot in the calendar
 SelectANewDate=Select a new date
 EmailContent=Email content
 Pre-Prompt=Pre-prompt
@@ -381,7 +381,7 @@ TLSv1.2=TLSv1.2
 TLS/STARTTLS=TLS/STARTTLS
 FillExtrafieldWithAi=Fill extrafield with AI content
 ExtrafieldFiller=Extrafield filler
-OurProductSelection=Our selection of new products
+OurProductSelection=The product to discover
 NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
 # Bookmarks
 AddThisPageToBookmarks = Add current page to bookmarks

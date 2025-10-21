@@ -1,0 +1,45 @@
+# Action to prepare the github action
+# Go on Dolibarr Organization - Settings - Developer settings - GitHub App  (https://github.com/organizations/Dolibarr/settings/apps)
+# Create an App: Enter a name + In Home page URL use https://github.com/Dolibarr/dolibarr + Disable webhook
+# Set Permissions (see other app for list of permissions)
+# Click on generate the private keys
+# Click on Install application - choose the repository of the bot
+# Go on Organisation - Secret and variables and create a secret PR_SECRET_KEY and copy the content of received private key. Choose the repository access to "Repository Dolibarr".
+# Go on Organisation - Secret and variables and create a variable PR_APP_ID and copy the ID of the previously create ID. Choose the repository access to "Repository Dolibarr".
+#
+
+name: Set the tag with devcamp label during the session of a devcamp
+on:
+  pull_request_target:
+    types: [opened]
+
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  add-label-devcamp:
+    runs-on: ubuntu-latest
+
+    steps:
+    #- name: Install GitHub CLI
+    #  run: sudo apt-get install gh
+
+    - name: Generate a token
+      id: generate-token
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.PR_APP_ID }}
+        private-key: ${{ secrets.PR_SECRET_KEY }}
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Assign label
+      env:
+        GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        url: ${{ github.event.pull_request.html_url }}
+      run: |
+        echo "env.url=${{env.url}}"
+        gh pr edit "${{env.url}}" --add-label "Event: DevCamp 2025 XXX"

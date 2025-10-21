@@ -49,9 +49,18 @@ $includecustom = 0;
 $includeconstants = array();
 $buildzip = 0;
 
+print '***** '.$script_file.' *****'."\n";
+
 if (empty($argv[1])) {
 	print "Usage:   ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
 	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
+	print "\n";
+	print "Generate the file filelist-x.y.z[-mybuild].xml with signature of files. ";
+	print "This includes the 3 sections:\n";
+	print "- dolibarr_htdocs_dir\n";
+	print "- dolibarr_scripts_dir\n";
+	print "- dolibarr_unalterable_files (only files inside the scope of the unalterable module)\n";
+	print "\n";
 	exit(1);
 }
 
@@ -68,12 +77,6 @@ while ($i < $argc) {
 	if (!empty($result["includecustom"])) {
 		$includecustom = $result["includecustom"];
 	}
-	if (!empty($result["includeconstant"])) {
-		$includeconstants[$i] = $result["includeconstant"];
-	}
-	if (!empty($result["buildzip"])) {
-		$buildzip = 1;
-	}
 	if (preg_match('/includeconstant=/', strval($argv[$i]))) {
 		$tmp = explode(':', $result['includeconstant'], 3);			// $includeconstant has been set with previous parse_str()
 		if (count($tmp) != 3) {
@@ -81,6 +84,9 @@ while ($i < $argc) {
 			exit(1);
 		}
 		$includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
+	}
+	if (!empty($result["buildzip"])) {
+		$buildzip = 1;
 	}
 	$i++;
 }
@@ -97,7 +103,7 @@ $savrelease = $release;
 $tmpver = explode('-', $release, 2);
 if ($tmpver[0] == 'auto') {
 	$release = DOL_VERSION;
-	if ($tmpver[1] && $tmpver[0] == 'auto') {
+	if (!empty($tmpver[1]) && $tmpver[0] == 'auto') {
 		$release .= '-'.$tmpver[1];
 	}
 }
@@ -126,10 +132,10 @@ if (empty($includecustom)) {
 	}
 }
 
-print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
-print "Release                        : ".$release."\n";
-print "Include custom in signature    : ".$includecustom."\n";
-print "Include constants in signature : ";
+print "Working on files into           : ".DOL_DOCUMENT_ROOT."\n";
+print "Release                         : ".$release."\n";
+print "Include custom dir in signature : ".(empty($includecustom) ? 'no' : 'yes')."\n";
+print "Include constants in signature  : ".(empty($includeconstants) ? 'none' : '');
 foreach ($includeconstants as $countrycode => $tmp) {
 	foreach ($tmp as $constname => $constvalue) {
 		print $constname.'='.$constvalue." ";
@@ -155,9 +161,12 @@ $gitcommit = 'seetag';
 $branchname = preg_replace('/^(\d+\.\d+)\..*$/', '\1', $release);	// Keep only x.y into x.y.z
 $fileforgit = dirname(dirname(dirname(__FILE__))).'/.git/refs/heads/'.$branchname;
 print "Try to get last commit ID from file ".$fileforgit."\n";
-$fileforgitcontent = file_get_contents($fileforgit);
+$fileforgitcontent = '';
+if (file_exists($fileforgit)) {
+	$fileforgitcontent = file_get_contents($fileforgit);
+}
 if (empty($fileforgitcontent)) {
-	print "Failed to get the last commit ID. Are you on the branch for the release (branch name '.$branchname.') ?\n";
+	print "Failed to get the last commit ID (are you on the branch for the release branch name ".$branchname." ?). We will use an empty value for gitcommit.\n";
 }
 $gitcommit = trim($fileforgitcontent);
 
@@ -263,6 +272,16 @@ $checksumconcat = array();
 
 fputs($fp, '<dolibarr_unalterable_files version="'.$release.'">'."\n");
 
+// TODO Use this array to make the scan
+$arrayofunalterablefiles = array(
+	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'files' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'files' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'files' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'files' => 'interfaces.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'files' => 'commontrigger.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'files' => 'receipt.php')
+);
+
 $regextoinclude = '(\.php|\.sql)$';
 $regextoexclude = '';  // Exclude dirs
 $files = dol_dir_list(dirname(__FILE__).'/../../htdocs/blockedlog', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
@@ -350,7 +369,7 @@ if ($newdir != $dir) {
 	}
 	fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 	$dir = $newdir;
-	$needtoclose = 1;
+	//$needtoclose = 1;		// close will be done in next filethat is in same dir
 }
 if (filetype($file) == "file") {
 	$md5 = md5_file($file);
@@ -361,7 +380,7 @@ if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
 	$needtoclose = 0;
 }
-// Add the interfaces.class.php file
+// Add the commontrigger.class.php file
 $file = dirname(__FILE__).'/../../htdocs/core/class/commontrigger.class.php';
 $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
 $newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
@@ -374,6 +393,8 @@ if ($newdir != $dir) {
 	$dir = $newdir;
 	$needtoclose = 1;
 }
+
+$needtoclose = 1;	// This is the last file
 if (filetype($file) == "file") {
 	$md5 = md5_file($file);
 	$checksumconcat[] = $md5;
@@ -399,22 +420,26 @@ fputs($fp, '</dolibarr_unalterable_files_checksum>'."\n\n");
 fputs($fp, '</checksum_list>'."\n");
 fclose($fp);
 
+print "\n";
+
 if (empty($buildzip)) {
-	print "File ".$outputfile." generated\n";
+	print "File ".$outputfile." generated.\n";
 } else {
 	if ($buildzip == '1' || $buildzip == 'zip') {
 		$result = dol_compress_file($outputfile, $outputfile.'.zip', 'zip');
 		if ($result > 0) {
 			dol_delete_file($outputfile);
-			print "File ".$outputfile.".zip generated\n";
+			print "File ".$outputfile.".zip generated.\n";
 		}
 	} elseif ($buildzip == '2' || $buildzip == 'gz') {
 		$result = dol_compress_file($outputfile, $outputfile.'.gz', 'gz');
 		if ($result > 0) {
 			dol_delete_file($outputfile);
-			print "File ".$outputfile.".gz generated\n";
+			print "File ".$outputfile.".gz generated.\n";
 		}
 	}
 }
+
+print "\n";
 
 exit(0);

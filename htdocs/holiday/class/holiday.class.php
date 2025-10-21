@@ -786,7 +786,7 @@ class Holiday extends CommonObject
 		}
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id)) {
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id) {
 			$num = $this->getNextNumRef(null);
 		} else {
 			$num = (string) $this->ref;

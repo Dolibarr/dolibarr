@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
+ * Copyright (C) 2022		Lamrani Abdel
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -89,6 +89,7 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->fieldParams['hideGenerateButton'] = 1;
 	$item->fieldParams['trClass'] = 'iaservice '.$ia;
 	$item->cssClass = 'minwidth500 text-security input'.$ia;
+	$item->helpText = '<span class="helptoshow">HelpToShow</span>';
 
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
@@ -133,7 +134,7 @@ $title = "AiSetup";
 llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-ai page-admin');
 
 // Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1])).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
@@ -179,11 +180,25 @@ foreach ($arrayofai as $key => $airecord) {
 	print dol_escape_js($key).': \''.dol_escape_js($airecord['url']).'\'';
 }
 print '};
+				const arrayofextlink = {';
+$i = 0;
+foreach ($arrayofai as $key => $airecord) {
+	if ($key == -1) {
+		continue;
+	}
+	if ($i) {
+		print ', ';
+	}
+	$i++;
+	print dol_escape_js($key).': \''.dol_escape_js($airecord['setup']).'\'';
+}
+print '};
 				console.log("Check URL for .iaurl."+aiservice+" .input"+aiservice);
 				if (jQuery(".iaurl."+aiservice+" .input"+aiservice).val() == \'\') {
 					console.log("URL is empty, we fill with default value of IA selected");
 					jQuery(".iaurl."+aiservice+" .input"+aiservice).val(arrayofia[aiservice]);
 				}
+				jQuery(".helptoshow").text(arrayofextlink[aiservice]);
 			}
 		}
 
@@ -191,6 +206,8 @@ print '};
 	        var aiservice = $(this).val();
 
 			showHideAIService(aiservice);
+
+			jQuery(".sectiontest").hide();	/* Hide test section, will appear after the save */
 		});
 
 		showHideAIService("'.getDolGlobalString("AI_API_SERVICE").'");
@@ -204,7 +221,7 @@ print dol_get_fiche_end();
 // The section for test
 
 if (getDolGlobalString("AI_API_SERVICE")) {
-	print '<br>';
+	print '<br><div class="sectiontest">';
 
 	// Section to test
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -255,8 +272,9 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 	$doleditor = new DolEditor($htmlname, '', '', 100, 'dolibarr_details');
 	print $doleditor->Create(1);
 
-
 	print '</form>';
+
+	print '</div>';
 }
 
 llxFooter();

@@ -159,10 +159,6 @@ class pdf_standard extends ModelePDFProduct
 				$file = $dir."/".$objectref.".pdf";
 			}
 
-			$productFournisseur = new ProductFournisseur($this->db);
-			$supplierprices = $productFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
-
 			if (!file_exists($dir)) {
 				if (dol_mkdir($dir) < 0) {
 					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);

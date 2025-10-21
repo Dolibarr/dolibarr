@@ -51,11 +51,6 @@ function recruitmentAdminPrepareHead()
 	$head[$h][2] = 'settings_candidatures';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/public_interface.php';
-	$head[$h][1] = $langs->trans("PublicUrl");
-	$head[$h][2] = 'publicurl';
-	$h++;
-
 	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/jobposition_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtrafieldsJobPosition");
 	$nbExtrafields = $extrafields->attributes['recruitment_recruitmentjobposition']['count'];
@@ -72,6 +67,11 @@ function recruitmentAdminPrepareHead()
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
 	}
 	$head[$h][2] = 'candidature_extrafields';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/public_interface.php';
+	$head[$h][1] = $langs->trans("PublicUrl");
+	$head[$h][2] = 'publicurl';
 	$h++;
 
 	// Show more tabs from modules

@@ -193,7 +193,7 @@ class pdf_standard_actions
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
 		$dir = $conf->agenda->dir_temp."/";
-		$file = $dir."actions-".sprintf("%02d", $this->month)."-".sprintf("%04d", $this->year).".pdf";
+		$file = $dir."actions-".sprintf("%04d", $this->year)."-".sprintf("%02d", $this->month).".pdf";
 
 		if (!file_exists($dir)) {
 			if (dol_mkdir($dir) < 0) {
