@@ -1288,7 +1288,6 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 {
 	global $conf, $db, $user, $langs, $hookmanager;
 	global $action, $object;
-	debug_print_backtrace();exit;
 
 	if (!is_object($langs)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
