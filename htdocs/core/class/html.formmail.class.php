@@ -8,6 +8,7 @@
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1834,6 +1835,8 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
 					} elseif ($type_template == 'invoice_supplier_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
+					} elseif ($type_template == 'supplier_payment_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierPayment");
 					} elseif ($type_template == 'shipping_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
 					} elseif ($type_template == 'reception_send') {
