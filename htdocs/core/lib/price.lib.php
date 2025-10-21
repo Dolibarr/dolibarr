@@ -32,6 +32,7 @@
  *
  * @param	float $val unversally formatted number
  * @param	int $f number of decimals to keep
+ * @return	float truncated number
  */
 function numTruncate($val, $f = "0")
 {
