@@ -263,32 +263,32 @@ if (empty($error) && !empty($xml)) {
 			$moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 			$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
-			$text = '<span class="opacitymedium">'.$langs->trans("LastActivationDate").':</span> ';
+			$htmltooltip = '<span class="opacitymedium">'.$langs->trans("LastActivationDate").':</span> ';
 			if (getDolGlobalString($const_name)) {
-				$text .= dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+				$htmltooltip .= dol_print_date($objMod->getLastActivationDate(), 'dayhour');
 			} else {
-				$text .= $langs->trans("Disabled");
+				$htmltooltip .= $langs->trans("Disabled");
 			}
 			$tmp = $objMod->getLastActivationInfo();
 			$authorid = (empty($tmp['authorid']) ? '' : $tmp['authorid']);
 			if ($authorid > 0) {
 				$tmpuser = new User($db);
 				$tmpuser->fetch($authorid);
-				$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
-				$text .= $tmpuser->getNomUrl(0, 'nolink', -1, 1);
+				$htmltooltip .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
+				$htmltooltip .= $tmpuser->getNomUrl(0, 'nolink', -1, 1);
 			}
 			$ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
 			if ($ip) {
-				$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
-				$text .= $ip;
+				$htmltooltip .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
+				$htmltooltip .= $ip;
 			}
 			$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
 			if ($lastactivationversion && $lastactivationversion != 'dolibarr') {
-				$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
-				$text .= $lastactivationversion;
+				$htmltooltip .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
+				$htmltooltip .= $lastactivationversion;
 			}
 
-			$out .= $form->textwithpicto('', $text);
+			$out .= $form->textwithpicto('', $htmltooltip);
 
 			$out .= "</td>\n";
 			$out .= "</tr>\n";
