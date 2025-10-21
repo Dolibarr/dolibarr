@@ -84,7 +84,8 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT ctt.rowid, ctt.label, ctt.code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
-			$sql .= " WHERE ctt.active = 1";
+			$sql .= " WHERE ctt.entity IN (".getEntity('c_ticket_type').")";
+			$sql .= " AND ctt.active = 1";
 			$sql .= $this->db->order('ctt.rowid', 'ASC');
 			$resql = $this->db->query($sql);
 
@@ -116,7 +117,8 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 			$data = array();
 			$sql = "SELECT t.type_code, COUNT(t.type_code) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-			$sql .= " WHERE t.fk_statut <> 8";
+			$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
+			$sql .= " AND t.fk_statut <> 8";
 			$sql .= " GROUP BY t.type_code";
 			$resql = $this->db->query($sql);
 			if ($resql) {
