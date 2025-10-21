@@ -510,8 +510,7 @@ if (empty($error) && !empty($xml)) {
 
 	// Scan scripts
 	/*
-	if (is_object($xml->dolibarr_script_dir[0]))
-	{
+	if (is_object($xml->dolibarr_script_dir[0])) {
 		$file_list = array();
 		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
 		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
@@ -530,10 +529,6 @@ if (empty($error) && !empty($xml)) {
 		$nameofsection = 'dolibarr_htdocs_dir_checksum';
 		$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 	}
-	//var_dump(count($file_list['added']));
-	//var_dump($checksumget);
-	//var_dump($checksumtoget);
-	//var_dump($checksumget == $checksumtoget);
 
 	$resultcomment = '';
 
