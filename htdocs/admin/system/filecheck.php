@@ -290,7 +290,7 @@ if (empty($error) && !empty($xml)) {
 
 			$out .= $form->textwithpicto('', $text);
 
-			$out . '</td>'."\n";
+			$out .= "</td>\n";
 			$out .= "</tr>\n";
 		}
 
