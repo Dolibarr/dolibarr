@@ -178,6 +178,7 @@ class UserGroup extends CommonObject
 		}
 
 		$this->name = $this->nom; // For compatibility with field name
+		$this->note_private = $this->note; // For compatibility with old field note
 
 		if ($result) {
 			if ($load_members) {
