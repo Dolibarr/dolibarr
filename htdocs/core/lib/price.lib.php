@@ -34,7 +34,7 @@
  * @param	int $f number of decimals to keep
  * @return	float truncated number
  */
-function numTruncate($val, $f = "0")
+function numTruncate($val, $f = 0)
 {
 	if (($p = strpos($val, '.')) !== false) {
 		$val = floatval(substr($val, 0, $p + 1 + $f));
