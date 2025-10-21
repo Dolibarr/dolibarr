@@ -105,8 +105,8 @@ if (!empty($useragent)) {
 
 
 // Check PHP version min
-$arrayphpminversionerror = array(7, 0, 0);
-$arrayphpminversionwarning = array(7, 1, 0);
+$arrayphpminversionerror = array(7, 1, 0);
+$arrayphpminversionwarning = array(7, 2, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
 	print img_picto('', 'warning', 'class="pictofixedwidth error"');
 	print $langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));

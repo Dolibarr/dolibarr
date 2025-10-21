@@ -32,6 +32,7 @@ The following changes may create regressions for some external modules, but were
 * Because of new TRIGGER_PREFIX property triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed to PRODUCT_BUYPRICE_XXX.
 * Function img_pdf() has been removed. Replace it with img_picto('', 'pdf.png') if you were using it.
 * The method run_trigger() was deprecated 10+ years ago in favor of runTrigger(). It has been removed. Change your trigger file if you still use it.
+* Property ->picto of module descriptors must contains the image extension if it is not a font awesome tag. Example: $this->picto="mymoduleimg.png";
 
 
 ***** ChangeLog for 22.0.2 compared to 22.0.1 *****
