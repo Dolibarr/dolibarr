@@ -671,7 +671,7 @@ function ajax_event($htmlname, $events)
  *  @param  int<0,2>    	$marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
  *  @param  int<0,1>    	$forcenoajax            1 = Force to use a ahref link instead of ajax code.
  *  @param  int<0,1>    	$setzeroinsteadofdel    1 = Set constant to '0' instead of deleting it when $input is empty.
- *  @param  string|array	$suffix             	Suffix to use on the name of the switch picto when option is on. Example: array('ifoff' => '_red', 'ifon' => '_green')
+ *  @param  string|array<string,string>		$suffix             	Suffix to use on the name of the switch picto when option is on. Example: array('ifoff' => '_red', 'ifon' => '_green')
  *  @param  string      	$mode                   Add parameter &mode= to the href link (Used for href link)
  *  @param  string      	$morecss                More CSS. Example: 'inline-block reposition'
  *  @param	User|int		$userconst				If set, use the ajax On/Off for user or user ID $userconst
