@@ -876,12 +876,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$filter = array('customsql' => 't.fk_pacchetto = '.((int) $object->id));
 		$lista = $lez->fetchAll('ASC', 'datalezione', 0, 0, $filter);
 
+		// Determine pagato for new Lezione: 1 if a bank transaction number is present, otherwise 0
+		$pagato_for_url = !empty($object->bank_transaction) ? 'on' : 'off';
+
+		$createLezioniUrl = '/business/custom/lezioni/lezione_card.php?action=create&amp;bank_account='.urlencode($object->bank_account)
+		.'&amp;num_payment='.urlencode($object->bank_transaction)
+		.'&amp;fk_project='.urlencode($object->fk_project)
+		.'&amp;fk_pacchetto='.urlencode($object->id)
+		.'&amp;allievo='.urlencode($object->allievo)
+		.'&amp;pagato='.$pagato_for_url
+		.'&amp;backtopage=%2Fbusiness%2Fcustom%2Flezioni%2Fpacchetto_card.php%3Fid%3D'.urlencode($object->id);
+
 		print '<table class="centpercent notopnoleftnoright table-fiche-title showlinkedobjectblock">
 		<tbody>
 		<tr class="toptitle">
 			<td class="nobordernopadding valignmiddle col-title">
 				<div class="titre inline-block"><span class="inline-block valignmiddle">Lezioni collegate</span></div>
 			</td>
+			<td class="nobordernopadding titre_right wordbreakimp right valignmiddle col-right"><a class="btnTitle btnTitlePlus" href="'.$createLezioniUrl.'" title="Crea Lezione"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a></td>
 		</tr>
 		</tbody>
 		</table>';
