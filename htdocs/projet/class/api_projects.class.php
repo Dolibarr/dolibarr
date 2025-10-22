@@ -1058,7 +1058,7 @@ public function deleteContactjess($id, $contactid, $type)
  * @throws RestException
  */
 
-public function getTimespent($id)
+public function getTimespent($id) 
 {
     if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
         throw new RestException(403);
