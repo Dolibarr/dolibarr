@@ -713,7 +713,7 @@ class Users extends DolibarrApi
 
 		// If there is no error, update() returns the number of affected
 		// rows so if the update is a no op, the return value is zezo.
-		if ($usergroup->update(DolibarrApiAccess::$user) >= 0) {
+		if ($usergroup->update() >= 0) {
 			return $this->infoGroups($group);
 		} else {
 			throw new RestException(500, $usergroup->error);
