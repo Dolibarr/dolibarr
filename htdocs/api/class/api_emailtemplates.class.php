@@ -51,7 +51,7 @@ class EmailTemplates extends DolibarrApi
 	);
 
 	/**
-	 * @var cEmailTemplate {@type cEmailTemplate}
+	 * @var CEmailTemplate {@type CEmailTemplate}
 	 */
 	public $email_template;
 
@@ -67,7 +67,7 @@ class EmailTemplates extends DolibarrApi
 	{
 		global $db;
 		$this->db = $db;
-		$this->email_template = new cEmailTemplate($this->db);
+		$this->email_template = new CEmailTemplate($this->db);
 	}
 
 	/**
@@ -153,8 +153,8 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * @param   int         $id		ID of email template
 	 * @return  Object				Object with cleaned properties
-	 * @phan-return		cEmailTemplate
-	 * @phpstan-return	cEmailTemplate
+	 * @phan-return		CEmailTemplate
+	 * @phpstan-return	CEmailTemplate
 	 *
 	 * @url	GET {id}
 	 *
@@ -173,8 +173,8 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * @param       string		$label		Label of object
 	 * @return      Object				    Object with cleaned properties
-	 * @phan-return		cEmailTemplate
-	 * @phpstan-return	cEmailTemplate
+	 * @phan-return		CEmailTemplate
+	 * @phpstan-return	CEmailTemplate
 	 *
 	 * @url GET    label/{label}
 	 *
@@ -200,8 +200,8 @@ class EmailTemplates extends DolibarrApi
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array						Array of order objects
-	 * @phan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @url GET
 	 *
@@ -256,7 +256,7 @@ class EmailTemplates extends DolibarrApi
 			$i = 0;
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
-				$email_template_static = new cEmailTemplate($this->db);
+				$email_template_static = new CEmailTemplate($this->db);
 				if ($email_template_static->apifetch($obj->rowid, '') > 0) {
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($email_template_static), $properties);
 				}
@@ -448,8 +448,8 @@ class EmailTemplates extends DolibarrApi
 	 * @param   int         $id             ID of email_template
 	 * @param	string		$label			Label of email_template
 	 * @return  Object						Object with cleaned properties
-	 * @phan-return		cEmailTemplate
-	 * @phpstan-return	cEmailTemplate
+	 * @phan-return		CEmailTemplate
+	 * @phpstan-return	CEmailTemplate
 	 *
 	 * @throws	RestException 400
 	 * @throws	RestException 403
@@ -490,12 +490,12 @@ class EmailTemplates extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     	Object to clean
-	 * @phan-param		cEmailTemplate	$object
-	 * @phpstan-param	cEmailTemplate	$object
+	 * @phan-param		CEmailTemplate	$object
+	 * @phpstan-param	CEmailTemplate	$object
 	 *
 	 * @return  Object	Object with cleaned properties
-	 * @phan-return		cEmailTemplate
-	 * @phpstan-return	cEmailTemplate
+	 * @phan-return		CEmailTemplate
+	 * @phpstan-return	CEmailTemplate
 	 */
 	protected function _cleanObjectDatas($object)
 	{

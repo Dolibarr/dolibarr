@@ -689,6 +689,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 		$input = array();
 	}
 
+	$out = '';
+
 	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
 		if (!getDolGlobalString($code)) {
 			$out = '<a '.($morecss ? 'class="'.$morecss.'" ' : '').'href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
