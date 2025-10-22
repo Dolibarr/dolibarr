@@ -826,15 +826,15 @@ class RecruitmentJobPosition extends CommonObject
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowPositionToBeFilled")];
 		}
-		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("PositionToBeFilled").'</u>';
+		$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("PositionToBeFilled") . '</u>';
 		if (isset($this->status)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5);
+			$datas['picto'] .= ' ' . $this->getLibStatut(5);
 		}
 		if (!empty($this->ref)) {
-			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			$datas['ref'] = '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		}
 		if (!empty($this->label)) {
-			$datas['ref'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
+			$datas['ref'] = '<br>' . $langs->trans('Label') . ':</b> ' . $this->label;
 		}
 
 		return $datas;
