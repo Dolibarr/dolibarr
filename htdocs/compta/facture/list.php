@@ -335,6 +335,8 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// For POS context, we force possource and posmodule
+$arrayfields["f.pos_source"]['checked'] = 1;
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
