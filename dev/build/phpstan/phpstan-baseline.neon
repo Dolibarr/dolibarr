@@ -16063,22 +16063,10 @@ parameters:
 			path: ../../../htdocs/takepos/send.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/smpcb.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: ../../../htdocs/takepos/split.php
-
-		-
-			message: '#^Variable \$fontlist might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/eldy/btn.inc.php
 
 		-
 			message: '#^If condition is always true\.$#'
