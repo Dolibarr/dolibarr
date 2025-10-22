@@ -830,10 +830,10 @@ class RecruitmentJobPosition extends CommonObject
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		if (property_exists($this, 'ref')) {
+		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
-		if (property_exists($this, 'label')) {
+		if (!empty($this->label)) {
 			$datas['ref'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
