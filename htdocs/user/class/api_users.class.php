@@ -647,7 +647,7 @@ class Users extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->email_template->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				$usergroup->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 			if ($field == 'id') {
@@ -1369,6 +1369,7 @@ class Users extends DolibarrApi
 		unset($object->multicurrency_tx);
 		unset($object->nb_rights);
 		unset($object->nb_users);
+		unset($object->note_public);
 		unset($object->origin_id);
 		unset($object->origin_type);
 		unset($object->product);
