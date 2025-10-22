@@ -2653,7 +2653,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'contrat';
 	} elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents', 'objectlinks'))) {
 		$moduledirforclass = 'api';
-	} elseif ($moduleobject == 'contact' || $moduleobject == 'contacts' || $moduleobject == 'customer' || $moduleobject == 'thirdparty' || $moduleobject == 'thirdparties') {
+	} elseif (in_array($moduleobject, ['contact', 'contacts', 'customer', 'thirdparty', 'thirdparties'])) {
 		$moduledirforclass = 'societe';
 	} elseif ($moduleobject == 'propale' || $moduleobject == 'proposals') {
 		$moduledirforclass = 'comm/propal';
@@ -2661,7 +2661,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'comm/action';
 	} elseif ($moduleobject == 'mailing') {
 		$moduledirforclass = 'comm/mailing';
-	} elseif ($moduleobject == 'adherent' || $moduleobject == 'members' || $moduleobject == 'memberstypes' || $moduleobject == 'subscriptions') {
+	} elseif (in_array($moduleobject, ['adherent', 'members', 'memberstypes', 'subscriptions'])) {
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';

@@ -911,10 +911,11 @@ class FormSetupItem
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
 				$input = $this->fieldParams['input'] ?? array();
-				$revertonoff = !empty($this->fieldParams['revertonoff']) ? 1 : 0;
-				$forcereload = !empty($this->fieldParams['forcereload']) ? 1 : 0;
+				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
+				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
+				$suffixarray = array('ifoff' => empty($this->fieldParams['alertifoff']) ? '' : '_red', 'ifon' => empty($this->fieldParams['alertifon']) ? '' : '_red');
 
-				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload);
+				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, $suffixarray);
 			} else {
 				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 			}

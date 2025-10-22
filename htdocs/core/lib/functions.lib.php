@@ -5563,6 +5563,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'switch_on_grey',
 				'switch_on_red',
 				'switch_off',
+				'switch_off_grey',
+				'switch_off_red',
 				'uparrow',
 				'1uparrow',
 				'1downarrow',
@@ -5620,6 +5622,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'switch_on' => 'font-status4',
 				'switch_on_warning' => 'font-status4 warning',
 				'switch_on_red' => 'font-status8',
+				'switch_off_warning' => 'font-status4 warning',
+				'switch_off_red' => 'font-status8',
 				'holiday' => 'infobox-holiday',
 				'info' => 'opacityhigh',
 				'info_black' => 'font-status1',
@@ -5896,6 +5900,9 @@ function getImgPictoConv($mode = 'fa')
 			'movement' => 'people-carry',
 			'sign-out' => 'sign-out-alt',
 			'switch_off' => 'toggle-off',
+			'switch_off_grey' => 'toggle-off',
+			'switch_off_warning' => 'toggle-off',
+			'switch_off_red' => 'toggle-off',
 			'switch_on' => 'toggle-on',
 			'switch_on_grey' => 'toggle-on',
 			'switch_on_warning' => 'toggle-on',
@@ -8478,7 +8485,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 /**
  *	Return yes or no in current language
  *
- *	@param	int<0, 1>|'yes'|'true'|'no'|'false'	$yesno	Value to test (1, 'yes', 'true' or 0, 'no', 'false')
+ *	@param	boolean|int<0, 1>|'yes'|'true'|'no'|'false'	$yesno	Value to test (true, 1, 'yes', 'true' or false, 0, 'no', 'false')
  *	@param	integer|string	$format						1=Yes/No, 0=yes/no, 2=Disabled/enabled checkbox, 3=Disabled/enabled checkbox + Yes/No, 4 or Text=Use picto
  *	@param	int				$color						0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
  *	@return	string										HTML string
@@ -8489,7 +8496,7 @@ function yn($yesno, $format = 1, $color = 0)
 
 	$result = 'unknown';
 	$classname = '';
-	if ($yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// To set to 'no' before the test because of the '== 0'
+	if ($yesno === true || (int) $yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// To set to 'no' before the test because of the '== 0'
 		$result = $langs->trans('yes');
 		if ($format == 1 || $format == 3) {
 			$result = $langs->trans("Yes");
@@ -8505,7 +8512,7 @@ function yn($yesno, $format = 1, $color = 0)
 		}
 
 		$classname = 'ok';
-	} elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false') {
+	} else {
 		$result = $langs->trans("no");
 		if ($format == 1 || $format == 3) {
 			$result = $langs->trans("No");
@@ -11803,7 +11810,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
 				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 				$scheck = preg_replace('/^!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '!('
-				$scheck = preg_replace('/\s!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '... !('
+				$scheck = preg_replace('/\s!\(/', ' __NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '... !('
 				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
@@ -14644,6 +14651,20 @@ function getElementProperties($elementType)
 		$classname = 'Fournisseur';
 		$table_element = 'societe';
 		$subelement = '';
+	} elseif ($elementType == 'recruitmentcandidature') {
+		$module = 'recruitment';
+		$classfile = 'recruitmentcandidature';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentCandidature';
+		$subelement = 'recruitmentcandidature';
+		$subdir = '/recruitmentcandidature';
+	} elseif ($elementType == 'recruitmentjobposition') {
+		$module = 'recruitment';
+		$classfile = 'recruitmentjobposition';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentJobPosition';
+		$subelement = 'recruitmentjobposition';
+		$subdir = '/recruitmentjobposition';
 	}
 
 
