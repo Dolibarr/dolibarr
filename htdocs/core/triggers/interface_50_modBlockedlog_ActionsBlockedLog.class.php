@@ -184,5 +184,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		if (!isModEnabled('blockedlog')) {
 			return false;
 		}
+
+		return true;
 	}
 }
