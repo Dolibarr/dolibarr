@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
 /**
  * Object of table llx_c_email_templates
  */
-class cEmailTemplate extends CommonObject
+class CEmailTemplate extends CommonObject
 {
 	const TRIGGER_PREFIX = 'EMAILTEMPLATE';
 	/**
@@ -566,9 +566,9 @@ class cEmailTemplate extends CommonObject
 
 /**
  * old class name for Object of table llx_c_email_templates
- * I prefer the cEmailTemplate name as it better reflects the database
+ * I prefer the CEmailTemplate name as it better reflects the database
  */
-class ModelMail extends cEmailTemplate
+class ModelMail extends CEmailTemplate
 {
 	// just another name
 }

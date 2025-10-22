@@ -284,7 +284,7 @@ $permissiontoadd = 1;
 $permissiontoedit = ($user->admin ? 1 : 0);
 $permissiontodelete = ($user->admin ? 1 : 0);
 if ($rowid > 0) {
-	$tmpmailtemplate = new cEmailTemplate($db);
+	$tmpmailtemplate = new CEmailTemplate($db);
 	$tmpmailtemplate->fetch($rowid);
 	if ($tmpmailtemplate->fk_user == $user->id) {
 		$permissiontoedit = 1;
