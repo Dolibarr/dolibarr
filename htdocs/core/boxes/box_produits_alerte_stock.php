@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
  * Copyright (C) 2015-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
-		$tmpentry = array('enabled' => ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
+		$tmpentry = array('enabled' => (int) ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => (string) (int) $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 		$this->urltoaddentry = DOL_URL_ROOT.'/product/card.php?action=create';
@@ -163,7 +163,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 						$price_base_type = $langs->trans($objp->price_base_type);
 						$price = ($objp->price_base_type == 'HT') ? price($objp->price) : $price = price($objp->price_ttc);
 					} else { //Parse the dynamic price
-						$productstatic->fetch($objp->rowid, '', '', 1);
+						$productstatic->fetch($objp->rowid, '', '', '1');
 
 						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);

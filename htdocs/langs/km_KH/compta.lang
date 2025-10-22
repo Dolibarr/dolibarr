@@ -3,9 +3,9 @@ MenuFinancial=វិក័យប័ត្រ | ការទូទាត់
 TaxModuleSetupToModifyRules=ចូលទៅកាន់ <a href="%s">ការដំឡើងម៉ូឌុលពន្ធ</a> ដើម្បីកែប្រែច្បាប់សម្រាប់ការគណនា
 TaxModuleSetupToModifyRulesLT=ចូលទៅកាន់ <a href="%s">ការដំឡើងក្រុមហ៊ុន</a> ដើម្បីកែប្រែច្បាប់សម្រាប់ការគណនា
 OptionMode=ជម្រើសសម្រាប់គណនេយ្យ
-OptionModeTrue=ជម្រើសចំណូល-ចំណាយ
-OptionModeVirtual=ជម្រើសការទាមទារ-បំណុល
-OptionModeTrueDesc=នៅក្នុងបរិបទនេះ ចំណូលត្រូវបានគណនាលើការទូទាត់ (កាលបរិច្ឆេទនៃការទូទាត់)។ សុពលភាពនៃតួលេខត្រូវបានធានាបានលុះត្រាតែការរក្សាទុកសៀវភៅត្រូវបានពិនិត្យតាមរយៈការបញ្ចូល/លទ្ធផលនៅលើគណនីតាមរយៈវិក្កយបត្រ។
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=នៅក្នុងបរិបទនេះ ចំណូលត្រូវបានគណនាលើវិក្កយបត្រ (កាលបរិច្ឆេទនៃសុពលភាព)។ នៅពេលដែលវិក្កយបត្រទាំងនេះដល់កំណត់ ថាតើពួកគេត្រូវបានបង់ឬអត់ ពួកគេត្រូវបានចុះបញ្ជីនៅក្នុងលទ្ធផលចំណូល។
 FeatureIsSupportedInInOutModeOnly=មុខងារ​មាន​តែ​ក្នុង​របៀប​គណនី​ឥណទាន​-​បំណុល​ប៉ុណ្ណោះ (មើល​ការ​កំណត់​រចនាសម្ព័ន្ធ​ម៉ូឌុល​គណនេយ្យ)
 VATReportBuildWithOptionDefinedInModule=ចំនួនទឹកប្រាក់ដែលបានបង្ហាញនៅទីនេះត្រូវបានគណនាដោយប្រើច្បាប់កំណត់ដោយការដំឡើងម៉ូឌុលពន្ធ។
@@ -325,3 +325,7 @@ InvoiceToPay30Days=បង់ (> 30 ថ្ងៃ)
 ConfirmPreselectAccount=ជ្រើសរើសលេខកូដគណនេយ្យជាមុន
 ConfirmPreselectAccountQuestion=តើ​អ្នក​ប្រាកដ​ជា​ចង់​ជ្រើសរើស​បន្ទាត់​ដែល​បាន​ជ្រើស​ %s ជាមុន​ជាមួយ​នឹង​លេខ​កូដ​គណនេយ្យ​នេះ?
 AmountPaidMustMatchAmountOfDownPayment=ចំនួនទឹកប្រាក់ដែលត្រូវបង់ត្រូវនឹងចំនួននៃការបង់ប្រាក់ចុះក្រោម
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

@@ -3,8 +3,8 @@
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,7 +214,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
 				$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT;
 				$url_link = $urlwithroot . '/public/agenda/agendaexport.php?format=ical' . ($conf->entity > 1 ? "&entity=" . $conf->entity : "");
-				$url_link .= '&exportkey=' . ($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ? urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) : '...');
+				$url_link .= '&exportkey=' . urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
 				$url_link .= "&project=" . $listofselectedref[$email]->fk_project . '&module=' . urlencode('@eventorganization') . '&status=' . ConferenceOrBooth::STATUS_CONFIRMED;
 				$html_link = '<a href="' . $url_link . '">' . $langs->trans('DownloadICSLink') . '</a>';
 			}
@@ -239,7 +239,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 			// Send mail (substitutionarray must be done just before this)
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, array(), array(), array(), $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', "attendees_".$attendees->id, '', $sendcontext);
+			$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, array(), array(), array(), $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', "attendees_".$attendees->id, '', $sendcontext);
 			if ($mailfile->error) {
 				$resaction .= '<div class="error">' . $mailfile->error . '</div>';
 			} else {

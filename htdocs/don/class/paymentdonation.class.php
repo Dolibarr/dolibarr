@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro	  		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -637,7 +637,7 @@ class PaymentDonation extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
+				(string) $this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				$amount,
 				$this->num_payment,

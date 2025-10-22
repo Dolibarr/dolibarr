@@ -4,7 +4,7 @@
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,6 +108,12 @@ if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUC
 	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
 }
 
+// TODO
+//$permissiontoadd should be set according to $element
+//$permissiontodelete should be set according to $element
+$permissiontoadd = $user->hasRight('resource', 'write');
+$permissiontodelete = $user->hasRight('resource', 'delete');
+
 
 /*
  * Actions
@@ -123,7 +129,7 @@ if (empty($reshook)) {
 	$error = 0;
 	$objstat = null;
 
-	if ($action == 'add_element_resource' && !$cancel) {
+	if ($action == 'add_element_resource' && !$cancel && $permissiontoadd) {	// Test on permission already done in header before actions
 		$res = 0;
 		if (!($resource_id > 0)) {
 			$error++;
@@ -204,7 +210,7 @@ if (empty($reshook)) {
 	}
 
 	// Update resource
-	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha') && is_object($objstat)) {
+	if ($action == 'update_linked_resource' && $permissiontoadd && !GETPOST('cancel', 'alpha') && is_object($objstat)) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
@@ -283,7 +289,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
+	if ($action == 'confirm_delete_linked_resource' && $permissiontodelete && $confirm === 'yes') {
 		$result = $object->delete_resource($lineid, $element);
 
 		if ($result >= 0) {
@@ -399,7 +405,7 @@ if (!$ret) {
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
@@ -491,7 +497,7 @@ if (!$ret) {
 			$listofcontactid = array(); // not used yet
 			$listofotherid = array(); // not used yet
 			print '<div class="assignedtouser">';
-			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, array(), 0, '', array(), 0, 0, 0, '', ($act->datep != $act->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
+			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, array(), 0, '', array(), '0', 0, 0, '', ($act->datep != $act->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
 			print '</div>';
 			/*if (in_array($user->id,array_keys($listofuserid)))
 			{
@@ -580,7 +586,7 @@ if (!$ret) {
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$fichinter->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, (string) $fichinter->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($fichinter->fk_project)) {
 						$proj = new Project($db);

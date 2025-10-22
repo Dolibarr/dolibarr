@@ -3,9 +3,9 @@ MenuFinancial=صورت‌حساب | پرداخت
 TaxModuleSetupToModifyRules=به <a href="%s">برپاسازی واحد مالیات‌ها</a> رفته و قواعد محاسبه را تعیین کنید
 TaxModuleSetupToModifyRulesLT=به <a href="%s">برپاسازی شرکت</a> رفته تا قواعد محاسبه را تعیین کنید
 OptionMode=گزینۀ حساب‌داری
-OptionModeTrue=گزینۀ درآمد-هزینه
-OptionModeVirtual=گزینۀ طلب‌ها-بدهی‌ها
-OptionModeTrueDesc=در این زمنیه، گردش‌مالی بر اساس پرداخت‌ها محاسبه می‌گردد (تاریخ پرداخت‌ها). اعتبار ارقام تنها در صورتی قابل تضمین است که دفترداری مربوط به ورودی/خروجی حساب‌ها در برابر صورت‌حساب‌ها به دقت بررسی و موشکافی شود.
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=در این زمنیه، گردش‌مالی بر اساس صورت‌حساب‌ها محاسبه می‌گردد (تاریخ تائیداعتبار). هنگامی که موعد پرداخت این صورت‌حساب‌ها به سررسد، چه پرداخت شده باشند یا نه، در خروجی گردش مالی فهرست خواهند شد.
 FeatureIsSupportedInInOutModeOnly=این قابلیت صرفا در حالت حساب‌داری بستانکار-بدهکار فعال است ( پیکربندی واحد حساب‌داری را ملاحظه کنید)
 VATReportBuildWithOptionDefinedInModule=مقادیری که در این قسمت نمایش داده می‌شود توسط قواعد تعریف شده در پیکربندی واحد مالیات محاسبه می‌گردد.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=To pay (> 30 days)
 ConfirmPreselectAccount=Preselect accountancy code
 ConfirmPreselectAccountQuestion=Are you sure you want to preselect the %s selected lines with this accountancy code ?
 AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down payment
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

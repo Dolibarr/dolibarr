@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,16 +94,15 @@ foreach ($arrayofpaymentmodetomanage as $key => $val) {
 }
 
 $arrayfields = array(
-	'bc.ref'            => array('label' => "Ref", 'checked' => 1, 'position' => 10),
-	'bc.type'			=> array('label' => "Type", 'checked' => 1, 'position' => 20),
-	'bc.date_bordereau' => array('label' => "DateCreation", 'checked' => 1, 'position' => 30),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 40),
-	'bc.nbcheque'		=> array('label' => "NbOfCheques", 'checked' => 1, 'position' => 50),
-	'bc.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 60),
-	'bc.statut'			=> array('label' => "Status", 'checked' => 1, 'position' => 70)
+	'bc.ref'            => array('label' => "Ref", 'checked' => '1', 'position' => 10),
+	'bc.type'			=> array('label' => "Type", 'checked' => '1', 'position' => 20),
+	'bc.date_bordereau' => array('label' => "DateCreation", 'checked' => '1', 'position' => 30),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 40),
+	'bc.nbcheque'		=> array('label' => "NbOfCheques", 'checked' => '1', 'position' => 50),
+	'bc.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 60),
+	'bc.statut'			=> array('label' => "Status", 'checked' => '1', 'position' => 70)
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('chequelist'));

@@ -64,3 +64,7 @@ NoPositionOpen=Aucun poste ouvert pour le moment
 ConfirmClose=Confirmer l'annulation
 ConfirmCloseAsk=Êtes-vous sûr de vouloir annuler cette candidature ?
 Recruitment=Recrutement
+ApplyJobCandidature=Postuler à ce poste
+ErrorRecruitmmentCandidatureAlreadyExists= Une candidature existe déjà avec cet email %s
+RecruitmentCandidatureSaved=La candidature est enregistrée
+NoOpenJobOffer=Pas d'offres d'emploi pour le moment

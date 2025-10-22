@@ -14,8 +14,8 @@ AddResource=Skapa en resurs
 ResourceFormLabel_ref=Resursnamn
 ResourceFormLabel_description=Resursbeskrivning
 ResourceType=Resurstyp
-ResourceTypeID=Resource type ID
-ResourceTypeLabel=Resource type label
+ResourceTypeID=Resurstyp-ID
+ResourceTypeLabel=Resurstypsetikett
 ResourcesLinkedToElement=Resurser länkade till elementet
 
 ShowResource=Visa resurs
@@ -35,4 +35,4 @@ ImportDataset_resource_1=Resurser
 ErrorResourcesAlreadyInUse=Vissa resurser används
 ErrorResourceUseInEvent=%s använt i %s
 MaxUsers=Maximalt antal användare (platser, sittplatser, etc.)
-MaxUsersLabel=Maximum users
+MaxUsersLabel=Maximalt antal användare

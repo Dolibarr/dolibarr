@@ -66,7 +66,9 @@ NoLineGoOnTabToAddSome=Keine Zeile, gehen Sie zum Hinzufügen auf die Registerka
 CreateInvoiceForThisCustomerFromSendings=Rechnungen erstellen
 IfValidateInvoiceIsNoSendingStayUnbilled=Wenn die Rechnung nicht freigegeben ist, bleibt die Lieferung im Status 'nicht fakturiert', bis die Rechnung freigegeben wird.
 OptionToSetSendingBilledNotEnabled=Option aus dem Modul-Workflow, um eine Lieferung automatisch auf 'fakturiert' zu setzen, wenn die Rechnung freigegeben ist, ist nicht aktiviert. Daher müssen Sie den Status von Lieferungen manuell auf 'fakturiert' setzen, nachdem die Rechnung erstellt wurde.
+NoWarehouseInBase=Kein Warenlager in der Basis
 ShipmentUpdated=Lieferung erfolgreich aktualisiert
+ShipmentIncrementStockOnDelete = Lagerbestand beim Löschen erhöhen
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Summe der Produktgewichte
 # warehouse details
 DetailWarehouseNumber= Warenlagerdetails
 DetailWarehouseFormat= W: %s (Menge: %d)
+DetailChildrenFormat=%s : %s (Menge: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Das letzte Zugangsdatum im Lagerbestand während der Sendungserstellung für Seriennummer oder Batch anzeigen.
 CreationOptions=Verfügbare Optionen während der Sendungserstellung
 ShipmentDistribution=Lieferung für den Versand
@@ -92,3 +95,4 @@ TypeContact_shipping_external_SHIPPING=Lieferadresse Kunde
 TypeContact_shipping_external_DELIVERY=Lieferadresse Kunde
 CloseShipment=Lieferung schließen
 ConfirmCloseShipment=Bestätigen Sie das Schließen der Lieferung
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Beim Erstellen einer Lieferung die Charge/Seriennummer mit dem frühesten Mindesthaltbarkeitsdatum/Verfallsdatum vorauswählen.

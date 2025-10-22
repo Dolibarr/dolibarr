@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Afhending
 DeliveryRef=Ref Delivery
-DeliveryCard=Receipt card
+DeliveryCard=Delivery receipt
 DeliveryOrder=Delivery receipt
 DeliveryDate=Fæðingardag
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
-SetDeliveryDate=Setja skipum dagsetningu
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Setja skipum dagsetningu
 ValidateDeliveryReceipt=Staðfesta sending berst
 ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Eyða afhendingu kvittun

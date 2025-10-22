@@ -78,7 +78,7 @@ class Notify
 	public $contact_id;
 
 	/**
-	 * @var string fk_user
+	 * @var int fk_user
 	 */
 	public $fk_user;
 
@@ -662,10 +662,12 @@ class Notify
 		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
 		// Define some vars
-		$application = 'Dolibarr';
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$application = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		$application = constant('DOL_APPLICATION_TITLE');
+		$applicationcustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($applicationcustom) {
+			$application = (preg_match('/^\+/', $applicationcustom) ? $application : '').$applicationcustom;
 		}
+
 		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM');
 		$object_type = '';
 		$link = '';
@@ -1037,6 +1039,12 @@ class Notify
 							'notification'
 						);
 
+						if (! empty($mailfile->error) || ! empty($mailfile->errors)) {
+							$this->error = $mailfile->error;
+							$this->errors = $mailfile->errors;
+							return -1;
+						}
+
 						if ($mailfile->sendfile()) {
 							if ($obj->type_target == 'touserid') {
 								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
@@ -1292,6 +1300,7 @@ class Notify
 							$outputlangs->loadLangs(array('main', 'other'));
 						}
 					}
+
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);
@@ -1356,6 +1365,12 @@ class Notify
 						'',
 						'notification'
 					);
+
+					if (! empty($mailfile->error) || ! empty($mailfile->errors)) {
+						$this->error = $mailfile->error;
+						$this->errors = $mailfile->errors;
+						return -1;
+					}
 
 					if ($mailfile->sendfile()) {
 						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";

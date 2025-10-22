@@ -12,6 +12,7 @@ YourEMail=E-Mail de confirmación de pago
 STRIPE_PAYONLINE_SENDEMAIL=E-Mail a avisar en caso de pago (con éxito o no)
 Creditor=Beneficiario
 PaymentCode=Código de pago
+StripeAutoRecordPayout=Habilitar la grabación automática de transferencias bancarias (cuando Stripe realiza un pago y llama al webhook IPN payout.create/payout.paid)
 StripeDoPayment=Pagar con Stripe
 YouWillBeRedirectedOnStripe=Se le redirigirá a la página de Stripe protegida para indicar la información de su tarjeta de crédito
 Continue=Continuar
@@ -22,7 +23,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL para ofrecer una página de pago 
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una página de pago en línea %s de cualquier importe sin objeto existente
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para ofrecer una página de pago en línea %s para una suscripción de miembro
 ToOfferALinkForOnlinePaymentOnDonation=URL para ofrecer una página de pago en línea %s para el pago de una donación
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanAddTagOnUrl=También puede agregar el parámetro de URL <b>&tag=value</b> a cualquiera de esas URL (obligatorio solo para pagos no vinculados a un objeto) para agregar su propia etiqueta de comentario de pago. <br>Para la URL de pagos sin un objeto existente, también puede agregar el parámetro <strong>&noidempotency=1</strong> para que el mismo enlace con la misma etiqueta se pueda usar varias veces (algunos modos de pago pueden limitar el pago a 1 por cada enlace diferente sin este parámetro)
 YouCanEmbedOnWebsite=Si desea integrar la página de pago en un sitio web de Dolibarr, puede incluir el parámetro: <b>&ws=website_ref</b>.<br>Además, dos páginas llamadas <b>paymentok</b> y <b>paymentko</b> deben ser creadas en el sitio web para recibir la redirección después de un pago en línea exitoso o fallido.
 SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con la url <b>%s</b> para crear un pago automáticament al validarse por Stripe.
 AccountParameter=Parámetros de la cuenta
@@ -33,6 +34,7 @@ CSSUrlForPaymentForm=Url de la hoja de estilo CSS para el formulario de pago
 NewStripePaymentReceived=Nuevo pago de Stripe recibido
 NewStripePaymentFailed=Nuevo pago de Stripe intentado, pero ha fallado
 FailedToChargeCard=Error al cargar la tarjeta
+FailedToChargeSEPA=No se pudo cargar SEPA
 STRIPE_TEST_SECRET_KEY=Clave secreta test
 STRIPE_TEST_PUBLISHABLE_KEY=Clave de test publicable
 STRIPE_TEST_WEBHOOK_KEY=Clave de prueba Webhook
@@ -88,3 +90,4 @@ ExampleOnlyForBECustomers=Sólo para clientes de Bélgica
 ExampleOnlyForDECustomers=Sólo para clientes alemanes.
 ExampleOnlyForNLCustomers=Sólo para clientes holandeses.
 ExampleOnlyForATBEDEITNLESCustomers=Sólo para clientes de Austria, Bélgica, Alemania, Italia, Países Bajos, España
+ListOfSupportedHooksToActivate=Lista de ganchos compatibles para activar

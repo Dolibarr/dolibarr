@@ -142,9 +142,9 @@ class UserTest extends CommonClassTest
 		// Test everything are still same than specimen
 		$newlocalobject = new User($db);
 		$newlocalobject->initAsSpecimen();
-		$this->changeProperties($newlocalobject);
-		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','flagdelsessionsbefore','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
+		$this->changeProperties($newlocalobject);	// Change some properties int $newlocalobject
 
+		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('array_options','id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','datelastpassvalidation','flagdelsessionsbefore','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
 		return $localobject;
 	}
 

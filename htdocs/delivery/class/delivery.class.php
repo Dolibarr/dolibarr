@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,6 +196,7 @@ class Delivery extends CommonObject
 		$sql .= ")";
 
 		dol_syslog("Delivery::create", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."delivery");
@@ -354,6 +355,7 @@ class Delivery extends CommonObject
 				$this->note_public          = $obj->note_public;
 				$this->model_pdf            = $obj->model_pdf;
 				$this->origin               = $obj->origin; // May be 'shipping'
+				$this->origin_type          = $obj->origin; // May be 'shipping'
 				$this->origin_id            = $obj->origin_id; // May be id of shipping
 
 				//Incoterms
@@ -447,9 +449,12 @@ class Delivery extends CommonObject
 					}
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."delivery SET";
-					$sql .= " ref='".$this->db->escape($numref)."'";
+					$sql .= " ref = '".$this->db->escape($numref)."'";
 					$sql .= ", fk_statut = 1";
 					$sql .= ", date_valid = '".$this->db->idate($now)."'";
+					if (!empty($this->date_delivery)) {
+						$sql .= ", date_delivery = '".$this->db->idate($this->date_delivery)."'";
+					}
 					$sql .= ", fk_user_valid = ".((int) $user->id);
 					$sql .= " WHERE rowid = ".((int) $this->id);
 					$sql .= " AND fk_statut = 0";
@@ -581,7 +586,7 @@ class Delivery extends CommonObject
 		$this->note_private         = $expedition->note_private;
 		$this->note_public          = $expedition->note_public;
 		$this->fk_project           = $expedition->fk_project;
-		$this->date_delivery        = $expedition->date_delivery;
+		$this->date_delivery        = '';									// Date of real reception. The Expedition->date_delivery is the planned one.
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
 		$this->ref_customer         = $expedition->ref_customer;
@@ -770,8 +775,8 @@ class Delivery extends CommonObject
 	/**
 	 *	Return clickable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param	int<0,2>	$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param  int<-1,1>	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								Chaine avec URL
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
@@ -844,7 +849,7 @@ class Delivery extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped, ld.fk_origin_line, ";
+		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped, ld.fk_origin_line, ld.extraparams,";
 		$sql .= " cd.qty as qty_asked, cd.label as custom_label, cd.fk_unit,";
 		$sql .= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc,";
 		$sql .= " p.weight, p.weight_units,  p.width, p.width_units, p.length, p.length_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
@@ -896,6 +901,8 @@ class Delivery extends CommonObject
 
 				$line->fk_unit = $obj->fk_unit;
 				$line->fetch_optionals();
+
+				$line->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->lines[$i] = $line;
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -553,7 +553,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
  * Create an invoice
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array{id:string,ref:string,ref_ext:string,thirdparty_id:int,fk_user_author:string,fk_user_valid:string,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,payment_mode_id:string,type:int,total_net:float,total_vat:float,total:float,note_private:string,note_public:string,status:int,close_code:string,close_note:string,project_id:string,lines?:array{id:string,type:int,desc:string,vat_rate:float,qty:float,unitprice:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}}		$invoice			Invoice
+ * @param	array{id:string,ref:string,ref_ext:string,thirdparty_id:int,fk_user_author:string,fk_user_valid:string,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,payment_mode_id:string,type:int,total_net:float,total_vat:float,total:float,note_private:string,note_public:string,status:int,close_code:string,close_note:string,project_id:string,lines?:array<array{id:string,type:int,desc:string,vat_rate:float,qty:float,unitprice:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$invoice			Invoice
  * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createInvoice($authentication, $invoice)
@@ -617,9 +617,9 @@ function createInvoice($authentication, $invoice)
 		foreach ($arrayoflines as $line) {
 			// $key can be 'line' or '0','1',...
 			$newline = new FactureLigne($db);
-			$newline->product_type = $line['type'];
+			$newline->product_type = (int) $line['type'];
 			$newline->desc = $line['desc'];
-			$newline->fk_product = $line['product_id'];
+			$newline->fk_product = (int) $line['product_id'];
 			$newline->tva_tx = isset($line['vat_rate']) ? $line['vat_rate'] : 0;
 			$newline->qty = $line['qty'];
 			$newline->subprice = isset($line['unitprice']) ? $line['unitprice'] : null;
@@ -672,12 +672,12 @@ function createInvoice($authentication, $invoice)
  * Create an invoice from an order
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
- * @param	string      $id_order			id of order to copy invoice from
+ * @param	int         $id_order			id of order to copy invoice from
  * @param	string      $ref_order			ref of order to copy invoice from
  * @param	string      $ref_ext_order		ref_ext of order to copy invoice from
  * @return	array{result:array{result_code:string,result_label:string},id?:int,ref?:string,ref_ext?:string}	Array result
  */
-function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = '', $ref_ext_order = '')
+function createInvoiceFromOrder($authentication, $id_order = 0, $ref_order = '', $ref_ext_order = '')
 {
 	global $db, $conf;
 
@@ -787,7 +787,7 @@ function updateInvoice($authentication, $invoice)
 		$objectfound = false;
 
 		$object = new Facture($db);
-		$result = $object->fetch($invoice['id'], $invoice['ref'], $invoice['ref_ext'], 0);
+		$result = $object->fetch((int) $invoice['id'], $invoice['ref'], $invoice['ref_ext'], 0);
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -808,10 +808,10 @@ function updateInvoice($authentication, $invoice)
 					}
 				}
 				if ($invoice['status'] == Facture::STATUS_CLOSED) {
-					$result = $object->setPaid($fuser, $invoice['close_code'], $invoice['close_note']);
+					$result = $object->setPaid($fuser, (string) $invoice['close_code'], (string) $invoice['close_note']);
 				}
 				if ($invoice['status'] == Facture::STATUS_ABANDONED) {
-					$result = $object->setCanceled($fuser, $invoice['close_code'], $invoice['close_note']);
+					$result = $object->setCanceled($fuser, (string) $invoice['close_code'], (string) $invoice['close_note']);
 				}
 			}
 		}
@@ -820,7 +820,7 @@ function updateInvoice($authentication, $invoice)
 			$db->commit();
 			$objectresp = array(
 					'result' => array('result_code' => 'OK', 'result_label' => ''),
-					'id' => $object->id,
+					'id' =>  $object->id,
 					'ref' => $object->ref,
 					'ref_ext' => $object->ref_ext
 			);

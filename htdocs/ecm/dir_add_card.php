@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ if (!$sortfield) {
 
 $ecmdir = new EcmDirectory($db);
 if (!empty($section)) {
-	$result = $ecmdir->fetch($section);
+	$result = $ecmdir->fetch((int) $section);
 	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;

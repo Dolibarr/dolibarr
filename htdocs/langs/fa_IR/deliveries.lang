@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=تحویل
 DeliveryRef=ش.ارجاع تحویل
-DeliveryCard=Stock receipt
+DeliveryCard=Delivery receipt
 DeliveryOrder=Delivery receipt
 DeliveryDate=تاریخ تحویل
 CreateDeliveryOrder=تولید رسید تحویل
 DeliveryStateSaved=وضعیت تحویل ذخیره شد
-SetDeliveryDate=تنظیم تاریخ حمل و نقل
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=تنظیم تاریخ حمل و نقل
 ValidateDeliveryReceipt=اعتبارسنجی رسید تحویل
 ValidateDeliveryReceiptConfirm=آیا مطمئن هستید می‌خواهید این رسید تحویل را تائید کنید؟
 DeleteDeliveryReceipt=حذف رسید تحویل

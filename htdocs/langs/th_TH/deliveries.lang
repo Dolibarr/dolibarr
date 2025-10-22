@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=การจัดส่งสินค้า
 DeliveryRef=อ้างอิงการจัดส่ง
-DeliveryCard=Delivery receipt
+DeliveryCard=ใบเสร็จรับเงินการจัดส่งสินค้า
 DeliveryOrder=ใบเสร็จรับเงินจัดส่ง
 DeliveryDate=วันที่ส่งมอบ
 CreateDeliveryOrder=สร้างใบเสร็จรับเงินการจัดส่ง
 DeliveryStateSaved=บันทึกสถานะการจัดส่งแล้ว
-SetDeliveryDate=ตั้งวันที่จัดส่ง
+SetDeliveryDate=กำหนดวันจัดส่งโดยประมาณ
+SetShippingDate=ตั้งวันที่จัดส่ง
 ValidateDeliveryReceipt=ตรวจสอบการจัดส่งใบเสร็จรับเงิน
 ValidateDeliveryReceiptConfirm=คุณแน่ใจหรือไม่ว่าต้องการตรวจสอบใบเสร็จรับเงินการจัดส่งนี้
 DeleteDeliveryReceipt=ลบใบเสร็จรับเงินการจัดส่ง

@@ -43,7 +43,7 @@ ConfirmCancelSending=Jeste li sigurni da želite otkazati ovu pošiljku?
 DocumentModelMerou=Model dokumenta Merou A5
 WarningNoQtyLeftToSend=Upozorenje, nema proizvoda na čekanju za slanje
 StatsOnShipmentsOnlyValidated=Statistika je samo za provjerene pošiljke. Datum koji se koristi je datum validacije pošiljke (planirani datum isporuke nije uvijek poznat)
-DateShipping=Sending date
+DateShipping=Datum slanja
 DateDeliveryPlanned=Planirani datum isporuke
 RefDeliveryReceipt=Ref. potvrda o prijemu
 StatusReceipt=Potvrda isporuke statusa
@@ -63,10 +63,12 @@ NoProductToShipFoundIntoStock=U skladištu nije pronađen nijedan proizvod za is
 WeightVolShort=Težina/Vol.
 ValidateOrderFirstBeforeShipment=Morate prvo potvrditi narudžbu prije nego što budete mogli slati pošiljke.
 NoLineGoOnTabToAddSome=Bez reda, idite na karticu "%s" da dodate
-CreateInvoiceForThisCustomerFromSendings=Create Bills
-IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
-OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
-ShipmentUpdated=Shipment successfully updated
+CreateInvoiceForThisCustomerFromSendings=Kreiraj račune
+IfValidateInvoiceIsNoSendingStayUnbilled=Ako je validacija fakture 'Ne', slanje će ostati u statusu 'Nefakturisano' dok se faktura ne validira.
+OptionToSetSendingBilledNotEnabled=Opcija iz modula Workflow, za automatsko postavljanje slanja na 'Fakturirano' kada se faktura validira, nije omogućena, tako da ćete morati ručno postaviti status slanja na 'Fakturirano' nakon što je faktura generirana.
+NoWarehouseInBase=Nema skladišta u bazi
+ShipmentUpdated=Pošiljka uspješno ažurirana
+ShipmentIncrementStockOnDelete = Povećanje zaliha prilikom brisanja
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Suma težina proizvoda
 # warehouse details
 DetailWarehouseNumber= Detalji skladišta
 DetailWarehouseFormat= W:%s (Količina: %d)
+DetailChildrenFormat=%s : %s (Qty: >%s
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Prikaz poslednjeg datuma unosa na zalihi tokom kreiranja pošiljke za serijski broj ili seriju
 CreationOptions=Dostupne opcije tokom kreiranja pošiljke
 ShipmentDistribution=Distribucija pošiljaka
@@ -85,10 +88,11 @@ ErrorTooManyCombinationBatchcode=Nema otpreme za liniju %s jer je pronađeno pre
 ErrorNoCombinationBatchcode=Nije moguće sačuvati red %s kao kombinaciju skladišta-proizvod-lot/serial (%s, %s, %s) nije pronađeno na zalihama.
 ErrorTooMuchShipped=Isporučena količina ne smije biti veća od naručene količine za red %s
 ##### Types of contacts #####
-TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
+TypeContact_shipping_internal_SALESREPFOLL=Reprezentativno praćenje otpreme
 TypeContact_shipping_external_BILLING=Kontakt za fakturu kupca
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
-TypeContact_shipping_external_DELIVERY=Customer contact for delivery
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+TypeContact_shipping_external_CUSTOMER=Kontakt s kupcem nakon isporuke
+TypeContact_shipping_external_SHIPPING=Kontakt kupca za dostavu
+TypeContact_shipping_external_DELIVERY=Kontakt kupca za dostavu
+CloseShipment=Zatvori pošiljku
+ConfirmCloseShipment=Potvrdite zatvaranje pošiljke
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Prilikom kreiranja pošiljke unaprijed odaberite broj serije/serijski broj s najranijim datumom upotrebe/roka trajanja

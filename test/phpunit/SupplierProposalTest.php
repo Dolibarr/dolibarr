@@ -88,7 +88,7 @@ class SupplierProposalTest extends CommonClassTest
 
 		// Set permission not set by default sql sample
 		$user->addrights(0, 'supplier_proposal');
-		$user->getrights('supplier_proposal', 1);
+		$user->loadRights('supplier_proposal', 1);
 	}
 
 	/**
@@ -183,7 +183,7 @@ class SupplierProposalTest extends CommonClassTest
 		$result = $user->addrights(0, 'supplier_proposal');
 		$this->assertLessThan($result, 0);
 
-		$result = $user->getrights('supplier_proposal', 1);
+		$result = $user->loadRights('supplier_proposal', 1);
 		//$this->assertLessThan($result, 0);
 
 		$result = $localobject->valid($user);

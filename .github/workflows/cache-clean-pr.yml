@@ -1,6 +1,7 @@
 ---
-name: Cleanup caches of a closed branch
+# This clean the caches of a branch when we close the pull request.
 # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#force-deletion-of-caches-overriding-default-cache-eviction-policy
+name: Cleanup caches of a closed branch
 on:
   pull_request:
     types: [closed]

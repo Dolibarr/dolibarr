@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
 DeliveryRef=Ссылка Доставка
-DeliveryCard=Delivery receipt
+DeliveryCard=квитанция о доставке
 DeliveryOrder=Квитанция о доставке
 DeliveryDate=Дата доставки
 CreateDeliveryOrder=Создать квитанцию о доставке
 DeliveryStateSaved=Состояние доставки сохранено
-SetDeliveryDate=Установить дату отправки
+SetDeliveryDate=Установите расчетную оценку доставка дата
+SetShippingDate=Установить дату отправки
 ValidateDeliveryReceipt=Подтверждение получения доставки
 ValidateDeliveryReceiptConfirm=Вы уверены, что хотите подтвердить эту квитанцию о доставке?
 DeleteDeliveryReceipt=Удалить подтверждение доставки

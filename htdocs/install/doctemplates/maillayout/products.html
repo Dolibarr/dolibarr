@@ -1,44 +1,45 @@
-<h1 style="margin-left:120px;">__LIST_PRODUCTS___</h1>
-<h2 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elitsit amet consectetur adipisicing </h2>
+<style>
+body {
+        margin: 0;
+        padding: 0;
+        background-color: #e2f3fd;
+}
+</style>
 
-<div style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 16px; max-width: 600px; margin: 0 auto; box-sizing: border-box;">
+<div style="background-color: #e2f3fd; padding: 0; margin-top:-10px; margin-bottom:-20px; margin-left:-10px; margin-right:-10px; width: 100%">
+        <div style="width: 680px; margin: 0 auto; background-color: #e2f3fd;">
 
-<!-- PHP_START -->
-require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+        <div style="width: 100%; height: 50px; background-color: unset;">
+        </div>
 
-$user = new User($db);
-$product = new Product($db);
-$products = $product->getProductsToPreviewInEmail(4);
+        <div style="border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0px 0px 20px #aaa;">
+	        <div style="border-top-left-radius: 20px; border-top-right-radius: 20px; width: calc(100% - 60px); background-color: white; padding: 30px; text-align: center;">
+	                <img src="__LOGO_URL__" style="height: 75px; max-width: 400px; border-radius: 4px;">
+	        </div>
+	        <div style="width: calc(100% - 60px); background-color: #263c5a; color: #fff; padding: 30px;">
+	        __(Hello)__
+	        </div>
+	        <div style="width: calc(100% - 60px); background-color: #fff; padding: 30px;">
 
+			<h1>__(OurProductSelection)__</h1>
+			<!--  <h2>__CONTENTOFMAILHOLDER__ </h2>-->
 
-    if (empty($products)){
-        print '<p>No Products</p>';
-    }else {
-        foreach($products as $product){
-            if ($i % 2 == 0) {
-                print '<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">';
-            }
+			<!-- PRODUCTS_START -->
+			__PRODUCTS_LIST__
+			<!-- PRODUCTS_END -->
 
-            print '<div style="flex: 1; padding-right: 10px;">
+	        </div>
+	    	<div style="width: calc(100% - 60px); border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; background-color: #263c5a; color: #fff; padding: 30px;">
+	       	__MYCOMPANY_SOCIAL_NETWORKS__
+	       	<hr>
+	       	__MYCOMPANY_ADDRESS__<br>
+	       	__MYCOMPANY_EMAIL__
+	       	</div>
+        </div>
 
-                    <div>
-                        <img alt="Gray rectangle" style="margin-left: 120px; margin-top: 30px;" width="350px" height="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=produit&file='.$product['ref'].'/'.$product['filename'].'" />
-                    </div>
-                    <div style="margin-left: 120px; background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                        <h3>'.$product["ref"].'</h3>
-                        <p>'.$product["description"].'</p>
-                    </div>
-                </div>';
+		<div style="width: 100%; height: 100px; background-color: unset; text-align: center;">
+        __CHECK_READ__
+        </div>
 
-            if ($i % 2 == 1 || $i == $num - 1) {
-                print '</div>';
-            }
-
-            $i++;
-        }
-    }
-<!-- PHP_END -->
-    </div>
+        </div>
 </div>

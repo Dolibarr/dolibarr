@@ -339,7 +339,7 @@ class DiscountAbsolute extends CommonObject
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$tmpinvoice = new Facture($this->db);
 			$tmpinvoice->fetch($this->fk_facture_source);
-			$userid = $tmpinvoice->fk_user_author; // We use the author of invoice
+			$userid = $tmpinvoice->user_creation_id; // We use the author of invoice
 		}
 
 		// Insert request
@@ -347,13 +347,15 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " (entity, datec, fk_soc, discount_type, fk_user, description,";
 		$sql .= " amount_ht, amount_tva, amount_ttc, tva_tx, vat_src_code,";
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
-		$sql .= " fk_facture_source, fk_invoice_supplier_source";
+		$sql .= " fk_facture_source, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
 		$sql .= ")";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_ttc).", ";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
-		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null");
+		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null").",";
+		$sql .= " ".($this->multicurrency_code ? "'".$this->db->escape($this->multicurrency_code)."'" : "null").",";
+		$sql .= " ".($this->multicurrency_tx ? price2num($this->multicurrency_tx) : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -703,7 +705,7 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
 	 *	@param      int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return     int					        		Return integer <0 if KO, Sum of credit notes and excess received amount otherwise
+	 *	@return     float|string		        		Return string 'Error...' if KO, Sum of credit notes and excess received amount otherwise
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
 	{
@@ -722,7 +724,7 @@ class DiscountAbsolute extends CommonObject
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
 			dol_print_error($this->db, $this->error);
-			return -1;
+			return 'ErrorBadElementType';
 		}
 
 		$resql = $this->db->query($sql);
@@ -735,7 +737,7 @@ class DiscountAbsolute extends CommonObject
 			}
 		} else {
 			$this->error = $this->db->lasterror();
-			return -1;
+			return 'ErrorBadSQLquery';
 		}
 	}
 	/**

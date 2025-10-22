@@ -47,7 +47,7 @@ PHP CKEDITOR:
 Replace:
 	body { ... margin: 20px;
 With
-	body { ... margin: 5px;
+	body { ... margin: 10px;
 
 * In ckeditor/ckeditor/ckeditor.js
 Replace:

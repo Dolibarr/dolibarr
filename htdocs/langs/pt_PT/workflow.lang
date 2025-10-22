@@ -9,28 +9,28 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar automaticamente uma fatura a clie
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=automaticamente crie um fatura de clientes depois que uma venda encomenda for fechada (o novo fatura terá o mesmo valor que encomenda)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Na criação do ticket, automaticamente crie um intervensão.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
-descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Quando uma venda encomenda é definida como faturado, classifique a fonte vinculada orçamentos como faturado (e se o valor do encomenda for igual ao valor total do orçamentos)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Quando um fatura de clientes for validado, classifique a origem vinculada orçamentos como faturado (e se a quantidade de fatura for igual à quantidade total do orçamentos vinculado e assinado)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Quando um fatura de clientes é definido como pago, classifique os pedidos de venda de origem vinculados como faturado (e se o valor do fatura for igual ao valor total dos pedidos de venda vinculados). Se você gerar 1 fatura para n pedidos, isso poderá definir todos os pedidos como faturado também.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Quando um fatura de clientes for validado, classifique todos os pedidos de venda de origem vinculados como faturado (e se o valor do fatura for o mesmo que o valor total dos pedidos de venda de origem vinculados). Se você gerar 1 fatura comum para n pedidos, isso poderá definir todos os pedidos de origem como faturado.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Quando um fatura de clientes for validado, classifique as vendas vinculadas encomenda (se houver apenas uma) como faturado, se o valor total da venda vinculada encomenda for igual ao valor total de todas as faturas emitidas a partir dela. Se você gerar n faturas para 1 encomenda, isso permitirá definir o encomenda como faturado assim que todas as faturas forem validadas.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Quando um Expedição for validado, classifique os pedidos de vendas de origem vinculada como enviados (e se a quantidade enviada por todas as remessas for a mesma que no encomenda a ser atualizado)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Quando um Expedição é fechado, classifique as vendas de origem vinculadas encomenda como enviadas (e se a quantidade enviada por todas as remessas for a mesma que no encomenda a ser atualizado)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Quando um Fornecedor, Vendedor fatura é validado, classifique a fonte vinculada Fornecedor, Vendedor orçamento como faturado (e se a quantidade de fatura for o mesmo que o valor total do orçamentos vinculado)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Quando um Fornecedor, Vendedor fatura for validado, classifique a compra de origem vinculada encomenda como faturado (e se o valor do fatura for igual ao valor total dos pedidos vinculados)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Quando um receção for validado, classifique a compra de origem vinculada encomenda como recebida (e se a quantidade recebida por todas as recepções for a mesma da compra encomenda a ser atualizada)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Quando um receção for fechado, classifique os pedidos de compra de origem vinculada como recebidos (e se a quantidade recebida por todas as recepções emitidas da compra encomenda for a mesma da compra encomenda a ser atualizada)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Quando um fatura de clientes for validado, classifique a origem vinculada Expedição como fechada (e se o valor do fatura for igual ao valor total das remessas vinculadas)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Quando um fatura de clientes for validado, classifique a origem vinculada Expedição como faturado (e se o valor do fatura for igual ao valor total das remessas vinculadas)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Quando uma compra fatura for validada, classifique os recebimentos de origem vinculados como fechados (e se o valor do fatura for igual ao valor total dos recebimentos vinculados)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Quando uma compra fatura for validada, classifique as recepções de origem vinculadas como faturado (e se o valor do fatura for igual ao valor total das recepções vinculadas)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
+descWORKFLOW_TICKET_LINK_CONTRACT=Quando um tíquete é criado, hiperligação, conexão ele com os contratos disponíveis, correspondendo ao mesmo terceiro que o tíquete
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Ao vincular automaticamente um tíquete com contratos, pesquise contratos entre aqueles das empresas-mãe
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Fechar todas as intervenções vinculadas ao ticket quando um ticket for fechado
 AutomaticCreation=Criação automática

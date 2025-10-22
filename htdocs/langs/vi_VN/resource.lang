@@ -14,8 +14,8 @@ AddResource=Tạo tài nguyên
 ResourceFormLabel_ref=Tên tài nguyên
 ResourceFormLabel_description=Mô tả tài nguyên
 ResourceType=Loại tài nguyên
-ResourceTypeID=Resource type ID
-ResourceTypeLabel=Resource type label
+ResourceTypeID=ID loại tài nguyên
+ResourceTypeLabel=Nhãn loại tài nguyên
 ResourcesLinkedToElement=Tài nguyên được liên kết tới các thành phần
 
 ShowResource=Hiển thị tài nguyên
@@ -35,4 +35,4 @@ ImportDataset_resource_1=Tài nguyên
 ErrorResourcesAlreadyInUse=Một số tài nguyên đang được sử dụng
 ErrorResourceUseInEvent=%s được sử dụng trong %s sự kiện
 MaxUsers=Người dùng tối đa (địa điểm, chỗ ngồi, v.v.)
-MaxUsersLabel=Maximum users
+MaxUsersLabel=Số người dùng tối đa

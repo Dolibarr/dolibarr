@@ -72,7 +72,7 @@ $search_user = GETPOST("search_user", "alpha");
 $search_desc = GETPOST("search_desc", "alpha");
 $search_ua   = GETPOST("search_ua", "restricthtml");
 $search_prefix_session = GETPOST("search_prefix_session", "restricthtml");
-$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));
+$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));		// TODO Replace with $search_entity = GETPOSTINT('search_entity') when the filter is available on screen for this page
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
@@ -340,7 +340,7 @@ if ($result) {
 
 	$center = '';
 	if ($num) {
-		$center = '<a class="butActionDelete small" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+		$center = '<a class="butActionDelete small" href="'.$_SERVER["PHP_SELF"].'?action=purge&token='.newToken().'">'.$langs->trans("Purge").'</a>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

@@ -52,6 +52,11 @@
 	font-size: 0.9em;
 }
 
+.size12x { font-size: 1.2em !important; }
+.size15x { font-size: 1.5em !important; }
+.size2x { font-size: 2em; }
+.size4x { font-size: 4em !important; }
+
 #divinstall {
 	overflow-x: auto;
 }

@@ -6,7 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@
  * @var string $action
  */
 '
-@phan-var-force CommonObjectLine $line
+@phan-var-force BOMLine $line
 @phan-var-force int $num
 @phan-var-force int $i
 @phan-var-force CommonObject $this
@@ -119,7 +119,7 @@ $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
-$res = $tmpbom->fetch($line->fk_bom_child);
+$res = $tmpbom->fetch((int) $line->fk_bom_child);
 if ($tmpbom->id > 0) {
 	print $tmpproduct->getNomUrl(1);
 	print ' '.$langs->trans("or").' ';
@@ -134,7 +134,7 @@ if ($tmpbom->id > 0) {
 
 // Line extrafield
 if (!empty($extrafields)) {
-	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 	if (!empty($temps)) {
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
 		print $temps;
@@ -153,7 +153,7 @@ print '</td>';
 if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
 		print '<td class="linecoluseunit nowrap">';
-		$label = measuringUnitString($line->fk_unit, '', '', 1);
+		$label = measuringUnitString((int) $line->fk_unit, '', null, 1);
 		if ($label !== '') {
 			print $langs->trans($label);
 		}
@@ -318,14 +318,12 @@ if ($resql) {
 		}
 
 		// Qty
-		$label = $sub_bom_product->getLabelOfUnit('long');
+		$label = $sub_bom_product->getLabelOfUnit('long', $langs);
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') {
-					print $langs->trans($label);
-				}
+				print $label;
 				print '</td>';
 			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
@@ -333,9 +331,7 @@ if ($resql) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * (float) $line->qty, 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') {
-					print $langs->trans($label);
-				}
+				print $label;
 				print '</td>';
 			}
 
@@ -359,7 +355,7 @@ if ($resql) {
 			$total_cost += $sub_bom->total_cost * $sub_bom_line->qty * (float) $line->qty;
 		} elseif ($sub_bom_product->type == Product::TYPE_SERVICE && isModEnabled('workstation') && !empty($sub_bom_product->fk_default_workstation)) {
 			//Convert qty to hour
-			$unit = measuringUnitString($sub_bom_line->fk_unit, '', '', 1);
+			$unit = measuringUnitString($sub_bom_line->fk_unit, '', null, 1);
 			$qty = convertDurationtoHour($sub_bom_line->qty, $unit);
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024      Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,6 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
 require_once '../../main.inc.php';
 require_once '../lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -51,9 +48,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
+ * @var string $dolibarr_main_url_root
  */
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -62,8 +68,86 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 top_httphead();
 
 // TODO Replace with ID of template
-if (GETPOSTISSET('content')) {
-	$content = filter_input(INPUT_POST, 'content', FILTER_UNSAFE_RAW);
+if (GETPOSTISSET('template')) {
+	$templatefile = DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/'.dol_sanitizeFileName(GETPOST('template')).'.html';
+
+	$content = file_get_contents($templatefile);
+
+	if ($content === false) {
+		print 'Failed to load template '.dol_escape_htmltag(GETPOST('template'));
+		exit;
+	}
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+
+	$specificSubstitutionArray = array(
+		'__TITLEOFMAILHOLDER__' => $langs->trans('TitleOfMailHolder'),
+		'__CONTENTOFMAILHOLDER__' => 'Lorem ipsum ...',
+		'__GRAY_RECTANGLE__' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC',
+		'__LAST_NEWS__'   => $langs->trans('LastNews'),
+		'__LIST_PRODUCTS___' => $langs->trans('ListProducts'),
+		'__SUBJECT__' => GETPOST('subject'),
+		// vars for company
+		'__MYCOMPANY_ADDRESS__' => $mysoc->getFullAddress(0, '<br>', 1, ''),
+		'__MYCOMPANY_EMAIL__' => $mysoc->email,
+		'__MYCOMPANY_PHONE_PRO__' => $mysoc->phone_pro,
+		'__MYCOMPANY_PHONE_MOBILE__' => $mysoc->phone_mobile,
+		'__MYCOMPANY_FAX__' => $mysoc->fax,
+	);
+
+	$listsocialnetworks = '';
+	// TODO Add a column imgsrcdata into llx_c_socialnetworks to store the src data for image of the social network in black on a white background.
+	/*
+	foreach($mysoc->socialnetworks as $snkey => $snval) {
+		$listsocialnetworks .= $snkey;
+	}
+	*/
+	$specificSubstitutionArray['__MYCOMPANY_SOCIAL_NETWORKS__'] = $listsocialnetworks;
+
+	if (!empty($mysoc->logo) && dol_is_file($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+		$specificSubstitutionArray['__LOGO_URL__'] = $urlwithroot.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo);
+	} else {
+		$specificSubstitutionArray['__LOGO_URL__'] = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC';
+	}
+
+	$specificSubstitutionArray['__USERSIGNATURE__'] = empty($user->signature) ? '' : $user->signature;
+
+	if (GETPOST('fromtype') == 'user') {
+		$specificSubstitutionArray['__SENDEREMAIL_SIGNATURE__'] = empty($user->signature) ? '' : $user->signature;
+	} elseif (GETPOST('fromtype') == 'company') {
+		$specificSubstitutionArray['__SENDEREMAIL_SIGNATURE__'] = $mysoc->name.' '.$mysoc->email;
+	} elseif (GETPOST('fromtype') == 'main_from') {
+		$specificSubstitutionArray['__SENDEREMAIL_SIGNATURE__'] = $mysoc->name.' '.getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+	} else {
+		// GETPOST('fromtype') is senderprofile_x_y (x = ID profile)
+		$specificSubstitutionArray['__SENDEREMAIL_SIGNATURE__'] = 'TODO Read database to get the signature of the profile';
+	}
+
+
+	// Must replace
+	// __SUBJECT__, __CONTENTOFMAILHOLDER__, __USERSIGNATURE__, __NEWS_LIST__, __PRODUCTS_LIST__
+	foreach ($specificSubstitutionArray as $key => $val) {
+		$content = str_replace($key, $val, $content);
+	}
+
+	// Parse all strings __(...)__ to replace with the translated value $langs->trans("...")
+	$langs->load("other");
+	$content = preg_replace_callback(
+		'/__\((.+)\)__/',
+		/**
+		 * @param 	array<int,string> $matches	Array of matches
+		 * @return 	string 						Translated string for the key
+		 */
+		function ($matches) {
+			global $langs;
+			return $langs->trans($matches[1]);
+		},
+		$content);
+
 
 	$selectedPostsStr = GETPOST('selectedPosts', 'alpha');
 	$selectedPosts = explode(',', $selectedPostsStr);
@@ -93,8 +177,7 @@ if (GETPOSTISSET('content')) {
 		$content = str_replace('__NEWS_LIST__', 'No articles selected', $content);
 	}
 
-
 	print $content;
 } else {
-	print 'No content provided or invalid token';
+	print 'No template ID provided or expired token';
 }

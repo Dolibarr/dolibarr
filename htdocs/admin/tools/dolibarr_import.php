@@ -173,7 +173,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
 	print $langs->trans("ImportMySqlDesc");
 	print '<br>';
-	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportMySqlCommand", $command, ($action == 'showpass' ? $paramclear : $paramcrypted)).'</textarea><br>';
+	print '<textarea rows="1" id="restorecommand" class="centpercent" spellcheck="false">'.$langs->trans("ImportMySqlCommand", $command, ($action == 'showpass' ? $paramclear : $paramcrypted)).'</textarea><br>';
 	print ajax_autoselect('restorecommand');
 
 	if (GETPOST("action") != 'showpass' && $dolibarr_main_db_pass) {

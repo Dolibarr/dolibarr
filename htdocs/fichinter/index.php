@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015	   Charlene Benke        <charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,12 +119,25 @@ if ($resql) {
 		}
 	}
 	$db->free($resql);
+
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus2
+	 * @var string $badgeStatus4
+	 */
+	'
+	@phan-var-force string $badgeStatus0
+	@phan-var-force string $badgeStatus1
+	@phan-var-force string $badgeStatus2
+	@phan-var-force string $badgeStatus4
+	';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED);
+	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED, Fichinter::STATUS_CLOSED);
 	if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 		$listofstatus[] = Fichinter::STATUS_BILLED;
 	}
@@ -137,6 +150,9 @@ if ($resql) {
 		}
 		if ($status == Fichinter::STATUS_VALIDATED) {
 			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == Fichinter::STATUS_CLOSED) {
+			$colorseries[$status] = $badgeStatus2;
 		}
 		if ($status == Fichinter::STATUS_BILLED) {
 			$colorseries[$status] = $badgeStatus4;

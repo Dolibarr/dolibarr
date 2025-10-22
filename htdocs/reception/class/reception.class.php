@@ -12,7 +12,7 @@
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -437,15 +437,16 @@ class Reception extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'order_supplier'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
-		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+
 		if ($id) {
-			$sql .= " AND e.rowid = ".((int) $id);
-		}
-		if ($ref) {
-			$sql .= " AND e.ref = '".$this->db->escape($ref)."'";
-		}
-		if ($ref_ext) {
-			$sql .= " AND e.ref_ext = '".$this->db->escape($ref_ext)."'";
+			$sql .= " WHERE e.rowid = ".((int) $id);
+		} else {
+			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+			if ($ref) {
+				$sql .= " AND e.ref = '".$this->db->escape($ref)."'";
+			} elseif ($ref_ext) {
+				$sql .= " AND e.ref_ext = '".$this->db->escape($ref_ext)."'";
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -631,7 +632,8 @@ class Reception extends CommonObject
 					if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 						continue;
 					}
-					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
@@ -872,16 +874,16 @@ class Reception extends CommonObject
 	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS is set, you can add a reception line, with no stock source defined
 	 * If STOCK_MUST_BE_ENOUGH_FOR_RECEPTION is not set, you can add a reception line, even if not enough into stock
 	 *
-	 * @param 	int			$entrepot_id		Id of warehouse
-	 * @param 	int			$id					Id of source line (supplier order line)
-	 * @param 	float		$qty				Quantity
+	 * @param 	int				$entrepot_id		Id of warehouse
+	 * @param 	int				$id					Id of source line (supplier order line)
+	 * @param 	float			$qty				Quantity
 	 * @param	array<string, mixed>	$array_options		extrafields array
-	 * @param	string		$comment			Comment for stock movement
-	 * @param	int			$eatby				eat-by date
-	 * @param	int			$sellby				sell-by date
-	 * @param	string		$batch				Lot number
-	 * @param	float		$cost_price			Line cost
-	 * @return	int							Return integer <0 if KO, index of line if OK
+	 * @param	string			$comment			Comment for stock movement
+	 * @param	int				$eatby				eat-by date
+	 * @param	int				$sellby				sell-by date
+	 * @param	string			$batch				Lot number
+	 * @param	float|string	$cost_price			Line cost (Can be '' to keep AWP unchanged or a float value)
+	 * @return	int									Return integer <0 if KO, index of line if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{
@@ -1447,9 +1449,9 @@ class Reception extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -1691,6 +1693,8 @@ class Reception extends CommonObject
 		if ($resql) {
 			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
 			if ($this->origin == 'order_supplier' && $this->origin_id > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 				$order = new CommandeFournisseur($this->db);
 				$order->fetch($this->origin_id);
 
@@ -1746,7 +1750,8 @@ class Reception extends CommonObject
 						if ($qty <= 0) {
 							continue;
 						}
-						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
@@ -1903,7 +1908,6 @@ class Reception extends CommonObject
 						if ($qty <= 0) {
 							continue;
 						}
-
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
@@ -1953,6 +1957,8 @@ class Reception extends CommonObject
 			}
 
 			if (!$error && $this->origin == 'order_supplier') {
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 				$commande = new CommandeFournisseur($this->db);
 				$commande->fetch($this->origin_id);
 				$result = $commande->setStatus($user, 4);
@@ -2034,11 +2040,11 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-
 						if ($qty <= 0) {
 							continue;
 						}
-						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);

@@ -887,6 +887,8 @@ DirectPrint
 Disassemble
 Dispatch
 DispatchVerb
+DocumentSigned
+DocumentUnsigned
 DoCreditTransferBeforePayments3
 DoNotAutofillButAutoConcat
 DoNotRemovePreviousCombinations
@@ -1029,7 +1031,6 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage
 ErrorLoginDisabled
 ErrorLoginDoesNotExists
 ErrorLoginHasNoEmail
-ErrorMandatoryParametersNotProvided
 ErrorMaxNumberReachForThisMask
 ErrorNewRefIsAlreadyUsed
 ErrorNoImagickReadimage
@@ -2993,7 +2994,6 @@ UserHideExternal
 UserHideNonEmployee
 UserID
 UserLogged
-UserLoginFailed
 UserLogoff
 UserMargins
 UserModif

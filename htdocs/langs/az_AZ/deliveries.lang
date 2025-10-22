@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Çatdırılma
 DeliveryRef=Ref Çatdırılma
-DeliveryCard=Delivery receipt
+DeliveryCard=Çatdırılma qəbzi
 DeliveryOrder=Çatdırılma qəbzi
 DeliveryDate=Çatdırılma tarixi
 CreateDeliveryOrder=Çatdırılma qəbzini yaradın
 DeliveryStateSaved=Çatdırılma vəziyyəti yadda saxlandı
-SetDeliveryDate=Göndərmə tarixini təyin edin
+SetDeliveryDate=Təxmini çatdırılma tarixini təyin edin
+SetShippingDate=Göndərmə tarixini təyin edin
 ValidateDeliveryReceipt=Çatdırılma qəbzini təsdiq edin
 ValidateDeliveryReceiptConfirm=Bu çatdırılma qəbzini doğrulamaq istədiyinizə əminsiniz?
 DeleteDeliveryReceipt=Çatdırılma qəbzini silin

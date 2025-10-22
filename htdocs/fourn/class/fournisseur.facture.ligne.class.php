@@ -15,7 +15,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -324,7 +324,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	{
 		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as line_desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
 		$sql .= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2, f.fk_remise_except';
-		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
+		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit, f.extraparams';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc';
 		$sql .= ', f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
@@ -383,6 +383,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->special_code = $obj->special_code;
 		$this->rang = $obj->rang;
 		$this->fk_unit           = $obj->fk_unit;
+
+		$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 		$this->multicurrency_subprice = $obj->multicurrency_subprice;
 		$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
@@ -456,7 +458,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function update($notrigger = 0)
 	{
-		global $conf;
+		global $user;
 
 		$pu = price2num($this->subprice);
 		$qty = price2num($this->qty);
@@ -523,8 +525,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", tva_tx = ".price2num($this->tva_tx);
 		$sql .= ", localtax1_tx = ".price2num($this->localtax1_tx);
 		$sql .= ", localtax2_tx = ".price2num($this->localtax2_tx);
-		$sql .= ", localtax1_type = '".$this->db->escape($this->localtax1_type)."'";
-		$sql .= ", localtax2_type = '".$this->db->escape($this->localtax2_type)."'";
+		$sql .= ", localtax1_type = '".$this->db->escape((string) $this->localtax1_type)."'";
+		$sql .= ", localtax2_type = '".$this->db->escape((string) $this->localtax2_type)."'";
 		$sql .= ", total_ht = ".price2num($this->total_ht);
 		$sql .= ", tva= ".price2num($this->total_tva);
 		$sql .= ", total_localtax1= ".price2num($this->total_localtax1);
@@ -567,8 +569,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		if (!$error && !$notrigger) {
-			global $langs, $user;
-
 			// Call trigger
 			if ($this->call_trigger('LINEBILL_SUPPLIER_MODIFY', $user) < 0) {
 				$this->db->rollback();
@@ -692,7 +692,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
 		$sql .= " VALUES (".$this->fk_facture_fourn.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape($this->fk_parent_line)."'" : "null").",";
+		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$product_label
 			= !empty($this->product_label)
 			? $this->product_label :
@@ -706,8 +706,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->tva_tx).",";
 		$sql .= " ".price2num($this->localtax1_tx).",";
 		$sql .= " ".price2num($this->localtax2_tx).",";
-		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
-		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
+		$sql .= " '".$this->db->escape((string) $this->localtax1_type)."',";
+		$sql .= " '".$this->db->escape((string) $this->localtax2_type)."',";
 		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
@@ -795,8 +795,18 @@ class SupplierInvoiceLine extends CommonObjectLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return $this->id;
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+
+			$this->db->rollback();
+			return -3;
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();

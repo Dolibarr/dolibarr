@@ -55,6 +55,10 @@ class box_actions_future extends ModeleBoxes
 		$this->enabled = isModEnabled('agenda');
 
 		$this->hidden = !($user->hasRight('agenda', 'myactions', 'read'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+
+		$this->msgNoRecords = 'NoUpcomingEvent';
 	}
 
 	/**
@@ -65,7 +69,7 @@ class box_actions_future extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		$this->max = $max;
 
@@ -76,7 +80,10 @@ class box_actions_future extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 		$actionstatic = new ActionComm($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleFutureActions", $max));
+		$text = $langs->trans("BoxTitleFutureActions", $max);
+		$this->info_box_head = array(
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/comm/action/list.php?sortfield=a.datep&datestart_dtstartday='.dol_print_date($now, '%d').'&datestart_dtstartmonth='.dol_print_date($now, '%m').'&datestart_dtstartyear='.dol_print_date($now, '%Y').'&sortorder=ASC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('agenda', 'myactions', 'read')) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
@@ -175,13 +182,6 @@ class box_actions_future extends ModeleBoxes
 					);
 
 					$line++;
-				}
-
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
-					);
 				}
 
 				$this->db->free($result);

@@ -3,9 +3,9 @@ MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Otvorite <a href="%s">podešavanja modula Taxes</a> da biste izmenili pravila kalkulacija
 TaxModuleSetupToModifyRulesLT=Otvori <a href="%s">Podešavanja kompanije</a> za izmenu pravila kalkulacije
 OptionMode=Opcije za računovodstvo
-OptionModeTrue=Opcije Prihoda-Rashoda
-OptionModeVirtual=Opcije Potraživanja-Dugovanja
-OptionModeTrueDesc=U ovom kontekstu, obrt je sračunat prema uplatama (datumima uplata). Validnost rezultata je sigurna samo ukoliko računovodstvo uredno evidentira ulaz/izlaz putem računa.
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=U ovom kontekstu, obrt je sračunat prema računima (datumima potvrde). Kada računima dođe datum naplate, uračunati su u obrt, bilo da su zaista naplaćeni ili ne.
 FeatureIsSupportedInInOutModeOnly=Funkcionalnost dostupna samo u računovodstvenom modu POTRAŽIVANJA-ZADUŽENJA (pogledajte podešavanja modula računovodstvo)
 VATReportBuildWithOptionDefinedInModule=Prikazani iznosi su sračunati po pravilima definisanim u podešavanjima modula Takse.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=To pay (> 30 days)
 ConfirmPreselectAccount=Preselect accountancy code
 ConfirmPreselectAccountQuestion=Are you sure you want to preselect the %s selected lines with this accountancy code ?
 AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down payment
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

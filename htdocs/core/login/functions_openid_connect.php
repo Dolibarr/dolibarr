@@ -121,7 +121,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		return false;
 	}
 
-	// Step 3: retrieve user info using token
+	// Step 3: retrieve user info (login, email, ...) from OIDC server using token
 	$userinfo_headers = array('Authorization: Bearer '.$token_content->access_token);
 	$userinfo_response = getURLContent(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_USERINFO_URL'), 'GET', '', 1, $userinfo_headers, array('https'), 2);
 	$userinfo_content = json_decode($userinfo_response['content']);
@@ -159,7 +159,12 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	// Success: retrieve claim to return to Dolibarr as login
 	$sql = 'SELECT login, entity, datestartvalidity, dateendvalidity';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
-	$sql .= " WHERE login = '".$db->escape($userinfo_content->$login_claim)."'";
+	if ($login_claim === 'email') {
+		// If login claim is email, check both login and email fields
+		$sql .= " WHERE (login = '".$db->escape($userinfo_content->$login_claim)."' OR email = '".$db->escape($userinfo_content->$login_claim)."')";
+	} else {
+		$sql .= " WHERE login = '".$db->escape($userinfo_content->$login_claim)."'";
+	}
 	$sql .= ' AND entity IN (0,'.(array_key_exists('dol_entity', $_SESSION) ? ((int) $_SESSION["dol_entity"]) : 1).')';
 
 	dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
@@ -167,6 +172,11 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect::Error with sql query (".$db->error().")");
+		return false;
+	}
+	$numres = $db->num_rows($resql);
+	if ($numres > 1) {
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::Error more than 1 result from the query");
 		return false;
 	}
 	$obj = $db->fetch_object($resql);

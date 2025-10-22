@@ -2,7 +2,7 @@
 /* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
@@ -385,7 +385,7 @@ class mailing_thirdparties extends MailingTargets
 			$formadmin = new FormAdmin($this->db);
 			$s .= img_picto($langs->trans("DefaultLang"), 'language', 'class="pictofixedwidth"');
 			//$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
-			$s .= $formadmin->select_language(GETPOST('filter_lang_thirdparties', 'aZ09'), 'filter_lang_thirdparties', 0, null, $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, null, 1);
+			$s .= $formadmin->select_language(GETPOST('filter_lang_thirdparties', 'aZ09'), 'filter_lang_thirdparties', 0, array(), $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, array(), 1);
 		}
 
 		return $s;

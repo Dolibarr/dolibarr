@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,11 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+global $linkedObjectBlock;
 
 $langs->load("bills");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
-'@phan-var-force array<string,CommonObject> $linkedObjectBlock';
 
 $total = 0;
 $ilink = 0;
@@ -77,6 +76,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right nowraponall">';
 	if (!empty($objectlink) && $objectlink->element == 'facture' && $user->hasRight('facture', 'lire')) {
+		'@phan-var-force Facture $objectlink';
 		if ($objectlink->statut != 3) {
 			// If not abandoned
 			$total += $objectlink->total_ht;
@@ -86,6 +86,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		}
 	}
 
+	'@phan-var-force CommonObject $objectlink';  // Workaround for false notices
 	print '</td>';
 	print '<td class="linkedcol-statut right">';
 	$totalallpayments = 0;

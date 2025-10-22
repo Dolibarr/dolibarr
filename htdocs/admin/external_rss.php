@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,7 @@ if ($action == 'add' || GETPOST("modify")) {
 			// Supprime boite box_external_rss de definition des boites
 			/* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$db->escape($boxlabel)."'";
-			$sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape(GETPOST("norss"))." %'";
+			$sql.= " WHERE file ='box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss"))." %'";
 
 			$resql=$db->query($sql);
 			if (! $resql)
@@ -138,7 +138,7 @@ if (GETPOST("delete")) {
 
 		// Supprime boite box_external_rss de definition des boites
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
-		$sql .= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape(GETPOSTINT("norss"))." %'";
+		$sql .= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape((string) GETPOSTINT("norss"))." %'";
 
 		$resql = $db->query($sql);
 		if ($resql) {

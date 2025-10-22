@@ -23,7 +23,10 @@ AllPropals=Minden ajánlat
 SearchAProposal=Ajánlat keresése
 NoProposal=Nincs ajánlat
 ProposalsStatistics=Árajánlat statisztikái
+NumberOfProposals=Árajánlatok száma
 NumberOfProposalsByMonth=Szám havonta
+AmountOfProposals=Javaslatok száma
+AmountOfProposalsHT=Ajánlatok összege (adó nélkül)
 AmountOfProposalsByMonthHT=Összeg havonta (nettó)
 NbOfProposals=Árajánlatok száma
 ShowPropal=Ajánlat megjelenítése
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 hét
 AvailabilityTypeAV_2W=2 hét
 AvailabilityTypeAV_3W=3 hét
 AvailabilityTypeAV_1M=1 hónap
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Reprezentatív nyomon követési ajánlat
 TypeContact_propal_external_BILLING=Az ügyfélszámla kapcsolattartója
 TypeContact_propal_external_CUSTOMER=Ügyfélkapcsolat nyomon követési ajánlat

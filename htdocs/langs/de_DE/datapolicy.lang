@@ -19,7 +19,8 @@ Module4100Desc = Modul zur Verwaltung der Datenschutzeinstellungen (DSGVO-Konfor
 datapolicySetup = Modul Datenschutzrichtlinien einrichten
 DataDeletion=Löschung von Daten
 DataAnonymization=Anonymisierung von Daten
-datapolicySetupPage = Depending on the laws of your country (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Abhängig von den Gesetzen Ihres Landes (Beispiel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> der DSGVO) dürfen personenbezogene Daten nicht länger aufbewahrt werden, als die Dauer, für die die Daten für den Zweck, für den sie erhoben wurden, benötigt werden, mit Ausnahme von Archivierungszwecken.<br>Dieses Modul wird nach einer festgelegten Zeitspanne ohne Ereignisse (die Dauer, die Sie unten angeben) und wenn das Objekt keine existierenden Kind-Objekte hat, automatisch eine Anonymisierung vornehmen.
 NB_MONTHS = %s Monate
 ONE_YEAR = 1 Jahr
 NB_YEARS = %s Jahre
@@ -34,7 +35,8 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Interessent/Kunde
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Weder Interessent noch Kunde
 DATAPOLICY_CONTACT_FOURNISSEUR = Lieferant
 DATAPOLICY_ADHERENT = Mitglied
-DATAPOLICY_Tooltip_SETUP=Die Anonymisierung wird durch den geplanten Job "%s" durchgeführt, der von Modul "%s" ausgeführt wird. Daher muss dieses Modul aktiviert sein und korrekt funktionieren.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Bewerbung
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
 SendAgreementText = Sie können eine DSGVO-E-Mail an alle Ihre relevanten Kontakte senden (die noch keine E-Mail erhalten haben und für die Sie nichts über ihre DSGVO-Vereinbarung registriert haben). Verwenden Sie dazu die folgende Schaltfläche.
 SendAgreement = E-Mails senden
 AllAgreementSend = Alle E-Mails wurden versendet
@@ -52,3 +54,5 @@ DATAPOLICY_date = Datum der Zustimmung/Ablehnung DSGVO
 DATAPOLICY_send = Datum, an dem die Vereinbarungs-E-Mail gesendet wurde
 MailSent = Die Email wurde verschickt
 NUMBER_MONTH_BEFORE_DELETION = Anzahl der Monate bis zum Löschen
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

@@ -315,7 +315,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withtoreadonly) {
 				print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			} else {
-				print '<input class="width150" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
+				print '<input class="width150" id="sendto" name="sendto" spellcheck="false" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
 				if (!empty($this->withtosocid) && $this->withtosocid > 0) {
 					$liste = array();
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value) {

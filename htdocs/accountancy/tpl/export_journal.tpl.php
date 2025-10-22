@@ -3,7 +3,7 @@
  * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 // $downloadMode 	=0 for direct download or =1 to download after writing files or =-1 not to download files
 
 '
-@phan-var-force string $formatexportset
+@phan-var-force int $formatexportset
 @phan-var-force string $type_export
 @phan-var-force string $filename
 @phan-var-force int<-1,1> $downloadMode
@@ -33,7 +33,7 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var string $formatexportset
+ * @var int $formatexportset
  * @var string $type_export
  * @var string $filename
  * @var int<-1,1> $downloadMode

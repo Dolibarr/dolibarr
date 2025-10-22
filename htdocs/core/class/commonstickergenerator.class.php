@@ -5,7 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Francis Appels  <francis.appels@yahoo.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,12 +107,12 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_COUNTY = 1;
 	protected $_First = 1;
 	/**
-	 * @var ?array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}
+	 * @var ?array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}
 	 */
 	public $Tformat;
 
 	/**
-	 * @var array<string,array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>
+	 * @var array<string,array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>
 	 */
 	public $_Avery_Labels;
 	// phpcs:enable
@@ -227,7 +227,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
 	 * @param int	$y2					Y2
-	 * @param int	$epaisseur			Epaisseur
+	 * @param float	$epaisseur			Epaisseur
 	 * @param int	$taille             Size
 	 * @return void
 	 *
@@ -304,7 +304,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
+	 * @param    array{metric:string,name:string,code?:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:int}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)

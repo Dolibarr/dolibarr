@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré	    <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,11 @@ if (file_exists($conffile)) {
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  */
+
+'
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+';
 
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
@@ -117,7 +122,7 @@ print 'Option repair_link_dispatch_lines_supplier_order_lines, is '.(GETPOST('re
 print 'Option set_empty_time_spent_amount is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ? GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
 print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only, is '.(GETPOST('force_utf8_on_tables', 'alpha') ? GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
-print '<span class="valignmiddle">'."Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only, is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined');
+print '<span class="valignmiddle">'."Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic), for mysql/mariadb only, is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined');
 print '</span>';
 if ($dolibarr_main_db_character_set != 'utf8mb4') {
 	print '<img src="../theme/eldy/img/warning.png" class="pictofortooltip valignmiddle" title="If you switch to utf8mb4, you must also check the value for $dolibarr_main_db_character_set and $dolibarr_main_db_collation into conf/conf.php file.">';
@@ -135,12 +140,15 @@ print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 $error = 0;
 
 // If password is encoded, we decode it
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+if (preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 	require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 	if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+	} elseif (preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass);
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
@@ -858,6 +866,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 
 		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
 
+		$object_instance = null;
 		// To show ref or specific information according to view to show (defined by $module)
 		if ($modulepart == 'company') {
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -954,6 +963,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 	}
 }
 
+$methodtofix = '';
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$methodtofix = GETPOST('methodtofix', 'alpha') ? GETPOST('methodtofix', 'alpha') : 'updatestock';
@@ -1149,7 +1159,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 	foreach ($arraylistofkey as $key) {
 		$sql = "SELECT DISTINCT name, value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const as c";
-		$sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
+		$sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($db->escape($key))."'";
 		$sql .= " ORDER BY name";
 
 		$resql = $db->query($sql);

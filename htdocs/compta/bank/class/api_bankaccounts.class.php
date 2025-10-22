@@ -1,8 +1,9 @@
 <?php
 /*
- * Copyright (C) 2016 Xebax Christy <xebax@wanadoo.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2016 Xebax Christy 			<xebax@wanadoo.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025       Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +63,8 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
+	 * @phan-return Account[]
+	 * @phpstan-return Account[]
 	 *
 	 * @throws RestException
 	 */
@@ -111,6 +114,7 @@ class BankAccounts extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$account = new Account($this->db);
 				if ($account->fetch($obj->rowid) > 0) {
+					$account->balance = $account->solde(1);  // 1=Exclude future operation date
 					$list[] = $this->_filterObjectProperties($this->_cleanObjectDatas($account), $properties);
 				}
 			}
@@ -148,6 +152,8 @@ class BankAccounts extends DolibarrApi
 	 * Create account object
 	 *
 	 * @param	array $request_data		Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	int						ID of account
 	 */
 	public function post($request_data = null)
@@ -156,7 +162,7 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(403);
 		}
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$this->_validate($request_data);
 
 		$account = new Account($this->db);
 		// Date of the initial balance (required to create an account).
@@ -172,7 +178,7 @@ class BankAccounts extends DolibarrApi
 		}
 		// courant and type are the same thing but the one used when
 		// creating an account is courant
-		$account->courant = $account->type; // deprecated
+		$account->courant = $account->type; // deprecated, kept for backward compatibility
 
 		if ($account->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating bank account', array_merge(array($account->error), $account->errors));
@@ -194,6 +200,8 @@ class BankAccounts extends DolibarrApi
 	 * @url POST    /transfer
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string,bank_id_from:int,bank_id_to:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,bank_id_from:int,bank_id_to:int}}
 	 *
 	 * @status 201
 	 *
@@ -267,14 +275,14 @@ class BankAccounts extends DolibarrApi
 		 */
 
 		if (!$error) {
-			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * (float) price2num($amount), '', '', $user, $cheque_number);
+			$bank_line_id_from = $accountfrom->addline((int) $date, $typefrom, $description, -1 * (float) price2num($amount), '', 0, $user, $cheque_number);
 		}
 		if (!($bank_line_id_from > 0)) {
 			$error++;
 		}
 
 		if (!$error) {
-			$bank_line_id_to = $accountto->addline($date, $typeto, $description, price2num($amount_to), '', '', $user, $cheque_number);
+			$bank_line_id_to = $accountto->addline((int) $date, $typeto, $description, (float) price2num($amount_to), '', 0, $user, $cheque_number);
 		}
 		if (!($bank_line_id_to > 0)) {
 			$error++;
@@ -324,6 +332,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param	int    $id              ID of account
 	 * @param	array  $request_data    data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -369,6 +379,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int    $id    ID of account
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -396,13 +408,16 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$account = array();
 		foreach (BankAccounts::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -435,6 +450,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int $id ID of account
 	 * @return array Array of AccountLine objects
+	 * @phan-return AccountLine[]
+	 * @phpstan-return AccountLine[]
 	 *
 	 * @throws RestException
 	 *
@@ -527,7 +544,7 @@ class BankAccounts extends DolibarrApi
 		$num_releve = sanitizeVal($num_releve);
 
 		$result = $account->addline(
-			$date,
+			(int) $date,
 			$type,
 			$label,
 			$amount,
@@ -537,7 +554,7 @@ class BankAccounts extends DolibarrApi
 			$cheque_writer,
 			$cheque_bank,
 			$accountancycode,
-			$datev,
+			(int) $datev,
 			$num_releve
 		);
 		if ($result < 0) {
@@ -594,16 +611,15 @@ class BankAccounts extends DolibarrApi
 	 * @param int    $id    		ID of account
 	 * @param int    $line_id       ID of account line
 	 * @return array Array of links
+	 * @phan-return array<int,array{url:string,url_id:int,label:string,type:string,fk_bank:int}>
+	 * @phpstan-return array<int,array{url:string,url_id:int,label:string,type:string,fk_bank:int}>
 	 *
 	 * @throws RestException
 	 *
 	 * @url GET {id}/lines/{line_id}/links
-	 *
 	 */
 	public function getLinks($id, $line_id)
 	{
-		$list = array();
-
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
 		}
@@ -665,6 +681,8 @@ class BankAccounts extends DolibarrApi
 	 * @param int    $id    		ID of account
 	 * @param int    $line_id       ID of account line
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE {id}/lines/{line_id}
 	 */

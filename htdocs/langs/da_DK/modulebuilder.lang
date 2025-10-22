@@ -193,3 +193,5 @@ PageLinkedByAMenuEntry=Side linket af mindst én menuindgang
 FieldsEdit=Felter rediger
 FieldsInsert=Felter indsættes
 FieldsView=oversigt over felter
+AIPromptExtrafield=AI-prompt
+AIPromptExtrafieldDesc=De konstanter, der bruges i dette felt, vil blive erstattet med den tilsvarende værdi.

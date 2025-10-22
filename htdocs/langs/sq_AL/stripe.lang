@@ -12,6 +12,7 @@ YourEMail=Email për të marrë konfirmimin e pagesës
 STRIPE_PAYONLINE_SENDEMAIL=Njoftimi me email pas një përpjekjeje pagese (suksesshme ose dështuar)
 Creditor=Kreditori
 PaymentCode=Kodi i pagesës
+StripeAutoRecordPayout=Aktivizo regjistrimin automatik të transferit bankar (kur Stripe po kryen një pagesë dhe po thërret webhook IPN payout.create/payout.paid)
 StripeDoPayment=Paguani me Stripe
 YouWillBeRedirectedOnStripe=Do të ridrejtoheni në faqen e sigurt të Stripe për të futur informacionin e kartës së kreditit
 Continue=Tjetri
@@ -22,8 +23,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL për të ofruar një faqe pagese 
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL për të ofruar një %s faqe pagese në internet të çdo shume pa objekt ekzistues
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL për të ofruar një faqe pagese në internet %s për një abonim të anëtarëve
 ToOfferALinkForOnlinePaymentOnDonation=URL për të ofruar një faqe pagese në internet %s për pagesën e një donacioni
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
-YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
+YouCanAddTagOnUrl=Gjithashtu mund të shtoni parametrin url <b>&tag=value</b> në cilëndo prej këtyre URL-ve (i detyrueshëm vetëm për pagesat që nuk janë të lidhura me një objekt) për të shtuar etiketën tuaj të komentit të pagesës.<br>Për URL-në e pagesave pa objekt ekzistues, mund të shtoni edhe parametrin <strong>&noidempotency=1</strong> në mënyrë që e njëjta lidhje me të njëjtën etiketë të mund të përdoret disa herë. (disa mënyra pagese mund ta kufizojnë pagesën në 1 për secilën lidhje të ndryshme pa këtë parametër)
+YouCanEmbedOnWebsite=Nëse dëshironi të integroni faqen e pagesës në një faqe interneti Dolibarr, mund të përfshini parametrin: <b>&ws=website_ref</b>.<br>Përveç kësaj, dy faqe të emëruara <b>paymentok</b> dhe <b>pagesa</b> duhet të krijohet në faqen e internetit për të marrë ridrejtimin pas një pagese të suksesshme ose të dështuar online.
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Parametrat e llogarisё
 UsageParameter=Parametrat e përdorimit
@@ -33,6 +34,7 @@ CSSUrlForPaymentForm=URL-ja e fletës së stilit CSS për formularin e pagesës
 NewStripePaymentReceived=U mor pagesa New Stripe
 NewStripePaymentFailed=Pagesa New Stripe u përpoq, por dështoi
 FailedToChargeCard=Karikimi i kartës dështoi
+FailedToChargeSEPA=Dështoi në ngarkimin e SEPA-s
 STRIPE_TEST_SECRET_KEY=Çelësi sekret i provës
 STRIPE_TEST_PUBLISHABLE_KEY=Çelësi testues i publikueshëm
 STRIPE_TEST_WEBHOOK_KEY=Çelësi i testimit të Uebhook
@@ -88,3 +90,4 @@ ExampleOnlyForBECustomers=Vetëm për klientët belgjikë
 ExampleOnlyForDECustomers=Vetëm për klientët gjermanë
 ExampleOnlyForNLCustomers=Vetëm për klientët holandez
 ExampleOnlyForATBEDEITNLESCustomers=Vetëm për klientët nga Austria, Belgjika, Gjermania, Italia, Holanda, Spanja
+ListOfSupportedHooksToActivate=Lista e grepave të mbështetur për t'u aktivizuar

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017	    Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -284,6 +284,7 @@ if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		} else {
 			$selected = json_decode(getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', ''));
 		}
+		// Assuming $selected is correct type: @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		print $formactions->select_type_actions($selected, "AGENDA_DEFAULT_REMINDER_EVENT_TYPES", "systemauto", 0, -1, 1, 1);
 		print '</td></tr>';
 	}

@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2025 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks", "categories", 'withdrawals', 'bills'));
+$langs->loadLangs(array("banks", "categories", "companies", 'withdrawals', 'bills'));
 
 // Security check
 if ($user->socid > 0) {
@@ -76,6 +76,9 @@ $object = new BonPrelevement($db);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
+// Check if salary or invoice
+$salaryBonPl = $object->checkIfSalaryBonPrelevement();
+
 // Security check
 if ($user->socid > 0) {
 	accessforbidden();
@@ -87,7 +90,6 @@ if ($type == 'bank-transfer') {
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
-
 
 
 /*
@@ -225,11 +227,8 @@ $sql .= " WHERE p.rowid=".((int) $object->id);
 $sql .= " AND pl.fk_prelevement_bons = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('facture').")";
 $sql .= " AND pl.fk_soc = s.rowid";
-$sql .= " AND pl.statut = 3 ";
+$sql .= " AND pl.statut = 3";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
-/*if ($socid) {
-	$sql .= " AND s.rowid = ".((int) $socid);
-}*/
 $sql .= " ORDER BY pl.amount DESC";
 
 // Count total nb of records
@@ -252,16 +251,20 @@ if ($resql) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("Rejects"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
+	$param = '&id='.((int) $object->id);
+
 	print"\n<!-- debut table -->\n";
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
-	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td>';
-	print '<td class="center">';
+	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "pl.rowid", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre((!$salaryBonPl ? "ThirdParty" : "Employee"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", '', $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Reason", $_SERVER["PHP_SELF"], "pr.motif", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("ToBill", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("");
 	// Invoice to charge the error. No yet implemented.
 	//print $langs->trans("Invoice");
-	print '</td>';
 	print '</tr>';
 
 	$total = 0;
