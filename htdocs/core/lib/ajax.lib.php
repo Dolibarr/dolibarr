@@ -676,10 +676,11 @@ function ajax_event($htmlname, $events)
  *  @param  string      	$morecss                More CSS. Example: 'inline-block reposition'
  *  @param	User|int		$userconst				If set, use the ajax On/Off for user or user ID $userconst
  *  @param	string			$showwarning			String to show a warning when enabled the option
+ *  @param	int<0,1>		$disabled				If component must be disabled
  * 	@return string									The HTML component of button
  *  @see ajax_object_onoff() to update the status of an object
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0, $showwarning = '')
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0, $showwarning = '', $disabled = 0)
 {
 	global $conf, $langs, $user, $db;
 
@@ -704,52 +705,56 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 			$userconst->fetch($userconstid);
 		}
 
-		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
-		<script>
-			$(document).ready(function() {
-				var input = '.json_encode($input).';
-				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
-				var code = \''.dol_escape_js($code).'\';
-				var entity = \''.dol_escape_js((string) $entity).'\';
-				var strict = \''.dol_escape_js((string) $strict).'\';
-				var userid = \''.dol_escape_js((string) $user->id).'\';
-				var userconst = '.((int) $userconstid).';
-				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
-				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
-				var token = \''.currentToken().'\';
-				var warning = \''.dol_escape_js($showwarning).'\';
-
-				// Set constant
-				$("#set_" + code).click(function() {
-					if (warning) {
-						alert(warning);
-					}
-
-					if (input.alert && input.alert.set) {
-						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
-						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
-						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
-					} else {
-						setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 1, userconst);
-					}
-				});
-
-				// Del constant
-				$("#del_" + code).click(function() {
-					if (input.alert && input.alert.del) {
-						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
-						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
-						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
-					} else {';
-		if (empty($setzeroinsteadofdel)) {
-			$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, userconst);';
+		if ($disabled) {
+			$morecss .= ' disabled';
 		} else {
-			$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0, userconst);';
-		}
-		$out .= '	}
+			$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
+			<script>
+				$(document).ready(function() {
+					var input = '.json_encode($input).';
+					var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
+					var code = \''.dol_escape_js($code).'\';
+					var entity = \''.dol_escape_js((string) $entity).'\';
+					var strict = \''.dol_escape_js((string) $strict).'\';
+					var userid = \''.dol_escape_js((string) $user->id).'\';
+					var userconst = '.((int) $userconstid).';
+					var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
+					var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
+					var token = \''.currentToken().'\';
+					var warning = \''.dol_escape_js($showwarning).'\';
+
+					// Set constant
+					$("#set_" + code).click(function() {
+						if (warning) {
+							alert(warning);
+						}
+
+						if (input.alert && input.alert.set) {
+							if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
+							if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
+							confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
+						} else {
+							setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 1, userconst);
+						}
+					});
+
+					// Del constant
+					$("#del_" + code).click(function() {
+						if (input.alert && input.alert.del) {
+							if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
+							if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
+							confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
+						} else {';
+			if (empty($setzeroinsteadofdel)) {
+				$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, userconst);';
+			} else {
+				$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0, userconst);';
+			}
+			$out .= '	}
+					});
 				});
-			});
-		</script>'."\n";
+			</script>'."\n";
+		}
 
 		if (!empty($userconst) && $userconst instanceof User) {
 			$value = getDolUserString($code, '', $userconst);

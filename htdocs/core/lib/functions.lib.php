@@ -11302,10 +11302,10 @@ function dol_osencode($str)
  *
  * 		@param	DoliDB				$db				Database handler
  * 		@param	string|int			$key			Code (string) or Id (int) to get Id or Code
- * 		@param	string				$tablename		Table name without prefix
+ * 		@param	string				$tablename		Table name without prefix. Example 'c_input_method'
  * 		@param	string				$fieldkey		Field to search the key into
  * 		@param	string				$fieldid		Field to get
- *      @param  int					$entityfilter	Filter by entity
+ *      @param  int					$entityfilter	1=Filter by entity
  *      @param	string				$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
  *      @param	bool    			$useCache       If true (default), cache will be queried and updated.
  *      @return int<-1,max>|string					ID of code if OK, 0 if key empty, -1 if KO
