@@ -114,6 +114,7 @@ ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_an
 
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
 ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
+ALTER TABLE llx_facture ADD COLUMN pos_print_counter integer DEFAULT 0;
 
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
