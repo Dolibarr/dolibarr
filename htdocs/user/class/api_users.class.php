@@ -917,7 +917,7 @@ class Users extends DolibarrApi
 		);
 	}
 
-/**
+	/**
 	 * Delete a usergroup
 	 *
 	 * @since	23.0.0	Initial implementation
