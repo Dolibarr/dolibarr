@@ -160,29 +160,4 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 1;
 		}
 	}
-
-
-	/**
-	 * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
-	 * This function can be used to avoid to show the mandatory information "Certified LNE" on tickets when it is not true.
-	 *
-	 * @return boolean		True or false
-	 */
-	public function isALNECandidateVersion()
-	{
-		global $mysoc;
-
-		if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
-			return false;
-		}
-		if ($mysoc->country_code != 'FR') {
-			return false;
-		}
-		if (!defined('CERTIF_LNE') || !constant('CERTIF_LNE')) {
-			return false;
-		}
-		if (!isModEnabled('blockedlog')) {
-			return false;
-		}
-	}
 }

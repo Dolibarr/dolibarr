@@ -241,15 +241,22 @@ if (empty($error) && !empty($xml)) {
 		$out .= '<td class="center">'.$langs->trans("CurrentValue").'</td>';
 		$out .= '</tr>'."\n";
 
+		$i = 0;
+
 		if ($mode == 'unalterable') {
+			$i++;
+
 			$out .= '<tr class="oddeven">';
-			$out .= '<td></td>'."\n";
+			$out .= '<td>'.$i.'</td>'."\n";
 			$out .= '<td>'.$langs->trans("Country").'</td>'."\n";
 			$out .= '<td class="center"><span class="opacitymedium">'.$langs->trans("YourCountryCode").'</span></td>'."\n";
 			$out .= '<td class="center">'.$mysoc->country_code.'</td>'."\n";
 			$out .= "</tr>\n";
+
+			$i++;
+
 			$out .= '<tr class="oddeven">';
-			$out .= '<td></td>'."\n";
+			$out .= '<td>'.$i.'</td>'."\n";
 			$out .= '<td>'.$langs->trans("StatusOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td>'."\n";
 			$out .= '<td class="center">'.$langs->trans("Enabled").'</td>'."\n";
 			$out .= '<td class="center">';
@@ -257,10 +264,10 @@ if (empty($error) && !empty($xml)) {
 
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/modBlockedLog.class.php';
 			$objMod = new modBlockedLog($db);
-			$modulename = $objMod->getName();
+			/*$modulename = $objMod->getName();
 			$moduledesc = $objMod->getDesc();
 			$moduleauthor = $objMod->getPublisher();
-			$moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
+			$moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));*/
 			$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 			$htmltooltip = '<span class="opacitymedium">'.$langs->trans("LastActivationDate").':</span> ';
@@ -294,7 +301,6 @@ if (empty($error) && !empty($xml)) {
 			$out .= "</tr>\n";
 		}
 
-		$i = 0;
 		foreach ($xml->dolibarr_constants[0]->constant as $constant) {    // $constant is a simpleXMLElement
 			$constname = (string) $constant['name'];
 			$constvalue = (string) $constant;
@@ -310,6 +316,7 @@ if (empty($error) && !empty($xml)) {
 			$checksumconcat[$constname] = $valueforchecksum;
 
 			$i++;
+
 			$out .= '<tr class="oddeven">';
 			$out .= '<td>'.$i.'</td>'."\n";
 			$out .= '<td>'.dol_escape_htmltag($constname).'</td>'."\n";
@@ -544,7 +551,7 @@ if (empty($error) && !empty($xml)) {
 			$resultcode = 'ok';
 			$resultcomment = 'Success';
 			$outcurrentchecksum = '<span class="'.$resultcode.'" title="Checksum of all current checksums concatenated separated by a comma">'.$checksumget.'</span>';
-			$outcurrentchecksumtext.= img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
+			$outcurrentchecksumtext.= img_picto('', 'tick').' <span class="badge badge-status4 badge-status '.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 		}
 	} else {
 		$resultcode = 'error';
@@ -610,7 +617,7 @@ if (empty($error) && !empty($xml)) {
 
 	print '<br>';
 	print $outforlistoffiles;
-	print '<br>';
+	print '<br><br>';
 
 
 	// Output detail
