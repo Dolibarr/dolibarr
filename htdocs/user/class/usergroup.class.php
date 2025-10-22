@@ -723,6 +723,10 @@ class UserGroup extends CommonObject
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
 
+		if (!empty($this->note_private)) {
+			$this->note = $this->note_private; // Field for 'note_private' is called 'note' in database
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
