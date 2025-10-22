@@ -255,6 +255,8 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			if (!empty($values_arr)) {
 				$value = implode(',', $values_arr);
 			}
+		} elseif ($object->fields[$key]['type'] === 'password') {
+			$value = GETPOST($key, 'none');
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09');
