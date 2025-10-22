@@ -2575,7 +2575,7 @@ TextTranslation=Text translation
 ImageGeneration=Image generation
 VideoGeneration=Video generation
 AudioGeneration=Audio generation
-AIPromptForFeatures=AI custom prompts per features (AI service %s)
+AIPromptForFeatures=AI custom prompts (AI service %s)
 AIModelForFeature=AI model per features (AI service %s)
 NewCustomPrompt=New custom prompt
 AudioTranscription=Audio transcription
@@ -2662,7 +2662,7 @@ AlgorithmFor=Algorithm for: %s
 SensitiveData=Sensitive data
 ToolToDecryptAString=Tool to decrypt a string
 Decrypt=Decrypt
-FilesIntegrityDesc=If you want to check the integrity of files instead of database, you can do it by using <a href="%s">this tool</a>.
+FilesIntegrityDesc=If you want to check the integrity of files instead of database, you can do it by using <a href="%s"><span class="fas fa-external-link-alt pictofixedwidth"></span>this tool</a>.
 AttributeCodeHelp=A code of your choice (without special chars and spaces) to identify the property.<br>Note that if an object B is created from an existing object A that has a different type (for example creation of an invoice from an order), the value of the complementary attributes of A are also copied into the complementary attributes of B when the code of the attribute is the same.
 ThereIsMoreThanXAnswers=There is more than %s answers with your filter. Please add more filters...
 PdfAddTermOfSaleHelp=You can upload the file at the bottom of this setup page
@@ -2736,3 +2736,4 @@ ModuleProviderSites=Module providers
 StillInDevelopment=Still in development
 SeeValueIntoConfPhp=Some sensitive data in database are encrypted using this key. Without it, system backup and restoration is still possible but sensitive data (Tokens, BAN) would remain obfuscated and you will need to regenerate them.
 SeeValueIntoConfPhp2=For security purpose, this value can be read from a system user, that have file system access to the conf/conf.php file. If you need a non system backup, without encrypted data, you can use the "export" menu to export your data in clear CSV files.
+StatusOfModule=Status of module %s
