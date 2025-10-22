@@ -342,8 +342,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[1] = price2num((float) $result2bis - ((float) $result[0] + $localtaxes[1]), 'MT'); // Total VAT = TTC - (HT + localtax)
 
 		$result[3] = price2num($pu, 'MU');
-		$result[5] = price2num($pu * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[2], 'MT'); // Selon TVA NPR ou non
-		$result5bis = price2num($pu * (1 + ($txtva / 100)) + $localtaxes[2], 'MT'); // Si TVA consideree normal (non NPR)
+		$result[5] = price2num($pu * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[2], 'MU'); // Selon TVA NPR ou non
+		$result5bis = price2num($pu * (1 + ($txtva / 100)) + $localtaxes[2], 'MU'); // Si TVA consideree normal (non NPR)
 		$result[4] = price2num((float) $result5bis - ((float) $result[3] + $localtaxes[2]), 'MU');
 	} else {
 		// We work to define prices using the price with tax
@@ -357,10 +357,10 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result0bis = price2num((float) $tot_avec_remise / (1 + ((float) $txtva / 100)), 'MT'); // Si TVA consideree normal (non NPR)
 		$result[1] = price2num((float) $result[2] - ((float) $result0bis + (float) $localtaxes[1]), 'MT'); // Total VAT = TTC - (HT + localtax)
 
-		$result[5] = price2num($pu + $localtaxes[2], 'MT');
+		$result[5] = price2num($pu + $localtaxes[2], 'MU');
 		$result[3] = price2num($pu / (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), 'MU'); // Selon TVA NPR ou non
 		$result3bis = price2num($pu / (1 + ($txtva / 100)), 'MU'); // Si TVA consideree normal (non NPR)
-		$result[4] = price2num((float) $result[5] - ((float) $result3bis + (float) $localtaxes[2]), 'MT');
+		$result[4] = price2num((float) $result[5] - ((float) $result3bis + (float) $localtaxes[2]), 'MU');
 	}
 
 	// if there's some localtax without vat, we calculate localtaxes (we will add them at end)
