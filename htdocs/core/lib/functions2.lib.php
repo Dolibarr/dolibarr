@@ -2146,7 +2146,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
-	} elseif ($objecttype == 'task') {
+	} elseif ($objecttype == 'project_task') {
 		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
