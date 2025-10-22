@@ -763,7 +763,7 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Group not found');
 		}
 
-		return $this->_cleanObjectDatas($group_static);
+		return $this->_cleanUserGroup($group_static);
 	}
 
 	/**
@@ -1144,6 +1144,109 @@ class Users extends DolibarrApi
 			unset($object->thm);
 			unset($object->tjm);
 		}
+
+		return $object;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible usergroup object datas
+	 *
+	 * @param   Object	$object		Object to clean
+	 * @return  Object				Object with cleaned properties
+	 */
+	private function _cleanUserGroup($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+		unset($object->actiontypecode);
+		unset($object->all_permissions_are_loaded);
+		unset($object->array_languages);
+		unset($object->array_options);
+		unset($object->barcode_type_coder);
+		unset($object->barcode_type);
+		unset($object->canvas);
+		unset($object->civility_code);
+		unset($object->civility_id);
+		unset($object->clicktodial_loaded);
+		unset($object->cond_reglement_id);
+		unset($object->cond_reglement_supplier_id);
+		unset($object->contact_id);
+		unset($object->contacts_ids_internal);
+		unset($object->contacts_ids);
+		unset($object->country_code);
+		unset($object->country_id);
+		unset($object->date_cloture);
+		unset($object->date_creation);
+		unset($object->date_modification);
+		unset($object->date_validation);
+		unset($object->default_values);
+		unset($object->demand_reason_id);
+		unset($object->deposit_percent);
+		unset($object->extraparams);
+		unset($object->firstname);
+		unset($object->fk_account);
+		unset($object->fk_delivery_address);
+		unset($object->fk_incoterms);
+		unset($object->fk_multicurrency);
+		unset($object->fk_project);
+		unset($object->fk_user_creat);
+		unset($object->fk_user_modif);
+		unset($object->globalgroup);
+		unset($object->import_key);
+		unset($object->last_main_doc);
+		unset($object->lastname);
+		unset($object->lastsearch_values_tmp);
+		unset($object->lastsearch_values);
+		unset($object->ldap_sid);
+		unset($object->libelle_incoterms);
+		unset($object->lines);
+		unset($object->linkedObjectsIds);
+		unset($object->location_incoterms);
+		unset($object->members);
+		unset($object->mode_reglement_id);
+		unset($object->module);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_tx);
+		unset($object->nb_rights);
+		unset($object->nb_users);
+		unset($object->origin_id);
+		unset($object->origin_type);
+		unset($object->product);
+		unset($object->ref_ext);
+		unset($object->ref);
+		unset($object->region_id);
+		unset($object->retained_warranty_fk_cond_reglement);
+		unset($object->rights);
+		unset($object->search_sid);
+		unset($object->shipping_method_id);
+		unset($object->shipping_method);
+		unset($object->specimen);
+		unset($object->state_id);
+		unset($object->status);
+		unset($object->statut);
+		unset($object->total_ht);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+		unset($object->total_tva);
+		unset($object->totalpaid_multicurrency);
+		unset($object->totalpaid);
+		unset($object->transport_mode_id);
+		unset($object->TRIGGER_PREFIX);
+		unset($object->user_closing_id);
+		unset($object->user_creation_id);
+		unset($object->user_modification_id);
+		unset($object->user_validation_id);
+		unset($object->user);
+		unset($object->usergroup_entity);
+		unset($object->warehouse_id);
 
 		return $object;
 	}

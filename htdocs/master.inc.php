@@ -62,6 +62,7 @@ require_once 'filefunc.inc.php';
  * @var string $dolibarr_main_url_root
  * @var string $dolibarr_main_url_root_alt
  * @var string $dolibarr_main_document_root_alt
+ * @var string $dolibarr_main_stream_to_disable
  */
 '
 @phan-var-force ?string $dolibarr_main_db_prefix
@@ -73,6 +74,7 @@ require_once 'filefunc.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
+
 if (!function_exists('is_countable')) {
 	/**
 	 * function is_countable (to remove when php version supported will be >= 7.3)
@@ -83,6 +85,50 @@ if (!function_exists('is_countable')) {
 	function is_countable($c)
 	{
 		return is_array($c) || $c instanceof Countable;
+	}
+}
+
+
+/*
+ * Define some constants
+ */
+
+if (!defined('EURO')) {
+	define('EURO', chr(128));
+}
+
+// Define syslog constants
+if (!defined('LOG_DEBUG')) {
+	if (!function_exists("syslog")) {
+		// For PHP versions without syslog (like running on Windows OS)
+		define('LOG_EMERG', 0);
+		define('LOG_ALERT', 1);
+		define('LOG_CRIT', 2);
+		define('LOG_ERR', 3);
+		define('LOG_WARNING', 4);
+		define('LOG_NOTICE', 5);
+		define('LOG_INFO', 6);
+		define('LOG_DEBUG', 7);
+	}
+}
+
+/*
+ * Disable some not used PHP stream
+ */
+$listofwrappers = stream_get_wrappers();
+// We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
+// phar stream does not auto unserialize content (possible code execution) since PHP 8.1
+// zip stream is necessary by excel import module
+$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zlib');
+if (!empty($dolibarr_main_stream_to_disable) && is_array($dolibarr_main_stream_to_disable)) {
+	$arrayofstreamtodisable = $dolibarr_main_stream_to_disable;
+}
+foreach ($arrayofstreamtodisable as $streamtodisable) {
+	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {
+		/*if (!empty($dolibarr_main_stream_do_not_disable) && is_array($dolibarr_main_stream_do_not_disable) && in_array($streamtodisable, $dolibarr_main_stream_do_not_disable)) {
+			continue;	// We do not disable this stream
+		}*/
+		stream_wrapper_unregister($streamtodisable);
 	}
 }
 
