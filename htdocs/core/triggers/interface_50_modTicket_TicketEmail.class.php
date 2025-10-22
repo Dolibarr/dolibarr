@@ -276,7 +276,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						// Refuse email if not
 						$contactObj = new Contact($this->db);
 						$res = $contactObj->fetch($contactid);
-						if (! in_array($contactObj, $linked_contacts)) {
+						if (! in_array($contactObj->id, array_column($linked_contacts, 'id'))) {
 							$error_msg = $langs->trans('Error'). ': ';
 							$error_msg .= $langs->transnoentities('TicketWrongContact');
 							setEventMessages($error_msg, [], 'errors');
