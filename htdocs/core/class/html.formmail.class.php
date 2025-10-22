@@ -1723,7 +1723,7 @@ class FormMail extends Form
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *  @param	string		$label			Label of template to get
 	 *  @param  int         $defaultfortype 1=Only default templates, 0=Only not default, -1=All
-	 *  @return ModelMail|int<-1,-1>		One instance of ModelMail or < 0 if error
+	 *  @return ModelMail|CEmailTemplate|int<-1,-1>		One instance of CEmailTemplate or < 0 if error
 	 */
 	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '', $defaultfortype = -1)
 	{
@@ -1736,7 +1736,7 @@ class FormMail extends Form
 		if ($type_template === 'societe') {
 			$type_template = 'thirdparty';
 		}
-		$ret = new ModelMail($dbs);
+		$ret = new CEmailTemplate($dbs);
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
 		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
@@ -1936,7 +1936,7 @@ class FormMail extends Form
 					}
 				}
 
-				$line = new ModelMail($db);
+				$line = new CEmailTemplate($db);
 				$line->id = (int) $obj->rowid;
 				$line->label = (string) $obj->label;
 				$line->lang = $obj->lang;
