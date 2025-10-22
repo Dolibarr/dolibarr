@@ -25,6 +25,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
 
+
 /**
  * Object of table llx_c_email_templates
  */
@@ -565,10 +566,12 @@ class CEmailTemplate extends CommonObject
 }
 
 /**
- * old class name for Object of table llx_c_email_templates
+ * Old class name for Object of table llx_c_email_templates
  * I prefer the CEmailTemplate name as it better reflects the database
+ *
+ * @deprecated Use now class CEmailTemplate
  */
 class ModelMail extends CEmailTemplate
 {
-	// just another name
+	// just another name for compatibility
 }
