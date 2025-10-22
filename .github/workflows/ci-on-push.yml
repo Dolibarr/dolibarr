@@ -25,15 +25,15 @@ jobs:
     uses: ./.github/workflows/windows-ci.yml
     with:
       gh_event: ${{ github.event_name }}
-  gh-travis:  # Runs travis script on github runner (not on travis)
-    if: false
-    # needs: [pre-commit, phan]
-    # needs: [windows-ci]
-    secrets: inherit
-    needs: [pre-commit, phan, phpstan]
-    uses: ./.github/workflows/gh-travis.yml
-    with:
-      gh_event: ${{ github.event_name }}
+  #gh-travis:  # Runs travis script on github runner (not on travis)
+  #  if: false
+  #  # needs: [pre-commit, phan]
+  #  # needs: [windows-ci]
+  #  secrets: inherit
+  #  needs: [pre-commit, phan, phpstan]
+  #  uses: ./.github/workflows/gh-travis.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}
 
 # Note (not tested, from https://github.com/orgs/community/discussions/38361)
 # To cancel jobs if one fails, the following action may help

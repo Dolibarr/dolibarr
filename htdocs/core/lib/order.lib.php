@@ -192,6 +192,11 @@ function order_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/order_pdf.php';
+	$head[$h][1] = $langs->trans("PDF");
+	$head[$h][2] = 'pdf';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';

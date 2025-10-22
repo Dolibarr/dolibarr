@@ -4,77 +4,67 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Värbamine
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = Uute töökohtade värbamiskampaaniate haldamine ja jälgimine
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = Värbamise seadistamine
+RecruitmentSetupPage = Sisesta siia värbamismooduli peamised valikud
+RecruitmentArea=Värbamisvaldkond
+PublicInterfaceRecruitmentDesc=Töökohtade avalikud lehed on avalikud URL-id avatud töökohtade kuvamiseks ja neile vastamiseks. Iga avatud töö kohta on üks erinev link, mis asub iga töökuulutuse juures.
+EnablePublicRecruitmentPages=Luba avatud töökohtade avalikud lehed
 
-#
-# About page
-#
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+NbOfEmployeesExpected=Eeldatav töötajate arv
+JobLabel=Ametikoha silt
+WorkPlace=Töökoht
+DateExpected=Eeldatav kuupäev
+FutureManager=Tulevane juht
+ResponsibleOfRecruitement=Värbamise eest vastutav
+IfJobIsLocatedAtAPartner=Kui töökoht asub partnerettevõttes
 PositionToBeFilled=Ametikoht
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
+PositionsToBeFilled=Töökohad
+ListOfPositionsToBeFilled=Ametikohtade loetelu
+NewPositionToBeFilled=Uued töökohad
+JobOfferToBeFilled=Täidetav ametikoht
+ThisIsInformationOnJobPosition=Täidetava ametikoha teave
+ContactForRecruitment=Kontakt värbamiseks
+EmailRecruiter=Kirjuta värbajale
+ToUseAGenericEmail=Üldise e-posti aadressi kasutamiseks. Kui seda pole määratletud, kasutatakse värbamise eest vastutava isiku e-posti aadressi.
+NewCandidature=Uus taotlus
+ListOfCandidatures=Rakenduste loetelu
 Remuneration=Palk
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
-ContractProposed=Contract proposed
+RequestedRemuneration=Soovitud palk
+ProposedRemuneration=Soovituslik palk
+ContractProposed=Pakutud leping
 ContractSigned=Leping on allkirjastatud
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
-ConfirmClose=Confirm cancellation
-ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
-Recruitment=Recruitment
+ContractRefused=Lepingust keelduti
+RecruitmentCandidature=Taotlus
+JobPositions=Töökohad
+RecruitmentCandidatures=Rakendused
+InterviewToDo=Kontaktid, mida jälgida
+AnswerCandidature=Taotluse vastus
+YourCandidature=Teie avaldus
+YourCandidatureAnswerMessage=Täname teid avalduse eest.<br>...
+JobClosedTextCandidateFound=Töökoht on suletud. Ametikoht on täidetud.
+JobClosedTextCanceled=Töökoht on suletud.
+ExtrafieldsJobPosition=Täiendavad omadused (ametikohad)
+ExtrafieldsApplication=Täiendavad omadused (tööavaldused)
+MakeOffer=Tee pakkumine
+WeAreRecruiting=Otsime töötajaid. See on nimekiri vabadest ametikohtadest, mida soovitakse täita...
+NoPositionOpen=Hetkel pole ühtegi avatud ametikohta
+ConfirmClose=Kinnita tühistamine
+ConfirmCloseAsk=Kas olete kindel, et soovite selle värbamisavalduse tühistada?
+Recruitment=Värbamine
+ApplyJobCandidature=Kandideeri sellele tööle
+ErrorRecruitmmentCandidatureAlreadyExists= Värbamisavaldus on juba olemas e-posti aadressiga %s.
+RecruitmentCandidatureSaved=Värbamisavalduse salvestamine õnnestus
+NoOpenJobOffer=Hetkel pole ühtegi avatud tööpakkumist

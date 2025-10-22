@@ -21,18 +21,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Need to have the following variables defined:
- * $object (invoice, order, ...)
- * $conf
- * $langs
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
- * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * $outputalsopricetotalwithtax
- * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- *
- * $type, $text, $description, $line
  */
 
 /**
@@ -42,7 +30,13 @@
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var Conf $conf
  * @var User $user
+ *
+ * @var int $disableedit
+ * @var int $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * @var int $outputalsopricetotalwithtax
+ * @var int $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  */
 
  // Protection to avoid direct call of template
@@ -121,11 +115,13 @@ print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</t
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</th>';
+	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHT');
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
 
+// Price TTC
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
-	print '<th class="right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+	print '<th class="linecoluttc right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
 }
 
 // Qty
@@ -191,7 +187,17 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		print '</th>';
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
-		print '<th class="linecolmark1 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate');
+		if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == get_class($object)::STATUS_DRAFT) {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=markforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarkforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+			if (GETPOST('mode', 'aZ09') == 'markforalllines') {
+				print '<div class="classmarkforalllines inline-block nowraponall">';
+				print '<input type="number" name="markforalllines" min="0" max="999.9" value="20.0" step="0.1" class="width50"><label>%</label>';
+				print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforallmark" value="'.$langs->trans("Update").'">';
+				print '</div>';
+			}
+		}
+		print '</th>';
 	}
 }
 
@@ -200,11 +206,12 @@ print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</th>';
+	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort');
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
 
 if ($outputalsopricetotalwithtax) {
-	print '<th class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
+	print '<th class="linecolttc right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
 }
 
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {

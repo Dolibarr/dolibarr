@@ -64,6 +64,7 @@ class FormCategory extends Form
 		if ($multiselect) {
 			$categoryArray = $this->select_all_categories($type, '', '', 64, 0, 2);
 			if ($nocateg) {
+				$langs->load("categories");
 				$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
 			}
 			$htmlName = "search_category_".$type."_list";

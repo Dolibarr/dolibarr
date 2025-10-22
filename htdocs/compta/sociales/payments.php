@@ -8,7 +8,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ if ($year > 0) {
 if ($sortfield !== null
 	&& preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)
 ) {
-	$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order($sortfield, (string) $sortorder);
 }
 
 // Count total nb of records
@@ -226,7 +226,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre">';
-$formsocialcontrib->select_type_socialcontrib(GETPOSTISSET("search_sc_type") ? $search_sc_type : '', 'search_sc_type', 1, 0, 0, 'minwidth200 maxwidth300');
+$formsocialcontrib->select_type_socialcontrib(GETPOSTISSET("search_sc_type") ? (int) $search_sc_type : 0, 'search_sc_type', 1, 0, 0, 'minwidth200 maxwidth300');
 print '</td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';

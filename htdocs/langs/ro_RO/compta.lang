@@ -3,9 +3,9 @@ MenuFinancial=Facturare | Plăți
 TaxModuleSetupToModifyRules=Du-te la <a href="%s"> Configurare modul Taxe</a> pentru a modifica regulile de calcul
 TaxModuleSetupToModifyRulesLT=Du-te la <a href="%s">Setare Companie</a> pentru a modifica regulile de calcul
 OptionMode=Opţiune pentru evidenţa contabilă
-OptionModeTrue=Opţiunea Venituri-Cheltuieli
-OptionModeVirtual=Opţiunea Creanţe-Datorii
-OptionModeTrueDesc=În acest context, se calculează cifra de afaceri din plăţi (data de plată). Validitatea cifrelor este asigurată numai în cazul în care evidenţa contabilă este analizată prin intrare/ieşire de pe conturi, prin intermediul facturilor.
+OptionModeTrue=Contabilitate angajamente
+OptionModeVirtual=Contabilitate numerar
+OptionModeTrueDesc=În acest context, cifra de afaceri se calculează pe plăți (data plăților). Valabilitatea cifrelor este asigurată numai dacă evidența contabilă este controlată prin intrare/ieșire încasări și plăți.
 OptionModeVirtualDesc=În acest context, cifra de afaceri se calculează pe facturi (data de validare). Când aceste facturi se datorează, indiferent dacă acestea au fost plătite sau nu, ele sunt enumerate în cifra de afaceri de ieşire.
 FeatureIsSupportedInInOutModeOnly=Caracteristicã disponibilă doar în modul contabil CREDITE-DEBITE (vezi Configurare modul Contabilitate)
 VATReportBuildWithOptionDefinedInModule=Sumele prezentate aici sunt calculate folosind regulile definite de modul de configurare fiscală.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=Facturi de plătit (> 30 zile)
 ConfirmPreselectAccount=Preselectare cont contabil
 ConfirmPreselectAccountQuestion=Sigur vrei să preselectezi liniile selectate %s cu acest cod contabil?
 AmountPaidMustMatchAmountOfDownPayment=Suma plătită trebuie să corespundă cu valoarea avansului
+RuleForLinesDates=Regulă pentru datele liniilor
+Prepaid=Preplătit
+Postpaid=Plată ulterioară
+SetRuleForLinesDates=Setare regulă pentru datele liniilor

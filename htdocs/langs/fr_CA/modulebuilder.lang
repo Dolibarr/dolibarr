@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-IdModule=Identifiant du module
 ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs expérimentés ou des développeurs. Il fournit des utilitaires pour créer ou modifier votre propre module. La documentation pour le développement manuel alternatif <a href="%s" target="_blank" rel="noopener noreferrer"> est disponible ici</a>.
 EnterNameOfModuleDesc=Saisissez le nom du module/application à créer sans espace. Utilisez des majuscules pour séparer les mots (par exemple : MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Entrez le nom de l'objet à créer sans espace. Utilisez des majuscules pour séparer les mots (Par exemple : MonObjet, Etudiant, Enseignant...). Le fichier de classe CRUD, les pages pour lister/ajouter/éditer/supprimer l'objet et les fichiers SQL seront générés.
@@ -38,7 +37,6 @@ FileNotYetGenerated=Fichier pas encore généré
 GenerateCode=Générer du code
 RegenerateMissingFiles=Générer les fichiers manquants
 SpecificationFile=Dossier de documentation
-LanguageFile=Fichier pour la langue
 PropertyDesc=Une propriété est un attribut qui caractérise un objet. Cet attribut possède un code, un libellé et un type avec plusieurs options.
 ConfirmDeleteProperty=Êtes-vous sûr de vouloir supprimer la propriété <strong>%s</strong> ? Cela modifiera le code de la classe PHP mais supprimera également la colonne de la définition de table de l'objet.
 NotNull=Pas NULL

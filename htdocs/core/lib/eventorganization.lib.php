@@ -65,6 +65,11 @@ function eventorganizationAdminPrepareHead()
 	$head[$h][2] = 'conferenceorboothattendee_extrafields';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/eventorganization_public.php';
+	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+	$head[$h][2] = 'public';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(

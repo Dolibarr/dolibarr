@@ -3,9 +3,9 @@ MenuFinancial=结算|付款
 TaxModuleSetupToModifyRules=转到<a href="%s">税务模块</a>设置修改计算规则
 TaxModuleSetupToModifyRulesLT=请到 <a href="%s">公司设置</a> 修改计算规则
 OptionMode=会计选项
-OptionModeTrue=期权投入产出
-OptionModeVirtual=期权索赔-债务
-OptionModeTrueDesc=在这种情况下，营业额计算超过付款(付款日期)。 此这些数字的有效性是有保证的只有当簿记审议通过输入/输出通过发票上的账目。
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=在这种情况下，营业额计算超过发票（验证的日期）。当这些发票是因为，不论是否已支付或没有，他们在输出中列出的营业额。
 FeatureIsSupportedInInOutModeOnly=功能只在信用额，债务提供会计模式（见会计模块的配置）
 VATReportBuildWithOptionDefinedInModule=这里显示的数额计算使用由税务模块设置定义的规则。
@@ -325,3 +325,7 @@ InvoiceToPay30Days=待付款（> 30 天）
 ConfirmPreselectAccount=预选科目代码
 ConfirmPreselectAccountQuestion=您确定要使用此会计科目代码预先选定 %s 所选定的行吗？
 AmountPaidMustMatchAmountOfDownPayment=支付的金额必须与预付款的金额一致
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

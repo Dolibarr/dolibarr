@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,21 +92,20 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	't.rowid'			=> array('checked' => 1, 'position' => 10, 'label' => "Ref",),
-	't.label'			=> array('checked' => 1, 'position' => 20, 'label' => "Label"),
-	't.datev'			=> array('checked' => 1, 'position' => 30, 'label' => "PeriodEndDate"),
-	't.fk_typepayment'	=> array('checked' => 1, 'position' => 50, 'label' => "DefaultPaymentMode"),
-	't.amount'			=> array('checked' => 1, 'position' => 90, 'label' => "Amount"),
-	't.datec'			=> array('checked' => 1, 'position' => 91, 'label' => "DateCreation"),
-	't.status'			=> array('checked' => 1, 'position' => 92, 'label' => "Status"),
+	't.rowid'			=> array('checked' => '1', 'position' => 10, 'label' => "Ref",),
+	't.label'			=> array('checked' => '1', 'position' => 20, 'label' => "Label"),
+	't.datev'			=> array('checked' => '1', 'position' => 30, 'label' => "PeriodEndDate"),
+	't.fk_typepayment'	=> array('checked' => '1', 'position' => 50, 'label' => "DefaultPaymentMode"),
+	't.amount'			=> array('checked' => '1', 'position' => 90, 'label' => "Amount"),
+	't.datec'			=> array('checked' => '1', 'position' => 91, 'label' => "DateCreation"),
+	't.status'			=> array('checked' => '1', 'position' => 92, 'label' => "Status"),
 );
 
 if (isModEnabled("bank")) {
-	$arrayfields['t.fk_account'] = array('checked' => 1, 'position' => 60, 'label' => "DefaultBankAccount");
+	$arrayfields['t.fk_account'] = array('checked' => '1', 'position' => 60, 'label' => "DefaultBankAccount");
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salestaxeslist'));

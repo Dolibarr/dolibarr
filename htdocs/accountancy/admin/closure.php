@@ -142,7 +142,7 @@ foreach ($list_account_main as $key) {
 	$keydesc = $key.'_Desc';
 
 	$htmltext = $langs->trans($keydesc);
-	print '<td class="fieldrequired" width="50%">';
+	print '<td>';
 	print $form->textwithpicto($label, $htmltext);
 	print '</td>';
 	// Value
@@ -154,7 +154,7 @@ foreach ($list_account_main as $key) {
 
 // Journal
 print '<tr class="oddeven">';
-print '<td class="fieldrequired">'.$langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL").'</td>';
+print '<td>'.$langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL").'</td>';
 print '<td>';
 $defaultjournal = getDolGlobalString('ACCOUNTING_CLOSURE_DEFAULT_JOURNAL');
 print $formaccounting->select_journal($defaultjournal, "ACCOUNTING_CLOSURE_DEFAULT_JOURNAL", 9, 1, 0, 0);
@@ -162,7 +162,7 @@ print '</td></tr>';
 
 // Accounting groups used for the balance sheet account
 print '<tr class="oddeven">';
-print '<td class="fieldrequired">';
+print '<td>';
 print $form->textwithpicto($langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT"), $langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp"));
 print '</td>';
 print '<td>';
@@ -171,7 +171,7 @@ print '</td></tr>';
 
 // Accounting groups used for the income statement
 print '<tr class="oddeven">';
-print '<td class="fieldrequired">';
+print '<td>';
 print $form->textwithpicto($langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT"), $langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp"));
 print '</td>';
 print '<td>';

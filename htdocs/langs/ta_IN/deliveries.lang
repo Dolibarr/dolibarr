@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=டெலிவரி
 DeliveryRef=ரெஃப் டெலிவரி
-DeliveryCard=Stock receipt
+DeliveryCard=Delivery receipt
 DeliveryOrder=விநியோக ரசீது
 DeliveryDate=டெலிவரி தேதி
 CreateDeliveryOrder=விநியோக ரசீதை உருவாக்கவும்
 DeliveryStateSaved=விநியோக நிலை சேமிக்கப்பட்டது
-SetDeliveryDate=ஷிப்பிங் தேதியை அமைக்கவும்
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Set shipping date
 ValidateDeliveryReceipt=டெலிவரி ரசீதை சரிபார்க்கவும்
 ValidateDeliveryReceiptConfirm=இந்த டெலிவரி ரசீதை நிச்சயமாக சரிபார்க்க விரும்புகிறீர்களா?
 DeleteDeliveryReceipt=டெலிவரி ரசீதை நீக்கு

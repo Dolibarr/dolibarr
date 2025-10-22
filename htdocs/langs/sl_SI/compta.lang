@@ -3,9 +3,9 @@ MenuFinancial=Obračunavanje | Plačilo
 TaxModuleSetupToModifyRules=Pojdite na nastavitev <a href="%s">Davčnega modula</a>  za spremembo kalkulacijskih pravil
 TaxModuleSetupToModifyRulesLT=Pojdite na <a href="%s"> Nastavitev podjetja </a>, da spremenite pravila za izračun
 OptionMode=Opcija za računovodstvo
-OptionModeTrue=Opcija Input-Output
-OptionModeVirtual=Opcija Kredit-Debit
-OptionModeTrueDesc=V tem kontekstu je letni promet kalkuliran na osnovi plačil (datumov plačila). Veljavnost številk je zagotovljena le, če je knjigovodstvo  pregledano v smislu prejemkov/izdatkov na kontih preko računov.
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=V tem kontekstu je letni promet kalkuliran na osnovi računov (datumov potrditve). Ko računi zapadejo, ne glede ali so bili plačani ali ne, se upoštevajo v prikazu letnega prometa.
 FeatureIsSupportedInInOutModeOnly=Funkcija je na voljo samo pri računovodskem načinu KREDIT-DEBIT (Glejte konfiguracijo računovodskega modula)
 VATReportBuildWithOptionDefinedInModule=Tukaj prikazani zneski so preračunani po pravilih, ki so definirana v nastavitvah modula davkov.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=Za plačilo (> 30 dni)
 ConfirmPreselectAccount=Vnaprej izberite šifro računovodstva
 ConfirmPreselectAccountQuestion=Ali ste prepričani, da želite vnaprej izbrati %s izbrane vrstice s to računovodsko kodo?
 AmountPaidMustMatchAmountOfDownPayment=Plačani znesek se mora ujemati z zneskom pologa
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

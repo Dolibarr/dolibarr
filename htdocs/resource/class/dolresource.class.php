@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015		Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -127,7 +127,7 @@ class Dolresource extends CommonObject
 	public $objelement;
 
 	/**
-	 * @var array<int,array{code:string,label:string,active:int}>	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
+	 * @var array<int,array{code:string,label:string,active:int}>	Cache of type of resources. TODO Use->cache['type_of_resources'] instead
 	 */
 	public $cache_code_type_resource;
 
@@ -148,9 +148,9 @@ class Dolresource extends CommonObject
 	/**
 	 * Create object in database
 	 *
-	 * @param	User	$user		User that creates
-	 * @param	int		$no_trigger	0=launch triggers after, 1=disable triggers
-	 * @return	int					if KO: <0 || if OK: Id of created object
+	 * @param	User		$user		User that creates
+	 * @param	int<0,1>	$no_trigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						if KO: <0 || if OK: Id of created object
 	 */
 	public function create(User $user, int $no_trigger = 0)
 	{
@@ -412,7 +412,7 @@ class Dolresource extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
+		if (!$error && $user !== null) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('RESOURCE_MODIFY', $user);
@@ -517,9 +517,9 @@ class Dolresource extends CommonObject
 	/**
 	 * Delete a resource object
 	 *
-	 * @param	User	$user			User making the change
-	 * @param	int		$notrigger		Disable all triggers
-	 * @return	int						if OK: >0 || if KO: <0
+	 * @param	User		$user			User making the change
+	 * @param	int<0,1>	$notrigger		Disable all triggers
+	 * @return	int							if OK: >0 || if KO: <0
 	 */
 	public function delete(User $user, int $notrigger = 0)
 	{
@@ -759,7 +759,7 @@ class Dolresource extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
+		if (!$error && $user !== null) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('RESOURCE_MODIFY', $user);
@@ -913,12 +913,12 @@ class Dolresource extends CommonObject
 	/**
 	 * Return clickable link of object (with optional picto)
 	 *
-	 *	@param		int		$withpicto					Add picto into link
-	 *	@param		string	$option						Where point the link ('compta', 'expedition', 'document', ...)
-	 *	@param		string	$get_params					Parameters added to url
-	 *	@param		int		$notooltip					1=Disable tooltip
-	 *  @param		string	$morecss                    Add more css on link
-	 *  @param		int		$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param		int<0,2>	$withpicto					Add picto into link
+	 *	@param		string		$option						Where point the link ('compta', 'expedition', 'document', ...)
+	 *	@param		string		$get_params					Parameters added to url
+	 *	@param		int<0,1>	$notooltip					1=Disable tooltip
+	 *  @param		string		$morecss                    Add more css on link
+	 *  @param		int<-1,1>	$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, string $option = '', string $get_params = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
@@ -995,7 +995,7 @@ class Dolresource extends CommonObject
 	/**
 	 * Get status label
 	 *
-	 * @param		int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param		int<0,6>	$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @return		string				Label of status
 	 */
 	public function getLibStatut(int $mode = 0)
@@ -1006,8 +1006,8 @@ class Dolresource extends CommonObject
 	/**
 	 * Get status
 	 *
-	 * @param	int		$status		Id status
-	 * @param	int		$mode 		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
+	 * @param	int			$status	Id status
+	 * @param	int<0,6>	$mode 	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 * @return	string				Label of status
 	 */
 	public static function getLibStatusLabel(int $status, int $mode = 0)

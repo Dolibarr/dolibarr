@@ -3,9 +3,9 @@ MenuFinancial=Norēķini | Maksājums
 TaxModuleSetupToModifyRules=Iet uz <a href="%s">Nodokļi moduļa uzstādīšanas</a> mainīt aprēķināšanas noteikumus
 TaxModuleSetupToModifyRulesLT=Iet uz <a href="%s">Kompānijas iestatījumiem</a> lai labotu aprēķina noteikumus
 OptionMode=Variants grāmatvedības
-OptionModeTrue=Variants Ienākumi-Izdevumi
-OptionModeVirtual=Variants Prasības-parādi
-OptionModeTrueDesc=Šajā kontekstā, apgrozījums tiek aprēķināts par maksājumiem (datums maksājumiem). No skaitļiem derīgums tiek nodrošināta tikai tad, ja grāmatvedība tiek rūpīgi caur ieejas / izejas uz Via rēķiniem kontiem.
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=Šajā kontekstā, apgrozījumu aprēķina rēķinu (datums validāciju). Kad šie rēķini ir jāmaksā, vai tie ir vai nav maksāts, tās ir uzskaitītas apgrozījuma produkciju.
 FeatureIsSupportedInInOutModeOnly=Funkcija pieejama tikai kredītpunktu-parādi grāmatvedības režīmā (skatīt grāmatvedības uzskaites moduļa konfigurācija)
 VATReportBuildWithOptionDefinedInModule=Summas, kas norādītas šeit tiek aprēķinātas, izmantojot noteikumus, kas paredzēti ar nodokli moduļa uzstādīšanas.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=Lai samaksātu (> 30 dienas)
 ConfirmPreselectAccount=Iepriekš atlasiet grāmatvedības kodu
 ConfirmPreselectAccountQuestion=Vai tiešām vēlaties iepriekš atlasīt %s atlasītās rindas ar šo grāmatvedības kodu?
 AmountPaidMustMatchAmountOfDownPayment=Samaksātajai summai ir jāatbilst pirmās iemaksas summai
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

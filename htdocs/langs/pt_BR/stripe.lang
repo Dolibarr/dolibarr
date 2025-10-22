@@ -1,7 +1,14 @@
 # Dolibarr language file - Source file is en_US - stripe
-StripeSetup=Configuração do módulo de boleto
+StripeSetup=Configuração do Módulo Stripe
+StripeDesc=Ofereça aos seus clientes uma página de pagamento online para pagamentos com cartão de crédito/débito via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. Isso pode ser usado para permitir que seus clientes façam pagamentos pontuais ou para pagamentos relacionados a um objeto Dolibarr específico (fatura, pedido, etc.).
 StripeOrCBDoPayment=Pagar com cartão de crédito ou boleto
-YouWillBeRedirectedOnStripe=Você será redirecionado na página de boleto protegida para inserir as informações do cartão de crédito
+FollowingUrlAreAvailableToMakePayments=As seguintes URL estão disponíveis para permitir a um cliente efetuar um pagamento
+PaymentForm=Formulário de Pagamento
+ThisScreenAllowsYouToPay=Esta página lhe permite fazer seu pagamento on-line destinado a %s.
+ThisIsInformationOnPayment=Aqui está a informação sobre o pagamento a realizar
+YourEMail=E-mail de confirmação de pagamento
+Creditor=Beneficiário
+YouWillBeRedirectedOnStripe=Você será redirecionado à página de boleto protegida para inserir as informações do cartão de crédito
 ToOfferALinkForOnlinePayment=URL para %s pagamento
 ToOfferALinkForOnlinePaymentOnOrder=URL para oferecer uma página de pagamentos on-line de %s para pedidos de vendas
 ToOfferALinkForOnlinePaymentOnInvoice=URL para oferecer uma página de pagamentos on-line de %s para faturas de clientes
@@ -9,28 +16,51 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL para oferecer uma página de paga
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL para oferecer uma página de pagamentos on-line de %s de qualquer valor sem objeto específico
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma página de pagamentos online de %s para assinaturas de membros
 ToOfferALinkForOnlinePaymentOnDonation=URL para oferecer %s página de pagamentos online para pagamentos de doação
-SetupStripeToHavePaymentCreatedAutomatically=Configure seu boleto com url <b> %s </b> para que o pagamento seja criado automaticamente quando validado por boleto
-STRIPE_CGI_URL_V2=Url de boleto CGI módulo para pagamento
-NewStripePaymentReceived=Pagamento de novo boleto recebido
-NewStripePaymentFailed=O pagamento do novo boleto tentou, mas falhou
-FailedToChargeCard=Falha ao carregar o cartão
-STRIPE_TEST_SECRET_KEY=Senha
-STRIPE_TEST_PUBLISHABLE_KEY=Senha editável
-STRIPE_LIVE_SECRET_KEY=Chave ao vivo secreta
-STRIPE_LIVE_PUBLISHABLE_KEY=Chave editável
-StripeLiveEnabled=Boleto ativado (caso contrário teste / modo cx)
-StripeImportPayment=Importação de pagamentos de franquia
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+YouCanAddTagOnUrl=Você também pode adicionar o parâmetro de URL <b>&tag=value</b> a qualquer uma dessas URLs (obrigatório apenas para pagamentos não vinculados a um objeto) para adicionar sua própria tag de comentário de pagamento.<br>Para a URL de pagamentos sem objeto existente, você também pode adicionar o parâmetro <strong>&noidempotency=1</strong> para que o mesmo link com a mesma tag possa ser usado várias vezes (alguns modos de pagamento podem limitar o pagamento a 1 para cada link diferente sem esse parâmetro)
+YouCanEmbedOnWebsite=Se você quiser integrar a página de pagamento em um site Dolibarr, você pode incluir o parâmetro: <b>&ws=website_ref</b>.<br>Além disso, duas páginas chamadas <b>paymentok</b> e <b>paymentko</b> devem ser criadas no site para receber o redirecionamento após um pagamento on-line bem-sucedido ou com falha.
+SetupStripeToHavePaymentCreatedAutomatically=Configure seu Steipe com url <b> %s </b> para que o pagamento seja criado automaticamente quando validado por boleto
+AccountParameter=Parâmetros da conta
+InformationToFindParameters=Ajuda para encontrar as informações da sua conta %s
+STRIPE_CGI_URL_V2=URL do módulo Stripe CGI para pagamento
+CSSUrlForPaymentForm=CSS style sheet URL para modelo de pagamento
+NewStripePaymentFailed=Novo pagamento Stripe tentado, mas falhou
+FailedToChargeCard=Falha ao cobrar o cartão
+STRIPE_TEST_SECRET_KEY=Segredo (ambiente de teste)
+STRIPE_TEST_PUBLISHABLE_KEY=Chave (ambiente de teste)
+STRIPE_TEST_WEBHOOK_KEY=Chave da Webhook (ambiente de teste)
+STRIPE_LIVE_SECRET_KEY=Segredo (ambiente de produção)
+STRIPE_LIVE_PUBLISHABLE_KEY=Chave (ambiente de produção)
+STRIPE_LIVE_WEBHOOK_KEY=Chave da Webhook (ambiente de produção)
+ONLINE_PAYMENT_WAREHOUSE=Estoque a ser usado para redução de estoque quando o pagamento on-line é feito <br>
+StripeLiveEnabled=Ambiente de produção Stripe habilitado
+StripeImportPayment=Importar pagamentos Stripe
+ExampleOfTestCreditCard=Exemplo de cartão de crédito para um pagamento de teste: %s => válido, %s => erro CVC, %s => expirado, %s => falha na cobrança
+ExampleOfTestBankAcountForSEPA=Exemplo de IBAN de conta bancária para teste de débito direto: %s
+StripeGateways=Gateways do Stripe
+BankAccountForBankTransfer=Conta bancária para transferência de fundos
 StripeAccount=Conta Stripe
 StripeTransactionList=Lista de transações Stripe
+StripeCustomerId=ID do cliente Stripe
+StripePaymentId=ID de pagamento Stripe
+StripePaymentModes=Modos de pagamento Stripe
 LocalID=ID local
+StripeID=IID do Stripe
 CardNumber=Número do cartão
 ExpiryDate=Data de validade
-CreateCustomerOnStripe=Crie um cliente na Stripe
+CVN=CVV
+CreateCustomerOnStripe=Crie um cliente no Stripe
 CreateCardOnStripe=Criar cartão no Stripe
-ShowInStripe=Mostrar na Stripe
+ShowInStripe=Mostrar no Stripe
 StripeUserAccountForActions=Conta de usuário a ser usada para notificação por e-mail de alguns eventos do Stripe (pagamentos Stripe)
 StripePayoutList=Lista de pagamentos do Stripe
 ToOfferALinkForTestWebhook=Link para configurar o Stripe WebHook para chamar o IPN (modo de teste)
 ToOfferALinkForLiveWebhook=Link para configurar Stripe WebHook para chamar o IPN (modo ao vivo)
-ClickHereToTryAgain=<a href="%s"> Clique aqui para tentar novamente ... </a>
+ClickHereToTryAgain=<a href="%s"> Clique aqui para tentar novamente... </a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Devido às regras de Autenticação Forte do Cliente, a criação de um cartão deve ser feita no back office do Stripe. Você pode clicar aqui para ativar o registro de cliente do Stripe: %s
+STRIPE_CARD_PRESENT=Cartão Presente para Terminais Stripe
+TERMINAL_LOCATION=Localização (endereço) para terminais Stripe
+RequestDirectDebitWithStripe=Solicitar débito direto com Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Habilitar pagamentos por débito direto através do Stripe
+ExampleOnlyForBECustomers=Somente para clientes belgas
+ExampleOnlyForDECustomers=Somente para clientes alemães
+ExampleOnlyForNLCustomers=Somente para clientes holandeses

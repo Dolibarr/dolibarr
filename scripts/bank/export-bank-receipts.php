@@ -2,7 +2,7 @@
 <?php
 /*
  * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 if (!isset($argv[3]) || !$argv[3]) {
 	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
@@ -120,7 +120,7 @@ if (!empty($newlangid)) {
 $outputlangs->loadLangs(array("main", "companies", "bills", "banks", "members", "compta"));
 
 $acct = new Account($db);
-$result = $acct->fetch('', $bankref);
+$result = $acct->fetch(0, $bankref);
 if ($result <= 0) {
 	print "Failed to find bank account with ref ".$bankref.".\n";
 	exit(1);
@@ -138,6 +138,7 @@ if (!dol_is_file($dir.$file)) {
 }
 require_once $dir.$file;
 $objmodel = new $classname($db);
+'@phan-var-force ModeleExports|ExportCsv $objmodel';
 
 // Define target path
 $dirname = $conf->bank->dir_temp;
@@ -247,7 +248,7 @@ if ($resql) {
 		}
 
 		$totalbefore = $total;
-		$total = $total + $objp->amount;
+		$total += $objp->amount;
 
 		// Date operation
 		$dateop = $db->jdate($objp->do);
@@ -375,10 +376,10 @@ if ($resql) {
 
 		$debit = $credit = '';
 		if ($objp->amount < 0) {
-			$totald = $totald + abs($objp->amount);
+			$totald += abs($objp->amount);
 			$debit = price2num($objp->amount * -1);
 		} else {
-			$totalc = $totalc + abs($objp->amount);
+			$totalc += abs($objp->amount);
 			$credit = price2num($objp->amount);
 		}
 

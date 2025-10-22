@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -235,7 +236,7 @@ if ($action == 'inactive' && $permissiontoadd) {
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
+	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
 		$objectutil = dol_clone($object, 1); // We clone to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use the native clone to keep this->db valid.
@@ -437,7 +438,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
-	print '<select name="nbfrequency">';
+	print '<select name="nbfrequency" id="nbfrequency" class="width50 maxwidth50imp">';
 	for ($i = 1; $i <= 60; $i++) {
 		if ($object->frequency == $i) {
 			print "<option value='".$i."' selected>".$i."</option>";
@@ -446,7 +447,8 @@ if (($action == "create") || ($action == "edit")) {
 		}
 	}
 	print "</select>";
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
+	print ajax_combobox('nbfrequency');
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
 	if ($object->unitfrequency == "60") {
 		$input .= ' checked />';
 	} else {
@@ -455,7 +457,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_minute\">".$langs->trans('Minutes')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
 	if ($object->unitfrequency == "3600") {
 		$input .= ' checked />';
 	} else {
@@ -464,7 +466,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_heures\">".$langs->trans('Hours')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
 	if ($object->unitfrequency == "86400") {
 		$input .= ' checked />';
 	} else {
@@ -473,7 +475,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_jours\">".$langs->trans('Days')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
 	if ($object->unitfrequency == "604800") {
 		$input .= ' checked />';
 	} else {
@@ -482,7 +484,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_semaine\">".$langs->trans('Weeks')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
 	if ($object->unitfrequency == "2678400") {
 		$input .= ' checked />';
 	} else {
@@ -637,7 +639,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
 	if (!is_null($object->note_private) && $object->note_private != '') {
-		print '<span class="small">'.$langs->trans($object->note_private).'</small>';
+		print '<div class="small lineheightsmall">'.$langs->trans($object->note_private).'</div>';
 	}
 	print "</td></tr>";
 

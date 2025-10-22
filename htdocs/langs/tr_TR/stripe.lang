@@ -12,6 +12,7 @@ YourEMail=Ödeme alındısı onayı için e-posta adresi
 STRIPE_PAYONLINE_SENDEMAIL=Bir ödeme denemesinden sonra e-posta bildirimi (başarılı veya başarısız)
 Creditor=Alacaklı
 PaymentCode=Ödeme kodu
+StripeAutoRecordPayout=banka havalesi'in otomatik kaydını etkinleştirin (Stripe ödeme yaparken ve webhook IPN ödemesini çağırdığında.oluştur/payout.Ödendi)
 StripeDoPayment=Stripe ile Öde
 YouWillBeRedirectedOnStripe=Kredi kartı bilgilerini girmek için güvenli Stripe sayfasında yönlendirileceksiniz
 Continue=Sonraki
@@ -22,7 +23,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=Bir sözleşme satırı için %s çev
 ToOfferALinkForOnlinePaymentOnFreeAmount=Mevcut bir nesne olmadan, herhangi bir tutarda %s çevrimiçi ödeme sayfası sunan URL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Üye aboneliği için %s çevrimiçi ödeme sayfası sunan URL
 ToOfferALinkForOnlinePaymentOnDonation=Bağışın ödenmesi için %s çevrimiçi ödeme sayfası sunan URL
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanAddTagOnUrl=Ayrıca, bu URL'lerden herhangi birine <b>&etiket=value</b> URL parametresini ekleyerek (sadece bir nesneye bağlı olmayan Ödeme için zorunludur) kendi Ödeme yorumunuzu etiket ekleyebilirsiniz.<br> Mevcut nesnesi olmayan ödemelerin URL'leri için <strong>&noidempotency=1</strong> parametresini de ekleyebilirsiniz, böylece aynı bağlantı aynı etiket ile birkaç kez kullanılabilir (bazı Ödeme modu Ödeme'i bu parametre olmadan her farklı bağlantı için 1'e ayarlayın)
 YouCanEmbedOnWebsite=Ödeme sayfasını bir Dolibarr web sitesine entegre etmek istiyorsanız şu parametreyi ekleyebilirsiniz: <b>&ws=website_ref</b>.<br>Ek olarak, isimlendirilmiş iki sayfa <b>paymentok</b> ve <b>paymentko</b>, başarısız bir çevrimiçi ödeme sonrasında yönlendirmeyi almak için web sitesinde oluşturulmalıdır.
 SetupStripeToHavePaymentCreatedAutomatically=Ödemenin otomatik olarak oluşturulmasını sağlamak için Stripe'ınızı <b>%s</b> URL'si ile ayarlayın. Stripe tarafından doğrulandı.
 AccountParameter=Hesap parametreleri
@@ -33,6 +34,7 @@ CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
 NewStripePaymentReceived=Yeni Stripe ödemesi alındı
 NewStripePaymentFailed=Yeni Stripe ödemesi denendi ancak başarısız oldu
 FailedToChargeCard=Kart şarj edilemedi
+FailedToChargeSEPA=SEPA'yı şarj edemedim
 STRIPE_TEST_SECRET_KEY=Gizli test anahtarı
 STRIPE_TEST_PUBLISHABLE_KEY=Yayımlanabilir test anahtarı
 STRIPE_TEST_WEBHOOK_KEY=Web kancası test anahtarı
@@ -88,3 +90,4 @@ ExampleOnlyForBECustomers=Yalnızca Belçika'daki müşteriler için
 ExampleOnlyForDECustomers=Yalnızca Alman müşteriler için
 ExampleOnlyForNLCustomers=Yalnızca Hollandalı müşteriler için
 ExampleOnlyForATBEDEITNLESCustomers=Yalnızca Avusturya, Belçika, Almanya, İtalya, Hollanda, İspanya'daki müşteriler için
+ListOfSupportedHooksToActivate=Etkinleştirilecek desteklenen kancaların Liste

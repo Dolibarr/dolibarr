@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,19 +75,18 @@ class Productbatch extends CommonObject
 	public $fk_product;
 
 	/**
-	 *
 	 * @var int Properties of the lot
 	 *          ID in table of the details of properties of each lots
 	 */
 	public $lotid;
 
 	/**
-	 * @var int|string
+	 * @var int|''
 	 * @deprecated
 	 */
 	public $sellby = '';	// dlc
 	/**
-	 * @var int|string
+	 * @var int|''
 	 * @deprecated
 	 */
 	public $eatby = '';		// dmd/dluo
@@ -107,9 +106,9 @@ class Productbatch extends CommonObject
 	/**
 	 *  Create object into database
 	 *
-	 *  @param	User	$user        User that creates
-	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
+	 *  @param	User		$user		User that creates
+	 *  @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int						Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -402,13 +401,13 @@ class Productbatch extends CommonObject
 	 *  Find first detailed record that match either eat-by, sell-by or batch within the warehouse
 	 *
 	 *  @param	int			$fk_product_stock   id product_stock for object
-	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
-	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+	 *  @param	int|''		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+	 *  @param	int|''		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
 	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
-	public function find($fk_product_stock = 0, $eatby = null, $sellby = null, $batch_number = '', $fk_warehouse = 0)
+	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0)
 	{
 		$where = array();
 
@@ -472,7 +471,7 @@ class Productbatch extends CommonObject
 	 *
 	 * @param	DoliDB		$dbs    			database object
 	 * @param	int			$fk_product_stock	id product_stock for object
-	 * @param	int			$with_qty    		1 = doesn't return line with 0 quantity
+	 * @param	int<0,1>	$with_qty    		1 = doesn't return line with 0 quantity
 	 * @param  	int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
 	 * @return 	Productbatch[]|int         				Return integer <0 if KO, array of batch
 	 */

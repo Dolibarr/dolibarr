@@ -481,7 +481,6 @@ Sincerely=Sinceramente
 ConfirmDeleteObject=¿Está seguro que quiere eliminar este objeto?
 DeleteLine=Eliminar línea
 ConfirmDeleteLine=¿Está seguro que quiere eliminar esta línea?
-NoPDFAvailableForDocGenAmongChecked=No hay disponible ningún PDF para la generación del documento entre los registros chequeados
 TooManyRecordForMassAction=Se eligió demasiados documentos para una acción en masa. La acción tiene una restricción de %s registros.
 NoRecordSelected=No se eligió registros
 MassFilesArea=Área para archivos construidos desde acciones en masa

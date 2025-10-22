@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,7 @@ function getListOfPossibleImageExt($acceptsvg = 0)
  *
  *      @param	string	$file       Filename
  *      @param	int		$acceptsvg	0=Default (depends on setup), 1=Always accept SVG as image files
- *      @return int         		-1=Not image filename, 0=Image filename but format not supported for conversion by PHP, 1=Image filename with format supported by this PHP
+ *      @return int         		-1=Not image filename, 0=Image filename but format not supported for conversion by PHP, 1=Image filename with format supported in conversion by this PHP
  */
 function image_format_supported($file, $acceptsvg = 0)
 {
@@ -313,6 +313,10 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			$img = imagecreatefromwebp($filetoread);
 			$extImg = '.webp';
 			break;
+	}
+
+	if ($img === null) {
+		return "Error: Could not create Image from '$filetoread'";
 	}
 
 	// Create empty image for target
@@ -558,6 +562,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	$imgWidth = $infoImg[0]; 	// Width of image
 	$imgHeight = $infoImg[1]; 	// Height of image
 
+	// TODO LDR
+	//if $infoImg[2] != extension of file $file, return a string 'Error: content of file has a format that differs of the format of its extension
+
 	$ort = false;
 	if (function_exists('exif_read_data')) {
 		$exif = @exif_read_data($filetoread);
@@ -614,6 +621,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	// Variable initialization according to image extension
 	$img = null;
+	$extImg = null;
 	switch ($infoImg[2]) {
 		case IMAGETYPE_GIF:	    // 1
 			$img = imagecreatefromgif($filetoread);
@@ -739,7 +747,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	// Variable initialization according to image extension
 	// $targetformat is 0 by default, in such case, we keep original extension
-	$extImgTarget = null;
+	$extImgTarget = '';  // Default = same extension as original
 	$trans_colour = false;
 	$newquality = null;
 	switch ($targetformat) {
@@ -803,7 +811,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			imagejpeg($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
 			break;
 		case IMAGETYPE_PNG:	    // 3
-			imagepng($imgThumb, $imgThumbName, $newquality);  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
+			imagepng($imgThumb, $imgThumbName, !is_numeric($newquality) ? -1 : (int) $newquality);  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 			break;
 		case IMAGETYPE_BMP:	    // 6
 			// Not supported by PHP GD

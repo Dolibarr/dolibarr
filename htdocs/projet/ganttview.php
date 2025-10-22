@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,6 +100,8 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
 llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-project page-card_ganttview');
+
+$userWrite = 0;
 
 if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// To verify role of users
@@ -272,7 +274,7 @@ print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'proje
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray = $task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid, 0);
+$tasksarray = $task->getTasksArray(null, null, ($object->id ? $object->id : $id), $socid, 0);
 // We load also tasks limited to a particular user
 //$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(null, $user, $object->id, 0) : '');
 //var_dump($tasksarray);
@@ -313,7 +315,7 @@ if (count($tasksarray) > 0) {
 			$tasks[$taskcursor]['task_css'] = 'ggroupblack';
 			//$tasks[$taskcursor]['task_css'] = 'gtaskblue';
 		}
-		$tasks[$taskcursor]['task_milestone'] = '0';
+		$tasks[$taskcursor]['task_milestone'] = 0;
 		$tasks[$taskcursor]['task_percent_complete'] = $val->progress;
 		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
 		//print dol_print_date($val->date_start).dol_print_date($val->date_end).'<br>'."\n";

@@ -77,6 +77,7 @@ CronType=Type de travail planifié
 CronType_method=Appelle d'une méthode d'une classe Dolibarr
 CronType_command=Commande terminal
 CronCannotLoadClass=Impossible de charger le fichier %s (pour charger l'objet %s)
+CronModuleNotEnabledInThisEntity=Le module Cron n'est pas activé dans cette entité (pour utiliser la méthode %s de l'objet %s)
 CronCannotLoadObject=Le fichier de classe %s a été chargé, mais l'objet %s n'a pas été trouvé dedans
 UseMenuModuleToolsToAddCronJobs=Aller à la page "<a href="%s">Accueil - Outils administration - Travaux planifiées</a>" pour voir la listes des travaux programmés et les modifier.
 JobDisabled=Travail désactivé

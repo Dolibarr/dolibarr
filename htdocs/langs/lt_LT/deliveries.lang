@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Pristatymas
 DeliveryRef=Ref Delivery
-DeliveryCard=Receipt card
+DeliveryCard=Delivery receipt
 DeliveryOrder=Delivery receipt
 DeliveryDate=Pristatymo data
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
-SetDeliveryDate=Nustatyti pakrovimo datą
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Nustatyti pakrovimo datą
 ValidateDeliveryReceipt=Patvirtinti pristatymo kvitą
 ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Ištrinti pristatymo kvitą

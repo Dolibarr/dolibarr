@@ -66,7 +66,9 @@ NoLineGoOnTabToAddSome=Geen regel. Ga naar tabblad "%s" om toe te voegen
 CreateInvoiceForThisCustomerFromSendings=Rekeningen maken
 IfValidateInvoiceIsNoSendingStayUnbilled=Als de Factuur-validatie 'Nee' is, blijft de verzending op de status 'Niet gefactureerd' totdat de Factuur is gevalideerd.
 OptionToSetSendingBilledNotEnabled=De optie uit de module Workflow, om het verzenden automatisch naar 'Gefactureerd' in te stellen wanneer Factuur is gevalideerd, is niet ingeschakeld, dus u zult de status van verzendingen daarna handmatig moeten instellen op 'Gefactureerd' de Factuur is gegenereerd.
-ShipmentUpdated=Shipment successfully updated
+NoWarehouseInBase=Geen magazijn in de basis
+ShipmentUpdated=Verzending succesvol bijgewerkt
+ShipmentIncrementStockOnDelete = Verhoog voorraad bij verwijdering
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Som van product-gewichten
 # warehouse details
 DetailWarehouseNumber= Magazijn informatie
 DetailWarehouseFormat= W: %s (Aantal: %d)
+DetailChildrenFormat=%s : %s (Aantal: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Laatst ingevoerde datum weergeven in voorraad tijdens het aanmaken van de zending voor serienummer of batch
 CreationOptions=Beschikbare opties tijdens het aanmaken van de zending
 ShipmentDistribution=Zending distributie
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=Het verzonden aantal mag niet groter zijn dan het bestelde a
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Vertegenwoordiger die follow-up van verzending doet
 TypeContact_shipping_external_BILLING=Afnemersfactuurcontactpersoon
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_CUSTOMER=Klant contact opvolging verzending
+TypeContact_shipping_external_SHIPPING=Klant contact voor verzending
 TypeContact_shipping_external_DELIVERY=Klant contact voor levering
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+CloseShipment=Sluit verzending
+ConfirmCloseShipment=Bevestig de sluiting van de verzending
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Selecteer vooraf het batch-/serienummer met de vroegst mogelijke houdbaarheidsdatum bij het aanmaken van een zending

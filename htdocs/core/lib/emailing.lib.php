@@ -41,7 +41,7 @@ function emailing_prepare_head(Mailing $object)
 	$h++;
 
 	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mailing', 'mailing_advance', 'recipient'))) {
-		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/targetemailing.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("MailRecipients");
 		if ($object->nbemail > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$object->nbemail.'</span>';

@@ -41,6 +41,7 @@ create table llx_extrafields
     totalizable     boolean DEFAULT FALSE,                      -- is extrafield totalizable on list
 	langs			varchar(64),								-- example: fileofmymodule@mymodule
 	help            text,                                       -- to store help tooltip
+	aiprompt		text,										-- a prompt to autofill the value with AI
 	css             varchar(128),                               -- to store css on create/update forms
 	cssview         varchar(128),                               -- to store css on view form
 	csslist         varchar(128),                               -- to store css on list

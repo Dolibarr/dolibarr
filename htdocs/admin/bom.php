@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2019 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2019 		Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -171,6 +171,13 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
+} elseif ($action == 'updateoptions') {
+	if (GETPOST('BOM_USE_SEARCH_TO_SELECT')) {
+		$bomsearch = GETPOST('activate_BOM_USE_SEARCH_TO_SELECT', 'alpha');
+		if (dolibarr_set_const($db, "BOM_USE_SEARCH_TO_SELECT", $bomsearch, 'chaine', 0, '', $conf->entity)) {
+			$conf->global->BOM_USE_SEARCH_TO_SELECT = $bomsearch;
+		}
+	}
 }
 
 
@@ -253,7 +260,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->BOM_ADDON == $file) {
+						if (getDolGlobalString('BOM_ADDON') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -265,11 +272,14 @@ foreach ($dirmodels as $reldir) {
 						$bom = new BOM($db);
 						$bom->initAsSpecimen();
 
+						$tmpprod = new Product($db);
+						$tmpprod->initAsSpecimen();
+
 						// Info
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$bom->type = 0;
-						$nextval = $module->getNextValue($mysoc, $bom);
+						$nextval = $module->getNextValue($tmpprod, $bom);
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
@@ -283,7 +293,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -420,7 +430,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -459,6 +469,31 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60"></td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
+
+
+print '<tr class="oddeven">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateoptions">';
+print '<td>'.$langs->trans("UseSearchToSelectBom").'</td>';
+if (!$conf->use_javascript_ajax) {
+	print '<td></td>';
+	print '<td class="nowrap right">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
+} else {
+	print '<td class="right">';
+	$arrval = array('0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	);
+	print $form->selectarray("activate_BOM_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("BOM_USE_SEARCH_TO_SELECT")).'</td>';
+	print '<td class="right"><input type="submit" class="button small reposition" name="BOM_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+}
+print '</form>';
+print '</tr>';
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
@@ -503,6 +538,8 @@ print '</form>';
 print '</table>';
 print '</div>';
 print '<br>';
+
+
 
 
 // End of page

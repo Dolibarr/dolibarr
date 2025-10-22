@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dodanie
 DeliveryRef=Referenčné doručenie
-DeliveryCard=Delivery receipt
+DeliveryCard=Potvrdenie o doručení
 DeliveryOrder=Potvrdenie o doručení
 DeliveryDate=Termín dodania
 CreateDeliveryOrder=Vygenerujte potvrdenie o doručení
 DeliveryStateSaved=Stav doručenia uložený
-SetDeliveryDate=Nastaviť dátumom odoslania
+SetDeliveryDate=Nastaviť odhadovaný dátum doručenia
+SetShippingDate=Nastaviť dátumom odoslania
 ValidateDeliveryReceipt=Potvrdenie o doručení
 ValidateDeliveryReceiptConfirm=Naozaj chcete overiť potvrdenie o doručení?
 DeleteDeliveryReceipt=Odstrániť potvrdenie o doručení

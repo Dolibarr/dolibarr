@@ -3,9 +3,9 @@ MenuFinancial=Rechnung | Zahlung
 TaxModuleSetupToModifyRules=Im <a href="%s">Steuer-Modul</a> können Sie die Einstellungen für die Berechnungen vornehmen
 TaxModuleSetupToModifyRulesLT=Hier können Sie die <a href="%s">Einstellungen</a> für die Berechnungen vornehmen
 OptionMode=Buchhaltungsoptionen
-OptionModeTrue=Option Einnahmen-Ausgaben
-OptionModeVirtual=Option Forderungen-Verbindlichkeiten
-OptionModeTrueDesc=Der Umsatz wird über Zahlungen (Zahlungszeitpunkt) berechnet (Ist-Versteuerung). Die Aussagekraft ist nur gegeben, wenn die Einnahmen und Ausgaben auf Basis entsprechender Rechnungen korrekt auf den Konten verbucht werden.
+OptionModeTrue=Soll-Buchhaltung/Periodenbuchhaltung
+OptionModeVirtual=Ist-Buchhaltung/Zahlungsbuchhaltung
+OptionModeTrueDesc=Der Umsatz wird über die Zahlungen (Datum der Zahlungen) berechnet. Die Validität der Zahlen ist nur dann gewährleistet, wenn die Buchhaltung für die Ein- und Ausgaben der Zahlungen erfolgt.
 OptionModeVirtualDesc=Der Umsatz wird über Rechnungen (Rechnungsdatum) ermittelt (Soll-Versteuerung). Wenn diese Rechnungen fällig sind, ob sie bezahlt wurden oder nicht, werden sie in der Umsatzausgabe aufgeführt.
 FeatureIsSupportedInInOutModeOnly=Dieses Feature ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
 VATReportBuildWithOptionDefinedInModule=Die hier ausgewiesenen Beträge werden unter Verwendung der USt.-Regeln definiert.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=Zu zahlen (> 30 Tage)
 ConfirmPreselectAccount=Buchungskonto vorbelegen
 ConfirmPreselectAccountQuestion=Möchten Sie die %s ausgewählten Zeilen wirklich mit diesem Buchhaltungscode vorbelegen?
 AmountPaidMustMatchAmountOfDownPayment=Der gezahlte Betrag muss mit dem Betrag der Anzahlung übereinstimmen
+RuleForLinesDates=Regel für Positions-Daten
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Regel für Positions-Daten festlegen

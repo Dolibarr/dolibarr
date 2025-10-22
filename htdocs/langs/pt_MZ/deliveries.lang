@@ -2,7 +2,7 @@
 Delivery=Entrega
 DeliveryRef=Ref. entrega
 DeliveryStateSaved=Estado de entrega salvo
-SetDeliveryDate=Indicar a Data de Envio
+SetShippingDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
 ValidateDeliveryReceiptConfirm=Você tem certeza que deseja validar este comprovante de entrega?
 DeleteDeliveryReceipt=Excluir recibo de entrega

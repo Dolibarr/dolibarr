@@ -193,3 +193,5 @@ PageLinkedByAMenuEntry=少なくとも 1 つの メニュー エントリによ�
 FieldsEdit=フィールド編集
 FieldsInsert=フィールド挿入
 FieldsView=フィールドビュー
+AIPromptExtrafield=AIプロンプト
+AIPromptExtrafieldDesc=このフィールドで使用される定数は、対応する値に置き換えられます。

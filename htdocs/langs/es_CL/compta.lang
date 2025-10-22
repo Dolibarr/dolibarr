@@ -3,9 +3,6 @@ MenuFinancial=Facturación | Pago
 TaxModuleSetupToModifyRules=Vaya a <a href="%s"> Configuración del módulo de impuestos </a> para modificar las reglas de cálculo
 TaxModuleSetupToModifyRulesLT=Vaya a <a href="%s"> Configuración de la empresa </a> para modificar las reglas de cálculo
 OptionMode=Opción para contabilidad
-OptionModeTrue=Opción ingresos-gastos
-OptionModeVirtual=Reclamaciones-Deudas opcionales
-OptionModeTrueDesc=En este contexto, el volumen de negocios se calcula sobre los pagos (fecha de pago). La validez de las cifras está garantizada solo si la contabilidad se analiza a través de la entrada / salida en las cuentas a través de facturas.
 OptionModeVirtualDesc=En este contexto, el volumen de negocios se calcula sobre las facturas (fecha de validación). Cuando venzan estas facturas, hayan sido pagadas o no, se incluyen en la salida de facturación.
 FeatureIsSupportedInInOutModeOnly=Característica solo disponible en el modo de contabilidad CRÉDITOS-DEUDAS (ver configuración del módulo Contabilidad)
 VATReportBuildWithOptionDefinedInModule=Las cantidades que se muestran aquí se calculan utilizando las reglas definidas por la configuración del módulo de impuestos.

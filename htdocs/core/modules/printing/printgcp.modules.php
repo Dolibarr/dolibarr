@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ class printing_printgcp extends PrintingDriver
 		$html .= '<td>'.$langs->trans('GCP_Type').'</td>';
 		$html .= '<td class="center">'.$langs->trans("Select").'</td>';
 		$html .= '</tr>'."\n";
-		$list = $this->getlistAvailablePrinters();
+		$list = $this->getlistAvailableGcpPrinters();
 		//$html.= '<td><pre>'.print_r($list,true).'</pre></td>';
 		foreach ($list['available'] as $printer_det) {
 			$html .= '<tr class="oddeven">';
@@ -245,9 +245,21 @@ class printing_printgcp extends PrintingDriver
 	/**
 	 *  Return list of available printers
 	 *
-	 *  @return array{available:array{name:string,displayname:string,id:string,ownerName:string,status:string,connectionStatus:string,type:string}}	list of printers
+	 *  @return array<array{name:string,displayName:string,id:string,ownerName:string,status:string,connectionStatus:string,type:string}>	list of printers
 	 */
 	public function getlistAvailablePrinters()
+	{
+		/* Compatible with paretn class signature */
+		return $this->getlistAvailableGcpPrinters()['available'];
+	}
+
+
+	/**
+	 *  Return list of available printers (internal format)
+	 *
+	 *  @return array{available:array<array{name:string,displayName:string,id:string,ownerName:string,status:string,connectionStatus:string,type:string}>}	list of printers
+	 */
+	public function getlistAvailableGcpPrinters()
 	{
 		global $conf;
 		$ret = array();

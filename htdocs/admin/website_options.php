@@ -63,7 +63,7 @@ $pagenext = $page + 1;
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin'));
 
-$arrayofparameters = array('WEBSITE_USE_WEBSITE_ACCOUNTS'=>array('css'=>'minwidth200'));
+$arrayofparameters = array();
 
 $status = 1;
 $rowid = GETPOST('rowid', 'alpha');
@@ -114,10 +114,12 @@ $head[$h][1] = $langs->trans("WebSites");
 $head[$h][2] = 'website';
 $h++;
 
+/* disable, no option for the moment
 $head[$h][0] = DOL_URL_ROOT."/admin/website_options.php";
 $head[$h][1] = $langs->trans("Options");
 $head[$h][2] = 'options';
 $h++;
+*/
 
 print dol_get_fiche_head($head, 'options', '', -1);
 
@@ -131,27 +133,7 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100"></td>'."\n";
 print '</tr>';
 
-
-// Mail required for users
-
-print '<tr class="oddeven">';
-print '<td>';
-print $form->textwithpicto($langs->trans('WEBSITE_USE_WEBSITE_ACCOUNTS'), $langs->trans('WEBSITE_USE_WEBSITE_ACCOUNTSTooltip'));
-print '</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-
-print '<td align="center" width="100">';
-if (!empty($conf->use_javascript_ajax)) {
-	print ajax_constantonoff('WEBSITE_USE_WEBSITE_ACCOUNTS');
-} else {
-	if (!getDolGlobalString('WEBSITE_USE_WEBSITE_ACCOUNTS')) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WEBSITE_USE_WEBSITE_ACCOUNTS&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_WEBSITE_USE_WEBSITE_ACCOUNTS&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
-}
-print '</td></tr>';
-
+// ...
 
 print '</table>';
 

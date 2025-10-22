@@ -193,3 +193,5 @@ PageLinkedByAMenuEntry=Pagină asociată la cel puțin o intrare din meniu
 FieldsEdit=Editare câmpuri
 FieldsInsert=Inserare câmpuri
 FieldsView=Vizualizare câmpuri
+AIPromptExtrafield=Prompt AI
+AIPromptExtrafieldDesc=Constantele utilizate în acest câmp vor fi înlocuite cu valoarea corespunzătoare.

@@ -66,7 +66,9 @@ NoLineGoOnTabToAddSome=Ingen linje, gå på fanen "%s" for at tilføje
 CreateInvoiceForThisCustomerFromSendings=Opret regninger
 IfValidateInvoiceIsNoSendingStayUnbilled=Hvis fakturavalidering er 'Nej', forbliver afsendelsen til status 'Ufaktureret', indtil fakturaen er valideret.
 OptionToSetSendingBilledNotEnabled=Mulighed fra modul Workflow, for automatisk at sætte afsendelse til 'Faktureret' når faktura er valideret, er ikke aktiveret, så du skal indstille status for afsendelser til 'Faktureret' manuelt efter at fakturaen er genereret.
+NoWarehouseInBase=Intet lager i basen
 ShipmentUpdated=Forsendelsen blev opdateret
+ShipmentIncrementStockOnDelete = Øg lagerbeholdningen ved sletning
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Summen af ​​produktvægt
 # warehouse details
 DetailWarehouseNumber= Lager detaljer
 DetailWarehouseFormat= W: %s(Antal:%d)
+DetailChildrenFormat=%s : %s (Antal: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Vis sidste dato for indførsel på lager under oprettelse af forsendelse for serienummer eller batch
 CreationOptions=Tilgængelige muligheder under oprettelse af forsendelse
 ShipmentDistribution=Forsendelsesfordeling
@@ -92,3 +95,4 @@ TypeContact_shipping_external_SHIPPING=Kundekontakt for forsendelse
 TypeContact_shipping_external_DELIVERY=Kundekontakt for levering
 CloseShipment=Luk forsendelsen
 ConfirmCloseShipment=Bekræft lukke forsendelse
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Forudvælg batch-/serienummeret med den tidligste sidste anvendelsesdato/sidste anvendelsesdato, når du opretter en forsendelse.

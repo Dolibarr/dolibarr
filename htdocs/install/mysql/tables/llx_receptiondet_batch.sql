@@ -43,5 +43,6 @@ create table llx_receptiondet_batch
   fk_user        integer,
   datec          datetime,
   tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  cost_price     double(24,8) DEFAULT 0
+  cost_price     double(24,8) DEFAULT 0,
+  extraparams	 varchar(255)				 	-- to stock other parameters in json format
 )ENGINE=innodb;

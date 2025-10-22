@@ -89,9 +89,12 @@ trait CommonSignedObject
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, string $triggercode = ''): int
 	{
 		global $langs;
+
 		$langs->loadLangs(array('commercial'));
+
 		$this->signed_status = $status;
 		$this->context['signature'] = $status;
+
 		switch ($status) {
 			case 0:
 				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('UnsignedInDolibarr');
@@ -152,7 +155,8 @@ trait CommonSignedObject
 				if (!$error) {
 					$this->signed_status = $status;
 					$this->db->commit();
-					setEventMessages($langs->transnoentitiesnoconv('DocumentSigned'), null, 'warnings');
+
+					setEventMessages($langs->transnoentitiesnoconv($status == 0 ? 'DocumentUnsigned' : 'DocumentSigned'), null, 'warnings');
 					return 1;
 				} else {
 					$this->db->rollback();

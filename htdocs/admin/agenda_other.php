@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 
 	$defaultValues = new DefaultValues($db);
-	$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page' => 'comm/action/card.php', 't.param' => 'complete', 't.user_id' => '0', 't.type' => 'createform', 't.entity' => $conf->entity));
+	$result = $defaultValues->fetchAll('', '', 0, 0, "(t.page:=:'comm/action/card.php') AND (t.param:=:'complete') AND (t.user_id:=:0) AND (t.type:=:'createform') AND (t.entity:=:".((int) $conf->entity).")");
 	if (!is_array($result) && $result < 0) {
 		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 	} elseif (count($result) > 0) {
@@ -242,6 +242,7 @@ if ($resql) {
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print load_fiche_titre($langs->trans("AgendaModelModule"), '', '');
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
 	print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -320,7 +321,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 						$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 						print '<td class="center">';
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
@@ -333,7 +334,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			}
 		}
 	}
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+	print '<br>';
 
 	print load_fiche_titre($langs->trans('MiscellaneousOptions'), '', '');
 }
@@ -343,6 +346,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -353,11 +357,11 @@ print '</tr>'."\n";
 // AGENDA_DEFAULT_VIEW
 print '<tr class="oddeven">'."\n";
 $htmltext = $langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
-print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
+print '<td class="minwidth200onall">'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'."\n";
+print '<td class="right parentonrightofpage">'."\n";
 $tmplist = array('' => '&nbsp;', 'show_list' => $langs->trans("ViewList"), 'show_month' => $langs->trans("ViewCal"), 'show_week' => $langs->trans("ViewWeek"), 'show_day' => $langs->trans("ViewDay"), 'show_peruser' => $langs->trans("ViewPerUser"));
-print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, getDolGlobalString('AGENDA_DEFAULT_VIEW'));
+print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_month'), 0, 0, 0, '', 0, 0, 0, '', 'right onrightofpage width150');
 print '</td></tr>'."\n";
 
 // Manual or automatic
@@ -379,8 +383,8 @@ if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
 	print '<td class="center">&nbsp;</td>'."\n";
-	print '<td class="right nowrap">'."\n";
-	print $formactions->select_type_actions(getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT'), "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1, 0, 1, 'minwidth300', 1);
+	print '<td class="right parentonrightofpage">'."\n";
+	print $formactions->select_type_actions(getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT'), "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1, 0, 1, 'minwidth300 right onrightofpage', 1);
 	print '</td></tr>'."\n";
 }
 
@@ -388,16 +392,16 @@ if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_EVENT_DEFAULT_STATUS").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right nowrap">'."\n";
+print '<td class="right parentonrightofpage">'."\n";
 $defval = 'na';
 $defaultValues = new DefaultValues($db);
-$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page' => 'comm/action/card.php', 't.param' => 'complete', 't.user_id' => '0', 't.type' => 'createform', 't.entity' => $conf->entity));
+$result = $defaultValues->fetchAll('', '', 0, 0, "(t.page:=:'comm/action/card.php') AND (t.param:=:'complete') AND (t.user_id:=:0) AND (t.type:=:'createform') AND (t.entity:=:".((int) $conf->entity).")");
 if (!is_array($result) && $result < 0) {
 	setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 } elseif (count($result) > 0) {
 	$defval = reset($result)->value;
 }
-$formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200 onrightofpage');
+$formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'right width200 onrightofpage');
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_TYPE
@@ -423,6 +427,7 @@ $formactions->form_select_status_action('agenda', getDolGlobalString('AGENDA_DEF
 print '</td></tr>'."\n";
 
 print '</table>';
+print '</div>';
 
 print $form->buttonsSaveCancel("Save", '');
 

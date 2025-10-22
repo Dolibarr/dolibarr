@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,13 +117,13 @@ class PriceParser
 		if (in_array($code, array(9, 14, 19, 20))) { //Errors which have 0 arg
 			return $langs->trans("ErrorPriceExpression".$code);
 		} elseif (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22))) { //Errors which have 1 arg
-			return $langs->trans("ErrorPriceExpression".$code, $info);
+			return $langs->trans("ErrorPriceExpression".$code, (string) $info);
 		} elseif (in_array($code, array(6, 23))) { //Errors which have 2 args
 			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
 		} elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) { //Internal errors
-			return $langs->trans("ErrorPriceExpressionInternal", $code);
+			return $langs->trans("ErrorPriceExpressionInternal", (string) $code);
 		} else { //Unknown errors
-			return $langs->trans("ErrorPriceExpressionUnknown", $code);
+			return $langs->trans("ErrorPriceExpressionUnknown", (string) $code);
 		}
 	}
 
@@ -345,7 +345,7 @@ class PriceParser
 	{
 		//Get the product data
 		$product = new Product($this->db);
-		$product->fetch($product_id, '', '', 1);
+		$product->fetch($product_id, '', '', '1');
 
 		//Values for product expressions
 		$extra_values = array_merge($extra_values, array(

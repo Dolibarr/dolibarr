@@ -4,7 +4,6 @@ DeliveryRef=Ref de entrega
 DeliveryCard=Recibo de entrega
 DeliveryOrder=Recibo de entrega
 CreateDeliveryOrder=Generar recibo de entrega
-SetDeliveryDate=Establecer fecha de entrega estimada
 ValidateDeliveryReceipt=Validar recibo de entrega
 ValidateDeliveryReceiptConfirm=¿Está seguro de que desea validar este recibo de entrega?
 DeleteDeliveryReceipt=Eliminar recibo de entrega

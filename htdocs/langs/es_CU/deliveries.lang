@@ -3,7 +3,6 @@ Delivery=Entrega
 DeliveryRef=Entrega de referencia
 DeliveryOrder=Recibo de entrega
 CreateDeliveryOrder=Generar recibo de entrega
-SetDeliveryDate=Establecer fecha de envío
 ValidateDeliveryReceipt=Validar recibo de entrega
 ValidateDeliveryReceiptConfirm=¿Estás seguro de que quieres validar este recibo de entrega?
 DeleteDeliveryReceipt=Eliminar recibo de entrega

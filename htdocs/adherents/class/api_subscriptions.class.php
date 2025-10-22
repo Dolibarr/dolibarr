@@ -39,12 +39,18 @@ class Subscriptions extends DolibarrApi
 	);
 
 	/**
+	 * @var Subscription $subscription {@type Subscription}
+	 */
+	public $subscription;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
 		global $db, $conf;
 		$this->db = $db;
+		$this->subscription = new Subscription($this->db);
 	}
 
 	/**
@@ -64,13 +70,14 @@ class Subscriptions extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$subscription = new Subscription($this->db);
-		$result = $subscription->fetch($id);
+		$result = $this->subscription->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Subscription not found');
 		}
 
-		return $this->_cleanObjectDatas($subscription);
+		$this->subscription->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->subscription);
 	}
 
 	/**

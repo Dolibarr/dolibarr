@@ -4,6 +4,7 @@
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,15 +168,15 @@ if (empty($reshook)) {
 
 // Definition of fields for lists
 $arrayfields = array(
-	'cpl.rowid' => array('label' => "ID", 'checked' => 1),
-	'cpl.date_action' => array('label' => "Date", 'checked' => 1),
-	'cpl.fk_user_action' => array('label' => "ActionByCP", 'checked' => 1),
-	'cpl.fk_user_update' => array('label' => "UserUpdateCP", 'checked' => 1),
-	'cpl.type_action' => array('label' => "Description", 'checked' => 1),
-	'cpl.fk_type' => array('label' => "Type", 'checked' => 1),
-	'cpl.prev_solde' => array('label' => "PrevSoldeCP", 'checked' => 1),
-	'variation' => array('label' => "Variation", 'checked' => 1),
-	'cpl.new_solde' => array('label' => "NewSoldeCP", 'checked' => 1),
+	'cpl.rowid' => array('label' => "ID", 'checked' => '1'),
+	'cpl.date_action' => array('label' => "Date", 'checked' => '1'),
+	'cpl.fk_user_action' => array('label' => "ActionByCP", 'checked' => '1'),
+	'cpl.fk_user_update' => array('label' => "UserUpdateCP", 'checked' => '1'),
+	'cpl.type_action' => array('label' => "Description", 'checked' => '1'),
+	'cpl.fk_type' => array('label' => "Type", 'checked' => '1'),
+	'cpl.prev_solde' => array('label' => "PrevSoldeCP", 'checked' => '1'),
+	'variation' => array('label' => "Variation", 'checked' => '1'),
+	'cpl.new_solde' => array('label' => "NewSoldeCP", 'checked' => '1'),
 );
 
 
@@ -363,14 +364,14 @@ if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
 	}
 
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_validator, "search_validator", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+	print $form->select_dolusers($search_validator, "search_validator", 1, null, 0, $valideurarray, '', '0', 0, 0, $morefilter, 0, '', 'maxwidth200');
 	print '</td>';
 }
 
 // Filter: User
 if (!empty($arrayfields['cpl.fk_user_update']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+	print $form->select_dolusers($search_employee, "search_employee", 1, null, $disabled, $include, '', '0', 0, 0, $morefilter, 0, '', 'maxwidth200');
 	print '</td>';
 }
 
@@ -475,14 +476,14 @@ while ($i < min($num, $limit)) {
 		break;
 	}
 
-	$holidaylogstatic->id = $obj['rowid'];
-	$holidaylogstatic->date = $obj['date_action'];
-	$holidaylogstatic->validator = $obj['fk_user_action'];
-	$holidaylogstatic->employee = $obj['fk_user_update'];
-	$holidaylogstatic->description = $obj['type_action'];
-	$holidaylogstatic->type = $obj['fk_type'];
-	$holidaylogstatic->balance_previous = $obj['prev_solde'];
-	$holidaylogstatic->balance_new = $obj['new_solde'];
+	$holidaylogstatic->id = (int) $obj['rowid'];
+	$holidaylogstatic->date = (string) $obj['date_action'];
+	$holidaylogstatic->validator = (int) $obj['fk_user_action'];
+	$holidaylogstatic->employee = (int) $obj['fk_user_update'];
+	$holidaylogstatic->description = (string) $obj['type_action'];
+	$holidaylogstatic->type = (int) $obj['fk_type'];
+	$holidaylogstatic->balance_previous = (float) $obj['prev_solde'];
+	$holidaylogstatic->balance_new = (float) $obj['new_solde'];
 
 	print '<tr class="oddeven">';
 

@@ -124,7 +124,7 @@ class FichinterLigne extends CommonObjectLine
 	{
 		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
 
-		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date';
+		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date, ft.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
 
@@ -139,6 +139,8 @@ class FichinterLigne extends CommonObjectLine
 			$this->desc           	= $objp->description;
 			$this->duration       	= $objp->duree;
 			$this->rang           	= $objp->rang;
+
+			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 			$this->db->free($resql);
 

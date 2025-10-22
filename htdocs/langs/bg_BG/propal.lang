@@ -23,7 +23,10 @@ AllPropals=Всички предложения
 SearchAProposal=Търсене na предложение
 NoProposal=Няма предложение
 ProposalsStatistics=Статистика на търговски предложения
+NumberOfProposals=Брой търговски предложения
 NumberOfProposalsByMonth=Брой предложения за месец
+AmountOfProposals=Брой предложения
+AmountOfProposalsHT=Брой предложения (без ДДС)
 AmountOfProposalsByMonthHT=Стойност на предложения за месец (без ДДС)
 NbOfProposals=Брой търговски предложения
 ShowPropal=Показване на предложение
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 седмица
 AvailabilityTypeAV_2W=2 седмици
 AvailabilityTypeAV_3W=3 седмици
 AvailabilityTypeAV_1M=1 месец
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Изготвил предложение
 TypeContact_propal_external_BILLING=Получател на фактура
 TypeContact_propal_external_CUSTOMER=Получател на предложение
 TypeContact_propal_external_SHIPPING=Получател на доставка
-
 # Document models
 CantBeNoSign=не може да бъде зададено неподписано
 CaseFollowedBy=Случай, проследяван от
@@ -122,3 +123,5 @@ SignSociete_rib=Подпишете мандат
 SignPropal=Приеми предложението
 Signed=подписан
 SignedOnly=Само подписани
+ExpeditionSigned=Пратката е подписана
+SignExpedition=Подписване на пратка

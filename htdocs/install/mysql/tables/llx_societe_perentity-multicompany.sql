@@ -28,5 +28,5 @@ create table llx_societe_perentity
   	accountancy_code_supplier			varchar(32),                         	-- supplier accountancy auxiliary account
   	accountancy_code_sell				varchar(32),                            -- Selling accountancy code
   	accountancy_code_buy				varchar(32),                            -- Buying accountancy code
-	vat_reverse_charge					tinyint DEFAULT 0
+	vat_reverse_charge					tinyint DEFAULT 0						-- VAT reverse charge
 )ENGINE=innodb;

@@ -29,6 +29,8 @@ create table llx_product_customer_price
   fk_product			integer NOT NULL,
   fk_soc				integer NOT NULL,
   ref_customer			varchar(128),
+  date_begin			date,
+  date_end				date,
   price					double(24,8) DEFAULT 0,
   price_ttc				double(24,8) DEFAULT 0,
   price_min				double(24,8) DEFAULT 0,
@@ -41,6 +43,7 @@ create table llx_product_customer_price
   localtax1_type        varchar(10)  NOT NULL DEFAULT '0',
   localtax2_tx			double(7,4)  DEFAULT 0,         -- Other local VAT 2
   localtax2_type        varchar(10)  NOT NULL DEFAULT '0',
+  discount_percent		real DEFAULT 0,
   fk_user				integer,
   price_label           varchar(255),
   import_key			varchar(14)                  -- Import key

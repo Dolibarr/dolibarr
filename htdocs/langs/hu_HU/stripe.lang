@@ -12,6 +12,7 @@ YourEMail=Email a fizetés teljesítéséről
 STRIPE_PAYONLINE_SENDEMAIL=E-mail értesítés fizetési kísérlet után (siker vagy sikertelen)
 Creditor=Hitelező
 PaymentCode=Fizetési kód
+StripeAutoRecordPayout=Banki átutalás automatikus rögzítésének engedélyezése (amikor a Stripe kifizetést hajt végre és meghívja a payout.create/payout.paid webhook IPN-t)
 StripeDoPayment=Fizetés a Stripe segítségével
 YouWillBeRedirectedOnStripe=A rendszer átirányítja a biztonságos Stripe oldalra, hogy adja meg hitelkártyaadatait
 Continue=Következő
@@ -22,7 +23,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL %s online fizetési oldal felajá
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL egy %s online fizetési oldal felajánlásához bármilyen összegben létező objektum nélkül
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL %s online fizetési oldal felajánlásához egy tagi előfizetéshez
 ToOfferALinkForOnlinePaymentOnDonation=URL %s online fizetési oldal felajánlásához adomány kifizetéséhez
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanAddTagOnUrl=Hozzáadhat URL-paramétert is a <b>&címke=value</b> bármelyik URL-hez (csak objektumhoz nem kapcsolódó fizetések esetén kötelező), hogy hozzáadja saját fizetési megjegyzését címke.<br>A meglévő objektummal nem rendelkező fizetések URL-címéhez hozzáadhatja a <strong>&noidempotency=1</strong>, így ugyanaz a link ugyanazzal a címke paraméterrel többször is felhasználható (egyes fizetési módok korlátozhatják a fizetést 1-re minden egyes különböző linkért e paraméter nélkül)
 YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Állítsa be a Stripe-ot a(z) <b>%s</b> URL-lel, hogy a Stripe ellenőrzésekor automatikusan létrejöjjön a fizetés.
 AccountParameter=Számlaparaméterek
@@ -33,6 +34,7 @@ CSSUrlForPaymentForm=CSS-stíluslap URL-címe a fizetési űrlaphoz
 NewStripePaymentReceived=Új Stripe fizetés érkezett
 NewStripePaymentFailed=Új Stripe fizetés próbálkozott, de nem sikerült
 FailedToChargeCard=Nem sikerült feltölteni a kártyát
+FailedToChargeSEPA=Nem sikerült a SEPA terhelése
 STRIPE_TEST_SECRET_KEY=Titkos tesztkulcs
 STRIPE_TEST_PUBLISHABLE_KEY=Tesztkulcs közzétehető
 STRIPE_TEST_WEBHOOK_KEY=Webhook tesztkulcs
@@ -88,3 +90,4 @@ ExampleOnlyForBECustomers=Csak belga ügyfelek számára
 ExampleOnlyForDECustomers=Csak német vásárlóknak
 ExampleOnlyForNLCustomers=Csak holland ügyfelek számára
 ExampleOnlyForATBEDEITNLESCustomers=Csak osztrák, belga, német, olasz, holland, spanyol ügyfelek számára
+ListOfSupportedHooksToActivate=Az aktiváláshoz támogatott hookok listája

@@ -93,7 +93,7 @@ if ($object->id > 0) {
 		$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write');
 		$permissiontodelete = isModEnabled('website') && $user->hasRight('website', 'delete');
 	} elseif ($object->site == 'dolibarr_portal') {
-		$permissiontocreate = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
+		$permissiontocreate = $permissiontodelete = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
 	}
 } else {
 	$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write') || isModEnabled('webportal') && $user->hasRight('webportal', 'write');
@@ -224,9 +224,6 @@ if ($action == 'create') {
 	}
 	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	}
-	if (!empty($backtopagejsfields)) {
-		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 	}
 	if (!empty($dol_openinpopup)) {
 		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';

@@ -3,7 +3,7 @@
  * Copyright (C) 2017-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ if (!empty($selectcpt)) {
 		}
 	}
 
-	$return = $accountingcategory->updateAccAcc($cat_id, $cpts);
+	$return = $accountingcategory->updateAccAcc((int) $cat_id, $cpts);
 
 	if ($return < 0) {
 		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
@@ -123,7 +123,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-$title= $langs->trans('AccountingCategory');
+$title = $langs->trans('AccountingCategory');
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_categories');
@@ -144,7 +144,7 @@ print '<table class="border centpercent">';
 // Select the category
 print '<tr><td class="titlefield">'.$langs->trans("AccountingCategory").'</td>';
 print '<td>';
-$s = $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 0);
+$s = $formaccounting->select_accounting_category((int) $cat_id, 'account_category', 1, 0, 0, 0);
 if ($formaccounting->nbaccounts_category <= 0) {
 	print '<span class="opacitymedium">'.$s.'</span>';
 } else {

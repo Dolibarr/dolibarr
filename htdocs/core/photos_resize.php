@@ -418,8 +418,8 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 	}
 }
 
-// Crop d'une image
-if ($action == 'confirm_crop') {
+// Crop if image
+if ($action == 'confirm_crop') {		// Test on permission already done
 	if (empty($dir)) {
 		print 'Bug: Value for $dir could not be defined.';
 	}

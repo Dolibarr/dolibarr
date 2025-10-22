@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,6 +60,8 @@ class Login
 	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
 	 * @return  array                   Response status and user token
+	 * @phan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
 	 *
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 500 System error
@@ -84,6 +86,8 @@ class Login
 	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
 	 * @return  array                   Response status and user token
+	 * @phan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
 	 *
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 500 System error
@@ -138,7 +142,7 @@ class Login
 		$token = 'failedtogenerateorgettoken';
 
 		$tmpuser = new User($this->db);
-		$tmpuser->fetch(0, $login, 0, 0, $entity);
+		$tmpuser->fetch(0, $login, '0', 0, $entity);
 		if (empty($tmpuser->id)) {
 			throw new RestException(500, 'Failed to load user');
 		}

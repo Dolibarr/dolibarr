@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Exports
 ImportArea=יְבוּא
 NewExport=ייצוא חדש
@@ -31,10 +32,10 @@ ExportCsvSeparator=מפריד תווים ב-CSV
 ImportCsvSeparator=מפריד תווים ב-CSV
 Step=שלב
 FormatedImport=ייבוא עוזר
-FormatedImportDesc1=מודול זה מאפשר לך לעדכן נתונים קיימים או להוסיף אובייקטים חדשים למסד הנתונים מקובץ ללא ידע טכני, באמצעות עוזר.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=השלב הראשון הוא לבחור את סוג הנתונים שברצונך לייבא, לאחר מכן את הפורמט של קובץ המקור, ולאחר מכן את השדות שברצונך לייבא.
 FormatedExport=עוזר ייצוא
-FormatedExportDesc1=כלים אלו מאפשרים ייצוא של נתונים מותאמים אישית באמצעות עוזר, כדי לעזור לך בתהליך מבלי לדרוש ידע טכני.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=השלב הראשון הוא לבחור מערך נתונים מוגדר מראש, ואז אילו שדות ברצונך לייצא, ובאיזה סדר.
 FormatedExportDesc3=כאשר נתונים לייצוא נבחרים, אתה יכול לבחור את הפורמט של קובץ הפלט.
 Sheet=דַף

@@ -59,3 +59,6 @@ WebPortalPropal=Propuesta
 removeFilter=Retirar filtro
 requiredField=Campo requerido
 unitPrice=Precio unitario
+labelSubject=Tema
+contactFormEmail = Email
+contactFormPhone = Teléfono

@@ -43,7 +43,7 @@ ConfirmCancelSending=¿Está seguro de querer anular esta expedición?
 DocumentModelMerou=Modelo Merou A5
 WarningNoQtyLeftToSend=Alerta, ningún producto en espera de envío.
 StatsOnShipmentsOnlyValidated=Las estadísticas son solo para envíos validados. La fecha utilizada es la fecha de validación del envío (la fecha de entrega planificada no siempre se conoce)
-DateShipping=Sending date
+DateShipping=Fecha de envío
 DateDeliveryPlanned=Fecha prevista de entrega
 RefDeliveryReceipt=Ref. nota de entrega
 StatusReceipt=Estado nota de entrega
@@ -66,7 +66,9 @@ NoLineGoOnTabToAddSome=No hay línea, vaya a la pestaña "%s" para agregar
 CreateInvoiceForThisCustomerFromSendings=Crear facturas
 IfValidateInvoiceIsNoSendingStayUnbilled=Si la validación de la factura es 'No', el envío permanecerá en estado 'No facturado' hasta que la factura sea validada.
 OptionToSetSendingBilledNotEnabled=La opción del módulo Flujo de Trabajo, para establecer el envío como 'Facturado' automáticamente cuando se valida la factura, no está habilitada, por lo que tendrás que establecer el estado de los envíos como 'Facturado' manualmente después de que se haya generado la factura.
-ShipmentUpdated=Shipment successfully updated
+NoWarehouseInBase=No hay almacén en la base
+ShipmentUpdated=Envío actualizado exitosamente
+ShipmentIncrementStockOnDelete = Aumentar el stock al eliminar
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Suma del peso de los productos
 # warehouse details
 DetailWarehouseNumber= Detalles del almacén
 DetailWarehouseFormat= Alm.:%s (Cant. : %d)
+DetailChildrenFormat=%s: %s (Cantidad: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Mostrar la última fecha de entrada en stock durante la creación del envío para el número de serie o lote
 CreationOptions=Opciones disponibles durante la creación del envío
 ShipmentDistribution=Distribución de envíos
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=La cantidad enviada no debe ser mayor que la cantidad solici
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Responsable recepción pedido a proveedor
 TypeContact_shipping_external_BILLING=Contacto cliente de facturación presupuesto
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_CUSTOMER=Seguimiento del envío del contacto con el cliente
+TypeContact_shipping_external_SHIPPING=Contacto del cliente para envíos
 TypeContact_shipping_external_DELIVERY=Contacto cliente para envíos
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+CloseShipment=Cerrar envío
+ConfirmCloseShipment=Confirmar cierre de envío
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Preseleccione el número de lote/serie con la fecha de caducidad/consumo más temprana al crear un envío

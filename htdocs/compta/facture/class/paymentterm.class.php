@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= "nbjour,";
 		$sql .= "decalage";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->entity) ? getEntity('c_payment_term') : "'".$this->db->escape($this->entity)."'").",";
+		$sql .= " ".(!isset($this->entity) ? getEntity('c_payment_term') : "'".$this->db->escape((string) $this->entity)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->sortorder) ? 'NULL' : "'".$this->db->escape($this->sortorder)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";

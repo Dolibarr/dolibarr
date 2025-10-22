@@ -1,5 +1,19 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
@@ -12,9 +26,21 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
  * @var string $textbutaction
+ * @var int<0,max> $nbtopmenuentries
  * @var string $right
  * @var string $left
  */
+
+'
+@phan-var-force string $butactionbg
+@phan-var-force string $colortextlink
+@phan-var-force int<0,1> $dol_optimize_smallscreen
+@phan-var-force string $fontlist
+@phan-var-force string $left
+@phan-var-force int<0,max> $nbtopmenuentries
+@phan-var-force string $right
+@phan-var-force string $textbutaction
+';
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -160,7 +186,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 .butAction:hover, .dropdown-holder.open > .butAction   {
 	/** TODO use css var with hsl from --colortextlink to allow create darken or lighten color */
-	-webkit-box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
 	box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
 }
 .butActionNew:hover   {
@@ -175,7 +200,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionDelete:hover {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
@@ -226,7 +250,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	color: #999 !important;
 	padding-top: 0.2em;
 	box-shadow: none !important;
-	-webkit-box-shadow: none !important;
 }
 
 .butActionTransparent {
@@ -290,10 +313,10 @@ a.btnTitle.btnTitleSelected {
 	text-decoration: none;
 	box-shadow: none;
 }
-/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
+/* The buttonplus is growing on hover (don't know why). This is to avoid to have the cell growing too */
 .btnTitlePlus:hover {
-	max-width: 24px;
-	max-height: 40px;
+	/* max-width: 24px; */ /* max width is a problem when the button has a text under */
+	max-height: 42px;
 }
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {
@@ -338,16 +361,12 @@ table.table-fiche-title tr.titre td.col-right a.btnTitle {
 	color: #aaa;
 }
 
+
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
-	}
-	.btnTitle, a.btnTitle {
-		display: inline-block;
-		padding: 4px 4px 4px 4px;
-		min-width: unset;
 	}
 }
 
@@ -360,10 +379,21 @@ table.table-fiche-title tr.titre td.col-right a.btnTitle {
 }
 
 /* smartphone */
+
 @media only screen and (max-width: 767px)
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.85em;
+	}
+
+	/* for small screen, we reduce the min with of button */
+	.btnTitle, a.btnTitle {
+		display: inline-block;
+		padding: 4px 4px 4px 4px;
+		min-width: unset;	/* if we unset the min-width here, we must also unset the font-size on .paginationafterarrows a.btnTitlePlus:hover span:before to avoid page content move */
+	}
+	.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
+		font-size: unset !important;
 	}
 }
 

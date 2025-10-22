@@ -3,9 +3,9 @@ MenuFinancial=開票|付款
 TaxModuleSetupToModifyRules=前往“ <a href="%s">稅金模組設定</a>修改計算規則
 TaxModuleSetupToModifyRulesLT=前往<a href="%s">公司設定</a>修改計算規則
 OptionMode=會計選項
-OptionModeTrue=收入-支出選項
-OptionModeVirtual=債權債務選項
-OptionModeTrueDesc=在這種情況下，營業額是根據付款（付款日期）計算的。僅當發票通過帳戶上的輸入/輸出檢查簿記時，才能確保數字的有效性。
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=在這種情況下，營業額是根據發票（驗證日期）計算的。這些發票到期時，無論是否已付款，都將在營業額輸出中列出。
 FeatureIsSupportedInInOutModeOnly=只在信用-借貸會計模式下可用的功能（請參閱會計模組組態）
 VATReportBuildWithOptionDefinedInModule=此處顯示的金額是使用稅金模組設定中的定義規則計算的。
@@ -325,3 +325,7 @@ InvoiceToPay30Days=支付（> 30 天）
 ConfirmPreselectAccount=預選會計科目代號
 ConfirmPreselectAccountQuestion=您確定要使用此會計科目代號預先選擇 %s 選定的行嗎？
 AmountPaidMustMatchAmountOfDownPayment=支付的金額必須與預付款/訂金金額相符。
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

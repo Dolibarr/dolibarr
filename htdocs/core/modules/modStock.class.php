@@ -78,7 +78,7 @@ class modStock extends DolibarrModules
 		$this->const = array();
 		$r = 0;
 
-		$this->const[$r] = array('STOCK_ALLOW_NEGATIVE_TRANSFER', 'chaine', '1', '', 1);
+		$this->const[$r] = array('STOCK_DISALLOW_NEGATIVE_TRANSFER', 'chaine', '1', '', 0);
 
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";

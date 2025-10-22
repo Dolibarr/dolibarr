@@ -66,7 +66,9 @@ NoLineGoOnTabToAddSome=Brak pozycji do wyświetlenia, przejdź do zakładki „%
 CreateInvoiceForThisCustomerFromSendings=Utwórz fakturę
 IfValidateInvoiceIsNoSendingStayUnbilled=Jeśli pole zatwierdzenia będzie miało wartość „Nie”, wysyłka pozostanie w stanie „Niezafakturowanym” do czasu zatwierdzenia faktury.
 OptionToSetSendingBilledNotEnabled=Opcja z modułu Workflow pozwalająca na automatyczne ustawienie wysyłania na „Zafakturowane” po zatwierdzeniu faktury nie jest włączona, dlatego po wygenerowaniu faktury konieczne będzie ręczne ustawienie statusu wysyłek na „Zafakturowane”.
-ShipmentUpdated=Shipment successfully updated
+NoWarehouseInBase=Brak magazynu w bazie
+ShipmentUpdated=Przesyłka została pomyślnie zaktualizowana
+ShipmentIncrementStockOnDelete = Zwiększ zapas przy usuwaniu
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Suma wag produktów
 # warehouse details
 DetailWarehouseNumber= Szczegóły magazynu
 DetailWarehouseFormat= W: %s (ilość: %d)
+DetailChildrenFormat=%s: %s (Ilość: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Wyświetla ostatnią datę wejścia do magazynu podczas tworzenia przesyłki dla numeru seryjnego lub partii
 CreationOptions=Dostępne opcje w trakcie tworzenia wysyłki
 ShipmentDistribution=Dystrybucja przesyłek
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=Ilość wysłana nie powinna być większa niż ilość zam�
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Przedstawiciela w ślad za koszty
 TypeContact_shipping_external_BILLING=Kontakt do faktury klienta
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
-TypeContact_shipping_external_DELIVERY=Customer contact for delivery
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+TypeContact_shipping_external_CUSTOMER=Kontakt z klientem w celu śledzenia wysyłki
+TypeContact_shipping_external_SHIPPING=Dane kontaktowe klienta w sprawie wysyłki
+TypeContact_shipping_external_DELIVERY=Dane kontaktowe do dostawy
+CloseShipment=Zamknięta przesyłka
+ConfirmCloseShipment=Potwierdź bliską wysyłkę
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Podczas tworzenia przesyłki wybierz wstępnie numer partii/seryjny z najwcześniejszą datą przydatności do spożycia

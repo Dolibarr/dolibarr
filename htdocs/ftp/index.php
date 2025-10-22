@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,6 +107,7 @@ $result = restrictedArea($user, 'ftp', '');
  */
 
 if ($action == 'uploadfile' && $user->hasRight('ftp', 'write')) {
+	$newsectioniso = null;
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -115,7 +116,7 @@ if ($action == 'uploadfile' && $user->hasRight('ftp', 'write')) {
 		$ok = $resultarray['ok'];
 		$mesg = $resultarray['mesg'];
 	}
-	if ($conn_id && $ok && !$mesg) {
+	if ($conn_id && $ok && !$mesg && $newsectioniso) {
 		$nbfile = count($_FILES['userfile']['name']);
 		for ($i = 0; $i < $nbfile; $i++) {
 			$newsection = $newsectioniso;
@@ -138,6 +139,7 @@ if ($action == 'uploadfile' && $user->hasRight('ftp', 'write')) {
 
 if ($action == 'addfolder' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
+	$newsectioniso = null;
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
@@ -145,7 +147,7 @@ if ($action == 'addfolder' && $user->hasRight('ftp', 'write')) {
 		$ok = $resultarray['ok'];
 		$mesg = $resultarray['mesg'];
 	}
-	if ($conn_id && $ok && !$mesg) {
+	if ($conn_id && $ok && !$mesg && $newsectioniso) {
 		$result = dol_ftp_mkdir($conn_id, $newfolder, $newsectioniso);
 
 		if ($result) {
