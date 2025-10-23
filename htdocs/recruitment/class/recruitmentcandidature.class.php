@@ -1001,8 +1001,7 @@ class RecruitmentCandidature extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_recruitmentcandidature:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
+			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1048,6 +1047,7 @@ class RecruitmentCandidature extends CommonObject
 			if (class_exists($classname)) {
 				$obj = new $classname();
 				'@phan-var-force ModeleNumRefRecruitmentCandidature $obj';
+				/** @var ModeleNumRefRecruitmentCandidature $obj */
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
