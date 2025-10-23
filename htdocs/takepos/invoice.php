@@ -394,8 +394,13 @@ if (empty($reshook)) {
 
 					// var_dump('fk_product='.$line->fk_product.' batch='.$line->batch.' warehouse='.$line->fk_warehouse.' qty='.$line->qty);
 					if ($line->batch != '' && $warehouseid > 0) {
+						// Obtain llx_product_stock.rowid with known $line->fk_product so we can pass it to the find() function and limit our results to only 1 record.
+						$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_stock where fk_product = ".((int) $line->fk_product)." AND fk_entrepot = ".$warehouseid;
+						$resql = $db->query($sql);
+						$row = $db->fetch_object($resql);
+
 						$prod_batch = new Productbatch($db);
-						$prod_batch->find(0, '', '', $line->batch, $warehouseid);
+						$prod_batch->find($row->rowid, '', '', $line->batch, '');
 
 						$mouvP = new MouvementStock($db);
 						$mouvP->setOrigin($invoice->element, $invoice->id);
