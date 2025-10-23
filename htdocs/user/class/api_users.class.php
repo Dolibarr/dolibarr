@@ -1315,8 +1315,6 @@ class Users extends DolibarrApi
 
 		unset($object->actiontypecode);
 		unset($object->all_permissions_are_loaded);
-		unset($object->array_languages);
-		unset($object->array_options);
 		unset($object->barcode_type_coder);
 		unset($object->barcode_type);
 		unset($object->canvas);
