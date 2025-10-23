@@ -106,6 +106,10 @@ if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
 
+if (!is_object($user)) {
+	$user = new User($db);
+}
+
 $captchaobj = null;
 if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -330,10 +334,6 @@ if (empty($reshook)) {
 			$object->type_code = GETPOST("type_code", 'aZ09');
 			$object->category_code = GETPOST("category_code", 'aZ09');
 			$object->severity_code = GETPOST("severity_code", 'aZ09');
-
-			if (!is_object($user)) {
-				$user = new User($db);
-			}
 
 			// create third-party with contact
 			$usertoassign = 0;
