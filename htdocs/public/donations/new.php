@@ -105,6 +105,39 @@ $object = new Don($db);
 
 $user->loadDefaultValues();
 
+$captchaobj = null;
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(
+		array(
+			'main' => '/core/modules/security/captcha/'
+		),
+		is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array()
+	);
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
+	}
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+			/** @var ModeleCaptcha $captchaobj */
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
+	} else {
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+	}
+}
 
 /**
  * Show header for new donation
@@ -174,7 +207,6 @@ if ($reshook < 0) {
 if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous form. Check is done on constant to enable and mitigation.
 	$error = 0;
 	$urlback = '';
-	$captchaobj = null;
 
 	$db->begin();
 
@@ -189,45 +221,13 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	// Check Captcha code if is enabled
+	$ok = false;
 	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
-		// List of directories where we can find captcha handlers
-		$dirModCaptcha = array_merge(
-			array(
-				'main' => '/core/modules/security/captcha/'
-			),
-			is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array()
-		);
-		$fullpathclassfile = '';
-		$ok = false;
-		foreach ($dirModCaptcha as $dir) {
-			$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
-			if ($fullpathclassfile) {
-				break;
-			}
-		}
-		if ($fullpathclassfile) {
-			include_once $fullpathclassfile;
-			// Charging the numbering class
-			$classname = "modCaptcha".ucfirst($captcha);
-			if (class_exists($classname)) {
-				/** @var ModeleCaptcha $captchaobj */
-				$captchaobj = new $classname($db, $conf, $langs, $user);
-				'@phan-var-force ModeleCaptcha $captchaobj';
-				/** @var ModeleCaptcha $captchaobj */
-				if (is_object($captchaobj) && method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
-					$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
-				} else {
-					print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
-				}
-			} else {
-				print 'Error, the captcha handler class '.$classname.' was not found after the include';
-			}
+		if (is_object($captchaobj) && method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+			$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
 		} else {
-			print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
 		}
-		print '<br></td></tr>';
 		if (!$ok) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
