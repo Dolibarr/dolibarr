@@ -32,22 +32,8 @@
  *  \brief      File that include the conf.php file and commons lib like functions.lib.php
  */
 
-// TODO Move this 2 information into a file that will be included into the LNE
-if (!defined('DOL_APPLICATION_TITLE')) {
-	define('DOL_APPLICATION_TITLE', 'Dolibarr');
-}
-if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '23.0.0-alpha'); 	// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
-}
+require_once 'version.inc.php';
 
-// End of common declaration part
-if (defined('DOL_INC_FOR_VERSION_ERROR')) {
-	return;
-}
-
-if (!defined('CERTIF_LNE')) {
-	define('CERTIF_LNE', '0');				// Set to 1 if version was certified
-}
 
 // Define syslog constants
 if (!defined('LOG_DEBUG')) {

@@ -2068,7 +2068,7 @@ function getSoapParams()
  * Return link url to an object
  *
  * @param 	int		$objectid		Id of record
- * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', 'user', 'myobject@mymodule', ...)
+ * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition', 'user', 'myobject@mymodule', ...)
  * @param 	int		$withpicto		Picto to show
  * @param 	string	$option			More options
  * @return	string					URL of link to object id/type
@@ -2120,7 +2120,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$langs->load('sendings');
 		$classpath = 'expedition/class';
 		$myobject = 'expedition';
-		$module = 'expedition_bon';
+		$module = 'expedition';
 	} elseif ($objecttype == 'delivery') {
 		$langs->load('sendings');
 		$classpath = 'delivery/class';
@@ -2651,7 +2651,7 @@ function getModuleDirForApiClass($moduleobject)
 
 	if ($moduleobject == 'contracts') {
 		$moduledirforclass = 'contrat';
-	} elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents', 'objectlinks'))) {
+	} elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents', 'objectlinks', 'emailtemplates'))) {
 		$moduledirforclass = 'api';
 	} elseif (in_array($moduleobject, ['contact', 'contacts', 'customer', 'thirdparty', 'thirdparties'])) {
 		$moduledirforclass = 'societe';

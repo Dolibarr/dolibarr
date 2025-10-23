@@ -662,24 +662,25 @@ function ajax_event($htmlname, $events)
 /**
  * 	On/off button for constant
  *
- * 	@param  string      $code                   Name of constant
- * 	@param  array<string,string[]>	$input      It's array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
- * 	@param  ?int        $entity                 Entity. Current entity is used if null.
- *  @param  int<0,1>    $revertonoff            1 = Revert on/off
- *  @param  int<0,1>    $strict                 0 = Default, 1=Only the complementary actions "disabled" and "enabled" (found into $input) are processed. Use only "disabled" with delConstant and "enabled" with setConstant.
- *  @param  int         $forcereload            Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
- *  @param  int<0,2>    $marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
- *  @param  int<0,1>    $forcenoajax            1 = Force to use a ahref link instead of ajax code.
- *  @param  int<0,1>    $setzeroinsteadofdel    1 = Set constant to '0' instead of deleting it when $input is empty.
- *  @param  string      $suffix                 Suffix to use on the name of the switch picto when option is on. Example: '', '_red'
- *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
- *  @param  string      $morecss                More CSS
- *  @param	User|int	$userconst				If set, use the ajax On/Off for user or user ID $userconst
- *  @param	string		$showwarning			String to show a warning when enabled the option
- * 	@return string
+ * 	@param  string      	$code                   Name of constant
+ * 	@param  array<string,string[]>	$input      	It's array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param  ?int        	$entity                 Entity. Current entity is used if null.
+ *  @param  int<0,1>    	$revertonoff            1 = Revert on/off
+ *  @param  int<0,1>    	$strict                 0 = Default, 1=Only the complementary actions "disabled" and "enabled" (found into $input) are processed. Use only "disabled" with delConstant and "enabled" with setConstant.
+ *  @param  int         	$forcereload            Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
+ *  @param  int<0,2>    	$marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
+ *  @param  int<0,1>    	$forcenoajax            1 = Force to use a ahref link instead of ajax code.
+ *  @param  int<0,1>    	$setzeroinsteadofdel    1 = Set constant to '0' instead of deleting it when $input is empty.
+ *  @param  string|array<string,string>		$suffix             	Suffix to use on the name of the switch picto when option is on. Example: array('ifoff' => '_red', 'ifon' => '_green')
+ *  @param  string      	$mode                   Add parameter &mode= to the href link (Used for href link)
+ *  @param  string      	$morecss                More CSS. Example: 'inline-block reposition'
+ *  @param	User|int		$userconst				If set, use the ajax On/Off for user or user ID $userconst
+ *  @param	string			$showwarning			String to show a warning when enabled the option
+ *  @param	int<0,1>		$disabled				If component must be disabled
+ * 	@return string									The HTML component of button
  *  @see ajax_object_onoff() to update the status of an object
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0, $showwarning = '')
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0, $showwarning = '', $disabled = 0)
 {
 	global $conf, $langs, $user, $db;
 
@@ -687,6 +688,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 	if (!isset($input)) {
 		$input = array();
 	}
+
+	$out = '';
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
 		if (!getDolGlobalString($code)) {
@@ -704,61 +707,74 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 			$userconst->fetch($userconstid);
 		}
 
-		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
-		<script>
-			$(document).ready(function() {
-				var input = '.json_encode($input).';
-				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
-				var code = \''.dol_escape_js($code).'\';
-				var entity = \''.dol_escape_js((string) $entity).'\';
-				var strict = \''.dol_escape_js((string) $strict).'\';
-				var userid = \''.dol_escape_js((string) $user->id).'\';
-				var userconst = '.((int) $userconstid).';
-				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
-				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
-				var token = \''.currentToken().'\';
-				var warning = \''.dol_escape_js($showwarning).'\';
-
-				// Set constant
-				$("#set_" + code).click(function() {
-					if (warning) {
-						alert(warning);
-					}
-
-					if (input.alert && input.alert.set) {
-						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
-						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
-						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
-					} else {
-						setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 1, userconst);
-					}
-				});
-
-				// Del constant
-				$("#del_" + code).click(function() {
-					if (input.alert && input.alert.del) {
-						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
-						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
-						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
-					} else {';
-		if (empty($setzeroinsteadofdel)) {
-			$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, userconst);';
+		if ($disabled) {
+			$morecss .= ' disabled';
 		} else {
-			$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0, userconst);';
-		}
-		$out .= '	}
+			$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
+			<script>
+				$(document).ready(function() {
+					var input = '.json_encode($input).';
+					var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
+					var code = \''.dol_escape_js($code).'\';
+					var entity = \''.dol_escape_js((string) $entity).'\';
+					var strict = \''.dol_escape_js((string) $strict).'\';
+					var userid = \''.dol_escape_js((string) $user->id).'\';
+					var userconst = '.((int) $userconstid).';
+					var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
+					var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
+					var token = \''.currentToken().'\';
+					var warning = \''.dol_escape_js($showwarning).'\';
+
+					// Set constant
+					$("#set_" + code).click(function() {
+						if (warning) {
+							alert(warning);
+						}
+
+						if (input.alert && input.alert.set) {
+							if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
+							if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
+							confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
+						} else {
+							setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 1, userconst);
+						}
+					});
+
+					// Del constant
+					$("#del_" + code).click(function() {
+						if (input.alert && input.alert.del) {
+							if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
+							if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
+							confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
+						} else {';
+			if (empty($setzeroinsteadofdel)) {
+				$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, userconst);';
+			} else {
+				$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0, userconst);';
+			}
+			$out .= '	}
+					});
 				});
-			});
-		</script>'."\n";
+			</script>'."\n";
+		}
 
 		if (!empty($userconst) && $userconst instanceof User) {
 			$value = getDolUserString($code, '', $userconst);
 		} else {
 			$value = getDolGlobalString($code);
 		}
+
+		if (is_array($suffix)) {
+			$suffixon = $suffix['ifon'];
+			$suffixoff = $suffix['ifoff'];
+		} else {	// old mode deprecated
+			$suffixon = (string) $suffix;
+			$suffixoff = '';
+		}
+
 		$out .= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-		$out .= '<span id="set_'.$code.'" class="valignmiddle inline-block linkobject '.($value ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.($revertonoff ? img_picto($langs->trans("Enabled"), 'switch_on', '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
-		$out .= '<span id="del_'.$code.'" class="valignmiddle inline-block linkobject '.($value ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.($revertonoff ? img_picto($langs->trans("Disabled"), 'switch_off'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffix, '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="set_'.$code.'" class="valignmiddle inline-block linkobject '.($value ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.($revertonoff ? img_picto($langs->trans("Enabled"), 'switch_on'.$suffixoff, '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off'.$suffixoff, '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="del_'.$code.'" class="valignmiddle inline-block linkobject '.($value ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.($revertonoff ? img_picto($langs->trans("Disabled"), 'switch_off'.$suffixon, '', 0, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffixon, '', 0, 0, 0, '', '', $marginleftonlyshort)).'</span>';
 		$out .= "\n";
 	}
 
