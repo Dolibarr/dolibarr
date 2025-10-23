@@ -1715,7 +1715,7 @@ function dol_set_user_param($db, $conf, &$user, $tab, $entity = -1)
 	// We remove old parameters for all keys in $tab
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 	$sql .= " WHERE fk_user = ".((int) $user->id);
-	$sql .= " AND entity = ".$entity;
+	$sql .= " AND entity = ".((int) $entity);
 	$sql .= " AND param IN (";
 	$i = 0;
 	foreach ($tab as $key => $value) {
@@ -1746,7 +1746,7 @@ function dol_set_user_param($db, $conf, &$user, $tab, $entity = -1)
 		}
 		if ($forcevalue == 1 || $value) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param (fk_user, entity, param, value)";
-			$sql .= " VALUES (".((int) $user->id).",".$entity.",";
+			$sql .= " VALUES (".((int) $user->id).",".((int) $entity).",";
 			$sql .= " '".$db->escape($key)."','".$db->escape($value)."')";
 
 			dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
