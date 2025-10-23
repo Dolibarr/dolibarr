@@ -44,6 +44,7 @@ require '../../main.inc.php';
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var ?User $user
  *
  * @var string $dolibarr_main_url_root
  */
@@ -106,6 +107,10 @@ $user->loadDefaultValues();
 $errmsg = "";
 
 $extrafields = new ExtraFields($db);
+
+if (!is_object($user)) {
+	$user = new User($db);
+}
 
 /*
  * Actions
