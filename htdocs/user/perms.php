@@ -241,7 +241,7 @@ $sql .= " WHERE gr.entity = ".((int) $entity); // it's very important, don't cha
 // but when using MULTICOMPANY_TRANSVERSE_MODE, we may have inserted record that make rubbish result here due to the duplicate record of
 // other entities, so we are forced to add a filter on gu here
 if (getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE_FIX_WHEN_GU_CONTAINS_0")) {
-	$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+	$sql .= " AND gu.entity IN (0,". ((int) $entity).")";
 } else {
 	$sql .= " AND gu.entity = ".((int) $entity);
 }
