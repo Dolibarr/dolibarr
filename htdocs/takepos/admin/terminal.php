@@ -437,11 +437,9 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 $customprinterallowed = true;
 $orderprinterallowed = (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS'));
 $customprinttemplateallowed = true;
-$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
-if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
-	//$customprinterallowed = false;	// Custom printer are allowed but information in template are mandatory
-	$customprinttemplateallowed = false;
-	//$orderprinterallowed = false;
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+if (isALNECandidateVersion()) {		// No need to show this option because it has no effect when isALNECandidateVersion is true.
+	$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 }
 
 if (isModEnabled('receiptprinter')) {
