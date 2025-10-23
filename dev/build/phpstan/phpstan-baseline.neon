@@ -14365,12 +14365,6 @@ parameters:
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
 			message: '#^Variable \$entity might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
