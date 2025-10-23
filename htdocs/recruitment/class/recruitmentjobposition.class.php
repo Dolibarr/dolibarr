@@ -883,7 +883,7 @@ class RecruitmentJobPosition extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$query = array_merge($query, ['save_lastsearch_values' => 1]);
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
 		$url = dolBuildUrl($baseurl, $query);
