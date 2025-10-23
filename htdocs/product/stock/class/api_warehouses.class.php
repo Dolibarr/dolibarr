@@ -60,10 +60,18 @@ class Warehouses extends DolibarrApi
 	 * @param	int		$id				ID of warehouse
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws	RestException
+	 * @url	GET {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
+
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
 		}
@@ -100,7 +108,11 @@ class Warehouses extends DolibarrApi
 	 * @phan-return Entrepot[]
 	 * @phpstan-return Entrepot[]
 	 *
-	 * @throws RestException
+	 * @url	GET
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 500 Internal Server Error
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -188,6 +200,13 @@ class Warehouses extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of warehouse
+	 *
+	 * @url	POST
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 500 Internal Server Error
+	 *
 	 */
 	public function post($request_data = null)
 	{
@@ -203,6 +222,10 @@ class Warehouses extends DolibarrApi
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->warehouse->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
+			}
+
+			if ($field == 'id') {
+				throw new RestException(400, 'Creating with id field is forbidden');
 			}
 
 			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
@@ -221,9 +244,21 @@ class Warehouses extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
+	 *
+	 * @url	PUT {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
+	 *
 	 */
 	public function put($id, $request_data = null)
 	{
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
+
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
 			throw new RestException(403);
 		}
@@ -239,8 +274,9 @@ class Warehouses extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
-				continue;
+				throw new RestException(400, 'Updating with id field is forbidden');
 			}
+
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->warehouse->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -271,9 +307,21 @@ class Warehouses extends DolibarrApi
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @url	DELETE {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
+	 *
 	 */
 	public function delete($id)
 	{
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
+
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'supprimer')) {
 			throw new RestException(403);
 		}
@@ -287,7 +335,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!$this->warehouse->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(403, 'error when delete warehouse');
+			throw new RestException(500, 'error when delete warehouse');
 		}
 
 		return array(
@@ -311,6 +359,69 @@ class Warehouses extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		unset($object->actiontypecode);
+		unset($object->canvas);
+		unset($object->civility_code);
+		unset($object->civility_id);
+		unset($object->cond_reglement_id);
+		unset($object->cond_reglement_supplier_id);
+		unset($object->contact_id);
+		unset($object->contacts_ids);
+		unset($object->contacts_ids_internal);
+		unset($object->country_code);
+		unset($object->date_cloture);
+		unset($object->date_validation);
+		unset($object->demand_reason_id);
+		unset($object->deposit_percent);
+		unset($object->extraparams);
+		unset($object->firstname);
+		unset($object->fk_account);
+		unset($object->fk_multicurrency);
+		unset($object->fk_user_creat);
+		unset($object->fk_user_modif);
+		unset($object->last_main_doc);
+		unset($object->lastname);
+		unset($object->libelle);
+		unset($object->lines);
+		unset($object->linkedObjectsIds);
+		unset($object->mode_reglement_id);
+		unset($object->module);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_tx);
+		unset($object->name);
+		unset($object->nb_rights);
+		unset($object->note_private);
+		unset($object->note_public);
+		unset($object->origin_id);
+		unset($object->origin_type);
+		unset($object->product);
+		unset($object->ref_ext);
+		unset($object->region_id);
+		unset($object->retained_warranty_fk_cond_reglement);
+		unset($object->shipping_method);
+		unset($object->shipping_method_id);
+		unset($object->specimen);
+		unset($object->state_id);
+		unset($object->tms);
+		unset($object->total_ht);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+		unset($object->total_tva);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->transport_mode_id);
+		unset($object->TRIGGER_PREFIX);
+		unset($object->user);
+		unset($object->user_closing_id);
+		unset($object->user_modification_id);
+		unset($object->user_validation_id);
+
 		return $object;
 	}
 
@@ -321,7 +432,7 @@ class Warehouses extends DolibarrApi
 	 * @param ?array<string,string> $data   Data to validate
 	 * @return array<string,string>
 	 *
-	 * @throws RestException
+	 * @throws RestException 400 Bad Request
 	 */
 	private function _validate($data)
 	{
