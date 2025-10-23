@@ -174,6 +174,7 @@ if ($reshook < 0) {
 if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous form. Check is done on constant to enable and mitigation.
 	$error = 0;
 	$urlback = '';
+	$captchaobj = null;
 
 	$db->begin();
 
@@ -208,7 +209,6 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		}
 		if ($fullpathclassfile) {
 			include_once $fullpathclassfile;
-			$captchaobj = null;
 			// Charging the numbering class
 			$classname = "modCaptcha".ucfirst($captcha);
 			if (class_exists($classname)) {
@@ -574,7 +574,6 @@ if (!$action || $action == 'create') {
 	// }
 
 	// Show line with Captcha
-	$captcha = '';
 	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
 		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td><br>';
 		if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
