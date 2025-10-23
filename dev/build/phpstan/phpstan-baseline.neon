@@ -14125,12 +14125,6 @@ parameters:
 			path: ../../../htdocs/public/partnership/new.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/public/partnership/new.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -15033,12 +15027,6 @@ parameters:
 		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/recruitment/class/recruitmentcandidature.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/recruitment/class/recruitmentcandidature.class.php
 
