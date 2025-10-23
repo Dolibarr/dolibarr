@@ -286,15 +286,13 @@ if (!empty($search_fk_warehouse)) {
 } else if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED')) {
 	// Case 2: multi-company + warehouse sharing -> sum via sp limited to visible entities
 	global $mc;
-	$useSeparatedStock = true;
 	if (isset($mc->sharings['stock']) && !empty($mc->sharings['stock'])) {
+		$useSeparatedStock = true;
 		$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
 	}
 }
 
 // --- Determine stock source field and alias
-// We define the source of the stock calculation (which field to use)
-// in one place, avoiding logical repetition later.
 $stockField = '';
 $stockAlias = 'stock'; // Default alias
 $useStockSum = false;  // Flag if we need to use SUM() for the stock field itself
@@ -314,56 +312,47 @@ if (!empty($search_fk_warehouse)) {
 }
 
 // --- SELECT
-$sql  = 'SELECT ';
-$sql .= ' p.rowid, p.ref, p.label, p.description, p.price,';
-$sql .= ' COALESCE(ppe.pmp, p.pmp) as pmp,'; // WAP (Weighted Average Price) per entity if available
-$sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
-$sql .= ' p.tms as datem, p.duration, p.tobuy,';
+$sql  = "SELECT ";
+$sql .= " p.rowid, p.ref, p.label, p.description, p.price,";
+$sql .= " COALESCE(ppe.pmp, p.pmp) as pmp,"; // WAP (Weighted Average Price) per entity if available
+$sql .= " p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,";
+$sql .= " p.tms as datem, p.duration, p.tobuy,";
 
-// --- Stock field (DRY implementation)
+
 // Add the stock field to the SELECT, applying SUM() only if required (cases 1 and 2)
 if ($useStockSum) {
-	$sql .= ' SUM('.$stockField.') as '.$stockAlias.',';
+	$sql .= " SUM($stockField) as $stockAlias,";
 } else {
-	$sql .= ' '.$stockField.' as '.$stockAlias.',';
+	$sql .= " $stockField as $stockAlias,";
 }
 
-// --- Value fields (DRY implementation)
 // currentvalue and sellvalue are now built *once* using the $stockField variable.
-// This logic is no longer repeated three times.
-$sql .= ' SUM(COALESCE(ppe.pmp, p.pmp) * '.$stockField.') as currentvalue,';
-$sql .= ' SUM(p.price * '.$stockField.') as sellvalue';
+$sql .= " SUM(COALESCE(ppe.pmp, p.pmp) * $stockField) as currentvalue,";
+$sql .= " SUM(p.price * $stockField) as sellvalue";
 
 // Hooks select
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);
 $sql .= $hookmanager->resPrint;
 
-// --- FROM / JOIN
 // This is where the code block you provided in your last message begins.
 // Remember to apply the security (intval) and prefix ($db->prefix()) fixes here.
-$sql .= ' FROM '.$db->prefix().'product as p';
+$sql .= " FROM ".$db->prefix()."product as p";
 
-// Join product_perentity si on peut en bénéficier (PMP par entité ou per-entity partagé)
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') || getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
-	$sql .= ' LEFT JOIN '.$db->prefix().'product_perentity as ppe'
-		.  ' ON ppe.fk_product = p.rowid AND ppe.entity = '.((int) $conf->entity);
+	$sql .= " LEFT JOIN ".$db->prefix()."product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = ". (int) $conf->entity;
 }
 
 // Stock joins
 if (!empty($search_fk_warehouse)) {
 	// Case 1: warehouse filter -> ps
 	$warehouseList = array_map('intval', $search_fk_warehouse);
-	$sql .= ' LEFT JOIN '.$db->prefix().'product_stock as ps'
-		.  ' ON ps.fk_product = p.rowid'
-		.  ' AND ps.fk_entrepot IN ('.implode(',', $warehouseList).')';
+	$sql .= " LEFT JOIN ".$db->prefix()."product_stock as ps ON ps.fk_product = p.rowid AND ps.fk_entrepot IN (".implode(',', $warehouseList).")";
 } elseif ($useSeparatedStock) {
 	// Case 2: sum via sp on visible warehouses (current entity + shared)
 	$entities = array_map('intval', explode(',', $visibleWarehousesEntities));
-	$sql .= ' LEFT JOIN '.$db->prefix().'product_stock as sp'
-		.  ' ON sp.fk_product = p.rowid'
-		.  ' AND sp.fk_entrepot IN (SELECT rowid FROM '.$db->prefix().'entrepot'
-		.  '                         WHERE entity IN ('.implode(',', $entities).'))';
+	$sql .= " LEFT JOIN ".$db->prefix()."product_stock as sp ON sp.fk_product = p.rowid AND sp.fk_entrepot IN (";
+		$sql .= "SELECT rowid FROM ".$db->prefix()."entrepot WHERE entity IN (".implode(',', $entities)."))";
 }
 
 // Hooks join
@@ -372,13 +361,11 @@ $reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters);
 $sql .= $hookmanager->resPrint;
 
 // --- WHERE
-$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-
 if ($productid > 0) {
-	$sql .= ' AND p.rowid = '.((int) $productid);
+	$sql .= " WHERE p.rowid = ".(int) $productid;
 }
 if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-	$sql .= ' AND p.fk_product_type = '.Product::TYPE_PRODUCT;
+	$sql .= " AND p.fk_product_type = " . (int) Product::TYPE_PRODUCT;
 }
 if (!empty($canvas)) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
@@ -391,16 +378,16 @@ if ($search_nom) {
 }
 
 // --- GROUP BY (OK ONLY_FULL_GROUP_BY)
-$sql .= ' GROUP BY';
-$sql .= ' p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
-$sql .= ' p.tms, p.duration, p.tobuy';
+$sql .= " GROUP BY";
+$sql .= " p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,";
+$sql .= " p.tms, p.duration, p.tobuy";
 
 // presentation: COALESCE(ppe.pmp,p.pmp) -> we group on the 2 components
-$sql .= ', p.pmp, ppe.pmp';
+$sql .= ", p.pmp, ppe.pmp";
 
 // if we are NOT in sum via sp/ps (fallback p.stock), we must regroup p.stock
 if (empty($search_fk_warehouse) && !$useSeparatedStock) {
-	$sql .= ', p.stock';
+	$sql .= ", p.stock";
 }
 
 // Hooks where additionnels
