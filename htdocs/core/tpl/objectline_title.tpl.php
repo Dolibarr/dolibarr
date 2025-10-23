@@ -70,7 +70,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'order_sup
 	}
 	if (GETPOST('mode', 'aZ09') == 'servicedateforalllines') {
 		print '&nbsp;&nbsp;<div class="classvatforalllines inline-block nowraponall">';
-		$hourmin = getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE');
+		$hourmin = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 		print $form->selectDate('', 'alldate_start', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
 		print ' '.$langs->trans('to').' ';
