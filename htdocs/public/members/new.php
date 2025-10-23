@@ -376,8 +376,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 	// Check Captcha code if is enabled
 	$ok = false;
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
-		if (is_object($captchaobj) && method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER') && is_object($captchaobj)) {
+		if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
 			$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
 		} else {
 			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
@@ -1062,9 +1062,9 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	// Display Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER') && is_object($captchaobj)) {
 		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td><br>';
-		if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+		if (method_exists($captchaobj, 'getCaptchaCodeForForm')) {
 			print $captchaobj->getCaptchaCodeForForm('');  // @phan-suppress-current-line PhanUndeclaredMethod
 		} else {
 			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
