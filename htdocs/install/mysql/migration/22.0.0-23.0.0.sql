@@ -43,6 +43,8 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_T
 
 -- V23 migration
 
+UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
+
 ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_ticket ADD COLUMN note_public text after resolution;

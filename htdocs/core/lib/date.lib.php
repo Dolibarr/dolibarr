@@ -674,13 +674,11 @@ function dol_get_first_hour($date, $gm = 'tzserver')
  */
 function dol_get_first_day_week($day, $month, $year, $gm = false)
 {
-	global $conf;
-
 	//$day=2; $month=2; $year=2015;
 	$date = dol_mktime(0, 0, 0, $month, $day, $year, $gm);
 
 	//Checking conf of start week
-	$start_week = (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1);
+	$start_week = getDolGlobalInt('MAIN_START_WEEK', 1);
 
 	$tmparray = dol_getdate($date, true); // detail of current day
 
