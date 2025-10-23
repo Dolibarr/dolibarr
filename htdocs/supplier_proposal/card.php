@@ -1024,7 +1024,7 @@ if (empty($reshook)) {
 					$desc,
 					(float) $pu_ht,
 					(float) $qty,
-					(float) $tva_tx,
+					$tva_tx, // don't cast to float
 					$localtax1_tx,
 					$localtax2_tx,
 					$idprod,
@@ -1309,7 +1309,7 @@ if (empty($reshook)) {
 				$ht,
 				(float) price2num(GETPOST('qty'), 'MS', 2),
 				(float) price2num(GETPOST('remise_percent'), '', 2),
-				(float) $vat_rate,
+				$vat_rate,
 				$localtax1_rate,
 				$localtax2_rate,
 				$description,
