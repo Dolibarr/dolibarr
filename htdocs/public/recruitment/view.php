@@ -103,14 +103,13 @@ if (!isModEnabled("recruitment")) {
 }
 
 $object->fetch(0, $ref);
+if (!is_object($user)) {
+	$user = new User($db);
+}
 $user->loadDefaultValues();
 $errmsg = "";
 
 $extrafields = new ExtraFields($db);
-
-if (!is_object($user)) {
-	$user = new User($db);
-}
 
 /*
  * Actions
