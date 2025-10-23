@@ -114,7 +114,7 @@ $object = new Adherent($db);
 $user->loadDefaultValues();
 
 $captchaobj = null;
-if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 	// List of directories where we can find captcha handlers
