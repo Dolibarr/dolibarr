@@ -1929,7 +1929,7 @@ while ($i < $imaxinloop) {
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowraponall">';
-			print $object->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
+			print $object->getNomUrl(1, '', '', 0, 1, getDolGlobalInt('PROPAL_LIST_SHOW_NOTES', 1));
 			print '</td>';
 			// Warning
 			$warnornote = '';

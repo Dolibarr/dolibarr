@@ -92,4 +92,6 @@ function isALNECandidateVersion()
 	if (!isModEnabled('blockedlog')) {
 		return false;
 	}
+
+	return true;	// all conditions are ok
 }

@@ -335,9 +335,18 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// For POS context, we force some fields
+if ($contextpage == 'poslist') {
+	$arrayfields["f.pos_source"]['checked'] = 1;
+	$arrayfields["f.date_lim_reglement"]['checked'] = 0;
+	$arrayfields["f.total_ttc"]['checked'] = 1;
+	$arrayfields["f.tms"]['checked'] = 1;
+	$arrayfields["p.ref"]['checked'] = 0;
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 // Check only if it's an internal user, external users are already filtered by $socid
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
