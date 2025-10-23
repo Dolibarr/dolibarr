@@ -665,7 +665,7 @@ if ($action == 'create') {
 			if ($usercancreadsupplierprice) {
 				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
-	
+
 				print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
@@ -836,7 +836,7 @@ if ($action == 'create') {
 					if ($usercancreadsupplierprice) {
 						// Price buy PMP
 						print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
-	
+
 						// Total PMP
 						print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
 						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
