@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_usergroup ADD UNIQUE INDEX uk_usergroup_name (nom, entity);
+ALTER TABLE llx_usergroup ADD INDEX idx_usergroup_entity (entity);

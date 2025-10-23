@@ -16,3 +16,4 @@
 --
 
 ALTER TABLE llx_c_ticket_severity ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticket_severity ADD INDEX idx_c_ticket_severity_entity (entity);

@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY pk_rights_def (id, entity);
+ALTER TABLE llx_rights_def ADD INDEX idx_rights_def_entity (entity);

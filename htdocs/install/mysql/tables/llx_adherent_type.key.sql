@@ -19,3 +19,4 @@
 
 
 ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle, entity);
+ALTER TABLE llx_adherent_type ADD INDEX idx_adherent_type_entity (entity);

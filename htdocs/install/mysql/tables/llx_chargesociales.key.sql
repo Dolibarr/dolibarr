@@ -26,3 +26,4 @@ ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_modif (fk_us
 ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_valid (fk_user_valid);
 ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_projet (fk_projet);
 ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user (fk_user);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_entity (entity);

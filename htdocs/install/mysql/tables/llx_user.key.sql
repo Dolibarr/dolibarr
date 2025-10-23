@@ -22,6 +22,7 @@
 ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_login (login, entity);
 
 ALTER TABLE llx_user ADD INDEX idx_user_fk_societe (fk_soc);
+ALTER TABLE llx_user ADD INDEX idx_user_entity (entity);
 
 -- perf User::fetchAll
 ALTER TABLE llx_user ADD INDEX idx_user_status_employee(statut, employee);

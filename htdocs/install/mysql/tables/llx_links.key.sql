@@ -19,4 +19,4 @@
 -- ========================================================================
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype, label);
-
+ALTER TABLE llx_links ADD INDEX idx_links_entity (entity);

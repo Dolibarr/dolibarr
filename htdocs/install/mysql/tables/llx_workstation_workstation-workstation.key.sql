@@ -14,14 +14,9 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
--- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_rowid (rowid);
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_ref (ref);
-ALTER TABLE llx_workstation_workstation ADD CONSTRAINT fk_workstation_workstation_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_status (status);
--- END MODULEBUILDER INDEXES
+ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_entity (entity);
 
---ALTER TABLE llx_workstation_workstation ADD UNIQUE INDEX uk_workstation_workstation_fieldxy(fieldx, fieldy);
-
---ALTER TABLE llx_workstation_workstation ADD CONSTRAINT fk_workstation_workstation_fk_field FOREIGN KEY (fk_field) REFERENCES llx_workstation_myotherobject(rowid);
-
+ALTER TABLE llx_workstation_workstation ADD CONSTRAINT fk_workstation_workstation_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
