@@ -59,14 +59,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $langs->loadLangs(array("companies", "other", "recruitment"));
 
 // Get parameters
-$action   = GETPOST('action', 'aZ09');
-$cancel   = GETPOST('cancel', 'alpha');
-$email    = GETPOST('email', 'alpha');
-$firstname    = GETPOST('firstname', 'alpha');
-$lastname    = GETPOST('lastname', 'alpha');
-$birthday    = GETPOST('birthday', 'alpha');
-$phone    	 = GETPOST('phone', 'alpha');
-$message	 = GETPOST('message', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
+$email = GETPOST('email', 'alpha');
+$firstname = GETPOST('firstname', 'alpha');
+$lastname = GETPOST('lastname', 'alpha');
+$birthday = GETPOST('birthday', 'alpha');
+$phone = GETPOST('phone', 'alpha');
+$message = GETPOST('message', 'alpha');
+$SECUREKEY = GETPOST("securekey");
 $requestedremuneration = GETPOST('requestedremuneration', 'alpha');
 
 $ref = GETPOST('ref', 'alpha');
@@ -237,7 +238,7 @@ if (getDolGlobalString('MAIN_RECRUITMENT_CSS_URL')) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
+if (!getDolGlobalInt('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	$langs->load("errors");
 	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();

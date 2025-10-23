@@ -101,7 +101,6 @@ if (!is_object($user)) {
 	$user = new User($db);
 }
 
-
 /**
  * Show header for new partnership
  *

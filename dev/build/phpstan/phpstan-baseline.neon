@@ -14359,12 +14359,6 @@ parameters:
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
-			message: '#^Variable \$SECUREKEY might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
 			message: '#^Variable \$backtopage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
