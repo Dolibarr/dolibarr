@@ -222,8 +222,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 	// Check Captcha code if is enabled
 	$ok = false;
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
-		if (is_object($captchaobj) && method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION') && is_object($captchaobj)) {
+		if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
 			$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
 		} else {
 			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
