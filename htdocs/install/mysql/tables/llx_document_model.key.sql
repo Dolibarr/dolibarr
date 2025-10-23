@@ -19,3 +19,4 @@
 
 
 ALTER TABLE llx_document_model ADD UNIQUE uk_document_model (nom,type,entity);
+ALTER TABLE llx_document_model ADD INDEX idx_document_model_entity (entity);

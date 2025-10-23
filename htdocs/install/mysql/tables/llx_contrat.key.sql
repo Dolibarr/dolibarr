@@ -20,7 +20,7 @@
 
 
 -- Delete orphans
--- V4 DELETE llx_contratdet FROM llx_contratdet, llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.rowid WHERE llx_contratdet.fk_contrat = llx_contrat.rowid AND llx_societe.rowid IS NULL; 
+-- V4 DELETE llx_contratdet FROM llx_contratdet, llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.rowid WHERE llx_contratdet.fk_contrat = llx_contrat.rowid AND llx_societe.rowid IS NULL;
 -- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
 -- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_user ON llx_contrat.fk_user_author = llx_user.rowid WHERE llx_user.rowid IS NULL;
 
@@ -28,6 +28,7 @@ ALTER TABLE llx_contrat ADD UNIQUE INDEX uk_contrat_ref (ref, entity);
 
 ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_soc (fk_soc);
 ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_user_author (fk_user_author);
+ALTER TABLE llx_contrat ADD INDEX idx_contrat_entity (entity);
 
 ALTER TABLE llx_contrat ADD CONSTRAINT fk_contrat_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 ALTER TABLE llx_contrat ADD CONSTRAINT fk_contrat_user_author FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);

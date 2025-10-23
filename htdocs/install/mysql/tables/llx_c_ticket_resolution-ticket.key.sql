@@ -16,3 +16,4 @@
 --
 
 ALTER TABLE llx_c_ticket_resolution ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticket_resolution ADD INDEX idx_c_ticket_resolution_entity (entity);

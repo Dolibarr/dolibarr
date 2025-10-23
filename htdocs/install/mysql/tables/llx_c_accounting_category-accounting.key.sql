@@ -18,3 +18,4 @@
 -- ===================================================================
 
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category (code,entity,fk_report);
+ALTER TABLE llx_c_accounting_category ADD INDEX idx_c_accounting_category_entity (entity);

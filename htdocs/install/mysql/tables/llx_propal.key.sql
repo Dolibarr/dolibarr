@@ -30,6 +30,7 @@ ALTER TABLE llx_propal ADD INDEX idx_propal_fk_projet (fk_projet);
 ALTER TABLE llx_propal ADD INDEX idx_propal_fk_account(fk_account);
 ALTER TABLE llx_propal ADD INDEX idx_propal_fk_currency(fk_currency);
 ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
+ALTER TABLE llx_propal ADD INDEX idx_propal_entity (entity);
 
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_author	FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);

@@ -15,3 +15,4 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ALTER TABLE llx_mailing_advtarget ADD UNIQUE INDEX uk_advtargetemailing_name (name);
+ALTER TABLE llx_mailing_advtarget ADD INDEX idx_mailing_advtarget_entity (entity);
