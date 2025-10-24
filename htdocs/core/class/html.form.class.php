@@ -2211,7 +2211,7 @@ class Form
 		global $action;
 
 		// If no preselected user defined, we take current user
-		if ((is_numeric($selected) && ($selected < -3 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
+		if ((is_numeric($selected) && ($selected < -4 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
 			$selected = $user->id;
 		}
 
@@ -2384,6 +2384,18 @@ class Form
 						'id' => -2,
 						'label' => '-- ' . $langs->trans("Everybody") . ' --',
 						'labelhtml' => '-- ' . $langs->trans("Everybody") . ' --',
+						'color' => '',
+						'picto' => ''
+					);
+				}
+				if ($showalso == 4) {
+					$out .= '<option value="-4"' . ((in_array(-4, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("AllProjectContacts") . ' --</option>' . "\n";
+
+					$outarray[-4] = '-- ' . $langs->trans("AllProjectContacts") . ' --';
+					$outarray2[-4] = array(
+						'id' => -4,
+						'label' => '-- ' . $langs->trans("AllProjectContacts") . ' --',
+						'labelhtml' => '-- ' . $langs->trans("AllProjectContacts") . ' --',
 						'color' => '',
 						'picto' => ''
 					);
@@ -4230,7 +4242,7 @@ class Form
 						$outvallabel .= ' ' . $langs->transnoentities("Units");
 					}
 
-					if ($objp->quantity > 1) {
+					if ($objp->quantity != 1) {
 						$optlabel .= " (" . price($objp->unitprice * (getDolGlobalString('DISPLAY_DISCOUNTED_SUPPLIER_PRICE') ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency) . "/" . $langs->trans("Unit") . ")"; // Do not use strtolower because it breaks utf8 encoding
 						$outvallabel .= " (" . price($objp->unitprice * (getDolGlobalString('DISPLAY_DISCOUNTED_SUPPLIER_PRICE') ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency) . "/" . $langs->transnoentities("Unit") . ")"; // Do not use strtolower because it breaks utf8 encoding
 					}

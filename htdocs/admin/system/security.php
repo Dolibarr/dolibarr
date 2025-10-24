@@ -198,13 +198,13 @@ if ($todisabletext) {
 	print img_picto('', 'warning', 'class="pictofixedwidth nopaddingleft"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
-if (!\function_exists($functiontokeep)) {
+if (!function_exists($functiontokeep)) {
 	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning', 'class="pictofixedwidth"');
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
 }
 print $langs->trans("PHPFunctionsRequiredForCLI").': ';
-print '<span class="opacitymedium">'.$functiontokeep.'</span>';
+print '<span class="opacitymedium" title="exec or popen can be used depending on MAIN_EXEC_USE_POPEN option, currently to '.getDolGlobalInt('MAIN_EXEC_USE_POPEN').'">'.$functiontokeep.'</span>';
 print '<br>';
 
 print '<br>';

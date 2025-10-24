@@ -883,7 +883,7 @@ if (empty($reshook)) {
 					$desc,
 					(float) $pu_ht,
 					(float) $qty,
-					$tva_tx,
+					$tva_tx, // don't cast to float
 					$localtax1_tx,
 					$localtax2_tx,
 					$idprod,
