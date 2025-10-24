@@ -16679,10 +16679,10 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
  *      ]
  *  ]
  *
- * @template T
+ * @template T of mixed
  * @param array<string, T> $array1  The base array (default parameters).
  * @param array<string, T> $array2  The array with values to override or extend the base array.
- * @return array         The merged array with recursive replacement.
+ * @return array<string, T>			The merged array with recursive replacement.
  */
 function array_merge_recursive_distinct(array $array1, array $array2): array
 {
