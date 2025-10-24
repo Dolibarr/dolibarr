@@ -10755,8 +10755,8 @@ class Form
 		if ($shownav) {
 			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
 			$object->load_previous_next_ref((isset($object->next_prev_filter) ? $object->next_prev_filter : ''), $fieldid, $nodbprefix);
-			$id_preview = isset($object->ref_previous) && $object->getLineIdByLabel($object->ref_previous) ? "id=".$object->getLineIdByLabel($object->ref_previous) : "";
-			$id_next = isset($object->ref_next) &&  $object->getLineIdByLabel($object->ref_next) ? "id=".$object->getLineIdByLabel($object->ref_next) : "";
+			$id_preview = isset($object->ref_previous) && $object->getCategorieLineIdByLabel($object->ref_previous) ? "id=".$object->getCategorieLineIdByLabel($object->ref_previous) : "";
+			$id_next = isset($object->ref_next) &&  $object->getCategorieLineIdByLabel($object->ref_next) ? "id=".$object->getCategorieLineIdByLabel($object->ref_next) : "";
 
 			$navurl = $_SERVER["PHP_SELF"];
 			// Special case for project/task page

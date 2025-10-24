@@ -2251,9 +2251,9 @@ abstract class CommonObject
 	 * @param string $label The label of the element.
 	 * @return int Returns an integer: 0 if KO, > 0 if OK.
 	 */
-	public function getLineIdByLabel($label)
+	public function getCategorieLineIdByLabel($label)
 	{
-		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."categorie";
 		$sql .= " WHERE label = '" . $this->db->escape($label) . "'";
 		$resql = $this->db->query($sql);
 		if ($resql) {
