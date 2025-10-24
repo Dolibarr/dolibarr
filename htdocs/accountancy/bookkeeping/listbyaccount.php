@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -866,7 +866,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringaut
 }
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="list">';
 if ($optioncss != '') {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
  * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -29,7 +29,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -153,19 +152,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_array_options = array();
 }
 
-if ($action === 'downloadblockchain') {
-	$auth = new BlockedLogAuthority($db);
-
-	$bc = $auth->getLocalBlockChain();
-
-	header('Content-Type: application/octet-stream');
-	header("Content-Transfer-Encoding: Binary");
-	header("Content-disposition: attachment; filename=\"".$auth->signature.".certif\"");
-
-	echo $bc;
-
-	exit;
-} elseif (GETPOST('downloadcsv', 'alpha')) {
+if (GETPOST('downloadcsv', 'alpha')) {
 	$error = 0;
 
 	$previoushash = '';
@@ -236,8 +223,9 @@ if ($action === 'downloadblockchain') {
 	}
 
 	if (!$error) {
-		// Now restart request with all data = no limit(1) in sql request
-		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, element, fk_object, date_object, ref_object, signature, fk_user, object_data, object_version, debuginfo";
+		// Now restart request with all data, si without the limit(1) in sql request
+		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, element, fk_object, date_object, ref_object,";
+		$sql .= " signature, fk_user, object_data, object_version, object_format, debuginfo";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
@@ -280,21 +268,43 @@ if ($action === 'downloadblockchain') {
 				// We set here all data used into signature calculation (see checkSignature method) and more
 				// IMPORTANT: We must have here, the same rule for transformation of data than into the fetch method (db->jdate for date, ...)
 				$block_static->id = $obj->rowid;
-				$block_static->date_creation = $db->jdate($obj->date_creation);
-				$block_static->date_modification = $db->jdate($obj->tms);
+				$block_static->entity = $obj->entity;
+
+
+				$block_static->date_creation = $db->jdate($obj->date_creation);		// TODO Use gmt
+
+				$block_static->amounts = (float) $obj->amounts;						// Database store value with 8 digits, we cut ending 0 them with (flow)
+				$block_static->vat = $obj->vat;
+
 				$block_static->action = $obj->action;
-				$block_static->fk_object = $obj->fk_object;
-				$block_static->element = $obj->element;
-				$block_static->amounts = (float) $obj->amounts;
+				$block_static->date_object = $db->jdate($obj->date_object);			// TODO Use gmt ?
 				$block_static->ref_object = $obj->ref_object;
-				$block_static->date_object = $db->jdate($obj->date_object);
+
 				$block_static->user_fullname = $obj->user_fullname;
-				$block_static->fk_user = $obj->fk_user;
-				$block_static->signature = $obj->signature;
+
 				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
-				$block_static->object_version = $obj->object_version;
+
+				// Old hash + Previous fields concatenated = signature
+				$block_static->signature = $obj->signature;
+
+				$block_static->element = $obj->element;								// Not in signature
+				$block_static->fk_object = $obj->fk_object;							// Not in signature
+
+				$block_static->fk_user = $obj->fk_user;								// Not in signature
+
+				$block_static->date_modification = $db->jdate($obj->tms);			// Not in signature
+				$block_static->object_version = $obj->object_version;				// Not in signature
+				$block_static->object_format = $obj->object_format;					// Not in signature
+
+				$block_static->signature_line = $obj->signature_line;
+				$block_static->certified = ($obj->certified == 1);
+
+				$block_static->linktoref = $obj->linktoref;
+				$block_static->linktype = $obj->linktype;
+
 				$block_static->debuginfo = $obj->debuginfo;
 
+				//var_dump($block->id.' '.$block->signature, $block->object_data);
 				$checksignature = $block_static->checkSignature($previoushash); // If $previoushash is not defined, checkSignature will search it
 
 				if ($checksignature) {
@@ -313,21 +323,22 @@ if ($action === 'downloadblockchain') {
 				if ($i == 0) {
 					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
 				}
-				fwrite($fh, $obj->rowid
-					.';'.$obj->date_creation
-					.';"'.str_replace('"', '""', $obj->user_fullname).'";'
-					.$obj->action
-					.';'.$obj->element
-					.';'.$obj->amounts
-					.';'.$obj->fk_object
-					.';'.$obj->date_object
-					.';"'.str_replace('"', '""', $obj->ref_object).'";'
-					.$obj->signature
-					.';'.$statusofrecord
+
+				fwrite($fh, $block_static->id
+					.';'.$block_static->date_creation
+					.';"'.str_replace('"', '""', $block_static->user_fullname).'";'
+					.$block_static->action
+					.';'.$block_static->element
+					.';'.$block_static->amounts			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+					.';'.$block_static->fk_object
+					.';'.$block_static->date_object
+					.';"'.str_replace('"', '""', $block_static->ref_object).'";"'
+					.$block_static->signature.'";'
+					.$statusofrecord
 					.';'.$statusofrecordnote
-					.';'.$obj->object_version
-					.';"'.str_replace('"', '""', $obj->object_data).'";'
-					.str_replace('"', '""', $obj->debuginfo).'"'
+					.';'.$block_static->object_version
+					.';"'.str_replace('"', '""', $obj->object_data).'"'				// We must the string to decode into object with dolDecodeBlockedData
+					.';"'.str_replace('"', '""', $block_static->debuginfo).'"'
 					."\n");
 
 				// Set new previous hash for next fetch
@@ -407,7 +418,6 @@ $s = $langs->trans("FilesIntegrityDesc", '{s}');
 $s = str_replace('{s}', DOL_URL_ROOT.'/admin/system/filecheck.php', $s);
 print $s;
 print "<br>\n";
-
 print "</div>\n";
 
 print '<br>';
@@ -472,14 +482,14 @@ print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexp
 print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
-if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
+/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 	print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
-}
+}*/
 print ' </div><br>';
 
 print '</form>';
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -524,7 +534,7 @@ print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth200', 1);
+print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth150', 1);
 print '</td>';
 
 // Ref
@@ -545,11 +555,10 @@ $array = array("1" => "OnlyNonValid");
 print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status width100 onrightofpage', 1);
 print '</td>';
 
-// Status note
-//print '<td class="liste_titre"></td>';
-
-// Link to original ref into business software
-print '<td class="liste_titre"></td>';
+// Link to debug information object
+if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+	print '<td class="liste_titre"></td>';
+}
 
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -576,7 +585,9 @@ print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', 
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp'), 1)."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($form->textwithpicto($langs->trans('Status'), $langs->trans('DataOfArchivedEventHelp2')), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+}
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
@@ -593,9 +604,10 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
 } else {
-	// This is version that optimize the memory (but will not report errors that are outside the filter range)
+	// This is version that optimize the memory (note: it will not report errors that are outside the filter range)
 	if (is_array($blocks)) {
 		foreach ($blocks as &$block) {
+			//var_dump($block->id.' '.$block->signature, $block->object_data);
 			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
 
 			$checksignature = $tmpcheckresult['checkresult'];
@@ -669,7 +681,7 @@ if (is_array($blocks)) {
 			print '<td class="right nowraponall">'.price($block->amounts).'</td>';
 
 			// Details link
-			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_picto($langs->trans('ShowDetails'), 'note', 'class="size15x"').'</a></td>';
+			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_picto($langs->trans('ShowDetails'), 'note', 'class="size15x"').'</span></td>';
 
 			// Fingerprint
 			print '<td class="nowraponall">';
@@ -692,30 +704,28 @@ if (is_array($blocks)) {
 			} else {
 				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
 			}
-			//print '</td>';
 
 			// Note
-			//print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
 					print $form->textwithpicto('', $langs->trans('OkCheckFingerprintValidityButChainIsKo'));
-				} else {
-					//print $form->textwithpicto('', $langs->trans('KoCheckFingerprintValidity'));
 				}
-			} else {
-				//print $form->textwithpicto('', $langs->trans('DataOfArchivedEventHelp2'));
 			}
 
+			/*
 			if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 				print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') : img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black'));
 			}
+			*/
 			print '</td>';
 
-			// Link to source object
-			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
-			print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
-			print $object_link;
-			print '</td>';
+			// Link to debug information object
+			if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+				print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
+				print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
+				print $object_link;
+				print '</td>';
+			}
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -728,7 +738,11 @@ if (is_array($blocks)) {
 	}
 
 	if ($nbshown == 0) {
-		print '<tr><td colspan="12"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		$colspan = 11;
+		if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+			$colspan++;
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 }
 
@@ -753,7 +767,7 @@ jQuery(document).ready(function () {
 	}).css("z-index: 5000");
 
 	$("a[rel=show-info]").click(function() {
-	    console.log("We click on tooltip, we open popup and get content using an ajax call");
+	    console.log("We click on tooltip a[rel=show-info], we open popup and get content using an ajax call");
 
 		var fk_block = $(this).attr("data-blockid");
 
@@ -769,11 +783,13 @@ jQuery(document).ready(function () {
 		var mydialog = jQuery("#dialogforpopup");
 		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->trans("UnlaterableDataOfEvent")).'\',});
 		mydialog.dialog("open");
+		return false;
 	});
 })
 </script>'."\n";
 
 
+/*
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 	?>
 		<script type="text/javascript">
@@ -796,6 +812,7 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString(
 		</script>
 	<?php
 }
+*/
 
 if (GETPOST('withtab', 'alpha')) {
 	print dol_get_fiche_end();

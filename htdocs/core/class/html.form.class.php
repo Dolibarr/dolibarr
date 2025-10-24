@@ -216,7 +216,7 @@ class Form
 				$ret .= '<td class="right">';
 			}
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm) {
-				$ret .= '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=edit' . $htmlname . '&token=' . newToken() . '&' . $paramid . '=' . $object->id . $moreparam . '">';
+				$ret .= '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit' . $htmlname, $paramid => $object->id], true) . $moreparam . '">';
 				$ret .= img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1));
 				$ret .= '</a>';
 			}
@@ -2211,7 +2211,7 @@ class Form
 		global $action;
 
 		// If no preselected user defined, we take current user
-		if ((is_numeric($selected) && ($selected < -3 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
+		if ((is_numeric($selected) && ($selected < -4 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
 			$selected = $user->id;
 		}
 
@@ -2384,6 +2384,18 @@ class Form
 						'id' => -2,
 						'label' => '-- ' . $langs->trans("Everybody") . ' --',
 						'labelhtml' => '-- ' . $langs->trans("Everybody") . ' --',
+						'color' => '',
+						'picto' => ''
+					);
+				}
+				if ($showalso == 4) {
+					$out .= '<option value="-4"' . ((in_array(-4, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("AllProjectContacts") . ' --</option>' . "\n";
+
+					$outarray[-4] = '-- ' . $langs->trans("AllProjectContacts") . ' --';
+					$outarray2[-4] = array(
+						'id' => -4,
+						'label' => '-- ' . $langs->trans("AllProjectContacts") . ' --',
+						'labelhtml' => '-- ' . $langs->trans("AllProjectContacts") . ' --',
 						'color' => '',
 						'picto' => ''
 					);
@@ -4230,7 +4242,7 @@ class Form
 						$outvallabel .= ' ' . $langs->transnoentities("Units");
 					}
 
-					if ($objp->quantity > 1) {
+					if ($objp->quantity != 1) {
 						$optlabel .= " (" . price($objp->unitprice * (getDolGlobalString('DISPLAY_DISCOUNTED_SUPPLIER_PRICE') ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency) . "/" . $langs->trans("Unit") . ")"; // Do not use strtolower because it breaks utf8 encoding
 						$outvallabel .= " (" . price($objp->unitprice * (getDolGlobalString('DISPLAY_DISCOUNTED_SUPPLIER_PRICE') ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency) . "/" . $langs->transnoentities("Unit") . ")"; // Do not use strtolower because it breaks utf8 encoding
 					}
@@ -9359,6 +9371,79 @@ class Form
 		return $out;
 	}
 
+	/**
+	 * Generates a set of HTML radio inputs from an array of key-value items.
+	 *
+	 * @param string $htmlName Name of the HTML input group
+	 * @param array<string, string|array{label: string,value?: string|int,attr?: array<string, string|int|bool|null>, unescapedAttr?: string[],attrLabel?: array<string, string|int|bool|null>,unescapedAttrLabel?: string[],disabled?: bool,css?: string,labelIsHtml?: bool}> $radioItems Array of items in the form key => label or key => array of item properties
+	 * @param string|int $selected Preselected key for selection.
+	 * @param array<string, array<string, string|int|bool|null>|string|bool> $moreGlobalParams Additional global parameters applied to all items (e.g., attributes)
+	 *
+	 * @return string HTML string containing all radio inputs wrapped in <label> tags
+	 */
+	public static function radio($htmlName, $radioItems, $selected = '', $moreGlobalParams = [])
+	{
+		// Default parameters for each radio input
+		$defaultParams = [
+			'disabled' => false,
+			'attr' => [
+				'type' => 'radio',
+				'name' => $htmlName,
+			],
+			'unescapedAttr' => [],
+			'attrLabel' => [],
+			'unescapedAttrLabel' => [],
+			'labelIsHtml' => false
+		];
+
+		// Merge global parameters with defaults
+		$params = array_merge_recursive_distinct($defaultParams, $moreGlobalParams);
+
+		$out = '';
+		if (!empty($radioItems)) {
+			foreach ($radioItems as $key => $item) {
+				// Normalize item to array structure if it's a simple string
+				if (!is_array($item)) {
+					$item = [
+						'attr' => [
+							'value' => $key,
+						],
+						'label' => $item
+					];
+				}
+
+				// Default properties for individual item
+				$defaultItem = [
+					'attr' => [
+						'value' => !isset($item['attr']['value']) ? $key : '',
+					],
+					'label' => '',
+				];
+
+				// Merge defaults with global params and item-specific properties
+				$defaultItem = array_merge_recursive_distinct($params, $defaultItem);
+				$item = array_merge_recursive_distinct($defaultItem, $item);
+
+				// Determine if this radio should be checked
+				if ((is_array($selected) && in_array($item['attr']['value'], $selected, true)) || $selected === $item['attr']['value']) {
+					$item['attr']['checked'] = true;
+				}
+
+				// Build HTML attributes for input and label
+				$inputAttributes = implode(' ', commonHtmlAttributeBuilder($item['attr'], $item['unescapedAttr']));
+				$labelAttributes = implode(' ', commonHtmlAttributeBuilder($item['attrLabel'], $item['unescapedAttrLabel']));
+
+				// prevent accidental Xss todo : escape $item['label'] but html friendly compatible
+				$text = $item['labelIsHtml'] ? $item['label'] : htmlspecialchars($item['label'], ENT_QUOTES | ENT_SUBSTITUTE);
+
+				// Generate HTML
+				$out .= '<label ' . $labelAttributes . '><input ' . $inputAttributes . ' /> ' . $text . '</label> ';
+			}
+		}
+
+		return $out;
+	}
+
 
 	/**
 	 *	Return a HTML select string, built from an array of key+value.
@@ -9986,7 +10071,7 @@ class Form
 
         <dl class="dropdown">
             <dt>
-            <a href="#' . $htmlname . '">
+            <a href="#' . $htmlname . '" class="multiselectpicto">
               ' . img_picto('', 'list') . '
             </a>
             <input type="hidden" class="' . $htmlname . '" name="' . $htmlname . '" value="' . $listcheckedstring . '">

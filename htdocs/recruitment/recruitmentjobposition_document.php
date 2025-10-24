@@ -118,7 +118,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = recruitmentjobpositionPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("RecruitmentJobPosition"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -148,7 +148,7 @@ if ($object->id && $upload_dir !== null) {
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {

@@ -115,7 +115,7 @@ if (isModEnabled("propal")) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
 		startSimpleTable("DraftPropals", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		$total = 0;
@@ -295,7 +295,7 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
 		startSimpleTable("ProposalsOpened", "comm/propal/list.php", "search_status=".Propal::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {
