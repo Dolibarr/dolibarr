@@ -2225,6 +2225,26 @@ abstract class CommonObject
 		return $result;
 	}
 
+
+	/**
+	 * Retrieve the rowid of an element based on its label.
+	 *
+	 * @param string $label The label of the element.
+	 * @return int Returns an integer: 0 if KO, > 0 if OK.
+	 */
+	public function getLineIdByLabel($label)
+	{
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE label = '" . $label . "'";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$row = $this->db->fetch_row($resql);
+			return (!empty($row[0]) ? $row[0] : 0);
+		}
+
+		return 0;
+	}
+
 	/**
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
