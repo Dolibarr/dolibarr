@@ -370,7 +370,8 @@ class Warehouses extends DolibarrApi
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 Internal Server Error
-	 */
+	 *
+		*/
 	public function listProducts($id = 0, $limit = 100)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
