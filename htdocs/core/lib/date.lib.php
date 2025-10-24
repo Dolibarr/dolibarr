@@ -1318,23 +1318,23 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $country_code = '', $fk_user = null)
 {
 	global $langs, $mysoc, $db;
-        if(!empty($fk_user)){
-            $userObj = new User($db);
-            $result = $userObj->fetch($fk_user);
-            if($result > 0 && !empty($userObj->country_id)){
-                $sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c';
-                $sql .= ' WHERE c.rowid = '.(int) $userObj->country_id;
-                $resql = $db->query($sql);
-                if ($resql) {
-                        $obj = $db->fetch_object($resql);
-                        if ($obj) {
-                            $country_code = $obj->code;
-                        }
-                } else {
-                    dol_syslog("Error finding country for user: ".$fk_user);
-                }
-            }
-        }
+	if (!empty($fk_user)) {
+		$userObj = new User($db);
+		$result = $userObj->fetch($fk_user);
+		if ($result > 0 && !empty($userObj->country_id)) {
+			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c';
+			$sql .= ' WHERE c.rowid = '.(int) $userObj->country_id;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$country_code = $obj->code;
+				}
+			} else {
+				dol_syslog("Error finding country for user: ".$fk_user);
+			}
+		}
+	}
 
 	if (empty($country_code)) {
 		$country_code = $mysoc->country_code;

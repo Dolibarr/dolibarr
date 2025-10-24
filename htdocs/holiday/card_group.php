@@ -285,83 +285,81 @@ if (empty($reshook)) {
 					$TusersToProcess[$u] = $u;
 				}
 			}
-                        // Chek if there is any user with no working days
-                        foreach ($TusersToProcess as $u) {
-                            $nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, '', $u);
-                            if ($nbopenedday < 0.5) {
-                                    setEventMessages($langs->trans("ErrorDureeCP", $u), null, 'errors'); // No working day
-                                    $error++;
-                                    $action = 'create';
-                            }
-                        }
-                        if(!$error){
-                            
-                        
-                            foreach ($TusersToProcess as $u) {
-                                    // Check if there is already holiday for this period pour chaque user
-                                    $verifCP = $object->verifDateHolidayCP($u, $date_debut, $date_fin, $halfday);
-                                    if (!$verifCP) {
-                                            //setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
+			// Check if there is any user with no working days
+			foreach ($TusersToProcess as $u) {
+				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, '', $u);
+				if ($nbopenedday < 0.5) {
+					setEventMessages($langs->trans("ErrorDureeCP", $u), null, 'errors'); // No working day
+					$error++;
+					$action = 'create';
+				}
+			}
+			if (!$error) {
+				foreach ($TusersToProcess as $u) {
+					// Check if there is already holiday for this period pour chaque user
+					$verifCP = $object->verifDateHolidayCP($u, $date_debut, $date_fin, $halfday);
+					if (!$verifCP) {
+						//setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
 
-                                            $userError = new User($db);
-                                            $result = $userError->fetch($u);
+						$userError = new User($db);
+						$result = $userError->fetch($u);
 
-                                            if ($result) {
-                                                    setEventMessages($langs->trans("UseralreadyCPexist", $userError->firstname . ' '. $userError->lastname), null, 'errors');
-                                            } else {
-                                                    setEventMessages($langs->trans("ErrorUserFetch", $u), null, 'errors');
-                                            }
+						if ($result) {
+							setEventMessages($langs->trans("UseralreadyCPexist", $userError->firstname . ' '. $userError->lastname), null, 'errors');
+						} else {
+							setEventMessages($langs->trans("ErrorUserFetch", $u), null, 'errors');
+						}
 
-                                            $error++;
-                                            $action = 'create';
-                                    }
-                            }
+						$error++;
+						$action = 'create';
+					}
+				}
 
-                            if (!$error) {
-                                    $db->begin();
-                                    // non errors we can insert all
-                                    foreach ($TusersToProcess as $u) {
-                                            $object = new Holiday($db);
-                                            $object->fk_user = $u;
-                                            $object->description = $description;
-                                            $object->fk_validator = $approverid;
-                                            $object->fk_type = $type;
-                                            $object->date_debut = $date_debut;
-                                            $object->date_fin = $date_fin;
-                                            $object->halfday = $halfday;
+				if (!$error) {
+					$db->begin();
+					// non errors we can insert all
+					foreach ($TusersToProcess as $u) {
+						$object = new Holiday($db);
+						$object->fk_user = $u;
+						$object->description = $description;
+						$object->fk_validator = $approverid;
+						$object->fk_type = $type;
+						$object->date_debut = $date_debut;
+						$object->date_fin = $date_fin;
+						$object->halfday = $halfday;
 
-                                            $result = $object->create($user);
+						$result = $object->create($user);
 
-                                            if ($result <= 0) {
-                                                    setEventMessages($object->error, $object->errors, 'errors');
-                                                    $error++;
-                                            } else {
-                                                    //@TODO changer le nom si validated
-                                                    if ($autoValidation) {
-                                                            $htemp = new Holiday($db);
-                                                            $htemp->fetch($result);
+						if ($result <= 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+							$error++;
+						} else {
+							//@TODO changer le nom si validated
+							if ($autoValidation) {
+								$htemp = new Holiday($db);
+								$htemp->fetch($result);
 
-                                                            $htemp->status = Holiday::STATUS_VALIDATED;
-                                                            $resultValidated = $htemp->update($approverid);
+								$htemp->status = Holiday::STATUS_VALIDATED;
+								$resultValidated = $htemp->update($approverid);
 
-                                                            if ($resultValidated < 0) {
-                                                                    setEventMessages($object->error, $object->errors, 'errors');
-                                                                    $error++;
-                                                            }
-                                                            // we can auto send mail if we are in auto validation behavior
+								if ($resultValidated < 0) {
+									setEventMessages($object->error, $object->errors, 'errors');
+									$error++;
+								}
+								// we can auto send mail if we are in auto validation behavior
 
-                                                            if ($AutoSendMail && !$error) {
-                                                                    // send a mail to the user
-                                                                    $returnSendMail = sendMail($result, $permissiontoadd, $now, $autoValidation);
-                                                                    if (!empty($returnSendMail->msg)) {
-                                                                            setEventMessage($returnSendMail->msg, $returnSendMail->style);
-                                                                    }
-                                                            }
-                                                    }
-                                            }
-                                    }
-                            }
-                        }
+								if ($AutoSendMail && !$error) {
+									// send a mail to the user
+									$returnSendMail = sendMail($result, $permissiontoadd, $now, $autoValidation);
+									if (!empty($returnSendMail->msg)) {
+										setEventMessage($returnSendMail->msg, $returnSendMail->style);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 			// If no SQL error we redirect to the request card
 			if (!$error) {
 				$db->commit();
