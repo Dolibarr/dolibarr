@@ -84,11 +84,11 @@ $search_version = GETPOST('search_version', 'alpha');
 
 
 // For remotestore search
-$options              		= array();
-$options['per_page']  		= 11;
-$options['no_page']   		= (GETPOSTINT('no_page') ? GETPOSTINT('no_page') : 1);
-$options['categorie'] 		= (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0);
-$options['search']    		= GETPOST('search_keyword', 'alpha');
+$options              	= array();
+$options['per_page']  	= 11;
+$options['no_page']   	= (GETPOSTINT('no_page') ? GETPOSTINT('no_page') : 1);
+$options['categorie'] 	= (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0);
+$options['search']    	= GETPOST('search_keyword', 'alpha');
 
 // If it is a new search, we reset page to 1
 if (GETPOST('buttonsubmit', 'alphanohtml', 2)) {
@@ -96,15 +96,16 @@ if (GETPOST('buttonsubmit', 'alphanohtml', 2)) {
 }
 
 // MAIN_ENABLE_EXTERNALMODULES_DOLISTORE is 1 if we enabled the dolistore modules
-$options['search_source_dolistore']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE');
+$options['search_source_dolistore'] = getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE');
 // MAIN_ENABLE_EXTERNALMODULES_COMMUNITY is 1 if we enabled the community modules
-$options['search_source_github']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY');
+$options['search_source_github'] = getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY');
 
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $familyinfo = array(
+	'favorites' => array('position' => '000', 'label' => $langs->trans("Favorites")),
 	'hr' => array('position' => '001', 'label' => $langs->trans("ModuleFamilyHr")),
 	'crm' => array('position' => '006', 'label' => $langs->trans("ModuleFamilyCrm")),
 	'srm' => array('position' => '007', 'label' => $langs->trans("ModuleFamilySrm")),
@@ -405,7 +406,7 @@ if ($action == 'install' && $allowonlineinstall) {
 } elseif ($action == 'install' && !$allowonlineinstall) {
 	httponly_accessforbidden("You try to bypass the protection to disallow deployment of an external module. Hack attempt ?");
 }
-
+// unset($_SESSION['favorites_modules']);
 if ($action == 'set' && $user->admin) {
 	// We made some check against evil eternal modules that try to low security options.
 	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
@@ -422,6 +423,9 @@ if ($action == 'set' && $user->admin) {
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
 	} else {
+		if (!in_array($value, $_SESSION['favorites_modules'] ?? [])) {
+			$_SESSION['favorites_modules'][$value] = dol_now();
+		}
 		//var_dump($resarray);exit;
 		if ($resarray['nbperms'] > 0) {
 			$tmpsql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE admin <> 1";
@@ -460,6 +464,9 @@ if ($action == 'set' && $user->admin) {
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
 	} else {
+		if (!in_array($value, $_SESSION['favorites_modules'] ?? [])) {
+			$_SESSION['favorites_modules'][$value] = dol_now();
+		}
 		if ($resarray['nbperms'] > 0) {
 			$tmpsql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE admin <> 1";
 			$resqltmp = $db->query($tmpsql);
@@ -599,6 +606,15 @@ foreach ($modulesdir as $dir) {
 								} else {
 									$familykey = $objMod->family;
 								}
+								if (isset($_SESSION['favorites_modules'])) {
+									$favorites = $_SESSION['favorites_modules'] ?? [];
+									if (array_key_exists($modName, $favorites)) {
+										$familykey = 'favorites';
+										if (dol_now() > ($favorites[$modName] + 120)) {
+											unset($_SESSION['favorites_modules'][$modName]);
+										}
+									}
+								}
 								'@phan-var-force string $familykey';  // if not, phan considers $familykey may be null
 
 								$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
@@ -616,7 +632,7 @@ foreach ($modulesdir as $dir) {
 								}
 
 								$familyposition = (empty($familyinfo[$familykey]['position']) ? '0' : $familyinfo[$familykey]['position']);
-								$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
+								$listOfOfficialModuleGroups = array('favorites', 'hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
 								if ($external && !in_array($familykey, $listOfOfficialModuleGroups)) {
 									// If module is extern and into a custom group (not into an official predefined one), it must appear at end (custom groups should not be before official groups).
 									if (is_numeric($familyposition)) {
