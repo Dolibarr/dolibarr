@@ -1415,7 +1415,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
 				print '</td>';
 				print '<td>';
-				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, '', $object->fk_user);
+				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, (int) $object->halfday, '', $object->fk_user);
 				print '</td>';
 				print '</tr>';
 
