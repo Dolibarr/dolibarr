@@ -1672,7 +1672,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a simple title. No data to store
 	 *
-	 * @param ?array<string, array{id:string,label:string,picto?:string,labelhtml?:string}>|?array<string,string>  $fieldOptions  A table of field options
+	 * @param ?array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)
@@ -1689,7 +1689,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a simple title. No data to store
 	 *
-	 * @param  ?array<string, array{id:string,label:string,picto:string,labelIsHtml:bool}>|?array<string,string>  $fieldOptions  A table of field options
+	 * @param  ?array<string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsRadio($fieldOptions)
