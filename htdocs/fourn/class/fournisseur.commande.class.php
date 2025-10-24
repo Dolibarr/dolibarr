@@ -264,17 +264,17 @@ class CommandeFournisseur extends CommonOrder
 	public $mode_reglement;
 
 	/**
-	 * @var int User ID of the purchase order author
+	 * @var ?int User ID of the purchase order author
 	 */
 	public $user_author_id;
 
 	/**
-	 * @var int User ID of the purchase order approver
+	 * @var ?int User ID of the purchase order approver
 	 */
 	public $user_approve_id;
 
 	/**
-	 * @var int User ID of the purchase order second approver
+	 * @var ?int User ID of the purchase order second approver
 	 * Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 	 */
 	public $user_approve_id2;
@@ -313,6 +313,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var int Date of the purchase order payment deadline
 	 */
 	public $date_lim_reglement;
+
 	/**
 	 * @var array<int,float>
 	 */
