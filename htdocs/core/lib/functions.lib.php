@@ -25,6 +25,7 @@
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		Josep Lluís Amador Teruel	<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
+ * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4342,7 +4343,7 @@ function getArrayOfSocialNetworks()
 		$socialnetworks = $dataretrieved;
 	} else {
 		$sql = "SELECT rowid, code, label, url, icon, active FROM " . MAIN_DB_PREFIX . "c_socialnetworks";
-		$sql .= " WHERE entity=" . $conf->entity;
+		$sql .= " WHERE entity =" . ((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
@@ -4357,7 +4358,8 @@ function getArrayOfSocialNetworks()
 		}
 		dol_setcache($cachekey, $socialnetworks); // If setting cache fails, this is not a problem, so we do not test result.
 	}
-	return $socialnetworks;
+
+	return (is_array($socialnetworks) ? $socialnetworks : array());
 }
 
 /**
@@ -5562,6 +5564,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'switch_on_grey',
 				'switch_on_red',
 				'switch_off',
+				'switch_off_grey',
+				'switch_off_red',
 				'uparrow',
 				'1uparrow',
 				'1downarrow',
@@ -5619,6 +5623,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'switch_on' => 'font-status4',
 				'switch_on_warning' => 'font-status4 warning',
 				'switch_on_red' => 'font-status8',
+				'switch_off_warning' => 'font-status4 warning',
+				'switch_off_red' => 'font-status8',
 				'holiday' => 'infobox-holiday',
 				'info' => 'opacityhigh',
 				'info_black' => 'font-status1',
@@ -5895,6 +5901,9 @@ function getImgPictoConv($mode = 'fa')
 			'movement' => 'people-carry',
 			'sign-out' => 'sign-out-alt',
 			'switch_off' => 'toggle-off',
+			'switch_off_grey' => 'toggle-off',
+			'switch_off_warning' => 'toggle-off',
+			'switch_off_red' => 'toggle-off',
 			'switch_on' => 'toggle-on',
 			'switch_on_grey' => 'toggle-on',
 			'switch_on_warning' => 'toggle-on',
@@ -8229,6 +8238,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
 
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
+ *   VATRULE 0: If we are in mode SERVICE_ARE_ECOMMERCE_200238EC and customer is not a company with a vat id, we use default product VAT in buyer country
  *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
  *   VATRULE 2: If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
  *	 VATRULE 3: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
@@ -8272,7 +8282,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {
 		if ($seller_in_cee && $buyer_in_cee) {
 			$isacompany = $thirdparty_buyer->isACompany();
-			if ($isacompany && getDolGlobalString('MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL')) {
+			if ($isacompany && !getDolGlobalString('MAIN_USE_VAT_ZERO_FOR_COMPANIES_IN_EEC_EVEN_IF_VAT_ID_UNKNOWN')) {
 				require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 				if (!isValidVATID($thirdparty_buyer)) {
 					$isacompany = 0;
@@ -8289,6 +8299,11 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If seller does not use VAT, default VAT is 0. End of rule.
 	if (!$seller_use_vat) {
 		//print 'VATRULE 1';
+		// TODO get the VAT Code of exemption asked into setup if country isInEEC (from an array list of possible
+		// values like VATEX-EU-132-*, VATEX-FR-FRANCHISE, VATEX-EU-AE...
+		// When we had recorded it, we also added a corresponding entry into table of vat code if it does not exists yet.
+		// Here we test if entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-132-xx)'
+		// If not, we add it and we return '0 (VATEX-EU-132-xx)'
 		return 0;
 	}
 
@@ -8341,7 +8356,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if ($isacompany && getDolGlobalString('MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL')) {
+		if ($isacompany && !getDolGlobalString('MAIN_USE_VAT_ZERO_FOR_COMPANIES_IN_EEC_EVEN_IF_VAT_ID_UNKNOWN')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 			if (!isValidVATID($thirdparty_buyer)) {
 				$isacompany = 0;
@@ -8353,12 +8368,15 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 		} else {
 			//print 'VATRULE 6';
+			// TODO This is the case of VAT exemption 'VATEX-EU-IC'
+			// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-IC)'
+			// If not, we add it and we return '0 (VATEX-EU-IC)'
 			return 0;
 		}
 	}
 
 	// If (seller in the European Community and buyer outside the European Community and private buyer) then VAT by default = VAT of the product sold. End of rule
-	// I don't see any use case that need this rule.
+	// I don't see any use case that need this rule, this case is on only if MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC set
 	if (getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if (!$isacompany) {
@@ -8370,6 +8388,9 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// Otherwise the VAT proposed by default=0. End of rule.
 	// Rem: This means that at least one of the 2 is outside the European Community and the country differs
 	//print 'VATRULE 7';
+	// TODO This is the case of VAT exemption 'VATEX-EU-G'
+	// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-xxx)'
+	// If not, we add it and we return '0 (VATEX-xxx)'
 	return 0;
 }
 
@@ -8477,7 +8498,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 /**
  *	Return yes or no in current language
  *
- *	@param	int<0, 1>|'yes'|'true'|'no'|'false'	$yesno	Value to test (1, 'yes', 'true' or 0, 'no', 'false')
+ *	@param	boolean|int<0, 1>|'yes'|'true'|'no'|'false'	$yesno	Value to test (true, 1, 'yes', 'true' or false, 0, 'no', 'false')
  *	@param	integer|string	$format						1=Yes/No, 0=yes/no, 2=Disabled/enabled checkbox, 3=Disabled/enabled checkbox + Yes/No, 4 or Text=Use picto
  *	@param	int				$color						0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
  *	@return	string										HTML string
@@ -8488,7 +8509,7 @@ function yn($yesno, $format = 1, $color = 0)
 
 	$result = 'unknown';
 	$classname = '';
-	if ($yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// To set to 'no' before the test because of the '== 0'
+	if ($yesno === true || (int) $yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// To set to 'no' before the test because of the '== 0'
 		$result = $langs->trans('yes');
 		if ($format == 1 || $format == 3) {
 			$result = $langs->trans("Yes");
@@ -8504,7 +8525,7 @@ function yn($yesno, $format = 1, $color = 0)
 		}
 
 		$classname = 'ok';
-	} elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false') {
+	} else {
 		$result = $langs->trans("no");
 		if ($format == 1 || $format == 3) {
 			$result = $langs->trans("No");
@@ -10308,6 +10329,27 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					/** @var FactureFournisseur $object */
 					$substitutionarray['__URL_SUPPLIER_INVOICE__'] = DOL_MAIN_URL_ROOT . "/fourn/facture/card.php?id=" . $object->id;
 				}
+				if (is_object($object) && $object->element == 'payment_supplier') {
+					'@phan-var-force PaiementFourn $object';
+					/** @var PaiementFourn $object */
+					//print_r($object);
+					$liste_factures = [];
+					$total = 0;
+
+					$sql = 'SELECT f.ref,f.multicurrency_code as f_mccode, pf.*
+							FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf
+							JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON pf.fk_facturefourn = f.rowid
+							WHERE pf.fk_paiementfourn = '.((int) $object->id);
+
+					$resql = $db->query($sql);
+					if ($resql) {
+						while ($objp = $db->fetch_object($resql)) {
+							$liste_factures[] = ' - '.$outputlangs->trans('Invoice').' '. $objp->ref.' '.$outputlangs->trans('AmountPayed').' '.price($objp->multicurrency_amount, 0, $outputlangs, 0, -1, -1, $objp->multicurrency_code);
+						}
+					}
+					$substitutionarray['__SUPPLIER_PAYMENT_INVOICES_LIST__'] =  implode("\n", $liste_factures);;
+					$substitutionarray['__SUPPLIER_PAYMENT_INVOICES_TOTAL__'] = price($object->multicurrency_amount, 0, $outputlangs, 0, -1, -1, $object->multicurrency_code ? $object->multicurrency_code : $conf->currency);
+				}
 				if (is_object($object) && $object->element == 'shipping') {
 					'@phan-var-force Expedition $object';
 					/** @var Expedition $object */
@@ -11294,10 +11336,10 @@ function dol_osencode($str)
  *
  * 		@param	DoliDB				$db				Database handler
  * 		@param	string|int			$key			Code (string) or Id (int) to get Id or Code
- * 		@param	string				$tablename		Table name without prefix
+ * 		@param	string				$tablename		Table name without prefix. Example 'c_input_method'
  * 		@param	string				$fieldkey		Field to search the key into
  * 		@param	string				$fieldid		Field to get
- *      @param  int					$entityfilter	Filter by entity
+ *      @param  int					$entityfilter	1=Filter by entity
  *      @param	string				$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
  *      @param	bool    			$useCache       If true (default), cache will be queried and updated.
  *      @return int<-1,max>|string					ID of code if OK, 0 if key empty, -1 if KO
@@ -11802,7 +11844,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
 				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 				$scheck = preg_replace('/^!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '!('
-				$scheck = preg_replace('/\s!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '... !('
+				$scheck = preg_replace('/\s!\(/', ' __NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '... !('
 				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
@@ -12821,11 +12863,12 @@ function dol_getmypid()
  * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list,
  * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search inside a string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
- * @return 	string 			$res 		The statement to append to the SQL query
+ * @param   string			$sqltoadd	Additional SQL to append at the end of the generated SQL. Usually it is ''.
+ * @return	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
  * @see forgeSQLFromUniversalSearchCriteria()
  */
-function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
+function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd = '')
 {
 	global $db, $langs;
 
@@ -13009,6 +13052,11 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				$i2++; // a criteria for 1 more field was added to string
 			}
 		}
+
+		if ($sqltoadd) {
+			$newres .= ($newres ? '' : ' OR ').str_replace('__KEYTOSEARCH__', $crit, $sqltoadd);
+		}
+
 		if ($newres) {
 			$res = $res . ($res ? ' AND ' : '') . ($i2 > 1 ? '(' : '') . $newres . ($i2 > 1 ? ')' : '');
 		}
@@ -14643,6 +14691,20 @@ function getElementProperties($elementType)
 		$classname = 'Fournisseur';
 		$table_element = 'societe';
 		$subelement = '';
+	} elseif ($elementType == 'recruitmentcandidature') {
+		$module = 'recruitment';
+		$classfile = 'recruitmentcandidature';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentCandidature';
+		$subelement = 'recruitmentcandidature';
+		$subdir = '/recruitmentcandidature';
+	} elseif ($elementType == 'recruitmentjobposition') {
+		$module = 'recruitment';
+		$classfile = 'recruitmentjobposition';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentJobPosition';
+		$subelement = 'recruitmentjobposition';
+		$subdir = '/recruitmentjobposition';
 	}
 
 

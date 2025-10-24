@@ -33,6 +33,15 @@ if (!defined('NOSTYLECHECK')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var Societe $mysoc
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -46,14 +55,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
@@ -64,6 +65,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $urlfrom = GETPOST('urlfrom');
 $projectid = GETPOSTINT('projectid');
+$backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 
 // Initialize a technical objects
@@ -843,7 +845,11 @@ if ($action == 'create') {	// aaa
 
 	print '<table class="border centpercent">';
 
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="title" value="'.dol_escape_htmltag(GETPOST('title')).'" autofocus="autofocus"></td></tr>';
+	$title = GETPOST('title');
+	if (empty($title)) {
+		$title = $langs->transnoentities("MailingOf", dol_print_date(dol_now(), 'dayrfc'));
+	}
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" id="title" name="title" value="'.dolPrintHTMLForAttribute($title).'" autofocus="autofocus" spellcheck="false"></td></tr>';
 
 	// Project
 	if (isModEnabled('project')) {
@@ -912,8 +918,13 @@ if ($action == 'create') {	// aaa
 
 	print '<table class="border centpercent">';
 
+	$subject = GETPOST('subject');
+	if (empty($subject)) {
+		$subject = '['.$mysoc->name.'] '.$langs->trans("Information");
+	}
+
 	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td>';
-	print '<td><input id="subject" class="flat minwidth200 quatrevingtpercent" name="subject" id="subject" value="'.dol_escape_htmltag(GETPOST('subject', 'alphanohtml')).'"></td></tr>';
+	print '<td><input id="subject" class="flat minwidth200 quatrevingtpercent" name="subject" id="subject" value="'.dolPrintHTMLForAttributeUrl($subject).'"></td></tr>';
 
 	// Background color
 	/* if (getDolGlobalString('EMAILING_CAN_EDIT_BACKGROUND_COLOR')) {
