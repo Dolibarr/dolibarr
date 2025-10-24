@@ -2318,7 +2318,7 @@ if ($action == 'create') {
 		if (!empty($object->trueWeight)) {
 			print ' (' . $langs->trans("SumOfProductWeights") . ': ';
 		}
-		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'));
 		if (!empty($object->trueWeight)) {
 			print ')';
 		}

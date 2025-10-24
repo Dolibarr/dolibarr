@@ -1436,10 +1436,9 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	// Button to print receipt before payment
 	$customprinterallowed = true;
 	$customprinttemplateallowed = true;
-	$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
-	if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
-		$customprinterallowed = true;
-		$customprinttemplateallowed = false;
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+	if (isALNECandidateVersion()) {		// No need to show this option because it has no effect when isALNECandidateVersion is true.
+		$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 	}
 
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
@@ -1451,7 +1450,8 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 			}
 		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
 			// Button Print Receipt on special printer
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
+			$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+			$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
 		} else {
 			// Button Print Receipt on browser
 			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');

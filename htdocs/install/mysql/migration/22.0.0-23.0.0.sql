@@ -58,6 +58,7 @@ ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_task) REFERENCES llx_projet (rowid);
 
+UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
 
 ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
