@@ -348,6 +348,7 @@ ModuleFamilyFinancial=Financial Modules (Accounting/Treasury)
 ModuleFamilyECM=Electronic Content Management (ECM)
 ModuleFamilyPortal=Websites and other frontal application
 ModuleFamilyInterface=Interfaces with external systems
+ModuleFavorites=Favorites
 MenuHandlers=Menu handlers
 MenuAdmin=Menu editor
 DoNotUseInProduction=Do not use in production

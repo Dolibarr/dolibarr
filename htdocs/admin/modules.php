@@ -105,7 +105,7 @@ if (!$user->admin) {
 }
 
 $familyinfo = array(
-	'favorites' => array('position' => '000', 'label' => $langs->trans("Favorites")),
+	'favorites' => array('position' => '000', 'label' => $langs->trans("ModuleFavorites")),
 	'hr' => array('position' => '001', 'label' => $langs->trans("ModuleFamilyHr")),
 	'crm' => array('position' => '006', 'label' => $langs->trans("ModuleFamilyCrm")),
 	'srm' => array('position' => '007', 'label' => $langs->trans("ModuleFamilySrm")),
