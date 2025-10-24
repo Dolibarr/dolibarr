@@ -786,7 +786,7 @@ class FactureFournisseur extends CommonInvoice
 					$result_insert = $this->addline(
 						$_facrec->lines[$i]->desc ? $_facrec->lines[$i]->desc : $_facrec->lines[$i]->description,
 						$_facrec->lines[$i]->pu_ht,
-						(float) $tva_tx,
+						$tva_tx,
 						$localtax1_tx,
 						$localtax2_tx,
 						$_facrec->lines[$i]->qty,
@@ -2099,31 +2099,31 @@ class FactureFournisseur extends CommonInvoice
 	 *	by the get_default_tva method(vendor_company, buying company, idprod) and the desc must
 	 *	already have the right value (the caller has to manage the multilanguage).
 	 *
-	 *	@param      string      $desc                   Description of the line
-	 *	@param      float      $pu                     Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
-	 *	@param      float      $txtva                  Force Vat rate to use, -1 for auto.
-	 *	@param      float      $txlocaltax1            LocalTax1 Rate
-	 *	@param      float      $txlocaltax2            LocalTax2 Rate
-	 *	@param      float      $qty                    Quantity
-	 *	@param      int         $fk_product             Product/Service ID predefined
-	 *	@param      float      $remise_percent         Percentage discount of the line
-	 *	@param      int         $date_start             Service start date
-	 *	@param      int         $date_end               Service expiry date
-	 *	@param      int         $fk_code_ventilation    Accounting breakdown code
-	 *	@param      int         $info_bits              Line type bits
-	 *	@param      string      $price_base_type        HT or TTC
-	 *	@param      int         $type                   Type of line (0=product, 1=service)
-	 *	@param      int         $rang                   Position of line
-	 *	@param      int         $notrigger              Disable triggers
-	 *	@param      array<string,mixed>	$array_options	extrafields array
-	 *	@param      int|null    $fk_unit                Code of the unit to use. Null to use the default one
-	 *	@param      int         $origin_id              id origin document
-	 *	@param      float      	$pu_devise              Amount in currency
-	 *	@param      string      $ref_supplier           Supplier ref
-	 *	@param      int         $special_code           Special code
-	 *	@param      int         $fk_parent_line         Parent line id
-	 *	@param      int         $fk_remise_except       Id discount used
-	 *	@return     int                                 >0 if OK, <0 if KO
+	 *	@param      string      	$desc                   Description of the line
+	 *	@param      float  	    	$pu                     Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
+	 *	@param      float|string	$txtva                  VAT rate or -1. Can be '19.6' or '19.6 (CODE)'
+	 *	@param      float      		$txlocaltax1            LocalTax1 Rate
+	 *	@param      float      		$txlocaltax2            LocalTax2 Rate
+	 *	@param      float      		$qty                    Quantity
+	 *	@param      int         	$fk_product             Product/Service ID predefined
+	 *	@param      float      		$remise_percent         Percentage discount of the line
+	 *	@param      int         	$date_start             Service start date
+	 *	@param      int         	$date_end               Service expiry date
+	 *	@param      int         	$fk_code_ventilation    Accounting breakdown code
+	 *	@param      int         	$info_bits              Line type bits
+	 *	@param      string      	$price_base_type        HT or TTC
+	 *	@param      int         	$type                   Type of line (0=product, 1=service)
+	 *	@param      int         	$rang                   Position of line
+	 *	@param      int         	$notrigger              Disable triggers
+	 *	@param      array<string,mixed>	$array_options		Extrafields array
+	 *	@param      int|null    	$fk_unit                Code of the unit to use. Null to use the default one
+	 *	@param      int         	$origin_id              id origin document
+	 *	@param      float      		$pu_devise              Amount in currency
+	 *	@param      string      	$ref_supplier           Supplier ref
+	 *	@param      int         	$special_code           Special code
+	 *	@param      int         	$fk_parent_line         Parent line id
+	 *	@param      int         	$fk_remise_except       Id discount used
+	 *	@return     int             		                Return >0 if OK, <0 if KO
 	 */
 	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = 0, $date_end = 0, $fk_code_ventilation = 0, $info_bits = 0, $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = 0, $fk_parent_line = 0, $fk_remise_except = 0)
 	{
@@ -2372,27 +2372,27 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Update a line detail in the database
 	 *
-	 * @param	int			$id            		Id of line invoice
-	 * @param	string		$desc         		Description of line
-	 * @param	float		$pu          		Prix unitaire (HT ou TTC selon price_base_type)
+	 * @param	int				$id            		Id of line invoice
+	 * @param	string			$desc         		Description of line
+	 * @param	float			$pu          		Prix unitaire (HT ou TTC selon price_base_type)
 	 * @param	float|string	$vatrate 		VAT Rate (Can be '8.5', '8.5 (ABC)')
-	 * @param	float		$txlocaltax1		LocalTax1 Rate
-	 * @param	float		$txlocaltax2		LocalTax2 Rate
-	 * @param	float		$qty           		Quantity
-	 * @param	int			$idproduct			Id produit
-	 * @param	string		$price_base_type	HT or TTC
-	 * @param	int			$info_bits			Miscellaneous information of line
-	 * @param	int<0,1>	$type				Type of line (0=product, 1=service)
-	 * @param	float		$remise_percent  	Percentage discount of the line
-	 * @param	int<0,1>	$notrigger			Disable triggers
-	 * @param	int|''		$date_start     	Date start of service
-	 * @param	int|''		$date_end       	Date end of service
+	 * @param	float			$txlocaltax1		LocalTax1 Rate
+	 * @param	float			$txlocaltax2		LocalTax2 Rate
+	 * @param	float			$qty           		Quantity
+	 * @param	int				$idproduct			Id produit
+	 * @param	string			$price_base_type	HT or TTC
+	 * @param	int				$info_bits			Miscellaneous information of line
+	 * @param	int<0,1>		$type				Type of line (0=product, 1=service)
+	 * @param	float			$remise_percent  	Percentage discount of the line
+	 * @param	int<0,1>		$notrigger			Disable triggers
+	 * @param	int|''			$date_start     	Date start of service
+	 * @param	int|''			$date_end       	Date end of service
 	 * @param	array<string,mixed>	$array_options	extrafields array
-	 * @param	?int		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * @param	float		$pu_devise			Amount in currency
-	 * @param	string		$ref_supplier		Supplier ref
-	 * @param	int			$rang				Line rank
-	 * @return 	int<-1,1>      					Return integer <0 if KO, >0 if OK
+	 * @param	?int			$fk_unit 			Code of the unit to use. Null to use the default one
+	 * @param	float			$pu_devise			Amount in currency
+	 * @param	string			$ref_supplier		Supplier ref
+	 * @param	int				$rang				Line rank
+	 * @return 	int<-1,1>      						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = [], $fk_unit = null, $pu_devise = 0, $ref_supplier = '', $rang = 0)
 	{

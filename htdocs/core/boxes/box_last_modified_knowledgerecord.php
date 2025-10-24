@@ -94,7 +94,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 			$sql = 'SELECT k.rowid as id, k.date_creation, GREATEST(k.tms, kef.tms) as date_modification, k.ref, k.lang, k.question, k.status as status';
 			$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord_extrafields as kef ON kef.fk_object = k.rowid";
-			$sql .= " WHERE k.entity IN (".getEntity('knowledgemanagement').")";
+			$sql .= " WHERE k.entity IN (".getEntity('knowledgerecord').")";
 
 			if ($user->socid) {
 				$sql .= " AND k.fk_soc= ".((int) $user->socid);

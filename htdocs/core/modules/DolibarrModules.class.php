@@ -357,7 +357,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_fieldshidden_array;
 	/**
-	 * @var array<array<array{rule:string,file:string,class:string,method:string}>>
+	 * @var array<array<array<string,string>>>
 	 */
 	public $import_convertvalue_array;
 	/**
@@ -408,7 +408,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * @var string Name of image file used for this module
 	 *
-	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname'
+	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname.png'
 	 * If file is in module/img directory under name object_pictoname.png use 'pictoname@module'
 	 */
 	public $picto;
@@ -477,7 +477,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $phpmin;
 
 	/**
-	 * @var int[] Maximum version of PHP ensured compatible with module.
+	 * @var null|int[] Maximum version of PHP ensured compatible with module.
 	 */
 	public $phpmax;
 

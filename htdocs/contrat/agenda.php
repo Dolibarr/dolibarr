@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2009	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,8 +63,8 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$id			= GETPOSTINT('id');
-$ref		= GETPOST('ref', 'alpha');
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->socid) {
@@ -198,7 +198,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
+		$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.dolBuildUrl(DOL_URL_ROOT.'/contrat/list.php', ['socid' => $object->thirdparty->id, 'search_name' => $object->thirdparty->name]).'">'.$langs->trans("OtherContracts").'</a>)</span>';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -207,7 +207,7 @@ if ($object->id > 0) {
 		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -263,12 +263,17 @@ if ($object->id > 0) {
 	if (isModEnabled('agenda')) {
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			$backtopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
-			$out = '&origin='.$object->element.'&originid='.$object->id.'&backtopage='.urlencode($backtopage);
-			$messagingUrl = DOL_URL_ROOT.'/contrat/messaging.php?id='.$object->id;
+			$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/contrat/messaging.php', ['id' => $object->id]);
 			$newcardbutton .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-			$messagingUrl = DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id;
+			$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/contrat/agenda.php', ['id' => $object->id]);
 			$newcardbutton .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
-			$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+			$query = [
+				'action' => 'create',
+				'origin' => $object->element,
+				'originid' => $object->id,
+				'backtopage' => $backtopage,
+			];
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/comm/action/card.php', $query));
 		}
 	}
 

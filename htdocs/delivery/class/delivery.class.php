@@ -647,9 +647,9 @@ class Delivery extends CommonObject
 	/**
 	 * 	Add line
 	 *
-	 *	@param	int		$origin_id				Origin id
-	 *	@param	float	$qty					Qty
-	 *  @param	array<string,mixed>	$array_options		Array options
+	 *	@param	int					$origin_id				Origin id
+	 *	@param	float				$qty					Qty
+	 *  @param	array<string,mixed>	$array_options			Array options
 	 *	@return	void
 	 */
 	public function addline($origin_id, $qty, $array_options = [])

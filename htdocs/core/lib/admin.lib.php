@@ -774,8 +774,9 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
 
 	$h = 0;
 	$head = array();
+
 	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['mode' => $mode]);
 	if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
 		$head[$h][1] = $langs->trans("AvailableModules");
@@ -787,17 +788,17 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
 	$head[$h][2] = 'modules';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=marketplace";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['mode' => 'marketplace']);
 	$head[$h][1] = $langs->trans("ModulesMarketPlaces");
 	$head[$h][2] = 'marketplace';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=deploy";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['mode' => 'deploy']);
 	$head[$h][1] = $langs->trans("AddExtensionThemeModuleOrOther");
 	$head[$h][2] = 'deploy';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=develop";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['mode' => 'develop']);
 	$head[$h][1] = $langs->trans("ModulesDevelopYourModule");
 	$head[$h][2] = 'develop';
 	$h++;
@@ -816,32 +817,32 @@ function ihm_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'other']);
 	$head[$h][1] = $langs->trans("LanguageAndPresentation");
 	$head[$h][2] = 'other';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=template";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'template']);
 	$head[$h][1] = $langs->trans("SkinAndColors");
 	$head[$h][2] = 'template';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=dashboard";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'dashboard']);
 	$head[$h][1] = $langs->trans("Dashboard");
 	$head[$h][2] = 'dashboard';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'login']);
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=css";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'css']);
 	$head[$h][1] = $langs->trans("CSSPage");
 	$head[$h][2] = 'css';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/tools/ui/index.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/tools/ui/index.php');
 	$head[$h][1] = $langs->trans("UxComponentsDoc").' '.img_picto('', 'external-link-square-alt');
 	$head[$h][2] = 'ux';
 	$h++;
@@ -866,44 +867,44 @@ function security_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_other.php");
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'misc';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_captcha.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_captcha.php");
 	$head[$h][1] = $langs->trans("Captcha");
 	$head[$h][2] = 'captcha';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security.php");
 	$head[$h][1] = $langs->trans("Passwords");
 	$head[$h][2] = 'passwords';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_file.php");
 	$head[$h][1] = $langs->trans("Files").' ('.$langs->trans("UploadName").' | '.$langs->trans("Download").')';
 	$head[$h][2] = 'file';
 	$h++;
 
 	/*
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_file_download.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_file_download.php");
 	$head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Download").')';
 	$head[$h][2] = 'filedownload';
 	$h++;
 	*/
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/proxy.php");
 	$head[$h][1] = $langs->trans("ExternalAccess");
 	$head[$h][2] = 'proxy';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/events.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/events.php");
 	$head[$h][1] = $langs->trans("Audit");
 	$head[$h][2] = 'audit';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/openid_connect.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/openid_connect.php");
 	$head[$h][1] = $langs->trans("OpenIDconnectSetup");
 	$head[$h][2] = 'openid';
 	$h++;
@@ -930,7 +931,7 @@ function security_prepare_head()
 	}
 
 	if (getDolGlobalString('MAIN_SECURITY_USE_DEFAULT_PERMISSIONS')) {
-		$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/perms.php");
 		$head[$h][1] = $langs->trans("DefaultRights");
 		if ($nbPerms > 0) {
 			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
@@ -939,7 +940,7 @@ function security_prepare_head()
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_headers_http.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_headers_http.php");
 	$head[$h][1] = $langs->trans("MainHttpSecurityHeaders");
 	$head[$h][2] = 'headers_http';
 	$h++;
@@ -962,18 +963,18 @@ function modulehelp_prepare_head($object)
 	// FIX for compatibility habitual tabs
 	$object->id = $object->numero;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=desc';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modulehelp.php', ['id' => $object->id, 'mode' => 'desc']);
 	$head[$h][1] = $langs->trans("Description");
 	$head[$h][2] = 'desc';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=feature';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modulehelp.php', ['id' => $object->id, 'mode' => 'feature']);
 	$head[$h][1] = $langs->trans("TechnicalServicesProvided");
 	$head[$h][2] = 'feature';
 	$h++;
 
 	if ($object->isCoreOrExternalModule() == 'external') {
-		$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=changelog';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modulehelp.php', ['id' => $object->id, 'mode' => 'changelog']);
 		$head[$h][1] = $langs->trans("ChangeLog");
 		$head[$h][2] = 'changelog';
 		$h++;
@@ -997,12 +998,12 @@ function translation_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/translation.php', ['mode' => 'searchkey']);
 	$head[$h][1] = $langs->trans("TranslationKeySearch");
 	$head[$h][2] = 'searchkey';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/translation.php', ['mode' => 'overwrite']);
 	$head[$h][1] = '<span class="valignmiddle">'.$langs->trans("TranslationOverwriteKey").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 	$head[$h][2] = 'overwrite';
 	$h++;
