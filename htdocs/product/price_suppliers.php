@@ -11,6 +11,7 @@
  * Copyright (C) 2019-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
  * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
+ * Copyright (C) 2025      Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2023	   Joachim Kueter		<git-jk@bloxera.com>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -121,6 +122,9 @@ if ($id > 0 || $ref) {
 
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+// EN: Manage advanced permission to write supplier prices
+// FR: Gérer la permission avancée pour écrire les prix fournisseurs
+$usercanwritesupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'write_supplier_prices') : $usercancreate;
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -131,6 +135,12 @@ if ($object->id > 0) {
 	}
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+}
+
+// EN: Stop unauthorized access to supplier price creation or edition forms
+// FR: Bloquer l'accès non autorisé aux formulaires de création ou modification des prix fournisseurs
+if ((!$usercanwritesupplierprice) && ($action == 'create_price' || $action == 'edit_price')) {
+	accessforbidden();
 }
 
 
@@ -182,7 +192,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_remove_pf' && $usercancreate) {
+	if ($action == 'confirm_remove_pf' && $usercanwritesupplierprice) {
 		if ($rowid) {	// id of product supplier price to remove
 			$action = '';
 			$result = $object->remove_product_fournisseur_price($rowid);
@@ -196,7 +206,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'save_price' && $usercancreate) {
+	if ($action == 'save_price' && $usercanwritesupplierprice) {
 		$ref_fourn_price_id = GETPOSTINT('ref_fourn_price_id');
 		$id_fourn = GETPOSTINT("id_fourn");
 		if (empty($id_fourn)) {
@@ -390,6 +400,11 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrollo
 
 if ($id > 0 || $ref) {
 	if ($action == 'ask_remove_pf') {
+		// EN: Block action if user cannot write supplier prices
+		// FR: Bloque l'action si l'utilisateur ne peut pas écrire les prix fournisseurs
+		if (!$usercanwritesupplierprice) {
+			accessforbidden();
+		}
 		$form = new Form($db);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&rowid='.$rowid, $langs->trans('DeleteProductBuyPrice'), $langs->trans('ConfirmDeleteProductBuyPrice'), 'confirm_remove_pf', '', 0, 1);
 		echo $formconfirm;
@@ -482,7 +497,7 @@ if ($id > 0 || $ref) {
 
 
 		// Form to add or update a price
-		if (($action == 'create_price' || $action == 'edit_price') && $usercancreate) {
+		if (($action == 'create_price' || $action == 'edit_price') && $usercanwritesupplierprice) {
 			$langs->load("suppliers");
 
 			print "<!-- form to add a supplier price -->\n";
@@ -927,8 +942,10 @@ if ($id > 0 || $ref) {
 		if ($action != 'create_price' && $action != 'edit_price') {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) {
-				if ($usercancreate) {
+                        if (empty($reshook)) {
+                                // EN: Display add button only when user can write supplier prices
+				// FR: Afficher le bouton d'ajout seulement lorsque l'utilisateur peut écrire les prix fournisseurs
+				if ($usercanwritesupplierprice) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $object->id).'&action=create_price&token='.newToken().'">';
 					print $langs->trans("AddSupplierPrice").'</a>';
 				}
@@ -1143,9 +1160,11 @@ if ($id > 0 || $ref) {
 					print '<tr class="oddeven">';
 
 					// Action column
-					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-						print '<td class="center nowraponall">';
-						if ($usercancreate) {
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall">';
+					// EN: Allow editing and deletion when user can write supplier prices
+					// FR: Autoriser l'édition et la suppression lorsque l'utilisateur peut écrire les prix fournisseurs
+					if ($usercanwritesupplierprice) {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
@@ -1165,7 +1184,7 @@ if ($id > 0 || $ref) {
 					}
 
 					// Supplier ref
-					if ($usercancreate) { // change required right here
+					if ($usercanwritesupplierprice) { // EN: Supplier link allowed when user can write supplier prices / FR: Lien fournisseur autorisé lorsque l'utilisateur peut écrire les prix fournisseurs
 						print '<td class="tdoverflowmax150">'.$productfourn->getNomUrl().'</td>';
 					} else {
 						print '<td class="tdoverflowmax150">'.dol_escape_htmltag($productfourn->fourn_ref).'</td>';
@@ -1335,7 +1354,9 @@ if ($id > 0 || $ref) {
 					// Modify-Remove
 					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 						print '<td class="center nowraponall">';
-						if ($usercancreate) {
+						// EN: Allow editing and deletion when user can write supplier prices
+						// FR: Autoriser l'édition et la suppression lorsque l'utilisateur peut écrire les prix fournisseurs
+						if ($usercanwritesupplierprice) {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
