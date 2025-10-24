@@ -3507,7 +3507,10 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
-
+		// Add where from hooks
+		$parameters = array('socid' => $socid, 'type_element' => 'propal');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -3616,6 +3619,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $user, $hookmanager, $action;
 
+
 		$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
 		$sql .= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
 		$sql .= " FROM ".$this->db->prefix()."commandedet as cd";
@@ -3634,7 +3638,10 @@ class Product extends CommonObject
 		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
-
+		// Add where from hooks
+		$parameters = array('socid' => $socid, 'type_element' => 'order');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -3687,7 +3694,10 @@ class Product extends CommonObject
 					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
 					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
-
+					// Add where from hooks
+					$parameters = array('socid' => $socid, 'type_element' => 'order');
+					$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+					$sql .= $hookmanager->resPrint;
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						while ($obj = $this->db->fetch_object($resql)) {
@@ -3720,6 +3730,10 @@ class Product extends CommonObject
 					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
 
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
+					// Add where from hooks
+					$parameters = array('socid' => $socid, 'type_element' => 'order');
+					$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+					$sql .= $hookmanager->resPrint;
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						while ($obj = $this->db->fetch_object($resql)) {

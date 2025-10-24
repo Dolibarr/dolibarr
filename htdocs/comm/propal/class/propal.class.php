@@ -3500,7 +3500,7 @@ class Propal extends CommonObject
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$clause = " WHERE";
 
@@ -3529,6 +3529,10 @@ class Propal extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND p.fk_soc = ".((int) $user->socid);
 		}
+		// Add where from hooks
+		$parameters = array('socid' => $user->socid);
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

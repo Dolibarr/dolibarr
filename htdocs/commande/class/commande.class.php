@@ -3627,7 +3627,7 @@ class Commande extends CommonOrder
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$clause = " WHERE";
 
@@ -3655,7 +3655,10 @@ class Commande extends CommonOrder
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-
+		// Add where from hooks
+		$parameters = array('socid' => $user->socid);
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$delay_warning = 0;
