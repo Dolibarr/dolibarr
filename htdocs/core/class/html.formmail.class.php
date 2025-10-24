@@ -1458,9 +1458,9 @@ class FormMail extends Form
 	/**
 	 * Return Html section for the Topic of message
 	 *
-	 * @param	ModelMail	$arraydefaultmessage		Array with message template content
-	 * @param	string	$helpforsubstitution		Help string for substitution
-	 * @return 	string 								Text for topic
+	 * @param	CEmailTemplate	$arraydefaultmessage		Array with message template content
+	 * @param	string			$helpforsubstitution		Help string for substitution
+	 * @return 	string 										Text for topic
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
