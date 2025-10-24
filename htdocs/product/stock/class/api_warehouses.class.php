@@ -298,7 +298,8 @@ class Warehouses extends DolibarrApi
 			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
 		}
 
-		if ($this->warehouse->update($id, DolibarrApiAccess::$user)) {
+		$updateresult = $this->warehouse->update($id, DolibarrApiAccess::$user);
+		if ($updateresult > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->warehouse->error);

@@ -392,7 +392,7 @@ class Entrepot extends CommonObject
 		$sql .= ", warehouse_usage = ".((int) $this->warehouse_usage);
 		$sql .= ", fk_user_author = ".((int) $this->user_creation_id);
 		$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
-		$sql .= ", import_key = '".$this->db->escape($this->import_key)."'";
+		$sql .= ", import_key = ".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
