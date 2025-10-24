@@ -350,6 +350,75 @@ class Warehouses extends DolibarrApi
 		);
 	}
 
+	/**
+	 * List Product in warehouses
+	 *
+	 * Get a list of product in a warehouse
+	 * 
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param 	int		$id			warehouse ID
+	 * @param 	int		$limit		Limit for list
+	 * @return 	array    			Array of product in warehouse
+  	 * @phan-return array<array{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
+	 * @phpstan-return array<array{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
+	 *
+	 * @url GET /{id}/products
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
+	 */
+	public function listProducts($id = 0, $limit = 100)
+	{
+		global $db;
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
+		}
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
+		$existsresult = $this->warehouse->fetch($id);
+		if (!$existsresult) {
+			throw new RestException(404, 'warehouse not found');
+		}
+
+		$sql = "SELECT p.rowid, p.ref, p.label, p.fk_product_type,";
+		$sql.= " p.price, p.price_ttc, p.entity, p.pmp, ps.reel, (ps.reel * p.pmp) as reelpmp, (ps.reel * p.price) as reelprice";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
+		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".((int) $id);
+		$sql.= " ORDER BY p.ref DESC";
+		$sql .= $db->plimit($limit);
+
+		$result = $db->query($sql);
+		$line = array();
+		if ($result) {
+			$i = 0;
+			$num = $this->db->num_rows($result);
+			while ($i < $num) {
+				$obj = $db->fetch_object($result);
+				$line[$i] = array();
+				$line[$i]['rowid'] =  $obj->rowid;
+				$line[$i]['ref'] =  $obj->ref;
+				$line[$i]['label'] = $obj->label;
+				$line[$i]['fk_product_type'] = $obj->fk_product_type;
+				$line[$i]['price'] = $obj->price;
+				$line[$i]['price_ttc'] = $obj->price_ttc;
+				$line[$i]['entity'] = $obj->entity;
+				$line[$i]['pmp'] = $obj->pmp;
+				$line[$i]['reel'] = $obj->reel;
+				$line[$i]['reelpmp'] = $obj->reelpmp;
+				$line[$i]['reelprice'] = $obj->reelprice;
+
+				$i++;
+			}
+		} else {
+			throw new RestException(500, 'Error when retrieve warehouse product list : '.$db->lasterror());
+		}
+		return $this->_cleanObjectDatas($line);
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
