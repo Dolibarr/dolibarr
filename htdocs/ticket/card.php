@@ -457,6 +457,9 @@ if (empty($reshook)) {
 
 	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
+		if (GETPOSTISSET('contactid')) {
+			$object->context['contact_id'] = GETPOSTINT('contactid');
+		}
 
 		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {	// Test on pemrission already done
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
