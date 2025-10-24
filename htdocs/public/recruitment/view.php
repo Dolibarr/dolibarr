@@ -38,6 +38,15 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -47,13 +56,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment", "mails"));
@@ -491,7 +493,7 @@ if ($action != 'dosubmit') {
 
 		// Display Captcha code if is enabled
 		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT') && is_object($captchaobj)) {
-			print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td><br>';
+			print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans($captchaobj->getFieldInputTitle()).'</span></label></td><td><br>';
 			if (method_exists($captchaobj, 'getCaptchaCodeForForm')) {
 				print $captchaobj->getCaptchaCodeForForm('');  // @phan-suppress-current-line PhanUndeclaredMethod
 			} else {
