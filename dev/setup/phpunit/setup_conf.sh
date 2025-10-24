@@ -44,7 +44,7 @@ function save_db_cache() (
 	# DETERMINE VERSION
 	cd "${TRAVIS_BUILD_DIR}/htdocs/install" || exit 1
 
-	# Get the target version from the filefunc.inc.php file
+	# Get the target version from the version.inc.php file
 	target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\1/p" ../version.inc.php) ; echo $target_version
 	# Default in case that failed
 	target_version=${target_version:=22.0.0}
