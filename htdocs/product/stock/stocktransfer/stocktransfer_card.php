@@ -901,12 +901,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $line->id . '#line_' . $line->id . '">';
 				print img_edit() . '</a>';
 				print '</td>';
-			print '<td class="right">';
-			// Ensure the delete line link embeds a CSRF token.
-			// FR: Garantit que le lien de suppression de ligne intègre un jeton CSRF.
-			$deleteLineUrl = $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '&token=' . newToken();
-			print '<a href="' . $deleteLineUrl . '">' . img_delete($langs->trans("Remove")) . '</a>';
-			print '</td>';
+				print '<td class="right">';
+				// Ensure the delete line link embeds a CSRF token.
+				// FR: Garantit que le lien de suppression de ligne intègre un jeton CSRF.
+				$deleteLineUrl = $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '&token=' . newToken();
+				print '<a href="' . $deleteLineUrl . '">' . img_delete($langs->trans("Remove")) . '</a>';
+				print '</td>';
 			}
 
 			$num = count($object->lines);
