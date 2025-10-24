@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -67,9 +67,12 @@ print '<div class="opacitymedium justify">'.$langs->trans("FileCheckDesc").'</di
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td></td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
+$htmltooltip = '';
+$htmltooltip .= $langs->trans("VersionLastInstall").': '.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'<br>'."\n";
+$htmltooltip .= $langs->trans("VersionLastUpgrade").': '.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'<br>'."\n";
+
+print '<tr class="oddeven nohover"><td width="300">'.$langs->trans("VersionProgram").'</td><td>';
+print '<span class="valignmiddle">'.DOL_VERSION.'</span>';
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)
@@ -82,6 +85,7 @@ if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }
+print ' '.$form->textwithpicto('', $htmltooltip);
 print '</td></tr>'."\n";
 print '</table>';
 print '</div>';
@@ -128,9 +132,9 @@ if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || getDolGlobalString('MAIN_ALLO
 }
 $enableremotecheck = true;
 
-print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="check" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
+print img_picto('', 'search', 'class="pictofixedwidth"').$langs->trans("MakeIntegrityAnalysisFrom").'...<br><br>';
 
 print '<div class="divsection">';
 print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
@@ -225,19 +229,78 @@ if (empty($error) && !empty($xml)) {
 	$out = '';
 
 	// Forced constants
-	if (is_object($xml->dolibarr_constants[0])) {
+	if (is_object($xml->dolibarr_constants[0]) || $mode == 'unalterable') {
 		$out .= load_fiche_titre($langs->trans("ForcedConstants"));
 
 		$out .= '<div class="div-table-responsive-no-min">';
 		$out .= '<table class="noborder">';
 		$out .= '<tr class="liste_titre">';
 		$out .= '<td>#</td>';
-		$out .= '<td>'.$langs->trans("Constant").'</td>';
+		$out .= '<td>'.$langs->trans("Parameter").'</td>';
 		$out .= '<td class="center">'.$langs->trans("ExpectedValue").'</td>';
-		$out .= '<td class="center">'.$langs->trans("Value").'</td>';
+		$out .= '<td class="center">'.$langs->trans("CurrentValue").'</td>';
 		$out .= '</tr>'."\n";
 
 		$i = 0;
+
+		if ($mode == 'unalterable') {
+			$i++;
+
+			$out .= '<tr class="oddeven">';
+			$out .= '<td>'.$i.'</td>'."\n";
+			$out .= '<td>'.$langs->trans("Country").'</td>'."\n";
+			$out .= '<td class="center"><span class="opacitymedium">'.$langs->trans("YourCountryCode").'</span></td>'."\n";
+			$out .= '<td class="center">'.$mysoc->country_code.'</td>'."\n";
+			$out .= "</tr>\n";
+
+			$i++;
+
+			$out .= '<tr class="oddeven">';
+			$out .= '<td>'.$i.'</td>'."\n";
+			$out .= '<td>'.$langs->trans("StatusOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td>'."\n";
+			$out .= '<td class="center">'.$langs->trans("Enabled").'</td>'."\n";
+			$out .= '<td class="center">';
+			$out .= isModEnabled('blockedlog') ? '<span class="ok">'.$langs->trans("Enabled").'</span>' : '<span class="warning">'.$langs->trans("Disabled").'</span>';
+
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/modBlockedLog.class.php';
+			$objMod = new modBlockedLog($db);
+			/*$modulename = $objMod->getName();
+			$moduledesc = $objMod->getDesc();
+			$moduleauthor = $objMod->getPublisher();
+			$moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));*/
+			$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+
+			$htmltooltip = '<span class="opacitymedium">'.$langs->trans("LastActivationDate").':</span> ';
+			if (getDolGlobalString($const_name)) {
+				$htmltooltip .= dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+			} else {
+				$htmltooltip .= $langs->trans("Disabled");
+			}
+			$tmp = $objMod->getLastActivationInfo();
+			$authorid = (empty($tmp['authorid']) ? '' : $tmp['authorid']);
+			if ($authorid > 0) {
+				$tmpuser = new User($db);
+				$tmpuser->fetch($authorid);
+				$htmltooltip .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
+				$htmltooltip .= $tmpuser->getNomUrl(0, 'nolink', -1, 1);
+			}
+			$ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
+			if ($ip) {
+				$htmltooltip .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
+				$htmltooltip .= $ip;
+			}
+			$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
+			if ($lastactivationversion && $lastactivationversion != 'dolibarr') {
+				$htmltooltip .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
+				$htmltooltip .= $lastactivationversion;
+			}
+
+			$out .= $form->textwithpicto('', $htmltooltip);
+
+			$out .= "</td>\n";
+			$out .= "</tr>\n";
+		}
+
 		foreach ($xml->dolibarr_constants[0]->constant as $constant) {    // $constant is a simpleXMLElement
 			$constname = (string) $constant['name'];
 			$constvalue = (string) $constant;
@@ -253,6 +316,7 @@ if (empty($error) && !empty($xml)) {
 			$checksumconcat[$constname] = $valueforchecksum;
 
 			$i++;
+
 			$out .= '<tr class="oddeven">';
 			$out .= '<td>'.$i.'</td>'."\n";
 			$out .= '<td>'.dol_escape_htmltag($constname).'</td>'."\n";
@@ -261,7 +325,7 @@ if (empty($error) && !empty($xml)) {
 			$out .= "</tr>\n";
 		}
 
-		if ($i == 0) {
+		if ($i == 0 && $mode != 'unalterable') {
 			$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		$out .= '</table>';
@@ -453,8 +517,7 @@ if (empty($error) && !empty($xml)) {
 
 	// Scan scripts
 	/*
-	if (is_object($xml->dolibarr_script_dir[0]))
-	{
+	if (is_object($xml->dolibarr_script_dir[0])) {
 		$file_list = array();
 		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
 		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
@@ -473,31 +536,28 @@ if (empty($error) && !empty($xml)) {
 		$nameofsection = 'dolibarr_htdocs_dir_checksum';
 		$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 	}
-	//var_dump(count($file_list['added']));
-	//var_dump($checksumget);
-	//var_dump($checksumtoget);
-	//var_dump($checksumget == $checksumtoget);
 
 	$resultcomment = '';
 
 	$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
+	$outcurrentchecksumtext = '';
 	if ($checksumget == $checksumtoget) {
 		if (empty($onlymodifiedorremoved) && !empty($file_list['added'])) {
 			$resultcode = 'warning';
 			$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
 			$outcurrentchecksum = $checksumget;
-			$outcurrentchecksum .= '<br><br>'.img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
+			$outcurrentchecksumtext .= img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 		} else {
 			$resultcode = 'ok';
 			$resultcomment = 'Success';
 			$outcurrentchecksum = '<span class="'.$resultcode.'" title="Checksum of all current checksums concatenated separated by a comma">'.$checksumget.'</span>';
-			$outcurrentchecksum.= '<br><br>'.img_picto('', 'tick').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
+			$outcurrentchecksumtext.= img_picto('', 'tick').' <span class="badge badge-status4 badge-status '.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 		}
 	} else {
 		$resultcode = 'error';
 		$resultcomment = 'FileIntegrityIsKO';
 		$outcurrentchecksum = '<span class="'.$resultcode.'" title="Checksum of all current checksums concatenated separated by a comma">'.$checksumget.'</span>';
-		$outcurrentchecksum .= '<br><br>'.img_picto('', 'error').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
+		$outcurrentchecksumtext .= img_picto('', 'error').' <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 	}
 
 	// Show warning
@@ -535,15 +595,29 @@ if (empty($error) && !empty($xml)) {
 	} else {
 		print load_fiche_titre($langs->trans("GlobalChecksum"));
 	}
-	print $langs->trans("ExpectedChecksum").' = ';
+
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("ExpectedChecksum").'</td>';
+	print '<td>'.$langs->trans("CurrentChecksum").'</td>';
+	print '</tr>'."\n";
+
+	print '<tr><td>';
 	print '<span title="Checksum of all checksums in file separated by a comma and saved into '.$nameofsection.'">';
 	print $outexpectedchecksum;
-	print '</span><br>';
-	print $langs->trans("CurrentChecksum").' = '.$outcurrentchecksum;
+	print '</span>';
+	print '</td><td>';
+	print $outcurrentchecksum;
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+	print $outcurrentchecksumtext.'<br>';
 
-	print '<br><br>';
-	print $outforlistoffiles;
 	print '<br>';
+	print $outforlistoffiles;
+	print '<br><br>';
 
 
 	// Output detail

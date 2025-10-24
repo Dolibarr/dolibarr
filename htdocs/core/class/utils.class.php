@@ -411,6 +411,8 @@ class Utils
 					$handle = fopen($outputfile, 'w');
 				}
 			} else {
+				// TODO Add a pipe into script to decrypt dolCrypted values
+
 				if ($compression == 'none') {
 					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
 					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
@@ -479,6 +481,8 @@ class Utils
 								// Now check into the result file, that the file end with "-- Dump completed"
 								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
+									// TODO decrypt dolCrypted values from $read
+
 									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 										$ok = 1;

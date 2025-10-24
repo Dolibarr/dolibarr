@@ -85,7 +85,7 @@ $maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->glob
 $hookmanager->initHooks(array('invoiceindex'));
 
 
-$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+$maxofloop = getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500);
 
 
 /*

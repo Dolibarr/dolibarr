@@ -264,8 +264,9 @@ class pdf_sponge extends ModelePDFFactures
 				$realpath = false;
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
-						if ($conf->entity != $objphoto->entity) {
-							$dir = $conf->product->multidir_output[$objphoto->entity].'/'.$midir; //Check repertories of current entities
+						$entity = $objphoto->entity;
+						if ($entity !== null && $conf->entity != $entity) {
+							$dir = $conf->product->multidir_output[$entity].'/'.$midir; //Check repertories of current entities
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
@@ -1399,13 +1400,13 @@ class pdf_sponge extends ModelePDFFactures
 		if ($object->status > Facture::STATUS_DRAFT && getDolGlobalInt('PDF_INVOICE_SHOW_BALANCE_SUMMARY')) {
 			// All customer previous invoices
 			$sql = "SELECT f.rowid, f.datef, f.total_ttc";
-			$sql.= " FROM " . MAIN_DB_PREFIX . "facture as f";
-			$sql.= " WHERE f.fk_soc = " . ((int) $object->socid);
-			$sql.= " AND f.entity IN (" . getEntity('invoice') . ")";
-			$sql.= " AND f.datef <= '" . $this->db->idate($object->date) . "'";
-			$sql.= " AND f.rowid < " . ((int) $object->id);
-			$sql.= " AND f.fk_statut > 0";
-			$sql.= " ORDER BY f.datef ASC";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
+			$sql .= " WHERE f.fk_soc = " . ((int) $object->socid);
+			$sql .= " AND f.entity IN (" . getEntity('invoice') . ")";
+			$sql .= " AND f.datef <= '" . $this->db->idate($object->date) . "'";
+			$sql .= " AND f.rowid < " . ((int) $object->id);
+			$sql .= " AND f.fk_statut > 0";
+			$sql .= " ORDER BY f.datef ASC";
 
 			$old_balance = 0;
 			$invoices = array();
@@ -1420,12 +1421,12 @@ class pdf_sponge extends ModelePDFFactures
 
 			// All payments before current date
 			$sql_payments = "SELECT p.datep, pf.fk_facture, pf.amount";
-			$sql_payments.= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
-			$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
-			$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
-			$sql_payments.= " WHERE f.fk_soc = " . ((int) $object->socid);
-			$sql_payments.= " AND p.datep < '" . $this->db->idate($object->date) . "'";
-			$sql_payments.= " ORDER BY p.datep ASC";
+			$sql_payments .= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
+			$sql_payments .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
+			$sql_payments .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
+			$sql_payments .= " WHERE f.fk_soc = " . ((int) $object->socid);
+			$sql_payments .= " AND p.datep < '" . $this->db->idate($object->date) . "'";
+			$sql_payments .= " ORDER BY p.datep ASC";
 
 			$total_payments = 0;
 			$resql_payments = $this->db->query($sql_payments);
@@ -1438,11 +1439,11 @@ class pdf_sponge extends ModelePDFFactures
 
 			// Payments made on current invoice date (including current invoice)
 			$sql_current_date_payments = "SELECT p.datep, pf.fk_facture, pf.amount";
-			$sql_current_date_payments.= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
-			$sql_current_date_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
-			$sql_current_date_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
-			$sql_current_date_payments.= " WHERE f.fk_soc = " . ((int) $object->socid);
-			$sql_current_date_payments.= " AND DATE(p.datep) = DATE('" . $this->db->idate($object->date) . "')";
+			$sql_current_date_payments .= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
+			$sql_current_date_payments .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
+			$sql_current_date_payments .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
+			$sql_current_date_payments .= " WHERE f.fk_soc = " . ((int) $object->socid);
+			$sql_current_date_payments .= " AND DATE(p.datep) = DATE('" . $this->db->idate($object->date) . "')";
 
 			$current_date_payments = 0;
 			$resql_current_date = $this->db->query($sql_current_date_payments);
@@ -1466,7 +1467,7 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->MultiCell($posxval - $this->marge_gauche + 8, 4, $titre, 0, 'L', true);
 
 			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posxval+8, $posy);
+			$pdf->SetXY($posxval + 8, $posy);
 			$titre = $outputlangs->transnoentities("NewBalance").' : '.price($new_balance);
 			$pdf->MultiCell($posxend - $posxval - 8, 4, $titre, 0, 'L', true);
 
