@@ -363,7 +363,6 @@ class Entrepot extends CommonObject
 		$this->label = trim($this->label);
 		$this->barcode = trim($this->barcode);
 		$this->model_pdf = trim($this->model_pdf);
-		$this->import_key = trim($this->import_key);
 
 		$this->description = trim($this->description);
 

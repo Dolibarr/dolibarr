@@ -225,7 +225,7 @@ class Warehouses extends DolibarrApi
 			if ($field == 'id' || $field == 'warehouse_id') {
 				throw new RestException(400, 'Creating with id field is forbidden');
 			}
-			if ($field == 'entity' && $value != $warehouse->entity) {
+			if ($field == 'entity' && $value != $this->warehouse->entity) {
 				throw new RestException(403, 'Changing entity of a user using the APIs is not possible');
 			}
 
@@ -275,7 +275,7 @@ class Warehouses extends DolibarrApi
 			if ($field == 'id' || $field == 'warehouse_id') {
 				throw new RestException(400, 'Updating with id field is forbidden');
 			}
-			if ($field == 'entity' && $value != $warehouse->entity) {
+			if ($field == 'entity' && $value != $this->warehouse->entity) {
 				throw new RestException(403, 'Changing entity of a user using the APIs is not possible');
 			}
 			if ($field == 'ref') {
