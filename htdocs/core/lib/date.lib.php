@@ -115,7 +115,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 /**
  *  Add a delay to a date
  *
- *  @param      int			$time               Date timestamp
+ *  @param      int			$time               Date timestamp (Must be a UTC timestamp)
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int<0,1>    $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
@@ -163,9 +163,11 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
+	if (!function_exists('getDolGlobalString') || !getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_NOT_GMT')) {	// Add function_exists to allow usage of this function with minimal context
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
+
+
 	$date->setTimestamp((int) $time);
 	$interval = new DateInterval($deltastring);
 
@@ -174,7 +176,8 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	} else {
 		$date->add($interval);
 	}
-	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
+
+	// Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
 	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
 		$timeyear = (int) dol_print_date($time, '%Y');
 		$timemonth = (int) dol_print_date($time, '%m');
@@ -970,7 +973,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				// Geneva fast in Switzerland
 			}
 		}
-		//print "ferie=".$ferie."\n";
+		//print "ferie afterspe=".$ferie."\n";
 
 		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
@@ -990,7 +993,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				}
 			}
 		}
-		//print "ferie=".$ferie."\n";
+		//print "ferie afterincludexxxday=".$ferie."\n";
 
 		// We increase the counter of non working day
 		if ($ferie) {
@@ -998,8 +1001,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		}
 
 		// Increase number of days (on go up into loop)
+		//var_dump("before ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
 		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
-		//var_dump($jour.' '.$mois.' '.$annee.' '.$timestampStart);
+		//var_dump("after ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
 
 		$i++;
 	}
@@ -1335,7 +1339,9 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 	if ($timestampStart < $timestampEnd) {
 		// --- 1. Calculate Gross Working Days ---
 		// Gross working days = total days in range - non-working days (weekends & public holidays).
-		$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $lastday) - num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
+		$a = num_between_day($timestampStart, $timestampEnd, $lastday);
+		$b = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
+		$nbOpenDay = $a - $b;
 
 		// --- 2. Apply Contextual Half-Day Deductions ---
 		$halfday = (int) $halfday; // Ensure $halfday is an integer for reliable comparisons.

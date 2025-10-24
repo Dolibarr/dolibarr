@@ -414,6 +414,21 @@ input[type=checkbox], input[type=radio] {
 	margin: 0 5px 0 1px;
 	transform: scale(1.25);
 }
+
+.integrated-radio {
+	display: inline-block;
+	cursor : pointer;
+	border-radius: 3px;
+	padding: 4px;
+	background-color: #ededed;
+}
+.integrated-radio input[type="radio"] {
+	display: none;
+}
+.integrated-radio:has(input:checked) {
+	background-color: var(--colortextlink, #0a58ca);
+}
+
 .kanban input.checkforselect {
 	margin-right: 0px;
 	margin-top: 5px;
