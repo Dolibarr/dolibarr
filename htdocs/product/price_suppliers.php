@@ -1153,7 +1153,7 @@ if ($id > 0 || $ref) {
 			if (is_array($product_fourn_list)) {
 				foreach ($product_fourn_list as $productfourn) {
 					print '<tr class="oddeven">';
-					
+
 					// Action column
 					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 						print '<td class="center nowraponall">';
@@ -1163,7 +1163,7 @@ if ($id > 0 || $ref) {
 								print ' &nbsp; ';
 								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
 						}
-	
+
 						print '</td>';
 					}
 
