@@ -1300,7 +1300,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// Definition of order numbering model name
 			$soc = new Societe($this->db);
-			$soc->fetch($this->fourn_id);
+			$soc->fetch((int) $this->fourn_id);
 
 			// Check if object has a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
