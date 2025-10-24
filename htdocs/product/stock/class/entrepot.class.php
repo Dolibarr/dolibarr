@@ -361,6 +361,9 @@ class Entrepot extends CommonObject
 		}
 
 		$this->label = trim($this->label);
+		$this->barcode = trim($this->barcode);
+		$this->model_pdf = trim($this->model_pdf);
+		$this->import_key = trim($this->import_key);
 
 		$this->description = trim($this->description);
 
@@ -384,6 +387,13 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".((int) $this->country_id);
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
+		$sql .= ", barcode = '".$this->db->escape($this->barcode)."'";
+		$sql .= ", fk_departement = ".((int) $this->fk_departement);
+		$sql .= ", fk_barcode_type = ".((int) $this->barcode_type);
+		$sql .= ", warehouse_usage = ".((int) $this->warehouse_usage);
+		$sql .= ", fk_user_author = ".((int) $this->user_creation_id);
+		$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
+		$sql .= ", import_key = '".$this->db->escape($this->import_key)."'";
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
