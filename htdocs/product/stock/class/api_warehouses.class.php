@@ -361,8 +361,8 @@ class Warehouses extends DolibarrApi
 	 * @param 	int		$id			warehouse ID
 	 * @param 	int		$limit		Limit for list
 	 * @return 	array    			Array of product in warehouse
-	 * @phan-return array<array{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
-	 * @phpstan-return array<array{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
+	 * @phan-return array<string{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
+	 * @phpstan-return array<string{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
 	 *
 	 * @url GET /{id}/products
 	 *
