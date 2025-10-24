@@ -12487,12 +12487,6 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/price.php
-
-		-
 			message: '#^Variable \$rowid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
