@@ -93,18 +93,19 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-// Ensure delete action requires a valid CSRF token.
-// FR: Vérifie que l'action de suppression possède un jeton CSRF valide.
-if ($action === 'delete') {
+// Ensure delete-related actions require a valid CSRF token.
+// FR: Vérifie que les actions de suppression possèdent un jeton CSRF valide.
+if (in_array($action, array('delete', 'deleteline'), true)) {
 	$csrfToken = GETPOST('token', 'alphanohtml');
 	if (empty($csrfToken)) {
 		accessforbidden();
 	}
+	$expectedToken = currentToken();
 	if (function_exists('hash_equals')) {
-		if (!hash_equals(currentToken(), $csrfToken)) {
+		if (!hash_equals($expectedToken, $csrfToken)) {
 			accessforbidden();
 		}
-	} elseif (currentToken() !== $csrfToken) {
+	} elseif ($expectedToken !== $csrfToken) {
 		accessforbidden();
 	}
 }
@@ -900,9 +901,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $line->id . '#line_' . $line->id . '">';
 				print img_edit() . '</a>';
 				print '</td>';
-				print '<td class="right">';
-				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '">' . img_delete($langs->trans("Remove")) . '</a>';
-				print '</td>';
+			print '<td class="right">';
+			// Ensure the delete line link embeds a CSRF token.
+			// FR: Garantit que le lien de suppression de ligne intègre un jeton CSRF.
+			$deleteLineUrl = $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '&token=' . newToken();
+			print '<a href="' . $deleteLineUrl . '">' . img_delete($langs->trans("Remove")) . '</a>';
+			print '</td>';
 			}
 
 			$num = count($object->lines);
