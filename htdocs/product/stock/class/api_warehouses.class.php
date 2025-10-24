@@ -373,7 +373,6 @@ class Warehouses extends DolibarrApi
 	 */
 	public function listProducts($id = 0, $limit = 100)
 	{
-		global $db;
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
 		}
@@ -391,15 +390,15 @@ class Warehouses extends DolibarrApi
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".((int) $id);
 		$sql.= " ORDER BY p.ref DESC";
-		$sql .= $db->plimit($limit);
+		$sql .= $this->b->plimit($limit);
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		$line = array();
 		if ($result) {
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
-				$obj = $db->fetch_object($result);
+				$obj = $this->db->fetch_object($result);
 				$line[$i] = array();
 				$line[$i]['rowid'] =  $obj->rowid;
 				$line[$i]['ref'] =  $obj->ref;
@@ -416,7 +415,7 @@ class Warehouses extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(500, 'Error when retrieve warehouse product list : '.$db->lasterror());
+			throw new RestException(500, 'Error when retrieve warehouse product list : '.$this->db->lasterror());
 		}
 		return $line;
 	}
