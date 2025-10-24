@@ -391,7 +391,6 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrollo
 
 if ($id > 0 || $ref) {
 	if ($action == 'ask_remove_pf' && $usercanwritesupplierprice) {
-		
 		$form = new Form($db);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&rowid='.$rowid, $langs->trans('DeleteProductBuyPrice'), $langs->trans('ConfirmDeleteProductBuyPrice'), 'confirm_remove_pf', '', 0, 1);
 		echo $formconfirm;
