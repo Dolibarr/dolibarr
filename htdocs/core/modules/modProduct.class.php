@@ -147,8 +147,7 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][5] = 'read_supplier_prices';
 		$r++;
 
-		// EN: Advanced permission to write supplier prices
-		// FR: Permission avancée pour écrire les prix fournisseurs
+			// EN: Advanced permission to write supplier prices
 		$this->rights[$r][0] = 36; // id de la permission
 		$this->rights[$r][1] = 'Write supplier prices'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
