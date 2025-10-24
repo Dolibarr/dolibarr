@@ -94,7 +94,6 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Ensure delete-related actions require a valid CSRF token.
-// FR: Vérifie que les actions de suppression possèdent un jeton CSRF valide.
 if (in_array($action, array('delete', 'deleteline'), true)) {
 	$csrfToken = GETPOST('token', 'alphanohtml');
 	if (empty($csrfToken)) {
@@ -903,7 +902,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '</td>';
 				print '<td class="right">';
 				// Ensure the delete line link embeds a CSRF token.
-				// FR: Garantit que le lien de suppression de ligne intègre un jeton CSRF.
 				$deleteLineUrl = $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '&token=' . newToken();
 				print '<a href="' . $deleteLineUrl . '">' . img_delete($langs->trans("Remove")) . '</a>';
 				print '</td>';
