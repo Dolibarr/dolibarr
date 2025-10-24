@@ -489,6 +489,16 @@ if ($action != 'dosubmit') {
 		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_5.'" name="message">'.$message.'</textarea>';
 		print '</td></tr>'."\n";
 
+		// Display Captcha code if is enabled
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT') && is_object($captchaobj)) {
+			print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td><br>';
+			if (method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+				print $captchaobj->getCaptchaCodeForForm('');  // @phan-suppress-current-line PhanUndeclaredMethod
+			} else {
+				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+			}
+			print '<br></td></tr>';
+		}
 		print '<tr><td colspan=2>';
 		print $form->buttonsSaveCancel('Submit', 'Cancel');
 		print '</td></tr>'."\n";
