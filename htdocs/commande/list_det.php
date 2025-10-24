@@ -384,37 +384,41 @@ $title = $langs->trans("Orders");
 $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 // llxHeader('',$title,$help_url);
 
-$sql = 'SELECT';
-if ($search_all || $search_product_category_array > 0 || $search_user > 0) {
-	$sql = 'SELECT DISTINCT';
+$sql = '';
+$sqlSelect = 'SELECT';
+
+if ($search_all || !empty($search_product_category_array) || $search_user > 0) {
+	$sqlSelect = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
-$sql .= " typent.code as typent_code,";
-$sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " country.code as country_code,";
-$sql .= ' c.rowid as c_rowid, c.ref, c.ref_client, c.fk_user_author,';
-$sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
-$sql .= ' c.total_ht as c_total_ht, c.total_tva as c_total_tva, c.total_ttc as c_total_ttc, c.fk_warehouse as warehouse,';
-$sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as delivery_date, c.fk_statut, c.facture as billed,';
-$sql .= ' c.date_creation as date_creation, c.tms as date_modification, c.date_cloture as date_cloture,';
-$sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
-$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
-$sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
-$sql .= ' c.fk_input_reason, c.import_key,';
+$sqlSelect .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sqlSelect .= " typent.code as typent_code,";
+$sqlSelect .= " state.code_departement as state_code, state.nom as state_name,";
+$sqlSelect .= " country.code as country_code,";
+$sqlSelect .= ' c.rowid as c_rowid, c.ref, c.ref_client, c.fk_user_author,';
+$sqlSelect .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
+$sqlSelect .= ' c.total_ht as c_total_ht, c.total_tva as c_total_tva, c.total_ttc as c_total_ttc, c.fk_warehouse as warehouse,';
+$sqlSelect .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as delivery_date, c.fk_statut, c.facture as billed,';
+$sqlSelect .= ' c.date_creation as date_creation, c.tms as date_modification, c.date_cloture as date_cloture,';
+$sqlSelect .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
+$sqlSelect .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
+$sqlSelect .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
+$sqlSelect .= ' c.fk_input_reason, c.import_key,';
 // Lines or order
-$sql .= ' cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc,';
-$sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
+$sqlSelect .= ' cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc,';
+$sqlSelect .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sqlSelect .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
+
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+$sqlSelect .= $hookmanager->resPrint;
+
+$sql = ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
@@ -676,8 +680,13 @@ $sql .= $db->order($sortfield, $sortorder);
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$result = $db->query('SELECT COUNT(*) as numrows ' .  $sql);
+	$obj = $db->fetch_object($result);
+	if (empty($obj)) {
+		$nbtotalofrecords = 0;
+	} else {
+		$nbtotalofrecords = $obj->numrows;
+	}
 
 	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
@@ -687,8 +696,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 $sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
-
-$resql = $db->query($sql);
+$resql = $db->query($sqlSelect . $sql);
 if ($resql) {
 	if ($socid > 0) {
 		$soc = new Societe($db);
