@@ -68,14 +68,12 @@ class Warehouses extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if ($id == 0) {
-			throw new RestException(400, 'No warehouse with id=0 can exist');
-		}
-
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'warehouse not found');
@@ -227,6 +225,9 @@ class Warehouses extends DolibarrApi
 			if ($field == 'id') {
 				throw new RestException(400, 'Creating with id field is forbidden');
 			}
+			if ($field == 'entity' && $value != $usergroup->entity) {
+				throw new RestException(403, 'Changing entity of a user using the APIs is not possible');
+			}
 
 			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
 		}
@@ -255,14 +256,12 @@ class Warehouses extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if ($id == 0) {
-			throw new RestException(400, 'No warehouse with id=0 can exist');
-		}
-
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'warehouse not found');
@@ -273,8 +272,14 @@ class Warehouses extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
+			if ($field == 'id' || $field == 'warehouse_id') {
 				throw new RestException(400, 'Updating with id field is forbidden');
+			}
+			if ($field == 'entity' && $value != $usergroup->entity) {
+				throw new RestException(403, 'Changing entity of a user using the APIs is not possible');
+			}
+			if ($field == 'ref') {
+				throw new RestException(400, 'Deprecated, use label, not ref');
 			}
 
 			if ($field === 'caller') {
@@ -318,12 +323,11 @@ class Warehouses extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if ($id == 0) {
-			throw new RestException(400, 'No warehouse with id=0 can exist');
-		}
-
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'supprimer')) {
 			throw new RestException(403);
+		}
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
 		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {
