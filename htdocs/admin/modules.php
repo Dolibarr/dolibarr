@@ -406,7 +406,6 @@ if ($action == 'install' && $allowonlineinstall) {
 } elseif ($action == 'install' && !$allowonlineinstall) {
 	httponly_accessforbidden("You try to bypass the protection to disallow deployment of an external module. Hack attempt ?");
 }
-// unset($_SESSION['favorites_modules']);
 if ($action == 'set' && $user->admin) {
 	// We made some check against evil eternal modules that try to low security options.
 	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
