@@ -391,7 +391,7 @@ class Warehouses extends DolibarrApi
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".((int) $id);
 		$sql.= " ORDER BY p.ref DESC";
-		$sql .= $this->b->plimit($limit);
+		$sql .= $this->db->plimit($limit);
 
 		$result = $this->db->query($sql);
 		$line = array();
