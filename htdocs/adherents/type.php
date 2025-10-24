@@ -331,7 +331,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		if ($optioncss != '') {
 			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		}

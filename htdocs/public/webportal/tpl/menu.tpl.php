@@ -112,12 +112,24 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
+
+	// menu user
+	if ($context->logged_thirdparty) {
+		$navUserMenu['user'] = array(
+			'id' => 'user_account',
+			'rank' => 99998,
+			'url' => false,
+			'name' => '<img class="top-nav-icon user-account" src="' . WebPortalTheme::getIconImagesUrl() . 'user.svg" aria-hidden="true" /> '.$context->logged_thirdparty->getFullName($langs),
+		);
+	}
+
+
 	// menu user with logout
 	$navUserMenu['user_logout'] = array(
 		'id' => 'user_logout',
 		'rank' => 99999,
 		'url' => $context->getControllerUrl() . 'logout.php',
-		'name' => img_picto($langs->trans('Logout'), 'logout', 'class="pictofixedwidth"'),
+		'name' => '<img class="top-nav-icon log-out-img" src="'.WebPortalTheme::getIconImagesUrl() . 'logout.svg" title="'.dol_escape_htmltag($langs->trans('Logout')).'"  />',
 	);
 }
 // GROUP MENU

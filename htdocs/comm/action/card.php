@@ -444,7 +444,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 			$object->fk_element = $taskid;
 			$object->elementid = $taskid;
-			$object->elementtype = 'task';
+			$object->elementtype = 'project_task';
 		}
 
 		$object->datep = $datep;
@@ -963,7 +963,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 
 			$object->fk_element = $taskid;
 			$object->elementid = $taskid;
-			$object->elementtype = 'task';
+			$object->elementtype = 'project_task';
 		}
 
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
@@ -1803,7 +1803,7 @@ if ($action == 'create') {
 		}
 		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
 
-		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
+		if (! in_array($origin, array('societe', 'project', 'project_task', 'user'))) {
 			// We do not use link for object that already contains a hard coded field to make links with agenda events
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
 			print '<td colspan="3">';
@@ -2321,7 +2321,7 @@ if ($id > 0 && $action != 'create') {
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
 
-			if ($object->elementtype == 'task' && isModEnabled('project')) {
+			if ($object->elementtype == 'project_task' && isModEnabled('project')) {
 				print '<td id="project-task-input-container" >';
 
 				$urloption = '?action=create&donotclearsession=1'; // we use create not edit for more flexibility
@@ -2605,7 +2605,7 @@ if ($id > 0 && $action != 'create') {
 			if ($usercancreate) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
