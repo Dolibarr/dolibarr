@@ -384,6 +384,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		}
 		if (!$ok) {
 			$error++;
+			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
 			$action = '';
 		}
