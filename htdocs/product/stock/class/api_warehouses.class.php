@@ -222,7 +222,7 @@ class Warehouses extends DolibarrApi
 				continue;
 			}
 
-			if ($field == 'id') {
+			if ($field == 'id' || $field == 'warehouse_id') {
 				throw new RestException(400, 'Creating with id field is forbidden');
 			}
 			if ($field == 'entity' && $value != $usergroup->entity) {
