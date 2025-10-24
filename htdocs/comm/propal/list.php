@@ -218,7 +218,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'p.ref' => 'Ref',
 	'p.ref_client' => 'RefCustomer',
-	'pd.description' => 'Description',
+	'pd.description' => 'ProductDescription',
 	's.nom' => "ThirdParty",
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
@@ -586,9 +586,6 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = 'SELECT';
-if ($search_all !== '') {
-	$sql = 'SELECT DISTINCT';
-}
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
@@ -624,9 +621,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'propal as p ON p.fk_soc = s.rowid';
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
-}
-if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid = pd.fk_propal';
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
@@ -722,7 +716,25 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('p.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+	// Prepare the $sqltoadd for fields pd.* that need a test by doing a "or exits"
+	$sqltoadd = '';
+	$fieldstosearchallwithoutpd = array();
+	$fieldstosearchallwithpd = array();
+	foreach ($fieldstosearchall as $key => $val) {
+		if (!preg_match('/^pd\./', $key)) {
+			$fieldstosearchallwithoutpd[$key] = $val;
+		} else {
+			$fieldstosearchallwithpd[$key] = $val;
+		}
+	}
+
+	if (count($fieldstosearchallwithpd) > 0) {
+		$sqltoadd .= ' OR EXISTS (SELECT pd.rowid FROM '.MAIN_DB_PREFIX.'propaldet as pd WHERE pd.fk_propal = p.rowid';
+		$sqltoadd .= natural_search(array_keys($fieldstosearchallwithpd), '__KEYTOSEARCH__');
+		$sqltoadd .= ')';
+	}
+
+	$sql .= natural_search(array_keys($fieldstosearchallwithoutpd), $search_all, 0, 0, $sqltoadd);
 }
 if ($search_fk_cond_reglement > 0) {
 	$sql .= " AND p.fk_cond_reglement = ".((int) $search_fk_cond_reglement);

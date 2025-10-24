@@ -346,6 +346,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
 			$error++;
+			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
 			$action = '';
 		}
