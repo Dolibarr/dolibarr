@@ -93,22 +93,6 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-// Ensure delete-related actions require a valid CSRF token.
-if (in_array($action, array('delete', 'deleteline'), true)) {
-	$csrfToken = GETPOST('token', 'alphanohtml');
-	if (empty($csrfToken)) {
-		accessforbidden();
-	}
-	$expectedToken = currentToken();
-	if (function_exists('hash_equals')) {
-		if (!hash_equals($expectedToken, $csrfToken)) {
-			accessforbidden();
-		}
-	} elseif ($expectedToken !== $csrfToken) {
-		accessforbidden();
-	}
-}
-
 if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
