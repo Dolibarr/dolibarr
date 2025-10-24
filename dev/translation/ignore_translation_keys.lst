@@ -175,7 +175,6 @@ Child of
 ClassNotFound
 Clear
 ClickToDial
-Clients
 Clone
 CloneAffectation
 CloneChanges
@@ -626,17 +625,13 @@ Poll
 Posts
 PredefinedInterventional
 PrevRangeToThisRange
-PreviousFingerprint
 Print
 PrintDriver
 PrintModule
 PrintUserConfDesc
 PrinterId
 PrinterIdEmpty
-PrinterLocation
-PrinterNameEmpty
 PrinterParameterEmpty
-Printers
 Printing
 ProductCodeDesc
 ProductFournisseurPrice

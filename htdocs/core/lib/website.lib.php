@@ -1227,6 +1227,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	'@phan-var-force Website $website';
+	/** @var Website $website */
 
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
@@ -1291,9 +1292,9 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo)) {
 			// TODO Use a better way to scan keywords
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
+			$searchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$searchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$searchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		if (preg_match('/content/', $algo)) {
 			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";

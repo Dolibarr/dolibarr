@@ -113,6 +113,7 @@ class Subscription extends CommonObject
 		'fk_type' => array('type' => 'integer', 'label' => 'MemberType', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 60),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805),
 	);
 
 
@@ -144,6 +145,11 @@ class Subscription extends CommonObject
 
 		$now = dol_now();
 
+		// Clean parameters
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
+
 		// Check parameters
 		if ($this->datef <= $this->dateh) {
 			$this->error = $langs->trans("ErrorBadValueForDate");
@@ -165,13 +171,16 @@ class Subscription extends CommonObject
 			$type = $this->fk_type;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note, fk_user_creat)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note, note_private, ref_ext, fk_user_creat, import_key)";
 		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape((string) $type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".((float) $this->amount).",";
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
+		$sql .= " '".$this->db->escape($this->note_private)."',";
+		$sql .= " ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'").",";
 		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : $user->id));
+		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -443,9 +452,8 @@ class Subscription extends CommonObject
 		if (!empty($this->datef)) {
 			$label .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->datef, 'day');
 		}
-
-		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.((int) $this->id);
-
+		$baseurl = DOL_URL_ROOT . '/adherents/subscription/card.php';
+		$query = ['rowid' => $this->id];
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -453,9 +461,10 @@ class Subscription extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
 		$linkend = '</a>';

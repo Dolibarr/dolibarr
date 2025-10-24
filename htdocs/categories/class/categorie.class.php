@@ -69,6 +69,8 @@ class Categorie extends CommonObject
 	const TYPE_INVOICE				= 'invoice';
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
+	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
+	const TYPE_PROPOSAL	            = 'propal';
 
 
 	/**
@@ -99,7 +101,9 @@ class Categorie extends CommonObject
 		'order'					=> 16,
 		'invoice'				=> 17,
 		'supplier_order'		=> 20,
-		'supplier_invoice'		=> 21
+		'supplier_invoice'		=> 21,
+		'supplier_proposal'		=> 22,
+		'propal'				=> 23
 	);
 
 	/**
@@ -172,7 +176,9 @@ class Categorie extends CommonObject
 		'order'					=> 'Commande',
 		'invoice'				=> 'Facture',
 		'supplier_order'		=> 'CommandeFournisseur',
-		'supplier_invoice'		=> 'FactureFournisseur'
+		'supplier_invoice'		=> 'FactureFournisseur',
+		'supplier_proposal' => 'SupplierProposal',
+		'propal' => 'Propal',
 	);
 
 	/**
@@ -198,7 +204,9 @@ class Categorie extends CommonObject
 		'order'					=> 'Orders',
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
-		'supplier_invoice'		=> 'SuppliersInvoices'
+		'supplier_invoice'		=> 'SuppliersInvoices',
+		'propal' => 'Proposals',
+		'supplier_proposal' => 'SupplierProposals',
 	);
 
 	/**
@@ -380,6 +388,7 @@ class Categorie extends CommonObject
 			$reshook = $hookmanager->executeHooks('constructCategory', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
 				foreach ($hookmanager->resArray as $mapList) {
+					/** @var array{id:int,code:string,cat_fk:string|null,cat_table:string|null,obj_class:string,obj_table:string,label:string|null} $mapList */
 					$mapId = $mapList['id'];
 					$mapCode = $mapList['code'];
 					//self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
@@ -388,7 +397,7 @@ class Categorie extends CommonObject
 					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
 					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
 					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
-					self::$MAP_TYPE_TITLE_AREA[$mapCode] =  $mapList['label'];
+					self::$MAP_TYPE_TITLE_AREA[$mapCode] = isset($mapList['label']) ? $mapList['label'] : null;
 				}
 			}
 		}
@@ -1118,7 +1127,11 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+			if (($limit >= (int) $nbtotalofrecords) && $page > 0) {
+				return [];
+			}
+
+			if (($page * $limit) >= (int) $nbtotalofrecords) {	// if total resultset is smaller or equal then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
@@ -1883,7 +1896,7 @@ class Categorie extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("ShowCategory");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');

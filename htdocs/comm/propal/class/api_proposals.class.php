@@ -655,6 +655,41 @@ class Proposals extends DolibarrApi
 			throw new RestException(405, $this->propal->error);
 		}
 	}
+	/**
+	 * Get contacts of given proposal
+	 *
+	 * Return an array with contact information
+	 *
+	 * @param	int					$id			ID of proposal
+	 * @param	string				$type		Type of the proposal
+	 * @return	array<int,mixed>				Array of contacts associated
+	 *
+	 * @url	GET {id}/contacts
+	 *
+	 * @throws	RestException
+	 */
+	public function getContacts($id, $type = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->propal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$contacts = $this->propal->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $this->propal->liste_contact(-1, 'internal', 0, $type);
+
+		$contacts = array_merge($contacts, $socpeoples);
+
+		return $contacts;
+	}
 
 	/**
 	 * Add (link) a contact to a commercial proposal
@@ -747,19 +782,18 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->propal->liste_contact(-1, $source);
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->propal->delete_contact($contact['rowid']);
 
-		$contacts = $this->propal->liste_contact();
-
-		foreach ($contacts as $contact) {
-			if ($contact['id'] == $contactid && $contact['code'] == $type) {
-				$result = $this->propal->delete_contact($contact['rowid']);
-
-				if (!$result) {
-					throw new RestException(500, 'Error when deleted the contact');
+					if (!$result) {
+						throw new RestException(500, 'Error when deleted the contact');
+					}
 				}
 			}
 		}
-
 		return $this->_cleanObjectDatas($this->propal);
 	}
 

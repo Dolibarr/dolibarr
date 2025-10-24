@@ -185,8 +185,10 @@ class Zapier extends DolibarrApi
 		$result = $this->db->query($sql);
 		$i = 0;
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$hook_static = new Hook($this->db);
 				if ($hook_static->fetch($obj->rowid)) {

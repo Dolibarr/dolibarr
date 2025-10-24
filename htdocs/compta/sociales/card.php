@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -362,7 +362,7 @@ $resteapayer = 0;
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewSocialContribution"));
 
-	print '<form name="charge" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="charge" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -714,7 +714,6 @@ if ($id > 0) {
 
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$total = 0;
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder paymenttable">';
@@ -855,7 +854,7 @@ if ($id > 0) {
 			$action = 'presend';
 		}
 
-		if ($action != 'presend') {
+		if ($action != 'edit' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 

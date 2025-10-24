@@ -378,7 +378,7 @@ class ActionComm extends CommonObject
 	public $event_paid;
 
 	/**
-	 * @var int status use but Event organisation module
+	 * @var ?int status use but Event organisation module
 	 */
 	public $status;
 
@@ -1850,13 +1850,13 @@ class ActionComm extends CommonObject
 			$linkclose .= ' class="'.$morecss.'"';
 		}
 
-		$url = '';
+		$query = ['id' => $this->id];
 		if ($option == 'birthday') {
-			$url = DOL_URL_ROOT.'/contact/perso.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/contact/perso.php';
 		} elseif ($option == 'holiday') {
-			$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/holiday/card.php';
 		} else {
-			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/comm/action/card.php';
 		}
 
 		if ($option !== 'nolink') {
@@ -1866,9 +1866,10 @@ class ActionComm extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -2788,8 +2789,9 @@ class ActionComm extends CommonObject
 						// Content
 						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+						// Topic
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : $langs->transnoentitiesnoconv('EventReminder');
+						$sendTopic = make_substitutions($sendTopic, $substitutionarray);
 
 						// Recipient
 						$recipient = new User($this->db);

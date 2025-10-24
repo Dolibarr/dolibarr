@@ -606,34 +606,34 @@ class Propal extends CommonObject
 	 *      by whose calling the method get_default_tva (societe_vendeuse, societe_acheteuse, '' product)
 	 *      and desc must already have the right value (it's up to the caller to manage multilanguage)
 	 *
-	 * 		@param    	string		$desc				Description of line
-	 * 		@param    	float		$pu_ht				Unit price
-	 * 		@param    	float		$qty             	Quantity
+	 * 		@param    	string			$desc				Description of line
+	 * 		@param    	float			$pu_ht				Unit price
+	 * 		@param    	float			$qty             	Quantity
 	 * 		@param    	float|string	$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
-	 * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
-	 *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
-	 *		@param    	int			$fk_product      	Product/Service ID predefined
-	 * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
-	 * 		@param    	string		$price_base_type	HT or TTC
-	 * 		@param    	float		$pu_ttc             Prix unitaire TTC
-	 * 		@param    	int			$info_bits			Bits for type of lines
-	 *      @param      int			$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
-	 *      @param      int			$rang               Position of line
-	 *      @param		int			$special_code		Special code (also used by externals modules!)
-	 *      @param		int			$fk_parent_line		Id of parent line
-	 *      @param		int			$fk_fournprice		Id supplier price
-	 *      @param		float|string	$pa_ht			Buying price without tax ('' to keep PMP unchanged or a float)
-	 *      @param		string		$label				???
-	 *		@param      int|''		$date_start       	Start date of the line
-	 *		@param      int|''		$date_end         	End date of the line
+	 * 		@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
+	 *  	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
+	 *		@param    	int				$fk_product      	Product/Service ID predefined
+	 * 		@param    	float			$remise_percent  	Pourcentage de remise de la ligne
+	 * 		@param    	string			$price_base_type	HT or TTC
+	 * 		@param    	float			$pu_ttc             Prix unitaire TTC
+	 * 		@param    	int				$info_bits			Bits for type of lines
+	 *      @param      int				$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
+	 *      @param      int				$rang               Position of line
+	 *      @param		int				$special_code		Special code (also used by externals modules!)
+	 *      @param		int				$fk_parent_line		Id of parent line
+	 *      @param		int				$fk_fournprice		Id supplier price
+	 *      @param		float|string	$pa_ht				Buying price without tax ('' to keep PMP unchanged or a float)
+	 *      @param		string			$label				???
+	 *		@param      int|''			$date_start       	Start date of the line
+	 *		@param      int|''			$date_end         	End date of the line
 	 *      @param		array<string,mixed>	$array_options	extrafields array
-	 * 		@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
-	 *      @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
-	 *      @param		int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
-	 * 		@param		float		$pu_ht_devise		Unit price in currency
-	 * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
-	 *  	@param		int			$noupdateafterinsertline	No update after insert of line
-	 *    	@return    	int         	    			>0 if OK, <0 if KO
+	 * 		@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
+	 *      @param		string			$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
+	 *      @param		int				$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
+	 * 		@param		float			$pu_ht_devise		Unit price in currency
+	 * 		@param		int    			$fk_remise_except	Id discount if line is from a discount
+	 *  	@param		int				$noupdateafterinsertline	No update after insert of line
+	 *    	@return    	int         		    			Return >0 if OK, <0 if KO
 	 *    	@see       	add_product()
 	 */
 	public function addline(
@@ -897,31 +897,31 @@ class Propal extends CommonObject
 	/**
 	 *  Update a proposal line
 	 *
-	 *  @param      int			$rowid           	Id of line
-	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
-	 *  @param      float		$qty            	Quantity
-	 *  @param      float		$remise_percent  	Discount on line
+	 *  @param      int				$rowid           	Id of line
+	 *  @param      float			$pu		     	  	Unit price (HT or TTC depending on price_base_type)
+	 *  @param      float			$qty            	Quantity
+	 *  @param      float			$remise_percent  	Discount on line
 	 *  @param      float|string	$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
-	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
-	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
-	 *  @param      string		$desc            	Description
-	 *	@param	  	string		$price_base_type	HT or TTC
-	 *	@param      int			$info_bits        	Miscellaneous information
-	 *	@param		int			$special_code		Special code (also used by externals modules!)
-	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
-	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
-	 *  @param		int			$fk_fournprice		Id of origin supplier price
-	 *  @param		float|string	$pa_ht			Price (without tax) of product when it was bought (Can be '' to keep AWP unchanged or a float value)
-	 *  @param		string		$label				???
-	 *  @param		int			$type				0/1=Product/service
-	 *	@param      int|''		$date_start       	Start date of the line
-	 *	@param      int|''		$date_end         	End date of the line
+	 * 	@param	  	float			$txlocaltax1		Local tax 1 rate
+	 *  @param	  	float			$txlocaltax2		Local tax 2 rate
+	 *  @param      string			$desc            	Description
+	 *	@param	  	string			$price_base_type	HT or TTC
+	 *	@param      int				$info_bits        	Miscellaneous information
+	 *	@param		int				$special_code		Special code (also used by externals modules!)
+	 * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
+	 * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
+	 *  @param		int				$fk_fournprice		Id of origin supplier price
+	 *  @param		float|string	$pa_ht				Price (without tax) of product when it was bought (Can be '' to keep AWP unchanged or a float value)
+	 *  @param		string			$label				???
+	 *  @param		int				$type				0/1=Product/service
+	 *	@param      int|''			$date_start       	Start date of the line
+	 *	@param      int|''			$date_end         	End date of the line
 	 *  @param		array<string,mixed>	$array_options	extrafields array
-	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param		float		$pu_ht_devise		Unit price in currency
-	 * 	@param		int			$notrigger			Disable line update trigger
-	 *	@param      int			$rang   			Line rank
-	 *  @return     int     		        		0 if OK, <0 if KO
+	 * 	@param 		int|null		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param		float			$pu_ht_devise		Unit price in currency
+	 * 	@param		int				$notrigger			Disable line update trigger
+	 *	@param      int				$rang   			Line rank
+	 *  @return     int     							Return 0 if OK, <0 if KO
 	 */
 	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
 	{
@@ -1954,10 +1954,12 @@ class Propal extends CommonObject
 		$sql .= ' d.fk_unit,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
+		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' d.date_start, d.date_end, d.extraparams,';
 		$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as d';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (d.fk_product = p.rowid)';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_country';
 		$sql .= ' WHERE d.fk_propal = '.((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
@@ -1976,15 +1978,14 @@ class Propal extends CommonObject
 
 			$i = 0;
 			while ($i < $num) {
-				$objp                   = $this->db->fetch_object($result);
+				$objp = $this->db->fetch_object($result);
 
-				$line                   = new PropaleLigne($this->db);
+				$line = new PropaleLigne($this->db);
 
 				$line->rowid = $objp->rowid; //Deprecated
 				$line->id = $objp->rowid;
 				$line->fk_propal = $objp->fk_propal;
 				$line->fk_parent_line = $objp->fk_parent_line;
-				$line->product_type     = $objp->product_type;
 				$line->label            = $objp->custom_label;
 				$line->desc             = $objp->description; // Description ligne
 				$line->description      = $objp->description; // Description ligne
@@ -2020,12 +2021,16 @@ class Propal extends CommonObject
 
 				$line->product_ref = $objp->product_ref;
 				$line->product_label = $objp->product_label;
-				$line->product_desc     = $objp->product_desc; // Description produit
-				$line->product_tobatch  = $objp->product_tobatch;
-				$line->product_barcode  = $objp->product_barcode;
+				$line->product_desc = $objp->product_desc; // Description produit
+				$line->product_tobatch = $objp->product_tobatch;
+				$line->product_barcode = $objp->product_barcode;
+				$line->product_custom_code = $objp->customcode;
+				$line->product_custom_country_id = $objp->country_id;
+				$line->product_custom_country_code = $objp->country_code;
+				$line->product_type = $objp->product_type;
+				$line->fk_product_type = $objp->fk_product_type; // deprecated
 
-				$line->fk_product_type  = $objp->fk_product_type; // deprecated
-				$line->fk_unit          = $objp->fk_unit;
+				$line->fk_unit = $objp->fk_unit;
 				$line->weight = $objp->weight;
 				$line->weight_units = $objp->weight_units;
 				$line->volume = $objp->volume;
@@ -2039,10 +2044,10 @@ class Propal extends CommonObject
 				// Multicurrency
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
-				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
-				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+				$line->multicurrency_subprice = $objp->multicurrency_subprice;
+				$line->multicurrency_total_ht = $objp->multicurrency_total_ht;
+				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
+				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
 				$line->fetch_optionals();
 
@@ -2094,6 +2099,11 @@ class Propal extends CommonObject
 		|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'validate')))) {
 			$this->error = 'ErrorPermissionDenied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		if (!getDolGlobalBool('PROPALE_NOCHECK_ONSALE_PRODUCTS_ONVALID') && !$this->checkActiveProductInLines()) {
+			dol_syslog(get_class($this)."::valid checkActiveProductInLines ".$this->error, LOG_INFO);
 			return -1;
 		}
 
@@ -3577,9 +3587,10 @@ class Propal extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
+	 *  @param	array<string|mixed>		$param		Array of options
 	 *  @return	int
 	 */
-	public function initAsSpecimen()
+	public function initAsSpecimen($param = array())
 	{
 		global $conf, $langs;
 
@@ -3589,6 +3600,9 @@ class Propal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		if (array_key_exists('tosell', $param)) {
+			$sql .= " AND tosell = ".((int) $param['tosell']);
+		}
 		$sql .= $this->db->plimit(100);
 
 		$resql = $this->db->query($sql);
@@ -3605,6 +3619,7 @@ class Propal extends CommonObject
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->ref_customer = 'NEMICEPS';
 		$this->ref_client = 'NEMICEPS';
 		$this->specimen = 1;
 		$this->socid = 1;
@@ -3868,16 +3883,19 @@ class Propal extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = '';
+		$baseurl = '';
+		$query = [];
 		if ($user->hasRight('propal', 'lire')) {
+			parse_str($get_params, $query);
+			$query = array_merge($query, ['id' => $this->id]);
 			if ($option == '') {
-				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/card.php';
 			} elseif ($option == 'compta') {  // deprecated
-				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/card.php';
 			} elseif ($option == 'expedition') {
-				$url = DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/expedition/propal.php';
 			} elseif ($option == 'document') {
-				$url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id.$get_params;
+				$baseurl = DOL_URL_ROOT . '/comm/propal/document.php';
 			}
 
 			if ($option != 'nolink') {
@@ -3887,10 +3905,11 @@ class Propal extends CommonObject
 					$add_save_lastsearch_values = 1;
 				}
 				if ($add_save_lastsearch_values) {
-					$url .= '&save_lastsearch_values=1';
+					$query = array_merge($query, ['save_lastsearch_values' => 1]);
 				}
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('propal', 'lire')) {
@@ -4083,5 +4102,21 @@ class Propal extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param  int[]|int 	$categories 	Category or categories IDs
+	 * @return int<-1,1>					Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_PROPOSAL);
 	}
 }

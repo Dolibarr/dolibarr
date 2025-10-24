@@ -178,6 +178,7 @@ class UserGroup extends CommonObject
 		}
 
 		$this->name = $this->nom; // For compatibility with field name
+		$this->note_private = $this->note; // For compatibility with old field note
 
 		if ($result) {
 			if ($load_members) {
@@ -700,6 +701,9 @@ class UserGroup extends CommonObject
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
+		if (!empty($this->note_private)) {
+			$this->note = $this->note_private; // Field for 'note_private' is called 'note' in database
+		}
 
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
@@ -720,6 +724,10 @@ class UserGroup extends CommonObject
 
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
+		}
+
+		if (!empty($this->note_private)) {
+			$this->note = $this->note_private; // Field for 'note_private' is called 'note' in database
 		}
 
 		return $this->updateCommon($user, $notrigger);
@@ -753,7 +761,7 @@ class UserGroup extends CommonObject
 			}
 		}
 
-		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+		$ret .= dolGetFirstLastname((string) $firstname, (string) $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
 	}
@@ -847,10 +855,11 @@ class UserGroup extends CommonObject
 		}
 
 		if ($option == 'permissions') {
-			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/perms.php';
 		} else {
-			$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/card.php';
 		}
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -859,9 +868,10 @@ class UserGroup extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = "";
 		if (empty($notooltip)) {

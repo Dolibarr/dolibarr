@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2021-2023  Anthony Berton      <anthony.berton@bb2a.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2006-2012	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2017	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ function user_prepare_head(User $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/user/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("User");
 	$head[$h][2] = 'user';
 	$h++;
@@ -56,20 +56,20 @@ function user_prepare_head(User $object)
 	if ((isModEnabled('ldap') && getDolGlobalString('LDAP_SYNCHRO_ACTIVE'))
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
-		$head[$h][0] = DOL_URL_ROOT.'/user/ldap.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/ldap.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
 		$h++;
 	}
 
 	if ($canreadperms) {
-		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/perms.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Rights").(!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($object->nb_rights).'</span>' : '');
 		$head[$h][2] = 'rights';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/param_ihm.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("UserGUISetup");
 	$head[$h][2] = 'guisetup';
 	$h++;
@@ -95,14 +95,14 @@ function user_prepare_head(User $object)
 			}
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/agenda_extsites.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("ExtSites").($nbagenda ? '<span class="badge marginleftonlyshort">'.$nbagenda.'</span>' : '');
 		$head[$h][2] = 'extsites';
 		$h++;
 	}
 
 	if (isModEnabled('clicktodial')) {
-		$head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/clicktodial.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("ClickToDial");
 		$head[$h][2] = 'clicktodial';
 		$h++;
@@ -132,7 +132,7 @@ function user_prepare_head(User $object)
 		}
 
 		$langs->load("mails");
-		$head[$h][0] = DOL_URL_ROOT.'/user/notify/card.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/notify/card.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("NotificationsAuto");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -153,7 +153,7 @@ function user_prepare_head(User $object)
 		|| (isModEnabled('holiday') && $user->hasRight('holiday', 'read') && ($user->id == $object->id || $user->hasRight('holiday', 'readall')))
 	) {
 		// Bank
-		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/bank.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("HRAndBank");
 		$head[$h][2] = 'bank';
 		$h++;
@@ -169,7 +169,7 @@ function user_prepare_head(User $object)
 		if (!empty($object->note_private)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Note");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -183,7 +183,7 @@ function user_prepare_head(User $object)
 		$upload_dir = $conf->user->dir_output."/".$object->id;
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $object->element, $object->id);
-		$head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/document.php', ['userid' => $object->id]);
 		$head[$h][1] = $langs->trans("Documents");
 		if (($nbFiles + $nbLinks) > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -191,7 +191,7 @@ function user_prepare_head(User $object)
 		$head[$h][2] = 'document';
 		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/agenda.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Events");
 		if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			$nbEvent = 0;
@@ -249,7 +249,7 @@ function group_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/user/group/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/group/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'group';
 	$h++;
@@ -257,14 +257,14 @@ function group_prepare_head($object)
 	if ((isModEnabled('ldap') && getDolGlobalString('LDAP_SYNCHRO_ACTIVE'))
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
-		$head[$h][0] = DOL_URL_ROOT.'/user/group/ldap.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/group/ldap.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
 		$h++;
 	}
 
 	if ($canreadperms) {
-		$head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/group/perms.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("GroupRights").'<span class="badge marginleftonlyshort">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
@@ -298,17 +298,17 @@ function user_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/user.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/user.php');
 	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/usergroup.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/usergroup.php');
 	$head[$h][1] = $langs->trans("Group");
 	$head[$h][2] = 'usergroupcard';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/admin/user_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Users").")";
 	$nbExtrafields = $extrafields->attributes['user']['count'];
 	if ($nbExtrafields > 0) {
@@ -317,7 +317,7 @@ function user_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/admin/group_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Groups").")";
 	$nbExtrafields = $extrafields->attributes['usergroup']['count'];
 	if ($nbExtrafields > 0) {
@@ -455,7 +455,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 						$file = $dirtheme."/".$subdir."/thumb.png";
 						$url = $urltheme."/".$subdir."/thumb.png";
 						if (!file_exists($file)) {
-							$url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
+							$url = dolBuildUrl(DOL_URL_ROOT . '/public/theme/common/nophoto.png');
 						}
 						print '<a href="'.$_SERVER["PHP_SELF"].($edit ? '?action=edit&token='.newToken().'&mode=template&theme=' : '?theme=').$subdir.(GETPOST('optioncss', 'alpha', 1) ? '&optioncss='.GETPOST('optioncss', 'alpha', 1) : '').($fuser ? '&id='.$fuser->id : '').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 						if ($subdir == getDolGlobalString('MAIN_THEME')) {

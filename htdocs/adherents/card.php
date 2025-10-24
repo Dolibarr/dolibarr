@@ -88,6 +88,7 @@ if (isModEnabled('mailmanspip')) {
 
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
+$upload_dir = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -543,18 +544,18 @@ if (empty($reshook)) {
 			}
 		}
 
-		$object->email       = $email;
-		$object->url       	 = $url;
-		$object->login       = $login;
-		$object->pass        = $pass;
-		$object->birth       = $birthdate;
-		$object->photo       = $photo;
-		$object->typeid      = $typeid;
-		//$object->note        = $comment;
-		$object->morphy      = $morphy;
-		$object->user_id     = $userid;
+		$object->email = $email;
+		$object->url = $url;
+		$object->login = $login;
+		$object->pass = $pass;
+		$object->birth = $birthdate;
+		$object->photo = $photo;
+		$object->typeid = $typeid;
+		//$object->note = $comment;
+		$object->morphy = $morphy;
+		$object->user_id = $userid;
 		$object->socid = $socid;
-		$object->public      = $public;
+		$object->public = $public;
 		$object->default_lang = $default_lang;
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -617,10 +618,6 @@ if (empty($reshook)) {
 		if (!empty($object->url) && !isValidUrl($object->url)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
-		}
-		$public = 0;
-		if (isset($public)) {
-			$public = 1;
 		}
 
 		if (!$error) {
@@ -1075,14 +1072,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}
 		if ($user->hasRight('member', 'configurer')) {
-			print ' <a href="'.DOL_URL_ROOT.'/adherents/type.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&typeid=--IDFORBACKTOPAGE--').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
+			print ' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/type.php', ['action' => 'create', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'typeid' => '--IDFORBACKTOPAGE--'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
 		}
 		print "</td>\n";
 
-		// Morphy
-		$morphys = array();
-		$morphys["phy"] = $langs->trans("Physical");
-		$morphys["mor"] = $langs->trans("Moral");
+		// Legal entity or natural person
+		$morphys = [
+			"phy" => $langs->trans("Physical"),
+			"mor" => $langs->trans("Moral"),
+		];
 		$checkednature = GETPOST("morphy", 'alpha');
 		$listetype_natures = $adht->morphyByType(1);
 		$listetype_natures_json = json_encode($listetype_natures);
@@ -1884,7 +1882,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 

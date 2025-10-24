@@ -203,7 +203,7 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
@@ -567,36 +567,28 @@ function cleanSerialize(expr) {
 
 /*
  * =================================================================
- * Purpose: Display a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fieldId
- * Input:   message
- * Author:  Regis Houssin
+ * Purpose: Fonction to open a confirm popup on a clie of a link
+ * Input:   msg
+ * Input:   width
  * Licence: GPL
  * ==================================================================
  */
-function displayMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	if (textbox.value == '') {
-		textbox.style.color = 'grey';
-		textbox.value = message;
-	}
-}
-
-/*
- * =================================================================
- * Purpose: Hide a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fiedId
- * Input:   message
- * Author:  Regis Houssin
- * Licence: GPL
- * ==================================================================
- */
-function hideMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	textbox.style.color = 'black';
-	if (textbox.value == message) textbox.value = '';
+function confirmDolibarr(msg, id, width = 400) {
+  let alink = document.getElementById(id);
+  if (alink.getAttribute("data-alreadyclicked") === "0") {
+	  new Promise(res => {
+		$("#dialogforpopup").text(msg).dialog({
+		  modal: true,
+		  width: width,
+		  buttons: {
+			OK() { $(this).dialog("close"); res(false); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); },
+		  }
+		});
+	  });
+	  return false;
+  } else {
+	  return true;
+  }
 }
 
 

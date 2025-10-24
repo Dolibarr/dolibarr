@@ -24,6 +24,8 @@
  *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, proposal, orders, etc. ...)
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+
 
 /**
  *  Parent class for class inheritance lines of business objects
@@ -189,6 +191,21 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var string description in product table
 	 */
 	public $product_desc;
+
+	/**
+	 * @var ?string Product custom code
+	 */
+	public $product_custom_code;
+
+	/**
+	 * @var ?string Product custom country code
+	 */
+	public $product_custom_country_code;
+
+	/**
+	 * @var ?int Product custom country id
+	 */
+	public $product_custom_country_id;
 
 	/**
 	 * @var int type in product table

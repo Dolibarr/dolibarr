@@ -241,7 +241,8 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " t.libelle as type_label, t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql .= " WHERE d.fk_soc = ".((int) $id);
+			$sql .= " WHERE d.entity IN (".getEntity('member').")";
+			$sql .= " AND d.fk_soc = ".((int) $id);
 			$sql .= " AND d.fk_adherent_type = t.rowid";
 
 			dol_syslog("get list sql=".$sql);

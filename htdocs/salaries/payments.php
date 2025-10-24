@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,8 +255,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
+if (!$user->hasRight('salaries', 'readchild')) {
+	$sql .= " AND s.fk_user = ".(int) $user->id;
+}
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND sal.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
 }
 
 // Search criteria
@@ -404,7 +407,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

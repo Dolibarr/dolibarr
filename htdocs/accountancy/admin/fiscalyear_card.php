@@ -202,7 +202,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-fis
 if ($action == 'create') {
 	print load_fiche_titre($title, '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 

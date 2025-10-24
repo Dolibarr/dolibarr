@@ -108,6 +108,13 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
+$searchCategoryPropalList = GETPOST('search_category_propal_list', 'array:int');
+$searchCategoryPropalOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryPropalOperator = GETPOSTINT('search_category_propal_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryPropalOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_product_category = GETPOSTINT('search_product_category');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
@@ -211,7 +218,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'p.ref' => 'Ref',
 	'p.ref_client' => 'RefCustomer',
-	'pd.description' => 'Description',
+	'pd.description' => 'ProductDescription',
 	's.nom' => "ThirdParty",
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
@@ -366,6 +373,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_ttc = '';
 		$search_login = '';
 		$search_product_category = 0;
+		$searchCategoryPropalList = array();
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -578,15 +586,12 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = 'SELECT';
-if ($search_all !== '') {
-	$sql = 'SELECT DISTINCT';
-}
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.import_key, p.fk_user_author, p.datep as dp, p.fin_validite as dfv, p.date_livraison as ddelivery,';
+$sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.import_key, p.fk_user_author, p.datep as dp, p.fin_validite as dfv, p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_modification, p.date_cloture as date_cloture,';
 $sql .= ' p.date_signature as dsignature,';
@@ -616,9 +621,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'propal as p ON p.fk_soc = s.rowid';
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
-}
-if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid = pd.fk_propal';
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
@@ -714,7 +716,25 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('p.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+	// Prepare the $sqltoadd for fields pd.* that need a test by doing a "or exits"
+	$sqltoadd = '';
+	$fieldstosearchallwithoutpd = array();
+	$fieldstosearchallwithpd = array();
+	foreach ($fieldstosearchall as $key => $val) {
+		if (!preg_match('/^pd\./', $key)) {
+			$fieldstosearchallwithoutpd[$key] = $val;
+		} else {
+			$fieldstosearchallwithpd[$key] = $val;
+		}
+	}
+
+	if (count($fieldstosearchallwithpd) > 0) {
+		$sqltoadd .= ' OR EXISTS (SELECT pd.rowid FROM '.MAIN_DB_PREFIX.'propaldet as pd WHERE pd.fk_propal = p.rowid';
+		$sqltoadd .= natural_search(array_keys($fieldstosearchallwithpd), '__KEYTOSEARCH__');
+		$sqltoadd .= ')';
+	}
+
+	$sql .= natural_search(array_keys($fieldstosearchallwithoutpd), $search_all, 0, 0, $sqltoadd);
 }
 if ($search_fk_cond_reglement > 0) {
 	$sql .= " AND p.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
@@ -765,6 +785,7 @@ if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
 }
 // Search on user
+$param = '';
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
 	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
@@ -773,12 +794,46 @@ if ($search_user > 0) {
 	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal'";
 	$sql .= " WHERE ec.element_id = p.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
+if ($searchCategoryPropalOperator == 1) {
+	$param .= "&search_category_propal_operator=".urlencode((string) ($searchCategoryPropalOperator));
+}
+foreach ($searchCategoryPropalList as $searchCategoryPropal) {
+	$param .= "&search_category_propal_list[]=".urlencode($searchCategoryPropal);
+}
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
 	} elseif ($search_sale > 0) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search for tag/category ($searchCategoryPropalList is an array of ID)
+if (!empty($searchCategoryPropalList)) {
+	$searchCategoryPropalSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryPropalList as $searchCategoryPropal) {
+		if (intval($searchCategoryPropal) == -2) {
+			$searchCategoryPropalSqlList[] = "NOT EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal)";
+		} elseif (intval($searchCategoryPropal) > 0) {
+			if ($searchCategoryPropalOperator == 0) {
+				$searchCategoryPropalSqlList[] = " EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal AND ck.fk_categorie = ".((int) $searchCategoryPropal).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryPropal);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryPropalSqlList[] = " EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryPropalOperator == 1) {
+		if (!empty($searchCategoryPropalSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryPropalSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryPropalSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryPropalSqlList).")";
+		}
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
@@ -1117,6 +1172,9 @@ $arrayofmassactions = array(
 if ($permissiontosendbymail) {
 	$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
 }
+if (isModEnabled('category') && $user->hasRight('propal', 'lire')) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if ($permissiontovalidate) {
 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 }
@@ -1145,7 +1203,7 @@ $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
 
 // Fields title search
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -1188,7 +1246,11 @@ if ($search_all) {
 $i = 0;
 
 $moreforfilter = '';
-
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROPOSAL, $searchCategoryPropalList, 'minwidth300', $searchCategoryPropalOperator ? $searchCategoryPropalOperator : 0);
+}
 // If the user can view prospects other than his'
 if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
@@ -1879,7 +1941,7 @@ while ($i < $imaxinloop) {
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowraponall">';
-			print $object->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
+			print $object->getNomUrl(1, '', '', 0, 1, getDolGlobalInt('PROPAL_LIST_SHOW_NOTES', 1));
 			print '</td>';
 			// Warning
 			$warnornote = '';
@@ -1894,7 +1956,7 @@ while ($i < $imaxinloop) {
 			// Other picto tool
 			print '<td width="16" class="nobordernopadding right">';
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->propal->multidir_output[$obj->propal_entity].'/'.dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($object->element, $filename, $filedir);
 			print '</td></tr></table>';

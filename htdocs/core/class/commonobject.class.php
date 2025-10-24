@@ -20,7 +20,8 @@
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
- *
+ * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -117,6 +118,11 @@ abstract class CommonObject
 	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element;
+
+	/**
+	 * @var ?string Name of id column
+	 */
+	public $table_rowid;
 
 	/**
 	 * @var string 		Name of subtable line
@@ -554,7 +560,7 @@ abstract class CommonObject
 	public $multicurrency_code;
 
 	/**
-	 * @var float|float[]               Multicurrency rate ("tx" = "taux" in French)
+	 * @var null|float|float[]               Multicurrency rate ("tx" = "taux" in French)
 	 *                                  Or, just for the Paiement object, an array: invoice ID => currency rate for that invoice.
 	 */
 	public $multicurrency_tx;
@@ -682,12 +688,12 @@ abstract class CommonObject
 	public $name;
 
 	/**
-	 * @var string 		The lastname
+	 * @var ?string 		The lastname
 	 */
 	public $lastname;
 
 	/**
-	 * @var string 		The firstname
+	 * @var ?string 		The firstname
 	 */
 	public $firstname;
 
@@ -758,13 +764,13 @@ abstract class CommonObject
 	public $user_modification_id;
 
 	/**
-	 * @var int 		ID
+	 * @var int|null 		ID
 	 * @deprecated	Use $user_creation_id
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var ?int 		ID
+	 * @var int|null 		ID
 	 * @deprecated 	Use $user_modification_id
 	 */
 	public $fk_user_modif;
@@ -2631,21 +2637,21 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		// @phan-suppress-next-line PhanTypeMismatchProperty
-		if (!empty($this->fields['fk_project'])) {		// Common case
-			if ($projectid) {
-				$sql .= " SET fk_project = ".((int) $projectid);
-			} else {
-				$sql .= " SET fk_project = NULL";
-			}
-			$sql .= ' WHERE rowid = '.((int) $this->id);
-		} elseif ($this->table_element == 'actioncomm') {	// Special case for actioncomm
+		if ($this->table_element == 'actioncomm') {	// Special case for actioncomm
 			if ($projectid) {
 				$sql .= " SET fk_project = ".((int) $projectid);
 			} else {
 				$sql .= " SET fk_project = NULL";
 			}
 			$sql .= ' WHERE id = '.((int) $this->id);
+			// @phan-suppress-next-line PhanTypeMismatchProperty
+		} elseif (!empty($this->fields['fk_project'])) {		// Common case
+			if ($projectid) {
+				$sql .= " SET fk_project = ".((int) $projectid);
+			} else {
+				$sql .= " SET fk_project = NULL";
+			}
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 		} else { // Special case for old architecture objects
 			if ($projectid) {
 				$sql .= ' SET fk_projet = '.((int) $projectid);
@@ -3881,7 +3887,7 @@ abstract class CommonObject
 						$triggerName = 'EXPENSE_REPORT_MODIFY';
 						break;
 					default:
-						$triggerName = strtoupper($this->element) . '_MODIFY';
+						$triggerName = (!empty($this->TRIGGER_PREFIX) ? $this->TRIGGER_PREFIX : strtoupper($this->element)) . '_MODIFY';
 				}
 				$ret = $this->call_trigger($triggerName, $user);
 				if ($ret < 0) {
@@ -6948,6 +6954,7 @@ abstract class CommonObject
 			}
 		}
 
+		// Set array $sqlColumnValues (SQL field name in extrafield table => value)
 		$sqlColumnValues = ['fk_object' => (int) $this->id]; // key-value pairs for the SQL INSERT or UPDATE query
 
 		foreach ($new_array_options as $key => $newValue) {
@@ -7049,6 +7056,7 @@ abstract class CommonObject
 		if (!$error && !empty($this->fields['fk_user_modif'])) {
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET fk_user_modif = ".(int) $user->id;
+			$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 			$this->db->query($sql);
 		}
 
@@ -7473,6 +7481,7 @@ abstract class CommonObject
 			if (!$error && !empty($this->fields['fk_user_modif'])) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 				$sql .= " SET fk_user_modif = ".(int) $user->id;
+				$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 				$this->db->query($sql);
 			}
 
@@ -7992,8 +8001,8 @@ abstract class CommonObject
 				}
 
 				if (!$filter_categorie) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
+					$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+					if (!empty($fields_label)) {
 						$keyList .= ', ';
 						$keyList .= implode(', ', $fields_label);
 					}
@@ -8263,9 +8272,9 @@ abstract class CommonObject
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= ' as main, ' . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . '_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
-							$sqlwhere .= " AND " . $InfoFieldList[4];
+							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " WHERE " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
@@ -9314,6 +9323,7 @@ abstract class CommonObject
 
 		$parameters = array('mode' => $mode, 'params' => $params, 'keysuffix' => $keysuffix, 'keyprefix' => $keyprefix, 'display_type' => $display_type);
 		$reshook = $hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
+		$hookResPrint = $hookmanager->resPrint;
 
 		if (empty($reshook)) {
 			if (is_array($extrafields->attributes[$this->table_element]) && array_key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
@@ -9629,7 +9639,7 @@ abstract class CommonObject
 			}
 		}
 
-		$out .= $hookmanager->resPrint;
+		$out .= $hookResPrint;
 
 		return $out;
 	}
@@ -11342,7 +11352,7 @@ abstract class CommonObject
 		$comment = new Comment($this->db);
 		$result = $comment->fetchAllFor($this->element, $this->id);
 		if ($result < 0) {
-			$this->errors = array_merge($this->errors, $comment->errors);
+			$this->setErrorsFromObject($comment);
 			return -1;
 		} else {
 			$this->comments = $comment->comments;
@@ -11609,5 +11619,44 @@ abstract class CommonObject
 
 		$this->db->commit();
 		return true;
+	}
+
+	/**
+	 * Check if all products have the right status (on sale, on buy) called
+	 * during validation of propal, order, supplier proposal, supplier order
+	 *
+	 * @global object $langs
+	 * @param string $status onsale or onbuy
+	 * @return bool
+	 */
+	public function checkActiveProductInLines($status = 'onsale')
+	{
+		global $langs;
+
+		if (isModEnabled('product') || isModEnabled('service')) {
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+			$ret = true;
+			$tmpproduct = new Product($this->db);
+			foreach ($this->lines as $line) {
+				if ($line->fk_product > 0) {
+					$tmpproduct->fetch($line->fk_product);
+					$statustotest = ($status == 'onsale' ? 'status' : 'status_buy');
+					if (!$tmpproduct->$statustotest) {
+						$langs->load('products');
+						$statuskey4lang = ($status == 'onsale' ? 'ProductStatusNotOnSell' : 'ProductStatusNotOnBuy');
+						$ret = false;
+						$this->errors[] = $langs->trans('ProductRef').' '.$tmpproduct->ref.' '.$langs->trans($statuskey4lang);
+						break;
+					}
+				}
+			}
+			if (!$ret) {
+				$this->error = 'ErrorOneLineContainsADisactivatedProduct';
+			}
+			return $ret;
+		} else {
+			return true;
+		}
 	}
 }
