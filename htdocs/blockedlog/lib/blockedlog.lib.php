@@ -63,3 +63,35 @@ function blockedlogadmin_prepare_head()
 
 	return $head;
 }
+
+
+
+/**
+ * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
+ * This function can be used to avoid to show the mandatory information "Certified LNE" on tickets when it is not true.
+ *
+ * @return boolean		True or false
+ */
+function isALNECandidateVersion()
+{
+	global $mysoc;
+
+	// Constant set by developer to force LNE restriction even if country is not France so we can test them on any dev instance.
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
+		return true;
+	}
+	if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
+		return false;
+	}
+	if ($mysoc->country_code != 'FR') {
+		return false;
+	}
+	if (!defined('CERTIF_LNE') || (int) constant('CERTIF_LNE') === 0) {
+		return false;
+	}
+	if (!isModEnabled('blockedlog')) {
+		return false;
+	}
+
+	return true;	// all conditions are ok
+}
