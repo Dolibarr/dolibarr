@@ -85,6 +85,17 @@ PUT http://{{hostnport}}/api/index.php/warehouses/0
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: No warehouse with id=0 can exist"}}
 
+# GET products in warehouse with ID non integer ID - which should not exist
+GET http://{{hostnport}}/api/index.php/warehouses/0products
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: invalid value specified for `id`"}}
+
+# GET products in warehouse with ID 0 - which should not exist
+GET http://{{hostnport}}/api/index.php/warehouses/0/products
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: No warehouse with id=0 can exist"}}
+
+
 # GET warehouses DOLAPIENTITY: 1
 GET http://{{hostnport}}/api/index.php/warehouses
 DOLAPIENTITY: 1
