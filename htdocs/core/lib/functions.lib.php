@@ -14182,17 +14182,13 @@ function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
 			continue;
 		}
 
-		if ($value !== null) {
-			$value = (string) $value;
-		}
-
 		if (!empty($unescapedAttr) && in_array($key, $unescapedAttr)) {
 			// Not recommended
-			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
+			$value = dol_htmlentities((string) $value, ENT_QUOTES | ENT_SUBSTITUTE);
 		} elseif ($key == 'href') {
-			$value = dolPrintHTMLForAttributeUrl($value);
+			$value = dolPrintHTMLForAttributeUrl((string) $value);
 		} else {
-			$value = dolPrintHTMLForAttribute($value);
+			$value = dolPrintHTMLForAttribute((string) $value);
 		}
 
 		$TCompiledAttr[$key] = $key . '="' . $value . '"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
