@@ -417,7 +417,7 @@ class Warehouses extends DolibarrApi
 		} else {
 			throw new RestException(500, 'Error when retrieve warehouse product list : '.$db->lasterror());
 		}
-		return $this->_cleanObjectDatas($line);
+		return ($line);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
