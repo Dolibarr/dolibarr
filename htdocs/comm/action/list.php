@@ -434,7 +434,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $sql = "SELECT";
-$sql .= " a.datep as dp, a.id, a.code, a.label, a.note, a.datep2 as dp2, a.fulldayevent, a.location,";
+$sql .= " a.datep as dp, a.id, a.code, a.label, a.note, a.datep2 as dp2, a.fulldayevent, a.location, a.entity,";
 $sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
