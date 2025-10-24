@@ -135,12 +135,6 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
-// EN: Stop unauthorized access to supplier price creation or edition forms
-if ((!$usercanwritesupplierprice) && ($action == 'create_price' || $action == 'edit_price')) {
-	accessforbidden();
-}
-
-
 /*
  * Actions
  */
@@ -396,11 +390,8 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs mod-product page-price_suppliers');
 
 if ($id > 0 || $ref) {
-	if ($action == 'ask_remove_pf') {
-		// EN: Block action if user cannot write supplier prices
-		if (!$usercanwritesupplierprice) {
-			accessforbidden();
-		}
+	if ($action == 'ask_remove_pf' && $usercanwritesupplierprice) {
+		
 		$form = new Form($db);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&rowid='.$rowid, $langs->trans('DeleteProductBuyPrice'), $langs->trans('ConfirmDeleteProductBuyPrice'), 'confirm_remove_pf', '', 0, 1);
 		echo $formconfirm;
