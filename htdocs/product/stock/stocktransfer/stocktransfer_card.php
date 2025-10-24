@@ -2,6 +2,7 @@
 /* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025          Pierre Ardoin            <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +90,22 @@ $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha')) {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
+}
+
+// Ensure delete action requires a valid CSRF token.
+// FR: Vérifie que l'action de suppression possède un jeton CSRF valide.
+if ($action === 'delete') {
+	$csrfToken = GETPOST('token', 'alphanohtml');
+	if (empty($csrfToken)) {
+		accessforbidden();
+	}
+	if (function_exists('hash_equals')) {
+		if (!hash_equals(currentToken(), $csrfToken)) {
+			accessforbidden();
+		}
+	} elseif (currentToken() !== $csrfToken) {
+		accessforbidden();
 	}
 }
 
