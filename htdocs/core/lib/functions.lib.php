@@ -14119,7 +14119,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
  * // ]
  * ```
  *
- * @param array<string, string|int|float|null> $attr          Associative array of attribute names and their values.
+ * @param array<string, string|int|float|null|bool> $attr          Associative array of attribute names and their values.
  * @param string[]                            $unescapedAttr  Optional list of attribute names that should **not** be escaped.
  *
  * @return array<string, string> An array where each key corresponds to the attribute name
@@ -14129,11 +14129,19 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
 {
 	$TCompiledAttr = array();
+	if (empty($attr)) {
+		return [];
+	}
+
 	foreach ($attr as $key => $value) {
 		// special boolean attributes case
 		if (in_array($key, getListOfHtmlBooleanAttributes())) {
 			if ($value) { $TCompiledAttr[$key] = $key; }
 			continue;
+		}
+
+		if ($value !== null) {
+			$value = (string) $value;
 		}
 
 		if (!empty($unescapedAttr) && in_array($key, $unescapedAttr)) {
@@ -16615,8 +16623,9 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
  *      ]
  *  ]
  *
- * @param array $array1  The base array (default parameters).
- * @param array $array2  The array with values to override or extend the base array.
+ * @template T
+ * @param array<string, T> $array1  The base array (default parameters).
+ * @param array<string, T> $array2  The array with values to override or extend the base array.
  * @return array         The merged array with recursive replacement.
  */
 function array_merge_recursive_distinct(array $array1, array $array2): array

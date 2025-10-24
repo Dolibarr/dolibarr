@@ -91,6 +91,7 @@ $options = [
 ];
 $item = $formSetup->newItem('WEBPORTAL_LOGIN_FORM_THEME')->setAsRadio($options);
 $item->cssClass = 'integrated-radio';
+$item->defaultFieldValue = 'default';
 
 
 // Logo URL
