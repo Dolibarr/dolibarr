@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2006       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2011  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2016  Juanjo Menent        	<jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ class RemiseCheque extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut, bc.nbcheque, bc.ref_ext,";
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut as status, bc.nbcheque, bc.ref_ext,";
 		$sql .= " bc.date_bordereau as date_bordereau, bc.type,";
 		$sql .= " ba.label as account_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
@@ -147,11 +147,12 @@ class RemiseCheque extends CommonObject
 				$this->account_label  = $obj->account_label;
 				$this->author_id      = $obj->fk_user_author;
 				$this->nbcheque       = $obj->nbcheque;
-				$this->statut         = $obj->statut;
+				$this->statut         = $obj->status;
+				$this->status         = $obj->status;
 				$this->ref_ext        = $obj->ref_ext;
 				$this->type           = $obj->type;
 
-				if ($this->statut == 0) {
+				if ($this->status == 0) {
 					$this->ref = "(PROV".$this->id.")";
 				} else {
 					$this->ref = $obj->ref;
@@ -771,7 +772,7 @@ class RemiseCheque extends CommonObject
 		global $db, $user;
 
 		$payment = new Paiement($db);
-		$payment->fetch(0, 0, $bank_id);
+		$payment->fetch(0, '0', $bank_id);
 
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
@@ -814,7 +815,7 @@ class RemiseCheque extends CommonObject
 			$result = $rejectedPayment->create($user);
 			if ($result > 0) {
 				// We created a negative payment, we also add the line as bank transaction
-				$result = $rejectedPayment->addPaymentToBank($user, 'payment', '(CheckRejected)', $bankaccount, '', '');
+				$result = $rejectedPayment->addPaymentToBank($user, 'payment', '(CheckRejected)', (int) $bankaccount, '', '');
 				if ($result > 0) {
 					$result = $payment->reject();
 					if ($result > 0) {
@@ -877,16 +878,16 @@ class RemiseCheque extends CommonObject
 	/**
 	 *      Set the ref of bordereau
 	 *
-	 *      @param	User		$user           Object user
-	 *      @param  int   $ref         ref of bordereau
-	 *      @return int                 		Return integer <0 if KO, >0 if OK
+	 *      @param	User			$user           Object user
+	 *      @param  int|string		$ref	        ref of bordereau
+	 *      @return int					     		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_number($user, $ref)
 	{
 		// phpcs:enable
 		if ($user->hasRight('banque', 'cheque')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql .= " SET ref = '".$this->db->escape($ref)."'";
+			$sql .= " SET ref = '".$this->db->escape((string) $ref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("RemiseCheque::set_number", LOG_DEBUG);
@@ -1031,7 +1032,7 @@ class RemiseCheque extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

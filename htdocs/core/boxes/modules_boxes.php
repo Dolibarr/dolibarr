@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -263,7 +263,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$MAXLENGTHBOX = 60; // When set to 0: no length limit
+		$MAXLENGTHBOX = 0; // When set to 0: no length limit
 
 		$cachetime = 900; // 900 : 15mn
 		$cachedir = DOL_DATA_ROOT.'/users/temp/widgets';
@@ -295,6 +295,11 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 
 			// Show box title
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto'])) {
+				$s = '';
+				if (!empty($head['text']) && !is_array($head['text'])) {
+					$s = dol_trunc($head['text'], isset($head['limit']) ? $head['limit'] : $MAXLENGTHBOX);
+				}
+
 				$out .= '<tr class="liste_titre box_titre">';
 				$out .= '<th';
 				if (!empty($head['nbcol'])) {
@@ -303,19 +308,17 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 				if ($nbcol > 1) {
 					$out .= ' colspan="'.$nbcol.'"';
 				}
+				$out .= ' title="'.dolPrintHTMLForAttribute($s).'"';
 				$out .= '>';
 				if (!empty($conf->use_javascript_ajax)) {
-					//$out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
 					$out .= '<div class="tdoverflowmax400 maxwidth250onsmartphone float">';
 				}
 				if (!empty($head['text']) && !is_array($head['text'])) {
-					$s = dol_trunc($head['text'], isset($head['limit']) ? $head['limit'] : $MAXLENGTHBOX);
 					$out .= $s;
 				}
 				if (!empty($conf->use_javascript_ajax)) {
 					$out .= '</div>';
 				}
-				//$out.= '</td>';
 
 				if (!empty($conf->use_javascript_ajax)) {
 					$sublink = '';
@@ -329,19 +332,16 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 						$sublink .= '</a>';
 					}
 
-					//$out.= '<td class="nocellnopadd boxclose right nowraponall">';
 					$out .= '<div class="nocellnopadd boxclose floatright nowraponall">';
 					$out .= $sublink;
 					// The image must have the class 'boxhandle' because it's value used in DOM draggable objects to define the area used to catch the full object
 					$out .= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 					$out .= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
 					$label = $head['text'];
-					//if (!empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 					if (!empty($head['graph'])) {
 						$label .= ' <span class="opacitymedium fas fa-chart-bar"></span>';
 					}
-					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
-					//$out.= '</td></tr></table>';
+					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dolPrintHTMLForAttribute($label).'">';
 					$out .= '</div>';
 				}
 
@@ -388,7 +388,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 							if (!empty($contents[$i][$j]['url']) && empty($contents[$i][$j]['logo'])) {
 								$out .= '<a href="'.$contents[$i][$j]['url'].'"';
 								if (!empty($tooltip)) {
-									$out .= ' title="'.dol_escape_htmltag($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
+									$out .= ' title="'.dolPrintHTMLForAttribute($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
 								}
 								//$out.= ' alt="'.$textwithnotags.'"';      // Pas de alt sur un "<a href>"
 								$out .= isset($contents[$i][$j]['target']) ? ' target="'.$contents[$i][$j]['target'].'"' : '';

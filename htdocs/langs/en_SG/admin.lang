@@ -10,6 +10,7 @@ Permission91=Read social or fiscal taxes and GST
 Permission92=Create/modify social or fiscal taxes and GST
 Permission93=Delete social or fiscal taxes and GST
 DictionaryVAT=GST Rates or Sales Tax Rates
+DriverType=Driver type
 AddVatInList=Display Customer/Vendor GST number into combo lists.
 MustBeMandatory=Mandatory to create third parties (if GST number or type of company defined) ?
 SuggestPaymentByChequeToAddress=Suggest payment by cheque to

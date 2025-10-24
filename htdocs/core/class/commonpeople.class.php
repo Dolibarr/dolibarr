@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 
 /**
- *      Support class for third parties, contacts, members, users or resources
+ * Support class for third parties, contacts, members, users or resources
  *
  *
  * Properties expected in the host class receiving this trait.
@@ -57,17 +57,17 @@
 trait CommonPeople
 {
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string zip code
+	 * @var ?string zip code
 	 */
 	public $zip;
 
 	/**
-	 * @var string town
+	 * @var ?string town
 	 */
 	public $town;
 
@@ -79,18 +79,19 @@ trait CommonPeople
 	 * @var string
 	 */
 	public $state_code;
+
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $state;
 
 	/**
-	 * @var string email
+	 * @var ?string email
 	 */
 	public $email;
 
 	/**
-	 * @var string url
+	 * @var ?string url
 	 */
 	public $url;
 
@@ -99,8 +100,8 @@ trait CommonPeople
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
-	 *	@param	int			$option			0=No option, 1=Add civility
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 *	@param	int<0,1>	$option			0=No option, 1=Add civility
+	 * 	@param	int<-1,5>	$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
 	 * 	@param	int			$maxlen			Maximum length
 	 * 	@return	string						String with full name
 	 */
@@ -111,7 +112,7 @@ trait CommonPeople
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
 			// societe is deprecated - @suppress-next-line PhanUndeclaredProperty
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : ''))))); // @phpstan-ignore-line
 		}
 
 		$ret = '';
@@ -388,8 +389,8 @@ trait CommonPeople
 			}
 		}
 		if (getDolGlobalString('MAIN_ALL_TOWN_TO_UPPER')) {
-			$this->address = dol_strtoupper($this->address);
-			$this->town = dol_strtoupper($this->town);
+			$this->address = dol_strtoupper($this->address ?? '');
+			$this->town = dol_strtoupper($this->town ?? '');
 		}
 		if (!empty($this->email)) {
 			$this->email = dol_strtolower($this->email);

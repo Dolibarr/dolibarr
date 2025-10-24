@@ -1,9 +1,12 @@
 <?php
+
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 	2024-2025 Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 	2025	  MDW				  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 	2025	  Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +24,6 @@
  */
 
 // Following var can be set
-// $permissiontoadd = permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
 // $modulepart  = for download
 // $param       = param to add to download links
 // $moreparam   = param to add to download link for the form_attach_new_file function
@@ -29,17 +31,34 @@
 // $object
 // $filearray
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
+
 /**
+ * @var Conf $conf
  * @var CommonObject $object
+ * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
+ *
+ * @var	string 	$action
+ * @var string 	$relativepathwithnofile
+ * @var	int		$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
  */
+
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'
+@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
+@phan-var-force ?int<0,1> $permtoedit
+@phan-var-force ?int<0,1> $permission
+@phan-var-force int<0,1> $permissiontoadd
+@phan-var-force ?string $savingdocmask
+@phan-var-force ?string $param
+@phan-var-force CommonObject $object
+';
 
 
 $langs->load("link");
@@ -67,7 +86,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 	$disablemove = 0;
 }
 $parameters = array();
-$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);
+$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
 if ($reshook) {
 	$disablemove = $hookmanager->resArray['disablemove'];
 }
@@ -152,10 +171,20 @@ $tmparray = $formfile->form_attach_new_file(
 	2
 );
 
-$formToUploadAFile = $tmparray['formToUploadAFile'];
-$formToAddALink = $tmparray['formToAddALink'];
+$formToUploadAFile = '';
+$formToAddALink = '';
+
+if (is_array($tmparray) && !empty($tmparray)) {
+	$formToUploadAFile = $tmparray['formToUploadAFile'];
+	$formToAddALink = $tmparray['formToAddALink'];
+}
 
 
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	// We use a table with 2 columns
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+}
 // List of document
 $formfile->list_of_documents(
 	$filearray,
@@ -182,19 +211,27 @@ $formfile->list_of_documents(
 	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
 );
 
-
-print "<br><br>";
-
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	print '</div>';
+	print '<div class="fichehalfright">';
+} else {
+	print "<br>";
+}
 
 //List of links
 $formfile->listOfLinks(
 	$object,
 	$permission,
 	$action,
-	GETPOSTINT('linkid'),
+	(string) GETPOSTINT('linkid'),
 	$param,
 	'formaddlink',
 	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
 );
+
+if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
+	print '</div>';
+	print '</div>';
+}
 
 print "<br>";

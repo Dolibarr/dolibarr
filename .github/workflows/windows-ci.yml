@@ -1,5 +1,6 @@
 ---
 name: Win CI
+
 # yamllint disable-line rule:truthy
 on:
   # workflow called by the parent workflow ci.yml
@@ -25,6 +26,7 @@ env:
   PHP_INI_SCAN_DIR: C:\myphpini
   CKEY: win-ci-2
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+
 jobs:
   win-test:
     strategy:
@@ -35,7 +37,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -165,7 +167,7 @@ jobs:
           for /f "tokens=2 delims==" %%A in ('doskey /m:err') do EXIT /B %%A
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.3.5
+        uses: mdeweerd/logToCheckStyle@v2025.1.1
         if: ${{ failure() }}
         with:
           in: ${{ env.PHPUNIT_LOG }}

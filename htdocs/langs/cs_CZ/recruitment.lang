@@ -4,77 +4,67 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Nábor
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = Spravovat a sledovat náborové kampaně na nová pracovní místa
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = Nastavení náboru
+RecruitmentSetupPage = Zde zadejte nastavení hlavních možností pro náborový modul
+RecruitmentArea=Oblast náboru
+PublicInterfaceRecruitmentDesc=Veřejné stránky pracovních nabídek jsou veřejné adresy URL pro zobrazení a odpovědi na volná pracovní místa. Pro každou volnou pracovní pozici existuje jeden jiný odkaz, který se nachází v každém záznamu o pracovní pozici.
+EnablePublicRecruitmentPages=Povolit veřejné stránky s otevřenými pracovními místy
 
-#
-# About page
-#
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+NbOfEmployeesExpected=Očekávaný počet zaměstnanců
+JobLabel=Označení pracovní pozice
+WorkPlace=Pracovní místo
+DateExpected=Předpokládané datum
+FutureManager=Budoucí manažer
+ResponsibleOfRecruitement=Zodpovědný za nábor
+IfJobIsLocatedAtAPartner=Pokud se práce nachází u partnera
 PositionToBeFilled=Pracovní pozice
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
+PositionsToBeFilled=Pracovní pozice
+ListOfPositionsToBeFilled=Seznam pracovních pozic
+NewPositionToBeFilled=Nové pracovní pozice
+JobOfferToBeFilled=Pracovní pozice k obsazení
+ThisIsInformationOnJobPosition=Informace o obsazované pracovní pozici
+ContactForRecruitment=Kontakt pro nábor
+EmailRecruiter=E-mailový náborář
+ToUseAGenericEmail=Použití obecného e-mailu. Pokud není definován, bude použit e-mail osoby odpovědné za nábor.
+NewCandidature=Nová aplikace
+ListOfCandidatures=Seznam aplikací
 Remuneration=Mzda
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
-ConfirmClose=Confirm cancellation
-ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
-Recruitment=Recruitment
+RequestedRemuneration=Požadovaný plat
+ProposedRemuneration=Navrhovaný plat
+ContractProposed=Navrhovaná smlouva
+ContractSigned=Smlouva podepsána
+ContractRefused=Smlouva zamítnuta
+RecruitmentCandidature=Aplikace
+JobPositions=Pracovní pozice
+RecruitmentCandidatures=Aplikace
+InterviewToDo=Kontakty, které chcete sledovat
+AnswerCandidature=Odpověď na žádost
+YourCandidature=Vaše žádost
+YourCandidatureAnswerMessage=Děkujeme za vaši žádost.<br>...
+JobClosedTextCandidateFound=Pracovní pozice je uzavřena. Pozice byla obsazena.
+JobClosedTextCanceled=Pracovní pozice je uzavřena.
+ExtrafieldsJobPosition=Doplňkové atributy (pracovní pozice)
+ExtrafieldsApplication=Doplňkové atributy (žádosti o zaměstnání)
+MakeOffer=Udělejte nabídku
+WeAreRecruiting=Hledáme nové zaměstnance. Toto je seznam volných pozic, které je třeba obsadit...
+NoPositionOpen=Momentálně nejsou žádné volné pozice
+ConfirmClose=Potvrdit zrušení
+ConfirmCloseAsk=Jste si jisti, že chcete zrušit tuto kandidaturu na nábor?
+Recruitment=Nábor
+ApplyJobCandidature=Ucházejte se o tuto práci
+ErrorRecruitmmentCandidatureAlreadyExists= Kandidátka na pozici s e-mailem %s již existuje.
+RecruitmentCandidatureSaved=Kandidátura na nábor byla úspěšně uložena
+NoOpenJobOffer=Momentálně žádné otevřené pracovní nabídky

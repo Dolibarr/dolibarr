@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -94,9 +94,11 @@ $hookmanager->initHooks(array('membernote'));
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
+
 /*
  * Actions
  */
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -129,7 +131,7 @@ if (is_object($adht)) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);

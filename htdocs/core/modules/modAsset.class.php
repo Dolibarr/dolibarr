@@ -58,9 +58,9 @@ class modAsset extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleAssetsName' not found (MyModue is name of module).
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleAssetsDesc' not found (MyModue is name of module).
-		$this->description = "Asset module";
+		$this->description = "Fixed asset management";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "Asset module to manage assets module and depreciation charge on Dolibarr";
+		$this->descriptionlong = "Asset module to manage fixed asset module and depreciation charge";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'experimental';
@@ -92,10 +92,9 @@ class modAsset extends DolibarrModules
 		$this->langfiles = array("assets");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'AssetsWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -108,6 +107,16 @@ class modAsset extends DolibarrModules
 			"chaine",
 			"360",
 			"Duration per year to calculate depreciation. In some case, can be 365 days",
+			0,
+			'current',
+			1
+		);
+
+		$this->const[2] = array(
+			"ASSET_ASSET_ADDON",
+			"chaine",
+			"mod_asset_standard",
+			"Name of numbering rules for fixed asset",
 			0,
 			'current',
 			1

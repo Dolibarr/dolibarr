@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
  *       \ingroup    societe
  *       \brief      Card agenda of a contact
  */
-
 
 // Load Dolibarr environment
 require '../main.inc.php';
@@ -66,8 +65,10 @@ $errors = array();
 $action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm	= GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ09');
+
 $id = GETPOSTINT('id');
-$socid		= GETPOSTINT('socid');
+$socid = GETPOSTINT('socid');
 
 // Initialize objects
 $object = new Contact($db);
@@ -234,7 +235,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 		$morehtmlref .= '<div class="refidno">';
@@ -281,10 +282,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$permok = $user->hasRight('agenda', 'myactions', 'create');
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
+					$out .= '&originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&socid='.$objthirdparty->id : '');
 				}
-				$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
-				$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
+				$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '').'&origin=contact&originid='.$object->id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
+				$out .= '&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
 			}
 
 			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {

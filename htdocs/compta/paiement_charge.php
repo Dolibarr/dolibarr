@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta"));
@@ -99,7 +98,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 			}
 		}
 
-		if (count($amounts) <= 0) {
+		if (empty($amounts)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
 			$action = 'create';
@@ -122,16 +121,16 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 				$paymentid = $paiement->create($user, (GETPOST('closepaidcontrib') == 'on' ? 1 : 0));
 				if ($paymentid < 0) {
 					$error++;
-					setEventMessages($paiement->error, null, 'errors');
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
 				}
 			}
 
 			if (!$error) {
 				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOSTINT('accountid'), '', '');
-				if (!($result > 0)) {
+				if ($result <= 0) {
 					$error++;
-					setEventMessages($paiement->error, null, 'errors');
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
 				}
 			}
@@ -229,7 +228,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opend bank account list
+	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number
@@ -249,9 +248,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	/*
-	  * Other unpaid charges
-	 */
+	print '<br>';
+
+
+	// List of unpaid taxes
+
 	$num = 1;
 	$i = 0;
 
@@ -292,7 +293,7 @@ if ($action == 'create') {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
 			if (!empty($conf->use_javascript_ajax)) {
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 			}
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
@@ -323,7 +324,8 @@ if ($action == 'create') {
 	print '</div>';
 
 	// Save payment button
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib" id="closepaidcontrib" class="marginrightonly">';
+	print '<label for="closepaidcontrib" class="opacitymedium">'.$langs->trans("ClosePaidContributionsAutomatically").'</label>';
 	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';

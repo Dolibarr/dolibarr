@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,7 +97,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
@@ -228,7 +228,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 					});
 					</script>';
 				$stringtoshow .= '<div class="center hideobject divboxfilter" id="idfilter'.$this->boxcode.'">'; // hideobject is to start hidden
-				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';

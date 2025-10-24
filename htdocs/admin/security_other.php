@@ -214,19 +214,6 @@ print '<input class="flat right width50" name="MAIN_SECURITY_MAX_NUMBER_FAILED_A
 print '</td>';
 print '</tr>';
 
-/*
-if (empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$conf->global->MAIN_APPLICATION_TITLE = "";
-}
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.dol_escape_htmltag($conf->global->MAIN_APPLICATION_TITLE).'"> ';
-print '</td>';
-print '</tr>';
-*/
-
 print '</table>';
 
 print $form->buttonsSaveCancel("Modify", '');

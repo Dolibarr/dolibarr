@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +112,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		}
 
 		if ($this->tooltip && is_object($form)) {
-			$s .= ' '.$form->textwithpicto('', $langs->trans($this->tooltip), 1, 1);
+			$s .= ' '.$form->textwithpicto('', $langs->trans($this->tooltip), 1, 'help');
 		}
 		return $s;
 	}
@@ -174,7 +175,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
 			$sql = "UPDATE ".$this->db->prefix()."mailing";
 			$sql .= " SET nbemail = ".((int) $nb)." WHERE rowid = ".((int) $mailing_id);
@@ -262,8 +263,8 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 		if (empty($this->evenunsubscribe)) {
 			$sql = "UPDATE ".$this->db->prefix()."mailing_cibles as mc";
-			$sql .= " SET mc.statut = 3";
-			$sql .= " WHERE mc.fk_mailing = ".((int) $mailing_id);
+			$sql .= " SET statut = 3";
+			$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 			$sql .= " AND EXISTS (SELECT rowid FROM ".$this->db->prefix()."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
 
 			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);

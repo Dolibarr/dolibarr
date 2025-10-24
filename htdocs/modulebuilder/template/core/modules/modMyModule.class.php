@@ -156,15 +156,17 @@ class modMyModule extends DolibarrModules
 		$this->langfiles = array("mymodule@mymodule");
 
 		// Prerequisites
-		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 2); // Minimum version of PHP required by module
+		// $this->phpmax = array(8, 0); // Maximum version of PHP required by module
 		$this->need_dolibarr_version = array(19, -3); // Minimum version of Dolibarr required by module
+		// $this->max_dolibarr_version = array(19, -3); // Maximum version of Dolibarr required by module
 		$this->need_javascript_ajax = 0;
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation = array(); 		// Warning to show when we activate a module. Example: array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation_ext = array(); 	// Warning to show when we activate a module if another module is on. Example: array('modOtherModule' => array('always'=>'text')) or array('always' => array('FR'=>'textfr','MX'=>'textmx'...))
 		//$this->automatic_activation = array('FR'=>'MyModuleWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
+		//$this->always_enabled = false;			// If true, can't be disabled. Value true is reserved for core modules. Not allowed for external modules.
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -186,13 +188,14 @@ class modMyModule extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		/* BEGIN MODULEBUILDER TABS */
+		// Don't forget to deactivate/reactivate your module to test your changes
 		$this->tabs = array();
 		/* END MODULEBUILDER TABS */
 		// Example:
 		// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data' => 'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight(\'mymodule\', \'read\'):/mymodule/mynewtab1.php?id=__ID__');
+		// $this->tabs[] = array('data' => 'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'myobject', 'read'):/mymodule/mynewtab1.php?id=__ID__');
 		// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-		// $this->tabs[] = array('data' => 'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight(\'othermodule\', \'read\'):/mymodule/mynewtab2.php?id=__ID__',
+		// $this->tabs[] = array('data' => 'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight('othermodule', 'otherobject', 'read'):/mymodule/mynewtab2.php?id=__ID__',
 		// To remove an existing tab identified by code tabname
 		// $this->tabs[] = array('data' => 'objecttype:-tabname:NU:conditiontoremove');
 		//
@@ -204,13 +207,13 @@ class modMyModule extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
-		// 'invoice_supplier' to add a tab in supplier invoice view
+		// 'supplier_invoice' to add a tab in supplier invoice view
 		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sale order view
-		// 'order_supplier'   to add a tab in supplier order view
+		// 'supplier_order'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
-		// 'payment_supplier' to add a tab in supplier payment view
+		// 'supplier_payment' to add a tab in supplier payment view
 		// 'product'          to add a tab in product view
 		// 'propal'           to add a tab in propal view
 		// 'project'          to add a tab in project view
@@ -328,7 +331,7 @@ class modMyModule extends DolibarrModules
 			'url' => '/mymodule/mymoduleindex.php',
 			'langs' => 'mymodule@mymodule', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
-			'enabled' => 'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled.
+			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use "isModEnabled('mymodule')" if entry must be visible if module is enabled (those quote marks are importants).
 			'perms' => '1', // Use 'perms'=>'$user->hasRight("mymodule", "myobject", "read")' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
@@ -347,7 +350,7 @@ class modMyModule extends DolibarrModules
 			'url' => '/mymodule/mymoduleindex.php',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
-			'enabled' => 'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled.
+			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled.
 			'perms' => '$user->hasRight("mymodule", "myobject", "read")',
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
@@ -362,7 +365,7 @@ class modMyModule extends DolibarrModules
 			'url' => '/mymodule/myobject_card.php?action=create',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
-			'enabled' => 'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms' => '$user->hasRight("mymodule", "myobject", "write")'
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
@@ -377,7 +380,7 @@ class modMyModule extends DolibarrModules
 			'url' => '/mymodule/myobject_list.php',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
-			'enabled' => 'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled.
+			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled.
 			'perms' => '$user->hasRight("mymodule", "myobject", "read")'
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
@@ -388,7 +391,7 @@ class modMyModule extends DolibarrModules
 
 
 		// Exports profiles provided by this module
-		$r = 1;
+		$r = 0;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
@@ -419,7 +422,7 @@ class modMyModule extends DolibarrModules
 		/* END MODULEBUILDER EXPORT MYOBJECT */
 
 		// Imports profiles provided by this module
-		$r = 1;
+		$r = 0;
 		/* BEGIN MODULEBUILDER IMPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
@@ -497,7 +500,7 @@ class modMyModule extends DolibarrModules
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_myobjects.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
+				$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/'.$moduledir;
 				$dest = $dirodt.'/template_myobjects.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {

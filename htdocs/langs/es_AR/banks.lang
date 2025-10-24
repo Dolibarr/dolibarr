@@ -64,7 +64,6 @@ BankChecks=Cheques bancarios
 BankChecksToReceipt=Cheques que esperan a depositarse
 BankChecksToReceiptShort=Cheques que esperan a depositarse
 NumberOfCheques=Número de cheque
-PlannedTransactions=Registros planeados
 ExportDataset_banque_1=Registros bancarios y estado de la cuenta
 AllAccounts=Todas las cuentas bancarias y cajas
 ShowAllAccounts=Mostrar todas las cuentas

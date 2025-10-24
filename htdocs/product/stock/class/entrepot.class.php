@@ -4,8 +4,8 @@
  * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ class Entrepot extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -158,7 +158,7 @@ class Entrepot extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
@@ -175,7 +175,7 @@ class Entrepot extends CommonObject
 		'fk_pays' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'phone' => array('type' => 'varchar(20)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -2, 'position' => 70, 'searchall' => 1),
 		'fax' => array('type' => 'varchar(20)', 'label' => 'Fax', 'enabled' => 1, 'visible' => -2, 'position' => 75, 'searchall' => 1),
-		//'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
+		//'fk_user_author' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 301),
 		'warehouse_usage' => array('type' => 'integer', 'label' => 'WarehouseUsage', 'enabled' => 'getDolGlobalInt("STOCK_USE_WAREHOUSE_USAGE")', 'visible' => 1, 'position' => 400, 'default' => '1', 'arrayofkeyval' => array(1 => 'InternalWarehouse', 2 => 'ExternalWarehouse')),
@@ -211,7 +211,7 @@ class Entrepot extends CommonObject
 	/**
 	 * Warehouse that must be excluded for stock calculation (scrapping stock, virtual warehouses, ...)
 	 */
-	const USAGE_EXTTERNAL = 2;
+	const USAGE_EXTERNAL = 2;
 
 
 
@@ -254,6 +254,10 @@ class Entrepot extends CommonObject
 		if ($this->label == '') {
 			$this->error = "ErrorFieldRequired";
 			return 0;
+		}
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
 		}
 
 		$now = dol_now();
@@ -325,6 +329,11 @@ class Entrepot extends CommonObject
 	 */
 	public function update($id, $user, $notrigger = 0)
 	{
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$error = 0;
 
 		if (empty($id)) {
@@ -1029,12 +1038,14 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		global $langs;
+
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
@@ -1050,8 +1061,12 @@ class Entrepot extends CommonObject
 		if (property_exists($this, 'lieu') && (!empty($this->lieu))) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->lieu.'</span>';
 		}
-		if (property_exists($this, 'sellvalue') && $this->sellvalue != 0) {
-			$return .= '<br><span class="info-box-label amount">'.price($this->sellvalue).'</span>';
+		if ($arraydata['sellvalue'] != 0) {
+			if ($arraydata['isMultiPrices']) {
+				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Variable").' '.$langs->trans('EstimatedStockValueSell').'</span>';
+			} else {
+				$return .= '<br><span class="info-box-label amount">'.price($arraydata['sellvalue']).'</span>';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

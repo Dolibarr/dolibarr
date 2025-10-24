@@ -177,7 +177,8 @@ abstract class DoliDB implements Database
 	 * Sanitize a string for SQL forging
 	 *
 	 * @param   string 	$stringtosanitize 	String to sanitize
-	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
+	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string around val separated by "," but only when string is used as a list of SQL string "'aa', 'bb', 'cc', ..."). Can be used for IN ...
+	 * 										2=Allow all simple quotes. If you use this value, the return MUST be escaped to forge SQL strings.
 	 * @param	int		$allowsequals		1=Allow equals sign
 	 * @param	int		$allowsspace		1=Allow space char
 	 * @param	int		$allowschars		1=Allow a-z chars
@@ -185,7 +186,25 @@ abstract class DoliDB implements Database
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		return preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+		$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? '\p{L}' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/ui', '', $stringtosanitize);
+		//$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+
+		if ($allowsimplequote == 1) {
+			// Remove all quotes that are inside a string and not around
+			$tmpchars = explode(',', $result);
+			$newstringarray = array();
+			foreach ($tmpchars as $tmpchar) {
+				$reg = array();
+				if (preg_match('/^\'(.*)\'$/', $tmpchar, $reg)) {
+					$newstringarray[] = "'".str_replace("'", "", $reg[1])."'";
+				} else {
+					$newstringarray[] = str_replace("'", "", $tmpchar);
+				}
+			}
+			$result = implode(',', $newstringarray);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -303,7 +322,7 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb' or 't1.fielda,concat(a,b,c) as abc,t2.fieldb'
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity for sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
@@ -312,17 +331,30 @@ abstract class DoliDB implements Database
 		if (!empty($sortfield)) {
 			$oldsortorder = '';
 			$return = '';
+
+			// If text is "field1, f(a,b,c) as xxx, field2", we must convert string into 'field1,xxx,field2'
+			$sortfield = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $sortfield);
+
 			$fields = explode(',', $sortfield);
 			$orders = (!empty($sortorder) ? explode(',', $sortorder) : array());
 			$i = 0;
+
+
 			foreach ($fields as $val) {
+				// Sanitized fieldname
+				$fieldname = preg_replace('/[^0-9a-z_\.]/i', '', $val);
+				if (!$fieldname) {
+					continue;
+				}
+
 				if (!$return) {
 					$return .= ' ORDER BY ';
 				} else {
 					$return .= ', ';
 				}
 
-				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
+				// Add field
+				$return .= $fieldname;
 
 				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
 
@@ -437,6 +469,21 @@ abstract class DoliDB implements Database
 			$this->free($resql);
 			return $results;
 		}
+
+		return false;
+	}
+
+	/**
+	 * Prepare a SQL statement for execution
+	 *
+	 * This method must be implemented by subclasses.
+	 *
+	 * @param string $sql SQL query to prepare
+	 * @return mixed Driver-specific prepared statement object or false on failure
+	 */
+	public function prepare($sql)
+	{
+		$this->lasterror = 'prepare() not implemented for this driver. Failed to prepare '.$sql;
 
 		return false;
 	}

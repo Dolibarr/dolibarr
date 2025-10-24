@@ -5,7 +5,6 @@ FingerprintsDesc=Esta es la herramienta para navegar o extraer los registros ina
 CompanyInitialKey=Clave inicial de la empresa (hash del bloque de génesis)
 ShowAllFingerPrintsMightBeTooLong=Mostrar todos los registros archivados (pueden ser largos)
 ShowAllFingerPrintsErrorsMightBeTooLong=Mostrar todos los registros de archivo no válidos (pueden ser largos)
-KoCheckFingerprintValidity=La entrada de registro archivada no es válida. Significa que alguien (¿un pirata informático?) ha modificado algunos datos de este registro después de haberlo grabado, o ha borrado el registro archivado anterior (verifique que la línea con el número anterior existe) o ha modificado la suma de verificación del registro anterior.
 OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos de esta línea no fueron modificados y la entrada sigue a la anterior.
 OkCheckFingerprintValidityButChainIsKo=El registro archivado parece válido en comparación con el anterior, pero la cadena estaba dañada anteriormente.
 NotAddedByAuthorityYet=Aún no almacenado en la autoridad remota

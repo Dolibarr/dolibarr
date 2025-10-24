@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004-2007  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006       Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2011	    Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 class Fournisseur extends Societe
 {
-	public $next_prev_filter = "te.fournisseur:=:1"; // Used to add a filter in Form::showrefnav method
+	public $next_prev_filter = "(te.fournisseur:=:1)"; // Used to add a filter in Form::showrefnav method
 
 
 	/**

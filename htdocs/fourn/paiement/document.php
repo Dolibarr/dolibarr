@@ -7,7 +7,8 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2021      Jesus Jerez       	 <jesusballesteros@protonmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +88,7 @@ if (!$sortfield) {
 
 // Load object
 $object = new PaiementFourn($db);
+$upload_dir = null;
 if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$ref = dol_sanitizeFileName($object->ref);
@@ -107,12 +109,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$form = new	Form($db);
+$form = new Form($db);
 
 $title = $langs->trans('Payment')." - ".$langs->trans('Documents');
 llxHeader('', $title);
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_supplier_prepare_head($object);
 	print dol_get_fiche_head($head, 'documents', $langs->trans("SupplierPayment"), -1, 'payment');
 
@@ -122,7 +124,7 @@ if ($object->id > 0) {
 	$morehtmlref = '<div class="refidno">';
 
 	// Date of payment
-	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'datehourpicker', '', null, 3).': ';
+	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))), 'datehourpicker', '', 0, 3).': ';
 	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 
 	// Payment mode

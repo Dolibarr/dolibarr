@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'us
 if (!isset($id) || empty($id)) {
 	accessforbidden();
 }
+'@phan-var-force int<1,max> $id';
 
 // Define value to know what current user can do on users
 $permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
@@ -110,10 +112,11 @@ if (!$sortfield) {
 }
 
 $object = new User($db);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->loadRights();
-	//$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
+	// $upload_dir = $conf->user->multidir_output[$object->entity ?? $conf->entity] . "/" . $object->id ;
 	// For users, the upload_dir is always $conf->user->entity for the moment
 	$upload_dir = $conf->user->dir_output."/".$object->id;
 }
@@ -122,7 +125,7 @@ if ($id > 0 || !empty($ref)) {
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -145,7 +148,7 @@ $title = $person_name." - ".$langs->trans('Documents');
 $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_document');
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	/*
 	 * Show tabs
 	 */
@@ -154,7 +157,7 @@ if ($object->id) {
 	}
 	$head = user_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
+	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user', 0, '', '', 0, '', 1);
 
 	$linkback = '';
 	if ($user->hasRight("user", "user", "read") || $user->admin) {
@@ -162,7 +165,7 @@ if ($object->id) {
 	}
 
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
@@ -194,9 +197,9 @@ if ($object->id) {
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
 			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
 			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 			}
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;

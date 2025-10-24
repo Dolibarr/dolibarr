@@ -82,6 +82,7 @@ llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-tak
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
+
 print dol_get_fiche_head($head, 'other', 'TakePOS', -1, 'cash-register');
 print '<br>';
 
@@ -103,7 +104,11 @@ print '</tr>';
 $url = 'https://www.dolistore.com/45-pos';
 
 print '<tr class="oddeven">'."\n";
-print '<td class="titlefield"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+print '<td class="titlefield">';
+print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
+print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png">';
+print '</a>';
+print '</td>';
 print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
 print '<td>';
 print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
@@ -121,17 +126,20 @@ print '<br>';
 print '<div class="div-table-responsive-no-min">';
 
 // Support
-print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
+print "<table summary=\"list_of_modules\" class=\"noborder centpercent\">\n";
 print '<tr class="liste_titre">'."\n";
 print '<td colspan="2">TakePOS Support</td>';
 print '<td>'.$langs->trans("URL").'</td>';
 print '</tr>';
 
-$url = 'https://www.takepos.com';
+$url = 'https://partners.dolibarr.org';
 
 print '<tr class="oddeven">'."\n";
-print '<td class="titlefield"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
-print '<td>TakePOS original developers</td>';
+print '<td class="titlefield">';
+print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
+print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png">';
+print '</a></td>';
+print '<td>Dolibarr Preferred Partners</td>';
 print '<td>';
 print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
 print img_picto('', 'url', 'class="pictofixedwidth"');
@@ -141,7 +149,11 @@ print '</tr>';
 print "</table>\n";
 
 print '</div>';
-print '<br>';
+
+print '</form>';
+
+print dol_get_fiche_end();
+
 
 llxFooter();
 $db->close();

@@ -813,22 +813,23 @@ class ImportCsv extends ModeleImports
 						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $tmpkey)) {
 							continue; // Not a field of current table
 						}
-						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $tmpkey);
+						$keyfieldcache = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $tmpkey);
 
-						if (in_array($keyfield, $listfields)) {		// avoid duplicates in insert
+						if (in_array($keyfieldcache, $listfields)) {		// avoid duplicates in insert
 							continue;
 						} elseif ($tmpval == 'user->id') {
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
 							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $tmpval)) {
 							$tmp = explode('-', $tmpval);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
 							$listvalues[] = (int) $lastinsertid;
+							$keyfield = $keyfieldcache;
 							//print $tmpkey."-".$tmpval."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $tmpval)) {
 							$tmp = explode('-', $tmpval, 2);
-							$listfields[] = $keyfield;
+							$listfields[] = $keyfieldcache;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $tmpval)) {	// Example: rule-computeAmount, rule-computeDirection, ...
 							$fieldname = $tmpkey;
@@ -935,6 +936,7 @@ class ImportCsv extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										$keyfield = 'rowid';
 										if ($is_table_category_link) {
 											$lastinsertid = 'linktable';
 										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
@@ -959,10 +961,10 @@ class ImportCsv extends ModeleImports
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
 								// Note: For extrafield tablename, we have in importfieldshidden_array an entry 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM ".$tablename;
-
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
+
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -1004,10 +1006,10 @@ class ImportCsv extends ModeleImports
 									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
 								}
 								$sqlstart .= " SET ".implode(', ', $set).", import_key = '".$this->db->escape($importid)."'";
-
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
+
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {

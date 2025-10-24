@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - suppliers
-Suppliers=موردين
 SupplierInvoices=فواتير المورد
 ShowSupplierInvoice=إظهار فاتورة المورد
 ListOfSuppliers=قائمة موردين
@@ -23,6 +22,7 @@ AddSupplierInvoice=إنشاء فاتورة المورد
 ListOfSupplierProductForSupplier=قائمة المنتجات والأسعار الخاصة بالمورد <b> %s </b>
 SentToSuppliers=مرسلة إلى المورديين
 MenuOrdersSupplierToBill=أوامر الشراء للفاتورة
+NbDaysToDelivery=مهلة التسليم
 DescNbDaysToDelivery=أطول تأخير لتسليم المنتجات من هذا الطلب
 DoNotOrderThisProductToThisSupplier=لا تتعامل
 AllProductServicePrices=أسعار جميع المنتجات / الخدمات

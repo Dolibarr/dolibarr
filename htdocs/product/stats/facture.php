@@ -178,6 +178,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+		$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 		$shownav = 1;
 		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -262,7 +263,11 @@ if ($id > 0 || !empty($ref)) {
 			// Add HAVING from hooks
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+			if (empty($reshook)) {
+				$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+			} else {
+				$sql = $hookmanager->resPrint;
+			}
 
 			$sql .= $db->order($sortfield, $sortorder);
 

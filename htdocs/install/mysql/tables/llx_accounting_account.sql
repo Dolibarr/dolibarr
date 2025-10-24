@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006  Laurent Destailleur <eldy@users.sourceforge.net>
 -- Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
--- Copyright (C) 2016-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+-- Copyright (C) 2016-2025  Alexandre Spangaro  <alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Table of 'accounts' for accountancy expert module
+-- Table of 'accounts' for accountancy module
 -- ============================================================================
 
 create table llx_accounting_account
@@ -35,6 +35,7 @@ create table llx_accounting_account
   fk_user_author            integer      DEFAULT NULL,
   fk_user_modif             integer      DEFAULT NULL,
   active                    tinyint      DEFAULT 1  NOT NULL,
+  centralized				tinyint      DEFAULT 0  NOT NULL,
   reconcilable				tinyint      DEFAULT 0  NOT NULL,
   import_key                varchar(14),
   extraparams               varchar(255)                      -- for other parameters with json format

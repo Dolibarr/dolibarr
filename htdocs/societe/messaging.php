@@ -82,7 +82,7 @@ if (!$sortorder) {
 $object = new Societe($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
+$hookmanager->initHooks(array('thirdpartyagenda', 'agendathirdparty', 'globalcard'));
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -169,10 +169,10 @@ $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 	if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-		$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
+		$out .= '&originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&socid='.$objthirdparty->id : '').'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
 	}
-	$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
-	$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+	$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '');
+	$out .= '&datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
 }
 
 $morehtmlright = '';

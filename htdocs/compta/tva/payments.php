@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,8 +58,8 @@ if (!$year && $mode != 'tvaonly') {
 }
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = (string) GETPOST('sortfield', 'aZ09comma');
+$sortorder = (string) GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -80,7 +80,7 @@ $object = new Tva($db);
 if ($user->socid) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
+//restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
@@ -138,12 +138,13 @@ if ($year > 0) {
 	$sql .= " OR (tva.datev IS NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 	$sql .= ")";
 }
+$sortfield = (string) $sortfield;  // Avoid phan notice
 if (preg_match('/^cs\./', $sortfield)
 	|| preg_match('/^tva\./', $sortfield)
 	|| preg_match('/^ptva\./', $sortfield)
 	|| preg_match('/^pct\./', $sortfield)
 	|| preg_match('/^bank\./', $sortfield)) {
-	$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order($sortfield, (string) $sortorder);
 }
 //$sql.= $db->plimit($limit+1,$offset);
 //print $sql;
@@ -210,10 +211,9 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$sql .= " OR (tva.datev IS NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 		$sql .= ")";
 	}
-	if ($sortfield !== null
-		&& preg_match('/^(cs|tva|ptva|pct|bank)\./', $sortfield)
+	if (preg_match('/^(cs|tva|ptva|pct|bank)\./', $sortfield)
 	) {
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $db->order($sortfield, (string) $sortorder);
 	}
 
 	if ($num) {

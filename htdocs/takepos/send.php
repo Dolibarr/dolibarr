@@ -2,6 +2,7 @@
 /* Copyright (C) 2019	Thibault FOUCART      <support@ptibogxiv.net>
  * Copyright (C) 2020	Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$outputlangs = new Translate('', $conf);
-	$model_id = getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE');
+	$model_id = getDolGlobalInt('TAKEPOS_EMAIL_TEMPLATE_INVOICE');
 	$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, $model_id);
 	$subject = $arraydefaultmessage->topic;
 
@@ -89,7 +90,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 	$msg = "<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
 	$sendto = $email;
 	$from = $mysoc->email;
-	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', '', '', '', '', DOL_DOCUMENT_ROOT.'/documents/takepos/temp');
+	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
 	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
 	} else {

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,8 +80,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 $type = $object->type;
-// check if salary pl
+
+// Check if salary or invoice
 $salaryBonPl = $object->checkIfSalaryBonPrelevement();
+
+// Security check
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 
@@ -99,7 +102,6 @@ if ($type == 'bank-transfer') {
 }
 
 
-
 /*
  * Actions
  */
@@ -112,7 +114,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'setbankaccount' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->fk_bank_account = GETPOSTINT('fk_bank_account');
 
 		$object->update($user);
@@ -150,7 +152,7 @@ if (empty($reshook)) {
 			$mesg='BadFile';
 		}*/
 
-		$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
+		$error = $object->set_infotrans($user, $dt, GETPOSTINT('methode'));
 
 		if ($error) {
 			header("Location: card.php?id=".$id."&error=$error");
@@ -195,7 +197,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
 
 
 /*
@@ -315,9 +316,9 @@ if ($id > 0 || $ref) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editfkbankaccount') {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $fk_bank_account, 'fk_bank_account', 0);
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $fk_bank_account, 'fk_bank_account', 0);
 	} else {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $fk_bank_account, 'none');
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $fk_bank_account, 'none');
 	}
 	print "</td>";
 	print '</tr>';
@@ -501,7 +502,7 @@ if ($id > 0 || $ref) {
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {
+		if (($page * $limit) > (int) $nbtotalofrecords) {
 			// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
