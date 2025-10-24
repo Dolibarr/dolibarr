@@ -773,7 +773,7 @@ if (count($tasksarray) > 0) {
 			$startweekholiday = (int) (($h["date_debut"] <= $weekstart) ? $weekstart : $h["date_debut"]);
 			$endweekholiday = (int) (($h["date_fin"] >= $weekend) ? $weekend : $h["date_fin"]);
 			$halfdays = (int) $h["halfday"];
-			$nbdays = num_open_day($startweekholiday, $endweekholiday, 0, 1, $halfdays);
+			$nbdays = num_open_day($startweekholiday, $endweekholiday, 0, 1, $halfdays, $h["fk_user"]);
 
 			$THolidays[$weekNb]["ids"][] = $h->rowid;
 			$THolidays[$weekNb]["days"] += $nbdays;

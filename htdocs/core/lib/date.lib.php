@@ -1311,12 +1311,30 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
  *	@param		int			$lastday            We include last day, 0: no, 1:yes
  *  @param		int			$halfday			Tag to define half day when holiday start and end
  *  @param      string		$country_code       Country code (company country code if not defined)
+ *  @param      int			$fk_user       		ID of the user for whom we are calculating
  *	@return    	int|string						Number of days or hours or string if error
  *  @seealso num_between_day(), num_public_holiday()
  */
-function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $country_code = '')
+function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $country_code = '', $fk_user = null)
 {
-	global $langs, $mysoc;
+	global $langs, $mysoc, $db;
+        if(!empty($fk_user)){
+            $userObj = new User($db);
+            $result = $userObj->fetch($fk_user);
+            if($result > 0 && !empty($userObj->country_id)){
+                $sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c';
+                $sql .= ' WHERE c.rowid = '.(int) $userObj->country_id;
+                $resql = $db->query($sql);
+                if ($resql) {
+                        $obj = $db->fetch_object($resql);
+                        if ($obj) {
+                            $country_code = $obj->code;
+                        }
+                } else {
+                    dol_syslog("Error finding country for user: ".$fk_user);
+                }
+            }
+        }
 
 	if (empty($country_code)) {
 		$country_code = $mysoc->country_code;
