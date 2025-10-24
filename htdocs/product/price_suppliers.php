@@ -939,8 +939,8 @@ if ($id > 0 || $ref) {
 		if ($action != 'create_price' && $action != 'edit_price') {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-                        if (empty($reshook)) {
-                                // EN: Display add button only when user can write supplier prices
+            if (empty($reshook)) {
+                // EN: Display add button only when user can write supplier prices
 				if ($usercanwritesupplierprice) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $object->id).'&action=create_price&token='.newToken().'">';
 					print $langs->trans("AddSupplierPrice").'</a>';
@@ -1156,10 +1156,10 @@ if ($id > 0 || $ref) {
 					print '<tr class="oddeven">';
 
 					// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="center nowraponall">';
-					// EN: Allow editing and deletion when user can write supplier prices
-					if ($usercanwritesupplierprice) {
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="center nowraponall">';
+						// EN: Allow editing and deletion when user can write supplier prices
+						if ($usercanwritesupplierprice) {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
