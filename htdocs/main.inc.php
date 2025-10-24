@@ -2569,10 +2569,12 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		}
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
-                if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-					/* console.log("click close login - we click outside"); */
-					closeTopMenuLoginDropdown();
-                }
+				if (jQuery("#topmenu-login-dropdown").hasClass("open")) {
+	                if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+						/* console.log("click close login - we click outside"); */
+						closeTopMenuLoginDropdown();
+	                }
+				}
             });
 		';
 
