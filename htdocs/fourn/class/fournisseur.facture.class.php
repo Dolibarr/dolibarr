@@ -2107,8 +2107,8 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      float      		$qty                    Quantity
 	 *	@param      int         	$fk_product             Product/Service ID predefined
 	 *	@param      float      		$remise_percent         Percentage discount of the line
-	 *	@param      int         	$date_start             Service start date
-	 *	@param      int         	$date_end               Service expiry date
+	 *	@param      int|''         	$date_start             Service start date
+	 *	@param      int|''         	$date_end               Service expiry date
 	 *	@param      int         	$fk_code_ventilation    Accounting breakdown code
 	 *	@param      int         	$info_bits              Line type bits
 	 *	@param      string      	$price_base_type        HT or TTC
