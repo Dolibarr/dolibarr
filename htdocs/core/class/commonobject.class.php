@@ -2254,7 +2254,7 @@ abstract class CommonObject
 	public function getLineIdByLabel($label)
 	{
 		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
-		$sql .= " WHERE label = '" . $label . "'";
+		$sql .= " WHERE label = '" . $this->db->escape($label) . "'";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
