@@ -695,7 +695,7 @@ class FormProduct
 					}
 
 					$return .= '>';
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 					$return .= '</option>';
 				}
 			}

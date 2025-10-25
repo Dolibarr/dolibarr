@@ -1060,7 +1060,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	$result = $measuringUnits->fetchAll('', '', 0, 0, array('t.active' => 1));
 	$units = array();
 	foreach ($measuringUnits->records as $lines) {
-		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
+		$units[$lines->short_label] = $langs->trans(ucfirst((string) $lines->label));
 	}
 
 	$publiccounters = getDolGlobalString("MEMBER_COUNTERS_ARE_PUBLIC");
