@@ -12487,12 +12487,6 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/price.php
-
-		-
 			message: '#^Variable \$rowid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -14398,12 +14392,6 @@ parameters:
 			message: '#^Variable \$suffix might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
