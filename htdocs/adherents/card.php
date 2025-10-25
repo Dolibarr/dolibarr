@@ -2097,7 +2097,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Modify
 				if ($user->hasRight('adherent', 'creer')) {
-					print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
+					print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true).'">'.$langs->trans("Modify").'</a>'."\n";
 				} else {
 					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</span>'."\n";
 				}
@@ -2105,7 +2105,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Validate
 				if (Adherent::STATUS_DRAFT == $object->status) {
 					if ($user->hasRight('adherent', 'creer')) {
-						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=valid&token='.newToken().'">'.$langs->trans("Validate").'</a>'."\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'valid'], true).'">'.$langs->trans("Validate").'</a>'."\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</span>'."\n";
 					}
@@ -2114,7 +2114,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Reactivate
 				if (Adherent::STATUS_RESILIATED == $object->status || Adherent::STATUS_EXCLUDED == $object->status) {
 					if ($user->hasRight('adherent', 'creer')) {
-						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=valid&token='.newToken().'">'.$langs->trans("Reenable")."</a>\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'valid'], true).'">'.$langs->trans("Reenable")."</a>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable").'</span>'."\n";
 					}
