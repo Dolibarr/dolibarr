@@ -74,7 +74,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Home
 	$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
-	if (!empty($landingpage) && !getDolGlobalInt('MAIN_LANDING_PAGE_ONLY_AFTER_LOGIN')) {
+	if (!empty($landingpage) && (empty($user->admin) || !getDolGlobalInt('MAIN_LANDING_PAGE_ONLY_AFTER_LOGIN'))) {
 		$landingpage = dol_buildpath($landingpage, 1);
 	} else {
 		$landingpage = '/index.php?mainmenu=home&leftmenu=home';
@@ -1152,7 +1152,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 
 		// Home - dashboard
 		$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
-		if (!empty($landingpage) && !getDolGlobalInt('MAIN_LANDING_PAGE_ONLY_AFTER_LOGIN')) {
+		if (!empty($landingpage) && (empty($user->admin) || !getDolGlobalInt('MAIN_LANDING_PAGE_ONLY_AFTER_LOGIN'))) {
 			$landingpage = dol_buildpath($landingpage, 1);
 		} else {
 			$landingpage = '/index.php?mainmenu=home&leftmenu=home';
