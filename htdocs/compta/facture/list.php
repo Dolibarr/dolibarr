@@ -1598,6 +1598,11 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 
+// Hook: custom search filters
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearch', $parameters, $object, $action);
+print $hookmanager->resPrint;
+
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
