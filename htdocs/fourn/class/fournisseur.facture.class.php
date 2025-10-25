@@ -1473,7 +1473,7 @@ class FactureFournisseur extends CommonInvoice
 		$error = 0;
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('BILL_SUPPLIER_DELETE', $user);
 			if ($result < 0) {
@@ -1483,30 +1483,28 @@ class FactureFournisseur extends CommonInvoice
 			// Fin appel triggers
 		}
 
-		if (!$error) {
-			// If invoice was converted into a discount not yet consumed, we remove discount
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
-			$sql .= ' WHERE fk_invoice_supplier_source = '.((int) $rowid);
-			$sql .= ' AND fk_invoice_supplier_line IS NULL';
-			$resql = $this->db->query($sql);
+		// If invoice was converted into a discount not yet consumed, we remove discount
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql .= ' WHERE fk_invoice_supplier_source = '.((int) $rowid);
+		$sql .= ' AND fk_invoice_supplier_line IS NULL';
+		$resql = $this->db->query($sql);
 
-			// If invoice has consumned discounts
-			$this->fetch_lines();
-			$list_rowid_det = array();
-			foreach ($this->lines as $key => $invoiceline) {
-				$list_rowid_det[] = $invoiceline->id;
-			}
+		// If invoice has consumned discounts
+		$this->fetch_lines();
+		$list_rowid_det = array();
+		foreach ($this->lines as $key => $invoiceline) {
+			$list_rowid_det[] = $invoiceline->id;
+		}
 
-			// Consumned discounts are freed
-			if (count($list_rowid_det)) {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-				$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
-				$sql .= ' WHERE fk_invoice_supplier_line IN ('.$this->db->sanitize(implode(',', $list_rowid_det)).')';
+		// Consumned discounts are freed
+		if (count($list_rowid_det)) {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+			$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
+			$sql .= ' WHERE fk_invoice_supplier_line IN ('.$this->db->sanitize(implode(',', $list_rowid_det)).')';
 
-				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-				if (!$this->db->query($sql)) {
-					$error++;
-				}
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$error++;
 			}
 		}
 
@@ -1907,7 +1905,7 @@ class FactureFournisseur extends CommonInvoice
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Si on incrémente le produit principal et ses composants à la validation de facture fournisseur
-			if (!$error && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL')) {
+			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
@@ -1939,7 +1937,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 
 			// Triggers call
-			if (!$error && empty($notrigger)) {
+			if (empty($notrigger)) {
 				// Call trigger
 				$result = $this->call_trigger('BILL_SUPPLIER_VALIDATE', $user);
 				if ($result < 0) {
@@ -2044,9 +2042,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
+			$this->oldcopy = clone $this;
 
 			// Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
 			if ($result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL')) {
@@ -2069,7 +2065,7 @@ class FactureFournisseur extends CommonInvoice
 				}
 			}
 			// Triggers call
-			if (!$error && empty($notrigger)) {
+			if (empty($notrigger)) {
 				// Call trigger
 				$result = $this->call_trigger('BILL_SUPPLIER_UNVALIDATE', $user);
 				if ($result < 0) {
