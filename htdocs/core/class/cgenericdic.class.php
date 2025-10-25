@@ -444,7 +444,7 @@ class CGenericDic extends CommonDict
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
-		$object = new Ctyperesource($this->db);
+		$object = new CGenericDic($this->db);
 
 		$this->db->begin();
 
