@@ -80,7 +80,7 @@ class Export
 	/**
 	 * @var string[]
 	 */
-	public $array_export_label = array(); // Tableau de "libelle de lots"
+	public $array_export_label = array(); // Array of "Translation key" to use for each export profile
 	/**
 	 * @var string[]
 	 */
@@ -117,7 +117,7 @@ class Export
 	/**
 	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>
 	 */
-	public $array_export_special = array(); // array of special operations to do on field
+	public $array_export_special = array(); // array of special operations to do on fields
 	/**
 	 * @var array<array<string,string>>
 	 */
@@ -269,13 +269,13 @@ class Export
 									$this->array_export_perms[$i] = $bool;
 									// Icon
 									$this->array_export_icon[$i] = (isset($module->export_icon[$r]) ? $module->export_icon[$r] : $module->picto);
-									// Code of the export dataset / Code du dataset export
+									// Code of the export dataset
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
 									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
-									// Export Dataset Label / Libelle du dataset export
+									// Export Dataset Label
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
-									// Table of fields to export / Tableau des champ a exporter (cle=champ, valeur=libelle)
+									// Table of fields to export
 									$this->array_export_fields[$i] = $module->export_fields_array[$r];
 									// Table of fields to be filtered (key=field, value1=data type) Verifies that the module has filters
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
@@ -283,7 +283,7 @@ class Export
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
 									// Table of entities requiring to abandon DISTINCT (key=entity, valeur=field id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
-									// Table of special field operations / Tableau des operations speciales sur champ
+									// Table of special field operations
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
 									// Array of examples
 									$this->array_export_examplevalues[$i] = (!empty($module->export_examplevalues_array[$r]) ? $module->export_examplevalues_array[$r] : null);

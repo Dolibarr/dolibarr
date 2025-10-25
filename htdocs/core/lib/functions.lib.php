@@ -5785,8 +5785,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			if ($type == 'main') {
 				continue;
 			}
-			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommended
-			if (file_exists($dirroot . '/' . $path . '/img/' . $picto)) {
+			// This consumes a lot of time, that's why enabling alternative dir like "custom" dir should be avoid
+			if (file_exists($dirroot . '/' . $path . '/img/' . $picto) && !empty($conf->file->dol_url_root)) {
 				$url = DOL_URL_ROOT . $conf->file->dol_url_root[$type];
 				break;
 			}
@@ -16431,12 +16431,12 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$contactList = '';
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
-					if (empty($conf->cache['contact'][$histo[$key]['contact_id']])) {
+					if (empty($conf->cache['contact'][$cid])) {
 						$contact = new Contact($db);
 						$contact->fetch($cid);
-						$conf->cache['contact'][$histo[$key]['contact_id']] = $contact;
+						$conf->cache['contact'][$cid] = $contact;
 					} else {
-						$contact = $conf->cache['contact'][$histo[$key]['contact_id']];
+						$contact = $conf->cache['contact'][$cid];
 					}
 
 					if ($contact) {
