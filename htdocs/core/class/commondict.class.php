@@ -68,4 +68,21 @@ abstract class CommonDict
 	 * @var ?int<0,1>	1 if the entry is active, 0 if not
 	 */
 	public $active;
+
+	/**
+	 * Empty function to prevent errors on call of this function. Must be overload if useful
+	 *
+	 * @param  string      		$sortorder    	Sort Order
+	 * @param  string      		$sortfield    	Sort field
+	 * @param  int         		$limit        	Limit the number of lines returned
+	 * @param  int         		$offset       	Offset
+	 * @param  string|string[]	$filter       	Filter as an Universal Search string.
+	 * 											Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      		$filtermode   	No more used
+	 * @return self[]|int<-1,-1>        	    int <0 if KO, array of pages if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	{
+		return -1;  // NOK because nothing done.
+	}
 }
