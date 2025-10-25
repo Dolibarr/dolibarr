@@ -205,8 +205,8 @@ class CUnits extends CommonDict
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = (int) $obj->rowid;
-				$this->code = (string) $obj->code;
-				$this->label = (string) $obj->label;
+				$this->code = $obj->code;
+				$this->label = $obj->label;
 				$this->short_label = $obj->short_label;
 				$this->scale = $obj->scale ? (int) $obj->scale : null;
 				$this->unit_type = $obj->unit_type;
