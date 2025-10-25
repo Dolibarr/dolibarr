@@ -2132,7 +2132,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Exclude
 				if (Adherent::STATUS_VALIDATED == $object->status) {
 					if ($user->hasRight('adherent', 'supprimer')) {
-						print '<a class="butAction" href="card.php?id='.((int) $object->id).'&action=exclude&token='.newToken().'">'.$langs->trans("Exclude")."</a></span>\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'exclude'], true).'">'.$langs->trans("Exclude")."</a></span>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Exclude").'</span>'."\n";
 					}
