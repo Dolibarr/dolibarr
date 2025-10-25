@@ -199,3 +199,56 @@ input.login__input {
 .social-login__icon:hover {
     transform: scale(1.5);
 }
+
+
+/**
+* RIGHT LOGIN FORM VARIANT
+* For screen bigger than 600px
+*/
+@media (min-width: 600px) {
+	:where(.login-form-right) {
+		/* Conteneur principal */
+	}
+
+	:where(.login-form-right) .login {
+		--login-form-offset: 100px;
+	}
+
+	:where(.login-form-right) .login__logo {
+		max-height: 150px;
+		margin-bottom: 30px;
+		max-width: 100%;
+		background-position: center;
+	}
+
+	:where(.login-form-right) input.login__input {
+		width: 100%;
+	}
+
+	:where(.login-form-right) .login-screen {
+		width: 450px;
+		min-height: 100%;
+		height: auto;
+		background: #fff;
+		box-shadow: 0px 0px 24px hsla(0, 0%, 0%, 0.9);
+	}
+
+	:where(.login-form-right) .login-page__container {
+		align-items: stretch;
+		justify-content: right;
+	}
+
+	:where(.login-form-right) .login-screen__content {
+		height: 100%;
+	}
+
+	/* Background shapes */
+	:where(.login-form-right) :is(
+	.login-screen__background__shape1,
+	.login-screen__background__shape2,
+	.login-screen__background__shape3,
+	.login-screen__background__shape4
+	) {
+		display: none;
+	}
+}
