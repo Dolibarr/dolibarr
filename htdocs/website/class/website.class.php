@@ -1279,6 +1279,11 @@ class Website extends CommonObject
 		$error = 0;
 
 		$pathtofile = dol_sanitizePathName($pathtofile);
+		if (!file_exists($pathtofile)) {
+			$this->error = 'The zip file "'.$pathtofile.'" is not found';
+			return -9;
+		}
+
 		$object = $this;
 		if (empty($object->ref)) {
 			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';

@@ -147,7 +147,8 @@ if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// The
 $searchkey = (($id && GETPOST((string) $id, 'alpha')) ? GETPOST((string) $id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 
 // Add a security test to avoid to get content of all tables
-if ($objecttmp !== null && !empty($objecttmp->module)) {
+$allowModules = ['bom'];
+if ($objecttmp !== null && !empty($objecttmp->module) && !in_array($objecttmp->module, $allowModules)) {
 	restrictedArea($user, $objecttmp->module, $id, $objecttmp->table_element, $objecttmp->element);
 } else {
 	restrictedArea($user, $objecttmp !== null ? $objecttmp->element : '', $id);
