@@ -331,3 +331,4 @@ ConfirmCloneTask=Do you want to clone this task?
 TaskBackToDraft=Task status is back to draft
 TaskValidated=Task validated
 EventStartOrEndDateNotDefined=Event start or end date not defined
+FormForPublicLeadRegistrationHasNotBeenEnabled=Form for public lead registration has not been enabled
