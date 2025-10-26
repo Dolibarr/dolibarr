@@ -1149,9 +1149,9 @@ if ($id > 0 || $ref) {
 						print '<td class="center nowraponall">';
 						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {
-								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
-								print ' &nbsp; ';
-								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
+							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
+							print ' &nbsp; ';
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
 						}
 
 						print '</td>';
