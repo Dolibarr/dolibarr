@@ -1659,7 +1659,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&amp;version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(DOL_VERSION);
 
 		print "<head>\n";
 
@@ -1754,7 +1754,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').(empty($user->id) ? '' : ('&amp;userid='.$user->id)).'&amp;entity='.$conf->entity;
 
-		$themeparam .= ($ext ? '&amp;'.$ext : '').'&amp;revision='.getDolGlobalInt("MAIN_IHM_PARAMS_REV");
+		$themeparam .= '&' .$ext . '&revision='.getDolGlobalInt("MAIN_IHM_PARAMS_REV");
 		if (GETPOSTISSET('dol_hide_topmenu')) {
 			$themeparam .= '&amp;dol_hide_topmenu='.GETPOSTINT('dol_hide_topmenu');
 		}
@@ -1800,18 +1800,18 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				}
 			}
 			if (!defined('DISABLE_JQUERY_JNOTIFY')) {
-				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css'.($ext ? '?'.$ext : '').'">'."\n"; // JNotify
+				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css' . $ext . '">'."\n"; // JNotify
 			}
 			if (!defined('DISABLE_SELECT2') && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {     // jQuery plugin "mutiselect", "multiple-select", "select2"...
 				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT');
-				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/css/'.$tmpplugin.'.css'.($ext ? '?'.$ext : '').'">'."\n";
+				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/css/'.$tmpplugin.'.css' . $ext . '">'."\n";
 			}
 		}
 
 		if (!defined('DISABLE_FONT_AWSOME')) {
 			print '<!-- Includes CSS for font awesome -->'."\n";
 			$fontawesome_directory = getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', '/theme/common/fontawesome-5');
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/all.min.css' . $ext . '">'."\n";
 		}
 
 		// Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
@@ -1889,7 +1889,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		// Custom CSS
 		if (getDolGlobalString('MAIN_IHM_CUSTOM_CSS')) {
 			// If a custom CSS was set, we add link to the custom css php file
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/custom.css.php'.($ext ? '?'.$ext : '').'&amp;revision='.getDolGlobalInt("MAIN_IHM_PARAMS_REV").'">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/custom.css.php?' . $ext . '&amp;revision='.getDolGlobalInt("MAIN_IHM_PARAMS_REV").'">'."\n";
 		}
 
 		// Output standard javascript links
@@ -1897,36 +1897,36 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// JQuery. Must be before other includes
 			print '<!-- Includes JS for JQuery -->'."\n";
 			if (defined('JS_JQUERY') && constant('JS_JQUERY')) {
-				print '<script nonce="'.getNonce().'" src="'.JS_JQUERY.'jquery.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.JS_JQUERY.'jquery.min.js?' . $ext . '"></script>'."\n";
 			} else {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js?' . $ext . '"></script>'."\n";
 			}
 			if (!defined('DISABLE_JQUERY_UI')) {
 				if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) {
-					print '<script nonce="' . getNonce() . '" src="' . JS_JQUERY_UI . 'jquery-ui.min.js' . ($ext ? '?' . $ext : '') . '"></script>' . "\n";
+					print '<script nonce="' . getNonce() . '" src="' . JS_JQUERY_UI . 'jquery-ui.min.js?' . $ext . '"></script>' . "\n";
 				} else {
-					print '<script nonce="' . getNonce() . '" src="' . DOL_URL_ROOT . '/includes/jquery/js/jquery-ui.min.js' . ($ext ? '?' . $ext : '') . '"></script>' . "\n";
+					print '<script nonce="' . getNonce() . '" src="' . DOL_URL_ROOT . '/includes/jquery/js/jquery-ui.min.js?' . $ext . '"></script>' . "\n";
 				}
 			}
 			// jQuery jnotify
 			if (!getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY')) {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js?' . $ext . '"></script>'."\n";
 			}
 			// Table drag and drop lines
 			if (empty($disableforlogin) && !defined('DISABLE_JQUERY_TABLEDND')) {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js' . $ext . '"></script>'."\n";
 			}
 			// Chart
 			if (empty($disableforlogin) && (!getDolGlobalString('MAIN_JS_GRAPH') || getDolGlobalString('MAIN_JS_GRAPH') == 'chart') && !defined('DISABLE_JS_GRAPH')) {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/chart.min.js?' . $ext . '"></script>'."\n";
 			}
 
 			// jQuery jeditable for Edit In Place features
 			if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !defined('DISABLE_JQUERY_JEDITABLE')) {
 				print '<!-- JS to manage editInPlace feature -->'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js?' . $ext . '"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js?' . $ext . '"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js?' . $ext . '"></script>'."\n";
 				print '<script>'."\n";
 				print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
 				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
@@ -1937,16 +1937,16 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
 				print 'var withInPlace = 300;'; // width in pixel for default string edit
 				print '</script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/editinplace.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/editinplace.js' . $ext . '"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js' . $ext . '"></script>'."\n";
 			}
 			if (!defined('DISABLE_SELECT2') && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
 				// jQuery plugin "mutiselect", "multiple-select", "select2", ...
 				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT');
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n"; // We include full because we need the support of containerCssClass
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js' . $ext . '"></script>'."\n"; // We include full because we need the support of containerCssClass
 			}
 			if (!defined('DISABLE_MULTISELECT')) {     // jQuery plugin "mutiselect" to select with checkboxes. Can be removed once we have an enhanced search tool
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/jquery.multi-select.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/jquery.multi-select.js' . $ext . '"></script>'."\n";
 			}
 		}
 
@@ -2000,8 +2000,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 			// Leaflet
 			if (getDolGlobalString('MAIN_USE_GEOPHP')) {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.js' . $ext . '"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.min.js' . $ext . '"></script>'."\n";
 			}
 
 			// JS forced by modules (relative url starting with /)
@@ -2038,7 +2038,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (getDolGlobalString('ALLOW_THEME_JS')) {
 			$theme_js = dol_buildpath('/theme/'.$conf->theme.'/'.$conf->theme.'.js', 0);
 			if (file_exists($theme_js)) {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.js' . $ext . '"></script>'."\n";
 			}
 		}
 

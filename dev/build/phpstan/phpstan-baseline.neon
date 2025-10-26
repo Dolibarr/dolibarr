@@ -11055,7 +11055,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 30
+			count: 8
 			path: ../../../htdocs/main.inc.php
 
 		-
