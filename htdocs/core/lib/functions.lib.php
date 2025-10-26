@@ -5785,8 +5785,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			if ($type == 'main') {
 				continue;
 			}
-			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommended
-			if (file_exists($dirroot . '/' . $path . '/img/' . $picto)) {
+			// This consumes a lot of time, that's why enabling alternative dir like "custom" dir should be avoid
+			if (file_exists($dirroot . '/' . $path . '/img/' . $picto) && !empty($conf->file->dol_url_root)) {
 				$url = DOL_URL_ROOT . $conf->file->dol_url_root[$type];
 				break;
 			}

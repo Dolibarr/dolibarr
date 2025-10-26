@@ -1827,7 +1827,7 @@ class FactureFournisseur extends CommonInvoice
 			dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
 			return 0;
 		}
-		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->ref_supplier)) {
+		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ', '/').'/', $this->ref_supplier)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("RefSupplier")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
 			return -1;
