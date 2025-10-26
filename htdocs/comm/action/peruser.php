@@ -2308,8 +2308,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style1 .= 'peruser_busy ';
 			}
 			foreach ($cases1[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style1 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style1 .= ' peruser_busy';
 				}
 				if (!empty($ev['css'])) {
 					$style1 .= $ev['css'].' ';
@@ -2328,8 +2328,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style2 .= 'peruser_busy ';
 			}
 			foreach ($cases2[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style2 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style2 .= ' peruser_busy';
 				}
 				if (!empty($ev['css'])) {
 					$style2 .= $ev['css'].' ';
@@ -2348,8 +2348,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style3 .= 'peruser_busy ';
 			}
 			foreach ($cases3[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style3 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style3 .= ' peruser_busy';
 				}
 				if (!empty($ev['css'])) {
 					$style3 .= $ev['css'].' ';
@@ -2368,8 +2368,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style4 .= 'peruser_busy ';
 			}
 			foreach ($cases4[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style4 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style4 .= ' peruser_busy';
 				}
 				if (!empty($ev['css'])) {
 					$style4 .= $ev['css'].' ';
