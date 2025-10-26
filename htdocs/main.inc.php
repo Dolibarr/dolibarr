@@ -73,12 +73,6 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
 /**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- *
  * @var ?string $php_session_save_handler
  * @var ?string $dolibarr_main_force_https
  */
@@ -147,12 +141,20 @@ require_once 'master.inc.php';
 /**
  * The master.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
+ * @var ?DoliDB $db                 May be null if NOREQUIREDB is defined
+ * @var ?HookManager $hookmanager   May be null if NOHOOKMANAGER is defined
+ * @var ?Translate $langs           May be null if NOREQUIRETRAN is defined
+ * @var ?User $user                 May be null if NOREQUIREUSER is defined
  * @var Societe $mysoc
  */
+
+'
+@phan-var-force Conf $conf
+@phan-var-force ?DoliDB $db
+@phan-var-force ?HookManager $hookmanager
+@phan-var-force ?Translate $langs
+@phan-var-force ?User $user
+';
 
 // Uncomment this and set session.save_handler = user to use local session storing
 // include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php
