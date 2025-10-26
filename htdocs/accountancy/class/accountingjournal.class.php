@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
+/* Copyright (C) 2017-2022	OpenDSI						<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024       Alexandre Janniaux <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -429,6 +430,7 @@ class AccountingJournal extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation as ad";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "asset as a ON a.rowid = ad.fk_asset";
 		$sql .= " WHERE a.entity IN (" . getEntity('asset', 0) . ')'; // We don't share object for accountancy, we use source object sharing
+		$sql .= " AND a.status > 0";
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
 		} elseif ($in_bookkeeping == 'notyet') {
@@ -524,7 +526,7 @@ class AccountingJournal extends CommonObject
 					$account_infos = $this->getAccountingAccountInfos($account);
 
 					if ($type == 'view') {
-						$account_to_show = length_accounta($account);
+						$account_to_show = length_accountg($account);
 						if (($account_to_show == "") || $account_to_show == 'NotDefined') {
 							$account_to_show = '<span class="error">' . $langs->trans("AssetInAccountNotDefined") . '</span>';
 						}
@@ -644,7 +646,7 @@ class AccountingJournal extends CommonObject
 									$account_infos = $this->getAccountingAccountInfos($account);
 
 									if ($type == 'view') {
-										$account_to_show = length_accounta($account);
+										$account_to_show = length_accountg($account);
 										if (($account_to_show == "") || $account_to_show == 'NotDefined') {
 											$account_to_show = '<span class="error">' . $langs->trans("AssetInAccountNotDefined") . '</span>';
 										}
@@ -986,7 +988,7 @@ class AccountingJournal extends CommonObject
 				self::$accounting_account_cached[$account] = array(
 					'found' => true,
 					'label' => $accountingaccount->label,
-					'code_formatted_1' => length_accounta(html_entity_decode($account)),
+					'code_formatted_1' => length_accountg(html_entity_decode($account)),
 					'label_formatted_1' => mb_convert_encoding(dol_trunc($accountingaccount->label, 32), 'ISO-8859-1'),
 					'label_formatted_2' => dol_trunc($accountingaccount->label, 32),
 				);
@@ -994,7 +996,7 @@ class AccountingJournal extends CommonObject
 				self::$accounting_account_cached[$account] = array(
 					'found' => false,
 					'label' => '',
-					'code_formatted_1' => length_accounta(html_entity_decode($account)),
+					'code_formatted_1' => length_accountg(html_entity_decode($account)),
 					'label_formatted_1' => '',
 					'label_formatted_2' => '',
 				);
