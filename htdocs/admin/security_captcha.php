@@ -208,6 +208,20 @@ if (isModEnabled('don')) {
 }
 print '</td></tr>';
 
+if (isModEnabled('recruitment')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Recruitment public form</td><td class="right" width="100">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+print '</td></tr>';
+
 print '</table>';
 // Set if a captcha is used on at least one place
 $showavailablecaptcha = 0;

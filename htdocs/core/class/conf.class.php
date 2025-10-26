@@ -75,11 +75,6 @@ class Conf extends stdClass
 	 */
 	public $multicompany;
 
-	//! To store module status of special module names
-	/**
-	 * @var ?mixed
-	 */
-	public $expedition_bon;
 	/**
 	 * @var ?mixed
 	 */

@@ -2211,7 +2211,7 @@ class Form
 		global $action;
 
 		// If no preselected user defined, we take current user
-		if ((is_numeric($selected) && ($selected < -3 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
+		if ((is_numeric($selected) && ($selected < -4 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
 			$selected = $user->id;
 		}
 
@@ -2384,6 +2384,18 @@ class Form
 						'id' => -2,
 						'label' => '-- ' . $langs->trans("Everybody") . ' --',
 						'labelhtml' => '-- ' . $langs->trans("Everybody") . ' --',
+						'color' => '',
+						'picto' => ''
+					);
+				}
+				if ($showalso == 4) {
+					$out .= '<option value="-4"' . ((in_array(-4, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("AllProjectContacts") . ' --</option>' . "\n";
+
+					$outarray[-4] = '-- ' . $langs->trans("AllProjectContacts") . ' --';
+					$outarray2[-4] = array(
+						'id' => -4,
+						'label' => '-- ' . $langs->trans("AllProjectContacts") . ' --',
+						'labelhtml' => '-- ' . $langs->trans("AllProjectContacts") . ' --',
 						'color' => '',
 						'picto' => ''
 					);
@@ -3029,7 +3041,7 @@ class Form
 		if (!$forcecombo) {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$events = array();
-			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("PRODUIT_USE_SEARCH_TO_SELECT"));
+			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("BOM_USE_SEARCH_TO_SELECT"));
 		}
 
 		$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
@@ -4230,7 +4242,7 @@ class Form
 						$outvallabel .= ' ' . $langs->transnoentities("Units");
 					}
 
-					if ($objp->quantity > 1) {
+					if ($objp->quantity != 1) {
 						$optlabel .= " (" . price($objp->unitprice * (getDolGlobalString('DISPLAY_DISCOUNTED_SUPPLIER_PRICE') ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency) . "/" . $langs->trans("Unit") . ")"; // Do not use strtolower because it breaks utf8 encoding
 						$outvallabel .= " (" . price($objp->unitprice * (getDolGlobalString('DISPLAY_DISCOUNTED_SUPPLIER_PRICE') ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency) . "/" . $langs->transnoentities("Unit") . ")"; // Do not use strtolower because it breaks utf8 encoding
 					}
@@ -9078,6 +9090,7 @@ class Form
 		if ($prefixforautocompletemode == 'product') {
 			$prefixforautocompletemode = 'produit';
 		}
+
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode) . '_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this) . "::selectForForms filter=" . $filter, LOG_DEBUG);
@@ -9356,6 +9369,79 @@ class Form
 		if ($outputmode) {
 			return $outarray;
 		}
+		return $out;
+	}
+
+	/**
+	 * Generates a set of HTML radio inputs from an array of key-value items.
+	 *
+	 * @param string $htmlName Name of the HTML input group
+	 * @param array<string, string|array{label: string,value?: string|int,attr?: array<string, string|int|bool|null>, unescapedAttr?: string[],attrLabel?: array<string, string|int|bool|null>,unescapedAttrLabel?: string[],disabled?: bool,css?: string,labelIsHtml?: bool}> $radioItems Array of items in the form key => label or key => array of item properties
+	 * @param string|int $selected Preselected key for selection.
+	 * @param array<string, array<string, string|int|bool|null>|string|bool> $moreGlobalParams Additional global parameters applied to all items (e.g., attributes)
+	 *
+	 * @return string HTML string containing all radio inputs wrapped in <label> tags
+	 */
+	public static function radio($htmlName, $radioItems, $selected = '', $moreGlobalParams = [])
+	{
+		// Default parameters for each radio input
+		$defaultParams = [
+			'disabled' => false,
+			'attr' => [
+				'type' => 'radio',
+				'name' => $htmlName,
+			],
+			'unescapedAttr' => [],
+			'attrLabel' => [],
+			'unescapedAttrLabel' => [],
+			'labelIsHtml' => false
+		];
+
+		// Merge global parameters with defaults
+		$params = array_merge_recursive_distinct($defaultParams, $moreGlobalParams);
+
+		$out = '';
+		if (!empty($radioItems)) {
+			foreach ($radioItems as $key => $item) {
+				// Normalize item to array structure if it's a simple string
+				if (!is_array($item)) {
+					$item = [
+						'attr' => [
+							'value' => $key,
+						],
+						'label' => $item
+					];
+				}
+
+				// Default properties for individual item
+				$defaultItem = [
+					'attr' => [
+						'value' => !isset($item['attr']['value']) ? $key : '',
+					],
+					'label' => '',
+				];
+
+				// Merge defaults with global params and item-specific properties
+				$defaultItem = array_merge_recursive_distinct($params, $defaultItem);
+				$item = array_merge_recursive_distinct($defaultItem, $item);
+
+				// Determine if this radio should be checked
+				if ((is_array($selected) && in_array($item['attr']['value'], $selected, true)) || $selected === $item['attr']['value']) {
+					$item['attr']['checked'] = true;
+				}
+
+				// Build HTML attributes for input and label
+				$inputAttributes = implode(' ', commonHtmlAttributeBuilder($item['attr'], $item['unescapedAttr']));
+				$labelAttributes = implode(' ', commonHtmlAttributeBuilder($item['attrLabel'], $item['unescapedAttrLabel']));
+
+				// prevent accidental Xss todo : escape $item['label'] but html friendly compatible
+				$text = $item['labelIsHtml'] ? $item['label'] : htmlspecialchars($item['label'], ENT_QUOTES | ENT_SUBSTITUTE);
+
+				// Generate HTML
+				$out .= '<label ' . $labelAttributes . '><input ' . $inputAttributes . ' /> ' . $text . '</label> ';
+			}
+		}
+
 		return $out;
 	}
 
@@ -10753,19 +10839,8 @@ class Form
 				}
 			}
 
-			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
-			// accesskey is for Mac:               CTRL + key for all browsers
-			$stringforfirstkey = $langs->trans("KeyboardShortcut");
-			if ($conf->browser->name == 'chrome') {
-				$stringforfirstkey .= ' ALT +';
-			} elseif ($conf->browser->name == 'firefox') {
-				$stringforfirstkey .= ' ALT + SHIFT +';
-			} else {
-				$stringforfirstkey .= ' CTL +';
-			}
-
-			$previous_ref = $object->ref_previous ? '<a accesskey="p" alt="'.dol_escape_htmltag($langs->trans("Previous")).'" title="' . $stringforfirstkey . ' p" class="classfortooltip reposition" href="' . $navurl . '?' . $paramid . '=' . urlencode($object->ref_previous) . $moreparam . '"><i class="fa fa-chevron-left"></i></a>' : '<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
-			$next_ref = $object->ref_next ? '<a accesskey="n" alt="'.dol_escape_htmltag($langs->trans("Next")).'" title="' . $stringforfirstkey . ' n" class="classfortooltip reposition" href="' . $navurl . '?' . $paramid . '=' . urlencode($object->ref_next) . $moreparam . '"><i class="fa fa-chevron-right"></i></a>' : '<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
+			$previous_ref = $object->ref_previous ? '<a accesskey="p" alt="'.dol_escape_htmltag($langs->trans("Previous")).'" title="' . $conf->browser->stringforfirstkey . ' p" class="classfortooltip reposition" href="' . $navurl . '?' . $paramid . '=' . urlencode($object->ref_previous) . $moreparam . '"><i class="fa fa-chevron-left"></i></a>' : '<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
+			$next_ref = $object->ref_next ? '<a accesskey="n" alt="'.dol_escape_htmltag($langs->trans("Next")).'" title="' . $conf->browser->stringforfirstkey . ' n" class="classfortooltip reposition" href="' . $navurl . '?' . $paramid . '=' . urlencode($object->ref_next) . $moreparam . '"><i class="fa fa-chevron-right"></i></a>' : '<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 		}
 
 		//print "xx".$previous_ref."x".$next_ref;
