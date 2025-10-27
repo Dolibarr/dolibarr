@@ -60,7 +60,7 @@ parameters:
 	checkMaybeUndefinedVariables: true
 	checkNullables: false
 	checkThisOnly: true
-	checkUnionTypes: false
+	checkUnionTypes: true
 	checkExplicitMixedMissingReturn: true
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
