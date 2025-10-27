@@ -221,6 +221,8 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+/** @var array<string,mixed>|int<0,0> $search_array_options */
+'@phan-var-force array<string,mixed>|int<0,0> $search_array_options';
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
