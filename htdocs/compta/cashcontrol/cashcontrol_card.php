@@ -355,7 +355,6 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 			$sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
 			$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-			$sql .= " AND f.paye = 1";
 			$sql .= " AND p.entity IN (".getEntity('facture').")";
 			if ($key == 'cash') {
 				$sql .= " AND cp.code = 'LIQ'";
