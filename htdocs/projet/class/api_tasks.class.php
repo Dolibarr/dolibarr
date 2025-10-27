@@ -3,7 +3,7 @@
  * Copyright (C) 2016   	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025   JK							<jessicakowal69@gmail.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -766,136 +766,6 @@ class Tasks extends DolibarrApi
 		return $object;
 	}
 
-
-	 /**  ME
-     * Get contacts of given task
-     *
-     * Return an array with contact information
-     *
-     * @param int    $id     ID of task
-     * @param string $type   Type of the contact
-     * @return array         Array with cleaned properties
-     *
-     * @url GET {id}/contacts
-     *
-     * @throws RestException
-     */
-
-	 public function getContacts($id, $type = '')
-    {
-        if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
-            throw new RestException(403);
-        }
-
-        $result = $this->task->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Task not found');
-        }
-
-        if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
-            throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        $contacts = $this->task->liste_contact(-1, 'external', 0, $type);
-        $socpeoples = $this->task->liste_contact(-1, 'internal', 0, $type);
-
-        $contacts = array_merge($contacts, $socpeoples);
-
-        return $this->_cleanObjectDatas($contacts);
-    }
-
-	 /**
-     * Adds a contact to a task
-     *
-     * @param int    $id             Task ID
-     * @param int    $fk_socpeople   Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
-     * @param string $type_contact   Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
-     * @param string $source         external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
-     * @param int    $notrigger      Disable all triggers
-     *
-     * @url POST {id}/contacts
-     *
-     * @return object
-     *
-     * @throws RestException 304
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 500 System error
-     */
-    public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
-    {
-        if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-            throw new RestException(403);
-        }
-        
-        $result = $this->task->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Task not found');
-        }
-
-        if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
-            throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        $result = $this->task->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
-        if ($result <= 0) {
-            throw new RestException(500, 'Error : '.$this->task->error);
-        }
-
-        $result = $this->task->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Task not found');
-        }
-
-        return $this->_cleanObjectDatas($this->task);
-    }
-
-
-	  /**
-     * Delete a contact type of given task
-     *
-     * @param int    $id         Id of task to update
-     * @param int    $contactid  Row key of the contact in the array contact_ids.
-     * @param string $type       Type of the contact (BILLING, SHIPPING, CUSTOMER).
-     * @return Object            Object with cleaned properties
-     *
-     * @url DELETE {id}/contacts/{contactid}/{type}
-     *
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 500 System error
-     */
-    public function deleteContact($id, $contactid, $type)
-    {
-        if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-            throw new RestException(403);
-        }
-
-        $result = $this->task->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Task not found');
-        }
-
-        if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
-            throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        foreach (array('internal', 'external') as $source) {
-            $contacts = $this->task->liste_contact(-1, $source);
-
-            foreach ($contacts as $contact) {
-                if ($contact['id'] == $contactid && $contact['code'] == $type) {
-                    $result = $this->task->delete_contact($contact['rowid']);
-                    if (!$result) {
-                        throw new RestException(500, 'Error when deleted the contact');
-                    }
-                    break 2;
-                }
-            }
-        }
-
-        return $this->_cleanObjectDatas($this->task);
-    }
 
 	// \todo
 	// getSummaryOfTimeSpent

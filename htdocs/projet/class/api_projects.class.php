@@ -4,7 +4,6 @@
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025       JK         <jessicakowal69@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -426,7 +425,7 @@ class Projects extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->project);
-	} 
+	}
 
 	/**
 	 * Delete a contact type of given project
@@ -525,7 +524,7 @@ class Projects extends DolibarrApi
 	 */
 	public function getRoles($id, $userid = 0)
 	{
-				if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -901,194 +900,6 @@ class Projects extends DolibarrApi
 	}
 
 
-
-	/** ME */
-	/**
- * Get contacts of given project
- *
- * Return an array with contact information
- *
- * @param int    $id     ID of project
- * @param string $type   Type of the contact
- * @return array         Array with cleaned properties
- *
- * @url GET {id}/contacts
- *
- * @throws RestException
- */
-
-	public function getContacts($id, $type = '')
-{
-    if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
-        throw new RestException(403);
-    }
-
-    $result = $this->project->fetch($id);
-    if (!$result) {
-        throw new RestException(404, 'Project not found');
-    }
-
-    if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    }
-
-    $contacts = $this->project->liste_contact(-1, 'external', 0, $type);
-    $socpeoples = $this->project->liste_contact(-1, 'internal', 0, $type);
-
-    $contacts = array_merge($contacts, $socpeoples);
-
-    return $this->_cleanObjectDatas($contacts);
-} 
-
-/**
- * Adds a contact to a project
- *
- * @param int    $id             Project ID
- * @param int    $fk_socpeople   Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
- * @param string $type_contact   Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
- * @param string $source         external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
- * @param int    $notrigger      Disable all triggers
- * @param array  $affect_to_tasks Array of task IDs to also add the contact to (empty array = all tasks, null = no tasks)
- *
- * @url POST {id}/contacts
- *
- * @return object
- *
- * @throws RestException 304
- * @throws RestException 401
- * @throws RestException 404
- * @throws RestException 500 System error
- */
-
-public function addContactjess($id, $fk_socpeople, $type_contact, $source, $notrigger = 0, $affect_to_tasks = null)
-{
-    if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-        throw new RestException(403);
-    }
-    
-    $result = $this->project->fetch($id);
-    if (!$result) {
-        throw new RestException(404, 'Project not found');
-    }
-
-    if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    }
-
-    // Ajouter le contact au projet
-    $result = $this->project->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
-    if ($result <= 0) {
-        throw new RestException(500, 'Error : '.$this->project->error.'result :'.$result);
-    }
-
-    // Si demandé, ajouter le contact aux tâches
-    if ($affect_to_tasks !== null) {
-        $this->project->getLinesArray(DolibarrApiAccess::$user);
-        
-        foreach ($this->project->lines as $task) {
-            // Si $affect_to_tasks est vide, on affecte à toutes les tâches
-            // Sinon, on vérifie si la tâche est dans la liste
-            if (empty($affect_to_tasks) || in_array($task->id, $affect_to_tasks)) {
-                $task->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
-            }
-        }
-    }
-
-    $result = $this->project->fetch($id);
-    if (!$result) {
-        throw new RestException(404, 'Project not found');
-    }
-
-    return $this->_cleanObjectDatas($this->project);
-}
-/**
- * Delete a contact type of given project
- *
- * @param int    $id         Id of project to update
- * @param int    $contactid  Row key of the contact in the array contact_ids.
- * @param string $type       Type of the contact (BILLING, SHIPPING, CUSTOMER).
- * @return Object            Object with cleaned properties
- *
- * @url DELETE {id}/contact/{contactid}/{type}
- *
- * @throws RestException 401
- * @throws RestException 404
- * @throws RestException 500 System error
- */
-public function deleteContactjess($id, $contactid, $type)
-{
-    if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-        throw new RestException(403);
-    }
-
-    $result = $this->project->fetch($id);
-    if (!$result) {
-        throw new RestException(404, 'Project not found');
-    }
-
-    if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    }
-
-    foreach (array('internal', 'external') as $source) {
-        $contacts = $this->project->liste_contact(-1, $source);
-
-        foreach ($contacts as $contact) {
-            if ($contact['id'] == $contactid && $contact['code'] == $type) {
-                $result = $this->project->delete_contact($contact['rowid']);
-                if (!$result) {
-                    throw new RestException(500, 'Error when deleted the contact');
-                }
-                break 2;
-            }
-        }
-    }
-
-    return $this->_cleanObjectDatas($this->project);
-}
-
-/**
- * Get timespent of a project (from all its tasks)
- *
- * @param int   $id         ID of project
- * @return array            Array of timespent objects
- *
- * @url GET {id}/timespent
- *
- * @throws RestException
- */
-
-public function getTimespent($id)
-{
-    if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
-        throw new RestException(403);
-    }
-
-    $result = $this->project->fetch($id);
-    if (!$result) {
-        throw new RestException(404, 'Project not found');
-    }
-
-    if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    }
-
-   
-    $this->project->getLinesArray(DolibarrApiAccess::$user);
-    $allTimespent = array();
-
-    foreach ($this->project->lines as $task) {
-        
-         $allTimespent[] = $task->getSummaryOfTimeSpent();
-		//var_dump($taskTimespent);
-        //foreach ($taskTimespent as $time) {
-           // $this->_cleanObjectDatas($time);
-			
-        //}
-    }
-
-    return $allTimespent;
-}
 	// TODO
 	// getSummaryOfTimeSpent
 }
