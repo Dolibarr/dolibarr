@@ -405,7 +405,7 @@ class Warehouses extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				$api_products_static = new Products($this->db);
+				$api_products_static = new Products();
 				if ($api_products_static->get($obj->rowid, $includestockdata, $includesubproducts, $includeparentid, $includetrans)) {
 					$obj_ret[] = $this->_filterObjectProperties($api_products_static->product, $properties);
 				}
@@ -414,8 +414,11 @@ class Warehouses extends DolibarrApi
 		} else {
 			throw new RestException(500, 'Error when retrieve warehouse product list : '.$this->db->lasterror());
 		}
+
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
+			//this query will return total warehouses with the filters given
+			$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 			$totalsResult = $this->db->query($sqlTotals);
 			$total = $this->db->fetch_object($totalsResult)->total;
 
