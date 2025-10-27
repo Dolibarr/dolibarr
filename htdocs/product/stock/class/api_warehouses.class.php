@@ -20,7 +20,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/api_products.class.php';
 
 /**
  * API class for warehouses
@@ -358,11 +358,18 @@ class Warehouses extends DolibarrApi
 	 *
 	 * @since	23.0.0	Initial implementation
 	 *
-	 * @param 	int		$id			warehouse ID
-	 * @param 	int		$limit		Limit for list
-	 * @return 	array    			Array of product in warehouse
-	 * @phan-return array<string{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
-	 * @phpstan-return array<string{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
+	 * @param 	int		$id					warehouse ID
+	 * @param 	int		$limit				Limit for list
+	 * @param	int		$includestockdata	1=Load also information about stock (slower), 0=No stock data (faster) (default)
+	 * @param	bool	$includesubproducts Load information about subproducts
+	 * @param	bool	$includeparentid    Load also ID of parent product (if product is a variant of a parent product)
+	 * @param	bool	$includetrans		Load also the translations of product label and description
+	 * @param 	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @return 	array   					Array of product in warehouse
+	 *
+	 * @phan-return Product[]
+	 * @phpstan-return Product[]
 	 *
 	 * @url GET /{id}/products
 	 *
@@ -371,54 +378,60 @@ class Warehouses extends DolibarrApi
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 Internal Server Error
 	 *
-		*/
-	public function listProducts($id = 0, $limit = 100)
+	*/
+	public function listProducts($id = 0, $limit = 100, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false, $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
 		}
-		if ($id == 0) {
+		if ((int) $id == 0) {
 			throw new RestException(400, 'No warehouse with id=0 can exist');
 		}
 		$existsresult = $this->warehouse->fetch($id);
 		if (!$existsresult) {
 			throw new RestException(404, 'warehouse not found');
 		}
+		$obj_ret = array();
 
-		$sql = "SELECT p.rowid, p.ref, p.label, p.fk_product_type,";
-		$sql.= " p.price, p.price_ttc, p.entity, p.pmp, ps.reel, (ps.reel * p.pmp) as reelpmp, (ps.reel * p.price) as reelprice";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
-		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".((int) $id);
-		$sql.= " ORDER BY p.ref DESC";
+		$sql.= " WHERE ps.fk_entrepot =".((int) $id);
+		$sql.= " ORDER BY p.rowid ASC";
 		$sql .= $this->db->plimit($limit);
 
 		$result = $this->db->query($sql);
-		$line = array();
 		if ($result) {
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				$line[$i] = array();
-				$line[$i]['rowid'] =  $obj->rowid;
-				$line[$i]['ref'] =  $obj->ref;
-				$line[$i]['label'] = $obj->label;
-				$line[$i]['fk_product_type'] = $obj->fk_product_type;
-				$line[$i]['price'] = $obj->price;
-				$line[$i]['price_ttc'] = $obj->price_ttc;
-				$line[$i]['entity'] = $obj->entity;
-				$line[$i]['pmp'] = $obj->pmp;
-				$line[$i]['reel'] = $obj->reel;
-				$line[$i]['reelpmp'] = $obj->reelpmp;
-				$line[$i]['reelprice'] = $obj->reelprice;
-
+				$api_products_static = new Products($this->db);
+				if ($api_products_static->get($obj->rowid, $includestockdata, $includesubproducts, $includeparentid, $includetrans)) {
+					$obj_ret[] = $this->_filterObjectProperties($api_products_static->product, $properties);
+				}
 				$i++;
 			}
 		} else {
 			throw new RestException(500, 'Error when retrieve warehouse product list : '.$this->db->lasterror());
 		}
-		return $line;
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
+		return $obj_ret;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
