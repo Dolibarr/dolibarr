@@ -7337,13 +7337,6 @@ class Product extends CommonObject
 		}
 		return $products;
 	}
-
-
-	
-
-
-
-
 }
 
 /**
@@ -7354,4 +7347,3 @@ class ProductService extends Product
 {
 	public $picto = 'service';
 }
-

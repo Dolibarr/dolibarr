@@ -4,7 +4,7 @@
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
- * Copyright (C) 2025		Kowal Jessica			jessicakowal69@gmail.com
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -2172,141 +2172,6 @@ class Products extends DolibarrApi
 		return $obj_ret;
 	}
 
-	/**
- * Get contacts of a given product
- *
- * Return an array with contact information
- *
- * @param	int		$id			ID of product
- * @param	string	$type		Type of the contact ('BILLING', 'SHIPPING', 'CUSTOMER', ...)
- * @return	array				Array of contacts
- *
- * @url	GET {id}/contacts
- *
- * @throws	RestException
- */
-public function getContacts($id, $type = '')
-{
-    if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
-        throw new RestException(403);
-    }
-
-    $result = $this->product->fetch($id);
-    if (!$result) {
-        throw new RestException(404, 'Product not found');
-    }
-
-    if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    }
-
-	  // Récupérer les contacts externes et internes
-    $contacts = $this->product->liste_contact(-1, 'external', 0, $type);
-    $socpeoples = $this->product->liste_contact(-1, 'internal', 0, $type);
-
-    $contacts = array_merge($contacts, $socpeoples);
-
-    return $contacts;
-}
-
-/**
- * Add a contact type of given product
- *
- * @param int    $id             Id of product to update
- * @param int    $contactid      Id of contact to add
- * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
- * @param string $source         external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
- * @param int    $notrigger      Disable all triggers
- * @return array
- *
- * @url	POST {id}/contact/{contactid}/{type}
- *
- * @throws RestException 401
- * @throws RestException 404
- */
-public function postContact($id, $contactid, $type, $source = "external", $notrigger = 0)
-{
-    if (!DolibarrApiAccess::$user->hasRight('produit', 'creer')) {
-        throw new RestException(403);
-    }
-
-    $result = $this->product->fetch($id);
-    if (!$result) {
-        throw new RestException(404, 'Product not found');
-    }
-
-    if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    }
-
-    $result = $this->product->add_contact($contactid, $type, $source, $notrigger);
-
-    if ($result < 0) {
-        throw new RestException(500, 'Error when added the contact');
-    }
-
-    if ($result == 0) {
-        throw new RestException(304, 'contact already added');
-    }
-
-    return array(
-        'success' => array(
-            'code' => 200,
-            'message' => 'Contact linked to the product'
-        )
-    );
-}
-
-/**
- * Unlink a contact type of given product
- *
- * @param int    $id             Id of product to update
- * @param int    $contactid      Id of contact
- * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
- *
- * @url	DELETE {id}/contact/{contactid}/{type}
- *
- * @return array
- *
- * @throws RestException 401
- * @throws RestException 404
- * @throws RestException 500 System error
- */
-public function deleteContact($id, $contactid, $type)
-{
-    if (!DolibarrApiAccess::$user->hasRight('produit', 'creer')) {
-        throw new RestException(403);
-    }
-
-    $result = $this->product->fetch($id);
-    if (!$result) {
-        throw new RestException(404, 'Product not found');
-    }
-
-    if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    }
-
-    foreach (array('internal', 'external') as $source) {
-        $contacts = $this->product->liste_contact(-1, $source);
-        foreach ($contacts as $contact) {
-            if ($contact['id'] == $contactid && $contact['code'] == $type) {
-                $result = $this->product->delete_contact($contact['rowid']);
-
-                if (!$result) {
-                    throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
-                }
-            }
-        }
-    }
-
-    return array(
-        'success' => array(
-            'code' => 200,
-            'message' => 'Contact unlinked from product'
-        )
-    );
-}
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensitive object data
@@ -2478,11 +2343,4 @@ public function deleteContact($id, $contactid, $type)
 
 		return $this->_cleanObjectDatas($this->product);
 	}
-
-	
-
-
-
-
-
 }
