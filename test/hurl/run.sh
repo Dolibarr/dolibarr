@@ -1,4 +1,6 @@
 #!/bin/bash
+# Script to run unit tests on API with hurl
+#
 
 if [[ -z ${DOLIHOST+x} ]]; then
 	DOLIHOST="localhost"
@@ -14,6 +16,12 @@ if [[ -z ${DOLISUBURL+x} ]]; then
 fi
 if [[ "" != "${DOLISUBURL}" ]]; then
 	hostnport="${hostnport}/${DOLISUBURL}"
+fi
+
+echo "----- Run hurl test on APIs ---"
+if ! command -v hurl &> /dev/null; then
+	echo The command hurl must be available.
+	exit 1
 fi
 
 echo "First we run tests that do not require authentication"

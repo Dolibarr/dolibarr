@@ -126,6 +126,7 @@ print $langs->trans("CompanyInitialKey").'</td><td>';
 print $block_static->getSignature();
 print '</td></tr>';
 
+/*
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
@@ -142,6 +143,7 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 	print '</td></tr>';
 }
+*/
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("BlockedLogDisableNotAllowedForCountry").'</td>';

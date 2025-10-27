@@ -1010,16 +1010,8 @@ if ($type == 'sub') {
 }
 
 if (empty($socid)) {
-	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
-		$stringforfirstkey .= ' CTL +';
-	}
-	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
-	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
+	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $conf->browser->stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
+	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $conf->browser->stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
 	$moreforfilter .= <<<SCRIPT
 <script type="text/javascript">
 	jQuery(document).ready(function() {

@@ -900,6 +900,8 @@ class FormSetupItem
 			$out .= $this->generateInputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out .= $this->generateInputFieldSelect();
+		} elseif ($this->type == 'radio') {
+			$out .= $this->generateInputFieldRadio();
 		} elseif ($this->type == 'selectUser') {
 			$out .= $this->generateInputFieldSelectUser();
 		} elseif ($this->type == 'textarea') {
@@ -911,10 +913,11 @@ class FormSetupItem
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
 				$input = $this->fieldParams['input'] ?? array();
-				$revertonoff = !empty($this->fieldParams['revertonoff']) ? 1 : 0;
-				$forcereload = !empty($this->fieldParams['forcereload']) ? 1 : 0;
+				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
+				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
+				$suffixarray = array('ifoff' => empty($this->fieldParams['alertifoff']) ? '' : '_red', 'ifon' => empty($this->fieldParams['alertifon']) ? '' : '_red');
 
-				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload);
+				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, $suffixarray);
 			} else {
 				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 			}
@@ -1167,7 +1170,6 @@ class FormSetupItem
 		return $this->form->multiselectarray($this->confKey, $this->fieldOptions, $TSelected, 0, 0, '', 0, 0, 'style="min-width:100px"');
 	}
 
-
 	/**
 	 * generateInputFieldSelect
 	 *
@@ -1181,6 +1183,23 @@ class FormSetupItem
 		}
 
 		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue, 0, 0, 0, '', 0, 0, 0, '', $this->cssClass);
+
+		return $s;
+	}
+
+	/**
+	 * generateInputFieldSelect
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldRadio()
+	{
+		$s = '';
+		if ($this->picto) {
+			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
+		}
+
+		$s .= $this->form->radio($this->confKey, $this->fieldOptions, $this->fieldValue, ['attrLabel' => ['class' => $this->cssClass]]);
 
 		return $s;
 	}
@@ -1663,6 +1682,23 @@ class FormSetupItem
 		}
 
 		$this->type = 'select';
+		return $this;
+	}
+
+
+	/**
+	 * Set type of input as a simple title. No data to store
+	 *
+	 * @param  ?array<string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
+	 * @return self
+	 */
+	public function setAsRadio($fieldOptions)
+	{
+		if (is_array($fieldOptions)) {
+			$this->fieldOptions = $fieldOptions;
+		}
+
+		$this->type = 'radio';
 		return $this;
 	}
 

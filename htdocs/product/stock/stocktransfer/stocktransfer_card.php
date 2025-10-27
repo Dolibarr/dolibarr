@@ -2,6 +2,7 @@
 /* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025          Pierre Ardoin            <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -884,7 +885,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print img_edit() . '</a>';
 				print '</td>';
 				print '<td class="right">';
-				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '">' . img_delete($langs->trans("Remove")) . '</a>';
+				// Ensure the delete line link embeds a CSRF token.
+				$deleteLineUrl = $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '&token=' . newToken();
+				print '<a href="' . $deleteLineUrl . '">' . img_delete($langs->trans("Remove")) . '</a>';
 				print '</td>';
 			}
 

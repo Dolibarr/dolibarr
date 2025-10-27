@@ -272,137 +272,72 @@ $checksumconcat = array();
 
 fputs($fp, '<dolibarr_unalterable_files version="'.$release.'">'."\n");
 
-// TODO Use this array to make the scan
+// Array of dir/files to include in the section
 $arrayofunalterablefiles = array(
-	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'files' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'files' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'files' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'files' => 'interfaces.class.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'files' => 'commontrigger.class.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'files' => 'receipt.php')
+	array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'file' => 'all', 'regextoinclude' => '(interfaces.class.php|commontrigger.class.php)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'file' => 'receipt.php')
 );
 
-$regextoinclude = '(\.php|\.sql)$';
-$regextoexclude = '';  // Exclude dirs
-$files = dol_dir_list(dirname(__FILE__).'/../../htdocs/blockedlog', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
-$dir = '';
-foreach ($files as $filetmp) {
-	$file = $filetmp['fullname'];
-	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-	$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
-	if ($newdir != $dir) {
+foreach ($arrayofunalterablefiles as $entry) {
+	if ($entry['file'] == 'all') {
+		$regextoinclude = $entry['regextoinclude'];
+		$regextoexclude = $entry['regextoexclude'];
+		$files = dol_dir_list($entry['dir'], 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
+		$dir = '';
+		foreach ($files as $filetmp) {
+			$file = $filetmp['fullname'];
+			$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+			$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
+			if ($newdir != $dir) {
+				if ($needtoclose) {
+					fputs($fp, '  </dir>'."\n");
+					$needtoclose = 0;
+				}
+				fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+				$dir = $newdir;
+				$needtoclose = 1;
+			}
+			if (filetype($file) == "file") {
+				$md5 = md5_file($file);
+				$checksumconcat[] = $md5;
+				fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+			}
+		}
 		if ($needtoclose) {
 			fputs($fp, '  </dir>'."\n");
 			$needtoclose = 0;
 		}
-		fputs($fp, '  <dir name="'.$newdir.'">'."\n");
-		$dir = $newdir;
-		$needtoclose = 1;
-	}
-	if (filetype($file) == "file") {
-		$md5 = md5_file($file);
-		$checksumconcat[] = $md5;
-		fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
-	}
-}
-if ($needtoclose) {
-	fputs($fp, '  </dir>'."\n");
-	$needtoclose = 0;
-}
-// Add the SQL file
-$regextoinclude = 'llx_blockedlog.*(\.php|\.sql)$';
-$regextoexclude = '';  // Exclude dirs
-$files = dol_dir_list(dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'files', 0, $regextoinclude, $regextoexclude, 'fullname');
-foreach ($files as $filetmp) {
-	$file = $filetmp['fullname'];
-	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-	$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
-	if ($newdir != $dir) {
+	} else {
+		$file = $entry['dir'].'/'.$entry['file'];
+		$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+		$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
+		if (!file_exists($file)) {
+			print "Error file ".$file." does not exists.";
+			exit(1);
+		}
+		if ($newdir != $dir) {
+			if ($needtoclose) {
+				fputs($fp, '  </dir>'."\n");
+				$needtoclose = 0;
+			}
+			fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+			$dir = $newdir;
+			$needtoclose = 1;
+		}
+		if (filetype($file) == "file") {
+			$md5 = md5_file($file);
+			$checksumconcat[] = $md5;
+			fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+		}
 		if ($needtoclose) {
 			fputs($fp, '  </dir>'."\n");
 			$needtoclose = 0;
 		}
-		fputs($fp, '  <dir name="'.$newdir.'">'."\n");
-		$dir = $newdir;
-		$needtoclose = 1;
 	}
-	if (filetype($file) == "file") {
-		$md5 = md5_file($file);
-		$checksumconcat[] = $md5;
-		fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
-	}
-}
-if ($needtoclose) {
-	fputs($fp, '  </dir>'."\n");
-	$needtoclose = 0;
-}
-// Add the trigger file
-$file = dirname(__FILE__).'/../../htdocs/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php';
-$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
-if ($newdir != $dir) {
-	if ($needtoclose) {
-		fputs($fp, '  </dir>'."\n");
-		$needtoclose = 0;
-	}
-	fputs($fp, '  <dir name="'.$newdir.'">'."\n");
-	$dir = $newdir;
-	$needtoclose = 1;
-}
-if (filetype($file) == "file") {
-	$md5 = md5_file($file);
-	$checksumconcat[] = $md5;
-	fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
-}
-if ($needtoclose) {
-	fputs($fp, '  </dir>'."\n");
-	$needtoclose = 0;
-}
-// Add the interfaces.class.php file
-$file = dirname(__FILE__).'/../../htdocs/core/class/interfaces.class.php';
-$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
-if ($newdir != $dir) {
-	if ($needtoclose) {
-		fputs($fp, '  </dir>'."\n");
-		$needtoclose = 0;
-	}
-	fputs($fp, '  <dir name="'.$newdir.'">'."\n");
-	$dir = $newdir;
-	//$needtoclose = 1;		// close will be done in next filethat is in same dir
-}
-if (filetype($file) == "file") {
-	$md5 = md5_file($file);
-	$checksumconcat[] = $md5;
-	fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
-}
-if ($needtoclose) {
-	fputs($fp, '  </dir>'."\n");
-	$needtoclose = 0;
-}
-// Add the commontrigger.class.php file
-$file = dirname(__FILE__).'/../../htdocs/core/class/commontrigger.class.php';
-$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
-if ($newdir != $dir) {
-	if ($needtoclose) {
-		fputs($fp, '  </dir>'."\n");
-		$needtoclose = 0;
-	}
-	fputs($fp, '  <dir name="'.$newdir.'">'."\n");
-	$dir = $newdir;
-	$needtoclose = 1;
-}
-
-$needtoclose = 1;	// This is the last file
-if (filetype($file) == "file") {
-	$md5 = md5_file($file);
-	$checksumconcat[] = $md5;
-	fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
-}
-if ($needtoclose) {
-	fputs($fp, '  </dir>'."\n");
-	$needtoclose = 0;
 }
 
 
