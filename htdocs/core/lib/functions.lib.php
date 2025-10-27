@@ -845,7 +845,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
- *  @phpstan-return ($check is 'array:int' ? numeric-string[] : ($check is 'array:az09' ? string[] : ($check is 'array:restricthtml' ? string[] : string|array<mixed>)))
+ *  @phpstan-return ($check is 'array:int' ? numeric-string[]|array{} : ($check is 'array:az09' ? string[] : ($check is 'array:restricthtml' ? string[] : string|array<mixed>)))
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
 {
