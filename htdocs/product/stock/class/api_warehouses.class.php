@@ -399,6 +399,20 @@ class Warehouses extends DolibarrApi
 		$sql.= " ORDER BY p.rowid ASC";
 		$sql .= $this->db->plimit($limit);
 
+
+		//this query will return total warehouses with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$i = 0;
@@ -417,8 +431,6 @@ class Warehouses extends DolibarrApi
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
-			//this query will return total warehouses with the filters given
-			$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 			$totalsResult = $this->db->query($sqlTotals);
 			$total = $this->db->fetch_object($totalsResult)->total;
 
