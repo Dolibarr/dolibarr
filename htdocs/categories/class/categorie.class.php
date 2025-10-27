@@ -1376,8 +1376,19 @@ class Categorie extends CommonObject
 
 		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
 
-		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', 1, 0, 1);		// Sort on full label like "Label 1 >> Sublabel a >> Subsublabel"
+		// Sort on fulllabel but taking into account position too
+		foreach ($this->cats as $key => $cat) {
+			$this->cats[$key]['sort_key'] = $cat['position'] . '|' . $cat['fulllabel'];
+		}
 
+		// Sort on the temporary key
+		$this->cats = dol_sort_array($this->cats, 'sort_key', 'asc', 1, 0, 1);
+
+		// Remove temporary key
+		foreach ($this->cats as $key => $cat) {
+			unset($this->cats[$key]['sort_key']);
+		}
+		
 		return $this->cats;
 	}
 
