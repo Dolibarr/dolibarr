@@ -359,7 +359,10 @@ class Warehouses extends DolibarrApi
 	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param 	int		$id					warehouse ID
+	 * @param	string	$sortfield			Sort field
+	 * @param	string	$sortorder			Sort order
 	 * @param 	int		$limit				Limit for list
+	 * @param	int		$page				Page number
 	 * @param	int		$includestockdata	1=Load also information about stock (slower), 0=No stock data (faster) (default)
 	 * @param	bool	$includesubproducts Load information about subproducts
 	 * @param	bool	$includeparentid    Load also ID of parent product (if product is a variant of a parent product)
@@ -379,7 +382,7 @@ class Warehouses extends DolibarrApi
 	 * @throws RestException 500 Internal Server Error
 	 *
 	*/
-	public function listProducts($id = 0, $limit = 100, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false, $properties = '', $pagination_data = false)
+	public function listProducts($id = 0, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false, $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
@@ -393,12 +396,10 @@ class Warehouses extends DolibarrApi
 		}
 		$obj_ret = array();
 
-		$sql = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."product_stock as ps";
-		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as t ON ps.fk_product = t.rowid";
 		$sql.= " WHERE ps.fk_entrepot =".((int) $id);
-		$sql.= " ORDER BY p.rowid ASC";
-		$sql .= $this->db->plimit($limit);
-
+		$sql.= " AND t.entity IN (".getEntity('stock').")";
 
 		//this query will return total warehouses with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
