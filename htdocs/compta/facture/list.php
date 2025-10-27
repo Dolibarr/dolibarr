@@ -176,6 +176,8 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array:int');
+// uncomment to dump type seen by phpstan during analyse
+// \PHPStan\dumpType($searchCategoryInvoiceList);
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
