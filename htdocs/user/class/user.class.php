@@ -794,7 +794,11 @@ class User extends CommonObject
 		// Load user->conf for user
 		$sql = "SELECT param, value FROM ".$this->db->prefix()."user_param";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
-		$sql .= " AND entity = ".($entity == -1 ? (int) $conf->entity : (int) $entity);
+		if ($entity < 0) {
+			$sql .= " AND entity IN (0, ".((int) $conf->entity).")"; // IN (0, x)
+		} else {
+			$sql .= " AND entity = ".((int) $entity); // 0 or x
+		}
 
 		//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
 		$resql = $this->db->query($sql);

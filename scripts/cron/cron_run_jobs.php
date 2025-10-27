@@ -75,23 +75,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+// Global variables
+$version = DOL_VERSION;
+$error = 0;
+
 // Check parameters
 if (!isset($argv[1]) || !$argv[1]) {
-	usageCron($path, $script_file);
+	usageCron($path, $script_file, $version);
 	exit(1);
 }
 $key = $argv[1];
 
 if (!isset($argv[2]) || !$argv[2]) {
-	usageCron($path, $script_file);
+	usageCron($path, $script_file, $version);
 	exit(1);
 }
 
 $userlogin = $argv[2];
-
-// Global variables
-$version = DOL_VERSION;
-$error = 0;
 
 $hookmanager->initHooks(array('cli'));
 
@@ -351,20 +351,26 @@ exit(0);
 /**
  * script cron usageCron
  *
- * @param string $path				Path
- * @param string $script_file		Filename
+ * @param 	string 	$path				Path
+ * @param 	string 	$script_file		Filename
+ * @param	string	$version			Version
  * @return void
  */
-function usageCron($path, $script_file)
+function usageCron($path, $script_file, $version)
 {
+	$now = dol_now();
+
+	print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
 	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid] [--force]\n";
+	print "\n";
 	print "The script return 0 when everything worked successfully.\n";
 	print "\n";
-	print "On Linux system, you can have cron jobs ran automatically by adding an entry into cron.\n";
-	print "For example, to run pending tasks each day at 3:30, you can add this line:\n";
+	print "On Linux system, you can have cron jobs ran automatically by adding an entry into cron file.\n";
+	print "For example, to run this script each day at 3:30, you can add this line:\n";
 	print "30 3 * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
-	print "For example, to run pending tasks every 5mn, you can add this line:\n";
+	print "For example, to run this script every 5mn, you can add this line:\n";
 	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
 	print "\n";
 	print "The option --force allow to bypass the check on date of execution so job will be executed even if date is not yet reached.\n";
+	print "\n";
 }

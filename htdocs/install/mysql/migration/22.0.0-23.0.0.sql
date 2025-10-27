@@ -43,6 +43,8 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_T
 
 -- V23 migration
 
+UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
+
 ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_ticket ADD COLUMN note_public text after resolution;
@@ -114,6 +116,7 @@ ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_an
 
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
 ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
+ALTER TABLE llx_facture ADD COLUMN pos_print_counter integer DEFAULT 0;
 
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);

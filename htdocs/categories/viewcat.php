@@ -90,15 +90,15 @@ if ($id == "" && $label == "") {
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard', 'globalcard'));
 
-// Security check
-$result = restrictedArea($user, 'categorie', $id, '&category');
-
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
 }
+
+// Security check
+$result = restrictedArea($user, 'categorie', $object->id, '&category');
 
 $type = $object->type;
 if (is_numeric($type)) {
