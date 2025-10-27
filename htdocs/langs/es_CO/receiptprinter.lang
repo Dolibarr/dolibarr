@@ -1,12 +1,8 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Configuración del módulo ReceiptPrinter
 PrinterAdded=Se agregó la impresora %s
 TestSentToPrinter=Prueba enviada a la impresora %s
 ReceiptPrinter=Impresoras de recibos
-ReceiptPrinterDesc=Configuración de impresoras de recibos
-ReceiptPrinterProfileDesc=Descripción del perfil de la impresora de recibos
 ListPrinters=Lista de impresoras
-FromServerPointOfView=Desde el punto de vista del servidor web, este método debe ser accesible desde el servidor web en el que se aloja.
 SetupReceiptTemplate=Configuración de plantilla
 CONNECTOR_DUMMY=Impresora ficticia
 CONNECTOR_FILE_PRINT=Impresora local

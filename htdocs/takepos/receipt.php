@@ -7,6 +7,7 @@
  * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 202        Ferran Marcet      <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  *	\brief      Page to show a receipt.
  */
 
-// Include main (when fie in included into send.php, $action is set and main was already loaded)
+// Include main (when file in included into send.php, $action is set and main was already loaded)
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
@@ -58,6 +59,7 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
 $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
@@ -71,14 +73,20 @@ if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
  */
 
-top_htmlhead('', '', 1);
+top_htmlhead('', '', 2);
 
-if ((string) $place != '') {
+if ((string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
 	$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 	$sql .= " AND entity IN (".getEntity('invoice').")";
@@ -92,6 +100,7 @@ if ((string) $place != '') {
 $object = new Facture($db);
 $object->fetch($facid);
 
+print '<body>';
 
 // Record entry in blocked logs
 // DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
@@ -110,7 +119,6 @@ jQuery(document).ready(function () {
 });
 </script>";
 
-
 // Call to external receipt modules if exist
 $parameters = array();
 $hookmanager->initHooks(array('takeposfrontend'));
@@ -122,7 +130,7 @@ if (!empty($hookmanager->resPrint)) {
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
-<body>
+
 <style>
 .right {
 	text-align: right;
@@ -156,6 +164,7 @@ $constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $
 if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs, $object);
 	if (getDolGlobalString('TAKEPOS_HEADER')) {
 		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_HEADER'), $substitutionarray);
 	}
@@ -166,17 +175,44 @@ if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) 
 }
 ?>
 </p>
+
+<?php
+if ($object->status == Facture::STATUS_DRAFT) {
+	$canprintifnotvalidate = true;
+	$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
+	if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
+		//$customprinterallowed = false;	// Custom printer are allowed but information in template are mandatory
+		$canprintifnotvalidate = false;
+		//$orderprinterallowed = false;
+	}
+
+	if (!$canprintifnotvalidate && empty($facid)) {
+		print "Error: Printing ticket is not allowed when invoice is not validated/paid.";
+		exit;
+	}
+}
+?>
+
 <p class="right">
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
 if (getDolGlobalString('TAKEPOS_RECEIPT_NAME')) {
 	print getDolGlobalString('TAKEPOS_RECEIPT_NAME') . " ";
+} else {
+	print $langs->trans("TransactionID")." ";
 }
-if ($object->status == Facture::STATUS_DRAFT) {
-	print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));
+if ($object->status == Facture::STATUS_DRAFT || empty($facid) || GETPOST('specimen')) {
+	// Printing ticket is not allowed if invoice not yet validate.
+	// Reaching this code may happen for specimen or if a feature to validate invoice and print it before paying is implemented.
+	if (empty($facid) || GETPOST('specimen')) {
+		print 'Specimen';
+	} else {
+		print $object->ref;
+	}
 } else {
 	print $object->ref;
 }
+print '<br>'.$langs->trans("Terminal").' '.$object->pos_source;
 if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
@@ -188,7 +224,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
 }
-if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
+if (!getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
 	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 ?>
@@ -395,7 +431,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 }
 ?>
 </table>
-<div style="border-top-style: double;">
+
 <br>
 <br>
 <br>
@@ -404,6 +440,7 @@ $constFreeText = 'TAKEPOS_FOOTER'.(empty($_SESSION['takeposterminal']) ? '0' : $
 if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs, $object);
 	if (getDolGlobalString($constFreeText)) {
 		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
@@ -412,15 +449,19 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 	}
 	print $newfreetext;
 }
-?>
 
-<script type="text/javascript">
+if (!GETPOST('forcenoautoopen')) {
+	?>
+	<script type="text/javascript">
 	<?php
 	if ($facid) {
 		print 'window.print();';
 	} //Avoid print when is specimen
 	?>
-</script>
+	</script>
+	<?php
+}
 
-</body>
+print "</body>";
+?>
 </html>

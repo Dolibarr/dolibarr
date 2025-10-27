@@ -102,7 +102,6 @@ ProjectMustBeValidatedFirst=El proyecto debe ser validado primero
 TimeAlreadyRecorded=Este es el tiempo gastado ya registrado para esta tarea/día y el usuario%s
 NoUserAssignedToTheProject=No hay usuarios asignados a este proyecto.
 AssignTaskToUser=Asignar tarea a%s
-SelectTaskToAssign=Seleccione tarea para asignar ...
 ManageTasks=Usar proyectos para seguir tareas y/o informar el tiempo empleado (hojas de tiempo)
 ManageOpportunitiesStatus=Utilizar proyectos para seguir a clientes potenciales
 ProjectNbProjectByMonth=Nº de proyectos creados por mes.

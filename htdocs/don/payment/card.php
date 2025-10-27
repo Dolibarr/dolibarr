@@ -53,7 +53,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 // TODO Add rule to restrict access payment
-//$result = restrictedArea($user, 'facture', $id,'');
+//restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentDonation($db);
 if ($id > 0) {
@@ -99,6 +99,14 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment_card'
 $don = new Don($db);
 $form = new Form($db);
 
+// Message if donation not found
+if (empty($object->id)) {
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
+
 $h = 0;
 
 $head = array();
@@ -109,9 +117,7 @@ $h++;
 
 print dol_get_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment');
 
-/*
- * Confirm deleting of the payment
- */
+// Confirm deleting of the payment
 if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
@@ -156,6 +162,7 @@ if (isModEnabled("bank")) {
 
 print '</table>';
 
+print '<br>';
 
 /*
  * List of donations paid
@@ -237,7 +244,6 @@ if (empty($action)) {
 }
 
 print '</div>';
-
 
 
 llxFooter();

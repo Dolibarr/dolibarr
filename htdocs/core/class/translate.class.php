@@ -159,12 +159,12 @@ class Translate
 		if (!empty($langpart[1])) {	// If it's for a codetouse that is a long code xx_YY
 			// Array force long code from first part, even if long code is defined
 			$longforshort = array('ar' => 'ar_SA');
-			$longforshortexcep = array('ar_EG');
+			$longforshortexcep = array('ar_DZ', 'ar_EG', 'ar_IQ', 'ar_JO', 'ar_SY');
 			if (isset($longforshort[strtolower($langpart[0])]) && !in_array($codetouse, $longforshortexcep)) {
 				$srclang = $longforshort[strtolower($langpart[0])];
 			} elseif (!is_numeric($langpart[1])) {		// Second part YY may be a numeric with some Chrome browser
 				$srclang = strtolower($langpart[0]) . "_" . strtoupper($langpart[1]);
-				$longforlong = array('no_nb' => 'nb_NO');
+				$longforlong = array('no_nb' => 'nb_NO');	// When lang and code are inverted by browser
 				if (isset($longforlong[strtolower($srclang)])) {
 					$srclang = $longforlong[strtolower($srclang)];
 				}
@@ -256,7 +256,7 @@ class Translate
 	 */
 	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0, $forceloadifalreadynotfound = 0, &$tabtranslatedomain = [], $langkey = '')
 	{
-		global $conf, $db;
+		global $db;
 
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
@@ -482,8 +482,6 @@ class Translate
 	 */
 	public function loadFromDatabase($db)
 	{
-		global $conf;
-
 		$domain = 'database';
 
 		// Check parameters
@@ -675,7 +673,7 @@ class Translate
 				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
-					$str = preg_replace('/' . preg_quote($tmparray2[0]) . '/', $tmparray2[1], $str);
+					$str = preg_replace('/' . preg_quote($tmparray2[0], '/') . '/', $tmparray2[1], $str);
 				}
 			}
 
@@ -693,7 +691,6 @@ class Translate
 			}
 
 			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
-
 
 			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
 			// we want to keep '"' '<b>' '</b>' '<u>' '</u>' '<i>' '</i>' '<center> '</center>' '<strong' '</strong>' '<a ' '</a>' '<br>' '<span' '</span>' '< ' that are reliable HTML tags inside translation strings.
@@ -794,7 +791,7 @@ class Translate
 				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
-					$str = preg_replace('/' . preg_quote($tmparray2[0]) . '/', $tmparray2[1], $str);
+					$str = preg_replace('/' . preg_quote($tmparray2[0], '/') . '/', $tmparray2[1], $str);
 				}
 			}
 

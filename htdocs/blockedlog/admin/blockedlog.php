@@ -126,6 +126,7 @@ print $langs->trans("CompanyInitialKey").'</td><td>';
 print $block_static->getSignature();
 print '</td></tr>';
 
+/*
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
@@ -142,6 +143,7 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 	print '</td></tr>';
 }
+*/
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("BlockedLogDisableNotAllowedForCountry").'</td>';
@@ -178,7 +180,12 @@ print '<td class="titlefield">';
 print $langs->trans("ListOfTrackedEvents").'</td><td>';
 $arrayoftrackedevents = $block_static->trackedevents;
 foreach ($arrayoftrackedevents as $key => $val) {
-	print $key.' - '.$langs->trans($val).'<br>';
+	print $key.' - ';
+	if (is_array($val)) {
+		print $langs->trans($val['labelhtml']).'<br>';
+	} else {
+		print $langs->trans($val).'<br>';
+	}
 }
 
 print '</td></tr>';

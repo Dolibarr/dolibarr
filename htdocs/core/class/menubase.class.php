@@ -51,7 +51,7 @@ class Menubase
 	public $id;
 
 	/**
-	 * @var int Entity
+	 * @var ?int Entity
 	 */
 	public $entity;
 

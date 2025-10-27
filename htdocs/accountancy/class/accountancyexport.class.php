@@ -1412,14 +1412,14 @@ class AccountancyExport
 					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref;
+					$refInvoice = (string) $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref_supplier;
+					$refInvoice = (string) $invoice->ref_supplier;
 				}
 
 				$tab = array();
@@ -1501,15 +1501,15 @@ class AccountancyExport
 						$objectDirPath = '';
 						$objectFileName = dol_sanitizeFileName($line->doc_ref);
 						if ($line->doc_type == 'customer_invoice') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
 							}
 						} elseif ($line->doc_type == 'expense_report') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 							}
 						} elseif ($line->doc_type == 'supplier_invoice') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
 								'@phan-var-force FactureFournisseur $invoice';
 								/** @var FactureFournisseur $invoice */
 								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
@@ -1632,14 +1632,14 @@ class AccountancyExport
 					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref;
+					$refInvoice = (string) $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref_supplier;
+					$refInvoice = (string) $invoice->ref_supplier;
 				}
 
 				$tab = array();
@@ -1721,15 +1721,15 @@ class AccountancyExport
 						$objectDirPath = '';
 						$objectFileName = dol_sanitizeFileName($line->doc_ref);
 						if ($line->doc_type == 'customer_invoice') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
 							}
 						} elseif ($line->doc_type == 'expense_report') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 							}
 						} elseif ($line->doc_type == 'supplier_invoice') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
 								'@phan-var-force FactureFournisseur $invoice';
 								/** @var FactureFournisseur $invoice */
 								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;

@@ -5,7 +5,7 @@
  * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/salaries/info.php
+ *	\file       htdocs/salaries/virement_request.php
  *	\ingroup    salaries
- *	\brief      Page with info about salaries contribution
+ *	\brief      Page to request payment of a salary
  */
 
 // Load Dolibarr environment
@@ -220,9 +220,7 @@ if ($action == "delete" && $permissiontodelete) {
  * View
  */
 
-if (isModEnabled('project')) {
-	$formproject = new FormProjets($db);
-}
+$form = new Form($db);
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Info');
 $help_url = "";
@@ -268,7 +266,7 @@ if (isModEnabled('project')) {
 	if ($usercancreate) {
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
 		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
@@ -284,6 +282,11 @@ if (isModEnabled('project')) {
 }
 
 $morehtmlref .= '</div>';
+
+$totalpaid = $object->getSommePaiement();
+
+$object->totalpaid = $totalpaid;
+$object->alreadypaid = $totalpaid;	// Same then $totalpaid because there is no amount of credit note or deposits for salary payments.
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 

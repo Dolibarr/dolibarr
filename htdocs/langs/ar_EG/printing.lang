@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - printing
 PRINTGCP_AUTHLINK=توثيق
+GCP_Name=الاسم
 GCP_displayName=اسم العرض\n
 PRINTIPP_HOST=خادم الطباعة
+PRINTIPP_PORT=المنفذ
 PRINTIPP_USER=تسجيل دخول
 PRINTIPP_PASSWORD=كلمة السر

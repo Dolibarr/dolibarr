@@ -23,7 +23,10 @@ AllPropals=Усі пропозиції
 SearchAProposal=Пошук пропозиції
 NoProposal=Жодної пропозиції
 ProposalsStatistics=Статистика комерційних пропозицій
+NumberOfProposals=Кількість пропозицій
 NumberOfProposalsByMonth=Кількість по місяцях
+AmountOfProposals=Кількість пропозицій
+AmountOfProposalsHT=Кількість пропозицій (без ПДВ)
 AmountOfProposalsByMonthHT=Сума по місяцях (без податку)
 NbOfProposals=Кількість комерційних пропозицій
 ShowPropal=Показати пропозицію
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 тиждень
 AvailabilityTypeAV_2W=2 тижні
 AvailabilityTypeAV_3W=3 тижні
 AvailabilityTypeAV_1M=1 місяць
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Представницька подальша пропозиція
 TypeContact_propal_external_BILLING=Зв'язок з рахунками-фактурою клієнта
 TypeContact_propal_external_CUSTOMER=Наступна пропозиція щодо контакту з клієнтом
 TypeContact_propal_external_SHIPPING=Контакт з клієнтом для доставки
-
 # Document models
 CantBeNoSign=не можна встановити без підпису
 CaseFollowedBy=Слідом за випадком
@@ -122,3 +123,5 @@ SignSociete_rib=Підписати доручення
 SignPropal=Прийняти пропозицію
 Signed=підписаний
 SignedOnly=Тільки підписано
+ExpeditionSigned=Підписано відправлення
+SignExpedition=Підписати відправлення

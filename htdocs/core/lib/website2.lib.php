@@ -183,7 +183,16 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
 		$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
 		$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
-		if (empty($objectpage->disable_waf)) {
+		if ($objectpage->disable_waf != 'all') {
+			if (strpos($objectpage->disable_waf, 'NOSCANAUDIOFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANAUDIOFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANIFRAMEFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANIFRAMEFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANOBJECTFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANOBJECTFORINJECTION\', 1);'."\n";
+			}
 			$tplcontent .= '	require_once DOL_DOCUMENT_ROOT.\'/waf.inc.php\';'."\n";
 		}
 		$tplcontent .= "}\n";
@@ -323,6 +332,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<!-- Include link to common JS file -->'."\n";
 		$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
 		$tplcontent .= '</head>'."\n";
+		$tplcontent .= "\n";
 
 		// Page content
 		$tplcontent .= '<!-- File content defined in Dolibarr website module editor -->'."\n";
@@ -425,7 +435,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"description\" content=\".*?\" \/>/ms", "<meta name=\"description\" content=\"" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_DESC__"), 1) . "\"  />", $tmp);'."\n";
 		}
 		if (empty($objectpage->lang)) {		// We may need to use param into the canonical url
-			$tplcontent .= 'defined("__SEO_CANONICAL_URL_PARAMS__") ? ($tmp = preg_replace("/__SEO_CANONICAL_URL_PARAMS__/", dolPrintHTMLForAttributeUrl(constant("__SEO_CANONICAL_URL_PARAMS__")), $tmp)) : ($tmp = preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__\"/", "", preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__&/", "?", $tmp)));'."\n";
+			$tplcontent .= 'defined("__SEO_CANONICAL_URL_PARAMS__") ? ($tmp = preg_replace("/__SEO_CANONICAL_URL_PARAMS__/", dolPrintHTMLForAttributeUrl(constant("__SEO_CANONICAL_URL_PARAMS__")), $tmp)) : ($tmp = preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__\"/", "\"", preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__&/", "?", $tmp)));'."\n";
 
 			$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
 			$tplcontent .= '$tmp = preg_replace("/__SEO_CANONICAL_LANG__/", (defined("__SEO_PAGE_LANG__") ? preg_replace(\'/\[_-\].*$/\', "", constant("__SEO_PAGE_LANG__")) : (empty($weblangs->shortlang) ? "'.$tmpshortlangcode.'" : $weblangs->shortlang)), $tmp);'."\n";
@@ -440,7 +450,16 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
 		$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
 		$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
-		if (empty($objectpage->disable_waf)) {
+		if ($objectpage->disable_waf != 'all') {
+			if (strpos($objectpage->disable_waf, 'NOSCANAUDIOFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANAUDIOFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANIFRAMEFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANIFRAMEFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANOBJECTFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANOBJECTFORINJECTION\', 1);'."\n";
+			}
 			$tplcontent .= '	require_once DOL_DOCUMENT_ROOT.\'/waf.inc.php\';'."\n";
 		}
 		$tplcontent .= "}\n";

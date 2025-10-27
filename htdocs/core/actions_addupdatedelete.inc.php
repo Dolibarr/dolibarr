@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,9 @@
  * @var string $hidedetails
  * @var string $hidedesc
  * @var string $hideref
+ * @var ?string $confirm
+ * @var ?int $lineid
+ * @var ?int $id
  */
 // $action or $cancel must be defined
 // $object must be defined
@@ -150,7 +153,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = ((GETPOST($key) == '1' || GETPOST($key) == 'on') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$tmparraykey = array_keys($object->param_list);
-			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
+			$value = $tmparraykey[(int) GETPOST($key)].','.GETPOST($key.'2');
 		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
@@ -312,7 +315,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
-			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
+			$value = array_keys($object->param_list)[(int) GETPOST($key)].','.GETPOST($key.'2');
 		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
@@ -443,7 +446,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoed
 		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	} else {
-		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);	// TODO Remove $triggermodname to use $object->TRIGGER_PREFIX.'_MODIFY' instead
 		if ($result > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			$action = 'view';

@@ -72,6 +72,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var ?User $user
  */
 
 // Load translation files required by the page
@@ -178,7 +179,7 @@ if (empty($reshook)) {
 
 			// Ensure that contact is active and select first active contact
 			foreach ($contacts as $key => $contact) {
-				if ((int) $contact->status == 1) {
+				if ((int) $contact->statut == 1) {
 					$cid = $key;
 					break;
 				}

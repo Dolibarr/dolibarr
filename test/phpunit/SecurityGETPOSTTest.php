@@ -507,7 +507,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		// Test that links not on wrapper and not data are disallowed
 		$result = GETPOST("paramtestsubstit", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('XXX XXX 999 XXX 1 XXX 1 XXX', $result, 'Failed to do conversion');
+		$this->assertEquals('XXX __NOTDEFINED__ XXX 999 XXX 1 XXX 1 XXX', $result, 'Failed to do conversion');
 
 
 		return $result;

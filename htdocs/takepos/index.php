@@ -3,7 +3,7 @@
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -610,6 +610,7 @@ function Reduction() {
 	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
 	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
+
 var closeBillParams="";
 function CloseBill() {
 	<?php
@@ -711,7 +712,15 @@ function New() {
  * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
-	var eventKeyCode = window.event.keyCode;
+	var eventKeyCode = null;
+
+	if (window.event && window.event.keyCode) {
+		eventKeyCode = window.event.keyCode;
+	}
+	if (eventKeyCode === null && keyCodeForEnter !== '') {
+		// No key code available, exit early if a key code is required
+		return;
+	}
 
 	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter+", eventKeyCode="+eventKeyCode);
 
@@ -954,7 +963,7 @@ function Edit(number) {
 
 
 function TakeposPrintingOrder(){
-	console.log("TakeposPrintingOrder");
+	console.log("TakeposPrintingOrder output invoice to print order");
 	$("#poslines").load("invoice.php?action=order&token=<?php echo newToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
@@ -983,6 +992,7 @@ function OpenDrawer(){
 	});
 }
 
+/* Click on button to open drawer */
 function DolibarrOpenDrawer() {
 	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
 	$.ajax({
@@ -1332,6 +1342,11 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 
 <?php
 
+// Dependency modulecheck
+if (!isModEnabled('invoice')) {
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice")), null, 'errors');
+}
+
 // TakePOS setup check
 if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 	$sql = "SELECT code, libelle FROM " . MAIN_DB_PREFIX . "c_paiement";
@@ -1339,7 +1354,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 	$sql .= " AND active = 1";
 	$sql .= " ORDER BY libelle";
 
-	$resql          = $db->query($sql);
+	$resql = $db->query($sql);
 	$paiementsModes = array();
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -1403,7 +1418,7 @@ if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
 	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
 }
 
-// BAR RESTAURANT specific menu
+// BAR RESTAURANT specific menu "Print on Order printer"
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
 		$menus[$r++] = array('title' => '<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action' => 'TakeposPrintingOrder();');
@@ -1418,18 +1433,28 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	//Button to print receipt before payment
+	// Button to print receipt before payment
+	$customprinterallowed = true;
+	$customprinttemplateallowed = true;
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+	if (isALNECandidateVersion()) {		// No need to show this option because it has no effect when isALNECandidateVersion is true.
+		$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
+	}
+
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
-				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'TakeposConnector(placeid);');
+		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
+			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL')) == true) {
+				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposConnector(placeid);');
 			} else {
-				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'TakeposPrinting(placeid);');
+				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposPrinting(placeid);');
 			}
-		} elseif ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
+		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
+			// Button Print Receipt on special printer
+			$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+			$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
 		} else {
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'Print(placeid);');
+			// Button Print Receipt on browser
+			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');
 		}
 	}
 	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {
@@ -1443,7 +1468,7 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action' => 'OpenDrawer();');
 }
-if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+if (getDolGlobalInt('TAKEPOS_ADD_BUTTON_OPEN_DRAWER'.$term) > 0) {
 	$menus[$r++] = array(
 		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
 		'action' => 'DolibarrOpenDrawer();',
@@ -1503,6 +1528,24 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 
 ?>
 		<!-- Show buttons -->
+		<div id="dialogforpopuptakepos"></div>
+		<style>
+		/* Style de la popup */
+		#dialogforpopuptakepos {
+			display: none;
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			background: #333;
+			color: #fff;
+			padding: 15px 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			z-index: 1000;
+			font-family: sans-serif;
+		}
+		</style>
+
 		<div class="div3">
 		<?php
 		$i = 0;

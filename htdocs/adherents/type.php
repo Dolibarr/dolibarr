@@ -54,7 +54,7 @@ $rowid  = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$toselect 	= GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -118,14 +118,17 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
 
+$object->fields = dol_sort_array($object->fields, 'position');
+//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
@@ -169,7 +172,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->label = trim($label);
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
-	$object->subscription = (int) $subscription;
+	$object->subscription = (string) (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
@@ -230,7 +233,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->label = trim($label);
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
-	$object->subscription = (int) $subscription;
+	$object->subscription = (string) (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
@@ -294,7 +297,9 @@ $totalarray = [
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head([]);
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote,";
+	$sql .= " d.statut as status, d.morphy, d.duration,";
+	$sql .= " d.tms";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -326,7 +331,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		if ($optioncss != '') {
 			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		}
@@ -340,9 +345,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
-		$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
-		// $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+		$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
+		//$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -352,7 +357,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<table class="tagtable noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 			$totalarray['nbfield']++;
 		}
@@ -388,11 +393,15 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 			$totalarray['nbfield']++;
 		}
+		if (!empty($arrayfields['t.tms']['checked'])) {
+			print '<th class="center">'.$langs->trans("DateModification").'</th>';
+			$totalarray['nbfield']++;
+		}
 		if (!empty($arrayfields['t.statut']['checked'])) {
 			print '<th class="center">'.$langs->trans("Status").'</th>';
 			$totalarray['nbfield']++;
 		}
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 			$totalarray['nbfield']++;
 		}
@@ -433,7 +442,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			} else {
 				print '<tr class="oddeven">';
 
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
@@ -484,10 +493,13 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				if (!empty($arrayfields['t.vote']['checked'])) {
 					print '<td class="center">'.yn($objp->vote).'</td>';
 				}
+				if (!empty($arrayfields['t.tms']['checked'])) {
+					print '<td class="center">'.dol_print_date($db->jdate($objp->tms), 'dayhour').'</td>';
+				}
 				if (!empty($arrayfields['t.statut']['checked'])) {
 					print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 				}
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
@@ -542,10 +554,11 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Morphy
-	$morphys = array();
-	$morphys[""] = $langs->trans("MorAndPhy");
-	$morphys["phy"] = $langs->trans("Physical");
-	$morphys["mor"] = $langs->trans("Moral");
+	$morphys = [
+		"" => $langs->trans("MorAndPhy"), // for empty choice
+		"phy" => $langs->trans("Physical"),
+		"mor" => $langs->trans("Moral"),
+	];
 	print '<tr><td><span>'.$langs->trans("MembersNature").'</span></td><td>';
 	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
 	print "</td></tr>";
@@ -627,7 +640,7 @@ if ($rowid > 0) {
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
-		print yn($object->subscription);
+		print yn((int) $object->subscription);
 		print '</tr>';
 
 		// Amount
@@ -684,7 +697,7 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->hasRight('adherent', 'configurer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'edit', 'rowid' => $object->id], true).'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
@@ -697,14 +710,14 @@ if ($rowid > 0) {
 		}
 
 		if ($user->hasRight('adherent', 'configurer') && !empty($object->status)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.($morphy ? '&morphy='.urlencode($morphy) : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl('card.php', ['action' => 'create', 'typeid' => $object->id, 'morphy' => ($morphy ? $morphy : ''), 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
 
 		// Delete
 		if ($user->hasRight('adherent', 'configurer')) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'rowid' => $object->id], true).'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";
@@ -771,7 +784,7 @@ if ($rowid > 0) {
 				dol_print_error($db);
 			}
 
-			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
@@ -816,34 +829,35 @@ if ($rowid > 0) {
 				$titre .= " (".$membertype->label.")";
 			}
 
-			$param = "&rowid=".urlencode((string) ($object->id));
+			$query = ['rowid' => $object->id];
 			if (!empty($mode)) {
-				$param .= '&mode='.urlencode($mode);
+				$query+= ['mode' => $mode];
 			}
 			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-				$param .= '&contextpage='.urlencode($contextpage);
+				$query += ['contextpage' => $contextpage];
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.((int) $limit);
+				$query += ['limit' => $limit];
 			}
 			if (!empty($status)) {
-				$param .= "&status=".urlencode($status);
+				$query += ['status' => $status];
 			}
 			if (!empty($search_ref)) {
-				$param .= "&search_ref=".urlencode($search_ref);
+				$query += ['search_ref' => $search_ref];
 			}
 			if (!empty($search_lastname)) {
-				$param .= "&search_lastname=".urlencode($search_lastname);
+				$query += ['search_lastname' => $search_lastname];
 			}
 			if (!empty($search_login)) {
-				$param .= "&search_login=".urlencode($search_login);
+				$query += ['search_login' => $search_login];
 			}
 			if (!empty($search_email)) {
-				$param .= "&search_email=".urlencode($search_email);
+				$query += ['search_email' => $search_email];
 			}
 			if (!empty($filter)) {
-				$param .= "&filter=".urlencode($filter);
+				$query += ['filter' => $filter];
 			}
+			$param = '&' . http_build_query($query);
 
 			if ($sall) {
 				print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
@@ -864,7 +878,7 @@ if ($rowid > 0) {
 			// Fields title search
 			print '<tr class="liste_titre_filter">';
 
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="liste_titre center maxwidthsearch">';
 				$searchpicto = $form->showFilterButtons('left');
 				print $searchpicto;
@@ -889,7 +903,7 @@ if ($rowid > 0) {
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="liste_titre center nowraponall">';
 				print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '&nbsp; ';
@@ -900,7 +914,7 @@ if ($rowid > 0) {
 			print "</tr>\n";
 
 			print '<tr class="liste_titre">';
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			}
 			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.ref", $param, "", "", $sortfield, $sortorder);
@@ -910,7 +924,7 @@ if ($rowid > 0) {
 			print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			}
 			print "</tr>\n";
@@ -938,13 +952,13 @@ if ($rowid > 0) {
 				print '<tr class="oddeven">';
 
 				// Actions
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
-						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
 					}
 					if ($user->hasRight('adherent', 'supprimer')) {
-						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
 				}
@@ -1006,13 +1020,13 @@ if ($rowid > 0) {
 				}
 
 				// Actions
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
-						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
 					}
 					if ($user->hasRight('adherent', 'supprimer')) {
-						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
 				}

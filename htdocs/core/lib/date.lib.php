@@ -115,7 +115,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 /**
  *  Add a delay to a date
  *
- *  @param      int			$time               Date timestamp
+ *  @param      int			$time               Date timestamp (Must be a UTC timestamp)
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int<0,1>    $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
@@ -163,9 +163,11 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
+	if (!function_exists('getDolGlobalString') || !getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_NOT_GMT')) {	// Add function_exists to allow usage of this function with minimal context
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
+
+
 	$date->setTimestamp((int) $time);
 	$interval = new DateInterval($deltastring);
 
@@ -174,7 +176,8 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	} else {
 		$date->add($interval);
 	}
-	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
+
+	// Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
 	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
 		$timeyear = (int) dol_print_date($time, '%Y');
 		$timemonth = (int) dol_print_date($time, '%m');
@@ -595,7 +598,7 @@ function dol_get_next_week($day, $week, $month, $year)
  *                                                                              True or 1 or 'gmt' to compare with GMT date.
  *                                                                              Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
  *                                                                              Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
- *  @return		int|string				Date as a timestamp, '' if error
+ *  @return		int|''				Date as a timestamp, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
 {
@@ -614,7 +617,7 @@ function dol_get_first_day($year, $month = 1, $gm = false)
  * 	@param		int			$month		Month
  * 	@param		bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
  *                                                                                  True or 1 or 'gmt' to compare with GMT date.
- *	@return		int|string				Date as a timestamp, '' if error
+ *	@return		int|''					Date as a timestamp, '' if error
  */
 function dol_get_last_day($year, $month = 12, $gm = false)
 {
@@ -674,13 +677,11 @@ function dol_get_first_hour($date, $gm = 'tzserver')
  */
 function dol_get_first_day_week($day, $month, $year, $gm = false)
 {
-	global $conf;
-
 	//$day=2; $month=2; $year=2015;
 	$date = dol_mktime(0, 0, 0, $month, $day, $year, $gm);
 
 	//Checking conf of start week
-	$start_week = (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1);
+	$start_week = getDolGlobalInt('MAIN_START_WEEK', 1);
 
 	$tmparray = dol_getdate($date, true); // detail of current day
 
@@ -972,7 +973,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				// Geneva fast in Switzerland
 			}
 		}
-		//print "ferie=".$ferie."\n";
+		//print "ferie afterspe=".$ferie."\n";
 
 		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
@@ -992,7 +993,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				}
 			}
 		}
-		//print "ferie=".$ferie."\n";
+		//print "ferie afterincludexxxday=".$ferie."\n";
 
 		// We increase the counter of non working day
 		if ($ferie) {
@@ -1000,8 +1001,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		}
 
 		// Increase number of days (on go up into loop)
+		//var_dump("before ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
 		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
-		//var_dump($jour.' '.$mois.' '.$annee.' '.$timestampStart);
+		//var_dump("after ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
 
 		$i++;
 	}
@@ -1334,16 +1336,39 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		return 'ErrorBadParameter_num_open_day';
 	}
 
-	//print 'num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday;
 	if ($timestampStart < $timestampEnd) {
-		$numdays = num_between_day($timestampStart, $timestampEnd, $lastday);
+		// --- 1. Calculate Gross Working Days ---
+		// Gross working days = total days in range - non-working days (weekends & public holidays).
+		$a = num_between_day($timestampStart, $timestampEnd, $lastday);
+		$b = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
+		$nbOpenDay = $a - $b;
 
-		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
-		$nbOpenDay = ($numdays - $numholidays);
-		if ($inhour == 1 && $nbOpenDay <= 3) {
-			$nbOpenDay *= 24;
+		// --- 2. Apply Contextual Half-Day Deductions ---
+		$halfday = (int) $halfday; // Ensure $halfday is an integer for reliable comparisons.
+
+		// Check if start/end days are working days just ONCE to optimize performance
+		// by avoiding redundant calls to the potentially slow num_public_holiday() function.
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		$isStartDayWorking = (num_public_holiday($timestampStart, $timestampStart, $country_code, 1) == 0);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		$isEndDayWorking   = (num_public_holiday($timestampEnd, $timestampEnd, $country_code, 1) == 0);
+
+		// Deduct 0.5 if the leave starts in the afternoon of a working day.
+		if (($halfday == -1 || $halfday == 2) && $isStartDayWorking) {
+			$nbOpenDay -= 0.5;
 		}
-		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
+
+		// Deduct 0.5 if the leave ends in the morning of a different, working day.
+		if (($halfday == 1 || $halfday == 2) && date('Y-m-d', $timestampStart) != date('Y-m-d', $timestampEnd) && $isEndDayWorking) {
+			$nbOpenDay -= 0.5;
+		}
+
+		// --- 3. Return Final Value ---
+		if ($inhour == 1) {
+			return $nbOpenDay * 24;
+		}
+
+		return $nbOpenDay;
 	} elseif ($timestampStart == $timestampEnd) {
 		$numholidays = 0;
 		if ($lastday) {

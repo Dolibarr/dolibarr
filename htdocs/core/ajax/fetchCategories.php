@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,7 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
-// If we need access without being logged.
-if (!empty($_GET['public'])) {	// Keep $_GET here. GETPOST() is not yet defined so we use $_GET
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", '1');
-	}
-}
+
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
@@ -64,12 +60,9 @@ $lang = GETPOST('lang', 'aZ09');
 
 $type = GETPOST('type');
 
-// Security check
-if (!defined("NOLOGIN")) {	// No need of restrictedArea if not logged: Later the select will filter on public articles only if not logged.
-	restrictedArea($user, 'knowledgemanagement', 0, 'knowledgemanagement_knowledgerecord', 'knowledgerecord');
+if (!$user->hasRight('categorie', 'lire')) {
+	restrictedArea($user, 'categorie');
 }
-
-
 /*
  * Actions
  */
@@ -110,9 +103,8 @@ if ($action == "getCategories") {
 	}
 	*/
 	foreach ($cate_arbo as $categ) {
-		$response[] = array('id' => $categ['id'], 'label' => $categ['label'], 'fulllabel' => $categ['fulllabel'], 'htmlforoption' => dolPrintHTML($categ['fulllabel']), 'htmlforattribute' => dolPrintHTMLForAttribute($categ['data-html']), 'color' => $categ['color']);
+		$response[] = array('id' => $categ['id'], 'label' => $categ['label'], 'fulllabel' => $categ['fulllabel'], 'htmlforoption' => dolPrintHTML((string) $categ['fulllabel']), 'htmlforattribute' => dolPrintHTMLForAttribute((string) $categ['data-html']), 'color' => $categ['color']);
 	}
-
 	$response =json_encode($response);
 	echo $response;
 }

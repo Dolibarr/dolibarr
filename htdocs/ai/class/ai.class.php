@@ -56,9 +56,9 @@ class Ai
 
 	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, give only the translation with no comment and explanation.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original to rephrase.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
 
 	/**
@@ -80,7 +80,7 @@ class Ai
 	 * Generate response of instructions
 	 *
 	 * @param   string  		$instructions   Instruction to generate content
-	 * @param   string  		$model          Model name ('gpt-3.5-turbo', 'gpt-4-turbo', 'dall-e-3', ...)
+	 * @param   string  		$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
 	 * @param   string  		$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation')
 	 * @param	string			$format			Format for output ('', 'html', ...)
 	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
@@ -104,6 +104,7 @@ class Ai
 
 		// In most cases, it is empty and we must get it from $function and $this->apiService
 		if (empty($this->apiEndpoint)) {
+			// Return the endpoint from $this->apiService.
 			if ($function == 'imagegeneration') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'images/generations';
@@ -122,7 +123,7 @@ class Ai
 		// $model may be undefined or 'auto'.
 		// If this is the case, we must get it from $function and $this->apiService
 		if (empty($model) || $model == 'auto') {
-			// Return the endpoint and the model from $this->apiService.
+			// Return the model from $this->apiService.
 			if ($function == 'imagegeneration') {
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]);
 			} elseif ($function == 'audiogeneration') {
@@ -137,7 +138,9 @@ class Ai
 			}
 		}
 
-		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 3).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
+		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
+
+		$response = null;
 
 		try {
 			if (empty($this->apiEndpoint)) {
@@ -159,11 +162,16 @@ class Ai
 					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
+
+			// Get the default value of prePrompt if not defined
 			if (empty($prePrompt) && $function == 'textgenerationemail') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EMAIL;
 			}
 			if (empty($prePrompt) && $function == 'textgenerationwebpage') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_WEBPAGE;
+			}
+			if (empty($prePrompt) && $function == 'textgenerationextrafield') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER;
 			}
 			if (empty($prePrompt) && $function == 'texttranslation') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION;
@@ -234,6 +242,7 @@ class Ai
 					$fp = fopen($outputfile, "w");	// overwrite
 
 					if ($fp) {
+						fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following HTTP headers and Payload:\n");
 						fwrite($fp, var_export($headers, true)."\n");
 						fwrite($fp, var_export($payload, true)."\n");
 
@@ -250,7 +259,7 @@ class Ai
 				throw new Exception('API request failed. No http received');
 			}
 			if (!empty($response['http_code']) && $response['http_code'] != 200) {
-				if ($response['http_code'] == 400 && !empty($response['content'])) {
+				if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
 					$tmp = json_decode($response['content'], true);
 					if (!empty($tmp['message'])) {
 						return array(
@@ -264,7 +273,7 @@ class Ai
 						);
 					}
 				}
-				throw new Exception('API request on AI endpoint '.$this->apiEndpoint.' failed with status code '.$response['http_code'].(empty($response['content']) ? '' : ' - '.$response['content']));
+				throw new Exception('API request on AI endpoint '.$this->apiEndpoint.' failed with status code '.$response['http_code']);
 			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
@@ -314,12 +323,30 @@ class Ai
 			return $generatedContent;
 		} catch (Exception $e) {
 			$errormessage = $e->getMessage();
+			$errormessagelog = $e->getMessage();
 			if (!empty($response['content'])) {
 				$decodedResponse = json_decode($response['content'], true);
+				$errormessagelog .= ' - '.$response['content'];
 
-				// With OpenAI, error is into an object error into the content
 				if (!empty($decodedResponse['error']['message'])) {
+					// With OpenAI, error is into an object error into the content
 					$errormessage .= ' - '.$decodedResponse['error']['message'];
+				} else {
+					$errormessage .= ' - '.$response['content'];
+				}
+			}
+
+			if (getDolGlobalString("AI_DEBUG")) {
+				if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+					$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
+					$fp = fopen($outputfile, "a");
+
+					if ($fp) {
+						fwrite($fp, "Error: ".$errormessagelog."\n");
+
+						fclose($fp);
+						dolChmod($outputfile);
+					}
 				}
 			}
 

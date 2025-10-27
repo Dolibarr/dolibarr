@@ -4,6 +4,7 @@
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -359,7 +360,7 @@ class ProductCombination
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = $obj->nb;
+				$nb = (int) $obj->nb;
 			}
 		}
 
@@ -467,34 +468,36 @@ class ProductCombination
 	/**
 	 * Deletes all product combinations of a parent product
 	 *
-	 * @param User		$user Object user
-	 * @param int 		$fk_product_parent Rowid of parent product
-	 * @return int Return integer <0 KO >0 OK
+	 * @param User		$user 				Object user
+	 * @param int 		$fk_product_parent 	Rowid of parent product
+	 * @return int 							Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteByFkProductParent($user, $fk_product_parent)
 	{
-		$this->db->begin();
-
 		$arrayofparent = $this->fetchAllByFkProductParent($fk_product_parent);
 
-		if (is_array($arrayofparent)) {
-			foreach ($arrayofparent as $prodcomb) {
-				$prodstatic = new Product($this->db);
+		if (!is_array($arrayofparent)) { // No combinations found, return success
+			return 1;
+		}
 
-				$res = $prodstatic->fetch($prodcomb->fk_product_child);
+		$this->db->begin();
 
-				if ($res > 0) {
-					$res = $prodcomb->delete($user);
-				}
+		foreach ($arrayofparent as $prodcomb) {
+			$prodstatic = new Product($this->db);
 
-				if ($res > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
-					$res = $prodstatic->delete($user);
-				}
+			$res = $prodstatic->fetch($prodcomb->fk_product_child);
 
-				if ($res < 0) {
-					$this->db->rollback();
-					return -1;
-				}
+			if ($res > 0) {
+				$res = $prodcomb->delete($user);
+			}
+
+			if ($res > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
+				$res = $prodstatic->delete($user);
+			}
+
+			if ($res < 0) {
+				$this->db->rollback();
+				return -1;
 			}
 		}
 
@@ -746,9 +749,10 @@ class ProductCombination
 	 * @param false|float               $forced_weightvar       Value of the weight variation if it is forced
 	 * @param false|string              $forced_refvar          Value of the reference if it is forced
 	 * @param string                    $ref_ext                External reference
+	 * @param bool                      $clone_categories       Add parent product categories to the created variant
 	 * @return int<-1,1>                                        Return integer <0 KO, >0 OK
 	 */
-	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '', $clone_categories = false)
 	{
 		global $conf;
 
@@ -944,6 +948,16 @@ class ProductCombination
 		}
 
 		$newcomb->fk_product_child = $newproduct->id;
+
+		if ($clone_categories) {
+			$clone_result = $newproduct->cloneCategories($product->id, $newproduct->id);
+			if ($clone_result < 0) {
+				$this->error = $newproduct->error;
+				$this->errors = $newproduct->errors;
+				$this->db->rollback();
+				return -1;
+			}
+		}
 
 		if ($newcomb->update($user) < 0) {
 			$this->error = $newcomb->error;
