@@ -190,6 +190,7 @@ ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFA
 -- import key for subscriptions
 ALTER TABLE llx_subscription ADD COLUMN import_key varchar(14) NULL;
 
+ALTER TABLE llx_categorie ADD COLUMN extraparams varchar(255) AFTER fk_soc;
 
 CREATE TABLE llx_categorie_propal
 (
