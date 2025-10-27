@@ -1396,3 +1396,4 @@ Efficiency=Efficiency
 AccordingToYourSetupTheFileWillBeConcatenated=According to your setup, the file %s (uploaded in module setup) will be concatenated to any generated PDF
 TransactionID=Transaction ID
 AllProjectContacts=All project contacts
+ToPay=Pay
