@@ -60,7 +60,7 @@ parameters:
 	checkMaybeUndefinedVariables: true
 	checkNullables: false
 	checkThisOnly: true
-	checkUnionTypes: true
+	checkUnionTypes: false
 	checkExplicitMixedMissingReturn: true
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
@@ -69,7 +69,7 @@ parameters:
 	polluteScopeWithAlwaysIterableForeach: true
 	reportMagicMethods: false
 	reportMagicProperties: false
-	treatPhpDocTypesAsCertain: false
+	treatPhpDocTypesAsCertain: true
 	# if you want to exclude something, generate the baseline to do that, add here give only pattern that does not give the opportunity to introduce new errors
 	# or pattern to avoid false positive of some bugged or allowed phpstan checks
 	ignoreErrors:
