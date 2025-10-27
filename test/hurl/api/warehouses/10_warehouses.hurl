@@ -106,3 +106,71 @@ GET http://{{hostnport}}/api/index.php/warehouses
 DOLAPIENTITY: 2
 HTTP 401
 {"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
+
+# http://localhost:8080/api/index.php/warehouses?sortfield=t.rowid&sortorder=ASC&limit=1
+
+# Capture a warehouse ID number
+GET http://{{hostnport}}/api/index.php/warehouses?limit=1
+HTTP 200
+[Captures]
+warehouse_id: jsonpath "$[0]['id']"
+
+# GET products in warehouse with captured ID - which should exist
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products
+HTTP 200
+
+# GET products in warehouse with captured ID - limit 1
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?limit=1
+HTTP 200
+
+
+# GET products in warehouse with captured ID - with stockdata
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?includestockdata=1
+HTTP 200
+
+# GET products in warehouse with captured ID - no stockdata
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?includestockdata=0
+HTTP 200
+
+
+# GET products in warehouse with captured ID - with subproducts
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?includesubproducts=true
+HTTP 200
+
+# GET products in warehouse with captured ID - no subproducts
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?includesubproducts=false
+HTTP 200
+
+
+# GET products in warehouse with captured ID - with includeparentid
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?includeparentid=true
+HTTP 200
+
+# GET products in warehouse with captured ID - no includeparentid
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?includeparentid=false
+HTTP 200
+
+
+# GET products in warehouse with captured ID - with includetrans
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?includetrans=true
+HTTP 200
+
+# GET products in warehouse with captured ID - no includetrans
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?includetrans=false
+HTTP 200
+
+
+
+# GET products with pagination_data=false
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?pagination_data=false
+HTTP 200
+
+# GET products with pagination_data=true
+GET http://{{hostnport}}/api/index.php/warehouses/{{warehouse_id}}/products?pagination_data=true
+HTTP 200
+[Asserts]
+jsonpath "$.data" exists
+jsonpath "$.pagination.total" >= 0
+jsonpath "$.pagination.page" exists
+jsonpath "$.pagination.page_count" >= 0
+jsonpath "$.pagination.limit" == 100
