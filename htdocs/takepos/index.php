@@ -42,14 +42,6 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -58,6 +50,14 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
@@ -90,20 +90,9 @@ $categorie = new Categorie($db);
 
 $maxcategbydefaultforthisdevice = 12;
 $maxproductbydefaultforthisdevice = 24;
-if ($conf->browser->layout == 'phone') {
-	$maxcategbydefaultforthisdevice = 8;
-	$maxproductbydefaultforthisdevice = 16;
-	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT FORCED
-	if (!empty($_SESSION["takeposterminal"]) && getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_PHONE_BASIC_LAYOUT') == 1) {
-		$_SESSION["basiclayout"] = 1;
-		header("Location: phone.php?mobilepage=invoice");
-		exit;
-	}
-} else {
-	unset($_SESSION["basiclayout"]);
-}
-$MAXCATEG = (!getDolGlobalString('TAKEPOS_NB_MAXCATEG') ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
-$MAXPRODUCT = (!getDolGlobalString('TAKEPOS_NB_MAXPRODUCT') ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
+
+$MAXCATEG = getDolGlobalInt('TAKEPOS_NB_MAXCATEG', $maxcategbydefaultforthisdevice);
+$MAXPRODUCT = getDolGlobalInt('TAKEPOS_NB_MAXPRODUCT', $maxproductbydefaultforthisdevice);
 
 $term = empty($_SESSION['takeposterminal']) ? 1 : $_SESSION['takeposterminal'];
 
@@ -144,10 +133,11 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 
-$categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') : 0), 1);
+$categories = $categorie->get_full_arbo('product', getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 1);
 
 
 // Search root category to know its level

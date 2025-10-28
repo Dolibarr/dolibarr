@@ -104,11 +104,15 @@ if ((string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 	}
 }
 $object = new Facture($db);
-$object->fetch($facid);
-
+if ($facid > 0 && !GETPOST('specimen')) {
+	$object->fetch($facid);
+} else {
+	$object->initAsSpecimen('takepos');
+}
 print '<body>';
 
 // Record entry in blocked logs each time we print a receipt
+// This will also increase the counter of printings of the receipt
 // DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
 print "
 <script>
@@ -128,7 +132,6 @@ jQuery(document).ready(function () {
 // Call to external receipt modules factory if it exists and if we can (not allowed in some cases)
 if (isALNERunningVersion()) {
 	// If LNE version, we force format. Custom templates is not allowed
-
 	$conf->global->TAKEPOS_SHOW_HT_RECEIPT = 1;
 	$conf->global->TAKEPOS_TICKET_VAT_GROUPPED = 1;
 } else {
@@ -245,6 +248,13 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 if (!getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
 	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
+
+// TODO Show if it is a duplicata
+$isADuplicata = $object->pos_print_counter;
+
+if ($isADuplicata) {
+	print '<b>*** DUPLICATA***</b>';	// Hard coded string
+}
 ?>
 </p>
 <br>
@@ -322,14 +332,16 @@ if (!getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
 		echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
-<?php if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
+<?php
+if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
 	$vat_groups = array();
 	foreach ($object->lines as $line) {
 		if (!array_key_exists($line->tva_tx, $vat_groups)) {
-			$vat_groups[$line->tva_tx] = 0;
+			$vat_groups[(string) $line->tva_tx] = 0;
 		}
-		$vat_groups[$line->tva_tx] += $line->total_tva;
+		$vat_groups[(string) $line->tva_tx] += $line->total_tva;
 	}
+
 	// Loop on each VAT group
 	foreach ($vat_groups as $key => $val) {
 		?>
@@ -472,6 +484,12 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 	}
 	print $newfreetext;
 }
+
+if (isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
+	$langs->load("blockedlog");
+	print '<center class="small"><i>'.$langs->trans("LNECertifiedPOSSystem")."</i></center><br>\n";
+}
+
 
 if (!GETPOST('forcenoautoopen')) {
 	?>

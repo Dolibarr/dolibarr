@@ -68,12 +68,12 @@ function blockedlogadmin_prepare_head()
 
 /**
  * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
- * The difference between isALNECandidateVersion() and isALNERunningVersion() is that the first checks if we it has a sense or not to
- * activate the restrictions (not a strict check) and the second one is a strict check that restrictions were activated so we can't disable then after.
+ * The difference between isALNEQualifiedVersion() and isALNERunningVersion() is that this one checks if has a sense or not to
+ * activate the restrictions (not a strict check) and the second one is a strict check to say restrictions are enabled and can't be disabled.
  *
  * @return boolean		True or false
  */
-function isALNECandidateVersion()
+function isALNEQualifiedVersion()
 {
 	global $mysoc;
 
@@ -113,7 +113,7 @@ function isALNERunningVersion()
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
-	if (isBlockedLogused()) {
+	if (isModEnabled('blockedlog') && isBlockedLogused()) {
 		return true;
 	}
 
@@ -154,6 +154,37 @@ function isBlockedLogused($ignoresystem = 0)
 	}
 
 	dol_syslog("isBlockedLogused: ignoresystem=".$ignoresystem." returns ".(string) $result);
+
+	return $result;
+}
+
+
+/**
+ *      Add legal mention
+ *
+ *      @param	TCPDF      			$pdf            	Object PDF
+ *      @param  Translate			$outputlangs		Object lang
+ *      @param  Societe				$seller         	Seller company
+ *      @param  int					$default_font_size  Default font size
+ *      @param  float				$posy            	Y position
+ *      @param  CommonDocGenerator	$pdftemplate    	PDF template
+ *      @return	int                                 	0 if nothing done, 1 if a mention was printed
+ */
+function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_size, &$posy, $pdftemplate)
+{
+	$result = 0;
+
+	if (in_array($seller->country_code, array('FR')) && isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
+		$outputlangs->load("blockedlog");
+		$blockedlog_mention = $outputlangs->trans("InvoiceGeneratedWithLNECertifiedPOSSystem");
+		if ($blockedlog_mention) {
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($pdftemplate->marge_gauche, $posy);
+			$pdf->MultiCell(100, 3, $blockedlog_mention, 0, 'L', false);
+			$posy = $pdf->GetY();
+			$result = 1;
+		}
+	}
 
 	return $result;
 }
