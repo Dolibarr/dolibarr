@@ -807,7 +807,7 @@ class AccountingJournal extends CommonObject
 			$usedcn  = (float) price2num($invoice_static->getSumOfCreditNotesUsed(), 'MT');
 			$useddep = (float) price2num($invoice_static->getSumDepositsUsed(), 'MT');
 			$ttc_inv = (float) price2num($invoice_static->total_ttc, 'MT');
-			$escompte_ttc = price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
+			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
 			if ($escompte_ttc <= 0) continue;
 
 			$bookkeeping_static = new BookKeeping($this->db);
@@ -823,7 +823,10 @@ class AccountingJournal extends CommonObject
 				$ttcByRate[$key] += $ttc;
 				$totalTTC += $ttc;
 			}
-			if ($totalTTC <= 0) { $ttcByRate = array("0.000" => $escompte_ttc); $totalTTC = $escompte_ttc; }
+			if ($totalTTC <= 0) {
+				$ttcByRate = array("0.000" => $escompte_ttc);
+				$totalTTC = $escompte_ttc;
+			}
 
 			$element = array(
 				'ref'   => dol_trunc($invoice_static->ref, 16, 'right', 'UTF-8', 1),
@@ -834,7 +837,9 @@ class AccountingJournal extends CommonObject
 			$docdate = $this->db->jdate($obj->datef);
 			$docdate_fmt = dol_print_date($docdate, 'day');
 
-			$sumTTC = 0.0; $i = 0; $n = count($ttcByRate);
+			$sumTTC = 0.0;
+			$i = 0;
+			$n = count($ttcByRate);
 			foreach ($ttcByRate as $rateStr => $ttcRateOnInvoice) {
 				$i++;
 				$rate = (float) $rateStr;
@@ -1092,7 +1097,7 @@ class AccountingJournal extends CommonObject
 			$usedcn  = (float) price2num($invoicesupplier_static->getSumOfCreditNotesUsed(), 'MT');
 			$useddep = (float) price2num($invoicesupplier_static->getSumDepositsUsed(), 'MT');
 			$ttc_inv = (float) price2num($invoicesupplier_static->total_ttc, 'MT');
-			$escompte_ttc = price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
+			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
 			if ($escompte_ttc <= 0) continue;
 
 			$bookkeeping_static = new BookKeeping($this->db);
@@ -1125,12 +1130,16 @@ class AccountingJournal extends CommonObject
 				$rate = (float) $rateStr;
 
 				$ttc_part = $escompte_ttc * ($ttcRateOnInvoice / $totalTTC);
-				if ($i == $n) $ttc_part = price2num($escompte_ttc - $sumTTC, 'MT');
-				else { $ttc_part = price2num($ttc_part, 'MT'); $sumTTC = price2num($sumTTC + $ttc_part, 'MT'); }
+				if ($i == $n) {
+					$ttc_part = (float) price2num($escompte_ttc - $sumTTC, 'MT');
+				} else {
+					$ttc_part = (float) price2num($ttc_part, 'MT');
+					$sumTTC = (float) price2num($sumTTC + $ttc_part, 'MT');
+				}
 
 				if ($rate > 0) {
-					$ht_part  = price2num($ttc_part / (1 + $rate/100), 'MT');
-					$tva_part = price2num($ttc_part - $ht_part, 'MT');
+					$ht_part  = (float) price2num($ttc_part / (1 + $rate/100), 'MT');
+					$tva_part = (float) price2num($ttc_part - $ht_part, 'MT');
 				} else { $ht_part = $ttc_part; $tva_part = 0.0; }
 
 				// VAT collected account (by rate if available)
