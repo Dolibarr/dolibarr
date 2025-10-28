@@ -727,12 +727,12 @@ class AccountingJournal extends CommonObject
 	/**
 	 *  Get customer discount (escompte) data for various journal
 	 *
-	 * @param  User                        $user
-	 * @param  'view'|'bookkeeping'|'csv'  $type
-	 * @param  ?int                        $date_start
-	 * @param  ?int                        $date_end
-	 * @param  'already'|'notyet'          $in_bookkeeping
-	 * @return int|-1|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:int|'' ,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int|string,fk_docdet:int|string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:string|int|float,sens:string,debit:int|float|string,credit:int|float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:string,entity:string}>>}>
+	 * @param	User						$user				User who get infos
+	 * @param	'view'|'bookkeeping'|'csv'	$type				Type data returned ('view', 'bookkeeping', 'csv')
+	 * @param	?int						$date_start			Filter 'start date'
+	 * @param	?int						$date_end			Filter 'end date'
+	 * @param	'already'|'notyet'			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
+	 * @return	int<-1,-1>|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:''|int,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int|string,fk_docdet:int|string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:string,sens:string,debit:int|float|string,credit:int|float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:string,entity:string}>>}>    Return integer <0 if KO, array
 	 */
 	public function getDiscountCustomer(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
@@ -1006,12 +1006,12 @@ class AccountingJournal extends CommonObject
 	/**
 	 *  Get supplier discount (escompte) data for various journal
 	 *
-	 * @param  User                        $user
-	 * @param  'view'|'bookkeeping'|'csv'  $type
-	 * @param  ?int                        $date_start
-	 * @param  ?int                        $date_end
-	 * @param  'already'|'notyet'          $in_bookkeeping
-	 * @return int|-1|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:int|'' ,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int|string,fk_docdet:int|string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:string|int|float,sens:string,debit:int|float|string,credit:int|float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:string,entity:string}>>}>
+	 * @param	User						$user				User who get infos
+	 * @param	'view'|'bookkeeping'|'csv'	$type				Type data returned ('view', 'bookkeeping', 'csv')
+	 * @param	?int						$date_start			Filter 'start date'
+	 * @param	?int						$date_end			Filter 'end date'
+	 * @param	'already'|'notyet'			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
+	 * @return	int<-1,-1>|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:''|int,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int|string,fk_docdet:int|string,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:string,sens:string,debit:int|float|string,credit:int|float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:string,entity:string}>>}>    Return integer <0 if KO, array
 	 */
 	public function getDiscountSupplier(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
@@ -1261,7 +1261,7 @@ class AccountingJournal extends CommonObject
 					if ($type == 'view') $element['blocks'][] = $lines_view;
 					elseif ($type == 'bookkeeping') $element['blocks'][] = $lines_book;
 					else { // csv
-						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($account_supplier_general), $label_discount.' - '.$langs->transnoentitiesnoconv('SupplierAccount'), price($ttc_part), '');
+						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($account_supplier_general), $label_discount.' - '.$langs->transnoentitiesnoconv('Supplier'), price($ttc_part), '');
 						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($acc_disc_recv), $label_discount.' ('.$rateStr.'%)', '', price($ht_part));
 					}
 				}
