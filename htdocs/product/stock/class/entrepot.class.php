@@ -63,9 +63,19 @@ class Entrepot extends CommonObject
 	public $label;
 
 	/**
+	 * @var string  barcode
+	 */
+	public $barcode;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
+
+	/**
+	 * @var int
+	 */
+	public $fk_departement;
 
 	/**
 	 * @var int
@@ -351,6 +361,8 @@ class Entrepot extends CommonObject
 		}
 
 		$this->label = trim($this->label);
+		$this->barcode = trim($this->barcode);
+		$this->model_pdf = trim($this->model_pdf);
 
 		$this->description = trim($this->description);
 
@@ -374,6 +386,13 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".((int) $this->country_id);
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
+		$sql .= ", barcode = '".$this->db->escape($this->barcode)."'";
+		$sql .= ", fk_departement = ".((int) $this->fk_departement);
+		$sql .= ", fk_barcode_type = ".((int) $this->barcode_type);
+		$sql .= ", warehouse_usage = ".((int) $this->warehouse_usage);
+		$sql .= ", fk_user_author = ".((int) $this->user_creation_id);
+		$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
+		$sql .= ", import_key = ".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
@@ -527,7 +546,7 @@ class Entrepot extends CommonObject
 		}
 
 		$sql  = "SELECT rowid, entity, fk_parent, fk_project, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
-		$sql .= " model_pdf, import_key";
+		$sql .= " model_pdf, import_key, datec as date_creation, tms as date_modification, fk_departement, barcode, fk_barcode_type, warehouse_usage, fk_user_author as user_creation_id";
 		$sql .= " FROM ".$this->db->prefix()."entrepot";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -551,6 +570,7 @@ class Entrepot extends CommonObject
 				$this->label          = $obj->label;
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;
+				$this->status         = $obj->statut;
 				$this->lieu           = $obj->lieu;
 				$this->address        = $obj->address;
 				$this->zip            = $obj->zip;
@@ -558,6 +578,16 @@ class Entrepot extends CommonObject
 				$this->country_id     = $obj->country_id;
 				$this->phone          = $obj->phone;
 				$this->fax            = $obj->fax;
+
+				$this->date_creation  = $obj->date_creation;
+				$this->barcode		  = $obj->barcode;
+				$this->fk_departement = $obj->fk_departement;
+				$this->barcode_type   = $obj->fk_barcode_type;
+				$this->warehouse_id   = $obj->rowid;
+
+				$this->warehouse_usage = $obj->warehouse_usage;
+				$this->user_creation_id = $obj->user_creation_id;
+				$this->date_modification = $obj->date_modification;
 
 				$this->model_pdf      = $obj->model_pdf;
 				$this->import_key     = $obj->import_key;
