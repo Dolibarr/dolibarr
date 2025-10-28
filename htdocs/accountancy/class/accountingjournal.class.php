@@ -1083,8 +1083,8 @@ class AccountingJournal extends CommonObject
 
 			// Discounted amount including tax
 			$paid    = price2num($invoicesupplier_static->getSommePaiement(), 'MT');
-			$usedcn  = price2num(method_exists($invoicesupplier_static,'getSumOfCreditNotesUsed') ? $invoicesupplier_static->getSumOfCreditNotesUsed() : 0, 'MT');
-			$useddep = price2num(method_exists($invoicesupplier_static,'getSumDepositsUsed') ? $invoicesupplier_static->getSumDepositsUsed() : 0, 'MT');
+			$usedcn  = price2num(method_exists($invoicesupplier_static, 'getSumOfCreditNotesUsed') ? $invoicesupplier_static->getSumOfCreditNotesUsed() : 0, 'MT');
+			$useddep = price2num(method_exists($invoicesupplier_static, 'getSumDepositsUsed') ? $invoicesupplier_static->getSumDepositsUsed() : 0, 'MT');
 			$ttc_inv = price2num($invoicesupplier_static->total_ttc, 'MT');
 			$escompte_ttc = price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
 			if ($escompte_ttc <= 0) continue;
