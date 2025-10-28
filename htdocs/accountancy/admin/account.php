@@ -784,15 +784,15 @@ if ($resql) {
 		}
 
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-			// Activated or not reconciliation on an accounting account
+			// Activated or not reconciliation on a general accounting account
 			if (!empty($arrayfields['aa.reconcilable']['checked'])) {
 				print '<td class="center">';
 				if (empty($obj->reconcilable)) {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1&token='.newToken().'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&page='.$page.'&mode=1&token='.newToken().'">';
 					print img_picto($langs->trans("Disabled"), 'switch_off');
 					print '</a>';
 				} else {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1&token='.newToken().'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&page='.$page.'&mode=1&token='.newToken().'">';
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print '</a>';
 				}
@@ -807,11 +807,11 @@ if ($resql) {
 		if (!empty($arrayfields['aa.centralized']['checked'])) {
 			print '<td class="center">';
 			if (empty($obj->centralized)) {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=2&token='.newToken().'">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&page='.$page.'&mode=2&token='.newToken().'">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=2&token='.newToken().'">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&page='.$page.'&mode=2&token='.newToken().'">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}
@@ -825,11 +825,11 @@ if ($resql) {
 		if (!empty($arrayfields['aa.active']['checked'])) {
 			print '<td class="center">';
 			if (empty($obj->active)) {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=0&token='.newToken().'">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&page='.$page.'&mode=0&token='.newToken().'">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=0&token='.newToken().'">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&page='.$page.'&mode=0&token='.newToken().'">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}
