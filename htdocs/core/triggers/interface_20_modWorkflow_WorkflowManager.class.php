@@ -5,6 +5,7 @@
  * Copyright (C) 2022-2024 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	 * @param CommonObject	$object     Object
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
-	 * @param conf		    $conf       Object conf
+	 * @param Conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
@@ -103,7 +104,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		}
 
 		// Order to invoice
-		if ($action == 'ORDER_CLOSE') {
+		if ($action == 'ORDER_CLOSE' && $object instanceof Commande) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (isModEnabled('invoice') && getDolGlobalString('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -133,7 +134,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		}
 
 		// Order classify billed proposal
-		if ($action == 'ORDER_CLASSIFY_BILLED') {
+		if ($action == 'ORDER_CLASSIFY_BILLED' && $object instanceof Commande) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (isModEnabled("propal") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL')) {
 				$object->fetchObjectLinked(0, 'propal', $object->id, $object->element);
@@ -156,7 +157,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		}
 
 		// classify billed order & billed propososal
-		if ($action == 'BILL_VALIDATE') {
+		if ($action == 'BILL_VALIDATE' && $object instanceof Facture) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			// First classify billed the order to allow the proposal classify process
@@ -165,7 +166,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects['commande'])) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['commande'] as $element) {
-						if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) {
+						/** @var Commande $element */
+						if ($element->status == Commande::STATUS_VALIDATED || $element->status == Commande::STATUS_SHIPMENTONPROCESS || $element->status == Commande::STATUS_CLOSED) {
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
@@ -184,7 +186,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects['propal'])) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['propal'] as $element) {
-						if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) {
+						/** @var Propal $element */
+						if ($element->status == Propal::STATUS_SIGNED || $element->status == Propal::STATUS_BILLED) {
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
@@ -203,6 +206,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects['shipping'])) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['shipping'] as $element) {
+						/** @var Expedition $element */
 						if ($element->statut == Expedition::STATUS_VALIDATED) {
 							$totalonlinkedelements += $element->total_ht;
 						}
@@ -210,6 +214,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if (price2num($totalonlinkedelements, 'MT') == price2num($object->total_ht, 'MT')) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
+							/** @var Expedition $element */
 							$ret = $element->setClosed();
 							if ($ret < 0) {
 								return (int) $ret;
