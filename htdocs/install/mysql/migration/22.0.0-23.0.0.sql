@@ -282,5 +282,8 @@ ALTER TABLE llx_categorie_supplier_proposal ADD INDEX idx_categorie_supplier_pro
 ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier_proposal_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier_proposal_fk_supplier_proposal_rowid FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
 
+ALTER TABLE llx_blockedlog DROP INDEX entity;
+ALTER TABLE llx_blockedlog DROP INDEX entity_action_certified;
+ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 
 -- end of migration

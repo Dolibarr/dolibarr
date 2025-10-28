@@ -53,13 +53,15 @@ print '***** '.$script_file.' *****'."\n";
 
 if (empty($argv[1])) {
 	print "Usage:   ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
-	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
+	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=ES:CONST_XX_IS_ON includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
 	print "\n";
 	print "Generate the file filelist-x.y.z[-mybuild].xml with signature of files. ";
-	print "This includes the 3 sections:\n";
+	print "The file always includes the 3 sections:\n";
 	print "- dolibarr_htdocs_dir\n";
 	print "- dolibarr_scripts_dir\n";
 	print "- dolibarr_unalterable_files (only files inside the scope of the unalterable module)\n";
+	print "and if a specific setup/parameter need to be included into the signature for check:\n";
+	print "- dolibarr_constants\n";
 	print "\n";
 	exit(1);
 }
