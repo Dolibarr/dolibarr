@@ -2217,11 +2217,7 @@ class Products extends DolibarrApi
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
 	 * @param string $source         external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 * @param int    $notrigger      Disable all triggers
-<<<<<<< Updated upstream
-	 * @return array
-=======
 	 * @return array<string{code:int,message:string}>
->>>>>>> Stashed changes
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
