@@ -2274,11 +2274,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
-<<<<<<< Updated upstream
-	 * @return array
-=======
 	 * @return array<string{code:int,message:string}>
->>>>>>> Stashed changes
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -2319,10 +2315,6 @@ class Products extends DolibarrApi
 			)
 		);
 	}
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensitive object data
