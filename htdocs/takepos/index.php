@@ -1437,7 +1437,7 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	$customprinterallowed = true;
 	$customprinttemplateallowed = true;
 	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-	if (isALNECandidateVersion()) {		// No need to show this option because it has no effect when isALNECandidateVersion is true.
+	if (isALNERunningVersion()) {		// No need to show this option because it has no effect when isALNERunningVersion is true.
 		$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 	}
 

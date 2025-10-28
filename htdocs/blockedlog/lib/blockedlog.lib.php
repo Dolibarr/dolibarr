@@ -68,7 +68,8 @@ function blockedlogadmin_prepare_head()
 
 /**
  * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
- * This function can be used to avoid to show the mandatory information "Certified LNE" on tickets when it is not true.
+ * The difference between isALNECandidateVersion() and isALNERunningVersion() is that the first checks if we it has a sense or not to
+ * activate the restrictions (not a strict check) and the second one is a strict check that restrictions were activated so we can't disable then after.
  *
  * @return boolean		True or false
  */
@@ -76,7 +77,8 @@ function isALNECandidateVersion()
 {
 	global $mysoc;
 
-	// Constant set by developer to force LNE restriction even if country is not France so we can test them on any dev instance.
+	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
+	// Note that you can force, with this option, to enabling of the LNE restrictions but you can't force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
@@ -93,5 +95,65 @@ function isALNECandidateVersion()
 		return false;
 	}
 
-	return true;	// all conditions are ok
+	return true;	// all conditions are ok to become a LNE certified version
+}
+
+
+/**
+ * Return if the application is executed with the LNE features on.
+ * This function is used to disabled some features like disabling custom receipts, or showing the mandatory information "Certified LNE"
+ * on tickets when it is not true.
+ *
+ * @return boolean		True or false
+ */
+function isALNERunningVersion()
+{
+	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
+	// Note that you can force, with this option, to enabling of the LNE restrictions but you can't force the disabling of the LNE restriction.
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
+		return true;
+	}
+	if (isBlockedLogused()) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Return if the blocked log was already used to block some events.
+ *
+ * @param   int<0,1>	$ignoresystem       Ignore system events for the test
+ * @return 	boolean							True if blocked log was already used, false if not
+ */
+function isBlockedLogused($ignoresystem = 0)
+{
+	global $conf, $db;
+
+	$result = true;	// by default restrictions are on, so we can't disable them
+
+	// For the moment, we don't need this. We already have a feature that does not allow to disable the LNE rstriction by
+	// adding an inalterable event in the log.
+	if (!isModEnabled('blockedlog')) {
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked is disallowed
+		if ($ignoresystem) {
+			$sql .= " AND action NOT IN ('MODULE_SET', 'MODULE_RESET')";
+		}
+		$sql .= $db->plimit(1);
+
+		$resql = $db->query($sql);
+		if ($resql !== false) {
+			$obj = $db->fetch_object($resql);
+			if (!$obj) {
+				$result = false;
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	dol_syslog("isBlockedLogused: ignoresystem=".$ignoresystem." returns ".(string) $result);
+
+	return $result;
 }
