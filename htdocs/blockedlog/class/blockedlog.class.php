@@ -1376,29 +1376,7 @@ class BlockedLog
 	 */
 	public function alreadyUsed($ignoresystem = 0)
 	{
-		global $conf;
-
-		$result = false;
-
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
-		if ($ignoresystem) {
-			$sql .= " AND action not in ('MODULE_SET','MODULE_RESET')";
-		}
-		$sql .= $this->db->plimit(1);
-
-		$res = $this->db->query($sql);
-		if ($res !== false) {
-			$obj = $this->db->fetch_object($res);
-			if ($obj) {
-				$result = true;
-			}
-		} else {
-			dol_print_error($this->db);
-		}
-
-		dol_syslog("Module Blockedlog alreadyUsed(ignoresystem=".$ignoresystem.") returns ".json_encode($result));
-
-		return $result;
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		return isBlockedLogused($ignoresystem);
 	}
 }

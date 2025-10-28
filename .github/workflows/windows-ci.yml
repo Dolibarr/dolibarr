@@ -173,7 +173,7 @@ jobs:
           in: ${{ env.PHPUNIT_LOG }}
 
       - name: Provide dolibarr and phpunit logs as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: ${{ ! cancelled() }}
         with:
           name: win-ci-logs

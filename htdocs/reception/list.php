@@ -375,8 +375,8 @@ if (empty($reshook)) {
 				}
 
 				$objecttmp->date = $datefacture;
-				$objecttmp->origin    = 'reception';
-				$objecttmp->origin_id = $id_reception;
+				$objecttmp->origin = 'reception';
+				$objecttmp->origin_id = (int) $id_reception;
 
 				// Auto calculation of date due if not filled by user
 				if (empty($objecttmp->date_echeance)) {
