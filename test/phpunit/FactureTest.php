@@ -127,6 +127,7 @@ class FactureTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$this->changeProperties($localobject);
+		$localobject->pos_print_counter = 3;
 		$result = $localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -174,7 +175,6 @@ class FactureTest extends CommonClassTest
 				'newref','oldref','id','lines','client','thirdparty','brouillon', 'fk_user_author', 'user_modification_id', 'date_creation','date_validation','datem','date_modification',
 				'ref','statut','status','paye','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc', 'modelpdf',
-				'pos_print_counter',
 				'multicurrency_total_ht','multicurrency_total_tva',	'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
 				'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen', 'situation_cycle_ref', 'situation_counter', 'situation_final',
 				'trackid','user_creat','user_valid', 'note'
