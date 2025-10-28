@@ -1477,12 +1477,6 @@ parameters:
 			path: ../../../htdocs/bom/bom_net_needs.php
 
 		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/bom_net_needs.php
-
-		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
@@ -1517,12 +1511,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/bom/tpl/objectline_title.tpl.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/tpl/objectline_view.tpl.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -2327,6 +2315,12 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/commande/customer.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../../../htdocs/commande/list.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Commande and ''fetch_lines'' will always evaluate to true\.$#'
@@ -3385,21 +3379,9 @@ parameters:
 			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
 
 		-
@@ -5095,39 +5077,9 @@ parameters:
 			path: ../../../htdocs/core/class/ccountry.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ccountry.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ccountry.class.php
-
-		-
-			message: '#^Method CGenericDic\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
-			message: '#^Property CGenericDic\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
-			message: '#^Property CGenericDic\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/core/class/cgenericdic.class.php
 
 		-
@@ -5149,21 +5101,9 @@ parameters:
 			path: ../../../htdocs/core/class/cleadstatus.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../../htdocs/core/class/cleadstatus.class.php
 
 		-
@@ -5599,21 +5539,9 @@ parameters:
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/core/class/cproductnature.class.php
 
 		-
@@ -5641,12 +5569,6 @@ parameters:
 			path: ../../../htdocs/core/class/cstate.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctypent.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -5671,18 +5593,6 @@ parameters:
 			path: ../../../htdocs/core/class/ctyperesource.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctyperesource.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctyperesource.class.php
-
-		-
 			message: '#^Property CUnits\:\:\$short_label \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -5701,21 +5611,9 @@ parameters:
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
@@ -9547,36 +9445,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.ligne.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(FactureFournisseur\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(FactureFournisseur\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(FactureFournisseur\) and ''date'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(FactureFournisseur\) and ''total_ht'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 6
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
 			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -11055,7 +10923,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 33
+			count: 32
 			path: ../../../htdocs/main.inc.php
 
 		-
@@ -13967,12 +13835,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 2
 			path: ../../../htdocs/public/fichinter/agendaexport.php
-
-		-
-			message: '#^Variable \$php_self might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/members/new.php
 
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'

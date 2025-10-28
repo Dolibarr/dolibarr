@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025          Pierre Ardoin            <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,11 +54,11 @@ if (isModEnabled('incoterm')) {
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
@@ -66,7 +66,7 @@ $qty = GETPOSTINT('qty');
 $fk_product = GETPOSTINT('fk_product');
 $fk_warehouse_source = GETPOSTINT('fk_warehouse_source');
 $fk_warehouse_destination = GETPOSTINT('fk_warehouse_destination');
-$lineid   = GETPOSTINT('lineid');
+$lineid = GETPOSTINT('lineid');
 $label = GETPOST('label', 'alpha');
 $batch = GETPOST('batch', 'alpha');
 $code_inv = GETPOST('inventorycode', 'alphanohtml');
@@ -132,14 +132,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/product/stock/stocktransfer/stocktransfer_list.php', 1);
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/product/stock/stocktransfer/stocktransfer_list.php');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/product/stock/stocktransfer/stocktransfer_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/product/stock/stocktransfer/stocktransfer_card.php', ['id' => ($id > 0 ? $id : '__ID__')]);
 			}
 		}
 	}
