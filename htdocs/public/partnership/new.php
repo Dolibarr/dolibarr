@@ -53,20 +53,21 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var ?User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -96,6 +97,9 @@ $object = new Partnership($db);
 
 $user->loadDefaultValues();
 
+if (!is_object($user)) {
+	$user = new User($db);
+}
 
 /**
  * Show header for new partnership

@@ -109,7 +109,8 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-			$sql .= " WHERE CAST(t.datec AS DATE) > '".$this->db->idate($minimumdatec)."'";
+			$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
+			$sql .= " AND CAST(t.datec AS DATE) > '".$this->db->idate($minimumdatec)."'";
 			$sql .= " GROUP BY CAST(t.datec AS DATE)";
 
 			$resql = $this->db->query($sql);

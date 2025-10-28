@@ -209,7 +209,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 
 				// restrict on database type
 				if (!empty($reg[1])) {
-					if (!preg_match('/'.preg_quote($reg[1]).'/i', $db->type)) {
+					if (!preg_match('/'.preg_quote($reg[1], '/').'/i', $db->type)) {
 						$qualified = 0;
 					}
 				}
