@@ -916,7 +916,6 @@ class Projects extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-
 	public function getContacts($id, $type = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
@@ -959,7 +958,6 @@ class Projects extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 */
-
 	public function addToContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0, $affect_to_tasks = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
@@ -1057,7 +1055,6 @@ class Projects extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-
 	public function getTimespent($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
@@ -1076,7 +1073,6 @@ class Projects extends DolibarrApi
 
 		$this->project->getLinesArray(DolibarrApiAccess::$user);
 		$allTimespent = array();
-
 		foreach ($this->project->lines as $task) {
 
 			$allTimespent[] = $task->getSummaryOfTimeSpent();

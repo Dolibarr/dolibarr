@@ -780,7 +780,6 @@ class Tasks extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-
 	public function getContacts($id, $type = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
