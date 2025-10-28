@@ -2179,11 +2179,7 @@ class Products extends DolibarrApi
 	 *
 	 * @param	int		$id			ID of product
 	 * @param	string	$type		Type of the contact ('BILLING', 'SHIPPING', 'CUSTOMER', ...)
-<<<<<<< Updated upstream
-	 * @return	array				Array of contacts
-=======
 	 * @return	array|mixed			Array of contacts
->>>>>>> Stashed changes
 	 *
 	 * @url	GET {id}/contacts
 	 *
