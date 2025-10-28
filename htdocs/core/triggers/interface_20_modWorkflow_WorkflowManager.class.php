@@ -151,6 +151,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['propal'] as $element) {
 							/** @var Propal $element */
 							$ret = $element->classifyBilled($user);
+							if ($ret < 0) {
+								$this->setErrorsFromObject($element);
+							}
 						}
 					}
 				}
@@ -178,6 +181,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['commande'] as $element) {
 							/** @var Commande $element */
 							$ret = $element->classifyBilled($user);
+							if ($ret < 0) {
+								$this->setErrorsFromObject($element);
+							}
 						}
 					}
 				}
@@ -199,6 +205,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['propal'] as $element) {
 							/** @var Propal $element */
 							$ret = $element->classifyBilled($user);
+							if ($ret < 0) {
+								$this->setErrorsFromObject($element);
+							}
 						}
 					}
 				}
@@ -409,6 +418,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['commande'] as $element) {
 							/** @var Commande $element */
 							$ret = $element->classifyBilled($user);
+							if ($ret < 0) {
+								$this->setErrorsFromObject($element);
+							}
 						}
 					}
 				}
