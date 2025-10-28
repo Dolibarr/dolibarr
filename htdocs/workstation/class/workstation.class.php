@@ -462,7 +462,7 @@ class Workstation extends CommonObject
 		foreach ($groups as $id_group) {
 			$ws_usergroup = new WorkstationUserGroup($this->db);
 			$ws_usergroup->fk_workstation = $this->id;
-			$ws_usergroup->fk_usergroup = $id_group;
+			$ws_usergroup->fk_usergroup = (int) $id_group;
 			$ws_usergroup->createCommon($user);
 			$this->usergroups[] = $id_group;
 		}
@@ -475,7 +475,7 @@ class Workstation extends CommonObject
 			foreach ($resources as $id_resource) {
 				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $this->id;
-				$ws_resource->fk_resource = $id_resource;
+				$ws_resource->fk_resource = (int) $id_resource;
 				$ws_resource->createCommon($user);
 				$this->resources[] = $id_resource;
 			}

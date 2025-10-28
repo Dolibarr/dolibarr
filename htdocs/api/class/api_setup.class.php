@@ -506,7 +506,7 @@ class Setup extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$state = new Cstate($this->db);
 				if ($state->fetch($obj->rowid) > 0) {
-					if (empty($filter) || stripos($state->label, $filter) !== false) {
+					if (empty($filter) || stripos((string) $state->label, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($state);
 					}
 				}
@@ -619,7 +619,7 @@ class Setup extends DolibarrApi
 					// and then apply the filter if there is one.
 					$this->translateLabel($country, $lang, 'Country');
 
-					if (empty($filter) || stripos($country->label, $filter) !== false) {
+					if (empty($filter) || stripos((string) $country->label, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($country);
 					}
 				}

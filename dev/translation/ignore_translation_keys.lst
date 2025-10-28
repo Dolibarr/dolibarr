@@ -324,7 +324,6 @@ ErrorFailedToGetListOfNotificationsToSend
 ErrorFailedToLoadBankAccount
 ErrorFailedToLoadDiscount
 ErrorFailedToSetNewPassword
-ErrorFaviconMustBeASquaredImage
 ErrorFileNameInvalid
 ErrorImportOfChartLimitedToCurrentChart
 ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT
@@ -401,7 +400,6 @@ Filename
 FilteredFrom
 Flashy
 ForcedByGlobalSetup
-Form for public lead registration has not been enabled
 Free
 FreeLegalTextOnReceptions
 FrequencyPer_
@@ -803,7 +801,6 @@ TicketTypeShort
 TimeOnly
 Timezone
 ToGetBack
-ToPay
 Token
 Tooltip
 TooltipEditAndRevertStockMovement
