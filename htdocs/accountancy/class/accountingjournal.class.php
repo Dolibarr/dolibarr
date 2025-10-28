@@ -803,10 +803,10 @@ class AccountingJournal extends CommonObject
 			$piece_link = $invoice_static->getNomUrl(1, 'withlabel');
 
 			// Discounted amount including tax
-			$paid    = price2num($invoice_static->getSommePaiement(), 'MT');
-			$usedcn  = price2num($invoice_static->getSumOfCreditNotesUsed(), 'MT');
-			$useddep = price2num($invoice_static->getSumDepositsUsed(), 'MT');
-			$ttc_inv = price2num($invoice_static->total_ttc, 'MT');
+			$paid    = (float) price2num($invoice_static->getSommePaiement(), 'MT');
+			$usedcn  = (float) price2num($invoice_static->getSumOfCreditNotesUsed(), 'MT');
+			$useddep = (float) price2num($invoice_static->getSumDepositsUsed(), 'MT');
+			$ttc_inv = (float) price2num($invoice_static->total_ttc, 'MT');
 			$escompte_ttc = price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
 			if ($escompte_ttc <= 0) continue;
 
@@ -816,9 +816,9 @@ class AccountingJournal extends CommonObject
 			// Distribution including VAT by rate
 			$ttcByRate = array(); $totalTTC = 0.0;
 			foreach ((array) $invoice_static->lines as $li) {
-				$ttc = (float) ($li->total_ttc ?? 0);
+				$ttc = (float) $li->total_ttc;
 				if (!$ttc) continue;
-				$key = number_format((float) ($li->tva_tx ?? 0), 3, '.', '');
+				$key = number_format((float) $li->tva_tx, 3, '.', '');
 				if (!isset($ttcByRate[$key])) $ttcByRate[$key] = 0.0;
 				$ttcByRate[$key] += $ttc;
 				$totalTTC += $ttc;
@@ -839,18 +839,24 @@ class AccountingJournal extends CommonObject
 				$i++;
 				$rate = (float) $rateStr;
 
-				$ttc_part = $escompte_ttc * ($ttcRateOnInvoice / $totalTTC);
-				if ($i == $n) $ttc_part = price2num($escompte_ttc - $sumTTC, 'MT');
-				else { $ttc_part = price2num($ttc_part, 'MT'); $sumTTC = price2num($sumTTC + $ttc_part, 'MT'); }
+				$ttc_part = (float) $escompte_ttc * ($ttcRateOnInvoice / $totalTTC);
+				if ($i == $n) {
+					$ttc_part = (float) price2num($escompte_ttc - $sumTTC, 'MT');
+				} else {
+					$ttc_part = (float) price2num($ttc_part, 'MT');
+					$sumTTC = (float) price2num($sumTTC + $ttc_part, 'MT');
+				}
 
 				if ($rate > 0) {
-					$ht_part  = price2num($ttc_part / (1 + $rate/100), 'MT');
-					$tva_part = price2num($ttc_part - $ht_part, 'MT');
-				} else { $ht_part = $ttc_part; $tva_part = 0.0; }
+					$ht_part  = (float) price2num($ttc_part / (1 + $rate/100), 'MT');
+					$tva_part = (float) price2num($ttc_part - $ht_part, 'MT');
+				} else {
+					$ht_part = $ttc_part; $tva_part = 0.0;
+				}
 
 				// VAT deductible account (by rate if available)
-				$acc_vat_coll = function_exists('_vat_account_collected_for_rate') ? _vat_account_collected_for_rate($rate) : '';
-				if (empty($acc_vat_coll)) $acc_vat_coll = $acc_vat_coll_def;
+				// TODO write function to search the same vat code like the invoice
+				$acc_vat_coll = $acc_vat_coll_def;
 
 				$lines_view = array();
 				$lines_book = array();
@@ -1082,10 +1088,10 @@ class AccountingJournal extends CommonObject
 			$piece_link = $invoicesupplier_static->getNomUrl(1, 'withlabel');
 
 			// Discounted amount including tax
-			$paid    = price2num($invoicesupplier_static->getSommePaiement(), 'MT');
-			$usedcn  = price2num(method_exists($invoicesupplier_static, 'getSumOfCreditNotesUsed') ? $invoicesupplier_static->getSumOfCreditNotesUsed() : 0, 'MT');
-			$useddep = price2num(method_exists($invoicesupplier_static, 'getSumDepositsUsed') ? $invoicesupplier_static->getSumDepositsUsed() : 0, 'MT');
-			$ttc_inv = price2num($invoicesupplier_static->total_ttc, 'MT');
+			$paid    = (float) price2num($invoicesupplier_static->getSommePaiement(), 'MT');
+			$usedcn  = (float) price2num($invoicesupplier_static->getSumOfCreditNotesUsed(), 'MT');
+			$useddep = (float) price2num($invoicesupplier_static->getSumDepositsUsed(), 'MT');
+			$ttc_inv = (float) price2num($invoicesupplier_static->total_ttc, 'MT');
 			$escompte_ttc = price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
 			if ($escompte_ttc <= 0) continue;
 
@@ -1095,9 +1101,9 @@ class AccountingJournal extends CommonObject
 			// Distribution including VAT by rate
 			$ttcByRate = array(); $totalTTC = 0.0;
 			foreach ((array) $invoicesupplier_static->lines as $li) {
-				$ttc = (float) ($li->total_ttc ?? 0);
+				$ttc = (float) $li->total_ttc;
 				if (!$ttc) continue;
-				$key = number_format((float) ($li->tva_tx ?? 0), 3, '.', '');
+				$key = number_format((float) $li->tva_tx, 3, '.', '');
 				if (!isset($ttcByRate[$key])) $ttcByRate[$key] = 0.0;
 				$ttcByRate[$key] += $ttc;
 				$totalTTC += $ttc;
@@ -1128,8 +1134,8 @@ class AccountingJournal extends CommonObject
 				} else { $ht_part = $ttc_part; $tva_part = 0.0; }
 
 				// VAT collected account (by rate if available)
-				$acc_vat_ded = function_exists('_vat_account_deductible_for_rate') ? _vat_account_deductible_for_rate($rate) : '';
-				if (empty($acc_vat_ded)) $acc_vat_ded = $acc_vat_ded_def;
+				// TODO write function to search the same vat code like the supplier invoice
+				$acc_vat_ded = $acc_vat_ded_def;
 
 				$lines_view = array();
 				$lines_book = array();
