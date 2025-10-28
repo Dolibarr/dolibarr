@@ -119,7 +119,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->setErrorsFromObject($newobject);
 				} else {
 					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
-						$res = $newobject->setBankAccount($object->thirdparty->fk_account, 1, $user);
+						$ret = $newobject->setBankAccount($object->thirdparty->fk_account, 1, $user);
 						if ($ret < 0) {
 							$this->setErrorsFromObject($newobject);
 						}
