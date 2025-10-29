@@ -3,7 +3,7 @@
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Schaffhauser sébastien		<sebastien@webmaster67.fr>
- * Copyright (C) 2025		Abbes Bahfir				<contact@01consulting.eu> 
+ * Copyright (C) 2025		Abbes Bahfir				<contact@01consulting.eu>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -225,12 +225,13 @@ class Context
 
 		return self::$_instance;
 	}
-	
+
 	/** Gets Controller Class name
-	 * @param $controller
+	 * @param $controller Controller
 	 * @return string
 	 */
-	private static function getControllerClassname($controller){
+	private static function getControllerClassname($controller)
+	{
 		$part2 = '';
 		if (substr($controller, -4) === 'list') {
 			$part1 = substr($controller, 0, -4);
@@ -265,8 +266,8 @@ class Context
 		$defaultControllersPath = __DIR__ . '/../controllers/';
 
 		// define controllers definition
-		foreach($defaulcontrollers as $controller){
-			if(!in_array($controller, $modulecontrollers)) {
+		foreach ($defaulcontrollers as $controller) {
+			if (!in_array($controller, $modulecontrollers)) {
 				$this->addControllerDefinition($controller, $defaultControllersPath .$controller. '.controller.class.php', self::getControllerClassname($controller));
 			}
 		}
