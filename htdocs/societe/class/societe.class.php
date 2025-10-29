@@ -532,17 +532,17 @@ class Societe extends CommonObject
 	public $localtax2_value;
 
 	/**
-	 * @var string Manager
+	 * @var string 	Manager(s) of the company
 	 */
 	public $managers;
 
 	/**
-	 * @var float Capital
+	 * @var ?float 	Capital of the company
 	 */
 	public $capital;
 
 	/**
-	 * @var int Type thirdparty
+	 * @var int 	Type thirdparty
 	 */
 	public $typent_id = 0;
 
@@ -1526,7 +1526,7 @@ class Societe extends CommonObject
 		$this->localtax1_value = trim($this->localtax1_value);
 		$this->localtax2_value = trim($this->localtax2_value);
 
-		$this->capital = ($this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
+		$this->capital = (!is_null($this->capital) && (string) $this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
 		$this->effectif_id = (int) $this->effectif_id;
 		$this->forme_juridique_code = (int) $this->forme_juridique_code;
@@ -1685,7 +1685,7 @@ class Societe extends CommonObject
 				$sql .= ",localtax2_value =0.000";
 			}
 
-			$sql .= ",capital = ".($this->capital === null ? "null" : $this->capital);
+			$sql .= ",capital = ".($this->capital === null ? "null" : (float) $this->capital);
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
@@ -4852,7 +4852,7 @@ class Societe extends CommonObject
 			$this->socialnetworks['github'] = $github_url;
 		}
 
-		// Id prof generiques
+		// Id prof generic
 		$this->idprof1 = getDolGlobalString('MAIN_INFO_SIREN');
 		$this->idprof2 = getDolGlobalString('MAIN_INFO_SIRET');
 		$this->idprof3 = getDolGlobalString('MAIN_INFO_APE');
@@ -4865,7 +4865,7 @@ class Societe extends CommonObject
 		$this->idprof10 = getDolGlobalString('MAIN_INFO_PROFID10');
 		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarily INTRA.
 		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
-		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : 0;
+		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : null;
 		$this->forme_juridique_code = getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE');
 		$this->email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 		$this->default_lang = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
