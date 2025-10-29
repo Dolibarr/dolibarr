@@ -5617,7 +5617,7 @@ parameters:
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
-			message: '#^Constructor of class DolEditor has an unused parameter \$unused\.$#'
+			message: '#^Constructor of class DolEditor has an unused parameter \$notused\.$#'
 			identifier: constructor.unusedParameter
 			count: 1
 			path: ../../../htdocs/core/class/doleditor.class.php
