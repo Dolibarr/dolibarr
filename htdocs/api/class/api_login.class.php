@@ -77,7 +77,7 @@ class Login
 	 * Login
 	 *
 	 * Request the API token for a couple username / password.
-	 * WARNING: You should NEVER use this API, like you should never use the similar API that uses the POST method. This will expose your password.
+	 * WARNING: You should NEVER use this API, like you should never use the similar API that uses the GET method. This will expose your password.
 	 * To use the APIs, you should instead set an API token to the user you want to allow to use API (This API token called DOLAPIKEY can be found/set on the user page) and use this token as credential for any API call.
 	 * From the API explorer, you can enter directly the "DOLAPIKEY" into the field at the top right of the page to get access to any allowed APIs.
 	 *

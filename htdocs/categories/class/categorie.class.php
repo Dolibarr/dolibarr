@@ -1533,16 +1533,21 @@ class Categorie extends CommonObject
 	 * Returns the path of the category, with the names of the categories
 	 * separated by $sep (" >> " by default)
 	 *
-	 * @param	string	$sep	     Separator
-	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
-	 * @param   int     $nocolor     0
-	 * @param	int		$addpicto	 Add picto into link
+	 * @param	string		$sep	     Separator
+	 * @param	string		$url	     Url ('', 'none' or 'urltouse')
+	 * @param   int     	$nocolor     0
+	 * @param	int			$addpicto	 Add picto into link
+	 * @param	int			$notrunc	 Do not truncate names of parent categories
 	 * @return	string[]
 	 */
-	public function print_all_ways($sep = '&gt;&gt;', $url = '', $nocolor = 0, $addpicto = 0)
+	public function print_all_ways($sep = 'auto', $url = '', $nocolor = 0, $addpicto = 0, $notrunc = 0)
 	{
 		// phpcs:enable
 		$ways = array();
+
+		if ($sep == 'auto') {
+			$sep = '&gt;';
+		}
 
 		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
 
@@ -1567,13 +1572,21 @@ class Categorie extends CommonObject
 				}
 
 				if ($url == '') {
-					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.($i < count($way) ? 'small ' : '').$forced_color.'">';
-					$linkend = '</a>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					if (($i < count($way) && empty($notrunc)) && $i > 1) {
+						$link = '';
+						$linkend = '';
+					} else {
+						$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.(($i < count($way) && empty($notrunc)) ? 'small ' : '').$forced_color.'">';
+						$linkend = '</a>';
+					}
+					$s = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '');
+					$s .= (($i < count($way) && empty($notrunc)) ? ($i == 1 ? dol_trunc($cat->label, 3) : '') : $cat->label);
+					$s .= $linkend;
+					$w[] = $s;
 				} elseif ($url == 'none') {
 					$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
 					$linkend = '</span>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').($i < count($way) ? $cat->label : $cat->label).$linkend;
 				} else {
 					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}

@@ -328,11 +328,6 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	$moduleobject = strtolower($moduleobject);
 	$moduledirforclass = getModuleDirForApiClass($moduleobject);
 
-	// this works, but is only necessary because I don't know how to get getModuleDirForApiClass to answer correctly with comm/mailing
-	if ($moduleobject == 'mailings') {
-		$moduledirforclass = 'comm/mailing';
-	}
-
 	// Load a dedicated API file
 	dol_syslog("Load a dedicated API file moduleobject=".$moduleobject." moduledirforclass=".$moduledirforclass);
 
@@ -357,9 +352,6 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	}
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
-	}
-	if ($moduleobject == 'eventattendees') {
-		$moduledirforclass = 'eventorganization';
 	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
