@@ -5617,7 +5617,7 @@ parameters:
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
-			message: '#^Constructor of class DolEditor has an unused parameter \$toolbarlocation\.$#'
+			message: '#^Constructor of class DolEditor has an unused parameter \$unused\.$#'
 			identifier: constructor.unusedParameter
 			count: 1
 			path: ../../../htdocs/core/class/doleditor.class.php
