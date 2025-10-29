@@ -1373,7 +1373,7 @@ class AccountancyExport
 		// parcours du tableau pour recuperation des numero de compte des tiers pour pouvoir les fournir dans la bonne ligne pour istea
 		$tiers=[];
 		foreach ($objectLines as $line){
-			if ( $line->subledger_account && substr($line->subledger_account,0,1)=='4'){
+			if ( $line->subledger_account && substr($line->subledger_account, 0, 1) == '4' ){
 				$tiers[$line->piece_num] = $line->subledger_label;
 			}
 		}
@@ -1386,7 +1386,7 @@ class AccountancyExport
 			$search = array('Paiement fournisseur ', 'Virement ', 'Paiement ');
 			$replace = array('Paiemt fourn ','Virt ','Paiemt ');
 			$label_operation = str_replace($search, $replace, $line->label_operation);
-			// encadrement par des ' si le champs contient le separateur 
+			// encadrement par des ' si le champs contient le separateur
 			$label_operation = preg_match('/'.$separator.'/', $label_operation) ? "'".$label_operation."'" : $label_operation;
 
 			$tab = array();
@@ -1395,7 +1395,7 @@ class AccountancyExport
 			$tab[] = $date_document;	// colonne 2 : date				ISTEA
 			$tab[] = $line->doc_ref;	// colonne 3 : reference piece 	ISTEA
 			$tab[] = array_key_exists($line->piece_num, $tiers)?$tiers[$line->piece_num]:'';	// colonne 4 : nom tiers	ISTEA
-			$tab[] = length_accountg(($line->subledger_account && ( substr($line->subledger_account,0,2) == substr($line->numero_compte,0,2) ) )?$line->subledger_account:$line->numero_compte);	// colonne 5 : num�ro de compte	ISTEA
+			$tab[] = length_accountg(($line->subledger_account && ( substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2) ) )?$line->subledger_account:$line->numero_compte);	// colonne 5 : numero de compte	ISTEA
 			$tab[] = length_accountg($line->subledger_account?$line->subledger_account:$line->numero_compte);	// colonne 6 : numero de compte
 			$tab[] = length_accountg($line->subledger_account?$line->numero_compte:'');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
 			$tab[] = ($line->doc_type == 'bank')?$label_operation:($line->subledger_account?$line->subledger_label:$line->label_compte);	// colonne 8 : label de l'operation		ISTEA
@@ -1404,7 +1404,7 @@ class AccountancyExport
 			$tab[] = price2num($line->credit);	// colonne 11 : credit		ISTEA
 			$tab[] = $line->code_journal;		// colonne 12 : journal		ISTEA
 
-			$output = mb_convert_encoding('"'.implode('"'.$separator.'"', $tab).'"'.$this->end_line,'ISO-8859-1');
+			$output = mb_convert_encoding('"'.implode('"'.$separator.'"', $tab).'"'.$this->end_line, 'ISO-8859-1');
 			if ($exportFile) {
 				fwrite($exportFile, $output);
 			} else {
