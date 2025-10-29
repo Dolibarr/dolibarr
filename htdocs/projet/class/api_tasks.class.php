@@ -529,6 +529,7 @@ class Tasks extends DolibarrApi
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
+	 * @param   int|null    $progress           Progress percentage (0-100). If null, progress is not updated
 	 *
 	 * @url POST    {id}/addtimespent
 	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"
@@ -537,7 +538,7 @@ class Tasks extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
-	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
+	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '', $progress = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
@@ -563,6 +564,8 @@ class Tasks extends DolibarrApi
 		$this->task->timespent_duration = $duration;
 		$this->task->timespent_fk_user  = $uid;
 		$this->task->timespent_note     = $note;
+		if (!empty($this->task->progress))
+			$this->task->progress  		= $progress;
 
 		$result = $this->task->addTimeSpent(DolibarrApiAccess::$user, 0);
 		if ($result == 0) {

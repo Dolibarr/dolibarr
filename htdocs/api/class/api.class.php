@@ -213,6 +213,7 @@ class DolibarrApi
 		unset($object->error);
 		unset($object->errors);
 		unset($object->errorhidden);
+		unset($object->TRIGGER_PREFIX);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -239,7 +240,7 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
-		unset($object->model_pdf);
+		//unset($object->model_pdf);
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);

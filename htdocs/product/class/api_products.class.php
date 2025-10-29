@@ -2238,6 +2238,7 @@ class Products extends DolibarrApi
 			unset($object->stock_warehouse);
 		}
 
+		unset($object->module);
 		return $object;
 	}
 

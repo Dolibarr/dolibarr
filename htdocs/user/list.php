@@ -708,7 +708,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if (!empty($catid)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'user/list.php');
+	$ways = $c->print_all_ways('auto', 'user/list.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
