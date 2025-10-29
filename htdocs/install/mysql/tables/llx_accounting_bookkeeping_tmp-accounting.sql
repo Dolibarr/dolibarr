@@ -1,6 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2013-2017 Olivier Geffroy      <jeff@jeffinfo.com>
--- Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2013-2017	Olivier Geffroy			<jeff@jeffinfo.com>
+-- Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -39,9 +39,10 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
   multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise
+  lettering_general     tinyint DEFAULT 0 NOT NULL, --					| if value = 1, reconcile is on a general account
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
-  date_lim_reglement    datetime,					-- 					| date limite de reglement
+  date_lim_reglement    datetime,					-- FEC_suppl:DateLimitReglmt	| Payment deadline
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date

@@ -286,4 +286,7 @@ ALTER TABLE llx_blockedlog DROP INDEX entity;
 ALTER TABLE llx_blockedlog DROP INDEX entity_action_certified;
 ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN lettering_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN lettering_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
+
 -- end of migration
