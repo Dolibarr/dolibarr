@@ -211,6 +211,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if (price2num($totalonlinkedelements, 'MT') == price2num($object->total_ht, 'MT')) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
+							$this->errors = $element->errors;
 							if ($ret < 0) {
 								return (int) $ret;
 							}
