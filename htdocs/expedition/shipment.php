@@ -59,7 +59,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'stocks', 'productbatch', 'incoterm', 'other'));
 
 $order_id	= GETPOSTINT('id'); // id of order
 $ref		= GETPOST('ref', 'alpha');
@@ -171,7 +171,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 		if ($result < 0) {
@@ -304,7 +304,7 @@ if ($order_id > 0 || !empty($ref)) {
 			if (0) {	// @phpstan-ignore-line  Do not change on shipment
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -738,7 +738,7 @@ if ($order_id > 0 || !empty($ref)) {
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.$label;
 						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
-						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
+						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity ?? $conf->entity], 1, 1, 0, 0, 0, 80);
 						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range

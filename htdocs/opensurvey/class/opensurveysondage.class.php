@@ -45,6 +45,11 @@ class Opensurveysondage extends CommonObject
 	public $table_element = 'opensurvey_sondage';
 
 	/**
+	 * @var string
+	 */
+	public $table_rowid = 'id_sondage';
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'poll';
@@ -141,12 +146,12 @@ class Opensurveysondage extends CommonObject
 	public $commentaires;
 
 	/**
-	 * @var string admin mail
+	 * @var ?string admin mail
 	 */
 	public $mail_admin;
 
 	/**
-	 * @var string admin name
+	 * @var ?string admin name
 	 */
 	public $nom_admin;
 
@@ -156,13 +161,13 @@ class Opensurveysondage extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var string title of survey
+	 * @var ?string title of survey
 	 * @deprecated Rename the field titre into title into the table to allow to change this in fields and remove this declaration.
 	 */
 	public $titre;
 
 	/**
-	 * @var string title of survey
+	 * @var ?string title of survey
 	 */
 	public $title;
 
@@ -170,28 +175,29 @@ class Opensurveysondage extends CommonObject
 	 * @var int|'' end date of survey
 	 */
 	public $date_fin = '';
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
 	/**
-	 * @var string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
+	 * @var ?string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
 	 */
 	public $format;
 
 	/**
-	 * @var int to allow send mail
+	 * @var ?int to allow send mail
 	 */
 	public $mailsonde;
 
 	/**
-	 * @var int		Allow comments on this poll
+	 * @var ?int		Allow comments on this poll
 	 */
 	public $allow_comments;
 
 	/**
-	 * @var int		Allow users see others vote
+	 * @var ?int		Allow users see others vote
 	 */
 	public $allow_spy;
 
@@ -272,10 +278,10 @@ class Opensurveysondage extends CommonObject
 		$sql .= "'".$this->db->escape($this->id_sondage)."',";
 		$sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
 		$sql .= " ".(int) $user->id.",";
-		$sql .= " '".$this->db->escape($this->title)."',";
+		$sql .= " '".$this->db->escape((string) $this->title)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".(int) $this->status.",";
-		$sql .= " '".$this->db->escape($this->format)."',";
+		$sql .= " '".$this->db->escape((string) $this->format)."',";
 		$sql .= " ".((int) $this->mailsonde).",";
 		$sql .= " ".((int) $this->allow_comments).",";
 		$sql .= " ".((int) $this->allow_spy).",";

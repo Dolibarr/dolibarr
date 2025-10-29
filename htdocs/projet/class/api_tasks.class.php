@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016   	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +197,7 @@ class Tasks extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -224,47 +225,35 @@ class Tasks extends DolibarrApi
 		return $this->task->id;
 	}
 
-	// /**
-	//  * Get time spent of a task
-	//  *
-	//  * @param int   $id                     Id of task
-	//  * @return int
-	//  *
-	//  * @url	GET {id}/tasks
-	//  */
-	/*
-	public function getLines($id, $includetimespent=0)
+	/**
+	 * Get time spent of a task
+	 *
+	 * @param 	int   				$id         Id of task
+	 * @return	array<int,mixed>				Array of timespent lines
+	 *
+	 * @url	GET {id}/timespent
+	 */
+	public function getTimespent($id)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'Project not found');
+		$result = $this->task->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Task not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('tasks', $this->task->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->project->getLinesArray(DolibarrApiAccess::$user);
+		$this->task->fetchTimeSpentOnTask();
 		$result = array();
-		foreach ($this->project->lines as $line)      // $line is a task
-		{
-			if ($includetimespent == 1)
-			{
-				$timespent = $line->getSummaryOfTimeSpent(0);
-			}
-			if ($includetimespent == 1)
-			{
-				// TODO
-				// Add class for timespent records and loop and fill $line->lines with records of timespent
-			}
-			array_push($result,$this->_cleanObjectDatas($line));
+		foreach ($this->task->lines as $line) {
+			array_push($result, $this->_cleanObjectDatas($line));
 		}
 		return $result;
 	}
-	*/
 
 	/**
 	 * Get roles a user is assigned to a task with
@@ -540,6 +529,7 @@ class Tasks extends DolibarrApi
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
+	 * @param   int|null    $progress           Progress percentage (0-100). If null, progress is not updated
 	 *
 	 * @url POST    {id}/addtimespent
 	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"
@@ -548,7 +538,7 @@ class Tasks extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
-	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
+	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '', $progress = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
@@ -574,6 +564,8 @@ class Tasks extends DolibarrApi
 		$this->task->timespent_duration = $duration;
 		$this->task->timespent_fk_user  = $uid;
 		$this->task->timespent_note     = $note;
+		if (!empty($this->task->progress))
+			$this->task->progress  		= $progress;
 
 		$result = $this->task->addTimeSpent(DolibarrApiAccess::$user, 0);
 		if ($result == 0) {

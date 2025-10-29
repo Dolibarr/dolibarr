@@ -67,7 +67,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files
-$langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod

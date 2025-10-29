@@ -465,7 +465,7 @@ if ($action == 'create') {
 	print '</td>';
 
 	// Amount
-	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.dol_escape_htmltag(GETPOST("amount")).'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.dol_escape_htmltag(GETPOST("amount")).'" size="10" spellcheck="false"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Public donation
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
@@ -494,7 +494,7 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 
-		print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.img_picto('', 'object_email', 'class="paddingrightonly"').'<input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
+		print '<tr><td>'.$langs->trans("EMail").'</td><td>'.img_picto('', 'object_email', 'class="paddingrightonly"').'<input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200" spellcheck="false"></td></tr>';
 	}
 
 	// Payment mode
@@ -588,7 +588,7 @@ if (!empty($id) && $action == 'edit') {
 
 	// Amount
 	if ($object->status == 0) {
-		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'" spellcheck="false"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	} else {
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
@@ -632,12 +632,12 @@ if (!empty($id) && $action == 'edit') {
 		}
 		print '</td></tr>';
 
-		print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'" spellcheck="false"></td></tr>';
 	}
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	if ($object->mode_reglement_id) {
-		$selected = $object->mode_reglement_id;
+		$selected = (string) $object->mode_reglement_id;
 	} else {
 		$selected = '';
 	}
@@ -715,33 +715,21 @@ if (!empty($id) && $action != 'edit') {
 	// Project
 	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
-		$morehtmlref .= $langs->trans('Project').' ';
-		if ($user->hasRight('don', 'creer')) {
+		//$morehtmlref .= '<br>';
+		if ($permissiontoadd) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref .= '</form>';
-			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
-			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= ' - '.$proj->title;
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
-			} else {
-				$morehtmlref .= '';
 			}
 		}
 	}
@@ -880,7 +868,7 @@ if (!empty($id) && $action != 'edit') {
 			$resteapayeraffiche = $remaintopay;
 
 			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right'.(!empty($resteapayeraffiche) ? ' amountremaintopay' : '').'">'.price($remaintopay)."</td></tr>\n";
+			print '<td class="right'.(!empty($resteapayeraffiche) ? ' amountremaintopay' : '').'">'.price($resteapayeraffiche)."</td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);
@@ -895,7 +883,8 @@ if (!empty($id) && $action != 'edit') {
 
 	print dol_get_fiche_end();
 
-	$remaintopay = $object->amount - $totalpaid;
+	$remaintopay = price2num($object->amount - $totalpaid, 'MT');
+
 
 	// Actions buttons
 
@@ -928,7 +917,7 @@ if (!empty($id) && $action != 'edit') {
 		}
 
 		// Classify 'paid'
-		if ($object->status == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
+		if ($object->status == $object::STATUS_VALIDATED && $remaintopay == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 		if ($object->status == $object::STATUS_PAID && $object->paid == 1 && $user->hasRight('don', 'creer')) {
@@ -937,10 +926,10 @@ if (!empty($id) && $action != 'edit') {
 
 		// Delete
 		if ($user->hasRight('don', 'supprimer')) {
-			if ($object->status == $object::STATUS_CANCELED || $object->status == $object::STATUS_DRAFT) {
+			if ($object->status != $object::STATUS_PAID && $remaintopay == $object->amount) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantRemovePaymentWithOneInvoicePaid").'">'.$langs->trans("Delete")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DeletionNotPossibleWhenAPaymentExists").'">'.$langs->trans("Delete")."</a></div>";
 			}
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";

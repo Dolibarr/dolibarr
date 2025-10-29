@@ -1,5 +1,6 @@
 ---
 name: pre-commit
+
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:
@@ -16,6 +17,7 @@ concurrency:
   cancel-in-progress: true
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
+
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
@@ -66,7 +68,7 @@ jobs:
         run: |-
           [ -r requirements.txt ] || [ -r pyproject.toml ] || touch requirements.txt
       # Install python and pre-commit tool
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           cache: pip
           python-version: "3.11"
@@ -164,7 +166,7 @@ jobs:
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
       # Upload result log files of precommit into the Artifact shared store
       - name: Provide log as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: ${{ ! cancelled() }}
         with:
           name: precommit-logs

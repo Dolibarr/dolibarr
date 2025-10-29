@@ -96,8 +96,6 @@ AADE_WEBSERVICE_USER
 API
 Accept
 AccountancyErrorMismatchLetteringCode
-AccountingAccount
-AccountingCode
 AccountingJournalType
 ActionAC_
 ActionAC_ALL_
@@ -147,14 +145,12 @@ Banque
 Barcode
 BarcodeDesc
 BarcodeStickersMask
-BatchInformationNotfound
 BillOfMaterialsLine
 BlockLogNeedAmountsValue
 BlockLogNeedElement
 BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote
 BlockedLogAuthorityUrl
 BlockedLogSetup
-BookCalSystem
 Bookings
 BoxTitleLast
 BoxTitleLatest
@@ -179,7 +175,6 @@ Child of
 ClassNotFound
 Clear
 ClickToDial
-Clients
 Clone
 CloneAffectation
 CloneChanges
@@ -202,8 +197,6 @@ ConfirmActionMyObject
 ConfirmActionTarget
 ConfirmCloneMyObject
 ConfirmCloneTask
-ConfirmCreateAdherent
-ConfirmDeleteAdherent
 ConfirmDeleteIndividual
 ConfirmDeleteReport
 ConfirmDeleteWebsiteAccount
@@ -267,7 +260,6 @@ Dictionaries
 DictionaryEmpty
 DictionaryNameUpdated
 Directory
-DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND
 Document
 Documentation
 Dolibarr
@@ -291,7 +283,6 @@ EmailcollectorFilter
 EmailingTargetSelector
 Empty
 End
-EnterAnIP
 EnterNameOfDictionnaryToDeleteDesc
 Entries
 ErrSCAAuthentication
@@ -333,7 +324,6 @@ ErrorFailedToGetListOfNotificationsToSend
 ErrorFailedToLoadBankAccount
 ErrorFailedToLoadDiscount
 ErrorFailedToSetNewPassword
-ErrorFaviconMustBeASquaredImage
 ErrorFileNameInvalid
 ErrorImportOfChartLimitedToCurrentChart
 ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT
@@ -361,7 +351,6 @@ ErrorTechnicalError
 ErrorThirdPartyIdIsMandatory
 ErrorTicketIsNotValid
 ErrorTitreAlreadyExists
-ErrorUpdatingUsersCP
 ErrorUserFetch
 ErrorValueMustBeInteger
 ErrorValueTooHigh
@@ -411,7 +400,6 @@ Filename
 FilteredFrom
 Flashy
 ForcedByGlobalSetup
-Form for public lead registration has not been enabled
 Free
 FreeLegalTextOnReceptions
 FrequencyPer_
@@ -433,7 +421,6 @@ Gzip
 HTTPBasicPassword
 HelpAbandonProductReturned
 HideVersionLink
-HolidayStarted
 Hook
 Hooks
 IBANNotDefined
@@ -619,7 +606,6 @@ PaymentCondition
 PaymentConditionShort
 PaymentDonation
 PaymentHigherThanReminderToPaySupplier
-PaymentSalary
 PaymentSendToStripeTerminal
 PaymentType
 PaymentTypeShort
@@ -636,17 +622,13 @@ Poll
 Posts
 PredefinedInterventional
 PrevRangeToThisRange
-PreviousFingerprint
 Print
 PrintDriver
 PrintModule
 PrintUserConfDesc
 PrinterId
 PrinterIdEmpty
-PrinterLocation
-PrinterNameEmpty
 PrinterParameterEmpty
-Printers
 Printing
 ProductCodeDesc
 ProductFournisseurPrice
@@ -810,7 +792,6 @@ Templates
 TestPrinterTemplate
 TestTemplateToPrinter
 Theme
-ThirdpartyHasNoDefaultBanAccount
 ThisIsInformationOnDocumentToSign
 ThisScreenAllowsYouToSignDocFrom
 TicketCategoryShort
@@ -820,7 +801,6 @@ TicketTypeShort
 TimeOnly
 Timezone
 ToGetBack
-ToPay
 Token
 Tooltip
 TooltipEditAndRevertStockMovement
@@ -847,8 +827,6 @@ UpdateUser
 UpgradeHasBeenUnlocked
 Url
 Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER
-UserRemovedFromGroup
-UserSetInGroup
 VCard
 Vacant
 ValidateAndSign
@@ -874,7 +852,6 @@ Widgets
 Windows
 WorkingBoard
 Workload
-WrongAmount
 XDebug
 XmlCorrupted
 Y
@@ -1031,10 +1008,6 @@ PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
 ProcessingError
-PurchaseOrder
-PurchaseOrders
-ReceptionSentByEMail
-ReceptionValidated
 Recruited
 Ref. Product
 RefNewContract
@@ -1042,7 +1015,6 @@ Stable
 Suggested
 TicketMessageMailSignatureText
 TicketSetupPage
-Tiers
 Timeline
 Transfer
 TryAnotherConnectionMode

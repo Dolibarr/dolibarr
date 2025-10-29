@@ -71,7 +71,7 @@ if (isModEnabled('project')) {
  * @var User $user
  */
 
-$langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'sendings'));
+$langs->loadLangs(array("receptions", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'sendings'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -198,20 +198,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	/*
-	$backurlforlist = DOL_URL_ROOT.'/reception/list.php';
-
-	if (empty($backtopage) || ($cancel && empty($id))) {
-		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			 if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
-				 $backtopage = $backurlforlist;
-			 } else {
-				 $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
-			 }
-		}
-	}
-	*/
-
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
@@ -550,36 +536,31 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif (($action == 'settracking_number' || $action == 'settracking_url'
-	|| $action == 'settrueWeight'
-	|| $action == 'settrueWidth'
-	|| $action == 'settrueHeight'
-	|| $action == 'settrueDepth'
-		|| $action == 'setshipping_method_id') && $permissiontoadd) {
+	} elseif (in_array($action, array('settracking_number', 'settracking_url', 'settrueWeight', 'settrueWidth', 'settrueHeight', 'settrueDepth', 'setshipping_method_id')) && $permissiontoadd) {
 		// Action update
 		$error = 0;
 
-		if ($action == 'settracking_number') {	// Test on permission to add
+		if ($action == 'settracking_number') {		// Test on permission already done
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
-		if ($action == 'settracking_url') {		// Test on permission to add
+		if ($action == 'settracking_url') {			// Test on permission already done
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
-		if ($action == 'settrueWeight') {		// Test on permission to add
+		if ($action == 'settrueWeight') {			// Test on permission already done
 			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
-		if ($action == 'settrueWidth') {		// Test on permission to add
+		if ($action == 'settrueWidth') {			// Test on permission already done
 			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
-		if ($action == 'settrueHeight') {		// Test on permission to add
+		if ($action == 'settrueHeight') {			// Test on permission already done
 			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
-		if ($action == 'settrueDepth') {		// Test on permission to add
+		if ($action == 'settrueDepth') {			// Test on permission already done
 			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
-		if ($action == 'setshipping_method_id') {	// Test on permission to add
+		if ($action == 'setshipping_method_id') {	// Test on permission already done
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
@@ -1242,7 +1223,7 @@ if ($action == 'create') {
 					print $line->qty;
 				}
 				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value="'.$line->id.'">';
-				print '<input type="hidden" name="pul'.$indiceAsked.'" value="'.$line->pu_ht.'">';
+				print '<input type="hidden" name="pul'.$indiceAsked.'" value="'.$line->subprice.'">';
 				print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
 				print '</td>';
 				$qtyProdCom = $line->qty;
@@ -1290,7 +1271,7 @@ if ($action == 'create') {
 
 					if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 						print '<td>';
-						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
+						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.price($cost_price).'">';
 						print '</td>';
 					}
 
@@ -1425,7 +1406,7 @@ if ($action == 'create') {
 		if ($objectref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans("ConfirmValidateReception", $numref);
@@ -1500,7 +1481,7 @@ if ($action == 'create') {
 		if (0) {	// @phpstan-ignore-line  Do not change on reception
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $permissiontoadd) {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -1788,7 +1769,7 @@ if ($action == 'create') {
 		if (!isModEnabled('stock')) {
 			$editColspan--;
 		}
-		if (empty($conf->productbatch->enabled)) {
+		if (!isModEnabled('productbatch')) {
 			$editColspan--;
 		}
 		print '<td class="center" colspan="'.$editColspan.'">';
@@ -2271,7 +2252,7 @@ if ($action == 'create') {
 	}
 
 	// Presend form
-	$modelmail = 'shipping_send';
+	$modelmail = 'reception_send';
 	$defaulttopic = 'SendReceptionRef';
 	$diroutput = $conf->reception->dir_output;
 	$trackid = 'rec'.$object->id;

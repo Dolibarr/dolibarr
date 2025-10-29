@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("deliveries", "other"));
+$langs->loadLangs(array("sendings", "other"));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');

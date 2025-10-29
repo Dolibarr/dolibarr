@@ -51,6 +51,12 @@ class BOM extends CommonObject
 	public $element = 'bom';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'BOM';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'bom_bom';
@@ -64,6 +70,7 @@ class BOM extends CommonObject
 	 * @var Product	Object product of the BOM
 	 */
 	public $product;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -137,7 +144,7 @@ class BOM extends CommonObject
 	public $ref;
 
 	/**
-	 * @var string label
+	 * @var ?string label
 	 */
 	public $label;
 
@@ -147,7 +154,7 @@ class BOM extends CommonObject
 	public $bomtype;
 
 	/**
-	 * @var string description
+	 * @var ?string description
 	 */
 	public $description;
 
@@ -167,22 +174,22 @@ class BOM extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var int Id User modifying
+	 * @var int Id User validating
 	 */
 	public $fk_user_valid;
 
 	/**
-	 * @var int Id User modifying
+	 * @var ?int Id of warehouse
 	 */
 	public $fk_warehouse;
 
 	/**
-	 * @var string import key
+	 * @var ?string import key
 	 */
 	public $import_key;
 
 	/**
-	 * @var int status
+	 * @var ?int status
 	 */
 	public $status;
 
@@ -190,14 +197,17 @@ class BOM extends CommonObject
 	 * @var int product Id
 	 */
 	public $fk_product;
+
 	/**
 	 * @var float
 	 */
 	public $qty;
+
 	/**
 	 * @var float
 	 */
 	public $duration;
+
 	/**
 	 * @var float
 	 */
@@ -359,8 +369,7 @@ class BOM extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -437,13 +446,13 @@ class BOM extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectlineclassname = get_class($this).'Line';
+		$objectlineclassname = $this->class_element_line;
 		if (!class_exists($objectlineclassname)) {
-			$this->error = 'Error, class '.$objectlineclassname.' not found during call of fetchLinesCommon';
+			$this->error = 'Error, class BOMLine not found during call of fetchLinesCommon';
 			return -1;
 		}
 
-		$objectline = new $objectlineclassname($this->db);
+		$objectline = new BOMLine($this->db);
 
 		'@phan-var-force BOMLine $objectline';
 
@@ -463,7 +472,7 @@ class BOM extends CommonObject
 			while ($i < $num_rows) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					$newline = new $objectlineclassname($this->db);
+					$newline = new BOMLine($this->db);
 					'@phan-var-force BOMLine $newline';
 					$newline->setVarsFromFetchObj($obj);
 
@@ -602,7 +611,7 @@ class BOM extends CommonObject
 		$logtext .= ", fk_bom_child=$fk_bom_child, import_key=$import_key";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
@@ -710,7 +719,7 @@ class BOM extends CommonObject
 		$logtext .= ", import_key=$import_key";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
@@ -888,6 +897,7 @@ class BOM extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModeleNumRefBoms $obj';
+			/** @var ModeleNumRefBoms $obj */
 			$numref = $obj->getNextValue($prod, $this);
 
 			if ($numref != "") {
@@ -929,11 +939,11 @@ class BOM extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$this->fetch_product();
 			$num = $this->getNextNumRef($this->product);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
@@ -1393,6 +1403,7 @@ class BOM extends CommonObject
 		$reshook = $hookmanager->executeHooks('calculateCostsBom', $parameters, $this); // Note that $action and $object may have been modified by hook
 
 		if ($reshook > 0) {
+			$hookmanager->executeHooks('calculateCostsBomAfter', $parameters, $this); // Note that $action and $object may have been modified by hook
 			return $hookmanager->resPrint;
 		}
 
@@ -1406,6 +1417,21 @@ class BOM extends CommonObject
 				$tmpproduct->pmp = 0;
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 
+				$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
+				if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
+					if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+						if ($productFournisseur->fourn_remise_percent != "0") {
+							$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+						} else {
+							$line->unit_cost = $productFournisseur->fourn_unitprice;
+						}
+					} else {
+						$line->unit_cost = 0;
+					}
+				} else {
+					$line->unit_cost = (float) price2num($unit_cost);
+				}
+
 				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
 					if (empty($line->fk_bom_child)) {
 						if ($result < 0) {
@@ -1413,22 +1439,7 @@ class BOM extends CommonObject
 							return -1;
 						}
 
-						$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
-						if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
-							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-								if ($productFournisseur->fourn_remise_percent != "0") {
-									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
-								} else {
-									$line->unit_cost = $productFournisseur->fourn_unitprice;
-								}
-							} else {
-								$line->unit_cost = 0;
-							}
-						} else {
-							$line->unit_cost = (float) price2num($unit_cost);
-						}
-
-						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
+						$line->total_cost = (float) $line->unit_cost * $line->qty / $line->efficiency;
 
 						$this->total_cost += $line->total_cost;
 					} else {
@@ -1437,7 +1448,7 @@ class BOM extends CommonObject
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;
-							$this->total_cost += (float) price2num($bom_child->total_cost * $line->qty, 'MT');
+							$line->total_cost = (float) $bom_child->unit_cost * $line->qty / $line->efficiency;
 							$this->total_cost += $line->total_cost;
 						} else {
 							$this->error = $bom_child->error;
@@ -1458,7 +1469,7 @@ class BOM extends CommonObject
 						$res = $workstation->fetch($line->fk_default_workstation);
 
 						if ($res > 0) {
-							$line->total_cost = (float) price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+							$line->total_cost = (float) $qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated);
 						} else {
 							$this->error = $workstation->error;
 							return -3;
@@ -1472,9 +1483,9 @@ class BOM extends CommonObject
 						}
 
 						if ($qtyhourservice) {
-							$line->total_cost = (float) price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = (float) $qtyhourforline / $qtyhourservice * $line->unit_cost;
 						} else {
-							$line->total_cost = (float) price2num($line->qty * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = (float) $line->qty * $line->unit_cost;
 						}
 					}
 
@@ -1490,6 +1501,7 @@ class BOM extends CommonObject
 				$this->unit_cost = (float) price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
+		$hookmanager->executeHooks('calculateCostsBomAfter', $parameters, $this);
 
 		return 1;
 	}
@@ -1524,7 +1536,7 @@ class BOM extends CommonObject
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
 					foreach ($line->childBom as $childBom) {
-						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty);
+						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty / $childBom->qty);
 					}
 				} else {
 					if (empty($TNetNeeds[$line->fk_product]['qty'])) {
@@ -1560,7 +1572,7 @@ class BOM extends CommonObject
 						//$TNetNeeds[$childBom->id]['fk_unit'] = $line->fk_unit;
 						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
 						$TNetNeeds[$childBom->id]['level'] = $level;
-						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty, $level + 1);
+						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty / $childBom->qty, $level + 1);
 					}
 				} else {
 					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
@@ -1585,14 +1597,13 @@ class BOM extends CommonObject
 	/**
 	 * Recursively retrieves all parent bom in the tree that leads to the $bom_id bom
 	 *
-	 * @param 	BOM[]		$TParentBom		We put all found parent bom in $TParentBom
+	 * @param 	int[]		$TParentBom		We put all found parent bom in $TParentBom
 	 * @param 	int			$bom_id			ID of bom from which we want to get parent bom ids
 	 * @param 	int<0,1000>	$level			Protection against infinite loop
 	 * @return 	void
 	 */
 	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = 0, $level = 1)
 	{
-
 		// Protection against infinite loop
 		if ($level > 1000) {
 			return;
@@ -1602,15 +1613,13 @@ class BOM extends CommonObject
 			$bom_id = $this->id;
 		}
 
-		$sql = 'SELECT l.fk_bom, b.label
-				FROM '.MAIN_DB_PREFIX.'bom_bomline l
-				INNER JOIN '.MAIN_DB_PREFIX.$this->table_element.' b ON b.rowid = l.fk_bom
-				WHERE fk_bom_child = '.((int) $bom_id);
+		$sql = "SELECT l.fk_bom, b.label FROM ".MAIN_DB_PREFIX."bom_bomline as l INNER JOIN ".MAIN_DB_PREFIX.$this->table_element." b ON b.rowid = l.fk_bom";
+		$sql .= " WHERE fk_bom_child = ".((int) $bom_id);
 
 		$resql = $this->db->query($sql);
 		if (!empty($resql)) {
 			while ($res = $this->db->fetch_object($resql)) {
-				$TParentBom[$res->fk_bom] = $res->fk_bom;
+				$TParentBom[(int) $res->fk_bom] = (int) $res->fk_bom;
 				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom, $level + 1);
 			}
 		}
@@ -1635,7 +1644,7 @@ class BOM extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : '').'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
@@ -1652,9 +1661,7 @@ class BOM extends CommonObject
 			$prod = $arraydata['prod'];
 			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 
 		$return .= '</div>';
 		$return .= '</div>';

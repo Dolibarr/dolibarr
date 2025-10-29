@@ -5,7 +5,7 @@
  * Copyright (C) 2012-2018	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,14 +113,14 @@ dol_mkdir(DOL_DATA_ROOT.'/api/temp'); // May have been deleted by a purge
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-api page-admin-index');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ApiDesc")."</span><br>\n";
 print "<br>\n";
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
@@ -186,7 +186,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$form->textwithpicto($langs->trans("RESTRICT_ON_IP"), $langs->trans("Example").': '.$langs->trans("IPListExample"));
 print '</td>';
-print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag(getDolGlobalString('API_RESTRICT_ON_IP')).'"></td>';
+print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag(getDolGlobalString('API_RESTRICT_ON_IP')).'" spellcheck="false"></td>';
 print '<td>';
 print '<input type="submit" class="button button-save smallpaddingimp" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
 print '</td>';
@@ -208,7 +208,7 @@ $message = '';
 //$url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $url = $urlwithroot.'/api/index.php/login?login=auserlogin&password=thepassword[&reset=1]';
 $message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
-$message .= '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogettoken" value="'.$url.'"></div>';
+$message .= '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogettoken" value="'.$url.'" spellcheck="false"></div>';
 print $message;
 print ajax_autoselect("urltogettoken");
 print '<br>';
@@ -223,7 +223,7 @@ if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/e
 	print '<div class="opacitymediumxxx"><br><span class="opacitymedium">'.$langs->trans("SwaggerDescriptionFile").':</span><br>';
 	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
 	//$urlswaggerreal = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY='.$user->api_key;
-	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogetapidesc" value="'.$urlswagger.'"></div>';
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogetapidesc" value="'.$urlswagger.'" spellcheck="false"></div>';
 	print '</div>';
 	print ajax_autoselect("urltogetapidesc");
 } else {

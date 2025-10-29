@@ -217,7 +217,7 @@ class ProductFournisseurPrice extends CommonObject
 	 */
 	public $multicurrency_code;
 	/**
-	 * @var float
+	 * @var ?float
 	 */
 	public $multicurrency_tx;
 	/**
@@ -354,8 +354,6 @@ class ProductFournisseurPrice extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key);
-					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -366,8 +364,7 @@ class ProductFournisseurPrice extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -552,7 +549,7 @@ class ProductFournisseurPrice extends CommonObject
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 

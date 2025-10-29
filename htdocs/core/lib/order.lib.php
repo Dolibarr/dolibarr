@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
+
 	if (isModEnabled("shipping")) {
 		$langs->load("sendings");
 	}
@@ -44,7 +46,7 @@ function commande_prepare_head(Commande $object)
 	$head = array();
 
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/commande/card.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("CustomerOrder");
 		$head[$h][2] = 'order';
 		$h++;
@@ -52,7 +54,7 @@ function commande_prepare_head(Commande $object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/commande/contact.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -65,7 +67,7 @@ function commande_prepare_head(Commande $object)
 		|| (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire'))) {
 		$nbShipments = $object->getNbOfShipments();
 		$nbReceiption = 0;
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/expedition/shipment.php', ['id' => $object->id]);
 		$text = '';
 		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 			$text .= $langs->trans("Shipments");
@@ -107,7 +109,7 @@ function commande_prepare_head(Commande $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/commande/note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -118,10 +120,10 @@ function commande_prepare_head(Commande $object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->commande->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->commande->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/commande/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -130,7 +132,7 @@ function commande_prepare_head(Commande $object)
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT.'/commande/agenda.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/commande/agenda.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
@@ -178,7 +180,7 @@ function commande_prepare_head(Commande $object)
  */
 function order_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('commande');
@@ -187,19 +189,14 @@ function order_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/order.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/order.php');
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/order_pdf.php';
-	$head[$h][1] = $langs->trans("PDF");
-	$head[$h][2] = 'pdf';
-	$h++;
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/order_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['commande']['count'];
 	if ($nbExtrafields > 0) {
@@ -208,7 +205,7 @@ function order_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/orderdet_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/orderdet_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['commandedet']['count'];
 	if ($nbExtrafields > 0) {

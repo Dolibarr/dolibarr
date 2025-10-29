@@ -45,7 +45,7 @@ $langs->load("bom");
 
 '@phan-var-force BOM[] $linkedObjectBlock';  // Type before use
 /** @var BOM[] $linkedObjectBlock */
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 '@phan-var-force BOM[] $linkedObjectBlock';  // Type after dol_sort_array which looses typing
 /** @var BOM[] $linkedObjectBlock */
 

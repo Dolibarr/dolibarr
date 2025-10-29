@@ -20,10 +20,10 @@ See https://docs.github.com/en/actions/using-workflows/events-that-trigger-workf
 The other worklows are:
 -----------------------
 
-- stale-issues-safe	to autoclose old issues.
-- phpstan_baseline to update the phpstan baseline file.
-- cache-clean-pr to clean cache when closing a PR.
-
+- ci-stale-issues-safe	to autoclose old issues.
+- ci-phpstan_baseline to update the phpstan baseline file.
+- ci-cache-clean-pr to clean cache when closing a PR.
+- ci-test to make CI tests
 
 Some tests workflows are:
 ------------------------

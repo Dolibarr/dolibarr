@@ -3,10 +3,10 @@ MenuFinancial=Наплата | Плаќање
 TaxModuleSetupToModifyRules=Одете во <a href="%s">Поставување модул за даноци</a> за да ги измените правилата за пресметка
 TaxModuleSetupToModifyRulesLT=Одете во <a href="%s">Поставување на компанијата</a> за да ги измените правилата за пресметка
 OptionMode=Опција за сметководство
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Во овој контекст, прометот се пресметува преку фактури (датум на валидација). Кога доспеваат овие фактури, без разлика дали се платени или не, тие се наведени во прометот.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=Функцијата достапна само во сметководствениот режим КРЕДИТИ-ДОЛГИ (Видете ја конфигурацијата на сметководствениот модул)
 VATReportBuildWithOptionDefinedInModule=Износите прикажани овде се пресметуваат користејќи правила дефинирани со поставувањето на даночниот модул.
 LTReportBuildWithOptionDefinedInModule=Износите прикажани овде се пресметуваат користејќи правила дефинирани од поставувањето на компанијата.
@@ -302,7 +302,6 @@ ByVatRate=По продажна даночна стапка
 TurnoverbyVatrate=Промет фактуриран по продажна даночна стапка
 TurnoverCollectedbyVatrate=Промет собран по продажна даночна стапка
 PurchasebyVatrate=Даночна стапка за купување по продажба
-LabelToShow=Кратка етикета
 PurchaseTurnover=Купете промет
 PurchaseTurnoverCollected=Набавен промет собран
 RulesPurchaseTurnoverDue=- Вклучува достасани фактури на добавувачот без разлика дали се платени или не. <br>- Се заснова на датумот на фактурата на овие фактури.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

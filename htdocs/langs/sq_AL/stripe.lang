@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Kliko këtu për të provuar përsëri...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Për shkak të rregullave të forta të vërtetimit të klientit, krijimi i një karte duhet të bëhet nga Stripe back office. Mund të klikoni këtu për të aktivizuar regjistrimin e klientit Stripe: %s
 STRIPE_CARD_PRESENT=Dhuratë karte për terminalet me shirita
 TERMINAL_LOCATION=Vendndodhja (adresa) për Terminalet Stripe
-RequestDirectDebitWithStripe=Kërko Debitim Direkt me Stripe
-RequesCreditTransferWithStripe=Kërko Transfer Kredie me Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Aktivizo pagesat e Debitimit Direkt përmes Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Aktivizo pagesat duke përdorur Klarna
 STRIPE_BANCONTACT=Aktivizo pagesat duke përdorur BANCONTACT
 STRIPE_IDEAL=Aktivizo pagesat duke përdorur IDEAL
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Vetëm për klientët gjermanë
 ExampleOnlyForNLCustomers=Vetëm për klientët holandez
 ExampleOnlyForATBEDEITNLESCustomers=Vetëm për klientët nga Austria, Belgjika, Gjermania, Italia, Holanda, Spanja
 ListOfSupportedHooksToActivate=Lista e grepave të mbështetur për t'u aktivizuar
+# Paybox
+PayBoxSetup=PayBox module setup
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=You will be redirected on secured Paybox page to input you credit card information
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url of Paybox CGI module for payment
+NewPayboxPaymentReceived=New Paybox payment received
+NewPayboxPaymentFailed=New Paybox payment tried but failed
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+PAYBOX_HMAC_KEY=HMAC key

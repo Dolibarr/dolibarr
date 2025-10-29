@@ -82,7 +82,7 @@ $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe"));
 
 // Clean parameters
 $PAYPAL_API_USER = "";
@@ -494,6 +494,8 @@ if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
 			dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
 			$ispaymentok = $hookmanager->resArray['ispaymentok'];
 		}
+	} else {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 }
 
@@ -1071,6 +1073,19 @@ if ($ispaymentok) {
 					$paiement->ext_payment_id = $TRANSACTIONID;
 				}
 				$paiement->ext_payment_site = $service;
+
+				// Validate invoice if not already validated (this can happen for automatically generated invoices with a free amount)
+				if (!$error && $object->status == Facture::STATUS_DRAFT) {
+					$result = $object->validate($user);
+					if ($result < 0) {
+						$postactionmessages[] = $object->error;
+						$ispostactionok = -1;
+						$error++;
+					} else {
+						$postactionmessages[] = 'Invoice validated';
+						$ispostactionok = 1;
+					}
+				}
 
 				if (!$error) {
 					$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
@@ -2104,10 +2119,18 @@ if (empty($doactionsthenredirect)) {
 		}
 	} else {
 		print $langs->trans('DoExpressCheckoutPaymentAPICallFailed')."<br>\n";
-		print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
-		print $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
-		print $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
-		print $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+		if ($ErrorLongMsg) {
+			print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
+		}
+		if ($ErrorShortMsg) {
+			print $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
+		}
+		if ($ErrorCode) {
+			print $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
+		}
+		if ($ErrorSeverityCode) {
+			print $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+		}
 
 		if ($mysoc->email) {
 			print "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";

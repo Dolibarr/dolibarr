@@ -278,8 +278,7 @@ class CTicketCategory extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -481,7 +480,6 @@ class CTicketCategory extends CommonObject
 		*/
 		$label = '';
 
-		//$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
 		$url = '';
 
 		if ($option != 'nolink') {

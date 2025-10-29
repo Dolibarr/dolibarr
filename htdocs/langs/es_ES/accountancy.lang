@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Contabilidad
 Accounting=Contabilidad
+AccountingAccount=Cuenta contable
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
 ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
 ACCOUNTING_EXPORT_PIECE=Exportar el número de asiento
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Cuenta (del Plan Contable) que se utilizará para reg
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta (del Plan Contable) que se utilizará para registrar las suscripciones de membresía (módulo de membresía, si la membresía se registró sin factura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta (del Plan Contable) que se utilizará como cuenta predeterminada para registrar el depósito del cliente
 UseAuxiliaryAccountOnCustomerDeposit=Almacene la cuenta del cliente como cuenta individual en el libro mayor auxiliar para las líneas de anticipos (si está deshabilitada, la cuenta individual para las líneas de anticipos permanecerá vacía)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cuenta (del Plan Contable) que se utilizará como predeterminada
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Almacene la cuenta del proveedor como cuenta individual en el libro mayor auxiliar para las líneas de anticipos (si está deshabilitada, la cuenta individual para las líneas de anticipos permanecerá vacía)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Cuenta contable por defecto para registrar la garantía retenida por el cliente
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los productos comprados dentro del mismo país (se usa si no está definida en la hoja del producto)
@@ -278,6 +280,7 @@ PcgtypeDesc=Los grupos de cuentas se utilizan como criterios predefinidos de "fi
 AccountingCategoriesDesc=Se puede utilizar un grupo personalizado de cuentas para agrupar cuentas contables en un solo nombre y facilitar el uso de filtros o la creación de informes personalizados.
 Reconcilable=Reconciliable
 Centralized=Cuenta centralizada
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total facturación antes de impuestos
 TotalMarge=Total margen ventas
 DescVentilCustomer=Consulta aquí la lista de líneas de factura de cliente vinculadas (o no) a una cuenta de producto desde plan de cuentas
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activar la gestión del cobro reverti
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Cuando esta opción está habilitada, puede definir que un proveedor o una factura de proveedor determinada debe transferirse a la contabilidad de manera diferente: se generará un débito adicional y una línea de crédito en la contabilidad en 2 cuentas determinadas del plan de cuentas definido en "%s" página de configuración.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activar una pestaña en tarjetas de terceros para ver el libro auxiliar
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Cuando esta opción está habilitada, se muestra una nueva pestaña en las tarjetas de terceros para ver y administrar la contabilidad del tercero, como conciliar, imprimir y más.
+
 ## Export
 NotExportLettering=No exportar las letras al generar el archivo.
 NotifiedExportDate=Marcar líneas aún no exportadas como Exportadas <span class="warning"> (para modificar una línea marcada como exportada, deberá eliminar toda la transacción y volver a transferirla a contabilidad) </span>

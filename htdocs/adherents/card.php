@@ -88,6 +88,7 @@ if (isModEnabled('mailmanspip')) {
 
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
+$upload_dir = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -240,6 +241,7 @@ if (empty($reshook)) {
 			$tmpuser = dol_clone($object, 2);
 			if (GETPOST('internalorexternal', 'aZ09') == 'internal') {
 				$tmpuser->fk_soc = 0;
+				$tmpuser->socid = 0;
 			}
 
 			$result = $nuser->create_from_member($tmpuser, GETPOST('login', 'alphanohtml'));
@@ -270,6 +272,29 @@ if (empty($reshook)) {
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('adherent', 'creer')) {
+		$member_origin_id = GETPOSTINT('member_origin');
+		$member_origin = new Adherent($db);		// The thirdparty that we will delete
+
+		if ($member_origin_id <= 0) {
+			$langs->load('errors');
+			setEventMessages($langs->trans('MergeOriginMemberIsMAndatory'), null, 'errors');
+		} else {
+			if (!$error && $member_origin->fetch($member_origin_id) < 1) {
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+				$error++;
+			}
+			if (!$error) {
+				$result = $object->mergeMembers($member_origin_id);
+				if ($result < 0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					setEventMessages($langs->trans('MemberMergeSuccess'), null, 'mesgs');
+				}
+			}
 		}
 	}
 
@@ -335,7 +360,7 @@ if (empty($reshook)) {
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
 			$object->email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->url = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
+			$object->url = trim(GETPOST('member_url', 'url'));
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
@@ -485,7 +510,7 @@ if (empty($reshook)) {
 		$phone_perso = GETPOST("phone_perso", 'alpha');
 		$phone_mobile = GETPOST("phone_mobile", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase'));
-		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+		$url = trim(GETPOST('url', 'url'));
 		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'password');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');
@@ -519,18 +544,18 @@ if (empty($reshook)) {
 			}
 		}
 
-		$object->email       = $email;
-		$object->url       	 = $url;
-		$object->login       = $login;
-		$object->pass        = $pass;
-		$object->birth       = $birthdate;
-		$object->photo       = $photo;
-		$object->typeid      = $typeid;
-		//$object->note        = $comment;
-		$object->morphy      = $morphy;
-		$object->user_id     = $userid;
+		$object->email = $email;
+		$object->url = $url;
+		$object->login = $login;
+		$object->pass = $pass;
+		$object->birth = $birthdate;
+		$object->photo = $photo;
+		$object->typeid = $typeid;
+		//$object->note = $comment;
+		$object->morphy = $morphy;
+		$object->user_id = $userid;
 		$object->socid = $socid;
-		$object->public      = $public;
+		$object->public = $public;
 		$object->default_lang = $default_lang;
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -593,10 +618,6 @@ if (empty($reshook)) {
 		if (!empty($object->url) && !isValidUrl($object->url)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
-		}
-		$public = 0;
-		if (isset($public)) {
-			$public = 1;
 		}
 
 		if (!$error) {
@@ -1051,14 +1072,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}
 		if ($user->hasRight('member', 'configurer')) {
-			print ' <a href="'.DOL_URL_ROOT.'/adherents/type.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&typeid=--IDFORBACKTOPAGE--').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
+			print ' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/type.php', ['action' => 'create', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'typeid' => '--IDFORBACKTOPAGE--'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
 		}
 		print "</td>\n";
 
-		// Morphy
-		$morphys = array();
-		$morphys["phy"] = $langs->trans("Physical");
-		$morphys["mor"] = $langs->trans("Moral");
+		// Legal entity or natural person
+		$morphys = [
+			"phy" => $langs->trans("Physical"),
+			"mor" => $langs->trans("Moral"),
+		];
 		$checkednature = GETPOST("morphy", 'alpha');
 		$listetype_natures = $adht->morphyByType(1);
 		$listetype_natures_json = json_encode($listetype_natures);
@@ -1146,7 +1168,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1170,11 +1192,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// EMail
 		print '<tr><td>'.(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '</span>' : '').'</td>';
-		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
@@ -1380,7 +1402,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1658,7 +1680,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = (string) $arraydefaultmessage->topic;
-				$msg	 = (string) $arraydefaultmessage->content;
+				$msg = (string) $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1829,6 +1851,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action == 'add_spip') {
 			print $form->formconfirm("card.php?rowid=".$id, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
+
+		// Confirm merge
+		if ($action == 'merge') {
+			$formquestion = array(
+				array(
+					'name' => 'member_origin',
+					'label' => $langs->trans('MergeOriginMember'),
+					'type' => 'other',
+					'value' => $form->selectMembers('', 'member_origin', '', 0, 1, '', 0, array(), 0, 'SelectMember', 0, 'minwidth200', array(), 1, array($object->id))
+				)
+			);
+
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeMembers"), $langs->trans("ConfirmMergeMembers"), "confirm_merge", $formquestion, 'no', 1, 300);
+		}
+
 		// Confirm removed from spip
 		if ($action == 'del_spip') {
 			print $form->formconfirm("card.php?rowid=$id", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
@@ -1842,10 +1879,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$rowspan++;
 		}
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/vcard.php', ['id' => $object->id]).'" class="refid">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 
@@ -2040,7 +2077,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Send
 				if (empty($user->socid)) {
 					if (Adherent::STATUS_VALIDATED == $object->status) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
 					}
 				}
 
@@ -2060,7 +2097,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Modify
 				if ($user->hasRight('adherent', 'creer')) {
-					print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
+					print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true).'">'.$langs->trans("Modify").'</a>'."\n";
 				} else {
 					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</span>'."\n";
 				}
@@ -2068,7 +2105,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Validate
 				if (Adherent::STATUS_DRAFT == $object->status) {
 					if ($user->hasRight('adherent', 'creer')) {
-						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=valid&token='.newToken().'">'.$langs->trans("Validate").'</a>'."\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'valid'], true).'">'.$langs->trans("Validate").'</a>'."\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</span>'."\n";
 					}
@@ -2077,7 +2114,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Reactivate
 				if (Adherent::STATUS_RESILIATED == $object->status || Adherent::STATUS_EXCLUDED == $object->status) {
 					if ($user->hasRight('adherent', 'creer')) {
-						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=valid&token='.newToken().'">'.$langs->trans("Reenable")."</a>\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'valid'], true).'">'.$langs->trans("Reenable")."</a>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable").'</span>'."\n";
 					}
@@ -2086,7 +2123,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Resiliate
 				if (Adherent::STATUS_VALIDATED == $object->status) {
 					if ($user->hasRight('adherent', 'supprimer')) {
-						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=resiliate&token='.newToken().'">'.$langs->trans("Resiliate")."</a></span>\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'resiliate'], true).'">'.$langs->trans("Resiliate")."</a></span>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate").'</span>'."\n";
 					}
@@ -2095,7 +2132,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Exclude
 				if (Adherent::STATUS_VALIDATED == $object->status) {
 					if ($user->hasRight('adherent', 'supprimer')) {
-						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=exclude&token='.newToken().'">'.$langs->trans("Exclude")."</a></span>\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'exclude'], true).'">'.$langs->trans("Exclude")."</a></span>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Exclude").'</span>'."\n";
 					}
@@ -2105,7 +2142,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (isModEnabled('societe') && !$object->socid) {
 					if ($user->hasRight('societe', 'creer')) {
 						if (Adherent::STATUS_DRAFT != $object->status) {
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.((int) $object->id).'&action=create_thirdparty&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("CreateDolibarrThirdPartyDesc")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>'."\n";
+							print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'create_thirdparty'], true).'" title="'.dol_escape_htmltag($langs->trans("CreateDolibarrThirdPartyDesc")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>'."\n";
 						} else {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>'."\n";
 						}
@@ -2118,7 +2155,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (!$user->socid && !$object->user_id) {
 					if ($user->hasRight('user', 'user', 'creer')) {
 						if (Adherent::STATUS_DRAFT != $object->status) {
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.((int) $object->id).'&action=create_user&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("CreateDolibarrLoginDesc")).'">'.$langs->trans("CreateDolibarrLogin").'</a>'."\n";
+							print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'create_user'], true).'" title="'.dol_escape_htmltag($langs->trans("CreateDolibarrLoginDesc")).'">'.$langs->trans("CreateDolibarrLogin").'</a>'."\n";
 						} else {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a>'."\n";
 						}
@@ -2132,16 +2169,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$isinspip = $mailmanspip->is_in_spip($object);
 
 					if ($isinspip == 1) {
-						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=del_spip&token='.newToken().'">'.$langs->trans("DeleteIntoSpip").'</a>'."\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'del_spip'], true).'">'.$langs->trans("DeleteIntoSpip").'</a>'."\n";
 					}
 					if ($isinspip == 0) {
-						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=add_spip&token='.newToken().'">'.$langs->trans("AddIntoSpip").'</a>'."\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'add_spip'], true).'">'.$langs->trans("AddIntoSpip").'</a>'."\n";
 					}
 				}
 
+				// Merge
+				print dolGetButtonAction($langs->trans('MergeMembers'), $langs->trans('Merge'), 'danger', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'merge'], true), '', $user->hasRight('adherent', 'supprimer'));
+
 				// Delete
 				if ($user->hasRight('adherent', 'supprimer')) {
-					print '<a class="butActionDelete" href="card.php?rowid='.((int) $object->id).'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true).'">'.$langs->trans("Delete").'</a>'."\n";
 				} else {
 					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</span>'."\n";
 				}
@@ -2200,9 +2240,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$MAXEVENT = 10;
 
 			$morehtmlcenter = '';
-			$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
+			$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/adherents/messaging.php', ['id' => $object->id]);
 			$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id);
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/agenda.php', ['id' => $object->id]));
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

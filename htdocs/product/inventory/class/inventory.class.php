@@ -118,11 +118,6 @@ class Inventory extends CommonObject
 	public $ref;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_warehouse;
@@ -213,8 +208,6 @@ class Inventory extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
@@ -457,7 +450,8 @@ class Inventory extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $hookmanager, $langs;
+		global $langs;
+
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -483,8 +477,7 @@ class Inventory extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		unset($object->context['createfromclone']);
@@ -581,16 +574,13 @@ class Inventory extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
 		}
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>'.$langs->trans("Inventory").'</u>';
 		$label .= '<br>';

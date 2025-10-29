@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,8 +185,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Creation (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_creation) || !empty($object->user_creation_id) || !empty($object->date_creation)) {
+	// Creation
+	if (!empty($object->user_creation_id) || !empty($object->date_creation)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -196,27 +196,18 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (! empty($object->user_creation) && is_object($object->user_creation)) {	// deprecated mode
-			if ($object->user_creation->id) {
-				print $object->user_creation->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
-		} else {
+		print '<div class="valignmiddle inline-block">';
+		if ($object->user_creation_id > 0) {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_creation_id);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+		} else {
+			print $langs->trans("Unknown");
 		}
-
-		if ((!empty($object->user_creation) || !empty($object->user_creation_id)) && !empty($object->date_creation)) {
-			print ' - ';
-		}
+		print '</div>';
 
 		if (!empty($object->date_creation)) {
+			print ' - ';
 			print '<div class="valignmiddle inline-block">';
 			print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
@@ -232,8 +223,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Last modification (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_modification) || !empty($object->user_modification_id) || !empty($object->date_modification)) {
+	// Last modification
+	if (!empty($object->user_modification_id) || !empty($object->date_modification)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -244,20 +235,12 @@ function dol_print_object_info($object, $usetable = 0)
 			print ': ';
 		}
 		print '<div class="valignmiddle inline-block">';
-		if (is_object($object->user_modification)) {
-			if ($object->user_modification->id) {
-				print $object->user_modification->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
-		} else {
+		if ($object->user_modification_id > 0) {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_modification_id);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+		} else {
+			print $langs->trans("Unknown");
 		}
 		print '</div>';
 
@@ -278,8 +261,8 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Validation (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_validation) || !empty($object->user_validation_id) || !empty($object->date_validation)) {
+	// Validation
+	if (!empty($object->user_validation_id) || !empty($object->date_validation)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -289,20 +272,12 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_validation)) {
-			if ($object->user_validation->id) {
-				print $object->user_validation->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+		$userstatic = new User($db);
+		$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $langs->trans("Unknown");
 		}
 
 		if (!empty($object->date_validation)) {
@@ -935,7 +910,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (preg_match('/\{(jj+)\}/i', $mask, $regJournal)) {
 		$journalcode = 'JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ';
 		if (is_object($objbookkeeping)) {
-			$journalcode = $objbookkeeping->code_journal;
+			$journalcode = (string) $objbookkeeping->code_journal;
 		}
 
 		$maskjournal = $regJournal[1];
@@ -1717,28 +1692,31 @@ function weight_convert($weight, &$from_unit, $to_unit)
 /**
  *	Save personal parameter
  *
- *	@param	DoliDB	$db         Handler database
- *	@param	Conf	$conf		Object conf
- *	@param	User	$user      	Object user
- *	@param	array<string,string|int>	$tab        Array (key=>value) with all parameters to save/update
- *	@return int         		Return integer <0 if KO, >0 if OK
+ *	@param	DoliDB						$db			Handler database
+ *	@param	Conf						$conf		Object conf
+ *	@param	User						$user		Object user
+ *	@param	array<string,string|int>	$tab		Array (key=>value) with all parameters to save/update
+ *	@param  int							$entity		If a value is >= 0, we force the search on a specific entity. If -1, means search depends on default setup.
+ *	@return int										Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */
-function dol_set_user_param($db, $conf, &$user, $tab)
+function dol_set_user_param($db, $conf, &$user, $tab, $entity = -1)
 {
 	// Verification parameters
 	if (count($tab) < 1) {
 		return -1;
 	}
 
+	$entity = ($entity == -1 ? ((int) $conf->entity) : ((int) $entity));
+
 	$db->begin();
 
 	// We remove old parameters for all keys in $tab
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 	$sql .= " WHERE fk_user = ".((int) $user->id);
-	$sql .= " AND entity = ".((int) $conf->entity);
-	$sql .= " AND param in (";
+	$sql .= " AND entity = ".((int) $entity);
+	$sql .= " AND param IN (";
 	$i = 0;
 	foreach ($tab as $key => $value) {
 		if ($i > 0) {
@@ -1767,8 +1745,8 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 			$value = $value["value"];
 		}
 		if ($forcevalue == 1 || $value) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
-			$sql .= " VALUES (".((int) $user->id).",".((int) $conf->entity).",";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param (fk_user, entity, param, value)";
+			$sql .= " VALUES (".((int) $user->id).",".((int) $entity).",";
 			$sql .= " '".$db->escape($key)."','".$db->escape($value)."')";
 
 			dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
@@ -1952,7 +1930,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0, $showempty = 0)
 					$docmodels[0] = $obj->label.': '.$langs->trans("None");
 				}
 			} else {
-				if ($type == 'member' && $obj->doc_template_name == 'standard') {   // Special case, if member template, we add variant per format
+				if ($type == 'member' && $obj->doc_template_name == 'standard_member') {   // Special case, if member template, we add variant per format
 					global $_Avery_Labels;
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 					foreach ($_Avery_Labels as $key => $val) {
@@ -2093,7 +2071,7 @@ function getSoapParams()
  * Return link url to an object
  *
  * @param 	int		$objectid		Id of record
- * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', 'user', 'myobject@mymodule', ...)
+ * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition', 'user', 'myobject@mymodule', ...)
  * @param 	int		$withpicto		Picto to show
  * @param 	string	$option			More options
  * @return	string					URL of link to object id/type
@@ -2132,6 +2110,9 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$myobject = 'commande';
+	} elseif ($objecttype == 'mailing') {
+		$langs->load('mailing');
+		$classpath = 'comm/mailing/class';
 	} elseif ($objecttype == 'propal') {
 		$langs->load('propal');
 		$classpath = 'comm/propal/class';
@@ -2142,9 +2123,9 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$langs->load('sendings');
 		$classpath = 'expedition/class';
 		$myobject = 'expedition';
-		$module = 'expedition_bon';
+		$module = 'expedition';
 	} elseif ($objecttype == 'delivery') {
-		$langs->load('deliveries');
+		$langs->load('sendings');
 		$classpath = 'delivery/class';
 		$myobject = 'delivery';
 		$module = 'delivery_note';
@@ -2171,7 +2152,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
-	} elseif ($objecttype == 'task') {
+	} elseif ($objecttype == 'project_task') {
 		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
@@ -2673,15 +2654,17 @@ function getModuleDirForApiClass($moduleobject)
 
 	if ($moduleobject == 'contracts') {
 		$moduledirforclass = 'contrat';
-	} elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents', 'objectlinks'))) {
+	} elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents', 'objectlinks', 'emailtemplates'))) {
 		$moduledirforclass = 'api';
-	} elseif ($moduleobject == 'contact' || $moduleobject == 'contacts' || $moduleobject == 'customer' || $moduleobject == 'thirdparty' || $moduleobject == 'thirdparties') {
+	} elseif (in_array($moduleobject, ['contact', 'contacts', 'customer', 'thirdparty', 'thirdparties'])) {
 		$moduledirforclass = 'societe';
 	} elseif ($moduleobject == 'propale' || $moduleobject == 'proposals') {
 		$moduledirforclass = 'comm/propal';
 	} elseif ($moduleobject == 'agenda' || $moduleobject == 'agendaevents') {
 		$moduledirforclass = 'comm/action';
-	} elseif ($moduleobject == 'adherent' || $moduleobject == 'members' || $moduleobject == 'memberstypes' || $moduleobject == 'subscriptions') {
+	} elseif ($moduleobject == 'mailing' || $moduleobject == 'mailings') {
+		$moduledirforclass = 'comm/mailing';
+	} elseif (in_array($moduleobject, ['adherent', 'members', 'memberstypes', 'subscriptions'])) {
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';
@@ -2721,6 +2704,10 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'salaries';
 	} elseif ($moduleobject == 'paymentexpensereports') {
 		$moduledirforclass = 'expensereport';
+	} elseif ($moduleobject == 'eventattendees') {
+		$moduledirforclass = 'eventorganization';
+	} elseif ($moduleobject == 'holidays') {
+		$moduledirforclass = 'holiday';
 	}
 
 	return $moduledirforclass;
@@ -2925,7 +2912,7 @@ function acceptLocalLinktoMedia()
 
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
 
-	// By default we acceptto add medias from emails templates but this may be refused if later
+	// By default we accept to add medias from emails templates but this may be refused in the future
 	// we detect we are not on a public url that we can access remotely (if we are on a private network, such files can't be reached),
 	// except if MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK is net, in which case we accept also if instance has a local or private network URL.
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,7 @@
  * @var string $action
  * @var string $elementtype
  * @var string $textobject
+ * @var string[] $type2label
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -265,7 +266,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <td>
 	<table class="nobordernopadding">
 	<tr><td>
-		<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
+		<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>" spellcheck="false"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
 	</td><td>
 	<span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 'info', '', 0, 2, 'helpvalue1')?></span>
 	<span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").'<br>'.$langs->trans("ExtrafieldParamHelpsellistb").'<br>'.$langs->trans("ExtrafieldParamHelpsellistc").'<br>'.$langs->trans("ExtrafieldParamHelpsellistd").(getDolGlobalInt('MAIN_FEATUREES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 'info', '', 0, 2, 'helpvalue2')?></span>

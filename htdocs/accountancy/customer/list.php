@@ -29,7 +29,14 @@
  * \brief 		Ventilation page from customers invoices
  */
 require '../../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -40,14 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", "productbatch", "products"));
@@ -55,14 +54,11 @@ $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:aZ09');	// Value can be 'X_Y'
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountancycustomerlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $default_account = GETPOSTINT('default_account');
-
-// Select Box
-$mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
 $search_societe = GETPOST('search_societe', 'alpha');
@@ -206,21 +202,20 @@ if (empty($reshook)) {
 if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	$msg = '';
 
-	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
-	if (!empty($mesCasesCochees)) {
-		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
+	if (!empty($toselect)) {
+		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($toselect).'</div>';
 		$msg .= '<div class="detail">';
 		$cpt = 0;
 		$ok = 0;
 		$ko = 0;
 
-		foreach ($mesCasesCochees as $maLigneCochee) {
+		foreach ($toselect as $maLigneCochee) {
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
 			$monCompte = GETPOSTINT('codeventil'.$monId);
 
 			if ($monCompte <= 0) {
-				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
+				$msg .= '<div><span class="error">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";

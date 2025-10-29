@@ -7,7 +7,7 @@
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,6 +184,7 @@ foreach ($modulesdir as $dir) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
 					'@phan-var-force DolibarrModules $objMod';
+					/** @var DolibarrModules $objMod */
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
@@ -236,11 +237,15 @@ $permsgroupbyentity = array();
 $sql = "SELECT DISTINCT gr.fk_id, gu.entity";	// fk_id are permission id and entity is entity of the group
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";	// all groups of a user
-$sql .= " WHERE gr.entity = ".((int) $entity);
+$sql .= " WHERE gr.entity = ".((int) $entity); // it's very important, don't change please !
 // The entity on the table gu=usergroup_user should be useless and should never be used because it is already into gr and r.
 // but when using MULTICOMPANY_TRANSVERSE_MODE, we may have inserted record that make rubbish result here due to the duplicate record of
 // other entities, so we are forced to add a filter on gu here
-$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+if (getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE_FIX_WHEN_GU_CONTAINS_0")) {
+	$sql .= " AND gu.entity IN (0,". ((int) $entity).")";
+} else {
+	$sql .= " AND gu.entity = ".((int) $entity);
+}
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql .= " AND gu.fk_user = ".((int) $object->id);
 
@@ -275,7 +280,7 @@ if ($user->hasRight("user", "user", "read") || $user->admin) {
 }
 
 $morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
 $urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
@@ -291,7 +296,7 @@ print '<table class="border centpercent tableforfield">';
 
 // Login
 print '<tr><td id="anchorforperms" class="titlefield">'.$langs->trans("Login").'</td>';
-if (!empty($object->ldap_sid) && $object->statut == 0) {
+if (!empty($object->ldap_sid) && $object->status == 0) {
 	print '<td class="error">';
 	print $langs->trans("LoginAccountDisableInDolibarr");
 	print '</td>';
@@ -356,9 +361,9 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 if ($caneditperms) {
 	print '<td class="center nowrap">';
-	print '<a class="reposition commonlink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("All")."</a>";
+	print '<a class="reposition commonlink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'module' => 'allmodules', 'confirm' => 'yes'], true).'">'.$langs->trans("All")."</a>";
 	print ' / ';
-	print '<a class="reposition commonlink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("None")."</a>";
+	print '<a class="reposition commonlink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'module' => 'allmodules', 'confirm' => 'yes'], true).'">'.$langs->trans("None")."</a>";
 	print '</td>';
 } else {
 	print '<td></td>';
@@ -534,9 +539,9 @@ if ($result) {
 				if ($caneditperms) {
 					print '<td class="tdforbreakperms tdforbreakpermsifnotempty center width50 nowraponall" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
 					print '<span class="permtohide_'.dol_escape_htmltag($obj->module).'" '.(!$isexpanded ? ' style="display:none"' : '').'>';
-					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
+					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'module' => $obj->module, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">'.$langs->trans("All")."</a>";
 					print ' / ';
-					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
+					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'module' => $obj->module, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">'.$langs->trans("None")."</a>";
 					print '</span>';
 					print '</td>';
 					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
@@ -603,7 +608,7 @@ if ($result) {
 			print '<!-- user has perm -->';
 			if ($caneditperms) {
 				print '<td class="center nowrap">';
-				print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
+				print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 				//print img_edit_remove($langs->trans("Remove"));
 				print img_picto($langs->trans("Remove"), 'switch_on');
 				print '</a>';
@@ -629,7 +634,7 @@ if ($result) {
 				// Do not own permission
 				if ($caneditperms) {
 					print '<td class="center nowrap">';
-					print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
+					print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 					//print img_edit_add($langs->trans("Add"));
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a>';
@@ -647,7 +652,7 @@ if ($result) {
 			print '<!-- do not own permission -->';
 			if ($caneditperms) {
 				print '<td class="center nowrap">';
-				print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
+				print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 				//print img_edit_add($langs->trans("Add"));
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a>';

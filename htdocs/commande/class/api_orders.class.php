@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -309,7 +309,7 @@ class Orders extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -579,13 +579,13 @@ class Orders extends DolibarrApi
 	}
 
 	/**
-	 * Get contacts of given order
+	 * Get contacts of a given order
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of order
-	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
-	 * @return	Object				Object with cleaned properties
+	 * @param	int					$id			ID of order
+	 * @param	string				$type		Type of the contact ('BILLING', 'SHIPPING', 'CUSTOMER', ...)
+	 * @return	array<int,mixed>				Array of contacts
 	 *
 	 * @url	GET {id}/contacts
 	 *
@@ -607,8 +607,11 @@ class Orders extends DolibarrApi
 		}
 
 		$contacts = $this->commande->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $this->commande->liste_contact(-1, 'internal', 0, $type);
 
-		return $this->_cleanObjectDatas($contacts);
+		$contacts = array_merge($contacts, $socpeoples);
+
+		return $contacts;
 	}
 
 	/**
@@ -617,6 +620,8 @@ class Orders extends DolibarrApi
 	 * @param int    $id             Id of order to update
 	 * @param int    $contactid      Id of contact to add
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @param   string  $source		 external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 * @param   int     $notrigger   Disable all triggers
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
@@ -626,7 +631,7 @@ class Orders extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-	public function postContact($id, $contactid, $type)
+	public function postContact($id, $contactid, $type, $source = "external", $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403);
@@ -641,7 +646,7 @@ class Orders extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->commande->add_contact($contactid, $type, 'external');
+		$result = $this->commande->add_contact($contactid, $type, $source, $notrigger);
 
 		if ($result < 0) {
 			throw new RestException(500, 'Error when added the contact');
@@ -691,14 +696,15 @@ class Orders extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->commande->liste_contact();
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->commande->liste_contact(-1, $source);
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->commande->delete_contact($contact['rowid']);
 
-		foreach ($contacts as $contact) {
-			if ($contact['id'] == $contactid && $contact['code'] == $type) {
-				$result = $this->commande->delete_contact($contact['rowid']);
-
-				if (!$result) {
-					throw new RestException(500, 'Error when deleted the contact');
+					if (!$result) {
+						throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
+					}
 				}
 			}
 		}
@@ -977,9 +983,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		$this->commande->fetchObjectLinked();
 
@@ -1022,9 +1029,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		$this->commande->fetchObjectLinked();
 
@@ -1112,12 +1120,14 @@ class Orders extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
 			if ($num <= 0) {
 				throw new RestException(404, 'Shipments not found ');
 			}
-			$i = 0;
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$shipment_static = new Expedition($this->db);
 				if ($shipment_static->fetch($obj->rowid)) {

@@ -75,11 +75,6 @@ class Conf extends stdClass
 	 */
 	public $multicompany;
 
-	//! To store module status of special module names
-	/**
-	 * @var ?mixed
-	 */
-	public $expedition_bon;
 	/**
 	 * @var ?mixed
 	 */
@@ -346,6 +341,12 @@ class Conf extends stdClass
 	 * @var stdClass
 	 */
 	public $productbatch;
+
+	/**
+	 * @var stdClass
+	 */
+	public $api;
+
 	/**
 	 * @var ?stdClass
 	 * @deprecated Use project
@@ -516,6 +517,7 @@ class Conf extends stdClass
 		$this->notification = new stdClass();
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
+		$this->api = new stdClass();
 
 		// Common arrays
 		$this->cache = array();
@@ -785,6 +787,10 @@ class Conf extends stdClass
 			$this->admin->dir_output = $rootfordata.'/admin';
 			$this->admin->dir_temp = $rootfortemp.'/admin/temp';
 
+			// For api storage
+			$this->api->dir_output = $rootfordata.'/api';
+			$this->api->dir_temp = $rootfortemp.'/api/temp';
+
 			// For user storage
 			$this->user->multidir_output = array($this->entity => $rootfordata."/users");
 			$this->user->multidir_temp = array($this->entity => $rootfortemp."/users/temp");
@@ -924,7 +930,7 @@ class Conf extends stdClass
 			// conf->use_javascript_ajax
 			$this->use_javascript_ajax = 1;
 			if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) {
-				$this->use_javascript_ajax = (int) !$this->global->MAIN_DISABLE_JAVASCRIPT;
+				$this->use_javascript_ajax = (int) !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT');
 			}
 			// If no javascript_ajax, Ajax features are disabled.
 			if (empty($this->use_javascript_ajax)) {
@@ -957,7 +963,6 @@ class Conf extends stdClass
 					}
 				}
 			}
-
 			if (!isset($this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT)) {
 				$this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT = 1;
 			}

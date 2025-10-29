@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/api_products.class.php';
 
 /**
  * API class for warehouses
@@ -59,14 +60,20 @@ class Warehouses extends DolibarrApi
 	 * @param	int		$id				ID of warehouse
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws	RestException
+	 * @url	GET {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'warehouse not found');
@@ -84,20 +91,28 @@ class Warehouses extends DolibarrApi
 	 *
 	 * Get a list of warehouses
 	 *
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
-	 * @param  int    $category   Use this param to filter list by category
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return array                Array of warehouse objects
+	 * @since	4.0.0	Initial implementation
+	 * @since	23.0.0	Data pagination
+	 *
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param int		$category			Use this param to filter list by category
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
+	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return array						Array of warehouse objects
 	 * @phan-return Entrepot[]
 	 * @phpstan-return Entrepot[]
 	 *
-	 * @throws RestException
+	 * @url	GET
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 500 Internal Server Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -124,6 +139,9 @@ class Warehouses extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total warehouses with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -152,6 +170,23 @@ class Warehouses extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve warehouse list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -163,6 +198,13 @@ class Warehouses extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of warehouse
+	 *
+	 * @url	POST
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 500 Internal Server Error
+	 *
 	 */
 	public function post($request_data = null)
 	{
@@ -178,6 +220,13 @@ class Warehouses extends DolibarrApi
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->warehouse->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
+			}
+
+			if ($field == 'id' || $field == 'warehouse_id') {
+				throw new RestException(400, 'Creating with id field is forbidden');
+			}
+			if ($field == 'entity' && $value != $this->warehouse->entity) {
+				throw new RestException(403, 'Changing entity of a user using the APIs is not possible');
 			}
 
 			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
@@ -196,13 +245,23 @@ class Warehouses extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
+	 *
+	 * @url	PUT {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
+	 *
 	 */
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'warehouse not found');
@@ -213,9 +272,16 @@ class Warehouses extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
+			if ($field == 'id' || $field == 'warehouse_id') {
+				throw new RestException(400, 'Updating with id field is forbidden');
 			}
+			if ($field == 'entity' && $value != $this->warehouse->entity) {
+				throw new RestException(403, 'Changing entity of a user using the APIs is not possible');
+			}
+			if ($field == 'ref') {
+				throw new RestException(400, 'Deprecated, use label, not ref');
+			}
+
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->warehouse->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -232,7 +298,8 @@ class Warehouses extends DolibarrApi
 			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
 		}
 
-		if ($this->warehouse->update($id, DolibarrApiAccess::$user)) {
+		$updateresult = $this->warehouse->update($id, DolibarrApiAccess::$user);
+		if ($updateresult > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->warehouse->error);
@@ -246,11 +313,22 @@ class Warehouses extends DolibarrApi
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @url	DELETE {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
+	 *
 	 */
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'supprimer')) {
 			throw new RestException(403);
+		}
+		if ($id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
 		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {
@@ -262,7 +340,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!$this->warehouse->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(403, 'error when delete warehouse');
+			throw new RestException(500, 'error when delete warehouse');
 		}
 
 		return array(
@@ -273,6 +351,104 @@ class Warehouses extends DolibarrApi
 		);
 	}
 
+	/**
+	 * List Product in warehouses
+	 *
+	 * Get a list of product in a warehouse
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param 	int		$id					warehouse ID
+	 * @param	string	$sortfield			Sort field
+	 * @param	string	$sortorder			Sort order
+	 * @param 	int		$limit				Limit for list
+	 * @param	int		$page				Page number
+	 * @param	int		$includestockdata	1=Load also information about stock (slower), 0=No stock data (faster) (default)
+	 * @param	bool	$includesubproducts Load information about subproducts
+	 * @param	bool	$includeparentid    Load also ID of parent product (if product is a variant of a parent product)
+	 * @param	bool	$includetrans		Load also the translations of product label and description
+	 * @param 	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @return 	array   					Array of product in warehouse
+	 *
+	 * @phan-return Product[]
+	 * @phpstan-return Product[]
+	 *
+	 * @url GET /{id}/products
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
+	 *
+	*/
+	public function listProducts($id = 0, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false, $properties = '', $pagination_data = false)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
+		}
+		if ((int) $id == 0) {
+			throw new RestException(400, 'No warehouse with id=0 can exist');
+		}
+		$existsresult = $this->warehouse->fetch($id);
+		if (!$existsresult) {
+			throw new RestException(404, 'warehouse not found');
+		}
+		$obj_ret = array();
+
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as t ON ps.fk_product = t.rowid";
+		$sql.= " WHERE ps.fk_entrepot =".((int) $id);
+		$sql.= " AND t.entity IN (".getEntity('stock').")";
+
+		//this query will return total warehouses with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$i = 0;
+			$num = $this->db->num_rows($result);
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				$api_products_static = new Products();
+				if ($api_products_static->get($obj->rowid, $includestockdata, $includesubproducts, $includeparentid, $includetrans)) {
+					$obj_ret[] = $this->_filterObjectProperties($api_products_static->product, $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(500, 'Error when retrieve warehouse product list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
+		return $obj_ret;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -286,6 +462,69 @@ class Warehouses extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		unset($object->actiontypecode);
+		unset($object->canvas);
+		unset($object->civility_code);
+		unset($object->civility_id);
+		unset($object->cond_reglement_id);
+		unset($object->cond_reglement_supplier_id);
+		unset($object->contact_id);
+		unset($object->contacts_ids);
+		unset($object->contacts_ids_internal);
+		unset($object->country_code);
+		unset($object->date_cloture);
+		unset($object->date_validation);
+		unset($object->demand_reason_id);
+		unset($object->deposit_percent);
+		unset($object->extraparams);
+		unset($object->firstname);
+		unset($object->fk_account);
+		unset($object->fk_multicurrency);
+		unset($object->fk_user_creat);
+		unset($object->fk_user_modif);
+		unset($object->last_main_doc);
+		unset($object->lastname);
+		unset($object->libelle);
+		unset($object->lines);
+		unset($object->linkedObjectsIds);
+		unset($object->mode_reglement_id);
+		unset($object->module);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_tx);
+		unset($object->name);
+		unset($object->nb_rights);
+		unset($object->note_private);
+		unset($object->note_public);
+		unset($object->origin_id);
+		unset($object->origin_type);
+		unset($object->product);
+		unset($object->ref_ext);
+		unset($object->region_id);
+		unset($object->retained_warranty_fk_cond_reglement);
+		unset($object->shipping_method);
+		unset($object->shipping_method_id);
+		unset($object->specimen);
+		unset($object->state_id);
+		unset($object->tms);
+		unset($object->total_ht);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+		unset($object->total_tva);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->transport_mode_id);
+		unset($object->TRIGGER_PREFIX);
+		unset($object->user);
+		unset($object->user_closing_id);
+		unset($object->user_modification_id);
+		unset($object->user_validation_id);
+
 		return $object;
 	}
 
@@ -296,7 +535,7 @@ class Warehouses extends DolibarrApi
 	 * @param ?array<string,string> $data   Data to validate
 	 * @return array<string,string>
 	 *
-	 * @throws RestException
+	 * @throws RestException 400 Bad Request
 	 */
 	private function _validate($data)
 	{

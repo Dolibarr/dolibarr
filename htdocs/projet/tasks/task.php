@@ -2,7 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
@@ -27,6 +27,13 @@
  */
 
 require "../../main.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -36,14 +43,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadlangs(array('projects', 'companies'));
@@ -180,7 +179,7 @@ if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('projet',
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm == 'yes') {
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('projet', 'creer')) {
 	//$clone_contacts = GETPOST('clone_contacts') ? 1 : 0;
 	$clone_prog = GETPOST('clone_prog') ? 1 : 0;
 	$clone_time = GETPOST('clone_time') ? 1 : 0;
@@ -206,6 +205,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet'
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
+	// $object is task to delete
 	if ($object->delete($user) > 0) {
 		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
 		exit;
@@ -219,13 +219,11 @@ if ($action == 'confirm_close' && $confirm == "yes" && $user->hasRight('projet',
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
-	if ($object->setStatusCommon($user, Task::STATUS_CLOSED) > 0) {
-		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
-		exit;
-	} else {
+	// $object is task to close
+	if ($object->setStatusCommon($user, Task::STATUS_CLOSED) <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		$action = '';
 	}
+	$action = '';
 }
 
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
@@ -307,7 +305,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $object->ref;
+$title = (string) $object->ref;
 if (!empty($withproject)) {
 	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
 }
@@ -478,27 +476,7 @@ if ($id > 0 || !empty($ref)) {
 
 	/*
 	 * Actions
-	*/
-	/*print '<div class="tabsAction">';
-
-	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-	{
-	if ($projectstatic->public || $userWrite > 0)
-	{
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
-	}
-	else
-	{
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
-	}
-	}
-	else
-	{
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
-	}
-
-	print '</div>';
-	*/
+	 */
 
 	// To verify role of users
 	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
@@ -508,7 +486,7 @@ if ($id > 0 || !empty($ref)) {
 	$head = task_prepare_head($object);
 
 	if ($action == 'edit' && $user->hasRight('projet', 'creer')) {
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
@@ -799,7 +777,7 @@ if ($id > 0 || !empty($ref)) {
 				//}
 
 				if ($object->status != $object::STATUS_CLOSED) {
-					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
+					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
 				}
 
 				print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
@@ -830,13 +808,13 @@ if ($id > 0 || !empty($ref)) {
 		/*
 		 * Generated documents
 		 */
-		$filename = '';
-		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$subdir = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".$subdir;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire'));
 		$delallowed = ($user->hasRight('projet', 'creer'));
 
-		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
+		print $formfile->showdocuments('project_task', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 0, 0, '', '', '', '', '', $object);
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('project_task'), 1);

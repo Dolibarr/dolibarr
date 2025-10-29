@@ -2,7 +2,7 @@
 /* Copyright (C) 2016	    Xebax Christy	        <xebax@wanadoo.fr>
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherentstats.class.php';
 
 
 /**
@@ -45,12 +46,18 @@ class Members extends DolibarrApi
 	);
 
 	/**
+	 * @var AdherentStats
+	 */
+	public $memberstats;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
 		global $db;
 		$this->db = $db;
+		$this->memberstats = new AdherentStats($this->db, DolibarrApiAccess::$user->socid, DolibarrApiAccess::$user->id);
 	}
 
 	/**
@@ -138,7 +145,7 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
+		$sql = "SELECT rowid, fk_soc as socid, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
 		$sql .= " WHERE site = '".$this->db->escape($site)."' AND key_account = '".$this->db->escape($key_account)."'";
 		$sql .= " AND entity IN (".getEntity('adherent').")";
 
@@ -147,7 +154,7 @@ class Members extends DolibarrApi
 		if ($result && $this->db->num_rows($result) == 1) {
 			$obj = $this->db->fetch_object($result);
 			$thirdparty = new Societe($this->db);
-			$result = $thirdparty->fetch($obj->fk_soc);
+			$result = $thirdparty->fetch($obj->socid);
 
 			if ($result <= 0) {
 				throw new RestException(404, 'thirdparty not found');
@@ -655,14 +662,15 @@ class Members extends DolibarrApi
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found
+	 * @throws	RestException	422		Malformed data
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(403);
 		}
-		if (is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
-			throw new RestException(422, 'Malformed data');
+		if (!is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
+			throw new RestException(422, 'Malformed data: subscription start or end date, or subscription amount, is not numeric');
 		}
 
 		$member = new Adherent($this->db);
@@ -979,6 +987,91 @@ class Members extends DolibarrApi
 				'message' => 'Member type deleted'
 			)
 		);
+	}
+
+	/**
+	 * Return an array with the number of members by month for a given year
+	 *
+	 * @param	int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text
+	 *                              1=Label of abscissa is month number
+	 *                              2=Label of abscissa is first letter of month
+	 * @return array 			Array of statistics for last modified members
+	 * @phan-return array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
+	 * @phpstan-return array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
+	 *
+	 * @url GET stats/nbbymonth
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getNbByMonth($year, $format = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getNbByMonth($year, $format);
+	}
+
+	/**
+	 * Return an array with the number of subscriptions by year
+	 *
+	 * @return array 			Array of statistics for last modified members
+	 * @phan-return array<array{0:int,1:int}>		Array of nb each year
+	 * @phpstan-return array<array{0:int,1:int}>	Array of nb each year
+	 *
+	 * @url GET stats/nbbyyear
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getNbByYear()
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getNbByYear();
+	}
+
+	/**
+	 *  Return the number of subscriptions by month for a given year
+	 *
+	 * @param   int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return array 				Array of statistics for last modified members
+	 * @phan-return array<int<0,11>,array{0:int<1,12>,1:int|float}>		Array of values by month
+	 * @phpstan-return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values by month
+	 *
+	 * @url GET stats/amountbymonth
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getAmountByMonth($year, $format = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getAmountByMonth($year, $format);
+	}
+
+	/**
+	 * Last Modified Members
+	 *
+	 * Get an array of statistics for last modified members
+	 *
+	 * @param int    $max  		Max numbers of members
+	 * @return array 			Array of statistics for last modified members
+	 * @phan-return array<int,array{id:int,ref:string,firstname:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>
+	 * @phpstan-return array<int,array{id:int,ref:string,firstname:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>
+	 *
+	 * @url GET stats/lastmodifiedmembers
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getLastModifiedMembers($max)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getLastModifiedMembers($max);
 	}
 
 	/**

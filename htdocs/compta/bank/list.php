@@ -61,7 +61,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bankaccountlist'; // To manage different context of search
 $mode = GETPOST('mode', 'aZ');
 
@@ -658,7 +658,7 @@ foreach ($accounts as $key => $type) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$objecttmp->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$objecttmp->id.'" class="oddeven row-with-select">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

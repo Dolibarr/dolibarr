@@ -152,7 +152,7 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_fournprice;
 
 	/**
-	 * @var float|int|string
+	 * @var float|int|''|null
 	 */
 	public $pa_ht;
 
@@ -179,7 +179,7 @@ class PropaleLigne extends CommonObjectLine
 	 * Some other info:
 	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
 	 * Bit 1:	0 ligne normal - 1 if line with fixed discount
-	 * @var int
+	 * @var ?int
 	 */
 	public $info_bits = 0;
 
@@ -372,11 +372,13 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.fk_unit,';
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,p.barcode as product_barcode,';
+		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.packaging,';
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_country';
 		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
@@ -385,7 +387,7 @@ class PropaleLigne extends CommonObjectLine
 
 			if ($objp) {
 				$this->id = $objp->rowid;
-				$this->rowid			= $objp->rowid; // deprecated
+				$this->rowid = $objp->rowid; // deprecated
 				$this->fk_propal = $objp->fk_propal;
 				$this->fk_parent_line = $objp->fk_parent_line;
 				$this->label			= $objp->custom_label;
@@ -419,8 +421,12 @@ class PropaleLigne extends CommonObjectLine
 				$this->ref = $objp->product_ref; // deprecated
 				$this->product_ref = $objp->product_ref;
 				$this->libelle = $objp->product_label; // deprecated
-				$this->product_label	= $objp->product_label;
-				$this->product_desc		= $objp->product_desc;
+				$this->product_label = $objp->product_label;
+				$this->product_desc = $objp->product_desc;
+				$this->product_barcode = $objp->product_barcode;
+				$this->product_custom_code = $objp->customcode;
+				$this->product_custom_country_id = $objp->country_id;
+				$this->product_custom_country_code = $objp->country_code;
 				$this->fk_unit          = $objp->fk_unit;
 
 				$this->packaging      	= $objp->packaging;
@@ -554,9 +560,9 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
-		$sql .= " ".($this->fk_product ? "'".$this->db->escape((string) $this->fk_product)."'" : "null").",";
-		$sql .= " '".$this->db->escape((string) $this->product_type)."',";
-		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape((string) $this->fk_remise_except)."'" : "null").",";
+		$sql .= " ".($this->fk_product > 0 ? (int) $this->fk_product : "null").",";
+		$sql .= " ".((int) $this->product_type).",";
+		$sql .= " ".($this->fk_remise_except > 0 ? (int) $this->fk_remise_except : "null").",";
 		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql .= " ".price2num($this->tva_tx).",";
@@ -590,8 +596,8 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this).'::insert', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
-			$this->id = $this->rowid;
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
+			$this->rowid = $this->id;
 			$result = $this->insertExtraFields();
 			if ($result < 0) {
 				$error++;
@@ -653,13 +659,11 @@ class PropaleLigne extends CommonObjectLine
 			dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				// Remove extrafields
-				if (!$error) {
-					$this->id = $this->rowid;
-					$result = $this->deleteExtraFields();
-					if ($result < 0) {
-						$error++;
-						dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
-					}
+				$this->id = $this->rowid;
+				$result = $this->deleteExtraFields();
+				if ($result < 0) {
+					$error++;
+					dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
 				}
 			} else {
 				$this->error = $this->db->error() . " sql=" . $sql;
@@ -804,11 +808,9 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {

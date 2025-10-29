@@ -86,7 +86,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
@@ -175,7 +175,9 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array');
+$searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array:int');
+// to dump type seen by phpstan during analyse
+// \PHPStan\dumpType($searchCategoryInvoiceList);
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
@@ -220,7 +222,7 @@ $extrafields = new ExtraFields($db);
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_') ?: [];
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -232,7 +234,7 @@ $fieldstosearchall = array(
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
 	's.town' => "Town",
-	'pd.description' => 'Description',
+	'pd.description' => 'ProductDescription',
 );
 if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
@@ -335,9 +337,18 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// For POS context, we force some fields
+if ($contextpage == 'poslist') {
+	$arrayfields["f.pos_source"]['checked'] = 1;
+	$arrayfields["f.date_lim_reglement"]['checked'] = 0;
+	$arrayfields["f.total_ttc"]['checked'] = 1;
+	$arrayfields["f.tms"]['checked'] = 1;
+	$arrayfields["p.ref"]['checked'] = 0;
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 // Check only if it's an internal user, external users are already filtered by $socid
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
@@ -737,9 +748,6 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT';
-if ($search_all) {
-	$sql = 'SELECT DISTINCT';	// Because of link to llx_facturedet
-}
 $sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
@@ -788,14 +796,21 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
+// Add a special index hint if we sort on datef. But only if there is not search filter set to avoid bad query plan
 if ($sortfield == "f.datef") {
-	$sql .= $db->hintindex('idx_facture_datef');
+	$hasAnotherfilter = false;
+	foreach ($search_array_options as $v) {
+		if ($v !== '' && (string) $v !== '-1') {
+			$hasAnotherfilter = true;
+			break;
+		}
+	}
+	if (!$hasAnotherfilter) {
+		$sql .= $db->hintindex('idx_facture_datef');
+	}
 }
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
-}
-if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid = pd.fk_facture';
 }
 if (!empty($search_fac_rec_source_title)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_rec as facrec ON f.fk_fac_rec_source = facrec.rowid';
@@ -1120,9 +1135,26 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 
 if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-}
+	// Prepare the $sqltoadd for fields pd.* that need a test by doing a "or exits"
+	$sqltoadd = '';
+	$fieldstosearchallwithoutpd = array();
+	$fieldstosearchallwithpd = array();
+	foreach ($fieldstosearchall as $key => $val) {
+		if (!preg_match('/^pd\./', $key)) {
+			$fieldstosearchallwithoutpd[$key] = $val;
+		} else {
+			$fieldstosearchallwithpd[$key] = $val;
+		}
+	}
 
+	if (count($fieldstosearchallwithpd) > 0) {
+		$sqltoadd .= " OR EXISTS (SELECT pd.rowid FROM ".MAIN_DB_PREFIX."facturedet as pd WHERE pd.fk_facture = f.rowid";
+		$sqltoadd .= natural_search(array_keys($fieldstosearchallwithpd), '__KEYTOSEARCH__');
+		$sqltoadd .= ')';
+	}
+
+	$sql .= natural_search(array_keys($fieldstosearchallwithoutpd), $search_all, 0, 0, $sqltoadd);
+}
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1409,6 +1441,9 @@ $arrayofmassactions = array(
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
+if (isModEnabled('category') && $user->hasRight('facture', 'creer')) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if ($user->hasRight('facture', 'paiement')) {
 	$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 }
@@ -2324,7 +2359,7 @@ if ($num > 0) {
 		} else {
 			// Show line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'"';
+			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'"';
 			if ($contextpage == 'poslist') {
 				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
 				if (strpos($obj->ref, 'PROV') !== false) {

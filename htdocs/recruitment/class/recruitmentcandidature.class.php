@@ -127,14 +127,12 @@ class RecruitmentCandidature extends CommonObject
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Received', 3 => 'ContractProposed', 5 => 'ContractSigned', 8 => 'Refused', 9 => 'Canceled')),
 		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => 1, 'position' => 700, 'notnull' => 0, "visible" => 0, "comment" => "ip used to create record (for public submission page)"),
 	);
+
 	/**
 	 * @var int
 	 */
 	public $rowid;
-	/**
-	 * @var int
-	 */
-	public $entity;
+
 	/**
 	 * @var string
 	 */
@@ -324,8 +322,6 @@ class RecruitmentCandidature extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key);
-					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -336,8 +332,7 @@ class RecruitmentCandidature extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -502,7 +497,7 @@ class RecruitmentCandidature extends CommonObject
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
 	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *  @return int         		Return >0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
@@ -549,10 +544,10 @@ class RecruitmentCandidature extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (/* !$error && */ (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
@@ -739,9 +734,42 @@ class RecruitmentCandidature extends CommonObject
 
 		$ret = '';
 
-		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+		$ret .= dolGetFirstLastname((string) $firstname, (string) $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
+	}
+
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param	array<string,string> 	$params 	Params to construct tooltip data
+	 *
+	 * @return	array{optimize?:string,picto?:string,ref?:string}
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('recruitment');
+
+		$datas = [];
+
+		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			return ['optimize' => $langs->trans("ShowRecruitmentCandidature")];
+		}
+		$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("RecruitmentCandidature") . '</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' ' . $this->getLibStatut(5);
+		}
+		if (!empty($this->ref)) {
+			$datas['ref'] = '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		}
+		if (!empty($this->email)) {
+			$datas['email'] = '<br>' . $langs->trans('Email') . ':</b> ' . $this->email;
+		}
+		$datas['name'] = '<br>' . $langs->trans('Email') . ':</b> ' . $this->getFullName($langs);
+
+		return $datas;
 	}
 
 	/**
@@ -763,37 +791,43 @@ class RecruitmentCandidature extends CommonObject
 		}
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("RecruitmentCandidature").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$params = [
+			'id' => (string) $this->id,
+			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
-		$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);
 
-		$url = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.$this->id;
-
-		if ($option != 'nolink') {
+		$baseurl = DOL_URL_ROOT . '/recruitment/recruitmentcandidature_card.php';
+		$query = ['id' => $this->id];
+		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowRecruitmentCandidature");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -967,8 +1001,7 @@ class RecruitmentCandidature extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_recruitmentcandidature:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
+			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1014,6 +1047,7 @@ class RecruitmentCandidature extends CommonObject
 			if (class_exists($classname)) {
 				$obj = new $classname();
 				'@phan-var-force ModeleNumRefRecruitmentCandidature $obj';
+				/** @var ModeleNumRefRecruitmentCandidature $obj */
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {

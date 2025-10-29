@@ -33,19 +33,91 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
--- V23 migration
 
-create table llx_paiement_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                                 -- import key
+-- V22 forgotten
+
+ALTER TABLE llx_extrafields ADD module varchar(64) AFTER enabled;
+
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+-- V23 migration
+ALTER TABLE llx_usergroup ADD color VARCHAR(6) AFTER tms;
+
+UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
+
+ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_ticket ADD COLUMN note_public text after resolution;
+ALTER TABLE llx_ticket ADD COLUMN note_private text after resolution;
+ALTER TABLE llx_ticket ADD COLUMN fk_user_modif integer after resolution;
+
+
+CREATE TABLE llx_paiement_extrafields (
+	rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+	tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object                 integer NOT NULL,
+	import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
 
 ALTER TABLE llx_paiement_extrafields ADD UNIQUE INDEX uk_paiement_extrafields (fk_object);
 
+CREATE TABLE llx_accounting_analytic_axis (
+	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
+	label               varchar(255)    NOT NULL,
+	code                varchar(32)     NOT NULL,
+	active              integer         DEFAULT 1,
+	entity              integer         DEFAULT 1 NOT NULL,
+	datec               datetime,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_author      integer         NOT NULL,
+	fk_user_modif       integer,
+	import_key          varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_analytic_axis ADD UNIQUE INDEX uk_accounting_analytic_axis(code, entity);
+
+CREATE TABLE llx_accounting_analytic_account (
+	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
+	label               varchar(255)    NOT NULL,
+	code                varchar(32)     NOT NULL,
+	description			text,
+	fk_axis				integer			NOT NULL,
+	active              integer         DEFAULT 1,
+	entity              integer         DEFAULT 1 NOT NULL,
+	date_start			date,
+	date_end			date,
+	datec               datetime,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_author      integer         NOT NULL,
+	fk_user_modif       integer,
+	import_key          varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_analytic_account ADD UNIQUE INDEX uk_accounting_analytic_account(code, entity);
+ALTER TABLE llx_accounting_analytic_account ADD CONSTRAINT fk_accounting_analytic_account_fk_axis FOREIGN KEY (fk_axis) REFERENCES llx_accounting_analytic_axis (rowid);
+
+
+CREATE TABLE llx_accounting_analytic_distribution (
+	rowid				integer			AUTO_INCREMENT PRIMARY KEY,
+	fk_source_line		integer			NOT NULL,		-- id de la ligne source (facture, écriture, etc.)
+	sourcetype			varchar(32)		NOT NULL,		-- ex: 'facturedet', 'accounting_line'
+	fk_analytic_account integer			NOT NULL,
+	percentage			real			DEFAULT 100,	-- ex: 50.0 pour 50%
+	amount				double(24,8),					-- optional, if you prefer to work on the amount
+	entity				integer			DEFAULT 1,
+	datec               datetime,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_author      integer         NOT NULL,
+	fk_user_modif       integer,
+	import_key          varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_analytic_distribution_fk_analytic_account FOREIGN KEY (fk_analytic_account) REFERENCES llx_accounting_analytic_account (rowid);
+
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
+ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
+ALTER TABLE llx_facture ADD COLUMN pos_print_counter integer DEFAULT 0;
 
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
@@ -104,6 +176,114 @@ ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_adherent (fk_adherent
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_bank (fk_bank);
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_dateadh (dateadh);
 
+ALTER TABLE llx_subscription ADD COLUMN ref_ext varchar(128);
+ALTER TABLE llx_subscription ADD COLUMN note_private text;
+
 ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account; -- OFX Financial Institution Transaction ID "FITID"
+
+ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id;
+
+-- default deposit % if payment term needs it on supplier
+ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
+
+
+-- import key for subscriptions
+ALTER TABLE llx_subscription ADD COLUMN import_key varchar(14) NULL;
+
+ALTER TABLE llx_categorie ADD COLUMN extraparams varchar(255) AFTER fk_soc;
+
+CREATE TABLE llx_categorie_propal
+(
+  fk_categorie integer NOT NULL,
+  fk_propal integer NOT NULL,
+  import_key varchar(14)
+) ENGINE=innodb;
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_propal ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_propal);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_propal ADD INDEX idx_categorie_propal_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_propal ADD INDEX idx_categorie_propal_fk_propal (fk_propal);
+ALTER TABLE llx_categorie_propal ADD CONSTRAINT fk_categorie_propal_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_propal ADD CONSTRAINT fk_categorie_propal_fk_propal_rowid FOREIGN KEY (fk_propal) REFERENCES llx_propal (rowid);
+
+create table llx_categorie_supplier_proposal
+(
+  fk_categorie        integer NOT NULL,
+  fk_supplier_proposal integer NOT NULL,
+  import_key          varchar(14)
+)ENGINE=innodb;
+
+CREATE TABLE llx_accounting_bookkeeping_piece
+(
+	rowid               integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	entity              integer DEFAULT 1 NOT NULL,
+	ref             	varchar(128),
+	tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	datec				datetime,
+	datep				date NOT NULL,
+	statut				smallint DEFAULT 0,
+
+	note_private		text,
+	note_public			text,
+
+	fk_user_author		integer,
+	fk_user_modif		integer,
+	fk_user_valid		integer,
+	fk_user_closing		integer,
+
+	import_key          varchar(14),
+	extraparams         varchar(255)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_bookkeeping_piece ADD UNIQUE INDEX uk_accounting_bookkeeping_piece_ref (ref, entity);
+
+ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_author (fk_user_author);
+ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_modif (fk_user_modif);
+ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_closing (fk_user_closing);
+
+ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
+UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
+
+ALTER TABLE llx_receptiondet_batch ADD COLUMN description text AFTER fk_product;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN fk_unit integer AFTER qty;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN rang integer DEFAULT 0 AFTER cost_price;
+
+ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_src_object_type_id (src_object_type, src_object_id);
+
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '511', 'eGbR - eingetragene Gesellschaft bürgerlichen Rechts', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '512', 'Einzelunternehmen', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '513', 'PartG - Partnerschaftsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '514', 'PartG mbB - Partnerschaftsgesellschaft mit beschränkter Berufshaftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '515', 'KGaA - Kommanditgesellschaft auf Aktien', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '516', 'GmbH & Co. KGaA - Gesellschaft mit beschränkter Haftung & Compagnie Kommanditgesellschaft auf Aktien', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '517', 'SE - Societas Europaea', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '518', 'Stiftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '519', 'gGmbH - gemeinnützige Gesellschaft mit beschränkter Haftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '520', 'gUG - gemeinnützige Unternehmergesellschaft (haftungsbeschränkt)', 1);
+
+ALTER TABLE llx_oauth_token ADD COLUMN tokenstring_refresh text NULL AFTER tokenstring;
+ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
+
+ALTER TABLE llx_blockedlog ADD COLUMN linktoref varchar(255);
+ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
+ALTER TABLE llx_blockedlog ADD COLUMN vat double(24,8) DEFAULT NULL;
+
+
+-- Fix a wrong migration script
+UPDATE llx_oauth_token SET tokenstring = token, token = NULL WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
+
+
+ALTER TABLE llx_categorie_supplier_proposal ADD PRIMARY KEY pk_categorie_supplier_proposal (fk_categorie, fk_supplier_proposal);
+ALTER TABLE llx_categorie_supplier_proposal ADD INDEX idx_categorie_supplier_proposal_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_supplier_proposal ADD INDEX idx_categorie_supplier_proposal_fk_supplier_proposal (fk_supplier_proposal);
+
+ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier_proposal_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier_proposal_fk_supplier_proposal_rowid FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
+
+ALTER TABLE llx_blockedlog DROP INDEX entity;
+ALTER TABLE llx_blockedlog DROP INDEX entity_action_certified;
+ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 
 -- end of migration

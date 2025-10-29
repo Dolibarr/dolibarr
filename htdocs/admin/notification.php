@@ -5,7 +5,7 @@
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,7 +181,7 @@ $notify = new Notify($db);
 
 llxHeader('', $langs->trans("NotificationSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-notification');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_setup');
 
@@ -195,7 +195,7 @@ print $langs->trans("NotificationsDescGlobal").' - '.$langs->trans("YouAreHere")
 print '</span>';
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -271,7 +271,7 @@ print '<br><br>';
 
 // Emails templates for notification
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
@@ -321,6 +321,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$model = 'fichinter_send';
 	} elseif ($notifiedevent['elementtype'] == 'expensereport') {
 		$model = 'expensereport_send';
+	} elseif ($notifiedevent['elementtype'] == 'societe') {
+		$model = 'thirdparty';
 	} elseif ($notifiedevent['elementtype'] == 'order_supplier') {
 		$model = 'order_supplier_send';
 	} elseif ($notifiedevent['elementtype'] == 'invoice_supplier') {
@@ -397,7 +399,7 @@ print '</form>';
 print '<br><br>';
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setfixednotif">';
 print '<input type="hidden" name="page_y" value="">';
@@ -446,6 +448,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'shipping') {
 		$elementPicto = 'shipment';
 		$elementLabel = $langs->trans('Shipping');
+	} elseif ($notifiedevent['elementtype'] == 'societe') {
+		$elementPicto = 'company';
 	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 		$elementPicto = 'expensereport';
 		$elementLabel = $langs->trans('ExpenseReport');

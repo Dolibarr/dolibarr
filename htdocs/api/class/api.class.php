@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025	William Mead			<william@m34d.com>
+ * Copyright (C) 2025	    William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,6 +213,7 @@ class DolibarrApi
 		unset($object->error);
 		unset($object->errors);
 		unset($object->errorhidden);
+		unset($object->TRIGGER_PREFIX);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -227,7 +228,6 @@ class DolibarrApi
 		unset($object->contact);			// We use contact_id now
 		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
-		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
 		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
@@ -240,7 +240,7 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
-		unset($object->model_pdf);
+		//unset($object->model_pdf);
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);
