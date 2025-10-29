@@ -255,15 +255,17 @@ if (empty($reshook)) {
 					if ($objMo->fetch($idMo)) {
 						if ($objMo->status == Mo::STATUS_DRAFT) {
 							if (!empty($changeDate)) {
-								if ($action == 'changedatestart_confirm') {			// Test on permission not required
-									if ($newDate < $objMo->date_end_planned) {
+								if ($action == 'changedatestart_confirm') {
+									// La date de début peut être définie SI (la date de fin est vide OU la nouvelle date est AVANT la date de fin existante).
+									if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
 										$objMo->date_start_planned = $newDate;
 									} else {
 										setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
 										break;
 									}
-								} elseif ($action == 'changedateend_confirm') {		// Test on permission not required
-									if ($newDate > $objMo->date_start_planned) {
+								} elseif ($action == 'changedateend_confirm') {
+									// La date de fin peut être définie SI (la date de début est vide OU la nouvelle date est APRÈS la date de début existante).
+									if (empty($objMo->date_start_planned) || $newDate > $objMo->date_start_planned) {
 										$objMo->date_end_planned = $newDate;
 									} else {
 										setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');
