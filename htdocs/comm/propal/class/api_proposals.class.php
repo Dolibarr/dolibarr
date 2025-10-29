@@ -203,16 +203,6 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
-		/**
-		 * TODO A VIRER CEST POUR TEST
-		 */
-		global $conf, $db, $mc;
-		$conf->entity = 2;
-		$conf->setValues($db);
-		$mc->setValues($conf);
-		/**
-		 * FIN
-		 */
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal AS t";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
