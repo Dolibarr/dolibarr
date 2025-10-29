@@ -287,7 +287,7 @@ if (!empty($search_fk_warehouse)) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
@@ -296,7 +296,7 @@ if (!empty($search_fk_warehouse)) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($productid > 0) {
@@ -319,7 +319,7 @@ $sqlGroupBy = ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.pmp,
 $sqlGroupBy .= ' p.tms, p.duration, p.tobuy, p.stock';
 
 $parameters = array('sqlGroupBy' => $sqlGroupBy);
-$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if ($reshook == 0) {
 	// Allows the hook to add things (old behavior)
