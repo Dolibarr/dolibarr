@@ -90,7 +90,7 @@ class PropaleStats extends Stats
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->join = '';
-
+		$object = null;
 		if ($mode == 'customer') {
 			$object = new Propal($this->db);
 

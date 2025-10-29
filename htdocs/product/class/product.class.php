@@ -4629,7 +4629,7 @@ class Product extends CommonObject
 			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
-		$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+		$parameters = array('socid' => $user->socid);
 		$hookmanager->executeHooks('productGetNbPropal', $parameters, $this); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= " GROUP BY date_format(p.datep,'%Y%m')";
@@ -4735,7 +4735,7 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
-		$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+		$parameters = array('socid' => $user->socid);
 		$hookmanager->executeHooks('productGetNbOrder', $parameters, $this); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= " GROUP BY date_format(c.date_commande,'%Y%m')";

@@ -107,6 +107,7 @@ class CommandeStats extends Stats
 		$this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
+		$object = null;
 
 		if ($mode == 'customer') {
 			$object = new Commande($this->db);
