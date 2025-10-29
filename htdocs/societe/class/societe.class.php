@@ -537,7 +537,7 @@ class Societe extends CommonObject
 	public $managers;
 
 	/**
-	 * @var ?float 	Capital of the company
+	 * @var null|float|'' 	Capital of the company (to be null test is done with '')
 	 */
 	public $capital;
 

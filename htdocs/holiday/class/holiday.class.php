@@ -40,6 +40,12 @@ class Holiday extends CommonObject
 	public $element = 'holiday';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'HOLIDAY';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'holiday';
@@ -168,19 +174,6 @@ class Holiday extends CommonObject
 	 */
 	public $logs = array();
 
-
-	/**
-	 * @var string
-	 */
-	public $optName = '';
-	/**
-	 * @var string
-	 */
-	public $optValue = '';
-	/**
-	 * @var int
-	 */
-	public $optRowid = 0;
 
 	/**
 	 * Draft status
@@ -2228,8 +2221,6 @@ class Holiday extends CommonObject
 	 */
 	public function addLogCP($fk_user_action, $fk_user_update, $label, $new_solde, $fk_type)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$prev_solde = price2num((float) $this->getCPforUser($fk_user_update, $fk_type), 5);
@@ -2267,8 +2258,9 @@ class Holiday extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		$optRowid = 0;
 		if (!$error) {
-			$this->optRowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday_logs");
+			$optRowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday_logs");
 		}
 
 		// Commit or rollback
@@ -2281,7 +2273,7 @@ class Holiday extends CommonObject
 			return -1 * $error;
 		} else {
 			$this->db->commit();
-			return $this->optRowid;
+			return $optRowid;
 		}
 	}
 
