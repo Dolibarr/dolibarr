@@ -1399,7 +1399,7 @@ class AccountancyExport
 			$tab[] = length_accountg($line->subledger_account?$line->subledger_account:$line->numero_compte);	// colonne 6 : numero de compte
 			$tab[] = length_accountg($line->subledger_account?$line->numero_compte:'');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
 			$tab[] = ($line->doc_type == 'bank')?$label_operation:($line->subledger_account?$line->subledger_label:$line->label_compte);	// colonne 8 : label de l'operation		ISTEA
-			$tab[] = $label_operation;	// colonne 9 : label de l'operation (semble non pris en compte par ISTEA)
+			$tab[] = $label_operation;	// colonne 9 : label de l'operation (semble non prise en compte par ISTEA)
 			$tab[] = price2num($line->debit);	// colonne 10 : debit		ISTEA
 			$tab[] = price2num($line->credit);	// colonne 11 : credit		ISTEA
 			$tab[] = $line->code_journal;		// colonne 12 : journal		ISTEA
