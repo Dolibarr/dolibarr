@@ -75,7 +75,9 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No contract with id=0 can exist');
+		}
 		$result = $this->contract->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Contract not found');
@@ -715,7 +717,9 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No contract with id=0 can exist');
+		}
 		$result = $this->contract->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Contrat not found');
@@ -781,6 +785,9 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'supprimer')) {
 			throw new RestException(403);
 		}
+		if ($id == 0) {
+			throw new RestException(400, 'No contract with id=0 can exist');
+		}
 		$result = $this->contract->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Contract not found');
@@ -830,6 +837,9 @@ class Contracts extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
 			throw new RestException(403);
+		}
+		if ($id == 0) {
+			throw new RestException(400, 'No contract with id=0 can exist');
 		}
 		$result = $this->contract->fetch($id);
 		if (!$result) {
@@ -884,6 +894,9 @@ class Contracts extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
 			throw new RestException(403);
+		}
+		if ($id == 0) {
+			throw new RestException(400, 'No contract with id=0 can exist');
 		}
 		$result = $this->contract->fetch($id);
 		if (!$result) {
