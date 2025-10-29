@@ -1359,8 +1359,8 @@ class AccountancyExport
 	/**
 	 * Export format : ISTEA
 	 *
-	 * @param 	array 		$objectLines 			data
-	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	BookKeepingLine[] 		$objectLines 			data
+	 * @param 	?resource	$exportFile				[=null] File resource to export or print if null
 	 * @return	void
 	 */
 	public function exportISTEA($objectLines, $exportFile = null)
