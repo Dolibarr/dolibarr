@@ -1372,8 +1372,8 @@ class AccountancyExport
 
 		// parcours du tableau pour recuperation des numero de compte des tiers pour pouvoir les fournir dans la bonne ligne pour istea
 		$tiers=[];
-		foreach ($objectLines as $line){
-			if ( $line->subledger_account && substr($line->subledger_account, 0, 1) == '4' ){
+		foreach ($objectLines as $line) {
+			if ( $line->subledger_account && substr($line->subledger_account, 0, 1) == '4' ) {
 				$tiers[$line->piece_num] = $line->subledger_label;
 			}
 		}
