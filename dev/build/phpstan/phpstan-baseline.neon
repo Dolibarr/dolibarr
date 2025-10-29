@@ -631,12 +631,6 @@ parameters:
 			path: ../../../htdocs/admin/hrm.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/admin/index.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -1483,12 +1477,6 @@ parameters:
 			path: ../../../htdocs/bom/bom_net_needs.php
 
 		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/bom_net_needs.php
-
-		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
@@ -1523,12 +1511,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/bom/tpl/objectline_title.tpl.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/tpl/objectline_view.tpl.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -2333,6 +2315,12 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/commande/customer.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../../../htdocs/commande/list.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Commande and ''fetch_lines'' will always evaluate to true\.$#'
@@ -3391,21 +3379,9 @@ parameters:
 			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
 
 		-
@@ -5101,39 +5077,9 @@ parameters:
 			path: ../../../htdocs/core/class/ccountry.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ccountry.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ccountry.class.php
-
-		-
-			message: '#^Method CGenericDic\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
-			message: '#^Property CGenericDic\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
-			message: '#^Property CGenericDic\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/core/class/cgenericdic.class.php
 
 		-
@@ -5155,21 +5101,9 @@ parameters:
 			path: ../../../htdocs/core/class/cleadstatus.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../../htdocs/core/class/cleadstatus.class.php
 
 		-
@@ -5605,21 +5539,9 @@ parameters:
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/core/class/cproductnature.class.php
 
 		-
@@ -5647,12 +5569,6 @@ parameters:
 			path: ../../../htdocs/core/class/cstate.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctypent.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -5677,18 +5593,6 @@ parameters:
 			path: ../../../htdocs/core/class/ctyperesource.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctyperesource.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctyperesource.class.php
-
-		-
 			message: '#^Property CUnits\:\:\$short_label \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -5707,25 +5611,13 @@ parameters:
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
-			message: '#^Constructor of class DolEditor has an unused parameter \$toolbarlocation\.$#'
+			message: '#^Constructor of class DolEditor has an unused parameter \$notused\.$#'
 			identifier: constructor.unusedParameter
 			count: 1
 			path: ../../../htdocs/core/class/doleditor.class.php
@@ -6481,21 +6373,9 @@ parameters:
 			path: ../../../htdocs/core/class/timespent.class.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 2
-			path: ../../../htdocs/core/class/translate.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with list\<string\|false\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/core/class/utils.class.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 2
 			path: ../../../htdocs/core/class/utils.class.php
 
 		-
@@ -6769,12 +6649,6 @@ parameters:
 			path: ../../../htdocs/core/filemanagerdol/connectors/php/connector.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/core/get_info.php
-
-		-
 			message: '#^Variable \$var in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
@@ -6783,12 +6657,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/lib/admin.lib.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
 			count: 1
 			path: ../../../htdocs/core/lib/admin.lib.php
 
@@ -9523,32 +9391,8 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 3
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$ref_supplier \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
@@ -9583,18 +9427,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Property CommandeFournisseur\:\:\$user_author_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -9611,42 +9443,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 2
 			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.ligne.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(FactureFournisseur\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(FactureFournisseur\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(FactureFournisseur\) and ''date'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(FactureFournisseur\) and ''total_ht'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 6
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
 			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
@@ -11127,7 +10923,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 33
+			count: 32
 			path: ../../../htdocs/main.inc.php
 
 		-
@@ -12487,12 +12283,6 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/price.php
-
-		-
 			message: '#^Variable \$rowid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -13285,12 +13075,6 @@ parameters:
 			path: ../../../htdocs/projet/class/project.class.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/projet/class/project.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -14053,18 +13837,6 @@ parameters:
 			path: ../../../htdocs/public/fichinter/agendaexport.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/public/members/new.php
-
-		-
-			message: '#^Variable \$php_self might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/members/new.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -14122,12 +13894,6 @@ parameters:
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/public/partnership/new.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
 			path: ../../../htdocs/public/partnership/new.php
 
 		-
@@ -14365,21 +14131,9 @@ parameters:
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
-			message: '#^Variable \$SECUREKEY might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
 			message: '#^Variable \$backtopage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
@@ -14398,12 +14152,6 @@ parameters:
 			message: '#^Variable \$suffix might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
@@ -14523,12 +14271,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/public/ticket/create_ticket.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/public/ticket/create_ticket.php
 

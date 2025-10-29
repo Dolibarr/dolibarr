@@ -48,8 +48,8 @@ create table llx_facture
   remise_absolue		real     DEFAULT 0,						-- remise absolue
   remise				real     DEFAULT 0,						-- remise totale calculee
 
-  close_code			varchar(16),							-- Code for reason of closing without complete payment
-  close_missing_amount	double(24,8),							-- Amount missing when closing with a not complete payment
+  close_code			varchar(16),							-- Code for reason of closing without complete payment. '' if payment is complete.
+  close_missing_amount	double(24,8),							-- Amount missing when closing with a not complete payment. 0 if payment is complete.
   close_note			varchar(128),							-- Comment on closing without complete payment
 
   total_tva				double(24,8)     DEFAULT 0,				-- amount total tva apres remise totale

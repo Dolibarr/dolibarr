@@ -1841,8 +1841,8 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 							if ($objp->nature == 5 && isModEnabled('expensereport') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 								$nature = "expensereports";
 							}
-							if ($objp->nature == 1 && isModEnabled('asset')) {
-								$nature = "various";	// Warning: The page /accountancy/journal/variousjournal.php is bugged. It read tables that does not exists.
+							if ($objp->nature == 1 && (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
+								$nature = "various";
 							}
 							if ($objp->nature == 8) {
 								$nature = "inventory";

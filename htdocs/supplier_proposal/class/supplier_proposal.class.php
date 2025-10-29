@@ -2779,8 +2779,6 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->ref_fourn = $obj->ref_supplier; // deprecated
 				$this->lines[$i]->ref_supplier = $obj->ref_supplier;
 
-				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
-
 				// Multicurrency
 				$this->lines[$i]->fk_multicurrency = $obj->fk_multicurrency;
 				$this->lines[$i]->multicurrency_code = $obj->multicurrency_code;
