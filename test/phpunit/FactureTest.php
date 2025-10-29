@@ -127,7 +127,6 @@ class FactureTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$this->changeProperties($localobject);
-		$localobject->pos_print_counter = 3;
 		$result = $localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
