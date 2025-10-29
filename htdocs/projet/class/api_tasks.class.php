@@ -242,7 +242,7 @@ class Tasks extends DolibarrApi
 				$result = dol_include_once($reldir . "core/modules/project/task/" . $modele . '.php');
 				if ($result !== false && class_exists($classname)) {
 					$modTask = new $classname();
-					'@phan-var-force ModeleNumRefTasks $modTask';
+					'@phan-var-force ModeleNumRefTask $modTask';
 					$defaultref = $modTask->getNextValue(null, $this->task);
 				} else {
 					dol_syslog("Failed to include module file or invalid classname: " . $reldir . "core/modules/project/task/" . $modele . '.php', LOG_ERR);
