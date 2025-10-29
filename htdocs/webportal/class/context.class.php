@@ -227,10 +227,10 @@ class Context
 	}
 
 	/** Gets Controller Class name
-	 * @param $controller Controller
+	 * @param string $controller Controller
 	 * @return string
 	 */
-	private static function getControllerClassname($controller)
+	private static function getControllerClassname(String $controller):string
 	{
 		$part2 = '';
 		if (substr($controller, -4) === 'list') {
