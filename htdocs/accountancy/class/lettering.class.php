@@ -557,7 +557,7 @@ class Lettering extends BookKeeping
 				$group_error++;
 			}
 
-			// Lettering/Unlettering the group of bookkeeping lines
+			// Matching/Unmatching the group of bookkeeping lines
 			if (!$group_error && $do_it) {
 				if ($unlettering) {
 					$result = $this->deleteLettering($bookkeeping_lines);

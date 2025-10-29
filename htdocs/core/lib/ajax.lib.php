@@ -708,7 +708,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 		}
 
 		if ($disabled) {
-			$morecss .= ' disabled';
+			$morecss .= ' disabled opacitymedium';
 		} else {
 			$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
 			<script>
