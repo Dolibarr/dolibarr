@@ -314,8 +314,24 @@ if ($search_ref) {
 if ($search_nom) {
 	$sql .= natural_search('p.label', $search_nom);
 }
-$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.pmp, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
-$sql .= ' p.tms, p.duration, p.tobuy, p.stock';
+
+$sqlGroupBy = ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.pmp, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
+$sqlGroupBy .= ' p.tms, p.duration, p.tobuy, p.stock';
+
+$parameters = array('sqlGroupBy' => $sqlGroupBy);
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters); // Note that $action and $object may have been modified by hook
+
+if ($reshook == 0) {
+	// Allows the hook to add things (old behavior)
+	$sql .= $hookmanager->resPrint;
+	// Allows the hook to REPLACE the clause (new behavior)
+	if (!empty($hookmanager->resArray['sqlGroupBy'])) {
+		$sqlGroupBy = $hookmanager->resArray['sqlGroupBy'];
+	}
+}
+
+$sql .= $sqlGroupBy;
+
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
