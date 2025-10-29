@@ -1748,6 +1748,11 @@ class Account extends CommonObject
 				$out .= $address;
 				$outdone++;
 			}
+			if (!empty($this->url)) {
+				$out .= ($outdone ? '<br>' : '');
+				$out .= dol_print_url($this->url, '_blank', 0, 1);
+				$outdone++;
+			}
 			$outdone++;
 		}
 
