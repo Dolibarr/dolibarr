@@ -911,7 +911,6 @@ if ($object->id > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 
-
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -1019,7 +1018,6 @@ if ($object->id > 0) {
 
 		$resql = $db->query($sql);
 		if ($resql) {
-
 
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
