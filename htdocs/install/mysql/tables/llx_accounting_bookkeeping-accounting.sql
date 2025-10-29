@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2013-2014	Olivier Geffroy      	<jeff@jeffinfo.com>
 -- Copyright (C) 2013-2025	Alexandre Spangaro   	<alexandre@inovea-conseil.com>
+-- Copyright (C) 2025		Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
