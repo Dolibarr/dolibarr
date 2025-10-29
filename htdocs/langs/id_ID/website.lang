@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Anda dapat membuat halaman baru atau mengimpor 
 SyntaxHelp=Bantuan tentang kiat sintaksis khusus
 YouCanEditHtmlSourceckeditor=Anda dapat mengedit kode sumber HTML menggunakan tombol "Sumber" di editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Anda dapat menyertakan kode PHP ke dalam sumber ini menggunakan tag <strong>&lt;?php ?&gt;</strong>. Variabel global berikut tersedia: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Anda juga dapat menyertakan konten Halaman/Kontainer lain dengan sintaksis berikut:<br><strong>&lt;?php includeContainer('alias_kontainer_yang_akan_disertakan'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Anda dapat membuat pengalihan ke Halaman/Kontainer lain dengan sintaks berikut (Catatan: jangan tampilkan konten apa pun sebelum pengalihan):<br><strong>&lt;?php redirectToContainer('alias_kontainer_yang_akan_dialihkan_ke'); ?&gt;</strong><br>Anda juga dapat membuat pengalihan dengan parameter GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_dari_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Untuk menambahkan tautan ke halaman lain, gunakan sintaksis:<br><strong>&lt;a href="alias_halaman_yang_akan_ditautkan.php"&gt;tautan_saya&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Anda dapat secara dinamis mengatur <strong>judul SEO dan tag meta</strong> (judul, kata kunci, deskripsi). Cukup tentukan variabel berikut:<br> <code>$__PAGE_TITLE__ = "Nilai judul …";</code><br> <code>$__PAGE_KEYWORDS__ = "kata kunci1, kata kunci2, kata kunci3 …"; // Dipisahkan koma</code><br> <code>$__PAGE_DESC__ = "Deskripsi …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Untuk file yang dibagikan dengan tautan berbagi (akses terbuka menggunakan kunci hash berbagi file), sintaksnya adalah:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Untuk menyertakan <strong>gambar</strong> yang disimpan ke dalam <strong>media</strong> direktori (direktori terbuka untuk akses publik), gunakan jalur relatif yang dimulai dengan <strong>/medias</strong>, contoh:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Anda mengkloning halaman sebagai terjemahan.
 ParentPageId=ID halaman induk
 WebsiteId=ID situs web
 CreateByFetchingExternalPage=Buat halaman / wadah dengan mengambil halaman dari URL eksternal ...
-OrEnterPageInfoManually=Atau buat halaman dari awal atau dari templat halaman ...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Ambil dan Buat
 ExportSite=Ekspor situs web
 ImportSite=Impor template situs web
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Maaf, situs web ini saat ini offline. Silakan kem
 WEBSITE_USE_WEBSITE_ACCOUNTS=Aktifkan tabel akun situs web untuk pihak ketiga
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktifkan tabel untuk menyimpan akun situs web (login/kata sandi) untuk setiap pihak ketiga
 YouMustDefineTheHomePage=Anda harus terlebih dahulu menentukan halaman Beranda default
-OnlyEditionOfSourceForGrabbedContentFuture=Peringatan: Membuat halaman web dengan mengimpor halaman web eksternal hanya diperuntukkan bagi pengguna berpengalaman. Bergantung pada kompleksitas halaman sumber, hasil impor mungkin berbeda dari aslinya. Selain itu, jika halaman sumber menggunakan gaya CSS umum atau JavaScript yang saling bertentangan, tampilan atau fitur editor Situs Web dapat rusak saat bekerja di halaman ini. Metode ini merupakan cara yang lebih cepat untuk membuat halaman, tetapi sebaiknya buat halaman baru Anda dari awal atau dari templat halaman yang disarankan.<br>Perlu diketahui juga bahwa editor sebaris mungkin tidak berfungsi dengan benar saat digunakan pada halaman eksternal yang diambil.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Hanya modifikasi sumber HTML yang dimungkinkan ketika konten diambil dari situs eksternal
 GrabImagesInto=Ambil juga gambar yang ditemukan di css dan halaman.
 ImagesShouldBeSavedInto=Gambar harus disimpan ke dalam direktori
@@ -423,8 +423,8 @@ contactFormPhone = Telepon
 contactFormSubjectEntered = Subjek dimasukkan
 contactFormMessageLabel = Pesan
 contactFormSuccessAlert = Terima kasih atas pesan Anda. Kami akan segera menghubungi Anda kembali.
-socials=Jaringan sosial
-rgpd=Polisi Republik Demokratik Rakyat
+socials=Social networks
+rgpd=GDPR
 joinUs=Bergabunglah dengan kami
 home=Home
 anonymous=Anonim
@@ -455,3 +455,4 @@ SampleGoalOne=Mempromosikan kerjasama dan solidaritas antar anggota.
 SampleGoaltwo=Dorong praktik yang bertanggung jawab dan berkelanjutan di semua kegiatan.
 SampleGoalthree=Mendukung proyek yang berdampak dan memberi manfaat bagi masyarakat secara keseluruhan.
 SHOW_LANG_SELECTOR=Menampilkan menu dropdown pilihan bahasa
+ForAdvancedWebmastersOnly=For technical webmasters only

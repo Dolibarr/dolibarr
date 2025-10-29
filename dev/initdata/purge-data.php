@@ -32,7 +32,7 @@ $path=__DIR__.'/';
 // Test si mode batch
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 // Recupere root dolibarr
@@ -187,13 +187,13 @@ if (empty($mode) || ! in_array($mode, array('test','confirm'))) {
 	print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
 	print "\n";
 	print "option can be ".implode(',', array_keys($sqls))."\n";
-	exit(-1);
+	exit(1);
 }
 if (empty($option)) {
 	print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
 	print "\n";
 	print "option must be defined with a value in list ".implode(',', array_keys($sqls))."\n";
-	exit(-1);
+	exit(1);
 }
 if ($option != 'all') {
 	$listofoptions=explode(',', $option);
@@ -202,7 +202,7 @@ if ($option != 'all') {
 			print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
 			print "\n";
 			print "option '".$cursoroption."' must be in list ".implode(',', array_keys($sqls))."\n";
-			exit(-1);
+			exit(1);
 		}
 	}
 }
@@ -211,7 +211,7 @@ if (empty($date) || (! preg_match('/\d\d\d\d\-\d\d\-\d\d$/', $date) && $date != 
 	print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
 	print "\n";
 	print "date can be 'all' or 'YYYY-MM-DD' to delete record before YYYY-MM-DD\n";
-	exit(-1);
+	exit(1);
 }
 
 if ($date == 'all') {

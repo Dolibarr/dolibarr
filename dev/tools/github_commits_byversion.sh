@@ -32,8 +32,8 @@ fi
 
 
 # Determine release to check
-Releases=("3.9" "4.0" "5.0" "6.0" "7.0" "8.0" "9.0" "10.0" "11.0" "12.0" "13.0" "14.0" "15.0" "16.0" "17.0" "18.0" "19.0" "20.0")
-target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9]*\\.[0-9]*\\).*/\\1/p" htdocs/filefunc.inc.php)
+Releases=("3.9" "4.0" "5.0" "6.0" "7.0" "8.0" "9.0" "10.0" "11.0" "12.0" "13.0" "14.0" "15.0" "16.0" "17.0" "18.0" "19.0" "20.0" "21.0" "22.0")
+target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9]*\\.[0-9]*\\).*/\\1/p" htdocs/version.inc.php)
 
 # Default target version in case getting it from filefunc.inc failed
 target_version=${target_version:=20.0}

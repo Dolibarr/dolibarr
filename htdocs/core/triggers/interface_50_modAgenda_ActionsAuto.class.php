@@ -1593,10 +1593,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$elementid = $object->id; // id of object
 		$elementtype = $object->element;
 		$elementmodule = (empty($object->module) ? '' : $object->module);
+		// Special cases to support old naming.
 		if ($object->element == 'subscription') {
 			'@phan-var-force Subscription $object';
 			$elementid = $object->fk_adherent;
 			$elementtype = 'member';
+		}
+		if ($elementmodule == 'product') {
+			$elementmodule = '';
 		}
 		//var_dump($societeforaction);var_dump($contactforaction);var_dump($elementid);var_dump($elementtype);exit;
 

@@ -3,10 +3,10 @@ MenuFinancial=Bili | Malipo
 TaxModuleSetupToModifyRules=Nenda kwenye <a href="%s"> Mipangilio ya sehemu ya kodi </a>  kurekebisha kanuni za kuhesabu
 TaxModuleSetupToModifyRulesLT=Nenda kwenye <a href="%s"> Usanidi wa kampuni </a>  kurekebisha kanuni za kuhesabu
 OptionMode=Chaguo kwa uhasibu
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Katika muktadha huu, mauzo yanakokotolewa juu ya ankara (tarehe ya uthibitishaji). Wakati ankara hizi zinatakiwa, iwe zimelipwa au la, zimeorodheshwa katika matokeo ya mauzo.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=Kipengele kinapatikana tu katika hali ya uhasibu ya CREDITS-DEBTS (Angalia usanidi wa sehemu ya Uhasibu)
 VATReportBuildWithOptionDefinedInModule=Kiasi kilichoonyeshwa hapa kinakokotolewa kwa kutumia sheria zilizofafanuliwa na usanidi wa sehemu ya Kodi.
 LTReportBuildWithOptionDefinedInModule=Kiasi kilichoonyeshwa hapa kinakokotolewa kwa kutumia sheria zilizobainishwa na usanidi wa Kampuni.
@@ -302,7 +302,6 @@ ByVatRate=Kwa kiwango cha kodi ya mauzo
 TurnoverbyVatrate=Mauzo yanayolipwa na kiwango cha kodi ya mauzo
 TurnoverCollectedbyVatrate=Mauzo yaliyokusanywa kwa kiwango cha ushuru wa mauzo
 PurchasebyVatrate=Ununuzi kwa kiwango cha kodi ya mauzo
-LabelToShow=Lebo fupi
 PurchaseTurnover=Kununua mauzo
 PurchaseTurnoverCollected=Mauzo ya ununuzi yamekusanywa
 RulesPurchaseTurnoverDue=- Inajumuisha ankara za mtoa huduma kama zimelipwa au la. <br> - Inatokana na tarehe ya ankara ya ankara hizi. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

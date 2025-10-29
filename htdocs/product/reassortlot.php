@@ -406,14 +406,15 @@ if ($search_stock_physique != '') {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (!empty($hookmanager->resPrint)) {
-	if (!empty($sql_having)) {
-		$sql_having .= " AND";
-	} else {
-		$sql_having .= " HAVING";
+if (empty($reshook)) {
+	if (empty($sql_having)) {
+		$sql_having .= " HAVING 1=1";
 	}
 	$sql_having .= $hookmanager->resPrint;
+} else {
+	$sql_having = $hookmanager->resPrint;
 }
+
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
@@ -563,7 +564,7 @@ if ($search_categ > 0) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
 	$c->fetch($search_categ);
-	$ways = $c->print_all_ways(' &gt; ', 'product/reassortlot.php');
+	$ways = $c->print_all_ways('auto', 'product/reassortlot.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }

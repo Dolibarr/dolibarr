@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +33,13 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
-/** @var Translate $langs */
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
-/** @var CommonObject[] $linkedObjectBlock */
+'@phan-var-force CommandeFournisseur[] $linkedObjectBlock';
+/** @var CommandeFournisseur[] $linkedObjectBlock */
 
 $langs->load("orders");
 

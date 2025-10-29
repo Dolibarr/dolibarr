@@ -3,10 +3,10 @@ MenuFinancial=Фактури | Плащания
 TaxModuleSetupToModifyRules=Отидете в <a href="%s">Настройка на модула за данъци</a>, за да промените правилата за изчисляване
 TaxModuleSetupToModifyRulesLT=Отидете в <a href="%s">Настройка на фирма / организация</a>, за да промените правилата за изчисляване
 OptionMode=Режим за счетоводство
-OptionModeTrue=Начисляване Счетоводство
-OptionModeVirtual=Пари Счетоводство
-OptionModeTrueDesc=В този контекст оборотът се изчислява спрямо плащанията (Дата от плащанията). Валидността на данните е гарантирана само ако счетоводството се провери внимателно чрез входните/изходните данни за плащанията.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=В този контекст, оборотът се изчислява върху фактурите (по дата на валидиране). Когато тези фактури са дължими, независимо дали са платени или не, те са включени в оборота.
+OptionModeTrueDesc=В този контекст оборотът се изчислява спрямо плащанията (Дата от плащанията). Валидността на данните е гарантирана само ако счетоводството се провери внимателно чрез входните/изходните данни за плащанията.
 FeatureIsSupportedInInOutModeOnly=Функцията е налична само в режим на счетоводство Вземания - Задължения (вижте конфигурацията на модул счетоводство)
 VATReportBuildWithOptionDefinedInModule=Сумите показани тук се изчисляват с помощта на правилата, определени от настройката на модула за данъци.
 LTReportBuildWithOptionDefinedInModule=Сумите показани тук се изчисляват като се използват правилата, определени в настройката за фирма / организация.
@@ -302,7 +302,6 @@ ByVatRate=По ставка на ДДС
 TurnoverbyVatrate=Оборот, фактуриран по ставка на ДДС
 TurnoverCollectedbyVatrate=Оборот, натрупан по ставка на ДДС
 PurchasebyVatrate=Покупка по ставка на ДДС
-LabelToShow=Кратко означение
 PurchaseTurnover=Оборот на покупките
 PurchaseTurnoverCollected=Събран оборот от покупки
 RulesPurchaseTurnoverDue=- Включва дължимите фактури на доставчика, независимо дали са платени или не. <br>- Базира се на фактурата Дата от тези фактури.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Правило за дати на редове
 Prepaid=Предплатено
 Postpaid=Абонаментно плащане
 SetRuleForLinesDates=Задаване на правило за дати на редове
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

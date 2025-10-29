@@ -200,3 +200,5 @@ InSepa=SEPA এলাকা
 CountryIsInSepa=সেপা অঞ্চলের দেশগুলি
 Bank_line=ব্যাংক লেনদেন লাইন
 BankId=ব্যাংক লাইন আইডি
+BankAccountForcedOnRequest=This bank account was defined when preparing the bank transfer request. Delete it and redo the preparation from the source object if you need to change it.
+BankAccountUsedByDefault=This is the default bank account of the thirdparty.

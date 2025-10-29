@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Orrialde berri bat sor dezakezu edo webgune oso
 SyntaxHelp=Sintaxi aholku espezifikoei buruzko laguntza
 YouCanEditHtmlSourceckeditor=HTML iturburu-kodea edita dezakezu editoreko "Iturria" botoia erabiliz.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> PHP kodea iturburu honetan sar dezakezu <strong>&lt;?php ?&gt;</strong> etiketak erabiliz. Aldagai global hauek eskuragarri daude: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Beste orrialde/edukiontzi baten edukia ere sar dezakezu sintaxi honekin:<br><strong>&lt;?php includeContainer('sartzeko_edukiontziaren_ezizena'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Beste orrialde/edukiontzi batera birbideratzea egin dezakezu sintaxi honekin (Oharra: ez erakutsi edukirik birbideratze baten aurretik):<br><strong>&lt;?php redirectToContainer('birbideratu_beharreko_edukiontziaren_ezizena'); ?&gt;</strong><br>GET parametroekin birbideratze bat ere egin dezakezu:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Beste orrialde baterako esteka bat gehitzeko, erabili sintaxia:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;nireesteka&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> <strong> esteka bat </strong> <strong> dokumentuak eta </strong> direktorioan gordetako fitxategi bat deskargatzeko, erabili <strong>document.php</strong> bilgarria:<br>Adibidez, documents/ecm-ko fitxategi batentzat (erregistratu behar dena), sintaxia hau da:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[erlatiboa_dir/]fitxategi-izena.ext"&gt;</strong><br>Dokumentu/euskarri batean (sarbide publikorako direktorio irekia) fitxategi bat sartzeko, sintaxia hau da:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[erlatiboa_dir/]fitxategi-izena.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Fitxategi baten partekatze-esteka (fitxategiaren partekatze-hash gakoa erabiliz sarbide irekia) sintaxia hau da:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> <strong> irudi bat </strong> <strong> multimedia </strong> direktorioan gordeta sartzeko (jendearentzat irekitako direktorioa), erabili erlatiboa <strong>/medias</strong>-rekin hasten den bidea, adibidea:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Orrialde bat itzulpen gisa klonatzen duzu. O
 ParentPageId=Guraso-orrialdearen IDa
 WebsiteId=Webgunearen IDa
 CreateByFetchingExternalPage=Sortu orria/edukiontzia kanpoko URL batetik orria eskuratuz...
-OrEnterPageInfoManually=Edo sortu orrialdea hutsetik edo orrialde txantiloi batetik...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Eskuratu eta sortu
 ExportSite=Esportatu webgunea
 ImportSite=Inportatu webgunearen txantiloia
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Barkatu, webgune hau lineaz kanpo dago une honeta
 WEBSITE_USE_WEBSITE_ACCOUNTS=Gaitu webguneko kontuaren taula hirugarrenentzat
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Gaitu taula hirugarren bakoitzaren webguneko kontuak (saioa hasteko/pasahitza) gordetzeko
 YouMustDefineTheHomePage=Lehenik eta behin, hasierako orri lehenetsia definitu behar duzu
-OnlyEditionOfSourceForGrabbedContentFuture=Abisua: Kanpoko web orri bat inportatuz web orri bat sortzea erabiltzaile esperientziadunentzat gordeta dago. Jatorrizko orriaren konplexutasunaren arabera, inportazioaren emaitza jatorrizkotik desberdina izan daiteke. Gainera, iturburu orrian CSS estilo arruntak edo JavaScript gatazkatsuak erabiltzen badira, webgune editorearen itxura edo funtzioak hautsi daitezke orrialde honetan lan egitean. Metodo hau orrialde bat sortzeko modu azkarragoa da, baina gomendagarria da orrialde berria hutsetik edo iradokitako orrialde txantiloi batetik sortzea.<br>Kontuan izan, halaber, lerroko editoreak agian ez duela behar bezala funtzionatuko kanpoko orrialde batean erabiltzen denean.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Edukia kanpoko gune batetik hartzen denean, HTML iturriaren aldaketa baino ez da posible.
 GrabImagesInto=Hartu css-n eta orrialdean aurkitutako irudiak ere.
 ImagesShouldBeSavedInto=Irudiak direktorioan gorde behar dira
@@ -423,8 +423,8 @@ contactFormPhone = Telefonoa
 contactFormSubjectEntered = Gaia sartu da
 contactFormMessageLabel = Mezua
 contactFormSuccessAlert = Eskerrik asko zure mezuagatik. Laster erantzungo dizugu.
-socials=Gizarte sareak
-rgpd=RGPD
+socials=Social networks
+rgpd=GDPR
 joinUs=Batu zaitez gurekin
 home=Etxea
 anonymous=Anonimoa
@@ -455,3 +455,4 @@ SampleGoalOne=Kideen arteko lankidetza eta elkartasuna sustatzea.
 SampleGoaltwo=Jarduera guztietan praktika arduratsuak eta iraunkorrak sustatzea.
 SampleGoalthree=Gizarte osoari mesede egiten dioten proiektu eraginkorrak babestu.
 SHOW_LANG_SELECTOR=Hizkuntza hautatzeko goitibeherako menua bistaratzeko
+ForAdvancedWebmastersOnly=For technical webmasters only

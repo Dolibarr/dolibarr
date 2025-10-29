@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled= Opțiunea din modulul Flux de lucru, pentru 
 NoWarehouseInBase=Fără depozit în bază
 ShipmentUpdated=Livrarea a fost actualizată cu succes
 ShipmentIncrementStockOnDelete = Creștere de stoc la ștergere
+ConfirmSignShipping=Confirmare semnare livrare
+ConfirmUnsignShipping=Confirmare de-semnare livrare
+SignShipping=Semnare livrare
+UnsignShipping=De-semnare livrare
+
+# Deliveries
+Delivery=La livrare
+DeliveryRef=Ref Livrare
+DeliveryCard=Bon de livrare
+DeliveryOrder=Bon de livrare
+DeliveryDate=Dată de livrare
+CreateDeliveryOrder=Generați nota de livrare
+DeliveryStateSaved=Stare livrare salvată
+SetDeliveryDate=Setare data estimată de livrare
+SetShippingDate=Setare dată de expediere
+ValidateDeliveryReceipt=Validare notă de livrare
+ValidateDeliveryReceiptConfirm=Sigur doriți să validați această notă de livrare?
+DeleteDeliveryReceipt=Ştergere notă de livrare
+DeleteDeliveryReceiptConfirm=Sigur doriți să ștergeți nota de livrare <b>%s</b>?
+DeliveryMethod=Metodă de livrare
+TrackingNumber=Număr de urmărire AWB
+DeliveryNotValidated=Livrare nevalidată
+StatusDeliveryCanceled=Anulat
+StatusDeliveryDraft=Schiţă
+StatusDeliveryValidated=Primită
+NameAndSignature=Numele și semnătura:
+ToAndDate=Către___________________________________ pe data de ____ / _____ / __________
+GoodStatusDeclaration=Au primit bunurile de mai sus, în stare bună,
+Deliverer=Livrator:
+Sender=Expeditor
+Recipient=Destinatar
+ErrorStockIsNotEnough=Nu există stoc suficient
+Shippable=Livrabil
+NonShippable=Nelivrabil
+ShowShippableStatus=Afișare status de expediere
+ShowReceiving= Afișare notă de recepție
+NonExistentOrder=Comandă inexistentă
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Cantități de stoc deja alocate pe liniile anterioare
 
 # Sending methods
 # ModelDocument
@@ -95,4 +133,4 @@ TypeContact_shipping_external_SHIPPING=Contact client pentru livrare
 TypeContact_shipping_external_DELIVERY=Contact client pentru livrare
 CloseShipment=Închidere livrare
 ConfirmCloseShipment=Confirmare închidere livrare
-SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Preselectați numărul de lot/serie cu cea mai apropiată dată de expirare/consum atunci când creați o livrare
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Preselectare număr de lot/serie cu cea mai apropiată dată de expirare/consum atunci când creezi o livrare

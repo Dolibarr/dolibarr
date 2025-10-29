@@ -607,6 +607,8 @@ class pdf_vinci extends ModelePDFMo
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1097,7 +1099,7 @@ class pdf_vinci extends ModelePDFMo
 
 		// product info
 		$prodToMake = new Product($this->db);
-		$resProdToMake = $prodToMake->fetch($object->fk_product);
+		$resProdToMake = $prodToMake->fetch((int) $object->fk_product);
 
 		if ($resProdToMake > 0) {
 			// ref

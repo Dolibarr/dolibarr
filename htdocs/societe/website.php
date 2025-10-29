@@ -7,7 +7,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,18 +52,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "website"));
 
-
 // Get parameters
-$id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
-
 $action 	 = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';               // The action 'add', 'create', 'edit', 'update', 'view', ...
 $show_files  = GETPOSTINT('show_files');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'websitelist';  // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha');                                              // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ');                                                  // Option for the css output (always '' except when 'print')
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+
+$id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -88,7 +87,7 @@ $object = new Societe($db);
 $objectwebsiteaccount = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = isModEnabled('website') ? $conf->website->dir_output.'/temp/massgeneration/'.$user->id : '';
-$hookmanager->initHooks(array('websitethirdpartylist')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('thirdpartywebsite', 'websitethirdpartylist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($objectwebsiteaccount->table_element);
@@ -192,7 +191,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'WebsiteAccount';
 	$objectlabel = 'WebsiteAccount';
-	$uploaddir = empty($conf->societe->multidir_output[$object->entity]) ? $conf->societe->dir_output : $conf->societe->multidir_output[$object->entity];
+	$uploaddir = empty($conf->societe->multidir_output[$object->entity ?? $conf->entity]) ? $conf->societe->dir_output : $conf->societe->multidir_output[$object->entity ?? $conf->entity];
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

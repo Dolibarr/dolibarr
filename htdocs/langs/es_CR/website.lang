@@ -22,7 +22,6 @@ PreviewSiteServedByWebServer=<u>Obtenga una vista previa de %s en una nueva pest
 VirtualHostUrlNotDefined=URL del host virtual servido por el servidor web externo no definido
 SyntaxHelp=Ayuda sobre consejos de sintaxis específicos
 SiteAdded=Sitio web añadido
-OrEnterPageInfoManually=O crea una página desde cero o desde una plantilla de página ...
 WebsiteAccounts=Cuentas de sitio web
 GrabImagesInto=Insertar también las imágenes encontradas en CSS y página.
 CSSContentTooltipHelp=Ingrese aquí el contenido CSS. Para evitar cualquier conflicto con el CSS de la aplicación, asegúrese de anteponer todas las declaraciones con la clase .bodywebsite. Por ejemplo: <br> <br> #mycssselector, input.myclass: hover {...} <br> debe ser <br> .bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Nota: si tiene un archivo grande sin este prefijo, puede usar 'lessc' para convertirlo y agregar el prefijo .bodywebsite en todas partes.

@@ -146,6 +146,8 @@ DocMySectionText=A line of text to describe my component
 DocMySectionText2=You can add more lines of text
 DocMySectionExample=Here you can put an example of your component
 
+TableRowIntuitiveSelect = Intuitive table lines selection
+
 #ExperimentalUx
 ExperimentalUx = Experimental UX
 ExperimentalUxTitle = UX Experiments in Dolibarr
@@ -164,7 +166,6 @@ ExperimentalUxContributionEnd = This structure ensures a clear and modular organ
 # Start experiements menu title
 ExperimentalUxFreezeTooltip = Tooltip freeze
 ExperimentalUxInputAjaxFeedback = Input feedback
-ExperimentalUxIntuitiveSelect = Intuitive table lines selection
 # End experiements manu tyile
 
 # Title section

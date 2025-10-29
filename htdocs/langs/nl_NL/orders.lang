@@ -213,3 +213,4 @@ ExistingDipatchLines = Er zijn al regels die een voorraad-beweging hebben gegene
 ConfirmDeleteDispatchedLines = Ook alle reeds uitgevoerde voorraad bewegingen terugdraaien?
 SupplierOrderDeletion = Leverancier Bestelling %s Verwijdering
 OrderStatusMakeOperationForbidden = Bestelling status verboden voor deze bewerking.
+CreateRemoteOrder=Maak een externe Bestelling

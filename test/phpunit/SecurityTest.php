@@ -387,6 +387,7 @@ class SecurityTest extends CommonClassTest
 	{
 		$stringtotest = 'eée';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
+
 		//$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correctly with test 1');
 		$this->assertEquals('eée', $decodedstring, 'Function did not sanitize correctly with test 1');
 
@@ -615,6 +616,11 @@ class SecurityTest extends CommonClassTest
 		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
 		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
 		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 0;
+
+
+		//$resulttest = dol_eval('((getDolGlobalString("MAIN_USE_ADVANCED_PERMS") ? $user->hasRight("user","group_advance","read") : $user->hasRight("user","user","lire")) || $user->admin) && !(isModEnabled("multicompany") && $conf->entity > 1 && getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE"))', 1, 0);
+		//print "resulttest = ".$resulttest."\n";
+		//$this->assertTrue($resulttest);
 
 		$result = dol_eval('1==1', 1, 0);
 		print "result1 = ".$result."\n";

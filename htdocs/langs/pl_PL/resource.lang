@@ -34,5 +34,6 @@ ResourceTypeCode=Kod rodzaju zasobu
 ImportDataset_resource_1=Zasoby
 ErrorResourcesAlreadyInUse=Niektóre zasoby są w użyciu
 ErrorResourceUseInEvent=%s używany w zdarzeniu %s
-MaxUsers=Maksymalna liczba użytkowników (miejsca, siedzenia itp.)
+MaxUsers=Maksymalna liczba użytkowników
+MaxUsersResourceDesc=Jeśli zasób może być używany przez kilka osób (samochód, pomieszczenie i podobne) możesz tu wprowadzić msksymalną liczbę użytkowników tego zasobu w jednym czasie (liczba siedzeń, miejsc, ...).
 MaxUsersLabel=Maksymalna liczba użytkowników

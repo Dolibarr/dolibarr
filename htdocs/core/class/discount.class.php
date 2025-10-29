@@ -378,8 +378,6 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function delete($user)
 	{
-		global $conf, $langs;
-
 		// Check if we can remove the discount
 		if ($this->fk_facture_source) {
 			$sql = "SELECT COUNT(rowid) as nb";
@@ -605,7 +603,7 @@ class DiscountAbsolute extends CommonObject
 	 *  Return amount (with tax) of discounts currently available for a company, user or other criteria
 	 *
 	 *	@param		?Societe	$company		Object third party for filter
-	 *	@param		?User		$user			Filtre sur un user auteur des remises
+	 *	@param		?User		$user			Filtre on an author of the discount
 	 * 	@param		string		$filter			Filter other. Warning: Do not use a user input value here.
 	 * 	@param		int|float	$maxvalue		Filter on max value for discount
 	 *  @param      int<0,1>	$discount_type  0 => customer discount, 1 => supplier discount
@@ -670,7 +668,6 @@ class DiscountAbsolute extends CommonObject
 		}
 		return -1;
 	}
-
 
 	/**
 	 *  Return amount (with tax) of all deposits invoices used by invoice as a payment.

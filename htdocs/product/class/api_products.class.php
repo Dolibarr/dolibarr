@@ -900,7 +900,8 @@ class Products extends DolibarrApi
 	 * @return int
 	 *
 	 * @throws RestException 500	System error
-	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 403
 	 *
 	 * @url POST {id}/purchase_prices
 	 */
@@ -2231,14 +2232,13 @@ class Products extends DolibarrApi
 		unset($object->fk_bank);
 		unset($object->fk_account);
 
-		unset($object->supplierprices);	// Must use another API to get them
-
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			unset($object->stock_reel);
 			unset($object->stock_theorique);
 			unset($object->stock_warehouse);
 		}
 
+		unset($object->module);
 		return $object;
 	}
 

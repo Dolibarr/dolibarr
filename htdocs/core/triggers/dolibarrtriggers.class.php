@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,10 +164,10 @@ abstract class DolibarrTriggers
 	/**
 	 * setErrorsFromObject
 	 *
-	 * @param	CommonObject	$object		Object
+	 * @param	CommonObject|BlockedLog	$object		Object
 	 * @return	void
 	 */
-	public function setErrorsFromObject(CommonObject $object)
+	public function setErrorsFromObject($object)
 	{
 		if (!empty($object->error)) {
 			$this->errors = array_merge($this->errors, array($object->error));

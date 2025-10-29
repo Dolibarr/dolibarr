@@ -199,15 +199,13 @@ if ($action == 'update' && $permissiontobind) {
 	}
 
 	if (!empty($toselect) && $massaction === 'changeaccount') {
-		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
 		$ok = 0;
 		$ko = 0;
 		$msg = '';
 		$sql = '';
-		if (!empty($toselect) && in_array($accounting_product_mode, $accounting_product_modes)) {
+		if (!empty($toselect) && in_array($accounting_product_mode, $accounting_product_modes)) {	// @phpstan-ignore-line Bug phpstan thinking that empty(array()) is always true
 			$accounting = new AccountingAccount($db);
 
-			//$msg .= '<div><span class="accountingprocessing">' . count($toselect) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0;

@@ -3,7 +3,7 @@
  * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	    Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -32,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cregion.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  * API class for dictionaries
@@ -389,7 +391,7 @@ class Setup extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$region = new Cregion($this->db);
 				if ($region->fetch($obj->rowid) > 0) {
-					if (empty($filter) || stripos($region->name, $filter) !== false) {
+					if (empty($filter) || stripos((string) $region->name, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($region);
 					}
 				}
@@ -504,7 +506,7 @@ class Setup extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$state = new Cstate($this->db);
 				if ($state->fetch($obj->rowid) > 0) {
-					if (empty($filter) || stripos($state->label, $filter) !== false) {
+					if (empty($filter) || stripos((string) $state->label, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($state);
 					}
 				}
@@ -617,7 +619,7 @@ class Setup extends DolibarrApi
 					// and then apply the filter if there is one.
 					$this->translateLabel($country, $lang, 'Country');
 
-					if (empty($filter) || stripos($country->label, $filter) !== false) {
+					if (empty($filter) || stripos((string) $country->label, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($country);
 					}
 				}
@@ -1039,6 +1041,10 @@ class Setup extends DolibarrApi
 	public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
+
+		if ($type == 'expedition' && !getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS')) {
+			$type = 'commande';
+		}
 
 		$sql = "SELECT rowid, code, element as type, libelle as label, source, module, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as t";
@@ -2734,7 +2740,7 @@ class Setup extends DolibarrApi
 
 				// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
 				$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-				$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
+				$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 				$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
 				// Fill file_list with files in signature, new files, modified files
@@ -2911,7 +2917,6 @@ class Setup extends DolibarrApi
 		return array('resultcode' => $resultcode, 'resultcomment' => $resultcomment, 'expectedchecksum' => $outexpectedchecksum, 'currentchecksum' => $outcurrentchecksum, 'out' => $out);
 	}
 
-
 	/**
 	 * Get list of enabled modules
 	 *
@@ -2925,6 +2930,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getModules()
 	{
+		dol_syslog("Setup::getModules is DEPRECATED, use /api/index.php/setup/modules/status", LOG_INFO);
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->admin
@@ -2934,6 +2940,156 @@ class Setup extends DolibarrApi
 
 		sort($conf->modules);
 
-		return $this->_cleanObjectDatas($conf->modules);
+		return $conf->modules;
+	}
+
+	/**
+	 * Get list of modules with status and origin
+	 *
+	 * @url	GET /modules/status/{origin}
+	 *
+	 * @param	string			$status	"all", "active", "disabled"
+	 * @param	string			$origin	Origin of the module (all, core, external)
+	 * @return  array|mixed Data without useless information
+	 *
+	 * @throws RestException 403 Forbidden
+	 */
+	public function getModulesList($status = "active", $origin = 'all')
+	{
+		global $db;
+		$moduleObject = new DolibarrModules($this->db);
+
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
+		}
+
+		$filename = array();
+		$modulesdir = dolGetModulesDirs();
+		foreach ($modulesdir as $dir) {
+			// Load modules attributes in arrays (name, numero, orders) from dir directory
+			//print $dir."\n<br>";
+			dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
+			$handle = @opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					//print "$i ".$file."\n<br>";
+					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+						$modName = substr($file, 0, dol_strlen($file) - 10);
+						include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+						if (class_exists($modName)) {
+							$objMod = new $modName($db);
+							$moduleName = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+							$publisher = dol_escape_htmltag((string) $moduleObject->getPublisher());
+							$external = ((string) $moduleObject->isCoreOrExternalModule() == 'external');
+							$active = getDolGlobalString('MAIN_MODULE_'.$moduleName);
+							$version = $objMod->version;
+							if ($status != 'all') {
+								if ($status == 'active' && $active == "") {
+									continue;
+								} elseif ($status == 'disabled' && $active == 1) {
+									continue;
+								}
+							}
+							if ($origin != 'all') {
+								if ($origin == 'external' && !$external) {
+									continue;
+								} elseif ($origin == 'core' && $external) {
+									continue;
+								}
+							}
+
+							$filename[$moduleName] = array(
+								'modName' => $modName,
+								'origin' => $external ? 'external' : 'core',
+								'active' => $active,
+								'publisher' => $publisher,
+								'version' => $version
+							);
+						}
+					}
+				}
+			}
+		}
+		return $filename;
+	}
+
+	/**
+	 * PUT enable module
+	 *
+	 * @url	PUT /modules/{modulename}/enable
+	 *
+	 * @param	string			$modulename name of the module
+	 * @return  array|mixed		Data without useless information
+	 *
+	 * @throws RestException 403 Forbidden
+	 * @throws RestException 404 Not found
+	 */
+	public function enableModules($modulename)
+	{
+		return $this->_moduleOnOff($modulename, $state = true);
+	}
+	/**
+	 * PUT enable module
+	 *
+	 * @url	PUT /modules/{modulename}/disable
+	 *
+	 * @param	string			$modulename name of the module
+	 * @return  array|mixed		Data without useless information
+	 *
+	 * @throws RestException 403 Forbidden
+	 * @throws RestException 404 Not found
+	 */
+	public function disableModules($modulename)
+	{
+		return $this->_moduleOnOff($modulename, $state = false);
+	}
+
+	/**
+	 * switch moduleOnOff
+	 *
+	 * @param	string			$modulename name of the module
+	 * @param	bool			$state false means off, true means on
+	 * @return  array|mixed		Data without useless information
+	 *
+	 * @throws RestException 403 Forbidden
+	 * @throws RestException 404 Not found
+	 */
+	private function _moduleOnOff($modulename, $state = false)
+	{
+		global $db;
+
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
+		}
+
+		$modulesdir = dolGetModulesDirs();
+		foreach ($modulesdir as $dir) {
+			$handle = @opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+						// print $modulename. "==".substr($file, 0, dol_strlen($file) - 10)."\n";
+						if ($modulename == substr($file, 0, dol_strlen($file) - 10)) {
+							$modName = substr($file, 0, dol_strlen($file) - 10);
+							include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+							if (class_exists($modName)) {
+								$objMod = new $modName($db);
+								//$name = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+								if ($state) {
+									activateModule($modulename);
+									return array('result' => 'success', 'message' => 'Module '.$this->db->escape($modulename).' activated');
+								} else {
+									unActivateModule($modulename);
+									return array('result' => 'success', 'message' => 'Module '.$this->db->escape($modulename).' deactivated');
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		throw new RestException(404, 'Module '.$this->db->escape($modulename).' not found');
 	}
 }

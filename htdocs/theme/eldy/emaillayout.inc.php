@@ -102,6 +102,5 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
   width: 80%;
   max-height: 80px;
   margin: 0 5px;
-  padding-top: 5px;
   border-radius: 7px;
 }

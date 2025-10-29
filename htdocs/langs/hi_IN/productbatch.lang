@@ -50,4 +50,5 @@ ToReplace=प्रतिस्थापित करें
 CantMoveNonExistantSerial=त्रुटि। आप एक ऐसे सीरियल के लिए रिकॉर्ड पर मूव मांगते हैं जो अब मौजूद नहीं है। हो सकता है कि आप एक ही शिपमेंट में एक ही वेयरहाउस पर एक ही सीरियल को कई बार ले गए हों या इसका इस्तेमाल किसी दूसरे शिपमेंट द्वारा किया गया हो। इस शिपमेंट को हटाएँ और दूसरा तैयार करें।
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=लॉट तालिका अपूर्ण है, पैरामीटर '...repair.php?standard=confirmed' के साथ मरम्मत चलाएँ
 IlligalQtyForSerialNumbers= स्टॉक सुधार आवश्यक है क्योंकि सीरियल नंबर अद्वितीय है।
-ErrorBatchesNeedStockManagement=त्रुटि. बैच/लॉट प्रबंधन वाले उत्पाद को स्टॉक में प्रबंधित किया जाना चाहिए.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=बैच/लॉट प्रबंधन वाले उत्पाद को स्टॉक में प्रबंधित किया जाना चाहिए (स्टॉक प्रबंधन बल हाँ के लिए)

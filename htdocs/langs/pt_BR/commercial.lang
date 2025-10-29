@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Comercial
 CommercialArea=Área comercial
+Prospect=Cliente em Potencial
 Prospects=Clientes em Potencial
 DeleteAction=Excluir um evento
 AddAction=Adicionar evento

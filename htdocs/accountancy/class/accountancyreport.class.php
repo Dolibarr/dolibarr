@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,22 +67,22 @@ class AccountancyReport // extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Accountancy code
+	 * @var ?string Accountancy code
 	 */
 	public $code;
 
 	/**
-	 * @var string Accountancy Category label
+	 * @var ?string Accountancy Category label
 	 */
 	public $label;
 
 	/**
-	 * @var int country id
+	 * @var ?int country id
 	 */
 	public $fk_country;
 
 	/**
-	 * @var int Is active
+	 * @var ?int Is active
 	 */
 	public $active;
 
@@ -229,7 +230,6 @@ class AccountancyReport // extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters

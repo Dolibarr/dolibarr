@@ -50,4 +50,5 @@ ToReplace=প্রতিস্থাপন করুন
 CantMoveNonExistantSerial=ত্রুটি. আপনি এমন একটি সিরিয়ালের জন্য একটি রেকর্ডে সরানোর জন্য জিজ্ঞাসা করুন যা আর বিদ্যমান নেই। হতে পারে আপনি একই চালানে একাধিকবার একই গুদামে একই সিরিয়ালটি নিতে পারেন বা এটি অন্য চালানের দ্বারা ব্যবহৃত হয়েছিল। এই চালানটি সরান এবং অন্য একটি প্রস্তুত করুন।
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed='...repair.php?standard=confirmed' প্যারামিটার সহ লট টেবিলের অসম্পূর্ণ রান মেরামত
 IlligalQtyForSerialNumbers= স্টক সংশোধন প্রয়োজন কারণ অনন্য সিরিয়াল নম্বর।
-ErrorBatchesNeedStockManagement=ত্রুটি। ব্যাচ/লট ব্যবস্থাপনা সহ একটি পণ্য স্টকে থাকা আবশ্যক।
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
