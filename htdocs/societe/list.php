@@ -1301,7 +1301,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'societe/list.php');
+	$ways = $c->print_all_ways('auto', 'societe/list.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
