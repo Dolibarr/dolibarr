@@ -1584,9 +1584,17 @@ class Categorie extends CommonObject
 					$s .= $linkend;
 					$w[] = $s;
 				} elseif ($url == 'none') {
-					$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
-					$linkend = '</span>';
-					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').($i < count($way) ? $cat->label : $cat->label).$linkend;
+					if (($i < count($way) && empty($notrunc)) && $i > 1) {
+						$link = '';
+						$linkend = '';
+					} else {
+						$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
+						$linkend = '</span>';
+					}
+					$s = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '');
+					$s .= (($i < count($way) && empty($notrunc)) ? ($i == 1 ? dol_trunc($cat->label, 3) : '') : $cat->label);
+					$s .= $linkend;
+					$w[] = $s;
 				} else {
 					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
