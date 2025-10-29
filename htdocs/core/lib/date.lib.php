@@ -758,7 +758,7 @@ function getGMTEasterDatetime($year)
  *
  *  @param	int			$timestampStart		Timestamp start (UTC with hour, min, sec = 0)
  *  @param	int			$timestampEnd		Timestamp end (UTC with hour, min, sec = 0)
- *  @param	string		$country_code		Country code
+ *  @param	string|int	$countryCodeOrId	Country code or ID
  *  @param	int			$lastday			Last day is included, 0: no, 1:yes
  *  @param	int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includesunday		Include sunday as non working day (-1=use setup, 0=no, 1=yes)
@@ -767,7 +767,7 @@ function getGMTEasterDatetime($year)
  *  @return	int|string						Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
-function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1)
+function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1)
 {
 	global $conf, $db, $mysoc;
 
@@ -778,8 +778,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 
-	if (empty($country_code)) {
-		$country_code = $mysoc->country_code;
+	if (empty($countryCodeOrId)) {
+		$countryCodeOrId = $mysoc->country_code;
 	}
 	if ($includemonday < 0) {
 		$includemonday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY', 0);
@@ -794,7 +794,11 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$includesunday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', 1);
 	}
 
-	$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
+	if (is_numeric($countryCodeOrId)) {
+		$country_id = $countryCodeOrId;
+	} else {
+		$country_id = dol_getIdFromCode($db, $countryCodeOrId, 'c_country', 'code', 'rowid');
+	}
 
 	if (empty($conf->cache['arrayOfActivePublicHolidays_'.$country_id])) {
 		// Loop on public holiday defined into hrm_public_holiday for the day, month and year analyzed
@@ -1019,7 +1023,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  *
  * @param 	int 		$timestampStart 	Timestamp start (UTC with hour, min, sec = 0)
  * @param 	int 		$timestampEnd 		Timestamp end (UTC with hour, min, sec = 0)
- * @param 	string 		$country_code 		Country code
+ * @param	string|int	$countryCodeOrId	Country code or ID
  * @param 	int 		$lastday 			Last day is included, 0: no, 1:yes
  * @param 	int 		$excludesaturday 	Exclude saturday as non working day (-1=use setup, 0=no, 1=yes)
  * @param 	int 		$excludesunday 		Exclude sunday as non working day (-1=use setup, 0=no, 1=yes)
@@ -1028,7 +1032,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  * @return	string|int[]                    List of public holidays timestamps or error message string if error
  * @see num_public_holiday(), num_open_day()
  */
-function listPublicHoliday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $excludesaturday = -1, $excludesunday = -1, $excludefriday = -1, $excludemonday = -1)
+function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = '', $lastday = 0, $excludesaturday = -1, $excludesunday = -1, $excludefriday = -1, $excludemonday = -1)
 {
 	global $conf, $db, $mysoc;
 
@@ -1037,8 +1041,8 @@ function listPublicHoliday($timestampStart, $timestampEnd, $country_code = '', $
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 
-	if (empty($country_code)) {
-		$country_code = $mysoc->country_code;
+	if (empty($countryCodeOrId)) {
+		$countryCodeOrId = $mysoc->country_code;
 	}
 	if ($excludemonday < 0) {
 		$excludemonday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY', 0);
@@ -1053,7 +1057,11 @@ function listPublicHoliday($timestampStart, $timestampEnd, $country_code = '', $
 		$excludesunday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', 1);
 	}
 
-	$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
+	if (is_numeric($countryCodeOrId)) {
+		$country_id = $countryCodeOrId;
+	} else {
+		$country_id = dol_getIdFromCode($db, $countryCodeOrId, 'c_country', 'code', 'rowid');
+	}
 
 	if (empty($conf->cache['arrayOfActivePublicHolidays_' . $country_id])) {
 		// Loop on public holiday defined into hrm_public_holiday for the day, month and year analyzed
@@ -1314,19 +1322,19 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
  *	@param     	int			$inhour             0: return number of days, 1: return number of hours
  *	@param		int			$lastday            We include last day, 0: no, 1:yes
  *  @param		int			$halfday			Tag to define half day when holiday start and end
- *  @param      string		$country_code       Country code (company country code if not defined)
+ *  @param      string|int	$countryCodeOrId    Country Code or Id (company country code if not defined)
  *	@return    	int|string						Number of days or hours or string if error
  *  @seealso num_between_day(), num_public_holiday()
  */
-function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $country_code = '')
+function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $countryCodeOrId = '')
 {
 	global $langs, $mysoc;
 
-	if (empty($country_code)) {
-		$country_code = $mysoc->country_code;
+	if (empty($countryCodeOrId)) {
+		$countryCodeOrId = $mysoc->country_code;
 	}
 
-	dol_syslog('num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday.' country_code='.$country_code);
+	dol_syslog('num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday.' countryCodeOrId='.$countryCodeOrId);
 
 	// Check parameters
 	if (!is_int($timestampStart) && !is_float($timestampStart)) {
@@ -1340,7 +1348,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		// --- 1. Calculate Gross Working Days ---
 		// Gross working days = total days in range - non-working days (weekends & public holidays).
 		$a = num_between_day($timestampStart, $timestampEnd, $lastday);
-		$b = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
+		$b = num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, $lastday);
 		$nbOpenDay = $a - $b;
 
 		// --- 2. Apply Contextual Half-Day Deductions ---
@@ -1349,9 +1357,9 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		// Check if start/end days are working days just ONCE to optimize performance
 		// by avoiding redundant calls to the potentially slow num_public_holiday() function.
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$isStartDayWorking = (num_public_holiday($timestampStart, $timestampStart, $country_code, 1) == 0);
+		$isStartDayWorking = (num_public_holiday($timestampStart, $timestampStart, $countryCodeOrId, 1) == 0);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$isEndDayWorking   = (num_public_holiday($timestampEnd, $timestampEnd, $country_code, 1) == 0);
+		$isEndDayWorking   = (num_public_holiday($timestampEnd, $timestampEnd, $countryCodeOrId, 1) == 0);
 
 		// Deduct 0.5 if the leave starts in the afternoon of a working day.
 		if (($halfday == -1 || $halfday == 2) && $isStartDayWorking) {
@@ -1372,7 +1380,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 	} elseif ($timestampStart == $timestampEnd) {
 		$numholidays = 0;
 		if ($lastday) {
-			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
+			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, $lastday);
 			if ($numholidays == 1) {
 				return 0;
 			}

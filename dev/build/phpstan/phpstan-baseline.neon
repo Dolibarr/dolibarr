@@ -5617,7 +5617,7 @@ parameters:
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
-			message: '#^Constructor of class DolEditor has an unused parameter \$toolbarlocation\.$#'
+			message: '#^Constructor of class DolEditor has an unused parameter \$notused\.$#'
 			identifier: constructor.unusedParameter
 			count: 1
 			path: ../../../htdocs/core/class/doleditor.class.php
@@ -10918,12 +10918,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/main.inc.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 32
 			path: ../../../htdocs/main.inc.php
 
 		-
