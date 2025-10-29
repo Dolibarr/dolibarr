@@ -38,6 +38,9 @@ UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
 
 ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
 ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
+-- EN: Support second approval columns for holidays / FR: Ajouter les colonnes de seconde approbation pour les congés
+ALTER TABLE llx_holiday ADD COLUMN date_approval2 datetime DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN fk_user_approve2 integer DEFAULT NULL;
 
 
 -- Clean very old temporary tables (created during v9 migration or repair)

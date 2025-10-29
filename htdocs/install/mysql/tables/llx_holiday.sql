@@ -38,6 +38,8 @@ date_valid     DATETIME DEFAULT NULL,			-- date validation
 fk_user_valid  integer DEFAULT NULL,			-- user validation
 date_approval  DATETIME DEFAULT NULL,			-- date approval
 fk_user_approve integer DEFAULT NULL,			-- user approval
+	date_approval2	DATETIME DEFAULT NULL,			-- EN: date of second approval / FR: date de la seconde approbation
+	fk_user_approve2	integer DEFAULT NULL,			-- EN: user for second approval / FR: utilisateur pour la seconde approbation
 date_refuse    DATETIME DEFAULT NULL,
 fk_user_refuse integer DEFAULT NULL,
 date_cancel    DATETIME DEFAULT NULL,

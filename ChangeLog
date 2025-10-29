@@ -18,6 +18,9 @@ NEW: Accountancy - Option to select the label of operation (#31200)
 NEW: Accountancy - Allow grouping taxes with primary line price (#26732)
 NEW: Activate PHPUnit with tests on permission on $action ==...
 NEW: Add advice for max size on list for better performance
+NEW: Holiday module - Option "Les demandes de congés requièrent une double validation" in module settings
+NEW: Approbation de niveau 2 des demandes de congés
+NEW: Holiday module - Add "Responsible de seconde approbation" responsible field on holiday card
 NEW: Add an advanced permission to validate knowledge (#30855)
 NEW: Add a test mode into the setup of AI module to test the AI prompts.
 NEW: Add a tool to decrypt data encrypted in database.

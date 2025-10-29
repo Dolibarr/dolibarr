@@ -186,6 +186,8 @@ if (empty($reshook)) {
 		}
 
 		$approverid = GETPOSTINT('valideur');
+		// Capture the second approver from the request
+		$approverid2 = GETPOSTINT('valideur2');
 		$description = trim(GETPOST('description', 'restricthtml'));
 
 		// Check that leave is for a user inside the hierarchy or advanced permission for all is set
@@ -264,6 +266,18 @@ if (empty($reshook)) {
 			setEventMessages($langs->transnoentitiesnoconv('InvalidValidator'), null, 'errors');
 			$error++;
 		}
+		// Allow selection of the second approver
+		if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+			// Validate the chosen second approver
+			if ($approverid2 < 1) {
+				setEventMessages($langs->trans('SecondApproverRequired'), null, 'errors');
+				$error++;
+			}
+			if (!empty($approverslist) && !in_array($approverid2, $approverslist)) {
+				setEventMessages($langs->trans('InvalidSecondValidatorCP'), null, 'errors');
+				$error++;
+			}
+		}
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -277,6 +291,13 @@ if (empty($reshook)) {
 			$object->fk_user = $fuserid;
 			$object->description = $description;
 			$object->fk_validator = $approverid;
+		// Offer edition of the second approver
+		if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+			// Keep the expected second approver
+				$object->fk_user_approve2 = ($approverid2 > 0 ? $approverid2 : 0);
+			} else {
+				$object->fk_user_approve2 = 0;
+			}
 			$object->fk_type = $type;
 			$object->date_debut = $date_debut;
 			$object->date_fin = $date_fin;
@@ -308,8 +329,26 @@ if (empty($reshook)) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		$object->fk_validator = GETPOSTINT('valideur');
+		// Capture the second approver during quick edit
+		$approverid2 = GETPOSTINT('valideur2');
+		$localerror = 0;
+		if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+			// Validate and store the second approver during quick edit
+			if ($approverid2 < 1) {
+				setEventMessages($langs->trans('SecondApproverRequired'), null, 'warnings');
+				$localerror++;
+			}
+			$approverslist = $object->fetch_users_approver_holiday();
+			if (!empty($approverslist) && !in_array($approverid2, $approverslist)) {
+				setEventMessages($langs->trans('InvalidSecondValidatorCP'), null, 'warnings');
+				$localerror++;
+			}
+			$object->fk_user_approve2 = ($approverid2 > 0 ? $approverid2 : 0);
+		} else {
+			$object->fk_user_approve2 = 0;
+		}
 
-		if ($object->fk_validator != $object->oldcopy->fk_validator) {
+		if (!$localerror && ($object->fk_validator != $object->oldcopy->fk_validator || $object->fk_user_approve2 != $object->oldcopy->fk_user_approve2)) {
 			$verif = $object->update($user);
 
 			if ($verif <= 0) {
@@ -319,6 +358,8 @@ if (empty($reshook)) {
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 				exit;
 			}
+		} elseif ($localerror) {
+			$action = 'editvalidator';
 		}
 
 		$action = '';
@@ -362,6 +403,8 @@ if (empty($reshook)) {
 			// If this is the requester or has read/write rights
 			if ($permissiontoadd) {
 				$approverid = GETPOSTINT('valideur');
+				// Capture the second approver during edition
+				$approverid2 = GETPOSTINT('valideur2');
 				// TODO Check this approver user id has the permission for approval
 
 				$description = trim(GETPOST('description', 'restricthtml'));
@@ -386,6 +429,20 @@ if (empty($reshook)) {
 					$error++;
 					$action = 'edit';
 				}
+				if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+					// Validate the second approver while editing
+					if ($approverid2 < 1) {
+						setEventMessages($langs->trans('SecondApproverRequired'), null, 'warnings');
+						$error++;
+						$action = 'edit';
+					}
+					$approverslist = $object->fetch_users_approver_holiday();
+					if (!empty($approverslist) && !in_array($approverid2, $approverslist)) {
+						setEventMessages($langs->trans('InvalidSecondValidatorCP'), null, 'warnings');
+						$error++;
+						$action = 'edit';
+					}
+				}
 
 				// If there is no Business Days within request
 				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
@@ -402,6 +459,12 @@ if (empty($reshook)) {
 					$object->date_debut = $date_debut;
 					$object->date_fin = $date_fin;
 					$object->fk_validator = $approverid;
+					if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+						// Keep the updated second approver
+						$object->fk_user_approve2 = ($approverid2 > 0 ? $approverid2 : 0);
+					} else {
+						$object->fk_user_approve2 = 0;
+					}
 					$object->halfday = $halfday;
 
 					// Update
@@ -1189,6 +1252,10 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		$object = new Holiday($db);
 		$include_users = $object->fetch_users_approver_holiday();
+		// Normalize the approvers list
+		if (!is_array($include_users)) {
+		$include_users = array();
+		}
 		if (empty($include_users)) {
 			print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
 		} else {
@@ -1208,7 +1275,24 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		//print $form->select_dolusers((GETPOST('valideur','int')>0?GETPOST('valideur','int'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
 		print '</td>';
 		print '</tr>';
-
+		// Allow selection of the second approver
+		if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+			print '<tr>';
+			print '<td class="fieldrequired">'.$langs->trans("SecondApprovalResponsible").'</td>';
+			print '<td>';
+			if (empty($include_users)) {
+				print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
+			} else {
+				$defaultselectuser2 = GETPOSTINT('valideur2');
+				if (empty($defaultselectuser2) && !empty($defaultselectuser)) {
+					$defaultselectuser2 = $defaultselectuser;
+				}
+				$s2 = $form->select_dolusers($defaultselectuser2, "valideur2", 1, '', 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+				print img_picto('', 'user', 'class="pictofixedwidth"').$form->textwithpicto($s2, $langs->trans("AnyOtherInThisListCanValidate"));
+			}
+			print '</td>';
+			print '</tr>';
+		}
 		// Description
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
@@ -1242,6 +1326,11 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 			$approverexpected = new User($db);
 			$approverexpected->fetch($object->fk_validator);	// Use that should be the approver
+			$secondapproverexpected = new User($db);
+			if ($object->fk_user_approve2 > 0) {
+				// Preload the second approver
+				$secondapproverexpected->fetch($object->fk_user_approve2);
+			}
 
 			$userRequest = new User($db);
 			$userRequest->fetch($object->fk_user);
@@ -1474,11 +1563,29 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 					print '</td>';
 					print '</tr>';
+
+				// Display the second approver
+				if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+					print '<tr>';
+					print '<td class="titlefield">'.$langs->trans("SecondApprovalResponsible").'</td>';
+					print '<td>';
+					if ($object->fk_user_approve2 > 0) {
+						print $secondapproverexpected->getNomUrl(-1);
+					} else {
+						print $langs->trans('None');
+					}
+					print '</td>';
+					print '</tr>';
+				}
 				} else {
 					print '<tr>';
 					print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';	// Will be approved by
 					print '<td>';
 					$include_users = $object->fetch_users_approver_holiday();
+					// Normalize the approvers list
+					if (!is_array($include_users)) {
+						$include_users = array();
+					}
 					if (!in_array($object->fk_validator, $include_users)) {  // Add the current validator to the list to not lose it when editing.
 						$include_users[] = $object->fk_validator;
 					}
@@ -1488,6 +1595,22 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						$arrayofvalidatorstoexclude = (($user->admin || ($user->id != $userRequest->id)) ? '' : array($user->id)); // Nobody if we are admin or if we are not the user of the leave.
 						$s = $form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), $arrayofvalidatorstoexclude, 0, $include_users);
 						print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+						// Offer edition of the second approver
+					if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+						if (!in_array($object->fk_user_approve2, $include_users)) {
+							$include_users[] = $object->fk_user_approve2;
+						}
+						// Fetch the proposed second approver
+						$defaultselectuser2 = $object->fk_user_approve2;
+						// Preserve the posted value for the second approver
+						if ($action == 'editvalidator' && GETPOSTINT('valideur2') > 0) {
+							// Refresh the second approver with the posted value
+						$defaultselectuser2 = GETPOSTINT('valideur2');
+						}
+						$s2 = $form->select_dolusers($defaultselectuser2, "valideur2", (($action == 'editvalidator') ? 0 : 1), $arrayofvalidatorstoexclude, 0, $include_users);
+						print '<div class="paddingleft">'.$form->textwithpicto($s2, $langs->trans("AnyOtherInThisListCanValidate")).'</div>';
+					}
+
 					}
 					if ($action == 'editvalidator') {
 						print '<input type="submit" class="button button-save" name="savevalidator" value="'.$langs->trans("Save").'">';

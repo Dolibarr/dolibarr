@@ -528,6 +528,8 @@ if ($conf->use_javascript_ajax) {
 print "</td>";
 print "</tr>";
 
+// EN: Display toggle to consume holiday balance at end of month.
+// FR: Affiche le bascule pour consommer le solde de congés en fin de mois.
 // Set holiday decrease at the end of month
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt")."</td>";
@@ -539,6 +541,23 @@ if ($conf->use_javascript_ajax) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_OF_MONTH=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_OF_MONTH=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+}
+print "</td>";
+print "</tr>";
+
+// EN: Display toggle to require double approval for leave requests.
+// FR: Affiche le bascule pour exiger une double validation des demandes de congés.
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("HolidayRequireDoubleApproval")."</td>";
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('HOLIDAY_REQUIRE_DOUBLE_APPROVAL', array(), null, 0, 0, 0, 2, 0, 1);
+} else {
+	if (getDolGlobalString('HOLIDAY_REQUIRE_DOUBLE_APPROVAL')) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_REQUIRE_DOUBLE_APPROVAL=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_REQUIRE_DOUBLE_APPROVAL=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
 print "</td>";

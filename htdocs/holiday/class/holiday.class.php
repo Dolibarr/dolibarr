@@ -126,6 +126,16 @@ class Holiday extends CommonObject
 	public $fk_user_approve;
 
 	/**
+	 * @var int 	Date of second approval / Date de la seconde approbation
+	 */
+	public $date_approval2;
+
+	/**
+	 * @var int 	ID for second approval / ID de la seconde approbation
+	 */
+	public $fk_user_approve2;
+
+	/**
 	 * @var int 	Date for refuse
 	 */
 	public $date_refuse = 0;
@@ -331,6 +341,7 @@ class Holiday extends CommonObject
 		$sql .= "fk_validator,";
 		$sql .= "fk_type,";
 		$sql .= "fk_user_create,";
+		$sql .= "fk_user_approve2,";
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)',";
@@ -344,6 +355,8 @@ class Holiday extends CommonObject
 		$sql .= " ".((int) $this->fk_validator).",";
 		$sql .= " ".((int) $this->fk_type).",";
 		$sql .= " ".((int) $user->id).",";
+		// Persist the chosen second approver on creation
+		$sql .= ($this->fk_user_approve2 > 0 ? " ".((int) $this->fk_user_approve2)."," : " null,");
 		$sql .= " ".((int) $conf->entity);
 		$sql .= ")";
 
@@ -428,6 +441,8 @@ class Holiday extends CommonObject
 		$sql .= " cp.fk_user_valid,";
 		$sql .= " cp.date_approval,";
 		$sql .= " cp.fk_user_approve,";
+		$sql .= " cp.date_approval2,";
+		$sql .= " cp.fk_user_approve2,";
 		$sql .= " cp.date_refuse,";
 		$sql .= " cp.fk_user_refuse,";
 		$sql .= " cp.date_cancel,";
@@ -469,6 +484,9 @@ class Holiday extends CommonObject
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->date_approval = $this->db->jdate($obj->date_approval);
 				$this->fk_user_approve = $obj->fk_user_approve;
+				// Store the second approval metadata
+				$this->date_approval2 = $this->db->jdate($obj->date_approval2);
+				$this->fk_user_approve2 = $obj->fk_user_approve2;
 				$this->date_refuse = $this->db->jdate($obj->date_refuse);
 				$this->fk_user_refuse = $obj->fk_user_refuse;
 				$this->date_cancel = $this->db->jdate($obj->date_cancel);
@@ -523,6 +541,8 @@ class Holiday extends CommonObject
 		$sql .= " cp.fk_user_valid,";
 		$sql .= " cp.date_approval,";
 		$sql .= " cp.fk_user_approve,";
+		$sql .= " cp.date_approval2,";
+		$sql .= " cp.fk_user_approve2,";
 		$sql .= " cp.date_refuse,";
 		$sql .= " cp.fk_user_refuse,";
 		$sql .= " cp.date_cancel,";
@@ -594,6 +614,9 @@ class Holiday extends CommonObject
 				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
 				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
 				$tab_result[$i]['fk_user_approve'] = $obj->fk_user_approve;
+				// Keep the second approval data
+				$tab_result[$i]['date_approval2'] = $this->db->jdate($obj->date_approval2);
+				$tab_result[$i]['fk_user_approve2'] = $obj->fk_user_approve2;
 				$tab_result[$i]['date_refuse'] = $this->db->jdate($obj->date_refuse);
 				$tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;
 				$tab_result[$i]['date_cancel'] = $this->db->jdate($obj->date_cancel);
@@ -653,6 +676,8 @@ class Holiday extends CommonObject
 		$sql .= " cp.fk_user_valid,";
 		$sql .= " cp.date_approval,";
 		$sql .= " cp.fk_user_approve,";
+		$sql .= " cp.date_approval2,";
+		$sql .= " cp.fk_user_approve2,";
 		$sql .= " cp.date_refuse,";
 		$sql .= " cp.fk_user_refuse,";
 		$sql .= " cp.date_cancel,";
@@ -724,6 +749,9 @@ class Holiday extends CommonObject
 				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
 				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
 				$tab_result[$i]['fk_user_approve'] = $obj->fk_user_approve;
+				// Keep the second approval data
+				$tab_result[$i]['date_approval2'] = $this->db->jdate($obj->date_approval2);
+				$tab_result[$i]['fk_user_approve2'] = $obj->fk_user_approve2;
 				$tab_result[$i]['date_refuse'] = $obj->date_refuse;
 				$tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;
 				$tab_result[$i]['date_cancel'] = $obj->date_cancel;
@@ -948,6 +976,17 @@ class Holiday extends CommonObject
 		} else {
 			$sql .= " fk_user_approve = NULL,";
 		}
+		// Persist the second approval info
+		if (!empty($this->date_approval2)) {
+			$sql .= " date_approval2 = '".$this->db->idate($this->date_approval2)."',";
+		} else {
+			$sql .= " date_approval2 = NULL,";
+		}
+		if (!empty($this->fk_user_approve2)) {
+			$sql .= " fk_user_approve2 = ".((int) $this->fk_user_approve2).",";
+		} else {
+			$sql .= " fk_user_approve2 = NULL,";
+		}
 		if (!empty($this->date_refuse)) {
 			$sql .= " date_refuse = '".$this->db->idate($this->date_refuse)."',";
 		} else {
@@ -1077,6 +1116,17 @@ class Holiday extends CommonObject
 			$sql .= " fk_user_approve = ".((int) $this->fk_user_approve).",";
 		} else {
 			$sql .= " fk_user_approve = NULL,";
+		}
+		// Persist the second approval info
+		if (!empty($this->date_approval2)) {
+			$sql .= " date_approval2 = '".$this->db->idate($this->date_approval2)."',";
+		} else {
+			$sql .= " date_approval2 = NULL,";
+		}
+		if (!empty($this->fk_user_approve2)) {
+			$sql .= " fk_user_approve2 = ".((int) $this->fk_user_approve2).",";
+		} else {
+			$sql .= " fk_user_approve2 = NULL,";
 		}
 		if (!empty($this->date_refuse)) {
 			$sql .= " date_refuse = '".$this->db->idate($this->date_refuse)."',";

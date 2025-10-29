@@ -186,6 +186,15 @@ class modHoliday extends DolibarrModules
 		$this->rights[$r][4] = 'approve';
 		$r++;
 
+		// EN: Add level 2 approval permission for double validation
+		// FR: Ajouter la permission d'approbation de niveau 2 pour la double validation
+		$this->rights[$r][0] = 20008;
+		$this->rights[$r][1] = 'PermissionHolidayDoubleApproval';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'approvelevel2';
+		$r++;
+
 		$this->rights[$r][0] = 20004; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read leave requests for everybody'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
