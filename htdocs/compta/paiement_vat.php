@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -161,11 +161,12 @@ $form = new Form($db);
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create') {
 	$tva = new Tva($db);
+
 	$tva->fetch($chid);
+
 	$tva->accountid = $tva->fk_account ? $tva->fk_account : $tva->accountid;
 	$tva->paiementtype = $tva->type_payment;
 
-	$total = $tva->amount;
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript">';
 
@@ -181,7 +182,6 @@ if ($action == 'create') {
 	}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
-	print "<br>\n";
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -229,7 +229,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTINT("accountid") ? GETPOSTINT("accountid") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opend bank account list
+	$form->select_comptes(GETPOSTINT("accountid") ? GETPOSTINT("accountid") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number
@@ -247,9 +247,10 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	/*
-	  * Autres charges impayees
-	 */
+	print '<br>';
+
+
+	// List of VAT unpaid
 	$num = 1;
 	$i = 0;
 
@@ -265,8 +266,8 @@ if ($action == 'create') {
 	print "</tr>\n";
 
 	$total = 0;
-	$totalrecu = 0;
 	$total_ttc = 0.;
+	$totalrecu = 0;
 
 	while ($i < $num) {
 		$objp = $tva;
@@ -292,7 +293,7 @@ if ($action == 'create') {
 			$nameRemain = "remain_".$objp->id;
 			/* Disabled, we autofil the amount with remain to pay by default
 			if (!empty($conf->use_javascript_ajax)) {
-					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+					print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 			} */
 			$remaintopay = (float) $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
@@ -303,8 +304,8 @@ if ($action == 'create') {
 		print "</td>";
 
 		print "</tr>\n";
-		$total += $objp->total;
-		$total_ttc += $objp->total_ttc;
+		$total += $objp->amount;
+		$total_ttc += $objp->total_ttc;	// same than ->amount for vat object
 		$totalrecu += $objp->amount;
 		$i++;
 	}
@@ -323,9 +324,10 @@ if ($action == 'create') {
 	print '</div>';
 
 	// Bouton Save payment
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidvat"> '.$langs->trans("ClosePaidVATAutomatically");
-	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidvat" id="closepaidvat" class="marginrightonly opecitymedium"><label for="closepaidvat" class="opacitymedium">'.$langs->trans("ClosePaidVATAutomatically").'</label>';
+	print '<br>';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
+	print ' &nbsp; &nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 

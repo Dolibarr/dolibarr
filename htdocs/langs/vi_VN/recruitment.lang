@@ -64,3 +64,7 @@ NoPositionOpen=Không có vị trí nào mở vào lúc này
 ConfirmClose=Xác nhận hủy
 ConfirmCloseAsk=Bạn có chắc chắn muốn hủy ứng tuyển tuyển dụng này không
 Recruitment=Tuyển dụng
+ApplyJobCandidature=Nộp đơn xin việc này
+ErrorRecruitmmentCandidatureAlreadyExists= Ứng viên tuyển dụng đã tồn tại với email %s
+RecruitmentCandidatureSaved=Đã lưu ứng viên tuyển dụng thành công
+NoOpenJobOffer=Không có việc làm nào đang tuyển dụng tại thời điểm này

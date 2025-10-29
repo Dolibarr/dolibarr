@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -84,6 +84,19 @@ class TraceableDB extends DoliDB
 	public function ifsql($test, $resok, $resko)
 	{
 		return $this->db->ifsql($test, $resok, $resko);
+	}
+
+	/**
+	 *	format a sql regexp
+	 *
+	 *	@param	string	$subject        field name to test
+	 *	@param	string  $pattern        sql pattern to match
+	 *	@param	int		$sqlstring      0=the string being tested is a hard coded string, 1=the string is a field
+	 *	@return	string          		sql string
+	 */
+	public function regexpsql($subject, $pattern, $sqlstring = 0): string
+	{
+		return $this->db->regexpsql($subject, $pattern, $sqlstring = 0);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -368,7 +381,7 @@ class TraceableDB extends DoliDB
 	 * End query tracing
 	 *
 	 * @param      string   $sql       query string
-	 * @param      string   $resql     query result
+	 * @param      mysqli_result|bool|resource   $resql     query result
 	 * @return     void
 	 */
 	protected function endTracing($sql, $resql)
@@ -496,7 +509,7 @@ class TraceableDB extends DoliDB
 	 * Create a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @param        array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
+	 * @param        array<string,array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
 	 * @param        string $primary_key 	Nom du champ qui sera la clef primaire
 	 * @param        string $type 			Type de la table
 	 * @param        ?array<string,mixed> 	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -535,7 +548,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to add
-	 * @param    array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Tableau associatif de description du champ a inserer[nom du parameter][valeur du parameter]
+	 * @param    array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,extra?:string,null?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 * @param    string $field_position 	Optionnel ex.: "after champtruc"
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ $titre = $langs->trans("CardProduct".$object->type);
 print dol_get_fiche_head($head, 'card', $titre, -1, 'service');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = " fk_product_type:=:".((int) $object->type);
+$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 $shownav = 1;
 if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {

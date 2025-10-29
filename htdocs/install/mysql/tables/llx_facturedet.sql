@@ -80,5 +80,6 @@ create table llx_facturedet
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva		double(24,8) DEFAULT 0,
   multicurrency_total_ttc		double(24,8) DEFAULT 0,
-  ref_ext varchar(255) DEFAULT NULL
+  ref_ext						varchar(255) DEFAULT NULL,
+  extraparams				 	varchar(255)						-- to stock other parameters in json format
 )ENGINE=innodb;

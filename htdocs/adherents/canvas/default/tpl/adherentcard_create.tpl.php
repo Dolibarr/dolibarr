@@ -19,8 +19,11 @@
 
 /**
  * @var Adherent $object
+ * @var Canvas $this
  * @var Conf $conf
  * @var Translate $langs
+ *
+ * @var string $canvas
  */
 
 // Protection to avoid direct call of template

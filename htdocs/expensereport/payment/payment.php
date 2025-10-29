@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,6 +148,17 @@ if (($action == 'add_payment' || ($action === 'confirm_payment' && $confirm === 
 			}
 
 			if (!$error) {
+				$payment->fetch($paymentid);
+				if ($expensereport->total_ttc - $payment->amount == 0) {
+					$result = $expensereport->setPaid($expensereport->id, $user);
+					if (!($result > 0)) {
+						setEventMessages($payment->error, $payment->errors, 'errors');
+						$error++;
+					}
+				}
+			}
+
+			if (!$error) {
 				$db->commit();
 				$loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
 				header('Location: '.$loc);
@@ -175,6 +186,8 @@ $form = new Form($db);
 if ($action == 'create' || $action == 'add_payment') {
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($id, $ref);
+
+	$total = $expensereport->total_ttc;
 
 	// autofill remainder amount
 	if (!empty($conf->use_javascript_ajax)) {

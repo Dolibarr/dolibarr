@@ -14,8 +14,8 @@ AddResource=Vytvoriť zdroj
 ResourceFormLabel_ref=Meno zdroja
 ResourceFormLabel_description=Popis zdroja
 ResourceType=Typ zdroja
-ResourceTypeID=Resource type ID
-ResourceTypeLabel=Resource type label
+ResourceTypeID=ID typu zdroja
+ResourceTypeLabel=Označenie typu zdroja
 ResourcesLinkedToElement=Zdroje priradené pre časť
 
 ShowResource=Zobraziť zdroj
@@ -35,4 +35,4 @@ ImportDataset_resource_1=Zdroje
 ErrorResourcesAlreadyInUse=Niektoré zdroje sa používajú
 ErrorResourceUseInEvent=%s použité v udalosti %s
 MaxUsers=Maximálny počet používateľov (miesta, miesta atď.)
-MaxUsersLabel=Maximum users
+MaxUsersLabel=Maximálny počet používateľov

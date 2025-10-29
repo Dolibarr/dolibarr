@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -323,7 +323,7 @@ class FormAdvTargetEmailing extends Form
 				}
 			}
 			if (!empty($InfoFieldList[1])) {
-				$sql .= " ORDER BY nom";
+				$sql .= $this->db->order($InfoFieldList[1]);
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
@@ -334,8 +334,10 @@ class FormAdvTargetEmailing extends Form
 				if ($num) {
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
+
 						$fieldtoread = $InfoFieldList[1];
 						$labeltoshow = dol_trunc($obj->$fieldtoread, 90);
+
 						$options_array[$obj->rowid] = $labeltoshow;
 						$i++;
 					}
@@ -401,6 +403,20 @@ class FormAdvTargetEmailing extends Form
 		global $conf, $langs;
 
 		$form = new Form($this->db);
+		foreach ($options_array as $okey => $val) {
+			if ((string) $okey == '') {
+				continue;
+			}
+
+			$valarray = explode('|', $val);
+			$val = $valarray[0];
+
+			if ($val) {
+				$options_array[$okey] = $langs->trans($val);
+			} else {
+				$options_array[$okey] = $val;
+			}
+		}
 		$return = $form->multiselectarray($htmlname, $options_array, $selected_array, 0, 0, '', 0, 295);
 		return $return;
 	}
@@ -408,12 +424,12 @@ class FormAdvTargetEmailing extends Form
 	/**
 	 * Return a combo list to select emailing target selector
 	 *
-	 * @param	string 		$htmlname 		control name
-	 * @param	integer 	$selected  		default selected
-	 * @param	integer 	$showempty 		empty lines
-	 * @param	string		$type_element	Type element. Example: 'mailing'
-	 * @param	string		$morecss		More CSS
-	 * @return	string 						HTML combo
+	 * @param	string 			$htmlname 		control name
+	 * @param	integer 		$selected  		default selected
+	 * @param	integer|string 	$showempty 		1=Add an empty lines, 'string'=Value of placeholder for the emptyline
+	 * @param	string			$type_element	Type element. Example: 'mailing'
+	 * @param	string			$morecss		More CSS
+	 * @return	string 							HTML combo
 	 */
 	public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
 	{
@@ -429,7 +445,7 @@ class FormAdvTargetEmailing extends Form
 		if ($resql) {
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			if ($showempty) {
-				$out .= '<option value=""></option>';
+				$out .= '<option value="-1">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>';
 			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -450,6 +466,8 @@ class FormAdvTargetEmailing extends Form
 				}
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox($htmlname);
 		} else {
 			dol_print_error($this->db);
 		}

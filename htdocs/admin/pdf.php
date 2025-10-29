@@ -8,7 +8,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,7 +284,7 @@ print "<br>\n";
 
 $noCountryCode = empty($mysoc->country_code);
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
@@ -294,6 +294,7 @@ clearstatcache();
 if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
 	print '<div class="warning">';
 	print 'The not supported and hidden option PDF_SECURITY_ENCRYPTION has been enabled. This means a lof of feature related to PDF will be broken, like mass PDF generation or online signature of PDF.'."\n";
+	print "Also note that if an 'encrypted PDF' provides a protection against manual change done by mistake, it does NOT provide any protection against modification of your PDF in a security point of view: A protected PDF can still be modified by any advanced PDF editors. Don't forget this: If a software can read the PDF, this software can also rebuild it differently !\n";
 	print 'You should disable this option.';
 	print '</div>';
 }
@@ -306,7 +307,7 @@ print load_fiche_titre($langs->trans("DictionaryPaperFormat"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px"></td></tr>';
 
 $selected = getDolGlobalString('MAIN_PDF_FORMAT');
 if (empty($selected)) {
@@ -515,7 +516,7 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 // Use 2 languages into PDF
 

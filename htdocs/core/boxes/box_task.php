@@ -34,6 +34,9 @@ class box_task extends ModeleBoxes
 {
 	public $boxcode = "projettask";
 	public $boximg = "object_projecttask";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("projet");
 

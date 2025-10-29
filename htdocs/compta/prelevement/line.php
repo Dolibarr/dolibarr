@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			if ($lipre->fetch($id) == 0) {
 				$rej = new RejetPrelevement($db, $user, $type);
 
-				$result = $rej->create($user, $id, GETPOSTINT('motif'), $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
+				$result = $rej->create($user, $id, GETPOSTINT('motif'), (int) $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
 
 				if ($result > 0) {
 					header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));
@@ -179,7 +179,12 @@ if ($id) {
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 		print $id.'</td></tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		if ($type == 'bank-transfer') {
+			print '<tr><td class="titlefield">'.$langs->trans("BankTransfers").'</td><td>';
+		} else {
+			print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		}
+
 		print $bon->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec, 'day').'</td></tr>';
@@ -278,7 +283,7 @@ if ($id) {
 		if (is_object($bon) && $bon->statut == BonPrelevement::STATUS_CREDITED) {
 			if ($lipre->statut == 2) {
 				if ($user->hasRight('prelevement', 'bons', 'credit')) {
-					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
+					print '<a class="butActionDelete" href="line.php?action=rejet&token='.newToken().'&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 				}
@@ -336,7 +341,7 @@ if ($id) {
 			dol_print_error($db);
 		}
 
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}

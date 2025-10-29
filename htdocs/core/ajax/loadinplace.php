@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -151,7 +151,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			}
 		} else {
 			$object = new GenericObject($db);
-			$value = $object->$loadmethod($table_element, $fk_element, $field);
+			$value = $object->$loadmethod($table_element, (int) $fk_element, $field);
 			echo $value;
 		}
 	} else {

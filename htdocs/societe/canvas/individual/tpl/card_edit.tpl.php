@@ -18,12 +18,15 @@
  */
 
 /**
+ * @var Canvas $this
  * @var Conf $conf
  * @var CommonObject $this
  * @var DoliDB $db
  * @var FormFile $formfile
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $canvas
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -55,7 +58,7 @@ if (empty($conf) || !is_object($conf)) {
 
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('Name'); ?></span></td>
-	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
+	<td colspan="3"><input type="text" size="40" maxlength="60" name="name" value="<?php echo $this->control->tpl['name']; ?>"></td>
 </tr>
 
 <?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>

@@ -2,6 +2,7 @@
 IdAgenda=ID händelse
 Actions=Händelser
 Agenda=Dagordning
+AgendaEvents=Händelser på agendan
 TMenuAgenda=Dagordning
 Agendas=Dagordningar
 LocalAgenda=Standardkalender
@@ -44,6 +45,7 @@ PropalClosedRefusedInDolibarr=Offert %s avslogs
 PropalValidatedInDolibarr=Offert %s bekräftades
 PropalBackToDraftInDolibarr=Offert %s backades till utkast
 PropalClassifiedBilledInDolibarr=Offert %s markerades som fakturerad
+InvoiceCreatedInDolibarr=Faktura %s skapad
 InvoiceValidatedInDolibarr=Faktura %s bekräftades
 InvoiceValidatedInDolibarrFromPos=Faktura %s bekräftades från POS
 InvoiceBackToDraftInDolibarr=Faktura %s backades till utkast
@@ -137,11 +139,11 @@ AgendaUrlOptions1=Du kan också lägga till följande parametrar för att filtre
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=</b> för att begränsa till åtgärder som tilldelats användare <b>%s</b> (ägare och andra)
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID__ </b> för att begränsa till åtgärder länkade till projekt <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> för att hämta antingen automatiska eller manuella händelser
+AgendaUrlOptionsCode=<b>actioncode=%s</b> för att endast hämta händelser med en given kod
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> för att inkludera helgdagar
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> för att begränsa till händelser under de senaste %s dagarna (standard är %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> för att begränsa till de senaste 50 händelserna (standard och max är %s).
 AgendaShowBirthdayEvents=Kontakters födelsedagar
 AgendaHideBirthdayEvents=Dölj kontakters födelsedagar
 Busy=Upptagen
@@ -203,5 +205,8 @@ BookingSuccessfullyBooked=Din bokning har sparats
 BookingReservationHourAfter=Vi bekräftar bokningen av vårt möte vid datumet %s
 BookcalBookingTitle=Onlinebokning
 Transparency = Genomskinlighet
-ReadMore = Read more
-ReadLess = Read less
+ReadMore = Läs mer
+ReadLess = Läs mindre
+RecurringEvent=Återkommande händelse
+EventPartOfARecurringSerie=Händelsen är en del av en återkommande serie med ID %s
+BookCalSystem=Onlinebokning

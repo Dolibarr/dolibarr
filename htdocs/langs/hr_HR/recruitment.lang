@@ -64,3 +64,7 @@ NoPositionOpen=Trenutno nema otvorenih pozicija
 ConfirmClose=Potvrdite otkazivanje
 ConfirmCloseAsk=Jeste li sigurni da želite da poništite ovu kandidaturu za zapošljavanje
 Recruitment=Zapošljavanje
+ApplyJobCandidature=Prijavite se za ovaj posao
+ErrorRecruitmmentCandidatureAlreadyExists= Kandidatura za zapošljavanje već postoji kod e-pošta %s
+RecruitmentCandidatureSaved=Kandidatura za zapošljavanje uspješno je spremljena
+NoOpenJobOffer=Trenutno nema otvorenih ponuda za posao

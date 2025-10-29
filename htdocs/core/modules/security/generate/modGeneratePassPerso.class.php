@@ -221,6 +221,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		$this->initAll();	// For the case this method is called alone
 
+		dol_syslog("modGeneratePassPerso::validatePassword");
+
 		$password_a = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
 		$maj = preg_split('//u', $this->Maj, 0, PREG_SPLIT_NO_EMPTY);
 		$num = preg_split('//u', $this->Nb, 0, PREG_SPLIT_NO_EMPTY);

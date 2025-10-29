@@ -5,7 +5,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,10 +32,26 @@ define('DONOTLOADCONF', 1); // To avoid loading conf by file inc.php
 
 include 'inc.php';
 
-global $langs;
 /**
+ * @var string	$conffile
+ * @var string	$conffiletoshow
+ *
+ * @var Conf $conf
  * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_db_type
+ * @var string	$dolibarr_main_db_host
+ * @var string	$dolibarr_main_db_port
+ * @var string	$dolibarr_main_db_name
+ * @var string	$dolibarr_main_db_user
+ * @var string	$dolibarr_main_db_pass
+ * @var string	$dolibarr_main_document_root
+ * @var string	$dolibarr_main_db_encryption
+ * @var string	$dolibarr_main_db_encrypted_pass
+ * @var string	$dolibarr_main_db_cryptkey
  */
+
+global $langs;
 
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
 $setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
@@ -86,6 +102,23 @@ if ($conffile == "/etc/dolibarr/conf.php") {
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
+	/**
+	 * @var string	$force_install_noedit
+	 * @var string	$force_install_main_data_root
+	 * @var string	$force_install_databaserootlogin
+	 * @var string	$force_install_databaserootpass
+	 * @var string	$force_install_type
+	 * @var string	$force_install_dbserver
+	 * @var string	$force_install_database
+	 * @var string	$force_install_databaselogin
+	 * @var string	$force_install_databasepass
+	 * @var string	$force_install_port
+	 * @var string	$force_install_prefix
+	 * @var string	$force_install_createdatabase
+	 * @var string	$force_install_createuser
+	 * @var string	$force_install_mainforcehttps
+	 * @var string	$force_install_distrib
+	 */
 	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
 	if ($force_install_noedit) {
 		$main_dir = detect_dolibarr_main_document_root();
@@ -101,8 +134,9 @@ if (@file_exists($forcedfile)) {
 			$main_data_dir = $argv[4]; // override when executing the script in command line
 		}
 		// In mode 3 the main_url is custom
-		if ($force_install_noedit != 3)
-		$main_url = detect_dolibarr_main_url_root();
+		if ($force_install_noedit != 3) {
+			$main_url = detect_dolibarr_main_url_root();
+		}
 		if (!empty($argv[5])) {
 			$main_url = $argv[5]; // override when executing the script in command line
 		}
@@ -394,7 +428,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 	}
 
 	// Show title of step
-	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
+	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
 	print '<table cellspacing="0" class="centpercent" cellpadding="1">';
 
 	// Check parameter main_dir
@@ -567,14 +601,20 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 
 			// Check database connection
 
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, $databasefortest, (int) $conf->db->port);
-
-			if ($db->error) {
-				print '<div class="error">'.$db->error.'</div>';
+			$db = null;
+			if ($databasefortest === null) {
+				print '<div class="error">Database name can not be empty</div>';
 				$error++;
+			} else {
+				$db = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, $databasefortest, (int) $conf->db->port);
+
+				if ($db->error) {
+					print '<div class="error">'.$db->error.'</div>';
+					$error++;
+				}
 			}
 
-			if (!$error) {
+			if (!$error && $db !== null) {
 				if ($db->connected) {
 					$resultbis = 1;
 
@@ -862,7 +902,7 @@ function write_conf_file($conffile)
 	global $dolibarr_main_db_type, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_authentication;
 	global $dolibarr_main_distrib;
 	global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
-	global $conffile, $conffiletoshow, $conffiletoshowshort;
+	global $conffile, $conffiletoshow;
 	global $force_dolibarr_lib_NUSOAP_PATH;
 	global $force_dolibarr_lib_FPDF_PATH, $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
 	global $force_dolibarr_lib_GEOIP_PATH;
@@ -882,7 +922,7 @@ function write_conf_file($conffile)
 		fwrite($fp, '//'."\n");
 		fwrite($fp, '// File generated by Dolibarr installer '.DOL_VERSION.' on '.dol_print_date(dol_now(), '')."\n");
 		fwrite($fp, '//'."\n");
-		fwrite($fp, '// Take a look at conf.php.example file for an example of '.$conffiletoshowshort.' file'."\n");
+		fwrite($fp, '// Take a look at conf.php.example file for an example of '.basename($conffile).' file'."\n");
 		fwrite($fp, '// and explanations for all possibles parameters.'."\n");
 		fwrite($fp, '//'."\n");
 		fwrite($fp, '$dolibarr_main_url_root=\''.dol_escape_php(trim($main_url), 1).'\';');

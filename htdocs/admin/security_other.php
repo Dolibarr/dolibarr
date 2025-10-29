@@ -76,6 +76,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$res3 = 1;
 	$res4 = 1;
 	$res5 = 1;
+	$res6 = 1;
 	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
 		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
@@ -91,7 +92,10 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	if (GETPOSTISSET('MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS')) {
 		$res5 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", GETPOST("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 'alphanohtml'), 'int', 0, '', $conf->entity);
 	}
-	if ($res1 && $res2 && $res3 && $res4 && $res5) {
+	if (GETPOSTISSET('MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH')) {
+		$res6 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", GETPOST("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 'alphanohtml'), 'int', 0, '', $conf->entity);
+	}
+	if ($res1 && $res2 && $res3 && $res4 && $res5 && $res6) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
 }
@@ -209,19 +213,6 @@ print '<td class="nowrap">';
 print '<input class="flat right width50" name="MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 100).'"> '.$langs->trans("FailedAuth");
 print '</td>';
 print '</tr>';
-
-/*
-if (empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$conf->global->MAIN_APPLICATION_TITLE = "";
-}
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.dol_escape_htmltag($conf->global->MAIN_APPLICATION_TITLE).'"> ';
-print '</td>';
-print '</tr>';
-*/
 
 print '</table>';
 

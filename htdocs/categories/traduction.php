@@ -66,7 +66,7 @@ if ($result <= 0) {
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[(int) $type];   // For backward compatibility
+	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
 // Security check
@@ -124,6 +124,8 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd)
 			if ($forcelangprod == $current_lang) {
 				$object->label = $libelle;
 				$object->description = dol_htmlcleanlastbr($desc);
+
+				$object->update($user);
 			} else {
 				$object->multilangs[$forcelangprod]["label"] = $libelle;
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);
@@ -194,7 +196,8 @@ $formother = new FormOther($db);
 
 llxHeader("", "", $langs->trans("Translation"));
 
-$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
+$title = $langs->trans("Categories");
+$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
 
 $head = categories_prepare_head($object, $type);
 
@@ -208,11 +211,11 @@ if (!empty($object->multilangs)) {
 
 print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
-$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = 'type:=:'.((int) $object->type);
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 foreach ($ways as $way) {
 	$morehtmlref .= $way."<br>\n";

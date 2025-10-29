@@ -1,15 +1,5 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Default for FONTFORPDF=helvetica
-# Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese zh_CN
-# To read Chinese pdf with Linux: sudo apt-get install poppler-data
-# cid0jp is for Japanish
-# cid0kr is for Korean
-# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
-# freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,

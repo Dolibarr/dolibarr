@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Código de seguridad
-Tools=Herramientas
-TMenuTools=Herramientas
 ToolsDesc=Todas las herramientas no incluidas en otras entradas del menú se agrupan aquí. <br> Se puede acceder a todas las herramientas a través del menú de la izquierda.
 Birthday=Cumpleaños
 BirthdayAlertOn=Alerta de cumpleaños activa
@@ -57,6 +55,7 @@ DemoFundation=Administrar miembros de una fundación
 DemoFundation2=Administrar miembros y cuenta bancaria de una fundación
 DemoCompanyServiceOnly=Empresa o servicio de venta independiente solamente
 DemoCompanyAll=Empresa con múltiples actividades (todos los módulos principales)
+CreatedBy=Creado por%s
 ModifiedBy=Modificado por%s
 ValidatedBy=Validado por%s
 ClosedBy=Cerrado por%s
@@ -129,3 +128,5 @@ FileWasUpload=Se cargó el archivo <b>%s</b>
 FTPFailedToUploadFile=No se pudo cargar el archivo <b>%s</b> .
 FileWasCreateFolder=Se ha creado la carpeta <b>%s</b>
 FTPFailedToCreateFolder=No se pudo crear la carpeta <b>%s</b>.
+AddThisPageToBookmarks =Agregar página actual a favoritos
+SubscribeToFoundation=Contribuye al proyecto Dolibarr, suscríbete a la fundación

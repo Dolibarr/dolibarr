@@ -2,8 +2,8 @@
 /* Copyright (C) 2019-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2023		Christian Humpel			<christian.humpel@gmail.com>
  * Copyright (C) 2023		Vincent de Grandpré			<vincent@de-grandpre.quebec>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,11 +55,11 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
 
 // Get parameters
-$id          = GETPOSTINT('id');
-$ref         = GETPOST('ref', 'alpha');
-$action      = GETPOST('action', 'aZ09');
-$confirm     = GETPOST('confirm', 'alpha');
-$cancel      = GETPOST('cancel', 'aZ09');
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $lineid = GETPOSTINT('lineid');
@@ -142,7 +142,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_cancel' && $confirm == 'yes' && !empty($permissiontoadd)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
-		$result = $object->cancel($user, 0, $also_cancel_consumed_and_produced_lines);
+		$result = $object->cancel($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . DOL_URL_ROOT.'/mrp/mo_card.php?id=' . $object->id);
 			exit;
@@ -152,7 +152,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
-		$result = $object->delete($user, 0, $also_cancel_consumed_and_produced_lines);
+		$result = $object->delete($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . $backurlforlist);
 			exit;
@@ -213,10 +213,21 @@ if (empty($reshook)) {
 			$tmpproduct->fetch($moline->fk_product);
 			if ($tmpproduct->type == Product::TYPE_SERVICE) {
 				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
-			}
-			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
-			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-				$moline->fk_unit = $tmpproduct->fk_unit;
+				$moline->disable_stock_change = 1;
+				if ($tmpproduct->duration_unit) {
+					$moline->qty = $tmpproduct->duration_value;
+					include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$cunits = new CUnits($db);
+					$res = $cunits->fetch(0, '', $tmpproduct->duration_unit, 'time');
+					if ($res > 0) {
+						$moline->fk_unit = $cunits->id;
+					}
+				}
+			} else {
+				$moline->disable_stock_change = 0;
+				if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+					$moline->fk_unit = $tmpproduct->fk_unit;
+				}
 			}
 		}
 		// Extrafields
@@ -233,7 +244,7 @@ if (empty($reshook)) {
 			$moline->array_options = $array_options;
 		}
 
-		$resultline = $moline->create($user, false); // Never use triggers here
+		$resultline = $moline->create($user, 0); // Never use triggers here
 		if ($resultline <= 0) {
 			$error++;
 			setEventMessages($moline->error, $moline->errors, 'errors');
@@ -286,9 +297,9 @@ if (empty($reshook)) {
 							$stockmove->context['mrp_role'] = 'toconsume';
 
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
 							} else {
-								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess * -1, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess * -1, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
@@ -361,7 +372,7 @@ if (empty($reshook)) {
 							$stockmove->origin_id = $object->id;
 							$stockmove->context['mrp_role'] = 'toproduce';
 
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, GETPOSTDATE('eatby-'.$line->id.'-'.$i), GETPOSTDATE('sellby-'.$line->id.'-'.$i), GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -403,26 +414,30 @@ if (empty($reshook)) {
 
 			if (GETPOSTINT('autoclose')) {
 				foreach ($object->lines as $line) {
-					if ($line->role == 'toconsume') {
-						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
-						$alreadyconsumed = 0;
-						foreach ($arrayoflines as $line2) {
-							$alreadyconsumed += $line2['qty'];
-						}
+					$tmpproduct = new Product($db);
+					$tmpproduct->fetch($line->fk_product);
+					if ((int) $tmpproduct->stockable_product > 0) {
+						if ($line->role == 'toconsume') {
+							$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
+							$alreadyconsumed = 0;
+							foreach ($arrayoflines as $line2) {
+								$alreadyconsumed += $line2['qty'];
+							}
 
-						if ($alreadyconsumed < $line->qty) {
-							$consumptioncomplete = false;
+							if ($alreadyconsumed < $line->qty) {
+								$consumptioncomplete = false;
+							}
 						}
-					}
-					if ($line->role == 'toproduce') {
-						$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
-						$alreadyproduced = 0;
-						foreach ($arrayoflines as $line2) {
-							$alreadyproduced += $line2['qty'];
-						}
+						if ($line->role == 'toproduce') {
+							$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
+							$alreadyproduced = 0;
+							foreach ($arrayoflines as $line2) {
+								$alreadyproduced += $line2['qty'];
+							}
 
-						if ($alreadyproduced < $line->qty) {
-							$productioncomplete = false;
+							if ($alreadyproduced < $line->qty) {
+								$productioncomplete = false;
+							}
 						}
 					}
 				}
@@ -464,7 +479,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -488,13 +503,23 @@ if (empty($reshook)) {
 		$moline = new MoLine($db);
 		$res = $moline->fetch(GETPOSTINT('lineid'));
 		if ($result > 0) {
-			$extrafields->fetch_name_optionals_label($moline->element);
-			foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
-				$value = GETPOST('options_'.$key, 'alphanohtml');
-				$moline->array_options["options_".$key] = $value;
+			$extrafields->fetch_name_optionals_label($moline->table_element);
+			if (!empty($extrafields->attributes[$moline->table_element]['label'])) {
+				foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
+					$value = GETPOST('options_'.$key, 'alphanohtml');
+					$moline->array_options["options_".$key] = $value;
+				}
 			}
 			$moline->qty = GETPOSTFLOAT('qty_lineProduce');
+			if (GETPOSTISSET('warehouse_lineProduce')) {
+				$moline->fk_warehouse = (GETPOSTINT('warehouse_lineProduce') > 0 ? GETPOSTINT('warehouse_lineProduce') : 0);
+			}
+			if (GETPOSTISSET('workstation_lineProduce')) {
+				$moline->fk_default_workstation = (GETPOSTINT('workstation_lineProduce') > 0 ? GETPOSTINT('workstation_lineProduce') : 0);
+			}
+
 			$res = $moline->update($user);
+
 			if ($res < 0) {
 				setEventMessages($moline->error, $moline->errors, 'errors');
 				header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -527,13 +552,13 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-mrp page-card_p
 $newToken = newToken();
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create' && $action != 'reload'))) {
 	$res = $object->fetch_thirdparty();
 	$res = $object->fetch_optionals();
 
 	if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $object->fk_warehouse > 0) {
-		$tmpwarehouse->fetch($object->fk_warehouse);
-		$fk_default_warehouse = $object->fk_warehouse;
+		$tmpwarehouse->fetch((int) $object->fk_warehouse);
+		$fk_default_warehouse = (int) $object->fk_warehouse;
 	}
 
 	$head = moPrepareHead($object);
@@ -573,7 +598,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$object->fetch_product();
 			$numref = $object->getNextNumRef($object->product);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateMo', $numref);
@@ -614,7 +639,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'value' => !getDolGlobalString('MO_ALSO_CANCEL_CONSUMED_AND_PRODUCED_LINES_BY_DEFAULT') ? 0 : 1
 			),
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CancelMo'), $langs->trans('ConfirmCancelMo'), 'confirm_cancel', $formquestion, 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('CancelMo'), $langs->trans('ConfirmCancelMo'), 'confirm_cancel', $formquestion, 0, 1);
 	}
 
 	// Call Hook formConfirm
@@ -659,9 +684,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -778,7 +803,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline', 'addproduceline', 'editline'))) {
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_'.$action.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -851,7 +876,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table class="noborder noshadow centpercent nobottom">';
 
 		print '<!-- Line of title for products to consume -->'."\n";
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre trheight5em">';
 		// Product
 		print '<td>'.$langs->trans("Product").'</td>';
 		// Qty
@@ -863,7 +888,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
 		}
 		// Qty already consumed
-		print '<td class="right">'.$form->textwithpicto($langs->trans("QtyAlreadyConsumedShort"), $langs->trans("QtyAlreadyConsumed")).'</td>';
+		print '<td class="right classfortooltip" title="'.$langs->trans("QtyAlreadyConsumed").'">';
+		print $langs->trans("QtyAlreadyConsumedShort");
+		print '</td>';
 		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
@@ -923,20 +950,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<tr class="liste_titre">';
 			// Product
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth150');
+			print $form->select_produits(0, 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth150');
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width40 right"></td>';
 			// Unit
-			print '<td></td>';
+			print '<td>';
+			//if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+			//...
+			//}
+			print '</td>';
 			// Cost price
 			if ($permissiontoupdatecost && getDolGlobalString('MRP_SHOW_COST_FOR_CONSUMPTION')) {
 				print '<td></td>';
 			}
 
-			$colspan="3";
+			$colspan = 3;
 			if (isModEnabled('stock')) {
-				$colspan++;;
+				$colspan++;
 			}
 			if (isModEnabled('productbatch')) {
 				$colspan++;
@@ -961,7 +992,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Extrafields Line
 			if (is_object($objectline)) {
 				$extrafields->fetch_name_optionals_label($object->table_element_line);
-				$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
+				$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', '1', 'line');
 				if (!empty($temps)) {
 					print '<tr class="liste_titre"><td style="padding-top: 20px" colspan="9" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 					print $temps;
@@ -997,7 +1028,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if (empty($costprice)) {
 							require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 							$productFournisseur = new ProductFournisseur($db);
-							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product, $line->qty) > 0) {
 								$costprice = $productFournisseur->fourn_unitprice;
 							} else {
 								$costprice = 0;
@@ -1014,7 +1045,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 							$qtyhourforline = 0;
 							if ($line->fk_unit) {
-								$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
+								$unitforline = measuringUnitString($line->fk_unit, '', null, 1);
 								$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 							}
 
@@ -1071,7 +1102,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print measuringUnitString($line->fk_unit, '', '', 2);
+							print measuringUnitString($line->fk_unit, '', null, 2);
 						}
 						print '</td>';
 
@@ -1085,8 +1116,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print ' ' . price2num($alreadyconsumed, 'MS');
 						print '</td>';
 
-						// Entrepot
+						// Warehouse / Workstation
 						print '<td>';
+						if ($tmpproduct->type == Product::TYPE_PRODUCT) {
+							print $formproduct->selectWarehouses($line->fk_warehouse, 'warehouse_lineProduce', 'warehouseopen', 1);
+						} elseif (isModEnabled('workstation')) {
+							print $formproduct->selectWorkstations($line->fk_default_workstation, 'workstation_lineProduce', 1);
+						}
 						print '</td>';
 
 						// Stock
@@ -1116,7 +1152,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Extrafields Line
 						if (!empty($extrafields)) {
 							$line->fetch_optionals();
-							$temps = $line->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
+							$temps = $line->showOptionals($extrafields, 'edit', array(), '', '', '1', 'line');
 							if (!empty($temps)) {
 								$colspan = 10;
 								print '<tr><td colspan="'.$colspan.'"><div style="padding-top: 20px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
@@ -1156,7 +1192,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print measuringUnitString($line->fk_unit, '', '', 2);
+							print measuringUnitString($line->fk_unit, '', null, 2);
 						}
 						print '</td>';
 
@@ -1198,9 +1234,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 
 						// Warehouse and/or workstation
-						print '<td>';
-						if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $tmpwarehouse->id > 0) {
-							print img_picto('', $tmpwarehouse->picto) . " " . $tmpwarehouse->label;
+						print '<td class="tdoverflowmax100">';
+						if ($tmpproduct->isStockManaged()) {
+							// When STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE is set, we always use the warehouse of the MO, the same than production.
+							if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $tmpwarehouse->id > 0) {
+								print img_picto('', $tmpwarehouse->picto) . " " . $tmpwarehouse->label;
+							} else {
+								if ($line->fk_warehouse > 0) {
+									$warehouseline = new Entrepot($db);
+									$warehouseline->fetch($line->fk_warehouse);
+									print $warehouseline->getNomUrl(1);
+								}
+							}
 						}
 						if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
 							$tmpworkstation = new Workstation($db);
@@ -1268,7 +1313,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Extrafields Line
 						if (!empty($extrafields)) {
 							$line->fetch_optionals();
-							$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+							$temps = $line->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 							if (!empty($temps)) {
 								$colspan = 10;
 								print '<tr><td colspan="'.$colspan.'"><div id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
@@ -1378,7 +1423,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<input type="hidden" name="product-'.$line->id.'-'.$i.'" value="'.$line->fk_product.'">';
 
 						// Qty
-						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '></td>';
+						print '<td class="right">';
+						if ((int) $tmpproduct->stockable_product > 0) {
+							print '<input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '>';
+						} else {
+							print '<input type="hidden" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="0">';
+							print '<span class="opacitymedium">' . $langs->trans("StockDisabled") . '</span>';
+						}
+						print '</td>';
 
 						// Unit
 						print '<td></td>';
@@ -1393,7 +1445,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Warehouse
 						print '<td>';
-						if ($tmpproduct->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+						if (($tmpproduct->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))
+							&& ((int) $tmpproduct->stockable_product > 0)) {
 							if (empty($line->disable_stock_change)) {
 								$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
 								print $formproduct->selectWarehouses($preselected, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'maxwidth200 csswarehouse_'.$line->id.'_'.$i);
@@ -1401,7 +1454,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print '<span class="opacitymedium">'.$langs->trans("DisableStockChange").'</span>';
 							}
 						} else {
-							print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
+							if ((int) $tmpproduct->stockable_product > 0) {
+								print '<span class="opacitymedium">' . $langs->trans("StockDisabled") . '</span>';
+							} else {
+								print '<span class="opacitymedium">' . $langs->trans("NoStockChangeOnServices") . '</span>';
+							}
 						}
 						print '</td>';
 
@@ -1424,13 +1481,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Split
 						$type = 'batch';
 						print '<td align="right" class="split">';
-						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
+						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
 						print '</td>';
 
 						// Split All
 						print '<td align="right" class="splitall">';
 						if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
-							print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
+							print img_picto($langs->trans('SplitAllQuantity'), 'split', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
 						}
 						print '</td>';
 
@@ -1478,8 +1535,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="clearboth"></div>';
 
 		$nblinetoproduce = 0;
+		$atLeastOneEatBy = false;
+		$atLeastOneSellBy = false;
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toproduce') {
+				$tmpproduct = new Product($db);
+				$tmpproduct->fetch($line->fk_product);
+				if (
+					$tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY
+					|| $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT
+				) {
+					$atLeastOneEatBy = true;
+				}
+				if (
+					$tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY
+					|| $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT
+				) {
+					$atLeastOneSellBy = true;
+				}
 				$nblinetoproduce++;
 			}
 		}
@@ -1499,7 +1572,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelinestoproduce" class="noborder noshadow nobottom centpercent">';
 
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre trheight5em">';
 		// Product
 		print '<td>'.$langs->trans("Product").'</td>';
 		// Qty
@@ -1511,13 +1584,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Cost price
 		if ($permissiontoupdatecost) {
 			if (empty($bomcostupdated)) {
-				print '<td class="right">'.$form->textwithpicto($langs->trans("UnitCost"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
+				print '<td class="right classfortooltip" title="'.$langs->trans("AmountUsedToUpdateWAP").'">';
+				print $langs->trans("UnitCost");
+				print '</td>';
 			} else {
-				print '<td class="right">'.$form->textwithpicto($langs->trans("ManufacturingPrice"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
+				print '<td class="right classfortooltip" title="'.$langs->trans("AmountUsedToUpdateWAP").'">';
+				print $langs->trans("ManufacturingPrice");
+				print '</td>';
 			}
 		}
 		// Already produced
-		print '<td class="right">'.$form->textwithpicto($langs->trans("QtyAlreadyProducedShort"), $langs->trans("QtyAlreadyProduced")).'</td>';
+		print '<td class="right classfortooltip" title="'.$langs->trans("QtyAlreadyProduced").'">';
+		print $langs->trans("QtyAlreadyProducedShort");
+		print '</td>';
 		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
@@ -1538,6 +1617,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Split All
 			print '<td></td>';
+
+			// sell by
+			if ($atLeastOneEatBy) {
+				print '<td>'.$langs->trans("EatByDate").'</td>';
+			}
+
+			// eat by
+			if ($atLeastOneSellBy) {
+				print '<td>'.$langs->trans("SellByDate").'</td>';
+			}
 		}
 
 		// Action delete
@@ -1553,7 +1642,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Product
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+			print $form->select_produits(0, 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
@@ -1626,7 +1715,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td class="right">'.$line->qty.'</td>';
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-						print '<td class="right">'.measuringUnitString($line->fk_unit, '', '', 1).'</td>';
+						print '<td class="right">'.measuringUnitString($line->fk_unit, '', null, 1).'</td>';
 					}
 					// Cost price
 					if ($permissiontoupdatecost) {
@@ -1700,6 +1789,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';
+							$href .= '&token='.newToken();
 							$href .= '&lineid='.$line->id;
 							print '<td class="center">';
 							print '<a class="reposition" href="'.$href.'">';
@@ -1832,17 +1922,41 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								$type = 'batch';
 								print '<td align="right" class="split">';
-								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
+								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
 								print '</td>';
 
 								print '<td align="right"  class="splitall">';
 								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
-									print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"');
+									print img_picto($langs->trans('SplitAllQuantity'), 'split', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"');
 								} //
 								print '</td>';
 							} else {
 								print '<td></td>';
 
+								print '<td></td>';
+							}
+						}
+
+						// sell by mandatory
+						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+							print '<td align="right">';
+							$preselectedSellBy = (GETPOSTISSET('sellby-' . $line->id . '-' . $i) ? GETPOSTDATE('sellby-' . $line->id . '-' . $i) : '');
+							print $form->selectDate($preselectedSellBy, 'sellby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
+							print '</td>';
+						} else {
+							if ($atLeastOneSellBy) {
+								print '<td></td>';
+							}
+						}
+
+						// eat by mandatory
+						if ($tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY || $tmpproduct->sell_or_eat_by_mandatory == $tmpproduct::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+							print '<td align="right">';
+							$preselectedEatBy = (GETPOSTISSET('eatby-' . $line->id . '-' . $i) ? GETPOSTDATE('eatby-' . $line->id . '-' . $i) : '');
+							print $form->selectDate($preselectedEatBy, 'eatby-' . $line->id . '-' . $i, 0, 0, 1, '', 1, 0);
+							print '</td>';
+						} else {
+							if ($atLeastOneEatBy) {
 								print '<td></td>';
 							}
 						}
@@ -1916,7 +2030,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$.each(data, function (key, value) {
 
 							if(selectwarehouse.val() == -1) {
-								var label = key + " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
+								var label = key + " (<?php echo $langs->trans('TotalStock') ?> : " + value + ")";
 							} else {
 								var label = key + " (<?php echo $langs->trans('Stock') ?> : " + value + ")";
 							}

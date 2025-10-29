@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by the page
@@ -274,6 +275,7 @@ print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 print "\n";
 
+
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
 print '<div class="logopublicpayment">';
@@ -292,14 +294,8 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	print '</div>';
 }
 
-
-
 print '</div>';
-/*if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-	print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-}*/
 print '</div>';
-
 
 if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';
@@ -307,6 +303,7 @@ if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '</div>';
 }
 
+// url for the download .vcf file link
 $urlforqrcode = $object->getOnlineVirtualCardUrl('vcard');
 
 $socialnetworksdict = getArrayOfSocialNetworks();
@@ -319,10 +316,17 @@ if ($showbarcode) {
 
 	$filename = $v->buildVCardString($object, $company, $langs, '', $outdir);
 
+	$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
+	if (isModEnabled('multicompany')) {
+		$entity_qr = '&entity='.((int) $conf->entity);
+	} else {
+		$entity_qr = '';
+	}
+
 	print '<br>';
 	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
 	//print '<!-- filename = '.dol_escape_htmltag($filename).' -->';
-	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode(basename($filename)).'">';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode'.$entity_qr.'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode(basename($filename)).'&securekey='.$encodedsecurekey.'">';
 	print '</div>';
 	print '<br>';
 }
@@ -343,7 +347,7 @@ if ($object->email && !getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
 if ($object->url && !getDolUserInt('USER_PUBLIC_HIDE_URL', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'globe', 'class="pictofixedwidth"');
-	$usersection .= dol_print_url($object->url, '_blank', 0, 0, '');
+	$usersection .= dol_print_url($object->url ?? '', '_blank', 0, 0, '');
 	$usersection .= '</div>';
 }
 
@@ -387,7 +391,7 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks)) {
 		$listOfSocialNetworks = $object->socialnetworks;
 		foreach ($listOfSocialNetworks as $key => $value) {
 			if (!getDolUserString('USER_HIDE_SOCIALNETWORK_'.strtoupper($key), 0, $object)) {
-				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($key, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
+				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
 			}
 		}
 	}

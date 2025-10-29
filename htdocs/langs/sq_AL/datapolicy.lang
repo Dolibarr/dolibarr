@@ -17,8 +17,10 @@ Module4100Name = Politika e privatësisë së të dhënave
 Module4100Desc = Moduli për menaxhimin e privatësisë së të dhënave (përputhje me GDPR)
 # Administration page
 datapolicySetup = Konfigurimi i politikës së privatësisë së të dhënave të modulit
-Deletion = Fshirja e të dhënave
-datapolicySetupPage = Në varësi të ligjeve të vendeve tuaja (Shembull <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Neni 5</a> i GDPR), të dhënat personale duhet të mbahen për një periudhë duke mos e tejkaluar kohëzgjatjen, të dhënat nevojiten për qëllimin për të cilin janë mbledhur, përveç për qëllime arkivore.<br>Fshirja do të bëhet automatikisht pas një kohëzgjatjeje të caktuar pa ngjarje (kohëzgjatja të cilat do t'i keni treguar më poshtë).
+DataDeletion=Fshirja e të dhënave
+DataAnonymization=Anonimizimi i të dhënave
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Në varësi të ligjeve të vendit tuaj (Shembull <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Neni 5</a> i GDPR-së), të dhënat personale duhet të mbahen për një periudhë që nuk tejkalon kohëzgjatjen që të dhënat janë të nevojshme për qëllimin për të cilin janë mbledhur, përveç për qëllime arkivimi.<br>Ky modul do të bëjë një anonimizim automatikisht pas një kohëzgjatjeje të caktuar pa ngjarje (kohëzgjatja që do ta keni treguar më poshtë) dhe nëse objekti nuk ka objekte biznesi fëmijë ekzistues.
 NB_MONTHS = %s muaj
 ONE_YEAR = 1 vit
 NB_YEARS = %s vjet
@@ -33,12 +35,15 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Perspektiva/Klient
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = As perspektivë/As klient
 DATAPOLICY_CONTACT_FOURNISSEUR = Furnizuesi
 DATAPOLICY_ADHERENT = Anëtar
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
 SendAgreementText = Ju mund t'u dërgoni një email GDPR të gjithë kontakteve tuaja përkatëse (të cilët nuk kanë marrë ende një email dhe për të cilët nuk keni regjistruar asgjë në lidhje me marrëveshjen e tyre GDPR). Për ta bërë këtë, përdorni butonin e mëposhtëm.
 SendAgreement = Dërgo email
 AllAgreementSend = Të gjitha emailet janë dërguar
 TXTLINKDATAPOLICYACCEPT = Teksti për lidhjen "marrëveshje"
 TXTLINKDATAPOLICYREFUSE = Teksti për lidhjen "mosmarrëveshje"
+DelayForAnonymization=Vonesa për anonimizimin
+DelayForDeletion=Vonesa për fshirje
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Përpunimi i të dhënave personale
 DATAPOLICY_consentement = Pëlqimi i marrë për përpunimin e të dhënave personale
@@ -49,3 +54,5 @@ DATAPOLICY_date = Data e marrëveshjes/mosmarrëveshjes GDPR
 DATAPOLICY_send = Data e dërgimit të email-it të marrëveshjes
 MailSent = Email është dërguar
 NUMBER_MONTH_BEFORE_DELETION = Numri i muajve para fshirjes
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

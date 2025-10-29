@@ -4,7 +4,7 @@
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,12 @@ if (!defined('NOIPCHECK')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 $langs->loadLangs(array("main", "install", "other"));
 
 $conf->dol_hide_topmenu = GETPOSTINT('dol_hide_topmenu');
@@ -290,8 +295,10 @@ print '</div>';
 print '</div>';
 
 print '<div class="demobantext" style="max-width: 1024px;">';
-print '<div style="font-size: 20px; padding: 40px;">';
-print '<div class="hideonsmartphone" style="text-align: justify;">'.$langs->trans("DemoDesc").'</div><br>';
+print '<div style="font-size: 0.8em; padding: 40px;">';
+print '<div class="hideonsmartphone" style="text-align: justify;">'.$langs->trans("DemoDesc").'<br>';
+print $langs->trans("DemoDesc2", 'https://www.dolibarr.org/onlinedemo');
+print '</div><br>';
 print '<div class="titre"><span style="font-size: 20px">'.$langs->trans("ChooseYourDemoProfil").'</span></div>';
 print '</div>';
 print '</div>';
@@ -471,6 +478,8 @@ $db->close();
 /**
  * Show header for demo
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -479,7 +488,7 @@ $db->close();
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	top_httphead();
 
@@ -491,9 +500,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for demo
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	printCommonFooter('public');
 

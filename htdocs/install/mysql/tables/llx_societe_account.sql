@@ -34,11 +34,12 @@ CREATE TABLE llx_societe_account(
 	date_last_login   datetime,
 	date_previous_login datetime,
 	date_last_reset_password datetime,
-	date_creation datetime NOT NULL,
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	fk_user_creat integer NOT NULL,
-	fk_user_modif integer,
-	import_key varchar(14),
-	status integer
+	date_creation     datetime NOT NULL,
+	tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat     integer NOT NULL,
+	fk_user_modif     integer,
+	ip                varchar(250),				-- ip of the user that add the entry (For DOS Protection)
+	import_key        varchar(14),
+	status            integer
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

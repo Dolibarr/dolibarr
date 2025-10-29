@@ -2,7 +2,7 @@
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,8 +167,6 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public function create($user, $closepaidcontrib = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -217,6 +215,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
+			$this->error = 'ErrorPaymentAmountMustNotBeNull';
 			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 		}
 
@@ -505,6 +504,7 @@ class PaymentSocialContribution extends CommonObject
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->statut = 0;
+		$object->status = 0;
 
 		// Clear fields
 		// ...
@@ -515,7 +515,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 
@@ -610,7 +610,6 @@ class PaymentSocialContribution extends CommonObject
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
 					$error++;
-					dol_print_error($this->db);
 				}
 
 				// Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
@@ -622,7 +621,7 @@ class PaymentSocialContribution extends CommonObject
 					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
 					if ($result <= 0) {
 						$error++;
-						dol_print_error($this->db);
+						$this->setErrorsFromObject($acc);
 					}
 				}
 
@@ -634,7 +633,8 @@ class PaymentSocialContribution extends CommonObject
 						$socialcontrib->fetch($key);
 						$result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
 						if ($result <= 0) {
-							dol_print_error($this->db);
+							$this->setErrorsFromObject($acc);
+							$error++;
 						}
 
 						if ($socialcontrib->fk_user) {
@@ -651,14 +651,14 @@ class PaymentSocialContribution extends CommonObject
 							);
 
 							if ($result <= 0) {
-								$this->error = $acc->error;
+								$this->setErrorsFromObject($acc);
 								$error++;
 							}
 						}
 					}
 				}
 			} else {
-				$this->error = $acc->error;
+				$this->setErrorsFromObject($acc);
 				$error++;
 			}
 		}
@@ -812,17 +812,21 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-	 *	Return if object was dispatched into bookkeeping
+	 *	Return if object was dispatched into bookkeeping, or return the array of bookkeeping id.
 	 *
-	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
+	 *	@param		int		$mode		0=Mode to return the nb of record, 1=Mode to return array of ID in bookkeeping table.
+	 *	@return     int         		Return integer <0 if KO, 0=no, 1=yes or ID transaction
 	 */
-	public function getVentilExportCompta()
+	public function getVentilExportCompta($mode = 0)
 	{
 		$alreadydispatched = 0;
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->bank_line);
+		$sql = " SELECT ".($mode ? 'DISTINCT piece_num' : 'COUNT(ab.rowid)')." as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab";
+		$sql .= " WHERE ab.doc_type = '".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->bank_line);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -835,7 +839,7 @@ class PaymentSocialContribution extends CommonObject
 		}
 
 		if ($alreadydispatched) {
-			return 1;
+			return $alreadydispatched;
 		}
 		return 0;
 	}

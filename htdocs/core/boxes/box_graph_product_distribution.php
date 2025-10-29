@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		if (!isModEnabled('invoice') || !$user->hasRight('facture', 'lire')) {
 			$showinvoicenb = 0;
 		}
-		if (isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
+		if (!isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
 			$showpropalnb = 0;
 		}
 		if (!isModEnabled('order') || !$user->hasRight('commande', 'lire')) {
@@ -137,6 +137,10 @@ class box_graph_product_distribution extends ModeleBoxes
 
 
 		$socid = empty($user->socid) ? 0 : $user->socid;
+		$mesg = '';
+		$px1 = null;
+		$px2 = null;
+		$px3 = null;
 		$userid = 0; // No filter on user creation
 
 		$WIDTH = ($nbofgraph >= 2 || !empty($conf->dol_optimize_smallscreen)) ? '300' : '320';
@@ -218,6 +222,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data3)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
+
 					$data3 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 
@@ -350,7 +355,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				});
 			</script>';
 			$stringtoshow .= '<div class="center hideobject" id="idfilter'.$this->boxcode.'">'; // hideobject is to start hidden
-			$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow .= '<input type="hidden" name="page_y" value="">';
@@ -373,30 +378,30 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow .= '</div>';
 
 			if ($nbofgraph == 1) {
-				if ($showpropalnb) {
+				if ($showpropalnb && $px2 !== null) {
 					$stringtoshow .= $px2->show();
-				} elseif ($showordernb) {
+				} elseif ($showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
-				} else {
+				} elseif ($px1 !== null) {
 					$stringtoshow .= $px1->show();
 				}
 			}
 			if ($nbofgraph == 2) {
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
-				if (isModEnabled('propal') && $showpropalnb) {
+				if (isModEnabled('propal') && $showpropalnb && $px2 !== null) {
 					$stringtoshow .= $px2->show();
-				} elseif (isModEnabled('order') && $showordernb) {
+				} elseif (isModEnabled('order') && $showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div><div class="fichehalfright">';
-				if (isModEnabled('invoice') && $showinvoicenb) {
+				if (isModEnabled('invoice') && $showinvoicenb && $px1 !== null) {
 					$stringtoshow .= $px1->show();
-				} elseif (isModEnabled('order') && $showordernb) {
+				} elseif (isModEnabled('order') && $showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div></div></div>';
 			}
-			if ($nbofgraph == 3) {
+			if ($nbofgraph == 3 && $px1 !== null && $px2 !== null && $px3 !== null) {
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
 				$stringtoshow .= $px2->show();
 				$stringtoshow .= '</div><div class="fichehalfright">';

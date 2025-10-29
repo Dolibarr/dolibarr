@@ -17,6 +17,7 @@ CancelSending=الغاء الشحنة
 DeleteSending=حذف الشحنة
 Stock=الأسهم
 Stocks=الاسهم
+TotalStock=إجمالي المخزون
 MissingStocks=الأسهم المفقودة
 StockAtDate=الأسهم في التاريخ
 StockAtDateInPast=التاريخ في الماضي
@@ -27,9 +28,6 @@ LotSerialList=قائمة الدفعة / المسلسلات
 SubjectToLotSerialOnly=المنتجات الخاضعة للدفعة/المسلسل فقط
 Movements=حركات
 ErrorWarehouseRefRequired=مستودع الاشارة اسم مطلوب
-ListOfWarehouses=لائحة المخازن
-ListOfStockMovements=قائمة الحركات الأسهم
-ListOfInventories=قائمة الجرد
 MovementId=معرف الحركة
 StockMovementForId=معرف الحركة %d
 ListMouvementStockProject=قائمة تحركات المخزون المرتبطة بالمشروع
@@ -50,8 +48,8 @@ CorrectStock=تصحيح الأوراق المالية
 StockTransfer=تحويل المخزن
 TransferStock=نقل المخزون
 MassStockTransferShort=تغيير المخزون بالجملة
-StockMovement=حركة الأسهم
-StockMovements=تحركات الأسهم
+StockMovement=حركة المخزون
+StockMovements=تحركات المخزون
 NumberOfUnit=عدد الوحدات
 UnitPurchaseValue=وحدة سعر الشراء
 StockTooLow=الاسهم منخفضة جدا
@@ -100,15 +98,15 @@ VirtualStock=الأسهم الافتراضية
 VirtualStockAtDate=مخزون افتراضي في تاريخ مستقبلي
 VirtualStockAtDateDesc=المخزون الظاهري بمجرد الانتهاء من جميع الطلبات المعلقة التي تم التخطيط لمعالجتها قبل التاريخ المختار
 VirtualStockDesc=المخزون الافتراضي هو المخزون الذي سيبقى بعد تنفيذ جميع الإجراءات المفتوحة/المعلقة (التي تؤثر على المخزونات) (استلام أوامر الشراء، وشحن أوامر البيع، وإنتاج أوامر التصنيع، وما إلى ذلك)
-QtyAtDate=Quantity in stock at date
-MovementsSinceDate=Movements since the date
+QtyAtDate=الكمية الموجودة في المخزون حتى تاريخه
+MovementsSinceDate=الحركات منذ التاريخ
 IdWarehouse=معرف مخزن
 DescWareHouse=وصف المخزن
 LieuWareHouse=المكان مخزن
 WarehousesAndProducts=والمستودعات والمنتجات
 WarehousesAndProductsBatchDetail=مستودعات والمنتجات (مع التفاصيل في الكثير / مسلسل)
 AverageUnitPricePMPShort=المتوسط المرجح لسعر
-AverageUnitPricePMPDesc=متوسط سعر وحدة الإدخال الذي اضطررنا إلى إنفاقه للحصول على وحدة واحدة من المنتج في مخزوننا.
+AverageUnitPricePMPDesc=متوسط سعر الوحدة المدخلة المدفوع للحصول على وحدة واحدة من المنتج في المخزون
 SellPriceMin=بيع سعر الوحدة
 EstimatedStockValueSellShort=قيمة للبيع
 EstimatedStockValueSell=قيمة للبيع
@@ -162,6 +160,7 @@ MovementLabel=تسمية الحركة
 TypeMovement=اتجاه الحركة
 DateMovement=تاريخ الحركة
 InventoryCode=حركة المخزون أو كود
+LabelMovement=حركة تسمية
 IsInPackage=الواردة في حزمة
 WarehouseAllowNegativeTransfer=يمكن أن يكون المخزون سالبًا
 qtyToTranferIsNotEnough=ليس لديك مخزون كافٍ من المستودع المصدر ولا يسمح الإعداد الخاص بك بالمخزون السلبي.
@@ -227,7 +226,7 @@ ApplyPMP=تطبيق PMP
 FlushInventory=جرد التدفق
 ConfirmFlushInventory=هل تؤكد هذا العمل؟
 InventoryFlushed=مسح الجرد
-ExitEditMode=طبعة الخروج
+ExitEditMode=الخروج من وضع التحرير
 inventoryDeleteLine=حذف الخط
 RegulateStock=تنظيم المخزون
 ListInventory=قائمة
@@ -246,7 +245,7 @@ AlwaysShowFullArbo=عرض المسار الكامل للمستودع (المست
 StockAtDatePastDesc=يمكنك هنا عرض الأسهم (الأسهم الحقيقية) في تاريخ معين في الماضي
 StockAtDateFutureDesc=يمكنك عرض الأسهم (الأسهم الافتراضية) هنا في تاريخ معين في المستقبل
 CurrentStock=المخزون الحالي
-InventoryRealQtyHelp=The quantity you found in stock when making the inventory. Set value to 0 to reset qty<br>Keep field empty, or remove line, to keep unchanged
+InventoryRealQtyHelp=الكمية التي وجدتها في المخزون عند إجراء الجرد. اضبط القيمة على 0 لإعادة تعيين الكمية.<br> دع الحقل فارغًا أو قم بإزالة السطر لإبقائه دون تغيير
 UpdateByScaning=أكمل الكمية الحقيقية عن طريق المسح
 UpdateByScaningProductBarcode=التحديث عن طريق المسح (الرمز الشريطي للمنتج)
 UpdateByScaningLot=التحديث عن طريق المسح (الكثير | الرمز الشريطي التسلسلي)
@@ -264,7 +263,7 @@ ShowAllBatchByDefault=بشكل افتراضي ، اعرض تفاصيل الدُ�
 CollapseBatchDetailHelp=يمكنك تعيين العرض الافتراضي لتفاصيل الدُفعة في تكوين وحدة المخزونات
 ErrorWrongBarcodemode=وضع الرمز الشريطي غير معروف
 ProductDoesNotExist=المنتج غير موجود
-ErrorSameBatchNumber=تم العثور على عدة سجلات لرقم الدُفعة في صحيفة الجرد. لا توجد طريقة لمعرفة أي واحد لزيادة.
+ErrorSameBatchNumber=عُثر على عدة سجلات لرقم الدفعة في سجل المخزون. لا توجد طريقة لمعرفة أيها يجب زيادته.
 ProductBatchDoesNotExist=المنتج مع الدُفعة / المسلسل غير موجود
 ProductBarcodeDoesNotExist=المنتج مع الرمز الشريطي غير موجود
 WarehouseId=معرف المستودع
@@ -274,11 +273,13 @@ ToStart=يبدأ
 InventoryStartedShort=بدأ
 ErrorOnElementsInventory=تم إلغاء العملية للسبب التالي:
 ErrorCantFindCodeInInventory=لا يمكن العثور على الكود التالي في المخزون
+ErrorBarcodeNotFoundForProductWarehouse=خطأ: لم يتم العثور على الرمز الشريطي لمستودع المنتج
+ErrorCodeScannedIsBothProductAndSerial=خطأ: الكود الذي تم مسحه ضوئيًا هو المنتج و التسلسلي
 QtyWasAddedToTheScannedBarcode=النجاح !! تمت إضافة الكمية إلى كل الباركود المطلوب. يمكنك إغلاق أداة الماسح الضوئي.
 StockChangeDisabled=تم تعطيل تغيير المخزون
 NoWarehouseDefinedForTerminal=لا يوجد مستودع محدد للمحطة
 ClearQtys=امسح كل الكميات
-ProductValuesUsedBecauseNoValuesForThisWarehouse=No value has been defined for this warehouse so we assume it is zero (no need for this product into the warehouse)
+ProductValuesUsedBecauseNoValuesForThisWarehouse=لم يتم تحديد أي قيمة لهذا المستودع، لذا نفترض أنها صفر (لا حاجة لهذا المنتج في المستودع)
 ModuleStockTransferName=تحويل المخزون المتقدم
 ModuleStockTransferDesc=إدارة متقدمة لتحويل المخزون مع إنشاء صحيفة التحويل
 StockTransferNew=نقل مخزون جديد
@@ -333,7 +334,19 @@ ConfirmDeleteBatch=هل أنت متأكد أنك تريد حذف المجموع�
 WarehouseUsage=استخدام المستودع
 InternalWarehouse=مستودع داخلي
 ExternalWarehouse=مستودع خارجي
-LatestModifiedWarehouses=Latest %s modified warehouses
-LatestStockMovements=Latest %s stock movements
-QtyCurrentlyKnownInStock=System estimated quantity you have in stock. As long as the inventory is not closed, this is a realtime value and it may change if you continue to make stock movement during the inventory (not recommended).
-QtyInStockWhenInventoryWasValidated=System estimated quantity you had in stock when the inventory was validated (before the stock correction)
+LatestModifiedWarehouses=أحدث %s مستودع/مستودعات معدلة
+LatestStockMovements=أحدث %s تحرك في المخزون
+QtyCurrentlyKnownInStock=يقوم النظام بتقدير الكمية المتوفرة لديك في المخزون. طالما لم يتم إغلاق المخزون، فهذه قيمة في الوقت الفعلي و قد تتغير إذا واصلت إجراء حركة المخزون أثناء الجرد (غير مستحسن).
+QtyInStockWhenInventoryWasValidated=قام النظام بتقدير الكمية المتوفرة لديك في المخزون عند التحقق من صحة المخزون (قبل تصحيح المخزون)
+InventoryId=معرف المخزون
+DateInventory=تاريخ المخزون
+InventoryStatus=حالة المخزون
+InventoryTitle=اسم المخزون
+InventoryLine=خط المخزون
+InventoryLineId=معرف خط المخزون
+InventoryRef=مرجع المخزون
+QtyViewed=الكمية التي تمت مشاهدتها
+QtyStock=الكمية المتوفرة في المخزون
+QtyRegulated=كمية التصحيح في المخزون
+InventoryEntrepot=هوية المستودع
+SelectedWarehouse=حدد مستودع

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017  		Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  		Lenin Rivas		   	<lenin@leninrivas.com>
- * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ class Mo extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -82,7 +82,7 @@ class Mo extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -110,40 +110,42 @@ class Mo extends CommonObject
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'InProgress', '3' => 'StatusMOProduced', '9' => 'Canceled')),
 		'fk_parent_line' => array('type' => 'integer:MoLine:mrp/class/mo.class.php', 'label' => 'ParentMo', 'enabled' => 1, 'visible' => 0, 'position' => 1020, 'default' => '0', 'notnull' => 0, 'index' => 1,'showoncombobox' => 0),
 	);
+
 	/**
 	 * @var int
 	 */
 	public $rowid;
-	/**
-	 * @var int
-	 */
-	public $entity;
+
 	/**
 	 * @var string
 	 */
 	public $ref;
 
 	/**
-	 * @var int mrptype
+	 * @var ?int mrptype
 	 */
 	public $mrptype;
+
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $label;
 
 	/**
-	 * @var float Quantity
+	 * @var ?float Quantity
 	 */
 	public $qty;
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $fk_warehouse;
+
 	/**
 	 * @var int
 	 */
 	public $fk_soc;
+
 	/**
 	 * @var int
 	 */
@@ -177,12 +179,12 @@ class Mo extends CommonObject
 	 */
 	public $import_key;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
 	/**
-	 * @var int ID of product
+	 * @var ?int ID of product
 	 */
 	public $fk_product;
 
@@ -266,7 +268,7 @@ class Mo extends CommonObject
 	public $fk_parent_line;
 
 	/**
-	 @ var array{id:int,label:string,qty_bom:int|float,stock:float,seuil_stock_alerte:float,virtual_stock:float,qty:float,fk_unit:int,qty_frozen:float,disable_stock_change:int<0,1>,efficiency:float}	tpl
+	 * @var array{}|array{id:int,label:string,qty_bom:int|float,stock:float,seuil_stock_alerte:null|float,virtual_stock:float,qty:float,fk_unit:int,qty_frozen:int<0,1>,disable_stock_change:int<0,1>,efficiency:float}	tpl
 	 */
 	public $tpl = array();
 
@@ -312,9 +314,9 @@ class Mo extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User		$user      User that creates
-	 * @param  int<0,1>	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <=0 if KO, Id of created object if OK
+	 * @param  User		$user      	User that creates
+	 * @param  int<0,1>	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int             		Return integer <=0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -325,11 +327,11 @@ class Mo extends CommonObject
 		if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && !getDolGlobalString('ALLOW_USE_KITS_INTO_BOM_AND_MO') && $this->fk_product > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($this->fk_product);
+			$tmpproduct->fetch((int) $this->fk_product);
 			if ($tmpproduct->hasFatherOrChild(1) > 0) {
 				$this->error = 'ErrorAVirtualProductCantBeUsedIntoABomOrMo';
 				$this->errors[] = $this->error;
-				return -1;
+				return -2;
 			}
 		}
 
@@ -344,11 +346,10 @@ class Mo extends CommonObject
 			$this->mrptype = $tmpbom->bomtype;
 		}
 
-		if (!$error) {
-			$idcreated = $this->createCommon($user, $notrigger);
-			if ($idcreated <= 0) {
-				$error++;
-			}
+
+		$idcreated = $this->createCommon($user, $notrigger);
+		if ($idcreated <= 0) {
+			$error++;
 		}
 
 		if (!$error) {
@@ -537,7 +538,7 @@ class Mo extends CommonObject
 					if ($key == 't.rowid') {
 						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 					} elseif (strpos($key, 'date') !== false) {
-						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 					}
@@ -622,9 +623,9 @@ class Mo extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$resarray[] = array(
-						'rowid' => $obj->rowid,
+						'rowid' => (int) $obj->rowid,
 						'date' => $this->db->jdate($obj->date_creation),
-						'qty' => $obj->qty,
+						'qty' => (float) $obj->qty,
 						'role' => $obj->role,
 						'fk_product' => $obj->fk_product,
 						'fk_warehouse' => $obj->fk_warehouse,
@@ -725,102 +726,61 @@ class Mo extends CommonObject
 		$role = "";
 
 		if ($this->status != self::STATUS_DRAFT) {
+			dol_syslog("Bad status for MO object. Can't add production lines. Check that MO has status DRAFT.");
+			$this->error = "Bad status for MO object. Can't add production lines. Check that MO has status DRAFT.";
 			return -1;
 		}
 
 		$this->db->begin();
 
 		// Insert lines in mrp_production table from BOM data
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.((int) $this->id);
-			$this->db->query($sql);
 
-			$moline = new MoLine($this->db);
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.((int) $this->id);
+		$this->db->query($sql);
 
-			// Line to produce
-			$moline->fk_mo = $this->id;
-			$moline->qty = $this->qty;
-			$moline->fk_product = $this->fk_product;
-			$moline->position = 1;
+		$moline = new MoLine($this->db);
 
-			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($this->fk_product);
-			$moline->fk_unit = $tmpproduct->fk_unit;
+		// Line to produce
+		$moline->fk_mo = $this->id;
+		$moline->qty = (float) $this->qty;
+		$moline->fk_product = (int) $this->fk_product;
+		$moline->position = 1;
 
-			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
-				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new BOM($this->db);
-				$bom->fetch($this->fk_bom);
-				if ($bom->bomtype == 1) {
-					$role = 'toproduce';
-					$moline->role = 'toconsume';
-				} else {
-					$role = 'toconsume';
-					$moline->role = 'toproduce';
-				}
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$tmpproduct = new Product($this->db);
+		$tmpproduct->fetch((int) $this->fk_product);
+		$moline->fk_unit = $tmpproduct->fk_unit;
+
+		if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
+			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+			$bom = new BOM($this->db);
+			$bom->fetch($this->fk_bom);
+			if ($bom->bomtype == 1) {
+				$role = 'toproduce';
+				$moline->role = 'toconsume';
 			} else {
-				$bom = null;
-				if ($this->mrptype == 1) {
-					$moline->role = 'toconsume';
-				} else {
-					$moline->role = 'toproduce';
-				}
+				$role = 'toconsume';
+				$moline->role = 'toproduce';
 			}
-
-			$resultline = $moline->create($user, false); // Never use triggers here
-			if ($resultline <= 0) {
-				$error++;
-				$this->error = $moline->error;
-				$this->errors = $moline->errors;
+		} else {
+			$bom = null;
+			if ($this->mrptype == 1) {
+				$moline->role = 'toconsume';
+			} else {
+				$moline->role = 'toproduce';
 			}
+		}
 
-			if ($this->fk_bom > 0 && is_object($bom)) {	// If a BOM is defined, we know what to consume.
-				if ($bom->id > 0) {
-					// Lines to consume
-					if (!$error) {
-						foreach ($bom->lines as $line) {
-							$moline = new MoLine($this->db);
+		$resultline = $moline->create($user, 0); // Never use triggers here
+		if ($resultline <= 0) {
+			$error++;
+			$this->setErrorsFromObject($moline);
+		}
 
-							$moline->fk_mo = $this->id;
-							$moline->origin_id = $line->id;
-							$moline->origin_type = 'bomline';
-							if (!empty($line->fk_unit)) {
-								$moline->fk_unit = $line->fk_unit;
-							}
-							if ($line->qty_frozen) {
-								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
-							} else {
-								$moline->qty = (float) price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
-							}
-							if ($moline->qty <= 0) {
-								$error++;
-								$this->error = "BadValueForquantityToConsume";
-								$this->errors[] = $this->error;
-								break;
-							} else {
-								$moline->fk_product = $line->fk_product;
-								$moline->role = $role;
-								$moline->position = $line->position;
-								$moline->qty_frozen = $line->qty_frozen;
-								$moline->disable_stock_change = $line->disable_stock_change;
-								if (!empty($line->fk_default_workstation)) {
-									$moline->fk_default_workstation = $line->fk_default_workstation;
-								}
-
-								$resultline = $moline->create($user, false); // Never use triggers here
-								if ($resultline <= 0) {
-									$error++;
-									$this->error = $moline->error;
-									$this->errors[] = $moline->error;
-									$this->errors = array_merge($this->errors, $moline->errors);
-									dol_print_error($this->db, $moline->error, $moline->errors);
-									break;
-								}
-							}
-						}
-					}
-				}
+		if ($this->fk_bom > 0 && is_object($bom)) {	// If a BOM is defined, we know what to consume.
+			if ($bom->id > 0) {
+				// process lines to consume, this needs to recurse through BOM's
+				$error += $this->processBOM($user, $role, $bom, (float) $this->qty);
 			}
 		}
 
@@ -832,6 +792,71 @@ class Mo extends CommonObject
 			return -1;
 		}
 	}
+
+
+	/**
+	 * Recurse through BOM only adding products to list to consume/produce
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  string $role    MoLine Role that products are added as
+	 * @param  BOM $bom        BOM to parse lines from
+	 * @param  float $quantity Quantity modifier for sub products/BOM
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
+	public function processBOM(User $user, $role, $bom, $quantity)
+	{
+		$error = 0;
+
+		$quantity /= $bom->qty;
+		foreach ($bom->lines as $line) {
+			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : 1;
+
+			$tmpproduct = new Product($this->db);
+			$tmpproduct->fetch($line->fk_product);
+			if ($line->fk_bom_child > 0) {
+				$bom = new BOM($this->db);
+				$bom->fetch((int) $line->fk_bom_child);
+				$error += $this->processBOM($user, $role, $bom, $quantity_line);
+			} else {
+				$moline = new MoLine($this->db);
+				$moline->fk_mo = $this->id;
+				$moline->origin_id = $line->id;
+				$moline->origin_type = 'bomline';
+				if (!empty($line->fk_unit)) {
+					$moline->fk_unit = $line->fk_unit;
+				}
+
+				$moline->qty = (float) price2num($quantity_line, 'MS'); // Calculate with Qty to produce and  more presition
+				if ($moline->qty <= 0) {
+					$error++;
+					$this->error = "BadValueForquantityToConsume";
+					$this->errors[] = $this->error;
+				} else {
+					$moline->fk_product = $line->fk_product;
+					$moline->role = $role;
+					$moline->position = $line->position;
+					$moline->qty_frozen = $line->qty_frozen;
+					$moline->disable_stock_change = $line->disable_stock_change;
+					if (!empty($line->fk_default_workstation)) {
+						$moline->fk_default_workstation = $line->fk_default_workstation;
+					}
+					$resultline = $moline->create($user, 0); // Never use triggers here
+					if ($resultline <= 0) {
+						$error++;
+						$this->error = $moline->error;
+						$this->errors[] = $moline->error;
+						$this->errors = array_merge($this->errors, $moline->errors);
+						dol_print_error($this->db, $moline->error, $moline->errors);
+					}
+				}
+			}
+			if ($error) {
+				break;
+			}
+		}
+		return $error;
+	}
+
 
 	/**
 	 * Update quantities in lines to consume and/or lines to produce.
@@ -945,6 +970,7 @@ class Mo extends CommonObject
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
 
 		$result = 0;
+		$error = 0;
 
 		$this->db->begin();
 
@@ -974,7 +1000,7 @@ class Mo extends CommonObject
 					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
 				}
 				if ($idstockmove < 0) {
-					$this->error++;
+					$error++;
 					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 				} else {
 					$result = $moline->delete($user, $notrigger);
@@ -997,7 +1023,7 @@ class Mo extends CommonObject
 						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
-						$this->error++;
+						$error++;
 						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 					} else {
 						$moline = new MoLine($this->db);
@@ -1005,13 +1031,13 @@ class Mo extends CommonObject
 
 						$resdel = $moline->delete($user, $notrigger);
 						if ($resdel < 0) {
-							$this->error++;
+							$error++;
 							setEventMessages($moline->error, $moline->errors, 'errors');
 						}
 					}
 				}
 
-				if (empty($this->error)) {
+				if ($error == 0) {
 					$result = $this->deleteLineCommon($user, $idline, $notrigger);
 				}
 			}
@@ -1020,7 +1046,7 @@ class Mo extends CommonObject
 			$result = $this->deleteLineCommon($user, $idline, $notrigger);
 		}
 
-		if (!empty($this->error) || $result <= 0) {
+		if ($error != 0 || $result <= 0) {
 			$this->db->rollback();
 		} else {
 			$this->db->commit();
@@ -1113,11 +1139,11 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$this->fetch_product();
 			$num = $this->getNextNumRef($this->product);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
@@ -1511,9 +1537,9 @@ class Mo extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMo");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1747,9 +1773,9 @@ class Mo extends CommonObject
 		// Qty
 		print '<td class="right">'.$langs->trans('Qty');
 		if ($this->bom->bomtype == 0) {
-			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
+			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", (string) $this->bom->qty).')</span>';
 		} else {
-			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", $this->bom->qty).')</span>';
+			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", (string) $this->bom->qty).')</span>';
 		}
 		// Unit
 		print '<td class="right">'.$langs->trans('Unit');
@@ -1836,7 +1862,7 @@ class Mo extends CommonObject
 
 
 		global $conf;	// used into template
-		$res = include DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
 	}
 
 	/**
@@ -1978,12 +2004,84 @@ class Mo extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @param	User	$user   		Object user
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
+	 */
+	public function load_board($user)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+		if ($user->socid) {
+			return -1; // Protection pour éviter appel par utilisateur externe
+		}
+
+		$now = dol_now();
+
+		$sql = "SELECT rowid, date_end_planned FROM ".$this->db->prefix()."mrp_mo";
+		$sql .= " WHERE status IN (" . self::STATUS_VALIDATED . ", " . self::STATUS_INPROGRESS .")"; // 1 = Ouvert, 2 = En cours
+		$sql .= " AND entity IN (".getEntity('mrp_mo').")";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$langs->load("mrp");
+			$response = new WorkboardResponse();
+			$warning_delay = $conf->mrp->progress->warning_delay ;
+			$response->warning_delay = $warning_delay / 86400;
+			$response->label = $langs->trans("MOProgress");
+			$response->labelShort = $langs->trans("MOProgress");
+			$response->url = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2';
+			$response->img = img_object('', "mrp");
+
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$response->nbtodo++;
+
+				if (!empty($obj->date_end_planned)) {
+					$date_end_planned = $this->db->jdate($obj->date_end_planned);
+					if ($now > ($date_end_planned + $warning_delay)) {
+						$response->nbtodolate++;
+						$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
+					}
+				}
+			}
+
+			return $response;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 * Is the manufactured delayed?
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
+
+		if ($this->status != Mo::STATUS_VALIDATED && $this->status != Mo::STATUS_INPROGRESS) {
+			return false;
+		}
+		if (empty($this->date_end_planned)) {
+			return false;
+		}
+		return (dol_now() > ((int) $this->date_end_planned + $conf->mrp->progress->warning_delay));
+	}
+
+
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		?array{string,mixed}		$arraydata			Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

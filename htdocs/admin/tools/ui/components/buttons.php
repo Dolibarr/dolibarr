@@ -1,45 +1,52 @@
 <?php
 /*
  * Copyright (C) 2024 Anthony Damhet <a.damhet@progiseize.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
- * This program and files/directory inner it is free software: you can
- * redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License (AGPL) as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU AGPL for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU AGPL
- * along with this program. If not, see <https://www.gnu.org/licenses/agpl-3.0.html>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) : $res=@include '../../main.inc.php';
-endif;
-if (! $res && file_exists("../../../main.inc.php")) : $res=@include '../../../main.inc.php';
-endif;
-if (! $res && file_exists("../../../../main.inc.php")) : $res=@include '../../../../main.inc.php';
-endif;
+// Load Dolibarr environment
+require '../../../../main.inc.php';
+
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Protection if external user
-if ($user->socid > 0) : accessforbidden();
-endif;
+if ($user->socid > 0) {
+	accessforbidden();
+}
 
 // Includes
-dol_include_once('admin/tools/ui/class/documentation.class.php');
+require_once DOL_DOCUMENT_ROOT . '/admin/tools/ui/class/documentation.class.php';
 
 // Load documentation translations
 $langs->load('uxdocumentation');
 
 //
 $documentation = new Documentation($db);
-
+$morejs = [
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+];
 // Output html head + body - Param is Title
-$documentation->docHeader('Buttons');
+$documentation->docHeader('Buttons', $morejs);
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
@@ -128,7 +135,7 @@ $documentation->showSidebar(); ?>
 				' */',
 				'print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);',
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Example of modal usage -->
@@ -144,7 +151,7 @@ $documentation->showSidebar(); ?>
 				$id = 'button-id-7';
 				$url = '#'.$id;
 				$params = array(
-					'confirm' => true
+					'confirm' => [],
 				);
 				print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);
 
@@ -170,7 +177,7 @@ $documentation->showSidebar(); ?>
 				$id = 'button-id-9';
 				$url = '#'.$id;
 				$params = array(
-					'confirm' => true
+					'confirm' => [],
 				);
 				print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params); ?>
 			</div>
@@ -179,7 +186,7 @@ $documentation->showSidebar(); ?>
 				'<?php',
 				'// Default parameters',
 				'$params = array(',
-				'	\'confirm\' => true',
+				'	\'confirm\' => [],',
 				');',
 				'',
 				'// Custom parameters',
@@ -189,13 +196,13 @@ $documentation->showSidebar(); ?>
 				'		\'title\' => \'Your title to display\',',
 				'		\'action-btn-label\' => \'Your confirm label\',',
 				'		\'cancel-btn-label\' => \'Your cancel label\',',
-				'		\'content\' => \'Content to display  with <strong>HTML</strong> compatible <ul><li>test 01</li><li>test 02</li><li>test 03</li></ul>\'',
+				'		\'content\' => \'Content to display  with <strong>HTML</strong> compatible <ul><li>test 01</li><li>test 02</li><li>test 03</li></ul>\',',
 				'	)',
 				');',
 				'',
 				'print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);',
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Example of subbutton usage -->
@@ -214,13 +221,15 @@ $documentation->showSidebar(); ?>
 						'lang'=>'documentation@documentation',
 						'url'=> $submenu_url.'#'.$id,
 						'label' => 'My SubAction 1',
-						'perm' => 1
+						'perm' => true,
+						'enabled' => true,
 					),
 					array(
 						'lang'=>'documentation@documentation',
 						'url'=> $submenu_url.'#'.$id,
 						'label' => 'My SubAction 2',
-						'perm' => 0
+						'perm' => false,
+						'enabled' => true,
 					),
 				);
 				$params = array();
@@ -250,7 +259,7 @@ $documentation->showSidebar(); ?>
 				');',
 				'print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);'
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 		</div>
 
 
@@ -277,7 +286,7 @@ $documentation->showSidebar(); ?>
 				'print \' <button class="btn-low-emphasis --btn-icon" title="\'.dol_escape_htmltag($btnLabel).\'" aria-label="\'.dol_escape_htmltag($btnLabel).\'" >\'.img_picto($btnLabel, \'eraser\', \'aria-hidden="true"\', 0, 0, 1).\'</button>\';',
 
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Example of subbutton usage -->
@@ -313,17 +322,15 @@ $documentation->showSidebar(); ?>
 				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-file\', \'#\', \'\', $status);',
 			);
 
-			echo $documentation->showCode($lines); ?><div class="documentation-example">
+			echo $documentation->showCode($lines, 'php'); ?><div class="documentation-example">
 				<?php
 
-
-				$btnLabel = $langs->trans('Label');
+				$btnLabel = $langs->trans('Label', 'php');
 				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', 0, ['forcenohideoftext'=>1]); // Not Enough Permissions
 				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', 1, ['forcenohideoftext'=>1]); // Active
 				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', 2, ['forcenohideoftext'=>1]); // Active and selected
 				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', -1, ['forcenohideoftext'=>1]); // Functionality is disabled
 				print dolGetButtonTitle($btnLabel, '', 'fa fa-download', '#', '', -2, ['forcenohideoftext'=>1]); // Disabled without info
-
 
 				?>
 			</div>
@@ -343,14 +350,8 @@ $documentation->showSidebar(); ?>
 				'$status = -2; // Disabled without info',
 				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-download\', \'#\', \'\', $status, [\'forcenohideoftext\'=>1]);',
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 		</div>
-
-
-
-
-
-
 
 	</div>
 

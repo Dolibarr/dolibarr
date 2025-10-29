@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - sendings
+StatusDeliveryDraft=A validar
+StatusDeliveryValidated=Pagada
+Sender=Origen
+TypeContact_shipping_external_BILLING=Contacto cliente facturación pedido
