@@ -738,7 +738,11 @@ class Contracts extends DolibarrApi
 			if ($field == 'id') {
 				throw new RestException(400, 'Updating with id field is forbidden');
 			}
+<<<<<<< HEAD
 			if ($field == 'entity' && $value != $this->contract->entity) {
+=======
+			if ($field == 'entity' && $value != $this->entity) {
+>>>>>>> b36f5c849a7 (QUAL: API contract: RestException update, check if thirdparty exists before creating contract)
 				throw new RestException(400, 'Changing entity of a contract using the APIs is not possible');
 			}
 			if ($field === 'caller') {
