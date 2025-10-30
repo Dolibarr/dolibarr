@@ -284,7 +284,7 @@ if ($action == 'updatelasthourlyrate' && $permissiontoadd) {
 				$i++;
 			}
 		} else {
-			dol_print_error($this->db);
+			dol_print_error($db);
 			$error++;
 		}
 	}

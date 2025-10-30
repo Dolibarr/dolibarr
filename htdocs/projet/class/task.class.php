@@ -1894,7 +1894,7 @@ class Task extends CommonObjectLine
 	 *	@param	User|string	$fuser		Filter on a dedicated user
 	 *  @param	string		$dates		Start date (ex 00:00:00)
 	 *  @param	string		$datee		End date (ex 23:59:59)
-	 *  @return	array{}|array{amount:float,nbseconds:int,nblinesnull:int}	Array of info for task array('amount','nbseconds','nblinesnull')
+	 *  @return	array{}|array{amount:float,nbseconds:int,nblinesnull:int,nbuserthmnull:int}	Array of info for task array('amount','nbseconds','nblinesnull','nbuserthmnull')
 	 */
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	{
