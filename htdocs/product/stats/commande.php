@@ -189,6 +189,10 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= " AND c.fk_statut IN (".$db->sanitize($search_status).")";
 			}
 
+			// Add where from hooks
+			$parameters = array('socid' => $socid, 'type_element' => 'order');
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
 			$sql .= $db->order($sortfield, $sortorder);
 
 			//Calcul total qty and amount for global if full scan list
