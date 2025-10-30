@@ -3345,7 +3345,7 @@ class Form
 
 				// include search in supplier ref
 				if (getDolGlobalString('MAIN_SEARCH_PRODUCT_BY_FOURN_REF')) {
-					$sqlSupplierSearch .= !empty($sqlSupplierSearch) ? ' AND ':'';
+					$sqlSupplierSearch .= !empty($sqlSupplierSearch) ? ' AND ' : '';
 					$sqlSupplierSearch .= " pfp.ref_fourn LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
 				$sql .= ")";
@@ -10518,10 +10518,10 @@ class Form
 
 
 			// If we ask a resource form external module (instead of default path)
-			$module='';
+			$module = '';
 			if (preg_match('/^([^@]+)@([^@]+)$/i', $key, $regs)) {	// 'myobject@mymodule'
 				$key = $regs[1];
-				$module=$regs[2];
+				$module = $regs[2];
 			}
 
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
@@ -10535,7 +10535,7 @@ class Form
 					$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
 					$htmltoenteralink .= '<input type="hidden" name="action" value="addlinkbyref">';
 					$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
-					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key .(!empty($module)?'@'.$module:''). '">';
+					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key .(!empty($module) ? '@'.$module : ''). '">';
 					$htmltoenteralink .= '<table class="noborder">';
 					$htmltoenteralink .= '<tr class="liste_titre">';
 					//print '<td>' . $langs->trans("Ref") . '</td>';
@@ -10564,7 +10564,7 @@ class Form
 						$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
 						$htmltoenteralink .= '<input type="hidden" name="action" value="addlink">';
 						$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
-						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . (!empty($module)?'@'.$module:''). '">';
+						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . (!empty($module) ? '@'.$module : ''). '">';
 						$htmltoenteralink .= '<table class="noborder">';
 						$htmltoenteralink .= '<tr class="liste_titre">';
 						$htmltoenteralink .= '<td class="nowrap"></td>';
@@ -11055,32 +11055,34 @@ class Form
 			$email = $object->email;
 		} elseif ($modulepart == 'contact') {
 			$dir = $conf->societe->multidir_output[$entity] . '/contact';
-			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->photo)) {
+			$photo = $object->photo;  // Copy to help static analysis
+			if (!empty($photo)) {
+				if (dolIsAllowedForPreview($photo)) {
 					if ((string) $imagesize == 'mini') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . getImageFileNameForSize($object->photo, '_mini');
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . getImageFileNameForSize($photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . getImageFileNameForSize($object->photo, '_small');
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . getImageFileNameForSize($photo, '_small');
 					} else {
-						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . $object->photo;
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . $photo;
 					}
-					$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . $object->photo;
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . $photo;
 				}
 			}
 			$email = $object->email;
 			$capture = 'user';
 		} elseif ($modulepart == 'userphoto') {
 			$dir = $conf->user->dir_output;
-			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->photo)) {
+			$photo = $object->photo;  // Copy to help static analysis
+			if (!empty($photo)) {
+				if (dolIsAllowedForPreview($photo)) {
 					if ((string) $imagesize == 'mini') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . getImageFileNameForSize($object->photo, '_mini');
+						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . getImageFileNameForSize($photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . getImageFileNameForSize($object->photo, '_small');
+						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . getImageFileNameForSize($photo, '_small');
 					} else {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . $object->photo;
+						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . $photo;
 					}
-					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . $object->photo;
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . $photo;
 				}
 			}
 			if (getDolGlobalString('MAIN_OLD_IMAGE_LINKS')) {
@@ -11090,16 +11092,17 @@ class Form
 			$capture = 'user';
 		} elseif ($modulepart == 'memberphoto') {
 			$dir = $conf->adherent->dir_output;
-			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->photo)) {
+			$photo = $object->photo;  // Copy to help static analysis
+			if (!empty($photo)) {
+				if (dolIsAllowedForPreview($photo)) {
 					if ((string) $imagesize == 'mini') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . getImageFileNameForSize($object->photo, '_mini');
+						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . getImageFileNameForSize($photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . getImageFileNameForSize($object->photo, '_small');
+						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . getImageFileNameForSize($photo, '_small');
 					} else {
-						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . $object->photo;
+						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . $photo;
 					}
-					$originalfile = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . $object->photo;
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . $photo;
 				}
 			}
 			if (getDolGlobalString('MAIN_OLD_IMAGE_LINKS')) {
