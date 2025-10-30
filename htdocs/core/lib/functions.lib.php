@@ -11246,7 +11246,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 /**
  *	Check if a string is in UTF8. Seems similar to utf8_valid() but in pure PHP.
  *
- *	@param	string	$str        String to check
+ *	@param	?string|int	$str    String to check
  *	@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special non utf8 char or Binary)
  *	@see utf8_valid()
  */
