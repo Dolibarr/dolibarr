@@ -349,7 +349,7 @@ if (empty($reshook)) {
 						//Set the price expression for this supplier price
 						$ret = $object->setSupplierPriceExpression($price_expression);
 						if ($ret < 0) {
-							$error++;$
+							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
 					}
