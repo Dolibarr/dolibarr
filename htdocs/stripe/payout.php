@@ -121,8 +121,9 @@ if (!$rowid) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("ReferenceVirement", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');	// For info links
+	print_liste_field_titre("BankTransactions", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');	// For info links
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'center ');
 	print "</tr>\n";
 
@@ -160,13 +161,44 @@ if (!$rowid) {
 			print '<td class="center">'.dol_print_date($payout->arrival_date, 'dayhour')."</td>\n";
 			// Type
 			print '<td>'.dolPrintHTML($payout->description).'</td>';
+			// id du virement
+			print '<td>'.$payout->trace_id->value.'</td>';
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</span></td>";
 			// Info links
-			print '<td>';
-			print '<span class="small">';
-			// TODO Add missing link to bank transfer for the num_chq = $payout->id
-			print '</span>';
+			print '<td>';	
+			// link to bank transfer
+			if ($payout->status == 'paid') {
+				$sql = "SELECT * FROM ".MAIN_DB_PREFIX."bank";
+				$sql .= " WHERE label='".$payout->trace_id->value."'";
+				dol_syslog("fetch bank line link to stripe paiment ".$payout->trace_id->value, LOG_DEBUG);
+				$result = $db->query($sql);
+				if ($result) {
+					if ( $num = $db->num_rows($result) ) {
+						print '<span class="small">';
+						// affichage de la liste des numero d'ecriture bancaire liees a ce paiement stripe
+						print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?search_description='.$payout->trace_id->value.'">';
+						$i=0;
+						while ($i < $num) {
+							$obj = $db->fetch_object($result);
+							if ( $i != 0 ) print ' / ';
+							print '<span>'.$obj->rowid.'</span>';
+							$i++;
+						}
+						print '</a>';
+						print '</span>';
+					}
+				} else {
+					// TODO => mettre un bouton pour faire l'enregistrement du virement
+					print '<span class="small">';
+					print $langs->trans("NonEnregistre");
+					print '</span>';
+				}
+			} else {	// virement pas encore fait par stripe
+				print '<span class="small">';
+				print $langs->trans("VirtNonEffectue");
+				print '</span>';
+			}
 			print "</td>";
 			// Status
 			print '<td class="center">';
