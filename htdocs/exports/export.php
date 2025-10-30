@@ -149,6 +149,7 @@ $entitytolang = array(
 	'inventory_line' => 'InventoryLine'
 );
 
+
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
 $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["export_filtered_fields"] : array();
 $datatoexport = GETPOST("datatoexport", "aZ09");
@@ -162,6 +163,7 @@ $field = GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);
+
 
 $objmodelexport = new ModeleExports($db);
 $form = new Form($db);

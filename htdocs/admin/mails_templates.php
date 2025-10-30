@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';
 
 /**
  * @var Conf $conf
@@ -283,7 +284,7 @@ $permissiontoadd = 1;
 $permissiontoedit = ($user->admin ? 1 : 0);
 $permissiontodelete = ($user->admin ? 1 : 0);
 if ($rowid > 0) {
-	$tmpmailtemplate = new ModelMail($db);
+	$tmpmailtemplate = new CEmailTemplate($db);
 	$tmpmailtemplate->fetch($rowid);
 	if ($tmpmailtemplate->fk_user == $user->id) {
 		$permissiontoedit = 1;

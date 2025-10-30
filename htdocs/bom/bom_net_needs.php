@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -332,7 +332,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 					$unit = new CUnits($db);
 					$unit->fetch((int) $elem['fk_unit']);
-					print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+					print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords((string) $unit->label))."&nbsp;" : '');
 				}
 				print '</td>';
 				print '<td class="linecolstock right">'.price(price2num($prod->stock_reel, 'MS')).'</td>';

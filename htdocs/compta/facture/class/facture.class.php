@@ -154,31 +154,35 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int<0,1> 1 if invoice paid COMPLETELY, 0 otherwise
-	 * @deprecated * Use statut and close_code)
+	 * @deprecated Use statut = 2 and close_code is null or = '' instead
 	 */
 	public $paye;
 
 	/**
-	 * @var ?string key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', 'marketplace', ...)
+	 * @var ?string 	key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', 'marketplace', ...)
 	 */
 	public $module_source;
 	/**
-	 * @var ?string key of POS terminal ('0', '1', ...)
+	 * @var ?string 	key of POS terminal ('0', '1', ...)
 	 */
 	public $pos_source;
+	/**
+	 * @var int			counter used to track how many times the ticket was printed.
+	 */
+	public $pos_print_counter = 0;
 
 	/**
-	 * @var int id of template invoice when generated from a template invoice
+	 * @var int 		id of template invoice when generated from a template invoice
 	 */
 	public $fk_fac_rec_source;
 
 	/**
-	 * @var int id of source invoice if replacement invoice or credit note
+	 * @var int 		id of source invoice if replacement invoice or credit note
 	 */
 	public $fk_facture_source;
 
 	/**
-	 * @var int ID Field to store bank id to use when payment mode is withdraw
+	 * @var int 		ID Field to store bank id to use when payment mode is withdraw
 	 */
 	public $fk_bank;
 
@@ -365,6 +369,7 @@ class Facture extends CommonInvoice
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -1, 'position' => 310),
 		'module_source' => array('type' => 'varchar(32)', 'label' => 'POSModule', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => -1, 'position' => 315),
 		'pos_source' => array('type' => 'varchar(32)', 'label' => 'POSTerminal', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => -1, 'position' => 320),
+		'pos_print_counter' => array('type' => 'varchar(32)', 'label' => 'PrintCount', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => 0, 'position' => 325),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 500),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 506),
@@ -702,7 +707,7 @@ class Facture extends CommonInvoice
 		$sql .= ", note_public";
 		$sql .= ", ref_client";
 		$sql .= ", fk_account";
-		$sql .= ", module_source, pos_source, fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
+		$sql .= ", module_source, pos_source, pos_print_counter, fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
 		$sql .= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
 		$sql .= ", fk_input_reason";
 		$sql .= ", situation_cycle_ref, situation_counter, situation_final";
@@ -733,6 +738,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape((string) $this->pos_source)."'" : "null");
+		$sql .= ", ".(int) $this->pos_print_counter;
 		$sql .= ", ".($this->fk_fac_rec_source ? "'".$this->db->escape((string) $this->fk_fac_rec_source)."'" : "null");
 		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape((string) $this->fk_facture_source)."'" : "null");
 		$sql .= ", ".($origin_user_author_id > 0 ? (int) $origin_user_author_id : "null");
@@ -2221,7 +2227,7 @@ class Facture extends CommonInvoice
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.fk_incoterms, f.location_incoterms';
-		$sql .= ', f.module_source, f.pos_source';
+		$sql .= ', f.module_source, f.pos_source, f.pos_print_counter';
 		$sql .= ", i.libelle as label_incoterms";
 		$sql .= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit, f.retained_warranty_fk_cond_reglement as retained_warranty_fk_cond_reglement";
 		$sql .= ", f.payment_reference, f.dispute_status";
@@ -2349,6 +2355,7 @@ class Facture extends CommonInvoice
 
 				$this->module_source = $obj->module_source;
 				$this->pos_source = $obj->pos_source;
+				$this->pos_print_counter = $obj->pos_print_counter;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -2782,6 +2789,7 @@ class Facture extends CommonInvoice
 		$sql .= " import_key = ".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
 		$sql .= " module_source = ".(isset($this->module_source) ? "'".$this->db->escape($this->module_source)."'" : "null").",";
 		$sql .= " pos_source = ".(isset($this->pos_source) ? "'".$this->db->escape($this->pos_source)."'" : "null").",";
+		$sql .= " pos_print_counter = ".(int) $this->pos_print_counter.",";
 		$sql .= " situation_cycle_ref = ".(empty($this->situation_cycle_ref) ? "null" : (int) $this->situation_cycle_ref).",";
 		$sql .= " situation_counter = ".(empty($this->situation_counter) ? "null" : (int) $this->situation_counter).",";
 		$sql .= " situation_final = ".(empty($this->situation_final) ? "0" : (int) $this->situation_final).",";
@@ -5518,7 +5526,7 @@ class Facture extends CommonInvoice
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
+	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines, 'takepos'=Specimen for takepos module
 	 *  @return	int
 	 */
 	public function initAsSpecimen($option = '')
@@ -5578,6 +5586,8 @@ class Facture extends CommonInvoice
 		$this->fk_incoterms = 0;
 		$this->location_incoterms = '';
 
+		$this->pos_print_counter = 3;	// Already printed 3 times
+
 		$this->status = 0;
 
 		if (empty($option) || $option != 'nolines') {
@@ -5593,7 +5603,7 @@ class Facture extends CommonInvoice
 				$line->localtax1_tx = 0;
 				$line->localtax2_tx = 0;
 				$line->remise_percent = 0;
-				if ($xnbp == 1) {        // Qty is negative (product line)
+				if ($xnbp == 1 && $option != 'takepos') {        // Qty is negative (product line)
 					$prodid = mt_rand(1, $num_prods);
 					if (isset($prodids[$prodid])) {
 						$line->fk_product = $prodids[$prodid];
@@ -5605,7 +5615,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ht = -200;
 					$line->multicurrency_total_ttc = -239.2;
 					$line->multicurrency_total_tva = -39.2;
-				} elseif ($xnbp == 2) {    // UP is negative (free line)
+				} elseif ($xnbp == 2 && $option != 'takepos') {    // UP is negative (free line)
 					$line->subprice = -100;
 					$line->total_ht = -100;
 					$line->total_ttc = -119.6;
@@ -5656,27 +5666,29 @@ class Facture extends CommonInvoice
 			$this->revenuestamp = 0;
 
 			// Add a line "offered"
-			$line = new FactureLigne($this->db);
-			$line->desc = $langs->trans("Description")." (offered line)";
-			$line->qty = 1;
-			$line->subprice = 100;
-			$line->tva_tx = 19.6;
-			$line->localtax1_tx = 0;
-			$line->localtax2_tx = 0;
-			$line->remise_percent = 100;
-			$line->total_ht = 0;
-			$line->total_ttc = 0; // 90 * 1.196
-			$line->total_tva = 0;
-			$line->multicurrency_total_ht = 0;
-			$line->multicurrency_total_ttc = 0;
-			$line->multicurrency_total_tva = 0;
-			$prodid = mt_rand(1, $num_prods);
-			if (isset($prodids[$prodid])) {
-				$line->fk_product = $prodids[$prodid];
-			}
+			if ($option != 'takepos') {
+				$line = new FactureLigne($this->db);
+				$line->desc = $langs->trans("Description")." (offered line)";
+				$line->qty = 1;
+				$line->subprice = 100;
+				$line->tva_tx = 19.6;
+				$line->localtax1_tx = 0;
+				$line->localtax2_tx = 0;
+				$line->remise_percent = 100;
+				$line->total_ht = 0;
+				$line->total_ttc = 0; // 90 * 1.196
+				$line->total_tva = 0;
+				$line->multicurrency_total_ht = 0;
+				$line->multicurrency_total_ttc = 0;
+				$line->multicurrency_total_tva = 0;
+				$prodid = mt_rand(1, $num_prods);
+				if (isset($prodids[$prodid])) {
+					$line->fk_product = $prodids[$prodid];
+				}
 
-			$this->lines[$xnbp] = $line;
-			$xnbp++;
+				$this->lines[$xnbp] = $line;
+				$xnbp++;
+			}
 		}
 
 		return 1;
@@ -5689,7 +5701,7 @@ class Facture extends CommonInvoice
 	 */
 	public function loadStateBoard()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
 

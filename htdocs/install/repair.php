@@ -1993,7 +1993,7 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 		foreach (array_slice($supplierOrders, 1) as $supplierOrder) {
 			// Definition of supplier order numbering model name
 			$soc = new Societe($db);
-			$soc->fetch($supplierOrder->fourn_id);
+			$soc->fetch((int) $supplierOrder->fourn_id);
 
 			$newRef = $supplierOrder->getNextNumRef($soc);
 
