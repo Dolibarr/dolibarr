@@ -171,7 +171,7 @@ if (!$rowid) {
 			// link to bank transfer
 			if ($payout->status == 'paid') {
 				$sql = "SELECT * FROM ".MAIN_DB_PREFIX."bank";
-				$sql .= " WHERE label='".$payout->trace_id->value."'";
+				$sql .= " WHERE label='".$db->escape($payout->trace_id->value)."'";
 				dol_syslog("fetch bank line link to stripe paiment ".$payout->trace_id->value, LOG_DEBUG);
 				$result = $db->query($sql);
 				if ($result) {
