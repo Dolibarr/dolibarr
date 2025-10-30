@@ -414,7 +414,7 @@ if ($resql) {
 		print "<div id='ways'>";
 		$c = new Categorie($db);
 		$c->fetch($search_categ);
-		$ways = $c->print_all_ways(' &gt; ', 'product/reassort.php');
+		$ways = $c->print_all_ways('auto', 'product/reassort.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
 	}

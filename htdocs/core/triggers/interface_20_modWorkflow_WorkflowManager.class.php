@@ -229,6 +229,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							/** @var Expedition $element */
 							$ret = $element->setClosed();
+							$this->errors = $element->errors;
 							if ($ret < 0) {
 								return (int) $ret;
 							}

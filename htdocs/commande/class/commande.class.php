@@ -3627,7 +3627,7 @@ class Commande extends CommonOrder
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$clause = " WHERE";
 
@@ -3655,7 +3655,10 @@ class Commande extends CommonOrder
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-
+		// Add where from hooks
+		$parameters = array('socid' => $user->socid);
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$delay_warning = 0;
@@ -4150,21 +4153,24 @@ class Commande extends CommonOrder
 	 */
 	public function loadStateBoard()
 	{
-		global $user;
+		global $user, $hookmanager;
 
 		$this->nb = array();
 		$clause = "WHERE";
 
-		$sql = "SELECT count(co.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as co";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
+		$sql = "SELECT count(c.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= " ".$clause." co.entity IN (".getEntity('commande').")";
-
+		$sql .= " ".$clause." c.entity IN (".getEntity('commande').")";
+		// Add where from hooks
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
