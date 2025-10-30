@@ -957,9 +957,9 @@ function measuringUnitString($unitid, $measuring_style = '', $unitscale = null, 
 				if ($use_short_label == 1) {
 					$labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
 				} elseif ($use_short_label == 2) {
-					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst($measuringUnits->records[key($measuringUnits->records)]->label).'Short');
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv(ucfirst((string) $measuringUnits->records[key($measuringUnits->records)]->label).'Short');
 				} else {
-					$labeltoreturn = $outputlangs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv((string) $measuringUnits->records[key($measuringUnits->records)]->label);
 				}
 			} else {
 				$labeltoreturn = '';

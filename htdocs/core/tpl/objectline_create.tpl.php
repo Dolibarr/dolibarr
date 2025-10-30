@@ -612,9 +612,9 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 		print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
 	} else {
 		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-		print $form->selectDate($date_start, 'date_start', !getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 0 : 1, !getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 0 : 1, 1, "addproduct", 1, 0);
+		print $form->selectDate($date_start, 'date_start', getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE'), getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE'), 1, "addproduct", 1, 0);
 		print ' '.$langs->trans('to').' ';
-		print $form->selectDate($date_end, 'date_end', !getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 0 : 1, !getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 0 : 1, 1, "addproduct", 1, 0);
+		print $form->selectDate($date_end, 'date_end', getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE'), getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE'), 1, "addproduct", 1, 0);
 	}
 
 	if ($prefillDates) {
@@ -963,13 +963,6 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
 								<?php
-								// Price by customer
-								if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($object->socid)) {
-									?>
-							$("#remise_percent").val(data.discount);
-									<?php
-								}
-
 								if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
 							var proddesc = data.desc_trans;
