@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 $langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails', 'contracts'));
 
 // Security check
-if (!$user->admin) {
+if (!$user->admin) { // after this test, $user->admin is always true
 	accessforbidden();
 }
 
@@ -58,10 +58,10 @@ $error = 0;
  */
 
 // Action to update or add a constant
-if ($action == 'settemplates' && $user->admin) {
+if ($action == 'settemplates') {
 	$db->begin();
 
-	if (!$error && is_array($_POST)) {
+	if (is_array($_POST)) {
 		$reg = array();
 		foreach ($_POST as $key => $val) {
 			if (!preg_match('/^constvalue_(.*)_TEMPLATE/', $key, $reg)) {
@@ -100,7 +100,7 @@ if ($action == 'settemplates' && $user->admin) {
 	}
 }
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue') {
 	$db->begin();
 
 	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "alphawithlgt"), 'chaine', 0, '', $conf->entity);
@@ -125,10 +125,10 @@ if ($action == 'setvalue' && $user->admin) {
 }
 
 
-if ($action == 'setfixednotif' && $user->admin) {
+if ($action == 'setfixednotif') {
 	$db->begin();
 
-	if (!$error && is_array($_POST)) {
+	if (is_array($_POST)) {
 		$reg = array();
 		foreach ($_POST as $key => $val) {
 			if (!preg_match('/^NOTIF_(.*)_key$/', $key, $reg)) {
