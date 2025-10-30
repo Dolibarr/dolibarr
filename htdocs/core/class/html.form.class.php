@@ -9185,7 +9185,7 @@ class Form
 			}
 		} else {
 			// For backward compatibility
-			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'showoncombobox' => 1);
+			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'visible' => 4, 'showoncombobox' => 1);
 		}
 
 		if (empty($fieldstoshow)) {
