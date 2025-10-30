@@ -137,7 +137,7 @@ trait CommonSignedObject
 			$statusfield = 'signed_status';
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$statusfield." = ".((int) $status);
+			$sql .= " SET ".$this->db->sanitize($statusfield)." = ".((int) $status);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {

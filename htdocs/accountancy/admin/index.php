@@ -312,6 +312,34 @@ if ($action == 'setdisablebindingonexpensereports') {
 	}
 }
 
+if ($action == 'setdisabletransferonassets') {
+	$setdisabletransferonassets = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_TRANSFER_ON_ASSETS", $setdisabletransferonassets, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setdisabletransferondiscounts') {
+	$setdisabletransferondiscounts = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS", $setdisabletransferondiscounts, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 if ($action == 'setenablelettering') {
 	$setenablelettering = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_LETTERING", $setenablelettering, 'yesno', 0, '', $conf->entity);
@@ -546,6 +574,32 @@ if (getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 }
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_TRANSFER_ON_ASSETS").'</td>';
+if (getDolGlobalString('ACCOUNTING_DISABLE_TRANSFER_ON_ASSETS')) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferonassets&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on', '', 0, 0, 0, '', 'warning');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferonassets&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS").'</td>';
+if (getDolGlobalString('ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS')) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferondiscounts&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on', '', 0, 0, 0, '', 'warning');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferondiscounts&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
 if (!getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ACCOUNTANCY_ER_DATE_RECORD").'</td>';
@@ -744,7 +798,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
 	print '<input class="flat right" name="ACCOUNTING_LETTERING_NBLETTERS" id="ACCOUNTING_LETTERING_NBLETTERS" value="' . $nbletter . '" type="number" step="1" min="2" max="3" >' . "\n";
 	print '</tr>';
 
-	// Auto Lettering when transfer in accountancy is realized
+	// Auto matching when transfer in accountancy is realized
 	print '<tr class="oddeven">';
 	print '<td>';
 	print $form->textwithpicto($langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING"), $langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING_DESC")) . '</td>';
