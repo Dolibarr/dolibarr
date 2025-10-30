@@ -547,12 +547,6 @@ parameters:
 			path: ../../../htdocs/admin/fediverse.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/geoipmaxmind.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -761,12 +755,6 @@ parameters:
 			identifier: empty.variable
 			count: 2
 			path: ../../../htdocs/admin/mails_ticket.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/admin/menus/edit.php
 
 		-
 			message: '#^If condition is always true\.$#'
