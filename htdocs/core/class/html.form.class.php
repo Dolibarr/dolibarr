@@ -10134,7 +10134,7 @@ class Form
 	 * Render list of categories linked to object with id $id and type $type
 	 *
 	 * @param int 		$id 		Id of object
-	 * @param string 	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param string 	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode using number (0, 1, 2, ...) is deprecated.
 	 * @param int<0,1>	$rendermode 0=Default, use multiselect (deprecated). 1=Emulate multiselect (recommended)
 	 * @param int<0,1> 	$nolink 	1=Do not add html links
 	 * @return string               String with categories
@@ -10149,7 +10149,7 @@ class Form
 		if ($rendermode == 1) {
 			$toprint = array();
 			foreach ($categories as $c) {
-				$ways = $c->print_all_ways(' &gt;&gt; ', ($nolink ? 'none' : ''), 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+				$ways = $c->print_all_ways('auto', ($nolink ? 'none' : ''), 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 				foreach ($ways as $way) {
 					$color = $c->color;
 					$sfortag = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
@@ -12580,13 +12580,13 @@ class Form
 	/**
 	 * Output the buttons to submit a creation/edit form
 	 *
-	 * @param 	string 	$save_label 		Alternative label for save button
-	 * @param 	string 	$cancel_label 		Alternative label for cancel button
+	 * @param 	string 			$save_label 		Alternative label for save button
+	 * @param 	string 			$cancel_label 		Alternative label for cancel button
 	 * @param 	array<array{addclass?:string,name?:string,label_key?:string}> $morebuttons 		Add additional buttons between save and cancel
 	 * @param 	bool|int<0,1> 	$withoutdiv	Option to remove enclosing centered div
-	 * @param 	string 	$morecss 			More CSS
-	 * @param 	string 	$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
-	 * @return  string                      Html code with the buttons
+	 * @param 	string 			$morecss 			More CSS
+	 * @param 	string 			$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
+	 * @return  string           		           	Html code with the buttons
 	 */
 	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = false, $morecss = '', $dol_openinpopup = '')
 	{
