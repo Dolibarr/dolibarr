@@ -918,8 +918,7 @@ class Facture extends CommonInvoice
 						);
 
 						if ($result < 0) {
-							$this->error = $newinvoiceline->error;
-							$this->errors = array_merge($this->errors, $newinvoiceline->errors);
+							$this->setErrorsFromObject($newinvoiceline);
 							$error++;
 							break;
 						}
