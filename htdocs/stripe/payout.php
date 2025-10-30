@@ -43,6 +43,7 @@ if (isModEnabled('accounting')) {
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
+
 // Security check
 $socid = GETPOSTINT("socid");
 if ($user->socid) {
@@ -166,7 +167,7 @@ if (!$rowid) {
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</span></td>";
 			// Info links
-			print '<td>';	
+			print '<td>';
 			// link to bank transfer
 			if ($payout->status == 'paid') {
 				$sql = "SELECT * FROM ".MAIN_DB_PREFIX."bank";
