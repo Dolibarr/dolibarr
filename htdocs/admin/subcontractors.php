@@ -93,7 +93,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_CODE", GETPOST("itprovider_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NOTE", GETPOST("itprovider_note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
 
-	if ($action != 'updateedit' && !$error) {
+	if ($action != 'updateedit') {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 }
