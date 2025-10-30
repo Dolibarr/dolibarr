@@ -3565,6 +3565,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// $morehtml is the right part (link "Back to list")
+	// $morehtmlref is the part after the ref
 	// $morehtmlleft is the picto or photo of banner
 	// $morehtmlstatus is part under the status
 	// $morehtmlright is part of htmlright
@@ -4351,11 +4352,13 @@ function getArrayOfSocialNetworks()
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 	$cachekey = 'socialnetworks_' . $conf->entity;
 	$dataretrieved = dol_getcache($cachekey);
+
 	if (!is_null($dataretrieved)) {
 		$socialnetworks = $dataretrieved;
 	} else {
 		$sql = "SELECT rowid, code, label, url, icon, active FROM " . MAIN_DB_PREFIX . "c_socialnetworks";
-		$sql .= " WHERE entity =" . ((int) $conf->entity);
+		$sql .= " WHERE entity = " . ((int) $conf->entity);
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
