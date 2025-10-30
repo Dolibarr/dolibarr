@@ -1904,8 +1904,10 @@ class Task extends CommonObjectLine
 
 		$sql = "SELECT";
 		$sql .= " SUM(t.element_duration) as nbseconds,";
+		$sql .= " SUM(".$this->db->ifsql("u.thm IS NULL", '1', '0').") as nbuserthmnull,";
 		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", '0', "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", '1', '0').") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user";
 		$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $id);
 		if (is_object($fuser) && $fuser->id > 0) {
 			$sql .= " AND fk_user = ".((int) $fuser->id);
@@ -1928,6 +1930,7 @@ class Task extends CommonObjectLine
 			$result['amount'] = $obj->amount;
 			$result['nbseconds'] = $obj->nbseconds;
 			$result['nblinesnull'] = $obj->nblinesnull;
+			$result['nbuserthmnull'] = $obj->nbuserthmnull;
 
 			$this->db->free($resql);
 			return $result;
