@@ -3737,8 +3737,7 @@ class Facture extends CommonInvoice
 							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
 							if ($result < 0) {
 								$error++;
-								$this->error = $mouvP->error;
-								$this->errors = array_merge($this->errors, $mouvP->errors);
+								$this->setErrorsFromObject($mouvP);
 							}
 						} else {
 							// TODO If warehouseid has been set into invoice line, we should use this value in priority
@@ -3790,8 +3789,7 @@ class Facture extends CommonInvoice
 											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 											if ($result < 0) {
 												$error++;
-												$this->error = $mouvP->error;
-												$this->errors = array_merge($this->errors, $mouvP->errors);
+												$this->setErrorsFromObject($mouvP);
 												break;
 											}
 
@@ -3815,8 +3813,7 @@ class Facture extends CommonInvoice
 												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 												if ($result < 0) {
 													$error++;
-													$this->error = $mouvP->error;
-													$this->errors = array_merge($this->errors, $mouvP->errors);
+													$this->setErrorsFromObject($mouvP);
 												}
 											}
 										}
@@ -3828,8 +3825,7 @@ class Facture extends CommonInvoice
 								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
 								if ($result < 0) {
 									$error++;
-									$this->error = $mouvP->error;
-									$this->errors = array_merge($this->errors, $mouvP->errors);
+									$this->setErrorsFromObject($mouvP);
 								}
 							}
 						}
