@@ -145,13 +145,13 @@ class Form
 	 * @param 	string				$text 			Text of label or key to translate
 	 * @param 	string				$htmlname 		Name of select field ('edit' prefix will be added)
 	 * @param 	string				$preselected 	Value to show/edit (not used in this function)
-	 * @param 	object				$object 		Object (on the page we show)
+	 * @param 	?object				$object 		Object (on the page we show)
 	 * @param 	int<0,1>|boolean	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param 	string	 			$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param 	string				$moreparam		More param to add on a href URL.
 	 * @param 	int<0,1>			$fieldrequired	1 if we want to show field as mandatory using the "fieldrequired" CSS.
 	 * @param 	int<0,3>			$notabletag		1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
-	 * @param 	string				$paramid 		Key of parameter for id ('id', 'socid')
+	 * @param 	'id'|'socid'|'projectid'	$paramid 	Key of parameter for id ('id', 'socid')
 	 * @param 	string				$help 			Tooltip help
 	 * @return  string								HTML edit field
 	 */
@@ -215,7 +215,7 @@ class Form
 			if (empty($notabletag) && $perm) {
 				$ret .= '<td class="right">';
 			}
-			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm) {
+			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm && is_object($object)) {
 				$ret .= '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit' . $htmlname, $paramid => $object->id], true) . $moreparam . '">';
 				$ret .= img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1));
 				$ret .= '</a>';
@@ -9142,7 +9142,7 @@ class Form
 	 * Output html form to select an object.
 	 * Note, this function is called by selectForForms or by ajax selectobject.php
 	 *
-	 * @param Object 		$objecttmp 			Object to know the table to scan for combo.
+	 * @param CommonObject	$objecttmp 			Object to know the table to scan for combo.
 	 * @param string 		$htmlname 			Name of HTML select component
 	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
 	 * @param string|int<0,1>	$showempty 		''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
@@ -9219,6 +9219,7 @@ class Form
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
 		if (!empty($objecttmp->parent_element)) {	// If parent_element is defined
+			'@phan-var-force CommonObjectLine $objecttmp';
 			$parent_properties = getElementProperties($objecttmp->parent_element);
 			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$objecttmp->fk_parent_attribute;
 		}
