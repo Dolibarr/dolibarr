@@ -586,7 +586,7 @@ class Commande extends CommonOrder
 						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr", $num));
 						if ($result < 0) {
 							$error++;
-							$this->error = $mouvP->error;
+							$this->setErrorsFromObject($mouvP);
 						}
 					}
 					if ($error) {
@@ -721,7 +721,7 @@ class Commande extends CommonOrder
 						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr", $this->ref));
 						if ($result < 0) {
 							$error++;
-							$this->error = $mouvP->error;
+							$this->setErrorsFromObject($mouvP);
 							break;
 						}
 					}
@@ -1861,7 +1861,7 @@ class Commande extends CommonOrder
 					return -1;
 				}
 			} else {
-				$this->error = $this->line->error;
+				$this->setErrorsFromObject($this->line);
 				dol_syslog(get_class($this)."::addline error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -2184,8 +2184,7 @@ class Commande extends CommonOrder
 					return -1;
 				}
 			} else {
-				$this->error = $line->error;
-				$this->errors = $line->errors;
+				$this->setErrorsFromObject($line);
 				$this->db->rollback();
 				return -2;
 			}
@@ -2522,7 +2521,7 @@ class Commande extends CommonOrder
 				}
 			} else {
 				$this->db->rollback();
-				$this->error = $line->error;
+				$this->setErrorsFromObject($line);
 				return -1;
 			}
 		} else {
@@ -3350,7 +3349,7 @@ class Commande extends CommonOrder
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $this->line->error;
+				$this->setErrorsFromObject($this->line);
 
 				$this->db->rollback();
 				return -1;
