@@ -1827,17 +1827,18 @@ class Contact extends CommonObject
 	/**
 	 * Sets object to supplied categories.
 	 *
-	 * Deletes object from existing categories not supplied.
-	 * Adds it to non existing supplied categories.
-	 * Existing categories are left untouch.
+	 * Assign the object to all categories not yet assigned.
+	 * Unasign object from existing categories not supplied in $categories (if remove_existing==true).
+	 * If remove_existing is false, existing categories are left untouch.
 	 *
-	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							Return integer <0 if KO, >0 if OK
+	 * @param 	int[]|int 	$categories 		Category or categories IDs
+	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
+	 * @return 	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function setCategories($categories)
+	public function setCategories($categories, $remove_existing = true)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		return parent::setCategoriesCommon($categories, Categorie::TYPE_CONTACT);
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_CONTACT, $remove_existing);
 	}
 
 	/**

@@ -101,6 +101,11 @@ class ExternalModules
 	public $githubFileStatus;
 
 	/**
+	 * @var string
+	 */
+	public $githubFileError;
+
+	/**
 	 * @var int // number of online providers
 	 */
 	public $numberOfProviders;
@@ -169,6 +174,7 @@ class ExternalModules
 
 			$this->getRemoteYamlFile($this->file_source_url, $cachedelayforgithubrepo);
 
+			$this->githubFileError = $this->error;
 			$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
 		}
 
@@ -892,7 +898,10 @@ class ExternalModules
 			$result = getURLContent($file_source_url, 'GET', '', 1, $addheaders);	// TODO Force timeout to 5 s on both connect and response.
 			if (!empty($result) && $result['http_code'] == 200) {
 				$yaml = $result['content'];
-				file_put_contents($cache_file, $yaml);
+				$result = file_put_contents($cache_file, $yaml);
+				if ($result === false) {
+					$this->error = 'Failed to create cache file: ' . $cache_file;
+				}
 			}
 		} else {
 			$yaml = file_get_contents($cache_file);
