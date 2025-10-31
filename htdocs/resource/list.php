@@ -452,6 +452,13 @@ print '<table class="tagtable liste">'."\n";
 // Fields title search
 
 print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch center">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
@@ -525,6 +532,10 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 }
@@ -588,7 +599,22 @@ while ($i < $imaxinloop) {
 	$objectstatic->max_users = $obj->max_users;
 	$objectstatic->url = $obj->url;
 
-	print '<tr class="oddeven">';
+	print '<tr data-rowid="'.$obj->rowid.'"  class="oddeven">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
 		print '<td>'.$objectstatic->getNomUrl(5).'</td>';
