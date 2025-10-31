@@ -1991,12 +1991,12 @@ if ($placeid > 0) {
 			'htmlsupplements'=>$htmlsupplements,
 			'form'=>$form,
 			'tooltiptext'=>$tooltiptext,
-		);
-		$reshook = $hookmanager->executeHooks('showTakePosInvoiceLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-		}
-		elseif ($line->fk_parent_line != false) {
+			);
+			$reshook = $hookmanager->executeHooks('showTakePosInvoiceLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} 
+			elseif ($line->fk_parent_line != false) {
 				$htmlsupplements[$line->fk_parent_line] .= '<tr class="drag drop oddeven posinvoiceline';
 				if ($line->special_code == "4") {
 					$htmlsupplements[$line->fk_parent_line] .= ' order';
