@@ -1497,12 +1497,12 @@ function DolibarrTakeposPrinting(id) {
 // Call url to generate a credit note (with same lines) from existing invoice
 var creditNoteParams="";
 function CreditNote() {
-    <?php
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('paramsForCreditNote', $parameters, $invoice, $action);?>
+<?php
+$parameters = array();
+$reshook = $hookmanager->executeHooks('paramsForCreditNote', $parameters, $invoice, $action);?>
 	$("#poslines").load("<?php
-        print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
-        return true;
+		print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
+		return true;
 }
 
 // Call url to add notes
