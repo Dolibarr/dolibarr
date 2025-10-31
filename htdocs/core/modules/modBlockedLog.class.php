@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017   Laurent Destailleur  <eldy@users.sourcefore.net>
+/* Copyright (C) 2017-2025   Laurent Destailleur  <eldy@users.sourcefore.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		$this->db = $db;
 		$this->numero = 3200;
@@ -50,13 +50,13 @@ class modBlockedLog extends DolibarrModules
 		$this->module_position = '76';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";
+		$this->description = "Enable a log on some business events into an unalterable log. This module may be mandatory for some countries.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
-		$this->picto = 'technic';
+		$this->picto = 'blockedlog';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -73,19 +73,18 @@ class modBlockedLog extends DolibarrModules
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
 		$this->langfiles = array('blockedlog');
 
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		$this->warnings_unactivation = array('FR'=>'BlockedLogAreRequiredByYourCountryLegislation');
 
 		// Currently, activation is not automatic because only companies (in France) making invoices to non business customers must
 		// enable this module.
-		/*if (!empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
-		{
-			$tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
+		/*if (getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')) {
+			$tmp = explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
 			$this->automatic_activation = array();
-			foreach($tmp as $key)
+			foreach($tmp as $countrycodekey)
 			{
-				$this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
+				$this->automatic_activation[$countrycodekey] = 'BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
 			}
 		}*/
 		//var_dump($this->automatic_activation);
@@ -149,9 +148,9 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function alreadyUsed()
 	{
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-		$b = new BlockedLog($this->db);
-		return $b->alreadyUsed(1);
+		require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+		return isBlockedLogused();
 	}
 
 
@@ -210,7 +209,7 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$sql = array();
 
@@ -234,6 +233,8 @@ class modBlockedLog extends DolibarrModules
 
 		if ($b->alreadyUsed(1)) {
 			$res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
+			//$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));
+			return 0;
 		} else {
 			$res = $b->create($user);
 		}

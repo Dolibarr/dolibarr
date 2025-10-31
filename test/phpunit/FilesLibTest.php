@@ -3,6 +3,7 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -299,7 +300,7 @@ class FilesLibTest extends CommonClassTest
 		// Again to test there is error when deleting a non existing file with option disableglob
 		$result = dol_delete_file($conf->admin->dir_temp.'/file3.csv', 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertFalse($result, 'delete file that does not exists with disableglo must return ko');
+		$this->assertFalse($result, 'delete file that does not exists with disabling glob must return ko');
 
 		// Again to test there is no error when deleting a non existing file without option disableglob
 		$result = dol_delete_file($conf->admin->dir_temp.'/file3csv', 0, 1);

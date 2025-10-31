@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2006-2017	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_data_root
  */
 
 $langs->load("admin");
@@ -64,7 +66,7 @@ if (!$user->admin) {
 
 if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes')) {
 	// Increase limit of time. Works only if we are not in safe mode
-	$ExecTimeLimit = 600;
+	$ExecTimeLimit = getDolGlobalInt('MAIN_ADMIN_TOOLS_PURGE_EXEC_TIME_LIMIT', 600);
 	if (!empty($ExecTimeLimit)) {
 		$err = error_reporting();
 		error_reporting(0); // Disable all errors

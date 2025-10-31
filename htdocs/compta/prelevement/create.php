@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -55,7 +55,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bill
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'real';
 
 $type = GETPOST('type', 'aZ09');
@@ -95,6 +95,7 @@ $error = 0;
 $option = "";
 $mesg = '';
 
+$object = new BonPrelevement($db);
 
 /*
  * Actions
@@ -216,6 +217,7 @@ if ($type != 'bank-transfer') {
 	$invoicestatic = new FactureFournisseur($db);
 }
 $bprev = new BonPrelevement($db);
+
 $arrayofselected = is_array($toselect) ? $toselect : array();
 // List of mass actions available
 $arrayofmassactions = array(
@@ -246,10 +248,10 @@ llxHeader('', $title);
 // @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 $head = bon_prelevement_prepare_head($bprev, $bprev->nbOfInvoiceToPay($type), $bprev->nbOfInvoiceToPay($type, 'salary'));
 if ($type) {
-	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
+	print dol_get_fiche_head($head, ((GETPOSTISSET('sourcetype') && GETPOST('sourcetype') != '') ? 'salary' : 'invoice'), $langs->trans("Invoices"), -1, $bprev->picto);
 } else {
 	print load_fiche_titre($title);
-	print dol_get_fiche_head();
+	print dol_get_fiche_head(array(), '', '', -1);
 }
 
 
@@ -263,6 +265,9 @@ if ($sourcetype != 'salary') {
 if ($nb < 0) {
 	dol_print_error($db, $bprev->error);
 }
+
+print '<div class="fichecenter">';
+
 print '<table class="border centpercent tableforfield">';
 
 $labeltoshow = $langs->trans("NbOfInvoiceToWithdraw");
@@ -285,7 +290,11 @@ print '</td>';
 print '</tr>';
 
 print '</table>';
+
 print '</div>';
+print '<div class="clearboth"></div>';
+
+print dol_get_fiche_end();
 
 print '<div class="tabsAction">'."\n";
 
@@ -325,7 +334,7 @@ if ($nb) {
 		print $form->selectDate($datere, 're');
 
 
-		if ($mysoc->isInEEC()) {
+		if ($mysoc->isInSEPA()) {
 			$title = $langs->trans("CreateForSepa");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
@@ -347,7 +356,7 @@ if ($nb) {
 			print '<input type="submit" class="butAction margintoponly marginbottomonly" value="'.$title.'">'."\n";
 		}
 	} else {
-		if ($mysoc->isInEEC()) {
+		if ($mysoc->isInSEPA()) {
 			$title = $langs->trans("CreateForSepaFRST");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
@@ -446,7 +455,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {
+	if (($page * $limit) > (int) $nbtotalofrecords) {
 		// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
@@ -474,7 +483,7 @@ if ($resql) {
 		$param .= "&option=".urlencode($option);
 	}
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	if (!empty($limit)) {
@@ -626,10 +635,16 @@ if ($resql) {
 					if ($bac->verif() <= 0) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
 					}
+					if ($obj->soc_rib_id > 0) {
+						print $form->textwithpicto('', $langs->trans("BankAccountForcedOnRequest"));
+					} else {
+						print $form->textwithpicto('', $langs->trans("BankAccountUsedByDefault").'<br><b>'.$langs->trans("Label").'</b> : '.$bac->label.'<br><b>'.$langs->trans("BankName").'</b> : '.$bac->bank, 1, 'help', 'valigmiddle warning');
+					}
 				} else {
 					print img_warning($langs->trans("IBANNotDefined"));
 				}
 			} else {
+				$langs->load("banks");
 				print img_warning($langs->trans("NoBankAccountDefined"));
 			}
 			print '</td>';
@@ -650,6 +665,7 @@ if ($resql) {
 							}
 						}
 					} else {
+						$langs->load("banks");
 						print img_warning($langs->trans("NoBankAccountDefined"));
 					}
 				}

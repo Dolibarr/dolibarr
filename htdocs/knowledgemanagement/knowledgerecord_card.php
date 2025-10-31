@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,9 +161,10 @@ if (empty($reshook)) {
 	$trackid = 'knowledgerecord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
-if ($action == 'confirm_validate') {
+if ($action == 'confirm_validate') {	// Test on permission already done into actions_addupdatedelete.inc.php
 	$action = 'edit';
 }
+
 
 /*
  * View
@@ -182,7 +183,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement 
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewKnowledgeRecord"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if (!empty($backtopage)) {
@@ -203,11 +204,13 @@ if ($action == 'create') {
 
 	if (isModEnabled('category')) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 3);
+		// $output_mode is 3, so fix return type:
+		'@phan-var-force array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}> $cate_arbo';
 
 		if (count($cate_arbo)) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, 'categories', $object);
 			print "</td></tr>";
 		}
 	}
@@ -238,7 +241,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("KnowledgeRecord"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -260,19 +263,13 @@ if (($id || $ref) && $action == 'edit') {
 
 	if (isModEnabled('category')) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 3);
+		// $output_mode is 3, so fix return type:
+		'@phan-var-force array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}> $cate_arbo';
 
 		if (count($cate_arbo)) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT);
-			$arrayselected = array();
-			if (is_array($cats)) {
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, 'categories', $object);
 			print "</td></tr>";
 		}
 	}
@@ -400,7 +397,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
-	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 	 $morehtmlref .= ' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 0, 1, '', 'maxwidth300');
@@ -482,9 +479,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook)) {
 			// Send
-			if (empty($user->socid)) {
-				//print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle');
-			}
+			//if (empty($user->socid)) {
+			//print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle');
+			//}
 
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
@@ -500,7 +497,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				} else {
 					$langs->load("errors");
 					//print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes', '', 0);
-					print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Reply").'</a>';
+					print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
 

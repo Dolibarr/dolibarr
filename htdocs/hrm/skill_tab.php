@@ -4,7 +4,7 @@
  * Copyright (C) 2021       Greg Rastklan       <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021       Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021       Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -350,6 +350,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$object->getRights();
 		$head = user_prepare_head($object);
 		$listLink = dol_buildpath('/user/list.php', 1);
+	} else {
+		$head = [];
 	}
 
 	print dol_get_fiche_head($head, 'skill_tab', $langs->trans("Workstation"), -1, $object->picto);
@@ -395,7 +397,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$linkback = '<a href="' . $listLink . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 		$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
@@ -465,9 +467,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$addadmin = '';
 			if (property_exists($object, 'admin')) {
 				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
 				} elseif (!empty($object->admin)) {
-					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 				}
 			}
 			print showValueWithClipboardCPButton(!empty($object->login) ? $object->login : '').$addadmin;
@@ -611,15 +613,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= " WHERE e.rowid = ed.fk_evaluation";
 		$sql .= " AND s.rowid = ed.fk_skill";
 		$sql .= " AND e.fk_user = ".((int) $id);
-		$sql .= " AND e.status > 0";
+
 		$resql = $db->query($sql);
 		$num = $db->num_rows($resql);
 
 		//num of evaluations for each user
-		$sqlEval = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+		$sqlEval = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 		$sqlEval .= " WHERE e.fk_user = ".((int) $id);
 		$rslt = $db->query($sqlEval);
-		$numEval = $db->num_rows($rslt);
+		$tmpobj = $db->fetch_object($rslt);
+		$numEval = 0;
+		if ($tmpobj) {
+			$numEval = $tmpobj->nb;
+		}
 
 		$page = 0;
 		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $numEval, $numEval, $evaltmp->picto, 0);
@@ -646,6 +652,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$objects[$i] = $obj;
 				$i++;
 			}
+
 			//grouped skills by evaluation
 			$resultArray = getGroupedEval($objects);
 			foreach ($resultArray as $object) {
@@ -673,12 +680,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print $evaltmp->getLibStatut(2);
 				print '</td>';
 				print '<td class="linecolrank tdoverflowmax300">';
-
-				if (!is_array($object)) {
-					print $object->result;
-				} else {
-					foreach ($object as $skill) {
-						print $skill->result;
+				if ($job->status == $job::STATUS_VALIDATED) {
+					if (!is_array($object)) {
+						print $object->result;
+					} else {
+						foreach ($object as $skill) {
+							print $skill->result;
+						}
 					}
 				}
 				print '</td>';

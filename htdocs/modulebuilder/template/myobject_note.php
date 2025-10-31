@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,17 +79,16 @@ if (!$res && file_exists("../../../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
-
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+dol_include_once('/mymodule/class/myobject.class.php');
+dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "companies"));
@@ -118,7 +117,7 @@ if ($id > 0 || !empty($ref)) {
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
+$enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
 	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
 	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write');
@@ -194,7 +193,7 @@ if ($id > 0 || !empty($ref)) {
 	 if ($permissiontoadd)
 	 {
 	 if ($action != 'classify')
-	 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	 //$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 $morehtmlref.=' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

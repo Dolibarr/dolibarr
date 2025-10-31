@@ -60,16 +60,15 @@ if (!$res && file_exists("../../../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule"));
@@ -132,8 +131,8 @@ if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= ", s.code_client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " FROM ".$db->prefix()."commande as c";
+	$sql.= ", ".$db->prefix()."societe as s";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.fk_statut = 0";
 	$sql.= " AND c.entity IN (".getEntity('commande').")";
@@ -204,7 +203,7 @@ print '</div><div class="fichetwothirdright">';
 // Last modified myobject
 if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
-	$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject as s";
+	$sql.= " FROM ".$db->prefix()."mymodule_myobject as s";
 	$sql.= " WHERE s.entity IN (".getEntity($myobjectstatic->element).")";
 	//if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";

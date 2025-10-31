@@ -1,9 +1,9 @@
 <?php
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
- *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 {
 	public $boxcode = "box_nb_tickets_type";
 	public $boximg = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 

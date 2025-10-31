@@ -5,7 +5,7 @@
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -233,6 +233,9 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 
 $exportlink = "";
 $namelink = "";
+$builddate = 0;
+$calcmode = '';
+$name = '';
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -255,9 +258,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	$description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-} elseif ($modecompta == "BOOKKEEPING") {
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+// }
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
@@ -285,7 +288,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
@@ -320,7 +323,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= ", ".MAIN_DB_PREFIX."paiement as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
@@ -340,9 +343,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+// }
 if (!empty($search_societe)) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
@@ -445,7 +448,7 @@ if ($modecompta == "RECETTES-DEPENSES") {
 
 // Show array
 $i = 0;
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
 foreach ($headerparams as $key => $value) {

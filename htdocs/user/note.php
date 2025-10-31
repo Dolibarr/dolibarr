@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ if ($id) {
 	}
 
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
@@ -135,9 +135,9 @@ if ($id) {
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
 			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
 			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 			}
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;

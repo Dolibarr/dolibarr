@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ $langs->load("dict");
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
@@ -114,13 +115,13 @@ class PgsqlTest extends CommonClassTest
 		$sql = "SELECT a.b, GROUP_CONCAT(a.c) FROM table GROUP BY a.b";
 		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (without SEPARATOR)');
+		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c::TEXT, ','::TEXT) FROM table GROUP BY a.b", 'Test GROUP_CONCAT (without SEPARATOR)');
 
 		// Test GROUP_CONCAT (with SEPARATOR)
 		$sql = "SELECT a.b, GROUP_CONCAT(a.c SEPARATOR ',') FROM table GROUP BY a.b";
 		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (with SEPARATOR)');
+		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c::TEXT, ','::TEXT) FROM table GROUP BY a.b", 'Test GROUP_CONCAT (with SEPARATOR)');
 
 		return $result;
 	}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ abstract class CommonOrder extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -183,6 +183,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Unit price
 	 * @deprecated
 	 * @see $subprice
+	 * @var float
 	 */
 	public $price;
 
@@ -194,7 +195,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Type of the product. 0 for product 1 for service
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $product_type = 0;
 
@@ -234,7 +235,13 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 */
 	public $localtax2_tx;
 
+	/**
+	 * @var string
+	 */
 	public $localtax1_type;
+	/**
+	 * @var string
+	 */
 	public $localtax2_type;
 
 	/**

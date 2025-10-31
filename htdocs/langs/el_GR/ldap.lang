@@ -29,3 +29,5 @@ LDAPPasswordHashType=Τύπος hash κωδικού πρόσβασης
 LDAPPasswordHashTypeExample=Τύπος hash κωδικού πρόσβασης που χρησιμοποιείται στον διακομιστή
 SupportedForLDAPExportScriptOnly=Υποστηρίζεται μόνο από ένα script εξαγωγής ldap
 SupportedForLDAPImportScriptOnly=Υποστηρίζεται μόνο από ένα script εισαγωγής ldap
+LDAPUserAccountControl = userAccountControl κατά τη δημιουργία (active directory)
+LDAPUserAccountControlExample = 512 Κανονικός Λογαριασμός / 546 Κανονικός Λογαριασμός + Χωρίς κωδικό πρόσβασης + Απενεργοποιημένος (δείτε: https://fr.wikipedia.org/wiki/Active_Directory)

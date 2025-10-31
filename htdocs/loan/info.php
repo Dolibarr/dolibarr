@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<br>';
 
-print '<table width="100%"><tr><td>';
+print '<table class="centpercent"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 

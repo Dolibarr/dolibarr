@@ -95,7 +95,7 @@ $arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/t
 
 llxHeaderTicket($langs->trans('Tickets'), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+print '<div class="ticketpublicarea ticketlargemargin">';
 
 print '<p style="text-align: center">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HOME", '<span class="opacitymedium">'.$langs->trans("TicketPublicDesc")).'</span></p>').'</p>';
 print '<br>';

@@ -1,6 +1,7 @@
 # DOLIBARR ERP & CRM
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
+![Docker hub pulls](https://img.shields.io/docker/pulls/dolibarr/dolibarr.svg)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
@@ -33,15 +34,16 @@ There is a lot of different solutions to install Dolibarr.
 
 ### Using packages 
 
-If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions:
+If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge) :
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
-- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
+- [DoliDeb for Debian, Ubuntu](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Red Hat, Fedora, OpenSuse, Mandriva or Mageia
+- The Docker image (see chapter "Using Docker")
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Using the generic step by step setup (recommended)
+### Using the generic step by step setup (recommended for IT users)
 
 You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version:
 
@@ -69,7 +71,7 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
   `http://yourdolibarrvirtualhost/install/`
 
-- Follow the installer instructions;;;
+- Follow the installer instructions
 
 ### Using Docker images
 
@@ -114,6 +116,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Product Variants
 - Bill of Materials (BOM)
 - Manufacturing Orders (MO)
+- Workstations / Workplaces
 
  Customer/Sales Management
 
@@ -173,12 +176,13 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Data export/import
 - Barcodes
 - LDAP connectivity
-- ClickToDial integration
+- Click-To-Dial integration
 - Mass emailing
 - RSS integration
 - Social platforms linking
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
+- AI support via API
 
 (around 100 modules available by default, 1000+ addons at the official marketplace Dolistore.com)
 
@@ -235,7 +239,7 @@ These are features that Dolibarr does **not** yet fully support:
 Administrator, user, developer and translator's documentation are available along with other community resources in the [Wiki](https://wiki.dolibarr.org).
 
 
-## CONTRIBUTING
+## CONTRIBUTING AND RELEASE PROCESS
 
 This project exists thanks to all the people who contribute.
 Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [[Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)]
@@ -243,6 +247,8 @@ Please read the instructions on how to contribute (report a bug/error, a feature
 A View on Contributors:
 
 [![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
+
+The release process is described into the file dev/build/makepack-howto.md
 
 
 ## CREDITS
@@ -256,9 +262,12 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 
 Follow Dolibarr project on:
 
-- [Facebook](https://www.facebook.com/dolibarr)
-- [X](https://x.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
+- [Mastodon](https://pouet.chapril.org/@dolibarr)
+- [BlueSky](https://bsky.app/profile/dolibarr.org)
+- [Threads](https://www.threads.net/@dolibarr)
+- [X](https://x.com/dolibarr)
+- [Facebook](https://www.facebook.com/dolibarr)
 - [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)

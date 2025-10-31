@@ -3,8 +3,6 @@ MenuFinancial=Facturación | Pago
 TaxModuleSetupToModifyRules=Vaya a la configuración del módulo de impuestos <a href="%s"> </a> para modificar las reglas de cálculo
 TaxModuleSetupToModifyRulesLT=Vaya a <a href="%s"> Configuración de la empresa </a> para modificar las reglas de cálculo
 OptionMode=Opción de contabilidad
-OptionModeVirtual=Opción de Reclamaciones-Deudas
-OptionModeTrueDesc=En este contexto, el volumen de negocios se calcula sobre los pagos (fecha de los pagos). La validez de las cifras sólo se garantiza si la contabilidad se examina a través de las entradas/salidas de las cuentas a través de facturas.
 OptionModeVirtualDesc=En este contexto, el volumen de negocios se calcula sobre facturas (fecha de validación). Cuando estas facturas son debidas, hayan sido pagadas o no, se enumeran en la salida del volumen de ventas.
 VATReportBuildWithOptionDefinedInModule=Las cantidades que se muestran aquí se calculan utilizando reglas definidas por la configuración del módulo de impuestos.
 LTReportBuildWithOptionDefinedInModule=Los importes mostrados aquí se calculan utilizando reglas definidas por la configuración de la empresa.

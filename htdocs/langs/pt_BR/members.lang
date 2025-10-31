@@ -71,6 +71,7 @@ ThisIsContentOfYourCard=Este é um resumo das informações que temos sobre voc�
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Assunto do e-mail de notificação recebido em caso de inscrição automática de um convidado
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL=Conteúdo do e-mail de notificação recebido em caso de inscrição automática de um convidado
 DescADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION=Modelo de e-mail a ser usado para enviar e-mail para um membro na validação de membro
+DescADHERENT_CC_MAIL_FROM=Enviar cópia automática do e-mail para
 DescADHERENT_ETIQUETTE_TEXT=Texto impresso em folhas de endereço de membros
 DescADHERENT_CARD_TYPE=Formato da página fichas
 DescADHERENT_CARD_HEADER_TEXT=Texto a imprimir na parte superior do cartão de membro

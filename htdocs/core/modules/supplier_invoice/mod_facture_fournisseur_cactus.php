@@ -58,10 +58,19 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 */
 	public $name = 'Cactus';
 
+	/**
+	 * @var string
+	 */
 	public $prefixinvoice = 'SI';
 
+	/**
+	 * @var string
+	 */
 	public $prefixcreditnote = 'SA';
 
+	/**
+	 * @var string
+	 */
 	public $prefixdeposit = 'SD';
 
 

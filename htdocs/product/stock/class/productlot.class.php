@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023	   	Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -127,7 +127,7 @@ class Productlot extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -144,11 +144,11 @@ class Productlot extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
-		'fk_product'    => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => 1, 'visible' => 1, 'position' => 5, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'picto' => 'product', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'maxwidth150'),
+		'fk_product'    => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => 1, 'visible' => 1, 'position' => 5, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'picto' => 'product', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax250'),
 		'batch'         => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'comment' => 'Batch', 'searchall' => 1, 'picto' => 'lot', 'validate' => 1),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 20),
 		'sellby'        => array('type' => 'date', 'label' => 'SellByDate', 'enabled' => 'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible' => 1, 'notnull' => 0, 'position' => 60),
@@ -167,11 +167,6 @@ class Productlot extends CommonObject
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511),
 		'import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000)
 	);
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var int Product ID
@@ -848,7 +843,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsExpedition($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT exp.fk_soc) as nb_customers, COUNT(DISTINCT exp.rowid) as nb,";
@@ -882,7 +876,7 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//          if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
 			//              $TFather = $this->getFather();
 			//              if (is_array($TFather) && !empty($TFather)) {
 			//                  foreach ($TFather as &$fatherData) {
@@ -923,7 +917,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsSupplierOrder($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_customers, COUNT(DISTINCT cf.rowid) as nb,";
@@ -937,6 +930,7 @@ class Productlot extends CommonObject
 		}
 		$sql .= " WHERE cf.entity IN (".getEntity('expedition').")";
 		$sql .= " AND cfdi.batch = '".($this->db->escape($this->batch))."'";
+		$sql .= " AND cfdi.fk_product = " . (int) $this->fk_product;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -957,7 +951,7 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//          if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
 			//              $TFather = $this->getFather();
 			//              if (is_array($TFather) && !empty($TFather)) {
 			//                  foreach ($TFather as &$fatherData) {
@@ -998,7 +992,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsReception($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT recep.fk_soc) as nb_customers, COUNT(DISTINCT recep.rowid) as nb,";
@@ -1031,7 +1024,7 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//          if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
 			//              $TFather = $this->getFather();
 			//              if (is_array($TFather) && !empty($TFather)) {
 			//                  foreach ($TFather as &$fatherData) {
@@ -1072,7 +1065,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsMo($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$error = 0;
@@ -1232,9 +1224,9 @@ class Productlot extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1342,7 +1334,7 @@ class Productlot extends CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  string  $fieldKey            Key of attribute
 	 * @param  string  $fieldValue          value of attribute
 	 * @return bool 						Return false if fail, true on success, set $this->error for error message

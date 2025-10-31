@@ -72,7 +72,7 @@ print "Update dates to current year for database name = ".$db->database_name."\n
 if (empty($confirm)) {
 	print "Usage: $script_file confirm\n";
 	print "Return code: 0 if success, <>0 if error\n";
-	exit(-1);
+	exit(1);
 }
 
 

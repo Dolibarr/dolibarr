@@ -5,8 +5,9 @@
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 /**
  * @var Conf $conf
@@ -88,7 +90,7 @@ $hookmanager->initHooks(array('groupcard', 'globalcard'));
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 // Users/Groups management only in master entity if transverse mode
-if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
@@ -137,6 +139,7 @@ if (empty($reshook)) {
 		} else {
 			$object->name	= GETPOST("nom", 'alphanohtml');
 			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+			$object->color	= GETPOST("color", 'alphanohtml');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -177,7 +180,7 @@ if (empty($reshook)) {
 	if (($action == 'adduser' || $action == 'removeuser') && $permissiontoedit) {
 		if ($userid > 0) {
 			$object->fetch($id);
-			$object->oldcopy = clone $object;
+			$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
@@ -203,10 +206,11 @@ if (empty($reshook)) {
 
 		$object->fetch($id);
 
-		$object->oldcopy = clone $object;
+		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$object->name = GETPOST("nom", 'alphanohtml');
 		$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+		$object->color = GETPOST("color", 'alphanohtml');
 		$object->tms = dol_now();
 
 		// Fill array 'array_options' with data from add form
@@ -254,6 +258,7 @@ $form = new Form($db);
 $fuserstatic = new User($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formother = new FormOther($db);
 
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
@@ -280,8 +285,15 @@ if ($action == 'create') {
 		}
 	}
 
+	unset($object->fields['color']);
+
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
+
+	print '<tr><td>'.$langs->trans("ColorGroup").'</td>';
+	print '<td>';
+	print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, array(), 'hideifnotset');
+	print '</td></tr>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
@@ -350,10 +362,16 @@ if ($action == 'create') {
 			}
 
 			unset($object->fields['nom']); // Name already displayed in banner
+			unset($object->fields['color']);
 
 			// Common attributes
 			$keyforbreak = '';
 			include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+			print '<tr><td>'.$langs->trans("ColorGroup").'</td>';
+			print '<td>';
+			print $formother->showColor($object->color, '');
+			print '</td></tr>';
 
 			// Other attributes
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -415,7 +433,7 @@ if ($action == 'create') {
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
-					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 					print ' &nbsp; ';
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';
@@ -448,9 +466,9 @@ if ($action == 'create') {
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
-							print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
+							print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
 						} elseif ($useringroup->admin) {
-							print img_picto($langs->trans("AdministratorDesc"), 'star');
+							print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
 						}
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';
@@ -487,7 +505,7 @@ if ($action == 'create') {
 			$genallowed = $user->hasRight("user", "user", "write");
 			$delallowed = $user->hasRight("user", "user", "delete");
 
-			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $mysoc->default_lang);
+			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 
 			// Show links to link elements
 			$tmparray = $form->showLinkToObjectBlock($object, array(), array(), 1);
@@ -533,8 +551,15 @@ if ($action == 'create') {
 				}
 			}
 
+			unset($object->fields['color']);
+
 			// Common attributes
 			include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
+
+			print '<tr><td>'.$langs->trans("ColorGroup").'</td>';
+			print '<td>';
+			print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, array(), 'hideifnotset');
+			print '</td></tr>';
 
 			// Other attributes
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';

@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023      Christian Foellmann     <christian@foellmann.de>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,8 @@ class Status extends DolibarrApi
 	 * Get status (Dolibarr version)
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,dolibarr_version:string,access_locked:string,environment?:string,timestamp_now_utc?:int,timestamp_php_tz?:string,date_tz?:string}}
+	 * @phpstan-return array{success:array{code:int,dolibarr_version:string,access_locked:string,environment?:string,timestamp_now_utc?:int,timestamp_php_tz?:string,date_tz?:string}}
 	 */
 	public function index()
 	{

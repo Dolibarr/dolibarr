@@ -6,7 +6,7 @@
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +87,11 @@ class UserBankAccount extends Account
 	/**
 	 * Create bank information record
 	 *
-	 * @param	?User		$user		User
+	 * @param	User		$user		User
 	 * @param	int<0,1>	$notrigger	1=Disable triggers
 	 * @return	int						Return integer <0 if KO, >= 0 if OK
 	 */
-	public function create($user = null, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -115,18 +115,18 @@ class UserBankAccount extends Account
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	?User		$user		Object user
+	 *	@param	User		$user		Object user
 	 *	@param	int<0,1>	$notrigger	1=Disable triggers
 	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
-	public function update($user = null, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		$error = 0;
 
 		$this->db->begin();
 
 		if (!$this->id) {
-			$this->create();
+			$this->create($user, $notrigger);
 		}
 
 		$sql = "UPDATE ".$this->db->prefix()."user_rib SET";
@@ -223,7 +223,7 @@ class UserBankAccount extends Account
 				$this->number = $obj->number;
 				$this->cle_rib = $obj->cle_rib;
 				$this->bic = $obj->bic;
-				$this->iban = $obj->iban;
+				$this->iban = dolDecrypt($obj->iban);
 				$this->courant = self::TYPE_CURRENT;
 				$this->type = self::TYPE_CURRENT;
 

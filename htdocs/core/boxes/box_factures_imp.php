@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ class box_factures_imp extends ModeleBoxes
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql2 .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 			}
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql2 .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql2 .= ", ".MAIN_DB_PREFIX."facture as f";
@@ -113,7 +113,7 @@ class box_factures_imp extends ModeleBoxes
 			$sql2 .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql2 .= " AND f.paye = 0";
 			$sql2 .= " AND fk_statut = 1";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql2 .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -235,7 +235,7 @@ class box_factures_imp extends ModeleBoxes
 
 					// Add the sum à the bottom of the boxes
 					$this->info_box_contents[$line][] = array(
-						'tr' => 'class="liste_total_wrap"',
+						'tr' => 'class="liste_total"',
 						'td' => 'class="liste_total"',
 						'text' => $langs->trans("Total"),
 					);
@@ -244,7 +244,7 @@ class box_factures_imp extends ModeleBoxes
 						'text' => "&nbsp;",
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right liste_total" ',
+						'td' => 'class="nowraponall right liste_total" ',
 						'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][] = array(

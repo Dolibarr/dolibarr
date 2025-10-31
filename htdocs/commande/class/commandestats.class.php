@@ -100,14 +100,14 @@ class CommandeStats extends Stats
 	 */
 	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
 	{
-		global $user, $conf;
-
+		global $hookmanager;
 		$this->db = $db;
 
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
+		$object = null;
 
 		if ($mode == 'customer') {
 			$object = new Commande($this->db);
@@ -144,6 +144,10 @@ class CommandeStats extends Stats
 		if ($categid) {
 			$this->where .= ' AND EXISTS (SELECT rowid FROM '.$this->categ_link.' as cats WHERE cats.fk_soc = c.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
+		// Add where from hooks
+		$parameters = array('socid' => $socid);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$this->where .= $hookmanager->resPrint;
 	}
 
 	/**
@@ -159,7 +163,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -184,7 +188,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -208,7 +212,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -233,7 +237,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -256,7 +260,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -282,7 +286,7 @@ class CommandeStats extends Stats
 		$sql .= " FROM ".$this->from;
 		$sql .= " INNER JOIN ".$this->from_line." ON c.rowid = tl.fk_commande";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;

@@ -9,8 +9,8 @@
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
- * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +269,8 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader("", $langs->trans("OrdersSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-order');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("OrdersSetup"), $linkback, 'title_setup');
 
 $head = order_admin_prepare_head();
@@ -337,7 +338,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->COMMANDE_ADDON == $file) {
+						if (getDolGlobalString('COMMANDE_ADDON') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -368,7 +369,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -393,7 +394,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -509,7 +510,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -517,7 +518,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -580,7 +581,7 @@ if (!isModEnabled('invoice')) {
 					$row = $db->fetch_row($resql);
 
 					print '<option value="'.$row[0].'"';
-					print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected' : '';
+					print getDolGlobalString('FACTURE_RIB_NUMBER') == $row[0] ? ' selected' : '';
 					print '>'.$row[1].'</option>';
 
 					$i++;
@@ -620,7 +621,7 @@ if (!isModEnabled('invoice')) {
 			$row = $db->fetch_row($resql);
 
 			print '<option value="'.$row[0].'"';
-			print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected' : '';
+			print getDolGlobalString('FACTURE_CHQ_NUMBER') == $row[0] ? ' selected' : '';
 			print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
 
 			$i++;
@@ -649,7 +650,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td class="center" width="60"></td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
@@ -681,7 +682,7 @@ print '</form>';
 
 //Use draft Watermark
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_COMMANDE_DRAFT_WATERMARK">';
 print '<tr class="oddeven"><td>';
@@ -695,7 +696,7 @@ print "</td></tr>\n";
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
-print '<td class="center" colspan="2">';
+print '<td class="left" colspan="2">';
 print ajax_constantonoff('ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 print '</form>';
@@ -709,77 +710,26 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 }
 
-/*
-// Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
-// TODO Must be implemented by PDF templates
-// Ask for payment bank during order
-if (isModEnabled("banque")) {
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (!empty($conf->use_javascript_ajax)) {
-		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
-	} else {
-		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-		}
-	}
-	print '</td></tr>';
-} else {
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td colspan="2">';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
-
-// Ask for warehouse during order
-if (isModEnabled('stock')) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (!empty($conf->use_javascript_ajax)) {
-		print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
-	} else {
-		if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-		}
-	}
-	print '</td></tr>';
-} else {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
-*/
 
 print '</table>';
 print '</div>';
 
 print '<br>';
 
-
-/*
- * Notifications
- */
-
-print load_fiche_titre($langs->trans("Notifications"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60"></td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
-
-print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td class="right">';
-print "</td></tr>\n";
-
-print '</table>';
-print '</div>';
 
 // End of page
 llxFooter();

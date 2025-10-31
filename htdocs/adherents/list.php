@@ -5,8 +5,8 @@
  * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -50,51 +50,50 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "categories"));
 
-
 // Get parameters
-$action 	= GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
-$confirm 	= GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
-$optioncss 	= GETPOST('optioncss', 'aZ');
-$mode 		= GETPOST('mode', 'alpha');
+$optioncss = GETPOST('optioncss', 'aZ');
+$mode = GETPOST('mode', 'alpha');
 $groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 // Search fields
-$search 			= GETPOST("search", 'alpha');
+$search = GETPOST("search", 'alpha');
 $search_id = GETPOST('search_id', 'int');
-$search_ref 		= GETPOST("search_ref", 'alpha');
-$search_lastname 	= GETPOST("search_lastname", 'alpha');
-$search_firstname 	= GETPOST("search_firstname", 'alpha');
-$search_gender 		= GETPOST("search_gender", 'alpha');
-$search_civility 	= GETPOST("search_civility", 'alpha');
-$search_company 	= GETPOST('search_company', 'alphanohtml');
-$search_login 		= GETPOST("search_login", 'alpha');
-$search_address 	= GETPOST("search_address", 'alpha');
-$search_zip 		= GETPOST("search_zip", 'alpha');
-$search_town 		= GETPOST("search_town", 'alpha');
-$search_state 		= GETPOST("search_state", 'alpha');  // county / departement / federal state
-$search_country 	= GETPOST("search_country", 'alpha');
-$search_phone 		= GETPOST("search_phone", 'alpha');
+$search_ref = GETPOST("search_ref", 'alpha');
+$search_lastname = GETPOST("search_lastname", 'alpha');
+$search_firstname = GETPOST("search_firstname", 'alpha');
+$search_gender = GETPOST("search_gender", 'alpha');
+$search_civility = GETPOST("search_civility", 'alpha');
+$search_company = GETPOST('search_company', 'alphanohtml');
+$search_login = GETPOST("search_login", 'alpha');
+$search_address = GETPOST("search_address", 'alpha');
+$search_zip = GETPOST("search_zip", 'alpha');
+$search_town = GETPOST("search_town", 'alpha');
+$search_state = GETPOST("search_state", 'alpha');  // county / departement / federal state
+$search_country = GETPOST("search_country", 'alpha');
+$search_phone = GETPOST("search_phone", 'alpha');
 $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
-$search_type 		= GETPOST("search_type", 'alpha');
-$search_email 		= GETPOST("search_email", 'alpha');
-$search_categ 		= GETPOST("search_categ", 'intcomma');
-$search_morphy 		= GETPOST("search_morphy", 'alpha');
-$search_import_key  = trim(GETPOST("search_import_key", 'alpha'));
+$search_type = GETPOST("search_type", 'alpha');
+$search_email = GETPOST("search_email", 'alpha');
+$search_categ = GETPOST("search_categ", 'intcomma');
+$search_morphy = GETPOST("search_morphy", 'alpha');
+$search_import_key = trim(GETPOST("search_import_key", 'alpha'));
 
 $socid 		= GETPOSTINT('socid');
 if (GETPOSTINT('catid') && empty($search_categ)) {
 	$search_categ = GETPOSTINT('catid');
 }
 
-$search_filter 		= GETPOST("search_filter", 'alpha');
-$search_status 		= GETPOST("search_status", 'intcomma');  // status
+$search_filter = GETPOST("search_filter", 'alpha');
+$search_status = GETPOST("search_status", 'intcomma');  // status
 $search_datec_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datec_start_month'), GETPOSTINT('search_datec_start_day'), GETPOSTINT('search_datec_start_year'));
 $search_datec_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datec_end_month'), GETPOSTINT('search_datec_end_day'), GETPOSTINT('search_datec_end_year'));
 $search_datem_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datem_start_month'), GETPOSTINT('search_datem_start_day'), GETPOSTINT('search_datem_start_year'));
@@ -140,6 +139,7 @@ $object = new Adherent($db);
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
+$diroutputmassaction = $conf->member->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -174,7 +174,7 @@ $arrayfields = array(
 	'd.company' => array('label' => "Company", 'checked' => 1, 'position' => 70),
 	'd.login' => array('label' => "Login", 'checked' => 1),
 	'd.morphy' => array('label' => "MemberNature", 'checked' => 1),
-	't.libelle' => array('label' => "Type", 'checked' => 1, 'position' => 55),
+	't.libelle' => array('label' => "MemberType", 'checked' => 1, 'position' => 55),
 	'd.address' => array('label' => "Address", 'checked' => 0),
 	'd.zip' => array('label' => "Zip", 'checked' => 0),
 	'd.town' => array('label' => "Town", 'checked' => 0),
@@ -199,11 +199,15 @@ $tableprefix = 'd';
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
+		// Special case already added
+		if (in_array($key, array('fk_adherent_type', 'state_id', 'country'))) {	// Already managed by another field key in arrayfields
+			continue;
+		}
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => (int) $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -217,11 +221,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $result = restrictedArea($user, 'adherent');
-
 
 /*
  * Actions
@@ -235,9 +237,10 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$permissiontoread = 0;
-$permissiontodelete = 0;
-$permissiontoadd = 0;
+$permissiontoread = $user->hasRight('adherent', 'lire');
+$permissiontodelete = $user->hasRight('adherent', 'supprimer');
+$permissiontoadd = $user->hasRight('adherent', 'creer');
+$uploaddir = $conf->member->dir_output;
 $error = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
@@ -279,7 +282,6 @@ if (empty($reshook)) {
 		$search_filter = "";
 		$search_status = "";
 		$search_import_key = '';
-		$catid = "";
 		$search_all = "";
 		$toselect = array();
 		$search_datec_start = '';
@@ -364,7 +366,7 @@ if (empty($reshook)) {
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
 			if ($res > 0) {
-				$result = $tmpmember->subscription($now, $amount);
+				$result = $tmpmember->subscription($now, (float) $amount);
 				if ($result < 0) {
 					$error++;
 				} else {
@@ -379,7 +381,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("XSubsriptionError", $error), null, 'mesgs');
+			setEventMessages($langs->trans("XSubsriptionErrors", $error), null, 'mesgs');
 			$db->rollback();
 		}
 	}
@@ -387,10 +389,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
-	$permissiontoread = $user->hasRight('adherent', 'lire');
-	$permissiontodelete = $user->hasRight('adherent', 'supprimer');
-	$permissiontoadd = $user->hasRight('adherent', 'creer');
-	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -407,7 +405,7 @@ $memberstatic = new Adherent($db);
 $now = dol_now();
 
 // Page Header
-$title = $langs->trans("Members")." - ".$langs->trans("List");
+$title = $langs->trans("Members");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 $morejs = array();
 $morecss = array();
@@ -416,7 +414,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
+$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc as socid,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
@@ -526,7 +524,7 @@ if ($search_firstname) {
 	$sql .= natural_search("d.firstname", $search_firstname);
 }
 if ($search_lastname) {
-	$sql .= natural_search(array("d.firstname", "d.lastname", "d.societe"), $search_lastname);
+	$sql .= natural_search("d.lastname", $search_lastname);
 }
 if ($search_gender != '' && $search_gender != '-1') {
 	$sql .= natural_search("d.gender", $search_gender);
@@ -535,7 +533,7 @@ if ($search_login) {
 	$sql .= natural_search("d.login", $search_login);
 }
 if ($search_company) {
-	$sql .= natural_search("s.nom", $search_company);
+	$sql .= natural_search(array("s.nom", "d.societe"), $search_company);
 }
 if ($search_email) {
 	$sql .= natural_search("d.email", $search_email);
@@ -600,7 +598,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -641,102 +639,120 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
-	$result = $membertype->fetch($search_type);
+	$result = $membertype->fetch((int) $search_type);
 	$title .= " (".$membertype->label.")";
 }
 
 // $parameters
-$param = '';
+$query = [];
 if (!empty($mode)) {
-	$param .= '&mode='.urlencode($mode);
+	$query += ['mode' => $mode];
 }
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
+	$query += ['contextpage' => $contextpage];
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.((int) $limit);
+	$query += ['limit' => $limit];
 }
 if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
+	$query += ['optioncss' => $optioncss];
 }
 if ($groupby != '') {
-	$param .= '&groupby='.urlencode($groupby);
+	$query += ['groupby' => $groupby];
 }
 if ($search_all != "") {
-	$param .= "&search_all=".urlencode($search_all);
+	$query += ['search_all' => $search_all];
 }
 if ($search_ref) {
-	$param .= "&search_ref=".urlencode($search_ref);
+	$query += ['search_ref' => $search_ref];
 }
 if ($search_civility) {
-	$param .= "&search_civility=".urlencode($search_civility);
+	$query += ['search_civility' => $search_civility];
 }
 if ($search_firstname) {
-	$param .= "&search_firstname=".urlencode($search_firstname);
+	$query += ['search_firstname' => $search_firstname];
 }
 if ($search_lastname) {
-	$param .= "&search_lastname=".urlencode($search_lastname);
+	$query += ['search_lastname' => $search_lastname];
 }
 if ($search_gender) {
-	$param .= "&search_gender=".urlencode($search_gender);
+	$query += ['search_gender' => $search_gender];
+}
+if ($search_morphy != '' && $search_morphy != '-1') {
+	$query += ['search_morphy' => $search_morphy];
 }
 if ($search_login) {
-	$param .= "&search_login=".urlencode($search_login);
+	$query += ['search_login' => $search_login];
 }
 if ($search_email) {
-	$param .= "&search_email=".urlencode($search_email);
+	$query += ['search_email' => $search_email];
 }
 if ($search_categ > 0 || $search_categ == -2) {
-	$param .= "&search_categ=".urlencode((string) ($search_categ));
+	$query += ['search_categ' => $search_categ];
 }
 if ($search_company) {
-	$param .= "&search_company=".urlencode($search_company);
+	$query += ['search_company' => $search_company];
 }
 if ($search_address != '') {
-	$param .= "&search_address=".urlencode($search_address);
+	$query += ['search_address' => $search_address];
 }
 if ($search_town != '') {
-	$param .= "&search_town=".urlencode($search_town);
+	$query += ['search_town' => $search_town];
 }
 if ($search_zip != '') {
-	$param .= "&search_zip=".urlencode($search_zip);
+	$query += ['search_zip' => $search_zip];
 }
 if ($search_state != '') {
-	$param .= "&search_state=".urlencode($search_state);
+	$query += ['search_state' => $search_state];
 }
 if ($search_country != '') {
-	$param .= "&search_country=".urlencode($search_country);
+	$query += ['search_country' => $search_country];
 }
 if ($search_phone != '') {
-	$param .= "&search_phone=".urlencode($search_phone);
+	$query += ['search_phone' => $search_phone];
 }
 if ($search_phone_perso != '') {
-	$param .= "&search_phone_perso=".urlencode($search_phone_perso);
+	$query += ['search_phone_perso' => $search_phone_perso];
 }
 if ($search_phone_mobile != '') {
-	$param .= "&search_phone_mobile=".urlencode($search_phone_mobile);
+	$query += ['search_phone_mobile' => $search_phone_mobile];
 }
 if ($search_filter && $search_filter != '-1') {
-	$param .= "&search_filter=".urlencode($search_filter);
+	$query += ['search_filter' => $search_filter];
 }
 if ($search_status != "" && $search_status != -3) {
-	$param .= "&search_status=".urlencode($search_status);
+	$query += ['search_status' => $search_status];
 }
 if ($search_import_key != '') {
-	$param .= '&search_import_key='.urlencode($search_import_key);
+	$query += ['search_import_key' => $search_import_key];
 }
 if ($search_type > 0) {
-	$param .= "&search_type=".urlencode($search_type);
+	$query += ['search_type' => $search_type];
 }
 if ($search_datec_start) {
-	$param .= '&search_datec_start_day='.dol_print_date($search_datec_start, '%d').'&search_datec_start_month='.dol_print_date($search_datec_start, '%m').'&search_datec_start_year='.dol_print_date($search_datec_start, '%Y');
+	$query += [
+		'search_datec_start_day' => dol_print_date($search_datec_start, '%d'),
+		'search_datec_start_month' => dol_print_date($search_datec_start, '%m'),
+		'search_datec_start_year' => dol_print_date($search_datec_start, '%Y'),
+	];
 }
 if ($search_datem_end) {
-	$param .= '&search_datem_end_day='.dol_print_date($search_datem_end, '%d').'&search_datem_end_month='.dol_print_date($search_datem_end, '%m').'&search_datem_end_year='.dol_print_date($search_datem_end, '%Y');
+	$query += [
+		'search_datem_end_day' => dol_print_date($search_datem_end, '%d'),
+		'search_datem_end_month' => dol_print_date($search_datem_end, '%m'),
+		'search_datem_end_year' => dol_print_date($search_datem_end, '%Y'),
+	];
 }
 
-// Add $param from extra fields
+// Add $query from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $query from hooks
+$parameters = array('query' => &$query);
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// build $param
+$param = http_build_query($query);
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -777,12 +793,14 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$queryforbutton = $query;
+$queryforbutton['mode'] = 'common';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', dolBuildUrl($_SERVER["PHP_SELF"], $queryforbutton), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$queryforbutton['mode'] = 'kanban';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dolBuildUrl($_SERVER["PHP_SELF"], $queryforbutton), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create', '', $user->hasRight('adherent', 'creer'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/card.php', ['action' => 'create']), '', $user->hasRight('adherent', 'creer'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -1229,7 +1247,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->gender = $obj->gender;
 	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
-	$memberstatic->socid = $obj->fk_soc;
+	$memberstatic->socid = $obj->socid;
 	$memberstatic->photo = $obj->photo;
 	$memberstatic->email = $obj->email;
 	$memberstatic->morphy = $obj->morphy;
@@ -1237,7 +1255,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->note_private = $obj->note_private;
 	$memberstatic->need_subscription = $obj->subscription;
 
-	if (!empty($obj->fk_soc)) {
+	if (!empty($obj->socid)) {
 		$memberstatic->fetch_thirdparty();
 		if ($memberstatic->thirdparty->id > 0) {
 			$companyname = $memberstatic->thirdparty->name;
@@ -1274,7 +1292,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1293,14 +1311,14 @@ while ($i < $imaxinloop) {
 		}
 		// Technical ID
 		if (!empty($arrayfields['d.rowid']['checked'])) {
-			print '<td class="center" data-key="id">'.$obj->rowid.'</td>';
+			print '<td class="center" data-key="id">'.dolPrintHTML($obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Ref
 		if (!empty($arrayfields['d.ref']['checked'])) {
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			print $memberstatic->getNomUrl(-1, 0, 'card', 'ref', '', -1, 0, 1);
 			print "</td>\n";
 			if (!$i) {
@@ -1310,7 +1328,7 @@ while ($i < $imaxinloop) {
 		// Title/Civility
 		if (!empty($arrayfields['d.civility']['checked'])) {
 			print "<td>";
-			print dol_escape_htmltag($obj->civility);
+			print dolPrintHTML($obj->civility);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1349,13 +1367,13 @@ while ($i < $imaxinloop) {
 		}
 		// Company
 		if (!empty($arrayfields['d.company']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companyname).'">';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute((string) $companyname).'">';
 			print $companynametoshow;
 			print "</td>\n";
 		}
 		// Login
 		if (!empty($arrayfields['d.login']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.$obj->login."</td>\n";
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($obj->login).'">'.dolPrintHTML($obj->login)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1383,7 +1401,7 @@ while ($i < $imaxinloop) {
 		// Address
 		if (!empty($arrayfields['d.address']['checked'])) {
 			print '<td class="nocellnopadd tdoverflowmax200" title="'.dol_escape_htmltag($obj->address).'">';
-			print dol_escape_htmltag($obj->address);
+			print dolPrintHTML($obj->address);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1392,7 +1410,7 @@ while ($i < $imaxinloop) {
 		// Zip
 		if (!empty($arrayfields['d.zip']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print dol_escape_htmltag($obj->zip);
+			print dolPrintHTML($obj->zip);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1401,7 +1419,7 @@ while ($i < $imaxinloop) {
 		// Town
 		if (!empty($arrayfields['d.town']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print dol_escape_htmltag($obj->town);
+			print dolPrintHTML($obj->town);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1410,7 +1428,7 @@ while ($i < $imaxinloop) {
 		// State / County / Departement
 		if (!empty($arrayfields['state.nom']['checked'])) {
 			print "<td>";
-			print dol_escape_htmltag($obj->state_name);
+			print dolPrintHTML($obj->state_name);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1419,8 +1437,8 @@ while ($i < $imaxinloop) {
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			$tmparray = getCountry($obj->country, 'all');
-			print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
-			print dol_escape_htmltag($tmparray['label']);
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($tmparray['label']).'">';
+			print dolPrintHTML($tmparray['label']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1469,7 +1487,7 @@ while ($i < $imaxinloop) {
 			if ($datefin) {
 				$s .= dol_print_date($datefin, 'day');
 				if ($memberstatic->hasDelay()) {
-					$textlate = ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+					$textlate = ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(getWarningDelay('member', 'subscription') / 60 / 60 / 24) >= 0 ? '+' : '').ceil(getWarningDelay('member', 'subscription') / 60 / 60 / 24).' '.$langs->trans("days").')';
 					$s .= " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 				}
 			} else {
@@ -1524,8 +1542,8 @@ while ($i < $imaxinloop) {
 		}
 		// Import key
 		if (!empty($arrayfields['d.import_key']['checked'])) {
-			print '<td class="tdoverflowmax100 center" title="'.dol_escape_htmltag($obj->import_key).'">';
-			print dol_escape_htmltag($obj->import_key);
+			print '<td class="tdoverflowmax100 center" title="'.dolPrintHTMLForAttribute($obj->import_key).'">';
+			print dolPrintHTML($obj->import_key);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

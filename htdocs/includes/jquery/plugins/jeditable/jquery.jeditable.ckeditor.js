@@ -1,6 +1,6 @@
 /*
  * CKEditor input for Jeditable
- * 
+ *
  * Adapted from Wysiwyg input for Jeditable by Mike Tuupola
  *   http://www.appelsiini.net/2008/9/wysiwyg-for-jeditable
  *
@@ -8,10 +8,10 @@
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * Depends on CKEditor:
  *   http://ckeditor/
- *   
+ *
  */
 
 (function($) {
@@ -48,7 +48,7 @@ $.editable.addInputType('ckeditor', {
         $(this).append(textarea);
         return(textarea);
     },
-    content : function(string, settings, original) { 
+    content : function(string, settings, original) {
         /* jWYSIWYG plugin uses .text() instead of .val()        */
         /* For some reason it did not work work with generated   */
         /* textareas so I am forcing the value here with .text() */

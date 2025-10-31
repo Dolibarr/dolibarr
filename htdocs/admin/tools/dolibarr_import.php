@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2006-2021	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2006-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,9 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 require '../../main.inc.php';
 
 /**
+ * @var string $dolibarr_main_db_host
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -46,7 +49,7 @@ if (!$user->admin) {
 }
 
 $radio_dump = GETPOST('radio_dump');
-$showpass = GETPOST('showpass');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -87,8 +90,10 @@ jQuery(document).ready(function() {
 print load_fiche_titre($langs->trans("Restore"), '', 'title_setup');
 
 print '<div class="center">';
-print $langs->trans("RestoreDesc", DOL_DATA_ROOT);
+print $langs->trans("RestoreDesc", 3);
 print '</div>';
+print '<br>';
+print '<span class="small opacitymedium">'.$langs->trans("RestoreDescMore").'</span><br>';
 print '<br>';
 
 ?>
@@ -139,6 +144,7 @@ print '</span>';
 	}
 	?>
 </fieldset>
+<br>
 </div>
 <?php } ?>
 
@@ -148,11 +154,12 @@ print '</span>';
 <div id="div_container_sub_exportoptions" >
 <?php
 if (in_array($type, array('mysql', 'mysqli'))) {
-		print '<fieldset id="mysql_options">';
-		print '<legend>'.$langs->trans('RestoreMySQL').'</legend>';
-		print '<div class="formelementrow centpercent">';
-		// Parameters execution
-		$command = $db->getPathOfRestore();
+	print '<fieldset id="mysql_options">';
+	print '<legend>'.$langs->trans('RestoreMySQL').'</legend>';
+	print '<div class="formelementrow centpercent">';
+
+	// Parameters execution
+	$command = $db->getPathOfRestore();
 	if (preg_match("/\s/", $command)) {
 		$command = $command = escapeshellarg($command); // Use quotes on command
 	}
@@ -170,17 +177,19 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 		$paramclear .= " -p".$dolibarr_main_db_pass;
 	}
 
-		echo $langs->trans("ImportMySqlDesc");
-		print '<br>';
-		print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportMySqlCommand", $command, ($showpass ? $paramclear : $paramcrypted)).'</textarea><br>';
-		print ajax_autoselect('restorecommand');
+	print $langs->trans("ImportMySqlDesc");
+	print '<br>';
+	print '<textarea rows="1" id="restorecommand" class="centpercent" spellcheck="false">'.$langs->trans("ImportMySqlCommand", $command, ($action == 'showpass' ? $paramclear : $paramcrypted)).'</textarea><br>';
+	print ajax_autoselect('restorecommand');
 
-	if (!GETPOST("showpass") && $dolibarr_main_db_pass) {
-		print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
+	if (GETPOST("action") != 'showpass' && $dolibarr_main_db_pass) {
+		print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=showpass&token='.newToken().'&radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
 	}
-		//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
-		print '</div>';
-		print '</fieldset>';
+	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
+	print '</div>';
+
+	print '</fieldset>';
+	print '<br>';
 } elseif (in_array($type, array('pgsql'))) {
 	print '<fieldset id="postgresql_options">';
 	print '<legend>Restore PostgreSQL</legend>';
@@ -212,7 +221,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
 	echo $langs->trans("ImportPostgreSqlDesc");
 	print '<br>';
-	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportPostgreSqlCommand", $command, ($showpass ? $paramclear : $paramcrypted)).'</textarea><br>';
+	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportPostgreSqlCommand", $command, ($action == 'showpass' ? $paramclear : $paramcrypted)).'</textarea><br>';
 	print ajax_autoselect('restorecommand');
 	print '</div>';
 
@@ -226,6 +235,35 @@ print '</div>';
 
 print '</td></tr></table>';
 print '</fieldset>';
+
+
+
+print "<br>\n";
+print "<!-- Save setup conf -->\n";
+
+print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3</legend>';
+
+print '<br>';
+
+print '<span class="opacitymedium">';
+print $langs->trans("RestoreDesc4", 'dolibarr_main_dolcrypt_key').'<br>';
+print '</span>';
+
+print '<br>';
+
+print '<div id="backupfileright">';
+
+print $langs->trans("SeeValueIntoConfPhp");
+//print $langs->trans("SeeValueIntoConfPhp2");
+print '<br>';
+
+print '<br>';
+
+print '</div>';
+
+print '</fieldset>';
+
+
 
 // End of page
 llxFooter();

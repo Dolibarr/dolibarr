@@ -3,7 +3,7 @@
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var User $user
  *
  * @var string $dolibarr_main_document_root_alt
+ * @var string $conffile
  */
 
 // Load translation files required by the page
@@ -101,12 +102,12 @@ print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").'<br><span clas
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
+	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
 	// Compare version with last upgrade database version
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) {
+	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }
@@ -115,7 +116,12 @@ $version = DOL_VERSION;
 if (preg_match('/[a-z]+/i', $version)) {
 	$version = 'develop'; // If version contains text, it is not an official tagged version, so we use the full change log.
 }
-print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeChangeLog").'</a>';
+
+$urlofchangelog = 'https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog';
+
+print ' &nbsp; ';
+//print dolButtonToOpenUrlInDialogPopup('changelogpopup', $langs->trans("SeeChangeLog"), $langs->trans("SeeChangeLog"), $urlofchangelog);
+print '<a href="'.$urlofchangelog.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeChangeLog").'</a>';
 
 $newversion = '';
 if (function_exists('curl_init')) {
@@ -393,7 +399,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="titlefieldcreate">'.$langs->trans("Parameters").' ';
-print $langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')';
+print $langs->trans("ConfigurationFile").' ('.basename($conffile).')';
 print '</td>';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td></td>';
