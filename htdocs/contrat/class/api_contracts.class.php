@@ -247,7 +247,7 @@ class Contracts extends DolibarrApi
 			if ($field == 'id') {
 				throw new RestException(400, 'Creating with id field is forbidden');
 			}
-			if ($field == 'entity' && $value != $this->contract->entity) {
+			if ($field == 'entity' && $value != getEntity('contrat')) {
 				throw new RestException(403, 'Creating entity not the same as your API user is forbidden');
 			}
 
@@ -594,10 +594,13 @@ class Contracts extends DolibarrApi
 	 * @url	PUT {id}/lines/{lineid}/activate
 	 *
 	 * @return Object|bool
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Not found
 	 */
 	public function activateLine($id, $lineid, $datestart, $dateend = null, $comment = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('contrat', 'activer')) {
 			throw new RestException(403);
 		}
 
@@ -632,10 +635,13 @@ class Contracts extends DolibarrApi
 	 * @url	PUT {id}/lines/{lineid}/unactivate
 	 *
 	 * @return Object|bool
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Not found
 	 */
 	public function unactivateLine($id, $lineid, $datestart, $comment = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('contrat', 'desactiver')) {
 			throw new RestException(403);
 		}
 
