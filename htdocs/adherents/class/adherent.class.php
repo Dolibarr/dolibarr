@@ -314,7 +314,6 @@ class Adherent extends CommonObject
 	 */
 	public $invoice;
 
-
 	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
@@ -712,23 +711,20 @@ class Adherent extends CommonObject
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
 			if ($id > 0) {
 				$this->id = $id;
-				if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == '') {
-					// keep old numbering
-					$this->ref = (string) $id;
-				} else {
-					// auto code
-					$modfile = dol_buildpath('core/modules/member/'.getDolGlobalString('MEMBER_CODEMEMBER_ADDON').'.php', 0);
-					try {
-						require_once $modfile;
-						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
-						$modCodeMember = new $modname();
-						'@phan-var-force ModeleNumRefMembers $modCodeMember';
-						/** @var ModeleNumRefMembers $modCodeMember */
-						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
-					} catch (Exception $e) {
-						dol_syslog($e->getMessage(), LOG_ERR);
-						$error++;
-					}
+
+				$modulenum = getDolGlobalString('MEMBER_CODEMEMBER_ADDON', 'mod_member_simple');
+
+				$modfile = dol_buildpath('core/modules/member/'.$modulenum.'.php', 0);
+				try {
+					require_once $modfile;
+					$modname = $modulenum;
+					$modCodeMember = new $modname();
+					'@phan-var-force ModeleNumRefMembers $modCodeMember';
+					/** @var ModeleNumRefMembers $modCodeMember */
+					$this->ref = $modCodeMember->getNextValue($mysoc, $this);
+				} catch (Exception $e) {
+					dol_syslog($e->getMessage(), LOG_ERR);
+					$error++;
 				}
 
 				// Update minor fields
@@ -836,6 +832,7 @@ class Adherent extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " ref = '".$this->db->escape($this->ref)."'";
+		$sql .= ", ref_ext = ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'");
 		$sql .= ", civility = ".($this->civility_id ? "'".$this->db->escape($this->civility_id)."'" : "null");
 		$sql .= ", firstname = ".($this->firstname ? "'".$this->db->escape($this->firstname)."'" : "null");
 		$sql .= ", lastname = ".($this->lastname ? "'".$this->db->escape($this->lastname)."'" : "null");
@@ -1747,8 +1744,6 @@ class Adherent extends CommonObject
 	public function fetch_subscriptions()
 	{
 		// phpcs:enable
-		global $langs;
-
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 		$sql = "SELECT c.rowid, c.fk_adherent, c.fk_type, c.subscription, c.note as note_public, c.fk_bank,";
@@ -1811,8 +1806,6 @@ class Adherent extends CommonObject
 	 */
 	public function fetchPartnerships($mode)
 	{
-		global $langs;
-
 		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 
@@ -1829,15 +1822,16 @@ class Adherent extends CommonObject
 	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
 	 *	@param	int			$accountid			Id bank account. NOT USED.
 	 *	@param	string		$operation			Code of payment mode (if Id bank account provided). Example: 'CB', ... NOT USED.
-	 *	@param	string		$label				Label operation (if Id bank account provided).
-	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
+	 *	@param	string		$label				Label operation stored into public note.
+	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided). NOT USED.
 	 *	@param	string		$emetteur_nom		Name of cheque writer
 	 *	@param	string		$emetteur_banque	Name of bank of cheque
 	 *	@param	int     	$datesubend			Date end subscription
 	 *	@param	int     	$fk_type 			Member type id
+	 *  @param	string		$ref_ext			To save an external ref
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null)
+	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null, $ref_ext = '')
 	{
 		global $user;
 
@@ -1866,9 +1860,10 @@ class Adherent extends CommonObject
 		$subscription->dateh = $date; // Date of new subscription
 		$subscription->datef = $datefin; // End data of new subscription
 		$subscription->amount = $amount;
-		$subscription->note = $label; // deprecated
 		$subscription->note_public = $label;
+		$subscription->note_private = '';
 		$subscription->fk_type = $fk_type;
+		$subscription->ref_ext = $ref_ext;
 
 		if (empty($subscription->user_creation_id)) {
 			$subscription->user_creation_id = $user->id;
@@ -2546,10 +2541,11 @@ class Adherent extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
+		$baseurl = DOL_URL_ROOT . '/adherents/card.php';
 		if ($option == 'subscription') {
-			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.((int) $this->id);
+			$baseurl = DOL_URL_ROOT . '/adherents/subscription.php';
 		}
+		$query = ['rowid' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -2558,9 +2554,10 @@ class Adherent extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart .= '<a href="'.$url.'"';
 		$linkclose = "";
@@ -2777,10 +2774,10 @@ class Adherent extends CommonObject
 				$warning_delay = getWarningDelay('member', 'subscription') / 60 / 60 / 24;
 				$label = $langs->trans("MembersWithSubscriptionToReceive");
 				$labelShort = $langs->trans("MembersWithSubscriptionToReceiveShort");
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_VALIDATED.'&amp;filter=outofdate';
+				$url = dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['mainmenu' => 'members', 'statut' => self::STATUS_VALIDATED, 'filter' => 'outofdate']);
 			} elseif ($mode == 'shift') {
 				$warning_delay = getWarningDelay('member', 'subscription') / 60 / 60 / 24;
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_DRAFT;
+				$url = dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['mainmenu' => 'members', 'statut' => self::STATUS_DRAFT]);
 				$label = $langs->trans("MembersListToValid");
 				$labelShort = $langs->trans("ToValidate");
 			}

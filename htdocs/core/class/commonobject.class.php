@@ -20,7 +20,8 @@
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
- *
+ * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -117,6 +118,11 @@ abstract class CommonObject
 	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element;
+
+	/**
+	 * @var ?string Name of id column
+	 */
+	public $table_rowid;
 
 	/**
 	 * @var string 		Name of subtable line
@@ -6948,6 +6954,7 @@ abstract class CommonObject
 			}
 		}
 
+		// Set array $sqlColumnValues (SQL field name in extrafield table => value)
 		$sqlColumnValues = ['fk_object' => (int) $this->id]; // key-value pairs for the SQL INSERT or UPDATE query
 
 		foreach ($new_array_options as $key => $newValue) {
@@ -7049,6 +7056,7 @@ abstract class CommonObject
 		if (!$error && !empty($this->fields['fk_user_modif'])) {
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET fk_user_modif = ".(int) $user->id;
+			$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 			$this->db->query($sql);
 		}
 
@@ -7473,6 +7481,7 @@ abstract class CommonObject
 			if (!$error && !empty($this->fields['fk_user_modif'])) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 				$sql .= " SET fk_user_modif = ".(int) $user->id;
+				$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 				$this->db->query($sql);
 			}
 
@@ -7992,8 +8001,8 @@ abstract class CommonObject
 				}
 
 				if (!$filter_categorie) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
+					$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+					if (!empty($fields_label)) {
 						$keyList .= ', ';
 						$keyList .= implode(', ', $fields_label);
 					}
@@ -11405,9 +11414,9 @@ abstract class CommonObject
 	/**
 	 * Sets object to given categories.
 	 *
-	 * Adds it to non existing supplied categories.
-	 * Deletes object from existing categories not supplied (if remove_existing==true).
-	 * Existing categories are left untouch.
+	 * Assign the object to all categories not yet assigned.
+	 * Unasign object from existing categories not supplied in $categories (if remove_existing==true).
+	 * If remove_existing is false, existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
 	 * @param 	string 		$type_categ 		Category type ('customer', 'supplier', 'website_page', ...) defined into const class Categorie type
@@ -11610,5 +11619,44 @@ abstract class CommonObject
 
 		$this->db->commit();
 		return true;
+	}
+
+	/**
+	 * Check if all products have the right status (on sale, on buy) called
+	 * during validation of propal, order, supplier proposal, supplier order
+	 *
+	 * @global object $langs
+	 * @param string $status onsale or onbuy
+	 * @return bool
+	 */
+	public function checkActiveProductInLines($status = 'onsale')
+	{
+		global $langs;
+
+		if (isModEnabled('product') || isModEnabled('service')) {
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+			$ret = true;
+			$tmpproduct = new Product($this->db);
+			foreach ($this->lines as $line) {
+				if ($line->fk_product > 0) {
+					$tmpproduct->fetch($line->fk_product);
+					$statustotest = ($status == 'onsale' ? 'status' : 'status_buy');
+					if (!$tmpproduct->$statustotest) {
+						$langs->load('products');
+						$statuskey4lang = ($status == 'onsale' ? 'ProductStatusNotOnSell' : 'ProductStatusNotOnBuy');
+						$ret = false;
+						$this->errors[] = $langs->trans('ProductRef').' '.$tmpproduct->ref.' '.$langs->trans($statuskey4lang);
+						break;
+					}
+				}
+			}
+			if (!$ret) {
+				$this->error = 'ErrorOneLineContainsADisactivatedProduct';
+			}
+			return $ret;
+		} else {
+			return true;
+		}
 	}
 }

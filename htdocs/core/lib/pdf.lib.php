@@ -54,7 +54,7 @@ function pdf_admin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf.php';
-	$head[$h][1] = $langs->trans("Parameters");
+	$head[$h][1] = $langs->trans("GlobalParameters");
 	$head[$h][2] = 'general';
 	$h++;
 
@@ -66,7 +66,7 @@ function pdf_admin_prepare_head()
 
 	if (isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('reception')) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
-		$head[$h][1] = $langs->trans("Others");
+		$head[$h][1] = $langs->trans("SpecificParameters");
 		$head[$h][2] = 'other';
 		$h++;
 	}
@@ -847,6 +847,25 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 
 
 /**
+ *      Add legal certificate mention
+ *
+ *      @param	TCPDF      			$pdf            	Object PDF
+ *      @param  Translate			$outputlangs		Object lang
+ *      @param  Societe				$seller         	Seller company
+ *      @param  int					$default_font_size  Default font size
+ *      @param  float				$posy            	Y position
+ *      @param  CommonDocGenerator	$pdftemplate    	PDF template
+ *      @return	int                                 	0 if nothing done, 1 if a mention was printed
+ */
+function pdfCertifMention(&$pdf, $outputlangs, $seller, $default_font_size, &$posy, $pdftemplate)
+{
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+	return pdfCertifMentionblockedLog($pdf, $outputlangs, $seller, $default_font_size, $posy, $pdftemplate);
+}
+
+
+/**
  *  Show bank information for PDF generation
  *
  *  @param	TCPDF		$pdf            		Object PDF
@@ -860,8 +879,6 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  */
 function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $default_font_size = 10)
 {
-	global $mysoc, $conf;
-
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 
 	$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
@@ -1035,9 +1052,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  * 	@param	float		$marge_basse	Margin bottom we use for the autobreak
  * 	@param	float		$marge_gauche	Margin left (no more used)
  * 	@param	float		$page_hauteur	Page height
- * 	@param	CommonObject	$object			Object shown in PDF
+ * 	@param	?CommonObject	$object		Object shown in PDF
  * 	@param	int<0,3>	$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
- *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
+ *  @param	int<0,1>	$hidefreetext	1=Hide free text, 0=Show free text
  *  @param	float		$page_largeur	Page width
  *  @param	string		$watermark		Watermark text to print on page
  * 	@return	int							Return height of bottom margin including footer text
@@ -1460,7 +1477,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  */
 function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
 {
-	global $db, $conf, $langs, $hookmanager;
+	global $hookmanager;
 
 	$reshook = 0;
 	$result = '';
@@ -2077,7 +2094,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
  */
 function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $conf, $hookmanager;
+	global $hookmanager;
 
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
@@ -2120,7 +2137,7 @@ function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
  */
 function pdf_getlineupwithtax($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $hookmanager, $conf;
+	global $hookmanager;
 
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
@@ -2411,7 +2428,6 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 	if (empty($hookmanager)) {
 		global $hookmanager;
 	}
-	global $conf;
 
 	$reshook = 0;
 	$result = '';
@@ -2459,7 +2475,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
  */
 function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $conf, $hookmanager;
+	global $hookmanager;
 
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
@@ -2515,7 +2531,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
  */
 function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $hookmanager, $conf;
+	global $hookmanager;
 
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {

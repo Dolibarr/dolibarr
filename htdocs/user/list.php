@@ -569,7 +569,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-product page-list');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-user page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -708,7 +708,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if (!empty($catid)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'user/list.php');
+	$ways = $c->print_all_ways('auto', 'user/list.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }

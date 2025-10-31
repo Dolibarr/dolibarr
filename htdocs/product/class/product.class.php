@@ -2435,7 +2435,8 @@ class Product extends CommonObject
 			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
 			$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
 			$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
-			if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
+			if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
+				// using this option is a bug. kept for backward compatibility
 				if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
 					$tva_tx = $this->multiprices_tva_tx[$thirdparty_buyer->price_level];
 				}
@@ -3506,7 +3507,10 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
-
+		// Add where from hooks
+		$parameters = array('socid' => $socid, 'type_element' => 'propal');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -3615,6 +3619,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $user, $hookmanager, $action;
 
+
 		$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
 		$sql .= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
 		$sql .= " FROM ".$this->db->prefix()."commandedet as cd";
@@ -3633,7 +3638,10 @@ class Product extends CommonObject
 		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
-
+		// Add where from hooks
+		$parameters = array('socid' => $socid, 'type_element' => 'order');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -3666,21 +3674,33 @@ class Product extends CommonObject
 			// If stock decrease is on invoice validation, the theoretical stock continue to
 			// count the orders lines containing product in theoretical stock when some are already removed by invoice validation.
 			if ($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
+				// Do the request using an UNION instead of a OR in the JOIN that is very slow
 				if (getDolGlobalString('DECREASE_ONLY_UNINVOICEDPRODUCTS')) {
 					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation but only if order not yet invoice.
 					$adeduire = 0;
 					$sql = "SELECT SUM(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
 					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
-					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					//$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande' ";
 					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
 					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
 
-					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
+					$sql .= " UNION ";
+
+					$sql .= "SELECT SUM(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
+					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture' ";
+					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
+					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
+					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
+					// Add where from hooks
+					$parameters = array('socid' => $socid, 'type_element' => 'order');
+					$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+					$sql .= $hookmanager->resPrint;
 					$resql = $this->db->query($sql);
 					if ($resql) {
-						if ($this->db->num_rows($resql) > 0) {
-							$obj = $this->db->fetch_object($resql);
+						while ($obj = $this->db->fetch_object($resql)) {
 							$adeduire += $obj->count;
 						}
 					}
@@ -3694,16 +3714,29 @@ class Product extends CommonObject
 					$adeduire = 0;
 					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
 					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
-					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					//$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande' ";
+					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
+					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product = ".((int) $this->id);
+					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
+
+					$sql .= " UNION ALL ";
+
+					$sql .= "SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
+					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture' ";
 					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product = ".((int) $this->id);
 					$sql .= " AND EXISTS (SELECT cd.fk_product FROM ".$this->db->prefix()."commandedet as cd WHERE cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid)"; // We check that the product is in order lines
 
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
+					// Add where from hooks
+					$parameters = array('socid' => $socid, 'type_element' => 'order');
+					$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+					$sql .= $hookmanager->resPrint;
 					$resql = $this->db->query($sql);
 					if ($resql) {
-						if ($this->db->num_rows($resql) > 0) {
-							$obj = $this->db->fetch_object($resql);
+						while ($obj = $this->db->fetch_object($resql)) {
 							$adeduire += $obj->count;
 						}
 					} else {
@@ -4564,7 +4597,7 @@ class Product extends CommonObject
 	public function get_nb_propal($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
 		// phpcs:enable
-		global $user;
+		global $user, $hookmanager;
 
 		$sql = "SELECT sum(d.qty) as qty, date_format(p.datep, '%Y%m')";
 		if ($mode == 'bynumber') {
@@ -4596,9 +4629,11 @@ class Product extends CommonObject
 			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
+		$parameters = array('socid' => $user->socid);
+		$hookmanager->executeHooks('productGetNbPropal', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " GROUP BY date_format(p.datep,'%Y%m')";
 		$sql .= " ORDER BY date_format(p.datep,'%Y%m') DESC";
-
 		return $this->_get_stats($sql, $mode, $year);
 	}
 
@@ -4668,7 +4703,7 @@ class Product extends CommonObject
 	public function get_nb_order($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
 		// phpcs:enable
-		global $user;
+		global $user, $hookmanager;
 
 		$sql = "SELECT sum(d.qty) as qty, date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') {
@@ -4700,6 +4735,9 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
+		$parameters = array('socid' => $user->socid);
+		$hookmanager->executeHooks('productGetNbOrder', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql .= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
@@ -5807,7 +5845,7 @@ class Product extends CommonObject
 				$datas['duration'] .= (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? "&nbsp;".$langs->trans($dur[$this->duration_unit]) : '');
 			}
 			if (empty($user->socid)) {
-				if (isset($this->pmp) && $this->pmp) {
+				if ($this->isStockManaged() && isset($this->pmp) && $this->pmp) {
 					$datas['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
 				}
 

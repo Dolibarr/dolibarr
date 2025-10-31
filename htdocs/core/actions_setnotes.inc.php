@@ -47,7 +47,9 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 		$object->fetch($id); // Fetch may not be already done
 	}
 
-	$result_update = $object->update_note(dol_html_entity_decode(GETPOST('note_public', 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1), '_public');
+	$notePublic = GETPOST('note_public', 'restricthtml');
+
+	$result_update = $object->update_note(dol_html_entity_decode($notePublic, ENT_QUOTES | ENT_HTML5, 'UTF-8', 1), '_public');
 
 	if ($result_update < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -82,10 +84,6 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 			if ($resultGenDoc < 0) {
 				setEventMessages($object->error, $object->errors, 'warnings');
 			}
-
-			if ($result < 0) {
-				dol_print_error($db, $object->error, $object->errors);
-			}
 		}
 	}
 } elseif ($action == 'setnote_private' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {	// Set public note
@@ -97,7 +95,10 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 		if (empty($object->id)) {
 			$object->fetch($id); // Fetch may not be already done
 		}
-		$result = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1), '_private');
+
+		$notePrivate = GETPOST('note_private', 'restricthtml');
+
+		$result = $object->update_note(dol_html_entity_decode($notePrivate, ENT_QUOTES | ENT_HTML5, 'UTF-8', 1), '_private');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}

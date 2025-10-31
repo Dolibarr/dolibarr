@@ -85,6 +85,8 @@ class AccountancyExport
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
 	/** @var int */
 	public static $EXPORT_TYPE_ISUITEEXPERT = 200;
+	/** @var int */
+	public static $EXPORT_TYPE_ISTEA = 205;
 	// Generic FEC after that
 	/** @var int */
 	public static $EXPORT_TYPE_FEC = 1000;
@@ -161,6 +163,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV3 => $langs->trans('Modelcsv_Gestinumv3'),
 			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinumv5'),
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
+			self::$EXPORT_TYPE_ISTEA => $langs->trans('Modelcsv_ISTEA'),
 		);
 
 		$listofgenericformatexport = array(
@@ -223,6 +226,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_FEC => 'fec',
 			self::$EXPORT_TYPE_FEC2 => 'fec2',
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'isuiteexpert',
+			self::$EXPORT_TYPE_ISTEA => 'istea',
 		);
 
 		global $hookmanager;
@@ -315,6 +319,10 @@ class AccountancyExport
 				),
 				self::$EXPORT_TYPE_ISUITEEXPERT => array(
 					'label' => 'iSuite Expert',
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+				),
+				self::$EXPORT_TYPE_ISTEA => array(
+					'label' => 'ISTEA',
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 			),
@@ -538,6 +546,9 @@ class AccountancyExport
 				break;
 			case self::$EXPORT_TYPE_ISUITEEXPERT:
 				$this->exportiSuiteExpert($TData, $exportFile);
+				break;
+			case self::$EXPORT_TYPE_ISTEA:
+				$this->exportISTEA($TData, $exportFile);
 				break;
 			default:
 				global $hookmanager;
@@ -1337,6 +1348,63 @@ class AccountancyExport
 			$tab[] = $line->code_journal;
 
 			$output = implode($separator, $tab).$this->end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
+		}
+	}
+
+	/**
+	 * Export format : ISTEA
+	 *
+	 * @param 	BookKeepingLine[] 		$objectLines 			data
+	 * @param 	?resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
+	 */
+	public function exportISTEA($objectLines, $exportFile = null)
+	{
+		global $conf;
+
+		$separator = ';';
+		$end_line = "\n";
+
+		// parcours du tableau pour recuperation des numero de compte des tiers pour pouvoir les fournir dans la bonne ligne pour istea
+		$tiers=[];
+		foreach ($objectLines as $line) {
+			if ( $line->subledger_account && substr($line->subledger_account, 0, 1) == '4' ) {
+				$tiers[$line->piece_num] = $line->subledger_label;
+			}
+		}
+
+		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+			/*** preparation du champ label operation pour istea ***/
+			// retrecissement du champs car ISTEA n'affiche pas bcp de caract�re.
+			$search = array('Paiement fournisseur ', 'Virement ', 'Paiement ');
+			$replace = array('Paiemt fourn ','Virt ','Paiemt ');
+			$label_operation = str_replace($search, $replace, $line->label_operation);
+			// encadrement par des ' si le champs contient le separateur
+			$label_operation = preg_match('/'.$separator.'/', $label_operation) ? "'".$label_operation."'" : $label_operation;
+
+			$tab = array();
+			// export configurable
+			$tab[] = $line->piece_num;	// colonne 1 : numero de piece	ISTEA
+			$tab[] = $date_document;	// colonne 2 : date				ISTEA
+			$tab[] = $line->doc_ref;	// colonne 3 : reference piece 	ISTEA
+			$tab[] = array_key_exists($line->piece_num, $tiers)?$tiers[$line->piece_num]:'';	// colonne 4 : nom tiers	ISTEA
+			$tab[] = length_accountg(($line->subledger_account && ( substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2) ) )?$line->subledger_account:$line->numero_compte);	// colonne 5 : numero de compte	ISTEA
+			$tab[] = length_accountg($line->subledger_account?$line->subledger_account:$line->numero_compte);	// colonne 6 : numero de compte
+			$tab[] = length_accountg($line->subledger_account?$line->numero_compte:'');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
+			$tab[] = ($line->doc_type == 'bank')?$label_operation:($line->subledger_account?$line->subledger_label:$line->label_compte);	// colonne 8 : label de l'operation		ISTEA
+			$tab[] = $label_operation;	// colonne 9 : label de l'operation (semble non prise en compte par ISTEA)
+			$tab[] = price2num($line->debit);	// colonne 10 : debit		ISTEA
+			$tab[] = price2num($line->credit);	// colonne 11 : credit		ISTEA
+			$tab[] = $line->code_journal;		// colonne 12 : journal		ISTEA
+
+			$output = mb_convert_encoding('"'.implode('"'.$separator.'"', $tab).'"'.$this->end_line, 'ISO-8859-1');
 			if ($exportFile) {
 				fwrite($exportFile, $output);
 			} else {

@@ -177,7 +177,7 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-holiday');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
@@ -531,7 +531,7 @@ print "</tr>";
 
 // Set holiday decrease at the end of month
 print '<tr class="oddeven">';
-print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt")."</td>";
+print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt").' <span class="opacitymedium">('.$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAtBis").')</span></td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('HOLIDAY_DECREASE_AT_END_OF_MONTH', array(), null, 0, 0, 0, 2, 0, 1);

@@ -373,7 +373,7 @@ if (empty($reshook)) {
 			$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
 			$object->code_client			= GETPOSTISSET('customer_code') ? GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
-			$object->capital				= GETPOSTFLOAT('capital');
+			$object->capital				= GETPOST('capital');	// Can be null or 0 or a float value
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
@@ -1088,7 +1088,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->fax				= GETPOST('fax', 'alpha');
 		$object->email				= GETPOST('email', 'email');
 		$object->url				= GETPOST('url', 'url');
-		$object->capital			= GETPOSTFLOAT('capital');
+		$object->capital			= GETPOST('capital');	// can be null or 0 or a float value
 		$paymentTermId = GETPOSTINT('cond_reglement_id'); // can be set by default values on create page and not already in get or post variables
 		if (empty($paymentTermId) && !GETPOSTISSET('cond_reglement_id')) {
 			$paymentTermId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
@@ -1481,17 +1481,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
 			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
-				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
+				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'</label><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></span>';
 			}
 
 			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
-				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
+				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'</label><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></span>';
 			}
 
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				// Supplier
-				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></label></span>';
+				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'</label><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></span>';
 			}
 			// Add js to manage the background of nature
 			if ($conf->use_javascript_ajax) {
@@ -1861,7 +1861,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Capital
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
+			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.((string) $object->capital).'"> ';
 			if (isModEnabled("multicurrency")) {
 				print '<span class="hideonsmartphone">';
 				//print $langs->trans("Currency".$object->multicurrency_code);
@@ -2093,7 +2093,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$object->email					= GETPOST('email', 'email');
 				$object->no_email				= GETPOSTINT("no_email");
 				$object->url					= GETPOST('url', 'url');
-				$object->capital				= GETPOSTFLOAT('capital');
+				$object->capital				= GETPOST('capital');	// Can be null or 0 or a float value
 				$object->idprof1				= GETPOST('idprof1', 'alphanohtml');
 				$object->idprof2				= GETPOST('idprof2', 'alphanohtml');
 				$object->idprof3				= GETPOST('idprof3', 'alphanohtml');
@@ -2712,8 +2712,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Capital
 				print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-				print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
-				print $object->capital != '' && $object->capital != 0 ? dol_escape_htmltag(price($object->capital)) : '';
+				print '<td colspan="3"><input type="text" name="capital" id="capital" class="width75" value="';
+				print ($object->capital !== null ? dolPrintHTMLForAttribute(price($object->capital)) : '');
 				if (isModEnabled("multicurrency")) {
 					print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
 				} else {
@@ -2922,7 +2922,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/societe/vcard.php?id='.$object->id.'" class="refid">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 		dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', $morehtmlref);
@@ -3167,12 +3167,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->hasRight('societe', 'creer'));
 				print '</td><td>';
 				if ($action == 'editwarehouse') {
-					$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+					$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_warehouse, 'fk_warehouse', 1);
 				} else {
 					if ($object->fk_warehouse > 0) {
 						print img_picto('', 'stock', 'class="paddingrightonly"');
 					}
-					$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+					$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_warehouse, 'none');
 				}
 				print '</td>';
 				print '</tr>';
@@ -3231,14 +3231,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
-			if ($object->capital) {
+			if ($object->capital !== null) {
 				if (isModEnabled("multicurrency") && !empty($object->multicurrency_code)) {
 					print price($object->capital, 0, $langs, 0, -1, -1, $object->multicurrency_code);
 				} else {
 					print price($object->capital, 0, $langs, 0, -1, -1, $conf->currency);
 				}
-			} else {
-				print '&nbsp;';
 			}
 			print '</td></tr>';
 

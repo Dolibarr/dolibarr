@@ -207,7 +207,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 					// if contact selected send to email's contact else send to email's thirdparty
 
-					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
+					$contactid = empty($object->context['contact_id']) ? 0 : $object->context['contact_id'];
 					$res = 0;
 					$contactObj = null;
 
@@ -268,7 +268,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
-					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
+					$contactid = empty($object->context['contact_id']) ? 0 : $object->context['contact_id'];
+					$res = 0;
 					$contactObj = null;
 
 					if ($contactid > 0) {

@@ -168,7 +168,7 @@ if ($filtertype != 1) { // Product
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$unit = new CUnits($this->db);
 		$unit->fetch($line->fk_unit);
-		print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+		print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords((string) $unit->label))."&nbsp;" : '');
 	}
 
 	print '</td>';

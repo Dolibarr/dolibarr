@@ -1564,8 +1564,8 @@ class Contact extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
-
+		$baseurl = DOL_URL_ROOT . '/contact/card.php';
+		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -1573,9 +1573,10 @@ class Contact extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$url .= $moreparam;
 
@@ -1826,17 +1827,18 @@ class Contact extends CommonObject
 	/**
 	 * Sets object to supplied categories.
 	 *
-	 * Deletes object from existing categories not supplied.
-	 * Adds it to non existing supplied categories.
-	 * Existing categories are left untouch.
+	 * Assign the object to all categories not yet assigned.
+	 * Unasign object from existing categories not supplied in $categories (if remove_existing==true).
+	 * If remove_existing is false, existing categories are left untouch.
 	 *
-	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							Return integer <0 if KO, >0 if OK
+	 * @param 	int[]|int 	$categories 		Category or categories IDs
+	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
+	 * @return 	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function setCategories($categories)
+	public function setCategories($categories, $remove_existing = true)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		return parent::setCategoriesCommon($categories, Categorie::TYPE_CONTACT);
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_CONTACT, $remove_existing);
 	}
 
 	/**
@@ -1905,7 +1907,7 @@ class Contact extends CommonObject
 	 * Get thirdparty contact roles of a given contact
 	 *
 	 * @param  string 	$element 	Element type
-	 * @return array<array{fk_socpeople:int,type_contact:int}>|int<-1,-1>	Array of contact roles or -1
+	 * @return array<array{fk_socpeople:int,type_contact:int}>|int<-1,-1>	Array of contact roles or -1 if error
 	 * @throws Exception
 	 */
 	public function getContactRoles($element = '')
@@ -1921,20 +1923,19 @@ class Contact extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."societe_contacts sc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople sp";
 		$sql .= " ON sc.fk_socpeople = sp.rowid AND sp.statut = 1";
-		$sql .= " WHERE sc.fk_soc =".((int) $this->socid);
+		$sql .= " WHERE sc.fk_soc = ".((int) $this->socid);
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
 		$sql .= " AND sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND tc.active = 1";
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$tab[] = array('fk_socpeople' => $obj->id, 'type_contact' => $obj->fk_c_type_contact);
+				$tab[$obj->id] = array('fk_socpeople' => $obj->id, 'type_contact' => $obj->fk_c_type_contact);
 
 				$i++;
 			}

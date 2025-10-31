@@ -112,6 +112,7 @@ if (!$sortfield) {
 }
 
 $object = new User($db);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->loadRights();
@@ -147,7 +148,7 @@ $title = $person_name." - ".$langs->trans('Documents');
 $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_document');
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	/*
 	 * Show tabs
 	 */
@@ -156,7 +157,7 @@ if ($object->id) {
 	}
 	$head = user_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
+	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user', 0, '', '', 0, '', 1);
 
 	$linkback = '';
 	if ($user->hasRight("user", "user", "read") || $user->admin) {
@@ -164,7 +165,7 @@ if ($object->id) {
 	}
 
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);

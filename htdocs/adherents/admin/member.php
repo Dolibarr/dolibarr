@@ -37,6 +37,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 /**
  * @var Conf $conf
@@ -76,9 +77,63 @@ $error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-global $conf;
+if ($action == 'updateMask') {
+	$maskconst = GETPOST('maskconst', 'aZ09');
+	$maskvalue = GETPOST('maskvalue', 'alpha');
 
-if ($action == 'set_default') {
+	$res = 0;
+
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+	}
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'specimen') { // For fiche expensereport
+	$modele = GETPOST('module', 'alpha');
+
+	$adherentspecimen = new Adherent($db);
+	$adherentspecimen->initAsSpecimen();
+	$adherentspecimen->status = 0; // Force statut draft to show watermark
+
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/member/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($classname !== '') {
+		require_once $file;
+
+		$module = new $classname($db);
+		'@phan-var-force ModelePDFMember $module';
+		/** @var ModelePDFMember $module */
+
+		if ($module->write_file($adherentspecimen, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=member&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+} elseif ($action == 'set_default') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 	$res = true;
 } elseif ($action == 'del_default') {
@@ -238,7 +293,7 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
@@ -286,6 +341,7 @@ foreach ($dirModMember as $dirroot) {
 					continue;
 				}
 				$modCodeMember = new $file();
+				/** @var ModeleNumRefMembers $modCodeMember */
 				// Show modules according to features level
 				if ($modCodeMember->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
@@ -303,6 +359,7 @@ foreach ($dirModMember as $dirroot) {
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
 '@phan-var-force array<string,ModeleNumRefMembers> $arrayofmodules';
+/** @var array<string,ModeleNumRefMembers> $arrayofmodules */
 
 foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
@@ -310,7 +367,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
 	print '<td class="nowrap">'.$modCodeMember->getExample().'</td>'."\n";
 
-	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
+	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON', 'mod_member_simple') == "$file") {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
@@ -405,6 +462,7 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 							'@phan-var-force doc_generic_member_odt|pdf_standard_member $module';
+							/** @var doc_generic_member_odt|pdf_standard_member $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

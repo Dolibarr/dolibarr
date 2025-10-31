@@ -364,6 +364,8 @@ ErrorIsNotInError=%s is not in error
 ErrorFilenameExtensionNotAllowed=File %s has a forbidden file extension
 ErrorNoValueForSelectListType=Error, a value for this type of field is mandatory
 ErrorPaymentAmountMustNotBeNull=Error, payment amount must be defined and not zero
+ErrorOneLineContainsADisactivatedProduct=Error, at least one product is not or no more on sale or for purchase
+ErrorCalendarIsNotYetOpenOrHasBeenClosed=This calendar is not yet open or has been closed
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -416,6 +418,7 @@ WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may di
 WarningAmountOfFileDiffersFromSumOfLines=Warning, amount of file (%s) differs from the sum of lines (%s)
 WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported to the Dolibarr foundation as being published by a company using illegal practices (non-compliance with the rules for using the Dolibarr brand, collecting your data without your consent or deploying malware).
 WarningModuleAffiliatedToAPiratPlatform=Be careful when getting a module (paid or free) from a suspicious non official platform like %s
+WarningDNSServerNotAvailable=Warning, DNS server not available
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
@@ -449,3 +452,4 @@ ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 EmptyMessageNotAllowedError=Empty message is not allowed
 SomeShipmentExists=Error, there is some shipment linked to the order. Deletion refused.
+WarningEvaluationEmptyValidate=Can't validate evaluation, levels on skills not defined

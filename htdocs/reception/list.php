@@ -57,6 +57,7 @@ $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $toselect = GETPOST('toselect', 'array:int');
+$show_files = GETPOSTINT('show_files');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -374,8 +375,8 @@ if (empty($reshook)) {
 				}
 
 				$objecttmp->date = $datefacture;
-				$objecttmp->origin    = 'reception';
-				$objecttmp->origin_id = $id_reception;
+				$objecttmp->origin = 'reception';
+				$objecttmp->origin_id = (int) $id_reception;
 
 				// Auto calculation of date due if not filled by user
 				if (empty($objecttmp->date_echeance)) {

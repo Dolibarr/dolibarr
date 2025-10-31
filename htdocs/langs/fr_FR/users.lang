@@ -149,3 +149,4 @@ SocialNetworksUser=Réseaux sociaux de l'utilisateur
 MyTeam=Mon équipe
 TotalAPICall=Nombre total d'appels API
 TOTP=TOTP (mot de passe à usage unique basé sur le temps)
+ColorGroup=Couleur du groupe

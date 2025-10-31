@@ -163,7 +163,7 @@ $form = new Form($db);
 
 llxHeader("", "", $langs->trans("DynamicPrice"), '', 0, 0, '', '', '', 'mod-product page-admin_dynamic_prices');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("DynamicPriceDesc").'</span><br>';

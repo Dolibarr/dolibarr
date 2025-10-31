@@ -6,7 +6,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,11 +254,11 @@ $nowday   = $nowarray['mday'];
 // Define list of all external calendars (global setup)
 $listofextcals = array();
 
-$prev = dol_get_first_day($year, $month);
 $first_day   = 1;
 $first_month = 1;
 $first_year  = $year;
 
+$prev = dol_get_first_day_week($day, $month, $year);
 $week = $prev['week'];
 
 $day  = (int) $day;
@@ -339,7 +339,6 @@ $param .= "&maxprint=".urlencode((string) ($maxprint));
 
 $paramnoactionodate = $param;
 
-$prev = dol_get_first_day($year, 1);
 $prev_year  = $year - 1;
 $prev_month = $month;
 $prev_day   = $day;
@@ -347,6 +346,7 @@ $first_day  = 1;
 $first_month = 1;
 $first_year = $year;
 
+$prev = dol_get_first_day_week(1, 1, $year);
 $week = $prev['week'];
 
 $day = (int) $day;
