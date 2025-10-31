@@ -354,7 +354,7 @@ class modProduct extends DolibarrModules
 				'pr.price' => "PriceLevelUnitPriceHT", 'pr.price_ttc' => "PriceLevelUnitPriceTTC",
 				'pr.price_min' => "MinPriceLevelUnitPriceHT", 'pr.price_min_ttc' => "MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx' => 'PriceLevelVATRate',
-				'pr.date_price' => 'DateCreation');
+				'pr.date_creation' => 'DateCreation');
 			if (is_object($mysoc) && $usenpr) {
 				$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
 			}
@@ -370,12 +370,12 @@ class modProduct extends DolibarrModules
 				'pr.price_min' => "product", 'pr.price_min_ttc' => "product",
 				'pr.tva_tx' => 'product',
 				'pr.recuperableonly' => 'product',
-				'pr.date_price' => "product");
+				'pr.date_creation' => "product");
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 			$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.$conf->entity; // export prices only for the current entity
 			$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
-			$this->export_sql_end[$r] .= ' AND pr.date_price = (SELECT MAX(pr2.date_price) FROM '.MAIN_DB_PREFIX.'product_price as pr2 WHERE pr2.fk_product = pr.fk_product AND pr2.price_level = pr.price_level AND pr2.entity IN ('.getEntity('product').'))'; // export only latest prices not full history
+			$this->export_sql_end[$r] .= ' AND pr.date_creation = (SELECT MAX(pr2.date_creation) FROM '.MAIN_DB_PREFIX.'product_price as pr2 WHERE pr2.fk_product = pr.fk_product AND pr2.price_level = pr.price_level AND pr2.entity IN ('.getEntity('product').'))'; // export only latest prices not full history
 			$this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
 		}
 
@@ -945,7 +945,7 @@ class modProduct extends DolibarrModules
 				'pr.price_base_type' => "PriceBase", 'pr.price_level' => "PriceLevel",
 				'pr.price' => "PriceLevelUnitPriceHT", 'pr.price_ttc' => "PriceLevelUnitPriceTTC",
 				'pr.price_min' => "MinPriceLevelUnitPriceHT", 'pr.price_min_ttc' => "MinPriceLevelUnitPriceTTC",
-				'pr.date_price' => 'DateCreation*');
+				'pr.date_creation' => 'DateCreation*');
 			if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 				$this->import_fields_array[$r]['pr.tva_tx'] = 'VATRate';
 			}
@@ -978,7 +978,7 @@ class modProduct extends DolibarrModules
 				'pr.price_min' => "100", 'pr.price_min_ttc' => "110",
 				'pr.tva_tx' => '20',
 				'pr.recuperableonly' => '0',
-				'pr.date_price' => '2020-12-31');
+				'pr.date_creation' => '2020-12-31');
 		}
 
 

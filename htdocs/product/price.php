@@ -538,7 +538,7 @@ if (empty($reshook)) {
 					$sql .= " WHERE entity IN (".getEntity('productprice').")";
 					$sql .= " AND price_level=".((int) $key); // $i
 					$sql .= " AND fk_product = ".((int) $object->id);
-					$sql .= " ORDER BY date_price DESC, rowid DESC";
+					$sql .= " ORDER BY date_creation DESC, rowid DESC";
 					$sql .= " LIMIT 1";
 					$resql = $object->db->query($sql);
 					if ($resql) {
@@ -1268,7 +1268,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				$sql1 .= " WHERE entity IN (".getEntity('productprice').")";
 				$sql1 .= " AND price_level=".((int) $i);
 				$sql1 .= " AND fk_product = ".((int) $object->id);
-				$sql1 .= " ORDER BY date_price DESC, rowid DESC";
+				$sql1 .= " ORDER BY date_creation DESC, rowid DESC";
 				$sql1 .= " LIMIT 1";
 				$resql1 = $object->db->query($sql1);
 				if ($resql1) {
@@ -1894,7 +1894,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 				$sql1 .= " WHERE entity IN (".getEntity('productprice').")";
 				$sql1 .= " AND price_level=".((int) $i);
 				$sql1 .= " AND fk_product = ".((int) $object->id);
-				$sql1 .= " ORDER BY date_price DESC, rowid DESC";
+				$sql1 .= " ORDER BY date_creation DESC, rowid DESC";
 				$sql1 .= " LIMIT 1";
 				$resql1 = $object->db->query($sql1);
 				if ($resql1) {
@@ -2732,7 +2732,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_default_price') && !in_array($action, array('edit_price', 'edit_level_price', 'edit_vat'))) {
 	$sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.recuperableonly, p.localtax1_tx, p.localtax1_type, p.localtax2_tx, p.localtax2_type,";
 	$sql .= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
-	$sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
+	$sql .= " p.date_creation as dp, p.fk_price_expression, u.rowid as user_id, u.login";
 	$sql .= " ,p.price_label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_price as p,";
 	$sql .= " ".MAIN_DB_PREFIX."user as u";
@@ -2742,7 +2742,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 	if (!empty($socid) && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && $soc !== null) {
 		$sql .= " AND p.price_level = ".((int) $soc->price_level);
 	}
-	$sql .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
+	$sql .= " ORDER BY p.date_creation DESC, p.rowid DESC, p.price_level ASC";
 	// $sql .= $db->plimit();
 	//print $sql;
 

@@ -2040,10 +2040,10 @@ while ($i < $imaxinloop) {
 			if ($product_static->status && $usercancreadprice) {
 				// Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
 				// then reuse the cache array if we need prices for other price levels
-				$sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
+				$sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_creation, p.price_base_type";
 				$sqlp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
 				$sqlp .= " WHERE fk_product = ".((int) $obj->rowid);
-				$sqlp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
+				$sqlp .= " ORDER BY p.date_creation DESC, p.rowid DESC, p.price_level ASC";
 				$resultp = $db->query($sqlp);
 				if ($resultp) {
 					$nump = $db->num_rows($resultp);

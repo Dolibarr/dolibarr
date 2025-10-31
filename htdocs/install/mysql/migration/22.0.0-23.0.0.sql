@@ -287,6 +287,9 @@ ALTER TABLE llx_blockedlog DROP INDEX entity_action_certified;
 ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 
 -- start price availability
+ALTER TABLE llx_product_price ADD COLUMN date_creation datetime NULL AFTER date_price;
+UPDATE llx_product_price SET date_creation = date_price;
+ALTER TABLE llx_product_price MODIFY COLUMN date_creation datetime NOT NULL;
 ALTER TABLE llx_product_price ADD COLUMN date_price_start datetime NULL AFTER date_price;
 ALTER TABLE llx_product_price ADD COLUMN date_price_end datetime NULL AFTER date_price_start;
 

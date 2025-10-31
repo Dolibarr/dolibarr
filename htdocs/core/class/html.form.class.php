@@ -3199,7 +3199,7 @@ class Form
 			if ($price_level >= 1 && getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 				$sql .= " AND price_level = " . ((int) $price_level);
 			}
-			$sql .= " ORDER BY date_price";
+			$sql .= " ORDER BY date_creation";
 			$sql .= " DESC LIMIT 1) as price_rowid";
 			$sql .= ", (SELECT pp.price_by_qty FROM " . $this->db->prefix() . "product_price as pp WHERE pp.fk_product = p.rowid"; // price_by_qty is 1 if some prices by qty exists in subtable
 			if ($price_level >= 1 && getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
@@ -3728,7 +3728,7 @@ class Form
 			$sql .= " WHERE fk_product = " . ((int) $objp->rowid);
 			$sql .= " AND entity IN (" . getEntity('productprice') . ")";
 			$sql .= " AND price_level = " . ((int) $price_level);
-			$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
+			$sql .= " ORDER BY date_creation DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
 			$sql .= " LIMIT 1";
 
 			dol_syslog(get_class($this) . '::constructProductListOption search price for product ' . $objp->rowid . ' AND level ' . $price_level, LOG_DEBUG);
