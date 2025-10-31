@@ -416,7 +416,9 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$result = $object->update($user, 0, $nosyncuser, $nosyncuserpass);
+				$nosyncthirdparty = (!getDolGlobalString('MEMBER_NO_SYNC_LINKED_THIRDPARTY') ? 0 : 1);
+
+				$result = $object->update($user, 0, $nosyncuser, $nosyncuserpass, $nosyncthirdparty);
 
 				if ($result >= 0 && !count($object->errors)) {
 					$categories = GETPOST('memcats', 'array');

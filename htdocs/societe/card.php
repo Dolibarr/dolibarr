@@ -684,7 +684,9 @@ if (empty($reshook)) {
 				}
 				//var_dump($object);exit;
 
-				$result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
+				$nosyncmember = (!getDolGlobalString('SOCIETE_NO_SYNC_LINKED_MEMBER') ? 0 : 1);
+
+				$result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', $nosyncmember);
 
 				if ($result > 0) {
 					// Update mass emailing flag into table mailing_unsubscribe
