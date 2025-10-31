@@ -431,8 +431,7 @@ class Contrat extends CommonObject
 				$result = $contratline->active_line($user, $date_start, !empty($date_end) ? $date_end : -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
-					$this->error = $contratline->error;
-					$this->errors = $contratline->errors;
+					$this->setErrorsFromObject($contratline);
 					break;
 				}
 			}
@@ -1642,8 +1641,7 @@ class Contrat extends CommonObject
 				$contractline->id = $contractlineid;
 				$result = $contractline->insertExtraFields();
 				if ($result < 0) {
-					$this->errors = array_merge($this->errors, $contractline->errors);
-					$this->error = $contractline->error;
+					$this->setErrorsFromObject($contractline);
 					$error++;
 				}
 
@@ -2680,8 +2678,7 @@ class Contrat extends CommonObject
 				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
 				if ($result < 0) {
 					$error++;
-					$this->error = $clonedObj->error;
-					$this->errors[] = $clonedObj->error;
+					$this->setErrorsFromObject($clonedObj);
 				}
 			}
 		}
