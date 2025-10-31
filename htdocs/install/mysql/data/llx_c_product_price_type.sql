@@ -23,6 +23,8 @@
 --
 -- Price Type
 --
-INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (1,'RECOM','Recommended price',1);
-INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (2,'FACTO','Factory price', 1);
-INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (3,'MANUF','Manufacturer price', 1);
+INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (1,'STD','Standard price',1);
+INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (2,'RECO','Recommended price',1);
+INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (3,'SALES','Sales price',1);
+INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (4,'FACTO','Factory price', 1);
+INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (5,'RETAIL','Retail price', 1);
