@@ -255,7 +255,8 @@ $sql .= ' ps.fk_entrepot, ps.reel,';
 $sql .= ' e.ref as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql .= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
 $sql .= ' pl.rowid as lotid, pl.eatby, pl.sellby,';
-$sql .= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
+$sql .= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable,';
+$sql .= ' SUM(COALESCE(pb.qty, ps.reel, 0)) AS search_physique';
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -394,7 +395,7 @@ if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
 }
 if ($search_stock_physique != '') {
-	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', $db->ifsql('ps.reel IS NULL', '0', 'ps.reel'), 'pb.qty') . ')', $search_stock_physique, 1, 1);
+	$natural_search_physique = natural_search('search_physique', $search_stock_physique, 1, 1);
 	$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
 	if (!empty($sql_having)) {
 		$sql_having .= " AND";

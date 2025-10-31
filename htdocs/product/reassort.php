@@ -155,7 +155,7 @@ $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desir
 if (getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED_PHYSICAL_STOCK')) {
 	$sql .= ' p.stock as stock_physique';
 } else {
-	$sql .= ' SUM(s.reel) as stock_physique';
+	$sql .= ' SUM(COALESCE(s.reel)) as stock_physique';
 }
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ', u.short_label as unit_short';
@@ -292,8 +292,7 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 		$sql_having .= " HAVING SUM(" . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ") < p.seuil_stock_alerte";
 	}
 	if ($search_stock_physique != '') {
-		//$natural_search_physique = natural_search('HAVING SUM(' . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ')', $search_stock_physique, 1, 1);
-		$natural_search_physique = natural_search('SUM(' . $db->ifsql('s.reel IS NULL', '0', 's.reel') . ')', $search_stock_physique, 1, 1);
+		$natural_search_physique = natural_search('stock_physique', $search_stock_physique, 1, 1);
 		$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
 		if (!empty($sql_having)) {
 			$sql_having .= " AND";
