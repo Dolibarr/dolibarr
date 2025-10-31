@@ -3004,8 +3004,6 @@ if ($action == 'create') {
 		//
 		$now = dol_now();
 
-		$productstatic = new Product($db);
-
 		$result = $object->fetch($id, $ref);
 		if ($result <= 0) {
 			recordNotFound('', 0);
@@ -3371,7 +3369,7 @@ if ($action == 'create') {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
+			print '<tr><td>'.$langs->trans('Type').'</td><td>';
 			print '<span class="badgeneutral">';
 			print $object->getLibType();
 			print '</span>';

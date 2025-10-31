@@ -2742,3 +2742,5 @@ SeeValueIntoConfPhp=Some sensitive data in database are encrypted using this key
 SeeValueIntoConfPhp2=For security purpose, this value can be read from a system user, that have file system access to the conf/conf.php file. If you need a non system backup, without encrypted data, you can use the "export" menu to export your data in clear CSV files.
 StatusOfModule=Status of module %s
 DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND=Disabled by option ADD_UNSPLASH_LOGIN_BACKGROUND
+GlobalParameters=Global parameters
+SpecificParameters=Specific parameters
