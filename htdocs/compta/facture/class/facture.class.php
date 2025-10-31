@@ -4282,7 +4282,7 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product->isStockManaged()) {
 					// get real stock
 					$productChildrenNb = 0;
 					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
@@ -4632,7 +4632,7 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product->isStockManaged()) {
 					// get real stock
 					$productChildrenNb = 0;
 					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
