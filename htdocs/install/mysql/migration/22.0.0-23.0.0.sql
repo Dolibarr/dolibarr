@@ -192,5 +192,8 @@ ALTER TABLE llx_c_product_price_type ADD UNIQUE INDEX uk_c_product_price_type(co
 ALTER TABLE llx_product_price ADD COLUMN fk_price_type integer DEFAULT NULL AFTER price_label;
 ALTER TABLE llx_product_price ADD CONSTRAINT fk_product_price_price_type FOREIGN KEY (fk_price_type) REFERENCES llx_c_product_price_type(rowid);
 
+INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (1,'RECOM','Recommended price',1);
+INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (2,'FACTO','Factory price', 1);
+INSERT INTO llx_c_product_price_type (rowid,code,label,active) VALUES (3,'MANUF','Manufacturer price', 1);
 
 -- end of migration
