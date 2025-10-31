@@ -434,7 +434,7 @@ if ($usecompression) {
 
 
 if (getDolGlobalString('MAIN_API_DEBUG')) {
-		dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG, 0, '_api');
+		dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.(int) $usecompression, LOG_DEBUG, 0, '_api');
 }
 
 
