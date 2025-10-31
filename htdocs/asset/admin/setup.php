@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Alexandre Spangaro   <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -469,7 +469,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 }
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -622,7 +622,7 @@ if ($action == 'edit') {
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					} elseif ($result > 0) {
-						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+						$ways = $c->print_all_ways('auto', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 						$toprint = array();
 						foreach ($ways as $way) {
 							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';

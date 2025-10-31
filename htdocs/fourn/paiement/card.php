@@ -5,6 +5,7 @@
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -427,7 +428,7 @@ if ($result > 0) {
 	}
 
 	// Presend form
-	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models
+	$modelmail = 'supplier_payment_send';
 	$defaulttopic = 'SendPaymentReceipt';
 	$diroutput = $conf->fournisseur->payment->dir_output;
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';

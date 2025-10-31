@@ -529,7 +529,10 @@ class Commande extends CommonOrder
 			$this->error = 'ErrorWrongParameters';
 			return -1;
 		}
-
+		if (!getDolGlobalBool('ORDER_NOCHECK_ONSALE_PRODUCTS_ONVALID') && !$this->checkActiveProductInLines()) {
+			dol_syslog(get_class($this)."::valid checkActiveProductInLines ".$this->error, LOG_INFO);
+			return -1;
+		}
 		$now = dol_now();
 
 		$this->db->begin();
@@ -1553,7 +1556,7 @@ class Commande extends CommonOrder
 	 *	@param      string			$desc            	Description of line
 	 *	@param      float			$pu_ht    	        Unit price (without tax)
 	 *	@param      float			$qty             	Quantite
-	 * 	@param    	float			$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 	@param    	float|string	$txtva           	Force VAT rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *	@param      int				$fk_product      	Id of product
@@ -3108,7 +3111,7 @@ class Commande extends CommonOrder
 	 *  @param    	float			$pu               	Unit price
 	 *  @param    	float			$qty              	Quantity
 	 *  @param    	float			$remise_percent   	Percent of discount
-	 *  @param    	float			$txtva           	Taux TVA
+	 *  @param    	float|string	$txtva           	VAT rate. Can be '19.6' or '19.6 (CODE)'
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate
 	 *  @param		float			$txlocaltax2		Local tax 2 rate
 	 *  @param    	string			$price_base_type	HT or TTC
@@ -3624,7 +3627,7 @@ class Commande extends CommonOrder
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$clause = " WHERE";
 
@@ -3652,7 +3655,10 @@ class Commande extends CommonOrder
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-
+		// Add where from hooks
+		$parameters = array('socid' => $user->socid);
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$delay_warning = 0;
@@ -3757,6 +3763,12 @@ class Commande extends CommonOrder
 
 		$labelTooltip = '';
 
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-billed' => (int) $billed,
+			'data-status' => (int) $status
+		)));
+
 		if ($status == self::STATUS_CANCELED) {
 			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderCanceled');
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderCanceledShort');
@@ -3788,11 +3800,14 @@ class Commande extends CommonOrder
 			$mode = 0;
 		}
 
+		$paramsBadge['tooltip'] = $labelTooltip;
+
 		$parameters = array(
 			'status'          => $status,
 			'mode'            => $mode,
 			'billed'          => $billed,
-			'donotshowbilled' => $donotshowbilled
+			'donotshowbilled' => $donotshowbilled,
+			'paramsBadge'	  =>& $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -3801,7 +3816,7 @@ class Commande extends CommonOrder
 			return $hookmanager->resPrint;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', array('tooltip' => $labelTooltip));
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**
@@ -3890,11 +3905,11 @@ class Commande extends CommonOrder
 		$result = '';
 
 		if (isModEnabled("shipping") && ($option == '1' || $option == '2')) {
-			$url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT . '/expedition/shipment.php';
 		} else {
-			$url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT . '/commande/card.php';
 		}
-
+		$query = ['id' => $this->id];
 		if (!$user->hasRight('commande', 'lire')) {
 			$option = 'nolink';
 		}
@@ -3906,9 +3921,10 @@ class Commande extends CommonOrder
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		if ($short) {
 			return $url;
@@ -4036,9 +4052,10 @@ class Commande extends CommonOrder
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
+	 *  @param	array<string|mixed>		$param		Array of options
 	 *  @return	int
 	 */
-	public function initAsSpecimen()
+	public function initAsSpecimen($param = array())
 	{
 		global $conf, $langs;
 
@@ -4050,6 +4067,9 @@ class Commande extends CommonOrder
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		if (array_key_exists('tosell', $param)) {
+			$sql .= " AND tosell = ".((int) $param['tosell']);
+		}
 		$sql .= $this->db->plimit(100);
 
 		$resql = $this->db->query($sql);
@@ -4133,21 +4153,24 @@ class Commande extends CommonOrder
 	 */
 	public function loadStateBoard()
 	{
-		global $user;
+		global $user, $hookmanager;
 
 		$this->nb = array();
 		$clause = "WHERE";
 
-		$sql = "SELECT count(co.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as co";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
+		$sql = "SELECT count(c.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= " ".$clause." co.entity IN (".getEntity('commande').")";
-
+		$sql .= " ".$clause." c.entity IN (".getEntity('commande').")";
+		// Add where from hooks
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {

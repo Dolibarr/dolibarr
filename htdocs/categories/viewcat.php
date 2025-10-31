@@ -8,7 +8,7 @@
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023-2024	Charlene Benke				<charlene@patas-monkey.com>
  *
@@ -90,15 +90,15 @@ if ($id == "" && $label == "") {
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard', 'globalcard'));
 
-// Security check
-$result = restrictedArea($user, 'categorie', $id, '&category');
-
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
 }
+
+// Security check
+$result = restrictedArea($user, 'categorie', $object->id, '&category');
 
 $type = $object->type;
 if (is_numeric($type)) {
@@ -207,7 +207,7 @@ if ($user->hasRight('categorie', 'supprimer') && $action == 'confirm_delete' && 
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie_list.php?type='.$type);
+			header("Location: ".dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['type' => $type]));
 			exit;
 		}
 	} else {
@@ -324,8 +324,9 @@ $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/ca
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = 'type:=:'.((int) $object->type);
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type).'">'.$langs->trans("Root").'</a> >> ';
-$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
+$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type).'">'.$langs->trans("Root").'</a>';
+$morehtmlref .= ' > ';
+$ways = $object->print_all_ways("auto", '', 1, 0, 1);
 foreach ($ways as $way) {
 	$morehtmlref .= $way."<br>\n";
 }
@@ -387,12 +388,12 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	if ($user->hasRight('categorie', 'creer')) {
-		$socid = ($object->socid ? "&socid=".$object->socid : "");
-		print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.urlencode($type).'">'.$langs->trans("Modify").'</a>';
+		$socid = ($object->socid ? $object->socid : "");
+		print '<a class="butAction" href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/edit.php', ['id' => $object->id, 'socid' => $socid, 'type' => $type]).'">'.$langs->trans("Modify").'</a>';
 	}
 
 	if ($user->hasRight('categorie', 'supprimer')) {
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'&backtolist='.urlencode($backtolist).'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id, 'type' => $type, 'backtolist' => $backtolist], true).'">'.$langs->trans("Delete").'</a>';
 	}
 }
 
@@ -400,11 +401,7 @@ print "</div>";
 
 $newcardbutton = '';
 if ($user->hasRight('categorie', 'creer')) {
-	$link = DOL_URL_ROOT.'/categories/card.php';
-	$link .= '?action=create';
-	$link .= '&type='.urlencode($type);
-	$link .= '&catorigin='.((int) $object->id);
-	$link .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.'&id='.$id);
+	$link = dolBuildUrl(DOL_URL_ROOT.'/categories/card.php', ['action'=> 'create', 'type' => $type, 'catorigin' => $object->id, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['type' => $type, 'id' => $id])]);
 
 	$newcardbutton = '<div class="right">';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', $link);
@@ -573,7 +570,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			/** @var Product[] $prods */
 			'@phan-var-force Product[] $prods';
 			// Form to add record into the category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -653,7 +650,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			/** @var Societe[] $socs */
 			'@phan-var-force Societe[] $socs';
 			// Form to add record into a category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -734,7 +731,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			/** @var Fournisseur[] $socs */
 			'@phan-var-force Fournisseur[] $socs';
 			// Form to add record into a category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -817,7 +814,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			/** @var Adherent[] $members */
 			'@phan-var-force Adherent[] $members';
 			// Form to add record into a category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -899,7 +896,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			/** @var Contact[] $contacts */
 			'@phan-var-force Contact[] $contacts';
 			// Form to add record into a category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -987,7 +984,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			/** @var Account[] $accounts */
 			'@phan-var-force Account[] $accounts';
 			// Form to add record into a category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1070,7 +1067,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 			/** @var Project $object */
 			'@phan-var-force Project $object';
 			// Form to add record into a category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1150,7 +1147,7 @@ if ($type == Categorie::TYPE_USER) {
 			/** @var User[] $users */
 			'@phan-var-force User[] $users';
 			// Form to add record into a category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1228,7 +1225,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 		} else {
 			/** @var Entrepot[] $objects */
 			'@phan-var-force Entrepot[] $objects';
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1299,7 +1296,7 @@ if ($type == Categorie::TYPE_TICKET) {
 			/** @var Ticket[] $tickets */
 			'@phan-var-force Ticket[] $tickets';
 			// Form to add record into a category
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1382,7 +1379,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 				$formfichinter = new FormIntervention($db);
 
 				print '<br>';
-				print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+				print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 				print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1398,7 +1395,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 				print '</form>';
 			}
 
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1467,7 +1464,7 @@ if ($type == Categorie::TYPE_ORDER) {
 		$showclassifyform = $user->hasRight('order', 'write');
 		if ($showclassifyform) {
 			print '<br>';
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1483,7 +1480,7 @@ if ($type == Categorie::TYPE_ORDER) {
 			print '</form>';
 		}
 
-		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1548,7 +1545,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 		$showclassifyform = $user->hasRight('facture', 'write');
 		if ($showclassifyform) {
 			print '<br>';
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1564,7 +1561,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 			print '</form>';
 		}
 
-		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1630,7 +1627,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 		;
 		if ($showclassifyform) {
 			print '<br>';
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1646,7 +1643,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 			print '</form>';
 		}
 
-		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1711,7 +1708,7 @@ if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 		$showclassifyform = $user->hasRight('fournisseur', 'facture', 'creer');;
 		if ($showclassifyform) {
 			print '<br>';
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
@@ -1727,7 +1724,7 @@ if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 			print '</form>';
 		}
 
-		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<input type="hidden" name="type" value="'.$typeid.'">';

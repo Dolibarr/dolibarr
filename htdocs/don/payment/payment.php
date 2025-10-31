@@ -219,7 +219,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
+	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'" spellcheck="false"></td></tr>'."\n";
 
 	// Check transmitter
 	print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
@@ -279,7 +279,7 @@ if ($action == 'create') {
 		if ($sumpaid < $objp->amount) {
 			$namef = "amount_".$objp->id;
 			if (!empty($conf->use_javascript_ajax)) {
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".price($objp->amount - $sumpaid)."'");
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".price($objp->amount - $sumpaid)."'");
 			}
 			print '<input type="text" size="8" name="'.$namef.'">';
 		} else {

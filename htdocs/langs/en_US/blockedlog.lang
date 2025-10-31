@@ -1,7 +1,8 @@
 BlockedLog=Unalterable Logs
 BlockedLogDesc=This module tracks some events into an unalterable log (that you can't modify once recorded) into a block chain, in real time. This module provides compatibility with requirements of laws of some countries (like France with the law Finance 2016 - Norme NF525).
 Fingerprints=Archived events and fingerprints
-FingerprintsDesc=This is the tool to browse or extract the unalterable logs. Unalterable logs are generated and archived locally into a dedicated table, in real time when you record a business event. You can use this tool to export this archive and save it into an external support (some countries, like France, ask that you do it every year). Note that, there is no feature to purge this log and every change tried to be done directly into this log (by a hacker for example) will be reported with a non-valid fingerprint. If you really need to purge this table because you used your application for a demo/test purpose and want to clean your data to start your production, you can ask your reseller or integrator to reset your database (all your data will be removed).
+FingerprintsDesc=This is the tool to browse or extract the unalterable logs. Unalterable logs are generated and archived locally into a dedicated table, in real time when a business event appears. You can use this tool to export this archive and save it into an external support (some countries, like France, ask that you do it at least every year). Note that, there is no feature to purge this log and every change tried to be done directly into this log (by a hacker for example) will be reported with a non-valid fingerprint.
+FingerprintsDesc2=If you really need to purge this table because you used your application for a demo/test purpose and want to clean your data to start your production, you can ask your reseller or integrator to reset your database (all your data will be removed).
 CompanyInitialKey=Company initial key (hash of genesis block)
 BrowseBlockedLog=Unalterable logs
 ShowAllFingerPrintsMightBeTooLong=Show all archived unlaterable logs (might be long)
@@ -18,8 +19,8 @@ BlockedlogInfoDialog=Log Details
 ListOfTrackedEvents=List of tracked events
 Fingerprint=Fingerprint
 DownloadLogCSV=Export unalterable logs (CSV)
-DataOfArchivedEvent=Complementary data of archived event
-DataOfArchivedEventHelp=This field contains the complementary data that was archived on real time. Even if some parent business event could have been purged or modified, the data archived here is the original data, and it can't be modified.
+DataOfArchivedEvent=Complete data of archived event
+DataOfArchivedEventHelp=This field contains the complementary data that was archived on real time. Even if some parent business event could have been canceled or modified, the data stored here is the original data, and it can't be modified.
 DataOfArchivedEventHelp2=The integrity of data on each line is guaranteed if the status of the line is OK
 ImpossibleToReloadObject=Original object (type %s, id %s) not linked (see 'Full datas' column to get unalterable saved data)
 BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
@@ -34,6 +35,10 @@ BlockedLogDisabledBis=System to track events into unalterable logs has been disa
 LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
 SavedOnLine=Saved on line
 UnlaterableDataOfEvent=Unalterable data of event
+YourCountryCode=Your country code
+DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset=Disabling %s module is not allowed once it has been used, except for a full database reset. Ask your integrator or reseller if you need such a reset.
+LNECertifiedPOSSystem=LNE Certified POS system
+InvoiceGeneratedWithLNECertifiedPOSSystem=Invoice generated with a LNE certified POS system
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted
@@ -62,3 +67,4 @@ logPAYMENT_VARIOUS_DELETE=Payment (not assigned to an invoice) logical deletion
 logPAYMENT_VARIOUS_MODIFY=Payment (not assigned to an invoice) modified
 logBLOCKEDLOG_EXPORT=Export of unalterable logs into a file
 DebugInfo=Debug info
+PreviousFingerprint=Previous fingerprint
