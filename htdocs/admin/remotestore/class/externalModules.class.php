@@ -130,6 +130,11 @@ class ExternalModules
 	 */
 	public $numberOfProducts;
 
+
+	/**
+	 * @var string 		Error string
+	 */
+	public $error;
 	/**
 	 * Constructor
 	 *
