@@ -899,9 +899,9 @@ class FormSetupItem
 			$out .=  $this->generateInputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out .= ajax_constantonoff($this->confKey);
+				$out .= ajax_constantonoff($this->confKey, array(), null, 0, 0, 0, 2, 0, 0, '', '', $this->cssClass);
 			} else {
-				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1, false, 0, 0, $this->cssClass);
 			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			$out .= $this->generateInputFieldEmailTemplate();
@@ -1212,7 +1212,7 @@ class FormSetupItem
 			$out .=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out .= ajax_constantonoff($this->confKey, array(), $this->entity); // TODO possibility to add $input parameter
+				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, 0, 0, 0, 2, 0, 0, '', '', $this->cssClass); // TODO possibility to add $input parameter
 			} else {
 				if ($this->fieldValue == 1) {
 					$out .= $langs->trans('yes');
