@@ -2914,6 +2914,7 @@ class Adherent extends CommonObject
 		$this->last_subscription_date_start = $this->first_subscription_date;
 		$this->last_subscription_date_end = dol_time_plus_duree($this->last_subscription_date_start, 1, 'y');
 		$this->last_subscription_amount = 10;
+
 		return 1;
 	}
 
@@ -3118,11 +3119,8 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
-
+			if ($this->db->num_rows($result) && $obj = $this->db->fetch_object($result)) {
 				$this->id = $obj->rowid;
-
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_modification_id = $obj->fk_user_mod;
@@ -3152,7 +3150,7 @@ class Adherent extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = (int) $obj->nb;
+			$nb = $this->db->toInt($obj, 'nb');
 
 			$this->db->free($resql);
 			return $nb;
@@ -3203,7 +3201,7 @@ class Adherent extends CommonObject
 		global $conf;
 
 		//Only valid members
-		if ($this->statut != self::STATUS_VALIDATED) {
+		if ($this->status != self::STATUS_VALIDATED) {
 			return false;
 		}
 		if (!$this->datefin) {
@@ -3288,7 +3286,7 @@ class Adherent extends CommonObject
 				while ($i < $num_rows) {
 					$obj = $this->db->fetch_object($resql);
 
-					$adherent->fetch($obj->rowid, '', 0, '', true, true);
+					$adherent->fetch($this->db->toInt($obj, 'rowid'), '', 0, '', true, true);
 
 					if (empty($adherent->email)) {
 						$nbko++;
