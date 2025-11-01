@@ -501,7 +501,6 @@ abstract class DoliDB implements Database
 	 */
 	public function toInt($object, $property)
 	{
-		var_dump($property);
 		return (int) $object->$property;
 	}
 
