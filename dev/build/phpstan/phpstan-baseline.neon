@@ -12481,30 +12481,6 @@ parameters:
 			path: ../../../htdocs/product/stats/supplier_proposal.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Entrepot\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Entrepot\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Entrepot\) and ''lieu'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1

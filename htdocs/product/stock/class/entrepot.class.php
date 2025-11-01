@@ -283,12 +283,9 @@ class Entrepot extends CommonObject
 			$id = $this->db->last_insert_id($this->db->prefix()."entrepot");
 			if ($id > 0) {
 				$this->id = $id;
-
-				if (!$error) {
-					$result = $this->update($id, $user);
-					if ($result <= 0) {
-						$error++;
-					}
+				$result = $this->update($id, $user);
+				if ($result <= 0) {
+					$error++;
 				}
 
 				// Actions on extra fields
@@ -449,7 +446,7 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && empty($notrigger)) {
+		if (empty($notrigger)) {
 			// Call trigger
 			$result = $this->call_trigger('WAREHOUSE_DELETE', $user);
 			if ($result < 0) {
@@ -1002,9 +999,7 @@ class Entrepot extends CommonObject
 	{
 		// phpcs:enable
 
-		$sql = "SELECT rowid
-				FROM ".$this->db->prefix()."entrepot
-				WHERE fk_parent = ".((int) $id);
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."entrepot WHERE fk_parent = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1084,11 +1079,11 @@ class Entrepot extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</div>';
 		$return .= '<div class="info-box-content" >';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'lieu') && (!empty($this->lieu))) {
+		if (!empty($this->lieu)) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->lieu.'</span>';
 		}
 		if ($arraydata['sellvalue'] != 0) {
@@ -1098,9 +1093,7 @@ class Entrepot extends CommonObject
 				$return .= '<br><span class="info-box-label amount">'.price($arraydata['sellvalue']).'</span>';
 			}
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
