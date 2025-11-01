@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
 
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -242,6 +243,57 @@ if ($action == 'update_extras' && $permissiontoeditextra) {
 
 	if ($error) {
 		$action = 'edit_extras';
+	}
+}
+if ($action == 'updatelasthourlyrate' && $permissiontoadd) {
+	$error = 0;
+	if (!GETPOSTISSET('taskid')) {
+		$error++;
+	}
+	if (!$error) {
+		$taskid = GETPOSTINT("taskid");
+		$sql = "SELECT et.rowid as id, u.thm as thmuser";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as et";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = et.fk_user";
+		$sql .= " WHERE et.elementtype = 'task'";
+		$sql .= " AND et.fk_element = ".((int) $taskid);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				if (empty($obj->thmuser)) {
+					$error++;
+					break;
+				}
+				$timespent = new TimeSpent($db);
+				$res = $timespent->fetch($obj->id);
+				if ($res <= 0) {
+					setEventMessages($timespent->error, $timespent->errors, 'errors');
+					$error++;
+					break;
+				}
+				$timespent->thm = $obj->thmuser;
+				$res = $timespent->update($user);
+				if ($res <= 0) {
+					setEventMessages($timespent->error, $timespent->errors, 'errors');
+					$error++;
+					break;
+				}
+				$i++;
+			}
+		} else {
+			dol_print_error($db);
+			$error++;
+		}
+	}
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("TaskHourlyRateUpdated"), null);
+		$action = '';
+	} else {
+		$db->rollback();
 	}
 }
 
@@ -1617,6 +1669,15 @@ foreach ($listofreferent as $key => $value) {
 					if ($warning) {
 						print ' '.img_warning($warning);
 					}
+					if ($tmpprojtime['nblinesnull'] > 0) {
+						if ($tmpprojtime['nbuserthmnull'] > 0) {
+							$title = $langs->trans("EnterUsersHourlyRateFirst");
+							print ' '.img_picto($title, "sync", '', 0, 0, 0, '', 'opacitymedium');
+						} else {
+							$title = $langs->trans("UpdateWithLastHourlyRate");
+							print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updatelasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync").'</a>';
+						}
+					}
 					print '</td>';
 				} else {
 					print '<td></td>';
@@ -1671,6 +1732,15 @@ foreach ($listofreferent as $key => $value) {
 					}
 					if ($warning) {
 						print ' '.img_warning($warning);
+					}
+					if ($tmpprojtime['nblinesnull'] > 0) {
+						if ($tmpprojtime['nbuserthmnull'] > 0) {
+							$title = $langs->trans("EnterUsersHourlyRateFirst");
+							print ' '.img_picto($title, "sync", '', 0, 0, 0, '', 'opacitymedium');
+						} else {
+							$title = $langs->trans("UpdateWithLastHourlyRate");
+							print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updatelasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync").'</a>';
+						}
 					}
 					print '</td>';
 				} else {
