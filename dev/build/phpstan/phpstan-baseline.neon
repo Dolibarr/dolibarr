@@ -12529,12 +12529,6 @@ parameters:
 			path: ../../../htdocs/product/stock/class/productstockentrepot.class.php
 
 		-
-			message: '#^Property ProductStockEntrepot\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
 			message: '#^Variable \$action might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
