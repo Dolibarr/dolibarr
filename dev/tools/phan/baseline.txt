@@ -152,7 +152,6 @@ return [
         'htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/delivery/class/delivery.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
         'htdocs/emailcollector/class/emailcollector.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/eventorganization/class/conferenceorboothattendee.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/eventorganization/conferenceorbooth_list.php' => ['PhanTypeMismatchArgument'],
