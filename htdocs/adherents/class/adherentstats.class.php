@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Waël Almoman         <info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,23 +231,23 @@ class AdherentStats extends Stats
 			);
 			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
-				$MembersCountArray[$objp->fk_adherent_type] = array(
-					'label' => $objp->label,
-					'members_draft' => (int) $objp->members_draft,
-					'members_pending' => (int) $objp->members_pending,
-					'members_uptodate' => (int) $objp->members_uptodate,
-					'members_expired' => (int) $objp->members_expired,
-					'members_excluded' => (int) $objp->members_excluded,
-					'members_resiliated' => (int) $objp->members_resiliated
+				$MembersCountArray[$this->db->toInt($objp, 'fk_adherent_type')] = array(
+					'label' => $this->db->toString($objp, 'label'),
+					'members_draft' => $this->db->toInt($objp, 'members_draft'),
+					'members_pending' => $this->db->toInt($objp, 'members_pending'),
+					'members_uptodate' => $this->db->toInt($objp, 'members_uptodate'),
+					'members_expired' => $this->db->toInt($objp, 'members_expired'),
+					'members_excluded' => $this->db->toInt($objp, 'members_excluded'),
+					'members_resiliated' => $this->db->toInt($objp, 'members_resiliated'),
 				);
 				$totalrow = 0;
-				foreach ($MembersCountArray[$objp->fk_adherent_type] as $key => $nb) {
+				foreach ($MembersCountArray[$this->db->toInt($objp, 'fk_adherent_type')] as $key => $nb) {
 					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;
 					}
 				}
-				$MembersCountArray[$objp->fk_adherent_type]['total_adhtype'] = $totalrow;
+				$MembersCountArray[$this->db->toInt($objp, 'fk_adherent_type')]['total_adhtype'] = $totalrow;
 				$i++;
 			}
 			$this->db->free($result);

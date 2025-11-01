@@ -210,7 +210,7 @@ class Adherent extends CommonObject
 	public $datevalid;
 
 	/**
-	 * @var string gender
+	 * @var ?string gender
 	 */
 	public $gender;
 
@@ -268,7 +268,7 @@ class Adherent extends CommonObject
 	public $first_subscription_date_end;
 
 	/**
-	 * @var int|string|null date
+	 * @var null|float|string amount
 	 */
 	public $first_subscription_amount;
 
@@ -288,7 +288,7 @@ class Adherent extends CommonObject
 	public $last_subscription_date_end;
 
 	/**
-	 * @var null|float|string date, null until set
+	 * @var null|float|string amount, null until set
 	 */
 	public $last_subscription_amount;
 
@@ -1636,10 +1636,10 @@ class Adherent extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->entity = $obj->entity;
-				$this->id = $obj->rowid;
-				$this->ref = $obj->ref;
-				$this->ref_ext = $obj->ref_ext;
+				$this->entity = $this->db->toInt($obj, 'entity');
+				$this->id = $this->db->toInt($obj, 'rowid');
+				$this->ref = $this->db->toString($obj, 'ref');
+				$this->ref_ext = $this->db->toNullString($obj, 'ref_ext');
 
 				$this->civility_id = $obj->civility_code; // Bad. Kept for backward compatibility
 				$this->civility_code = $obj->civility_code;
@@ -1647,15 +1647,15 @@ class Adherent extends CommonObject
 
 				$this->firstname = $obj->firstname;
 				$this->lastname = $obj->lastname;
-				$this->gender = $obj->gender;
-				$this->login = $obj->login;
-				$this->societe = $obj->company;
-				$this->company = $obj->company;
-				$this->socid = $obj->socid;
-				$this->fk_soc = $obj->socid; // For backward compatibility
-				$this->address = $obj->address;
-				$this->zip = $obj->zip;
-				$this->town = $obj->town;
+				$this->gender = $this->db->toNullString($obj, 'gender');
+				$this->login = $this->db->toNullString($obj, 'login');
+				$this->societe = $this->db->toNullString($obj, 'company');
+				$this->company = $this->db->toNullString($obj, 'company');
+				$this->socid = $this->db->toNullInt($obj, 'socid');
+				$this->fk_soc = $this->db->toNullInt($obj, 'socid'); // For backward compatibility
+				$this->address = $this->db->toNullString($obj, 'address');
+				$this->zip = $this->db->toNullString($obj, 'zip');
+				$this->town = $this->db->toNullString($obj, 'town');
 
 				$this->pass = $obj->pass;
 				$this->pass_indatabase = $obj->pass;
@@ -1766,21 +1766,21 @@ class Adherent extends CommonObject
 					$this->first_subscription_date = $this->db->jdate($obj->datec);
 					$this->first_subscription_date_start = $this->db->jdate($obj->dateh);
 					$this->first_subscription_date_end = $this->db->jdate($obj->datef);
-					$this->first_subscription_amount = $obj->subscription;
+					$this->first_subscription_amount = $this->db->toNullFloat($obj, 'subscription');
 				}
 				$this->last_subscription_date = $this->db->jdate($obj->datec);
 				$this->last_subscription_date_start = $this->db->jdate($obj->dateh);
 				$this->last_subscription_date_end = $this->db->jdate($obj->datef);
-				$this->last_subscription_amount = (float) $obj->subscription;
+				$this->last_subscription_amount = $this->db->toNullFloat($obj, 'subscription');
 
 				$subscription = new Subscription($this->db);
-				$subscription->id = $obj->rowid;
-				$subscription->fk_adherent = $obj->fk_adherent;
-				$subscription->fk_type = $obj->fk_type;
-				$subscription->amount = (float) $obj->subscription;
-				$subscription->note = $obj->note_public;
-				$subscription->note_public = $obj->note_public;
-				$subscription->fk_bank = $obj->fk_bank;
+				$subscription->id = $this->db->toInt($obj, 'rowid');
+				$subscription->fk_adherent = $this->db->toNullInt($obj, 'fk_adherent');
+				$subscription->fk_type = $this->db->toNullInt($obj, 'fk_type');
+				$subscription->amount = $this->db->toNullFloat($obj, 'subscription');
+				$subscription->note = $this->db->toNullString($obj, 'note_public');
+				$subscription->note_public = $this->db->toNullString($obj, 'note_public');
+				$subscription->fk_bank = $this->db->toNullInt($obj, 'fk_bank');
 				$subscription->datem = $this->db->jdate($obj->datem);
 				$subscription->datec = $this->db->jdate($obj->datec);
 				$subscription->dateh = $this->db->jdate($obj->dateh);

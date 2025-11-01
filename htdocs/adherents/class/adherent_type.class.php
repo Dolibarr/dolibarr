@@ -273,14 +273,15 @@ class AdherentType extends CommonObject
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
-				if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
-					$this->label        = $obj->label;
-					$this->description = $obj->description;
-					$this->email        = $obj->email;
+				$lang = $this->db->toString($obj, 'lang');
+				if ($lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
+					$this->label = $this->db->toString($obj, 'label');
+					$this->description = $this->db->toNullString($obj, 'description');
+					$this->email = $this->db->toNullString($obj, 'email');
 				}
-				$this->multilangs[(string) $obj->lang]["label"] = $obj->label;
-				$this->multilangs[(string) $obj->lang]["description"] = $obj->description;
-				$this->multilangs[(string) $obj->lang]["email"] = $obj->email;
+				$this->multilangs[$lang]["label"] = $this->db->toString($obj, 'label');
+				$this->multilangs[$lang]["description"] = $this->db->toNullString($obj, 'description');
+				$this->multilangs[$lang]["email"] = $this->db->toNullString($obj, 'email');
 			}
 			return 1;
 		} else {

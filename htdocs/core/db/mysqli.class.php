@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Charlene Benke	        <charlene@patas-monkey.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,7 +352,11 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		try {
+			$fields = [];
 			$ret = $this->db->query($query, $result_mode);
+			if ($ret instanceof \mysqli_result) {
+				$fields = $ret->fetch_fields();
+			}
 		} catch (Exception $e) {
 			dol_syslog(get_class($this)."::query Exception in query instead of returning an error: ".$e->getMessage(), LOG_ERR);
 			$ret = false;
@@ -373,6 +377,7 @@ class DoliDBMysqli extends DoliDB
 			}
 			$this->lastquery = $query;
 			$this->_results = $ret;
+			$this->fields = $fields;
 		}
 
 		return $ret;
@@ -1315,6 +1320,43 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		return $stmt;
+	}
+
+	/**
+	 * Get column type
+	 *
+	 * @param int $type type of field
+	 * @return string
+	 */
+	public function getColumnTypeName($type)
+	{
+		$types = [
+			1 => 'TINYINT',
+			2 => 'SMALLINT',
+			3 => 'INT',
+			4 => 'FLOAT',
+			5 => 'DOUBLE',
+			7 => 'TIMESTAMP',
+			8 => 'BIGINT',
+			9 => 'MEDIUMINT',
+			10 => 'DATE',
+			11 => 'TIME',
+			12 => 'DATETIME',
+			13 => 'YEAR',
+			16 => 'BIT',
+			246 => 'DECIMAL',
+			247 => 'TINYBLOB',
+			248 => 'MEDIUMBLOB',
+			249 => 'LONGBLOB',
+			250 => 'BLOB',
+			251 => 'VAR_STRING',
+			252 => 'STRING',
+			253 => 'VARCHAR',
+			254 => 'CHAR',
+			255 => 'GEOMETRY'
+		];
+
+		return $types[$type] ?? 'UNKNOWN';
 	}
 }
 
