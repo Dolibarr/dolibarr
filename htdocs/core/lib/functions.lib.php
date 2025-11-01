@@ -3474,7 +3474,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$object->totaldeposits = $object->getSumDepositsUsed(0);
 			$object->alreadypaid = $object->totalpaid + $object->totalcreditnotes + $object->totaldeposits;
 		}
-		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		$tmptxt = $object->getLibStatut(6, (float) $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, (float) $object->alreadypaid);
 		}
@@ -3857,12 +3857,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', (string) $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
-		dol_print_error(null, "Functions.lib::dol_print_date function called with a bad value from page " . (empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]));
+		dol_print_error(null, "Functions.lib::dol_print_date function called with a bad value" . getCallerInfoString());
 		return '';
 	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', (string) $time, $reg)) {    // Still available to solve problems in extrafields of type date
 		// This part of code should not be used anymore.
-		dol_syslog("Functions.lib::dol_print_date function called with a bad value from page " . (empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]), LOG_WARNING);
-		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
+		dol_syslog("Functions.lib::dol_print_date function called with a bad value" . getCallerInfoString(), LOG_WARNING);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
 		$syear	= (!empty($reg[1]) ? $reg[1] : '');
 		$smonth = (!empty($reg[2]) ? $reg[2] : '');
@@ -5220,7 +5219,7 @@ function dolGetFirstLetters($s, $nbofchar = 1)
 /**
  * Make a strlen call. Works even if mbstring module not enabled
  *
- * @param   string		$string				String to calculate length
+ * @param   ?string		$string				String to calculate length
  * @param   string		$stringencoding		Encoding of string
  * @return  int								Length of string
  */
@@ -7051,7 +7050,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 	$return .= '<table ' . ($id ? 'id="' . $id . '" ' : '') . 'class="centpercent notopnoleftnoright table-fiche-title' . ($morecssontable ? ' ' . $morecssontable : '') . '">'; // margin bottom must be same than into print_barre_list
 	$return .= '<tr class="toptitle">';
 	if ($picto) {
-		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle pictotitle'.($morecssonpicto ? ' '.$morecssonpicto: '').'"', $pictoisfullpath) . '</td>';
+		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle pictotitle'.($morecssonpicto ? ' '.$morecssonpicto : '').'"', $pictoisfullpath) . '</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
@@ -10363,7 +10362,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 							$liste_factures[] = ' - '.$outputlangs->trans('Invoice').' '. $objp->ref.' '.$outputlangs->trans('AmountPayed').' '.price($objp->multicurrency_amount, 0, $outputlangs, 0, -1, -1, $objp->multicurrency_code);
 						}
 					}
-					$substitutionarray['__SUPPLIER_PAYMENT_INVOICES_LIST__'] =  implode("\n", $liste_factures);;
+					$substitutionarray['__SUPPLIER_PAYMENT_INVOICES_LIST__'] =  implode("\n", $liste_factures);
+					;
 					$substitutionarray['__SUPPLIER_PAYMENT_INVOICES_TOTAL__'] = price($object->multicurrency_amount, 0, $outputlangs, 0, -1, -1, $object->multicurrency_code ? $object->multicurrency_code : $conf->currency);
 				}
 				if (is_object($object) && $object->element == 'shipping') {
@@ -11204,6 +11204,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 					// Add other keys
 					if (!empty($tmpmultikey[1])) {
 						$newindex = $tmpmultikey[1];
+						// @phan-suppress-next-line PhanTypeArraySuspicious,PhanTypeMismatchDimFetch
 						$temp[$key] .= '__' . (empty($array[$key][$newindex]) ? 0 : $array[$key][$newindex]);
 					}
 				}
@@ -11244,8 +11245,8 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 /**
  *	Check if a string is in UTF8. Seems similar to utf8_valid() but in pure PHP.
  *
- *	@param	string	$str        String to check
- *	@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special non utf8 char or Binary)
+ *	@param	null|string|int	$str    String to check
+ *	@return	boolean					True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special non utf8 char or Binary)
  *	@see utf8_valid()
  */
 function utf8_check($str)
@@ -11499,14 +11500,14 @@ function dol_eval_new($s)
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-		$db, $langs, $user, $website, $websitepage,
-		$action, $mainmenu, $leftmenu,
-		$mysoc,
-		$objectoffield,	// To allow the use of $objectoffield in computed fields
+	$db, $langs, $user, $website, $websitepage,
+	$action, $mainmenu, $leftmenu,
+	$mysoc,
+	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
-		// Old variables used
-		$object,
-		$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	// Old variables used
+	$object,
+	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
@@ -14188,7 +14189,6 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
  *
  * @return array<string, string> An array where each key corresponds to the attribute name
  *                               and each value is a full `key="escaped_value"` string ready for HTML output.
- *
  */
 function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
 {
@@ -14200,7 +14200,9 @@ function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
 	foreach ($attr as $key => $value) {
 		// special boolean attributes case
 		if (in_array($key, getListOfHtmlBooleanAttributes())) {
-			if ($value) { $TCompiledAttr[$key] = $key; }
+			if ($value) {
+				$TCompiledAttr[$key] = $key;
+			}
 			continue;
 		}
 

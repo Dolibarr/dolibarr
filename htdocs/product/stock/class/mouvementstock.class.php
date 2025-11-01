@@ -211,7 +211,7 @@ class MouvementStock extends CommonObject
 	 *	@param		int|string		$datem				Force date of movement
 	 *	@param		int|''			$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		int|''			$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
-	 *	@param		string			$batch				batch number
+	 *	@param		string|null		$batch				batch number
 	 *	@param		bool			$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch table to use)
 	 *  @param		int<0,1>		$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a kit)
@@ -362,8 +362,7 @@ class MouvementStock extends CommonObject
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num > 0) {
-					while ($i < $num) {
-						$obj = $this->db->fetch_object($resql);
+					while ($i < $num && $obj = $this->db->fetch_object($resql)) {
 						if ($obj->eatby) {
 							if ($eatby) {
 								$tmparray = dol_getdate((int) $eatby, true);
@@ -386,8 +385,7 @@ class MouvementStock extends CommonObject
 								$productlot->eatby = $eatby;
 								$result = $productlot->update($user);
 								if ($result <= 0) {
-									$this->error = $productlot->error;
-									$this->errors = $productlot->errors;
+									$this->setErrorsFromObject($productlot);
 									$this->db->rollback();
 									return -5;
 								}
@@ -414,8 +412,7 @@ class MouvementStock extends CommonObject
 								$productlot->sellby = $sellby;
 								$result = $productlot->update($user);
 								if ($result <= 0) {
-									$this->error = $productlot->error;
-									$this->errors = $productlot->errors;
+									$this->setErrorsFromObject($productlot);
 									$this->db->rollback();
 									return -5;
 								}
@@ -436,8 +433,7 @@ class MouvementStock extends CommonObject
 					$productlot->sellby = $sellby;
 					$result = $productlot->create($user);
 					if ($result <= 0) {
-						$this->error = $productlot->error;
-						$this->errors = $productlot->errors;
+						$this->setErrorsFromObject($productlot);
 						$this->db->rollback();
 						return -4;
 					}
@@ -475,8 +471,8 @@ class MouvementStock extends CommonObject
 					$tmpwarehouse = new Entrepot($this->db);
 					$tmpwarehouse->fetch($entrepot_id);
 
-					$this->error = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
-					$this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
+					$this->error = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, (string) $batch, $qtyisnotenough, $tmpwarehouse->ref);
+					$this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, (string) $batch, $qtyisnotenough, $tmpwarehouse->ref);
 					$this->db->rollback();
 					return -8;
 				}
@@ -513,7 +509,7 @@ class MouvementStock extends CommonObject
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
 			$sql .= " VALUES ('".$this->db->idate($this->datem)."', ".((int) $this->product_id).", ";
-			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
+			$sql .= " ".(isset($batch) ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
 			$sql .= " ".((int) $this->entrepot_id).", ".((float) $this->qty).", ".((int) $this->type).",";
@@ -621,11 +617,11 @@ class MouvementStock extends CommonObject
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 					if ($result == -2 && $fk_product_stock > 0) {	// The entry for this product batch does not exists anymore, bu we already have a llx_product_stock, so we recreate the batch entry in product_batch
-						$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => $batch);
+						$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => (string) $batch);
 						$result = $this->createBatch($param_batch, $qty);
 					}
 				} else {
-					$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => $batch);
+					$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => (string) $batch);
 					$result = $this->createBatch($param_batch, $qty);
 				}
 				if ($result < 0) {
@@ -678,9 +674,9 @@ class MouvementStock extends CommonObject
 			// Check unicity for serial numbered equipment once all movement were done.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
-					if ($this->getBatchCount($fk_product, $batch) > 1) {
+					if ($this->getBatchCount($fk_product, (string) $batch) > 1) {
 						$error++;
-						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
+						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, (string) $batch);
 					}
 				}
 			}
@@ -984,8 +980,7 @@ class MouvementStock extends CommonObject
 
 				$result = $pdluo->create($user, 1);
 				if ($result < 0) {
-					$this->error = $pdluo->error;
-					$this->errors = $pdluo->errors;
+					$this->setErrorsFromObject($pdluo);
 				}
 			}
 		}

@@ -6218,9 +6218,9 @@ class Product extends CommonObject
 	 * @param	int<0,1>		$movement       	0 = add, 1 = remove
 	 * @param	string			$label          	Label of stock movement
 	 * @param	int|float		$price          	Price to use for stock eval
-	 * @param	int|string		$dlc            	eat-by date
-	 * @param	int|string		$dluo           	sell-by date
-	 * @param	string			$lot            	Lot number
+	 * @param	int|''|null		$dlc            	eat-by date
+	 * @param	int|''|null		$dluo           	sell-by date
+	 * @param	string|null		$lot            	Lot number
 	 * @param	string			$inventorycode  	Inventory code
 	 * @param	string			$origin_element 	Origin element type
 	 * @param	?int			$origin_id      	Origin id of element
