@@ -509,7 +509,7 @@ class MouvementStock extends CommonObject
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
 			$sql .= " VALUES ('".$this->db->idate($this->datem)."', ".((int) $this->product_id).", ";
-			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
+			$sql .= " ".(isset($batch) ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
 			$sql .= " ".((int) $this->entrepot_id).", ".((float) $this->qty).", ".((int) $this->type).",";
@@ -617,11 +617,11 @@ class MouvementStock extends CommonObject
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 					if ($result == -2 && $fk_product_stock > 0) {	// The entry for this product batch does not exists anymore, bu we already have a llx_product_stock, so we recreate the batch entry in product_batch
-						$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => $batch);
+						$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => (string) $batch);
 						$result = $this->createBatch($param_batch, $qty);
 					}
 				} else {
-					$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => $batch);
+					$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => (string) $batch);
 					$result = $this->createBatch($param_batch, $qty);
 				}
 				if ($result < 0) {
