@@ -481,7 +481,7 @@ class Propal extends CommonObject
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (!$qty) {
 			$qty = 1;
