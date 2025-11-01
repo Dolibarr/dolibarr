@@ -688,7 +688,6 @@ while ($i < $imaxinloop) {
 			if ($obj->pid) {
 				$projectstatic->id = $obj->pid;
 				$projectstatic->ref = $obj->pref;
-				$projectstatic->id = $obj->pid;
 				$projectstatic->public = $obj->public;
 				$projectstatic->title = $obj->title;
 				print $projectstatic->getNomUrl(1);
