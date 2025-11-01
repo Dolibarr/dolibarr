@@ -168,6 +168,12 @@ foreach ($categories as $key => $categorycursor) {
 $maincategories = dol_sort_array($maincategories, 'label');
 $subcategories = dol_sort_array($subcategories, 'label');
 ?>
+<?php
+$keyCodeForEnter = '';
+if (!empty($_SESSION['takeposterminal'])) {
+	$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
+}
+?>
 
 <body class="bodytakepos" style="overflow: hidden;">
 
@@ -1146,12 +1152,6 @@ $( document ).ready(function() {
 });
 </script>
 
-<?php
-$keyCodeForEnter = '';
-if (!empty($_SESSION['takeposterminal'])) {
-	$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
-}
-?>
 <div class="container">
 
 <?php
@@ -1618,14 +1618,14 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
-												<?php if ($count == ($MAXPRODUCT - 2)) {
-													?> onclick="MoreProducts('less')" <?php
-												}
-												if ($count == ($MAXPRODUCT - 1)) {
-													?> onclick="MoreProducts('more')" <?php
-												} else {
-													echo 'onclick="ClickProduct('.((int) $count).')"';
-												} ?>>
+													<?php if ($count == ($MAXPRODUCT - 2)) {
+														?> onclick="MoreProducts('less')" <?php
+													}
+													if ($count == ($MAXPRODUCT - 1)) {
+														?> onclick="MoreProducts('more')" <?php
+													} else {
+														echo 'onclick="ClickProduct('.((int) $count).')"';
+													} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
