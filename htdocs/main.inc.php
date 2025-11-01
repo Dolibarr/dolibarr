@@ -222,24 +222,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"])) {
 	}
 }
 
-// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
-// accesskey is for Mac:               CTRL + Option + key for all browsers
-if (!defined('NOREQUIRETRAN')) {
-	$langs->load('main');
-	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->os == 'macintosh') {
-		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
-	} else {
-		if ($conf->browser->name == 'chrome') {
-			$conf->browser->stringforfirstkey .= ' ALT +';
-		} elseif ($conf->browser->name == 'firefox') {
-			$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
-		} else {
-			$conf->browser->stringforfirstkey .= ' CTL +';
-		}
-	}
-}
-
 // If theme is forced
 if (GETPOST('theme', 'aZ09')) {
 	$conf->theme = GETPOST('theme', 'aZ09');
@@ -935,6 +917,23 @@ if (!defined('NOLOGIN')) {
 				$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorSessionInvalidatedAfterPasswordChange");
 
 				$user->context['audit'] = 'ErrorUserSessionWasInvalidated - login='.$login;
+			}
+
+			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+			// accesskey is for Mac:               CTRL + Option + key for all browsers
+			if (!defined('NOREQUIRETRAN')) {
+				$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
+				if ($conf->browser->os == 'macintosh') {
+					$conf->browser->stringforfirstkey .= ' CTRL + Option +';
+				} else {
+					if ($conf->browser->name == 'chrome') {
+						$conf->browser->stringforfirstkey .= ' ALT +';
+					} elseif ($conf->browser->name == 'firefox') {
+						$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
+					} else {
+						$conf->browser->stringforfirstkey .= ' CTL +';
+					}
+				}
 			}
 
 			// Call trigger
