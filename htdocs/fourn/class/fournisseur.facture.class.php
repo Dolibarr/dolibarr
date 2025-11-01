@@ -1926,10 +1926,7 @@ class FactureFournisseur extends CommonInvoice
 							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("InvoiceValidatedInDolibarr", $num));
 						}
 						if ($result < 0) {
-							$this->error = $mouvP->error;
-							if (count($mouvP->errors)) {
-								$this->errors = $mouvP->errors;
-							}
+							$this->setErrorsFromObject($mouvP);
 							return -2;
 						}
 					}
@@ -2528,14 +2525,13 @@ class FactureFournisseur extends CommonInvoice
 		// Multicurrency
 		$line->multicurrency_subprice = (float) $pu_ht_devise;
 		$line->multicurrency_total_ht = (float) $multicurrency_total_ht;
-		$line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
-		$line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
+		$line->multicurrency_total_tva = (float) $multicurrency_total_tva;
+		$line->multicurrency_total_ttc = (float) $multicurrency_total_ttc;
 
 		$res = $line->update($notrigger);
 
 		if ($res < 1) {
-			$this->errors[] = $line->error;
-			$this->errors = array_merge($this->errors, $line->errors);
+			$this->setErrorsFromObject($line);
 		} else {
 			// Update total price into invoice record
 			$res = $this->update_price(1, 'auto', 0, $this->thirdparty);
