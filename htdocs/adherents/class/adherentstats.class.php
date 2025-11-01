@@ -231,7 +231,8 @@ class AdherentStats extends Stats
 			);
 			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
-				$MembersCountArray[$this->db->toInt($objp, 'fk_adherent_type')] = array(
+				$fkMemberType = $this->db->toInt($objp, 'fk_adherent_type');
+				$MembersCountArray[$fkMemberType] = array(
 					'label' => $this->db->toString($objp, 'label'),
 					'members_draft' => $this->db->toInt($objp, 'members_draft'),
 					'members_pending' => $this->db->toInt($objp, 'members_pending'),
@@ -241,13 +242,13 @@ class AdherentStats extends Stats
 					'members_resiliated' => $this->db->toInt($objp, 'members_resiliated'),
 				);
 				$totalrow = 0;
-				foreach ($MembersCountArray[$this->db->toInt($objp, 'fk_adherent_type')] as $key => $nb) {
+				foreach ($MembersCountArray[$fkMemberType] as $key => $nb) {
 					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;
 					}
 				}
-				$MembersCountArray[$this->db->toInt($objp, 'fk_adherent_type')]['total_adhtype'] = $totalrow;
+				$MembersCountArray[$fkMemberType]['total_adhtype'] = $totalrow;
 				$i++;
 			}
 			$this->db->free($result);
