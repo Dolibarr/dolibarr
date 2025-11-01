@@ -81,12 +81,13 @@ class Productbatch extends CommonObject
 	public $lotid;
 
 	/**
-	 * @var int|''
+	 * @var int|''|null
 	 * @deprecated
 	 */
 	public $sellby = '';	// dlc
+
 	/**
-	 * @var int|''
+	 * @var int|''|null
 	 * @deprecated
 	 */
 	public $eatby = '';		// dmd/dluo
