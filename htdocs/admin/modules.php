@@ -1338,7 +1338,11 @@ if ($mode == 'marketplace') {
 	print '</td>';
 	print '<td class="center">';
 	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' is in the local cache file '.$remotestore->cache_file.' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
+		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		if ($remotestore->githubFileError) {
+			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
+		}
 		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
 	}
 	print '</td>';

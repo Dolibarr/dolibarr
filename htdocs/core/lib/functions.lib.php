@@ -3565,6 +3565,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// $morehtml is the right part (link "Back to list")
+	// $morehtmlref is the part after the ref
 	// $morehtmlleft is the picto or photo of banner
 	// $morehtmlstatus is part under the status
 	// $morehtmlright is part of htmlright
@@ -4351,11 +4352,13 @@ function getArrayOfSocialNetworks()
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 	$cachekey = 'socialnetworks_' . $conf->entity;
 	$dataretrieved = dol_getcache($cachekey);
+
 	if (!is_null($dataretrieved)) {
 		$socialnetworks = $dataretrieved;
 	} else {
 		$sql = "SELECT rowid, code, label, url, icon, active FROM " . MAIN_DB_PREFIX . "c_socialnetworks";
-		$sql .= " WHERE entity =" . ((int) $conf->entity);
+		$sql .= " WHERE entity = " . ((int) $conf->entity);
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
@@ -7032,10 +7035,11 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
  * 	@param	string	$id					To force an id on html objects
  *  @param  string  $morecssontable     More css on table
  *	@param	string	$morehtmlcenter		Added message to show on center
+ *  @param	string	$morecssonpicto		More css on picto
  * 	@return	string
  *  @see print_barre_liste()
  */
-function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
+function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '', $morecssonpicto = 'widthpictotitle')
 {
 	$return = '';
 
@@ -7047,7 +7051,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 	$return .= '<table ' . ($id ? 'id="' . $id . '" ' : '') . 'class="centpercent notopnoleftnoright table-fiche-title' . ($morecssontable ? ' ' . $morecssontable : '') . '">'; // margin bottom must be same than into print_barre_list
 	$return .= '<tr class="toptitle">';
 	if ($picto) {
-		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath) . '</td>';
+		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle pictotitle'.($morecssonpicto ? ' '.$morecssonpicto: '').'"', $pictoisfullpath) . '</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
@@ -13742,7 +13746,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string  			$type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
  * @param   ''|'pill'|'dot'		$mode		Default '' , 'pill', 'dot'
  * @param   string  			$url        the url for link
- * @param   array<string,mixed>	$params		Various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
+ * @param   array{attr?:array{class:string,title:string},css?:string}	$params		Various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              			Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())

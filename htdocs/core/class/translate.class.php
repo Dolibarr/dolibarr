@@ -355,6 +355,7 @@ class Translate
 				if (!$found) {
 					if ($fp = @fopen($file_lang, "rt")) {
 						// $tabtranslatedomain = array(); // To save lang content in cache when enabled (commented because initial = argument to function)
+						//print "Process file_lang=$file_lang\n";
 
 						/**
 						 * Read each lines until a '=' (with any combination of spaces around it)

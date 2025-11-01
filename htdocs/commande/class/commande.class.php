@@ -586,7 +586,7 @@ class Commande extends CommonOrder
 						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr", $num));
 						if ($result < 0) {
 							$error++;
-							$this->error = $mouvP->error;
+							$this->setErrorsFromObject($mouvP);
 						}
 					}
 					if ($error) {
@@ -721,7 +721,7 @@ class Commande extends CommonOrder
 						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr", $this->ref));
 						if ($result < 0) {
 							$error++;
-							$this->error = $mouvP->error;
+							$this->setErrorsFromObject($mouvP);
 							break;
 						}
 					}
@@ -1673,7 +1673,7 @@ class Commande extends CommonOrder
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product_type == 0) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product->isStockManaged()) {
 					// get real stock
 					$productChildrenNb = 0;
 					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
@@ -1861,7 +1861,7 @@ class Commande extends CommonOrder
 					return -1;
 				}
 			} else {
-				$this->error = $this->line->error;
+				$this->setErrorsFromObject($this->line);
 				dol_syslog(get_class($this)."::addline error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -2184,8 +2184,7 @@ class Commande extends CommonOrder
 					return -1;
 				}
 			} else {
-				$this->error = $line->error;
-				$this->errors = $line->errors;
+				$this->setErrorsFromObject($line);
 				$this->db->rollback();
 				return -2;
 			}
@@ -2522,7 +2521,7 @@ class Commande extends CommonOrder
 				}
 			} else {
 				$this->db->rollback();
-				$this->error = $line->error;
+				$this->setErrorsFromObject($line);
 				return -1;
 			}
 		} else {
@@ -3228,7 +3227,7 @@ class Commande extends CommonOrder
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product_type == 0) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product->isStockManaged()) {
 					// get real stock
 					$productChildrenNb = 0;
 					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
@@ -3350,7 +3349,7 @@ class Commande extends CommonOrder
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $this->line->error;
+				$this->setErrorsFromObject($this->line);
 
 				$this->db->rollback();
 				return -1;
@@ -3627,7 +3626,7 @@ class Commande extends CommonOrder
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$clause = " WHERE";
 
@@ -3655,7 +3654,10 @@ class Commande extends CommonOrder
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-
+		// Add where from hooks
+		$parameters = array('socid' => $user->socid);
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$delay_warning = 0;
@@ -4150,21 +4152,24 @@ class Commande extends CommonOrder
 	 */
 	public function loadStateBoard()
 	{
-		global $user;
+		global $user, $hookmanager;
 
 		$this->nb = array();
 		$clause = "WHERE";
 
-		$sql = "SELECT count(co.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as co";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
+		$sql = "SELECT count(c.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= " ".$clause." co.entity IN (".getEntity('commande').")";
-
+		$sql .= " ".$clause." c.entity IN (".getEntity('commande').")";
+		// Add where from hooks
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {

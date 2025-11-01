@@ -11414,9 +11414,9 @@ abstract class CommonObject
 	/**
 	 * Sets object to given categories.
 	 *
-	 * Adds it to non existing supplied categories.
-	 * Deletes object from existing categories not supplied (if remove_existing==true).
-	 * Existing categories are left untouch.
+	 * Assign the object to all categories not yet assigned.
+	 * Unasign object from existing categories not supplied in $categories (if remove_existing==true).
+	 * If remove_existing is false, existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
 	 * @param 	string 		$type_categ 		Category type ('customer', 'supplier', 'website_page', ...) defined into const class Categorie type
