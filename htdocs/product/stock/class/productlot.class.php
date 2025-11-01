@@ -227,7 +227,7 @@ class Productlot extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var string import key
+	 * @var null|string import key
 	 */
 	public $import_key;
 

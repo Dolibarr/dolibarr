@@ -12511,12 +12511,6 @@ parameters:
 			path: ../../../htdocs/product/stock/class/productlot.class.php
 
 		-
-			message: '#^Property Productlot\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
