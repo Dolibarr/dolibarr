@@ -471,8 +471,8 @@ class MouvementStock extends CommonObject
 					$tmpwarehouse = new Entrepot($this->db);
 					$tmpwarehouse->fetch($entrepot_id);
 
-					$this->error = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
-					$this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
+					$this->error = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, (string) $batch, $qtyisnotenough, $tmpwarehouse->ref);
+					$this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, (string) $batch, $qtyisnotenough, $tmpwarehouse->ref);
 					$this->db->rollback();
 					return -8;
 				}
