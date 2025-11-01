@@ -271,7 +271,6 @@ ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
 ALTER TABLE llx_blockedlog ADD COLUMN vat double(24,8) DEFAULT NULL;
 
 
-WHERE code = 'CIP';
 -- Incoterms 2025 and specific terms
 -- DAT is replaced by DPU - but not deactivating for existing installations
 -- UPDATE llx_c_incoterms SET active = 0 WHERE code = 'DAT';
@@ -280,16 +279,10 @@ WHERE code = 'CIP';
 ALTER TABLE llx_c_incoterms MODIFY code varchar(8) NOT NULL;
 
 -- For MySQL and MariaDB:
--- VMYSQL5.7 INSERT IGNORE INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPU', 'Delivered at Place Unloaded', 'Delivered at Place Unloaded, marchandises déchargées et livrées au lieu de destination désigné (remplace DAT, élargit les lieux de livraison possibles)', 1);
--- VMYSQL5.7 INSERT IGNORE INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP', 'Delivered at Terminal Paid', 'Delivered at Terminal Paid, marchandises livrées et dédouanées dans un terminal du pays de destination', 0);
--- VMYSQL5.7 INSERT IGNORE INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPP', 'Delivered at Place Paid', 'Delivered at Place Paid, marchandises livrées et dédouanées à une adresse précise du pays de destination', 0);
--- VMYSQL5.7 INSERT IGNORE INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP(DHL)', 'Duties and Taxes Paid', 'Duties and Taxes Paid (service DHL) : l''expéditeur paie les droits de douane et taxes à l''importation (spécifique à DHL)', 0);
-
--- For PostgreSQL:
--- VPGSQL9.5 INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPU', 'Delivered at Place Unloaded', 'Delivered at Place Unloaded, marchandises déchargées et livrées au lieu de destination désigné (remplace DAT, élargit les lieux de livraison possibles)', 1) ON CONFLICT DO NOTHING;
--- VPGSQL9.5 INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP', 'Delivered at Terminal Paid', 'Delivered at Terminal Paid, marchandises livrées et dédouanées dans un terminal du pays de destination', 0) ON CONFLICT DO NOTHING;
--- VPGSQL9.5 INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPP', 'Delivered at Place Paid', 'Delivered at Place Paid, marchandises livrées et dédouanées à une adresse précise du pays de destination', 0) ON CONFLICT DO NOTHING;
--- VPGSQL9.5 INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP(DHL)', 'Duties and Taxes Paid', 'Duties and Taxes Paid (service DHL) : l''expéditeur paie les droits de douane et taxes à l''importation (spécifique à DHL)', 0) ON CONFLICT DO NOTHING;
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPU', 'Delivered at Place Unloaded', 'Delivered at Place Unloaded, marchandises déchargées et livrées au lieu de destination désigné (remplace DAT, élargit les lieux de livraison possibles)', 1);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP', 'Delivered at Terminal Paid', 'Delivered at Terminal Paid, marchandises livrées et dédouanées dans un terminal du pays de destination', 0);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPP', 'Delivered at Place Paid', 'Delivered at Place Paid, marchandises livrées et dédouanées à une adresse précise du pays de destination', 0);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP(DHL)', 'Duties and Taxes Paid', 'Duties and Taxes Paid (service DHL) : l''expéditeur paie les droits de douane et taxes à l''importation (spécifique à DHL)', 0);
 
 -- Update existing Incoterms descriptions
 UPDATE llx_c_incoterms
