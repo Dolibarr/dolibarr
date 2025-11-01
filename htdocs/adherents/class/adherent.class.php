@@ -3101,10 +3101,10 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *      Load type info information in the member object
+	 *  Load type info information in the member object
 	 *
-	 *      @param  int		$id       Id of member to load
-	 *      @return	void
+	 *  @param  int		$id       Id of member to load
+	 *  @return	void
 	 */
 	public function info($id)
 	{
@@ -3120,10 +3120,10 @@ class Adherent extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result) && $obj = $this->db->fetch_object($result)) {
-				$this->id = $obj->rowid;
-				$this->user_creation_id = $obj->fk_user_author;
-				$this->user_validation_id = $obj->fk_user_valid;
-				$this->user_modification_id = $obj->fk_user_mod;
+				$this->id = $this->db->toInt($obj, 'rowid');
+				$this->user_creation_id = $this->db->toNullInt($obj, 'fk_user_author');
+				$this->user_validation_id = $this->db->toNullInt($obj, 'fk_user_valid');
+				$this->user_modification_id = $this->db->toNullInt($obj, 'fk_user_mod');
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_modification = $this->db->jdate($obj->datem);
