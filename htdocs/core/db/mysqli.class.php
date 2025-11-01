@@ -1385,11 +1385,9 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function toNullIntUnsigned($object, $property)
 	{
-		$type = array_filter($this->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+		$index = array_search($property, array_column($this->fields, 'name'));
+		$type = $index !== false ? $this->fields[$index] : null;
+		if ($type && (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1405,11 +1403,9 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function toFloat($object, $property)
 	{
-		$type = array_filter($this->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [4, 5, 246]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+		$index = array_search($property, array_column($this->fields, 'name'));
+		$type = $index !== false ? $this->fields[$index] : null;
+		if ($type && (!in_array($type->type, [4, 5, 246]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1425,11 +1421,9 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function toNullFloat($object, $property)
 	{
-		$type = array_filter($this->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [4, 5, 246]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+		$index = array_search($property, array_column($this->fields, 'name'));
+		$type = $index !== false ? $this->fields[$index] : null;
+		if ($type && (!in_array($type->type, [4, 5, 246]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1445,11 +1439,9 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function toString($object, $property)
 	{
-		$type = array_filter($this->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [251, 252, 253, 254, 255]) || !($type->flags & MYSQLI_NOT_NULL_FLAG)) {
+		$index = array_search($property, array_column($this->fields, 'name'));
+		$type = $index !== false ? $this->fields[$index] : null;
+		if ($type && (!in_array($type->type, [251, 252, 253, 254, 255]) || !($type->flags & MYSQLI_NOT_NULL_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1465,11 +1457,9 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function toNullString($object, $property)
 	{
-		$type = array_filter($this->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [251, 252, 253, 254, 255]) || ($type->flags & MYSQLI_NOT_NULL_FLAG)) {
+		$index = array_search($property, array_column($this->fields, 'name'));
+		$type = $index !== false ? $this->fields[$index] : null;
+		if ($type && (!in_array($type->type, [251, 252, 253, 254, 255]) || ($type->flags & MYSQLI_NOT_NULL_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 

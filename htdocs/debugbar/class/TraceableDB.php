@@ -756,7 +756,8 @@ class TraceableDB extends DoliDB
 		// phpcs:enable
 		return $this->db->select_db($database);
 	}
-		/**
+
+	/**
 	 * Prepare a SQL statement for execution
 	 *
 	 * This method must be implemented by subclasses.
