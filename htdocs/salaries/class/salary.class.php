@@ -197,6 +197,7 @@ class Salary extends CommonObject
 		$this->db = $db;
 		$this->element = 'salary';
 		$this->table_element = 'salary';
+		$this->isextrafieldmanaged = 1;
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
