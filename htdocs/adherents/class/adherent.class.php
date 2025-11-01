@@ -1641,9 +1641,10 @@ class Adherent extends CommonObject
 				$this->ref = $this->db->toString($obj, 'ref');
 				$this->ref_ext = $this->db->toNullString($obj, 'ref_ext');
 
-				$this->civility_id = $obj->civility_code; // Bad. Kept for backward compatibility
-				$this->civility_code = $obj->civility_code;
-				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$civility_code = $this->db->toNullString($obj, 'civility_code');
+				$this->civility_id = $civility_code; // Bad. Kept for backward compatibility
+				$this->civility_code = $civility_code;
+				$this->civility = $civility_code ? ($langs->trans("Civility".$civility_code) != "Civility".$civility_code ? $langs->trans("Civility".$civility_code) : $civility_code) : '';
 
 				$this->firstname = $this->db->toNullString($obj, 'firstname');
 				$this->lastname = $this->db->toNullString($obj, 'lastname');
@@ -1661,12 +1662,14 @@ class Adherent extends CommonObject
 				$this->pass_indatabase = $this->db->toNullString($obj, 'pass');
 				$this->pass_indatabase_crypted = $this->db->toNullString($obj, 'pass_crypted');
 
-				$this->state_id = $obj->state_id;
-				$this->state_code = $obj->state_id ? $obj->state_code : '';
-				$this->state = $obj->state_id ? $obj->state : '';
+				$state_id = $this->db->toNullInt($obj, 'state_id');
+				$this->state_id = $state_id;
+				$this->state_code = $state_id ? $obj->state_code : '';
+				$this->state = $state_id ? $obj->state : '';
 
 				$this->country_id = $obj->country_id;
-				$this->country_code = $obj->country_code;
+				$country_code = $this->db->toNullString($obj, 'country_code');
+				$this->country_code = $country_code;
 				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {
 					$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
 				} else {
