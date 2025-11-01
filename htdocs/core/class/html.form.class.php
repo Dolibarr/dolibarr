@@ -2996,7 +2996,7 @@ class Form
 
 		$sql = 'SELECT b.rowid, b.ref, b.label as bomLabel, p.label as productLabel';
 		$sql .= ' FROM ' . $this->db->prefix() . 'bom_bom as b';
-		$sql .= ' JOIN ' . $this->db->prefix() . 'product as p ON b.fk_product = p.rowid';
+		$sql .= ' INNER JOIN ' . $this->db->prefix() . 'product as p ON b.fk_product = p.rowid';
 		$sql .= ' WHERE b.entity IN (' . getEntity('bom') . ')';
 		if (!empty($status)) {
 			$sql .= ' AND status = ' . (int) $status;
