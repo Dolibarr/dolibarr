@@ -2406,10 +2406,10 @@ class ExpenseReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
 		$sql .= " AND fk_user_author = ".((int) $user->id);
-		$sql .= " AND NOT (date_fin < '{$this->db->idate($startDate)}' OR date_debut > '{$this->db->idate($endDate)}')";
+		$sql .= " AND NOT (date_fin < '".$this->db->idate($startDate)."' OR date_debut > '".$this->db->idate($endDate)."')";
 
-		dol_syslog(__CLASS__."::". __METHOD__." sql=".$sql);
 		$row = $this->db->getRow($sql);
+		
 		if ($row === false) {
 			$this->error = $this->db->lasterror();
 			dol_syslog(__CLASS__."::". __METHOD__."  Error ".$this->error, LOG_ERR);
