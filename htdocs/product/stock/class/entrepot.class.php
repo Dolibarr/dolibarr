@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
+/* Copyright (C) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2016	    Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -481,7 +481,7 @@ class Entrepot extends CommonObject
 			}
 		}
 
-		// Removed extrafields
+		// Remove extrafields
 		if (!$error) {
 			$result = $this->deleteExtraFields();
 			if ($result < 0) {
