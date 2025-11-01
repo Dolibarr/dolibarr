@@ -592,7 +592,7 @@ function Contact() {
 function History()
 {
 	console.log("Open box to select the history");
-	$.colorbox({href:"../compta/facture/list.php?contextpage=poslist", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
+	$.colorbox({href:"../compta/facture/list.php?contextpage=poslist&search_module_source=takepos", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
 }
 
 function Reduction() {

@@ -4,6 +4,7 @@
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -885,7 +886,7 @@ class Products extends DolibarrApi
 	 * @param	float		$remise							Discount  regarding qty (amount)
 	 * @param	int			$newnpr							Set NPR or not
 	 * @param	int			$delivery_time_days				Delay in days for delivery (max). May be '' if not defined.
-	 * @param   string      $supplier_reputation            Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
+	 * @param   string      $supplier_reputation            Reputation with this product to the defined supplier (empty, FAVORITE, NOTTHGOOD, DONOTORDER)
 	 * @param   array		$localtaxes_array				Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
 	 * @phan-param		array{0:string,1:string,2:string,3:string}|array{}	$localtaxes_array
 	 * @phpstan-param	array{0:string,1:string,2:string,3:string}|array{}	$localtaxes_array

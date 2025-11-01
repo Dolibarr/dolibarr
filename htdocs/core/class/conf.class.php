@@ -613,6 +613,7 @@ class Conf extends stdClass
 								}
 
 								if (!empty($newvalue)) {
+									// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal,PhanTypeMismatchProperty
 									$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $newvalue)); // $value may be a string or an array
 								}
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg)) {

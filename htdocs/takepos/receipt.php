@@ -5,7 +5,7 @@
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 202        Ferran Marcet      <fmarcet@2byte.es>
  *
@@ -216,11 +216,11 @@ if ($object->status == Facture::STATUS_DRAFT) {
 
 <p class="right">
 <?php
-print $langs->trans('Date')." ".dol_print_date($object->date ? $object->date : dol_now(), 'day').'<br>';
+// Invoice Ref
 if (getDolGlobalString('TAKEPOS_RECEIPT_NAME')) {
 	print getDolGlobalString('TAKEPOS_RECEIPT_NAME') . " ";
 } else {
-	print $langs->trans("TransactionID")." ";
+	print $langs->trans("InvoiceRef")." ";
 }
 if ($object->status == Facture::STATUS_DRAFT || empty($facid) || GETPOST('specimen')) {
 	// Printing ticket is not allowed if invoice not yet validate.
@@ -233,7 +233,8 @@ if ($object->status == Facture::STATUS_DRAFT || empty($facid) || GETPOST('specim
 } else {
 	print $object->ref;
 }
-print '<br>'.$langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : $object->pos_source);
+// POS terminal
+print '<br>'.$langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : ($object->pos_source ? $object->pos_source : 'Backoffice'));
 if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
@@ -245,7 +246,15 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
 }
-if (!getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
+// Transaction ID
+if (isALNERunningVersion()) {
+	$unalterablelogid = 'TODO';
+	print "<br>".$langs->trans("TransactionID").': '.$unalterablelogid.'<br>';
+}
+// Date
+print $langs->trans('Date')." ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
+// Date of printing
+if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
 	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 
@@ -485,9 +494,24 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 	print $newfreetext;
 }
 
-if (isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
+if (isALNEQualifiedVersion() || isALNERunningVersion()) {
 	$langs->load("blockedlog");
-	print '<center class="small"><i>'.$langs->trans("LNECertifiedPOSSystem")."</i></center><br>\n";
+	print '<center class="small"><i>';
+	print $langs->trans("LNECertifiedPOSSystem")."<br>";
+	if ($mysoc->idprof2) {
+		$labelidprof = $langs->transcountry("ProfId2Short", $mysoc->country_code);
+		print $labelidprof.': '.$mysoc->idprof2;
+	} elseif ($mysoc->idprof1) {
+		$labelidprof = $langs->transcountry("ProfId1Short", $mysoc->country_code);
+		print $labelidprof.': '.$mysoc->idprof1;
+	} else {
+		print 'ERROR: SIREN/SIRET not defined. Ticket not valid !!!';
+	}
+	if ($mysoc->tva_intra) {
+		$labelidprof = $langs->trans("VATIntra");
+		print ' - '.$labelidprof.': '.$mysoc->tva_intra;
+	}
+	print "</i></center><br>\n";
 }
 
 
