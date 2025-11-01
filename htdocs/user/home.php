@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2024	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2005-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ if ($resql) {
 	$lastcreatedbox .= '<table class="noborder centpercent">';
 	$lastcreatedbox .= '<tr class="liste_titre"><td colspan="3" class="valignmiddle">';
 	$lastcreatedbox .= '<span class="valignmiddle">'.$langs->trans("LastUsersCreated", min($num, $max)).'</span>';
-	$lastcreatedbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+	$lastcreatedbox .= '<a class="valignmiddle marginleftonlyshort" href="'.dolBuildUrl(DOL_URL_ROOT.'/user/list.php', ['sortfield' => 'u.datec', 'sortorder' => 'DESC']).'" title="'.$langs->trans("FullList").'">';
 	$lastcreatedbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
 	$lastcreatedbox .= '</a>';
 	$lastcreatedbox .= '</td>';

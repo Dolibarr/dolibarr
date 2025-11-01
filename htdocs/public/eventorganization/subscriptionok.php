@@ -5,6 +5,7 @@
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,6 +97,8 @@ if (empty($conf->eventorganization->enabled)) {
 /**
  * Show header for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -104,7 +107,7 @@ if (empty($conf->eventorganization->enabled)) {
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderSubscriptionOk($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -177,54 +180,11 @@ if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-llxHeaderVierge($langs->trans("PaymentForm"));
-
+llxHeaderSubscriptionOk($langs->trans("PaymentForm"));
 
 // Show message
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" class="center">'."\n";
-
-
-// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
-// Define logo and logosmall
-$logosmall = $mysoc->logo_small;
-$logo = $mysoc->logo;
-$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-if (getDolGlobalString($paramlogo)) {
-	$logosmall = getDolGlobalString($paramlogo);
-} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
-	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
-}
-//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
-// Define urllogo
-$urllogo = '';
-$urllogofull = '';
-if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-}
-
-// Output html code for logo
-if ($urllogo) {
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	print '>';
-	print '</div>';
-	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-	}
-	print '</div>';
-}
-
-if (getDolGlobalString('EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE')) {
-	print '<div class="backimagepubliceventorganizationsubscription">';
-	print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE').'">';
-	print '</div>';
-}
 
 print '<br><br><br>';
 
@@ -232,6 +192,7 @@ print $langs->trans("SubscriptionOk");
 
 print "\n</div>\n";
 
+$suffix = '';
 
 htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 

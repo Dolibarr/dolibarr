@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -229,7 +229,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 						'text' => "&nbsp;",
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right liste_total" ',
+						'td' => 'class="nowraponall right liste_total"',
 						'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][] = array(

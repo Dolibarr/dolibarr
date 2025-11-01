@@ -3,7 +3,7 @@
  * Copyright (C) 2016-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,9 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
 
 $id_report = GETPOSTINT('id_report');
+if ($id_report <= 0) {
+	$id_report = 1;
+}
 
 $error = 0;
 
@@ -337,6 +340,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$totPerAccount = array();
 	if (!is_array($cats) && $cats < 0) {
 		setEventMessages(null, $AccCat->errors, 'errors');
+	} elseif (is_array($cats) && count($cats) == 0) {
+		print '<tr class="liste_total">';
+		print '<td colspan="15">';
+		print '<span class="opacitymedium">';
+		print $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategory"));
+		print '</span>';
+		print '</td>';
+		print '</tr>';
 	} elseif (is_array($cats) && count($cats) > 0) {
 		// Loop on each custom group of accounts
 		foreach ($cats as $cat) {
@@ -491,7 +502,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				// Set $cpts with array of accounts in the category/group
-				$cpts = $AccCat->getCptsCat($cat['rowid']);
+				$cpts = $AccCat->getCptsCat((int) $cat['rowid']);
 				// We should loop over empty $cpts array, else the category _code_ is used in the formula, which leads to wrong result if the code is a number.
 				if (empty($cpts)) {
 					$cpts[] = array();
@@ -544,33 +555,37 @@ if ($modecompta == 'CREANCES-DETTES') {
 							$yeartoprocess++;
 						}
 
-						//var_dump($monthtoprocess.'_'.$yeartoprocess);
-						if (isset($cpt['account_number'])) {
-							$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
-							if ($return < 0) {
-								setEventMessages(null, $AccCat->errors, 'errors');
-								$resultM = 0;
+						if (($yeartoprocess == $start_year && ($k + 1) >= $date_startmonth && $k < $date_endmonth) ||
+							($yeartoprocess == $start_year + 1 && ($k + 1) < $date_startmonth)
+						) {
+							//var_dump($monthtoprocess.'_'.$yeartoprocess);
+							if (isset($cpt['account_number'])) {
+								$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
+								if ($return < 0) {
+									setEventMessages(null, $AccCat->errors, 'errors');
+									$resultM = 0;
+								} else {
+									$resultM = $AccCat->sdc;
+								}
 							} else {
-								$resultM = $AccCat->sdc;
+								$resultM = 0;
 							}
-						} else {
-							$resultM = 0;
-						}
-						if (empty($totCat['M'][$k])) {
-							$totCat['M'][$k] = $resultM;
-						} else {
-							$totCat['M'][$k] += $resultM;
-						}
-						if (empty($sommes[$code]['M'][$k])) {
-							$sommes[$code]['M'][$k] = $resultM;
-						} else {
-							$sommes[$code]['M'][$k] += $resultM;
-						}
-						if (isset($cpt['account_number'])) {
-							$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
-						}
+							if (empty($totCat['M'][$k])) {
+								$totCat['M'][$k] = $resultM;
+							} else {
+								$totCat['M'][$k] += $resultM;
+							}
+							if (empty($sommes[$code]['M'][$k])) {
+								$sommes[$code]['M'][$k] = $resultM;
+							} else {
+								$sommes[$code]['M'][$k] += $resultM;
+							}
+							if (isset($cpt['account_number'])) {
+								$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
+							}
 
-						$resultN += $resultM;
+							$resultN += $resultM;
+						}
 					}
 
 					if (empty($totCat)) {

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2020-2024  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ $v = new vCard();
 $v->setProdId('Dolibarr '.DOL_VERSION);
 
 $v->setUid('DOLIBARR-ADHERENTID-'.$object->id);
-$v->setName($object->lastname, $object->firstname, "", $object->civility, "");
+$v->setName($object->lastname, $object->firstname, "", (string) $object->civility, "");
 $v->setFormattedName($object->getFullName($langs, 1));
 
 $v->setPhoneNumber($object->phone_pro, "TYPE=WORK;VOICE");

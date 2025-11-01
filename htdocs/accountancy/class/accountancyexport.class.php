@@ -14,7 +14,7 @@
  * Copyright (C) 2020		Guillaume Alexandre			<guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter				<jkueter@gmx.de>
  * Copyright (C) 2022		Progiseize					<a.bisotti@progiseize.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +85,8 @@ class AccountancyExport
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
 	/** @var int */
 	public static $EXPORT_TYPE_ISUITEEXPERT = 200;
+	/** @var int */
+	public static $EXPORT_TYPE_ISTEA = 205;
 	// Generic FEC after that
 	/** @var int */
 	public static $EXPORT_TYPE_FEC = 1000;
@@ -161,6 +163,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV3 => $langs->trans('Modelcsv_Gestinumv3'),
 			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinumv5'),
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
+			self::$EXPORT_TYPE_ISTEA => $langs->trans('Modelcsv_ISTEA'),
 		);
 
 		$listofgenericformatexport = array(
@@ -223,6 +226,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_FEC => 'fec',
 			self::$EXPORT_TYPE_FEC2 => 'fec2',
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'isuiteexpert',
+			self::$EXPORT_TYPE_ISTEA => 'istea',
 		);
 
 		global $hookmanager;
@@ -315,6 +319,10 @@ class AccountancyExport
 				),
 				self::$EXPORT_TYPE_ISUITEEXPERT => array(
 					'label' => 'iSuite Expert',
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+				),
+				self::$EXPORT_TYPE_ISTEA => array(
+					'label' => 'ISTEA',
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 			),
@@ -539,9 +547,12 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_ISUITEEXPERT:
 				$this->exportiSuiteExpert($TData, $exportFile);
 				break;
+			case self::$EXPORT_TYPE_ISTEA:
+				$this->exportISTEA($TData, $exportFile);
+				break;
 			default:
 				global $hookmanager;
-				$parameters = array('format' => $formatexportset);
+				$parameters = array('format' => $formatexportset, 'exportFile' => $exportFile);
 				// file contents will be created in the hooked function via print
 				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
 				if ($reshook != 1) {
@@ -956,7 +967,7 @@ class AccountancyExport
 
 			$tab = array();
 			$tab['type_ligne'] = 'M';
-			$tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
+			$tab['num_compte'] = str_pad(self::trunc((string) $code_compta, 8), 8);
 			$tab['code_journal'] = str_pad(self::trunc($line->code_journal, 2), 2);
 			$tab['folio'] = '000';
 
@@ -1076,7 +1087,7 @@ class AccountancyExport
 					$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
 				}
 			}
-			if (dol_strlen($attachmentFileName) == 12) {
+			if (dol_strlen((string) $attachmentFileName) == 12) {
 				$tab['attachment'] = $attachmentFileName; // position 182
 			} else {
 				$tab['attachment'] = str_repeat(' ', 12); // position 182
@@ -1134,7 +1145,7 @@ class AccountancyExport
 
 			$tab['jour_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
 
-			$tab['num_compte'] = str_pad(dol_trunc($code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
+			$tab['num_compte'] = str_pad(dol_trunc((string) $code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
 
 			if ($line->sens == 'D') {
 				$tab['montant_debit']  = str_pad(number_format($line->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
@@ -1148,7 +1159,7 @@ class AccountancyExport
 
 			$tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($line->doc_ref).' '.dol_string_unaccent($line->label_operation), 30, 'right', 'UTF-8', 1), 30);
 
-			$tab['lettrage'] = str_repeat(dol_trunc($line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
+			$tab['lettrage'] = str_repeat(dol_trunc((string) $line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
 
 			$tab['code_piece'] = str_pad(dol_trunc((string) $line->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
 
@@ -1346,6 +1357,63 @@ class AccountancyExport
 	}
 
 	/**
+	 * Export format : ISTEA
+	 *
+	 * @param 	BookKeepingLine[] 		$objectLines 			data
+	 * @param 	?resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
+	 */
+	public function exportISTEA($objectLines, $exportFile = null)
+	{
+		global $conf;
+
+		$separator = ';';
+		$end_line = "\n";
+
+		// parcours du tableau pour recuperation des numero de compte des tiers pour pouvoir les fournir dans la bonne ligne pour istea
+		$tiers=[];
+		foreach ($objectLines as $line) {
+			if ( $line->subledger_account && substr($line->subledger_account, 0, 1) == '4' ) {
+				$tiers[$line->piece_num] = $line->subledger_label;
+			}
+		}
+
+		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+			/*** preparation du champ label operation pour istea ***/
+			// retrecissement du champs car ISTEA n'affiche pas bcp de caract�re.
+			$search = array('Paiement fournisseur ', 'Virement ', 'Paiement ');
+			$replace = array('Paiemt fourn ','Virt ','Paiemt ');
+			$label_operation = str_replace($search, $replace, $line->label_operation);
+			// encadrement par des ' si le champs contient le separateur
+			$label_operation = preg_match('/'.$separator.'/', $label_operation) ? "'".$label_operation."'" : $label_operation;
+
+			$tab = array();
+			// export configurable
+			$tab[] = $line->piece_num;	// colonne 1 : numero de piece	ISTEA
+			$tab[] = $date_document;	// colonne 2 : date				ISTEA
+			$tab[] = $line->doc_ref;	// colonne 3 : reference piece 	ISTEA
+			$tab[] = array_key_exists($line->piece_num, $tiers)?$tiers[$line->piece_num]:'';	// colonne 4 : nom tiers	ISTEA
+			$tab[] = length_accountg(($line->subledger_account && ( substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2) ) )?$line->subledger_account:$line->numero_compte);	// colonne 5 : numero de compte	ISTEA
+			$tab[] = length_accountg($line->subledger_account?$line->subledger_account:$line->numero_compte);	// colonne 6 : numero de compte
+			$tab[] = length_accountg($line->subledger_account?$line->numero_compte:'');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
+			$tab[] = ($line->doc_type == 'bank')?$label_operation:($line->subledger_account?$line->subledger_label:$line->label_compte);	// colonne 8 : label de l'operation		ISTEA
+			$tab[] = $label_operation;	// colonne 9 : label de l'operation (semble non prise en compte par ISTEA)
+			$tab[] = price2num($line->debit);	// colonne 10 : debit		ISTEA
+			$tab[] = price2num($line->credit);	// colonne 11 : credit		ISTEA
+			$tab[] = $line->code_journal;		// colonne 12 : journal		ISTEA
+
+			$output = mb_convert_encoding('"'.implode('"'.$separator.'"', $tab).'"'.$this->end_line, 'ISO-8859-1');
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
+		}
+	}
+
+	/**
 	 * Export format : FEC
 	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
@@ -1412,14 +1480,14 @@ class AccountancyExport
 					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref;
+					$refInvoice = (string) $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref_supplier;
+					$refInvoice = (string) $invoice->ref_supplier;
 				}
 
 				$tab = array();
@@ -1501,15 +1569,15 @@ class AccountancyExport
 						$objectDirPath = '';
 						$objectFileName = dol_sanitizeFileName($line->doc_ref);
 						if ($line->doc_type == 'customer_invoice') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
 							}
 						} elseif ($line->doc_type == 'expense_report') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 							}
 						} elseif ($line->doc_type == 'supplier_invoice') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
 								'@phan-var-force FactureFournisseur $invoice';
 								/** @var FactureFournisseur $invoice */
 								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
@@ -1632,14 +1700,14 @@ class AccountancyExport
 					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref;
+					$refInvoice = (string) $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref_supplier;
+					$refInvoice = (string) $invoice->ref_supplier;
 				}
 
 				$tab = array();
@@ -1721,15 +1789,15 @@ class AccountancyExport
 						$objectDirPath = '';
 						$objectFileName = dol_sanitizeFileName($line->doc_ref);
 						if ($line->doc_type == 'customer_invoice') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
 							}
 						} elseif ($line->doc_type == 'expense_report') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 							}
 						} elseif ($line->doc_type == 'supplier_invoice') {
-							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
+							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
 								'@phan-var-force FactureFournisseur $invoice';
 								/** @var FactureFournisseur $invoice */
 								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
@@ -2415,7 +2483,7 @@ class AccountancyExport
 			} else {
 				$account = $line->numero_compte;
 			}
-			$tab[] = self::trunc($account, 15); //Account number
+			$tab[] = self::trunc((string) $account, 15); //Account number
 
 			$tab[] = self::trunc($line->label_compte, 60); //Account label
 			$tab[] = self::trunc($line->doc_ref, 20); //Piece
@@ -2598,14 +2666,14 @@ class AccountancyExport
 	}
 
 	/**
-	* Export format : iSuite Expert
-	*
-	* by OpenSolus [https://opensolus.fr]
-	*
+	 * Export format : iSuite Expert
+	 *
+	 * by OpenSolus [https://opensolus.fr]
+	 *
 	 * @param 	BookKeepingLine[]	$objectLines 	data
 	 * @param	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
-	*/
+	 */
 	public function exportiSuiteExpert($objectLines, $exportFile = null)
 	{
 		$separator = ';';

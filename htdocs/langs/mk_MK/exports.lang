@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Exports
 ImportArea=Увоз
 NewExport=Нов извоз
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv сепаратор на знаци
 ImportCsvSeparator=Csv сепаратор на знаци
 Step=Чекор
 FormatedImport=Помошник за увоз
-FormatedImportDesc1=Овој модул ви овозможува да ги ажурирате постоечките податоци или да додавате нови објекти во базата на податоци од датотека без техничко знаење, користејќи асистент.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=Првиот чекор е да изберете вид на податоци што сакате да ги увезете, потоа форматот на изворната датотека, потоа полињата што сакате да ги увезете.
 FormatedExport=Асистент за извоз
-FormatedExportDesc1=Овие алатки овозможуваат извоз на персонализирани податоци со помош на асистент, за да ви помогнат во процесот без да барате техничко знаење.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=Првиот чекор е да изберете претходно дефинирана база на податоци, потоа кои полиња сакате да ги извезете и по кој редослед.
 FormatedExportDesc3=Кога се избираат податоците за извоз, можете да го изберете форматот на излезната датотека.
 Sheet=Лист

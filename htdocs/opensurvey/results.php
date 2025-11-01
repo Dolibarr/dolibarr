@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ $action = GETPOST('action', 'aZ09');
 $numsondage = GETPOST("id", 'alphanohtml');
 
 $object = new Opensurveysondage($db);
-$result = $object->fetch(0, $numsondage);
+$result = $object->fetch('', $numsondage);
 if ($result <= 0) {
 	dol_print_error(null, 'Failed to get survey id '.$numsondage);
 }
@@ -115,6 +115,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 $testmodifier = false;
 $testligneamodifier = false;
 $ligneamodifier = -1;
+$modifier = '';
 for ($i = 0; $i < $nblines; $i++) {
 	if (GETPOSTISSET('modifierligne'.$i)) {
 		$ligneamodifier = $i;
@@ -226,6 +227,7 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 		//on rajoute la valeur dans les valeurs
 		$datesbase = explode(",", $object->sujet);
 		$taillebase = count($datesbase);
+		$cleinsertion = -1;
 
 		//recherche de l'endroit de l'insertion de la nouvelle date dans les dates deja entrées dans le tableau
 		if ($nouvelledate < $datesbase[0]) {
@@ -424,13 +426,14 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
  */
 
 $form = new Form($db);
+$userstatic = null;
 
 if ($object->fk_user_creat) {
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user_creat);
 }
 
-$result = $object->fetch(0, $numsondage);
+$result = $object->fetch('', $numsondage);
 if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
@@ -461,7 +464,7 @@ print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
 
 $head = opensurvey_prepare_head($object);
 
-print dol_get_fiche_head($head, 'preview', $langs->trans("Survey"), -1, 'poll');
+print dol_get_fiche_head($head, 'preview', $langs->trans("Survey"), -1, $object->picto);
 
 $morehtmlref = '';
 
@@ -538,7 +541,7 @@ print '</td></tr>';
 // Author
 print '<tr><td>';
 print $langs->trans("Author").'</td><td>';
-if ($object->fk_user_creat) {
+if ($object->fk_user_creat && $userstatic !== null) {
 	print $userstatic->getLoginUrl(-1);
 } else {
 	print dol_htmlentities($object->nom_admin);
@@ -699,7 +702,7 @@ print '<td></td>'."\n";
 // loop to show the delete link
 if ($user->hasRight('opensurvey', 'write')) {
 	for ($i = 0; isset($toutsujet[$i]); $i++) {
-		print '<td class=somme><input type="image" class="buttonwebsite" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete.png', '', 0, 1).'"></td>'."\n";
+		print '<td class=somme><input type="image" class="buttonwebsite" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete', '', 0, 1).'"></td>'."\n";
 	}
 }
 
@@ -846,7 +849,7 @@ while ($compteur < $num) {
 	print '<tr><td>'."\n";
 
 	if ($user->hasRight('opensurvey', 'write')) {
-		print '<input type="image" class="reposition" name="effaceligne'.$compteur.'" src="'.img_picto('', 'delete.png', '', 0, 1).'">'."\n";
+		print '<input type="image" class="reposition" name="effaceligne'.$compteur.'" src="'.img_picto('', 'delete', '', 0, 1).'">'."\n";
 	}
 
 	// Name
@@ -1064,6 +1067,7 @@ if (empty($testligneamodifier)) {
 
 // Select value of best choice (for checkbox columns only)
 $nbofcheckbox = 0;
+$meilleurecolonne = null;
 for ($i = 0; $i < $nbcolonnes + 1; $i++) {
 	if (empty($listofanswers[$i]['format']) || !in_array($listofanswers[$i]['format'], array('yesno', 'foragainst'))) {
 		$nbofcheckbox++;

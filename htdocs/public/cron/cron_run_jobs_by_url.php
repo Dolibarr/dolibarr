@@ -3,7 +3,7 @@
  * Copyright (C) 2013		Florian Henry		<forian.henry@open-cocnept.pro>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,7 @@ if (is_numeric($entity)) {
 // Error if CLI mode
 if (php_sapi_name() == "cli") {
 	echo "Error: This page can't be used as a CLI script. For the CLI version of script, launch cron_run_job.php available into scripts/cron/ directory.\n";
-	exit(-1);
+	exit(1);
 }
 
 // core library
@@ -161,6 +161,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
+		'@phan-var-force Cronjob $line';
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -178,12 +179,12 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-					exit(-1);
+					exit(1);
 				} else {
 					if ($result == 0) {
 						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
 						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
-						exit(-1);
+						exit(1);
 					}
 				}
 				$user->loadRights();

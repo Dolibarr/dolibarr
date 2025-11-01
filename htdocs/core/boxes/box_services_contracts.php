@@ -143,7 +143,7 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
+					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + getWarningDelay('contract', 'services', 'expires')) < $now) {
 						$late = img_warning($langs->trans("Late"));
 					}
 

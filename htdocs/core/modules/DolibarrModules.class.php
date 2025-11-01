@@ -7,8 +7,8 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +151,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	const KEY_ENABLED = 7;
 
 	/**
-	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
+	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,positionfull:int|string,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
 	 */
 	public $menu = array();
 
@@ -208,13 +208,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * Module last version
-	 * @var string $lastVersion
+	 * @var string
 	 */
 	public $lastVersion = '';
 
 	/**
 	 * true indicate this module need update
-	 * @var bool $needUpdate
+	 * @var bool
 	 */
 	public $needUpdate = false;
 
@@ -357,7 +357,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_fieldshidden_array;
 	/**
-	 * @var array<array<array{rule:string,file:string,class:string,method:string}>>
+	 * @var array<array<array<string,string>>>
 	 */
 	public $import_convertvalue_array;
 	/**
@@ -408,7 +408,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * @var string Name of image file used for this module
 	 *
-	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname'
+	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname.png'
 	 * If file is in module/img directory under name object_pictoname.png use 'pictoname@module'
 	 */
 	public $picto;
@@ -423,11 +423,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
 	/**
-	 * @var string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @var null|string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
 	 * 				Another example : array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 * Note: Example in modTakePos:  array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 *       Example in modAccounting: array("modFacture", "modBanque", "modTax");
-
+	 *
 	 * @see $requiredby
 	 */
 	public $depends;
@@ -439,27 +439,27 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $requiredby;
 
 	/**
-	 * @var string[] List of module class names as string this module is in conflict with.
+	 * @var null|string[] List of module class names as string this module is in conflict with.
 	 * @see $depends
 	 */
 	public $conflictwith;
 
 	/**
-	 * @var string[] Module language files
+	 * @var null|string[] Module language files
 	 */
 	public $langfiles;
 
 	/**
-	 * @var array<string,string> Array of warnings to show when we activate the module
+	 * @var array<string,mixed> 	Array of warnings to show when we activate the module
 	 *
-	 * array('always'='text') or array('FR'='text')
+	 * array('always'=>'text') or array('FR'=>array('text1', 'text2))
 	 */
 	public $warnings_activation;
 
 	/**
-	 * @var array<string,string> Array of warnings to show when we activate an external module
+	 * @var array<string,mixed> 	Array of warnings to show when we activate a module if another module is on
 	 *
-	 * array('always'='text') or array('FR'='text')
+	 * array('modOtherModule' => array('always'=>'text')) or array('modOtherModule' => array('FR'=>array('text1', 'text2)))
 	 */
 	public $warnings_activation_ext;
 
@@ -471,21 +471,27 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $warnings_unactivation;
 
 	/**
-	 * @var int[] Minimum version of PHP required by module.
+	 * @var null|int[] Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
 
 	/**
-	 * @var int[] Maximum version of PHP ensured compatible with module.
+	 * @var null|int[] Maximum version of PHP ensured compatible with module.
 	 */
 	public $phpmax;
 
 	/**
-	 * @var int[] Minimum version of Dolibarr required by module.
+	 * @var null|int[] Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
+
+	/**
+	 * @var int[] Maximum version of Dolibarr required by module.
+	 * e.g.: Dolibarr ≤ 3.6 = array(3, 6)
+	 */
+	public $max_dolibarr_version;
 
 	/**
 	 * @var int<0,1>
@@ -528,7 +534,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * Enables a module.
 	 * Inserts all information into database.
 	 *
-	 * @param array<array{sql:string,ignoreerror:int<0,1>}>|array<string,string>	$array_sql 	SQL requests to be executed when enabling module
+	 * @param array<array{sql:string,ignoreerror:int<0,1>}>|string[]	$array_sql 	SQL requests to be executed when enabling module
 	 * @param string	$options   	String with options when disabling module:
 	 *                          	- 'noboxes' = Do all actions but do not insert boxes
 	 *                          	- 'newboxdefonly' = Do all actions but for boxes, insert def of boxes only and not boxes activation
@@ -596,7 +602,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$ignoreerror = 0;
 				if (is_array($val)) {
 					$sql = $val['sql'];
-					$ignoreerror = $val['ignoreerror'];
+					$ignoreerror = $val['ignoreerror'] ?? 0;
 				}
 				// Add current entity id
 				$sql = str_replace('__ENTITY__', (string) $conf->entity, $sql);
@@ -1762,8 +1768,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$err = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-		$sql .= " WHERE ".$this->db->decrypt('name')." like '".$this->db->escape($this->const_name)."_TABS_%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_TABS_%'";
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::delete_tabs", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -2457,7 +2463,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						dol_delete_file($dest.'.zip');
 
 						// Compress it
-						global $errormsg;
+						global $errormsg;	// Used by dol_compress_dir
 						$errormsg = '';
 						$result = dol_compress_dir($src, $dest.'.zip', 'zip');
 						if ($result < 0) {
@@ -2753,8 +2759,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmpfieldsofline = explode(';', $line);
 					$modulekey = strtolower($tmpfieldsofline[0]);
 					$conf->cache['noncompliantmodules'][$modulekey]['name'] = $tmpfieldsofline[0];
-					$conf->cache['noncompliantmodules'][$modulekey]['id'] = $tmpfieldsofline[1];
-					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = $tmpfieldsofline[2];
+					$conf->cache['noncompliantmodules'][$modulekey]['id'] = (isset($tmpfieldsofline[1]) ? $tmpfieldsofline[1] : '');
+					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = (isset($tmpfieldsofline[2]) ? $tmpfieldsofline[2] : '');
 					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[3]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[3]);
 					if (!empty($tmpfieldsofline[4])) {
 						$message2 = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", '{s}');

@@ -6,9 +6,9 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,22 +98,22 @@ class Don extends CommonObject
 	public $societe;
 
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string Zipcode
+	 * @var ?string Zipcode
 	 */
 	public $zip;
 
 	/**
-	 * @var string Town
+	 * @var ?string Town
 	 */
 	public $town;
 
 	/**
-	 * @var string Email
+	 * @var ?string Email
 	 */
 	public $email;
 
@@ -167,6 +167,11 @@ class Don extends CommonObject
 	 * @var int<0,1> paid
 	 */
 	public $paid;
+
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -426,6 +431,7 @@ class Don extends CommonObject
 		$sql .= ", email";
 		$sql .= ", phone";
 		$sql .= ", phone_mobile";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".((int) $conf->entity);
@@ -449,6 +455,7 @@ class Don extends CommonObject
 		$sql .= ", '".(!empty($this->email) ? $this->db->escape(trim($this->email)) : "")."'";
 		$sql .= ", '".(!empty($this->phone) ? $this->db->escape(trim($this->phone)) : "")."'";
 		$sql .= ", '".(!empty($this->phone_mobile) ? $this->db->escape(trim($this->phone_mobile)) : "")."'";
+		$sql .= ", '".(!empty($this->ip) ? $this->db->escape($this->ip) : "null")."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -661,7 +668,7 @@ class Don extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
+		$sql = "SELECT d.rowid, d.entity, d.datec, d.date_valid, d.tms as datem, d.datedon,";
 		$sql .= " d.fk_soc as socid, d.firstname, d.lastname, d.societe, d.amount, d.fk_statut as status, d.address, d.zip, d.town, ";
 		$sql .= " d.fk_country, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
 		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
@@ -685,7 +692,8 @@ class Don extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                 = $obj->rowid;
+				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref                = $obj->rowid;
 				$this->date_creation      = $this->db->jdate($obj->datec);
 				$this->datec              = $this->db->jdate($obj->datec);
@@ -859,8 +867,21 @@ class Don extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED) {
+		if ($this->status != self::STATUS_CANCELED && $this->status != self::STATUS_PAID) {
 			return 0;
+		}
+		if ($this->statut == self::STATUS_PAID) {
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "don SET paid = 0 WHERE rowid = " . ((int) $this->id);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($this->db->affected_rows($resql)) {
+					$this->paid = 0;
+				} else {
+					dol_print_error($this->db);
+					return -1;
+				}
+			}
 		}
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
@@ -1097,7 +1118,7 @@ class Don extends CommonObject
 
 			$classname = $modele;
 			$obj = new $classname($this->db);
-
+			/** @var ModeleDon $obj */
 			'@phan-var-force ModeleDon $obj';
 
 			// We save charset_output to restore it because write_file can change it if needed for
@@ -1170,7 +1191,7 @@ class Don extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

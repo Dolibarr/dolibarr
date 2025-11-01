@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2016      Pierre-Henry Favre  <phf@atm-consulting.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2016       Pierre-Henry Favre      <phf@atm-consulting.fr>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ class modMultiCurrency extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -88,8 +89,6 @@ class modMultiCurrency extends DolibarrModules
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("multicurrency");
 
 		// Constants
@@ -136,34 +135,29 @@ class modMultiCurrency extends DolibarrModules
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		$this->boxes = array(); // List of boxes
-		// Example:
-		//$this->boxes=array(
-		//    0=>array('file'=>'myboxa.php@multicurrency','note'=>'','enabledbydefaulton'=>'Home'),
-		//    1=>array('file'=>'myboxb.php@multicurrency','note'=>''),
-		//    2=>array('file'=>'myboxc.php@multicurrency','note'=>'')
-		//);
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$statusatinstall=1;
 		$arraydate=dol_getdate(dol_now());
 		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$langs->load('multicurrency');
 
 		$this->cronjobs = array(
 			0 => array(
-				'priority'=>61,
-				'label'=>'MutltiCurrencyAutoUpdateCurrencies',
-				'jobtype'=>'method',
-				'class'=>'multicurrency/class/multicurrency.class.php',
-				'objectname'=>'MultiCurrency',
-				'method'=>'syncRates',
-				'parameters'=>'0,0,cron',
-				'comment'=>'Update all the currencies using the currencylayer API. An API key needs to be given in the multi-currency module config page',
-				'frequency'=>1,
-				'unitfrequency'=>2678400,
-				'status'=>$statusatinstall,
-				'test'=>'isModEnabled("cron")',
-				'datestart'=>$datestart
+				'priority' => 61,
+				'label' => $langs->trans('MutltiCurrencyAutoUpdateCurrencies'),
+				'jobtype' => 'method',
+				'class' => 'multicurrency/class/multicurrency.class.php',
+				'objectname' => 'MultiCurrency',
+				'method' => 'syncRates',
+				'parameters' => '0,0,cron',
+				'comment' => 'Update all the currencies using the currencylayer API. An API key needs to be given in the multi-currency module config page to have this job working.<br>First param is not used, Second parameter is 0 to update only already existing currency defined into the Multicurrency module or 1 to add any currency. Third parameter must be "cron".',
+				'frequency' => 1,
+				'unitfrequency' => 604800,
+				'status' => $statusatinstall,
+				'test' => 'isModEnabled("cron")',
+				'datestart' => $datestart
 			),
 		);
 
@@ -207,39 +201,6 @@ class modMultiCurrency extends DolibarrModules
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
 		$r = 0;
-
-		// Add here entries to declare new menus
-		//
-		// Example to declare a new Top Menu entry and its Left menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'',			                // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-		//							'type'=>'top',			                // This is a Top menu entry
-		//							'titre'=>'MyModule top menu',
-		//							'mainmenu'=>'multicurrency',
-		//							'leftmenu'=>'multicurrency',
-		//							'url'=>'/multicurrency/pagetop.php',
-		//							'langs'=>'mylangfile@multicurrency',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'$conf->multicurrency->enabled',	// Define condition to show or hide menu entry. Use '$conf->multicurrency->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->multicurrency->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-		//
-		// Example to declare a Left Menu entry into an existing Top menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=xxx',		    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-		//							'type'=>'left',			                // This is a Left menu entry
-		//							'titre'=>'MyModule left menu',
-		//							'mainmenu'=>'xxx',
-		//							'leftmenu'=>'multicurrency',
-		//							'url'=>'/multicurrency/pagelevel2.php',
-		//							'langs'=>'mylangfile@multicurrency',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'$conf->multicurrency->enabled',  // Define condition to show or hide menu entry. Use '$conf->multicurrency->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->multicurrency->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-
 
 		// Exports
 		$r = 1;

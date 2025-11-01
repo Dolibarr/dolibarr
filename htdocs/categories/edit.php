@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ $action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ');
 
 $socid = GETPOSTINT('socid');
 $label = (string) GETPOST('label', 'alphanohtml');
@@ -78,7 +79,7 @@ if ($result <= 0) {
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
+	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
 $extrafields = new ExtraFields($db);
@@ -103,14 +104,14 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $object->id).'&type='.urlencode($type).($dol_openinpopup ? '&dol_openinpopup='.urlencode($dol_openinpopup) : ''));
 			exit;
 		}
 	}
 
 	// Action mise a jour d'une categorie
 	if ($action == 'update' && $user->hasRight('categorie', 'creer')) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$object->label = $label;
 		$object->description    = dol_htmlcleanlastbr($description);
@@ -136,7 +137,7 @@ if (empty($reshook)) {
 					header("Location: ".$backtopage);
 					exit;
 				} else {
-					header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+					header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $object->id).'&type='.urlencode($type).($dol_openinpopup ? '&dol_openinpopup='.urlencode($dol_openinpopup) : ''));
 					exit;
 				}
 			} else {
@@ -170,6 +171,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 
 print dol_get_fiche_head([]);
 

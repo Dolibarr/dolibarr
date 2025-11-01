@@ -36,7 +36,6 @@
       <file>../../htdocs/core/modules/fichinter/modules_fichinter.php</file>
     </include>
     <exclude>
-      <directory suffix=".php">../../build/</directory>
       <directory suffix=".php">../../dev/</directory>
       <directory suffix=".php">../../doc/</directory>
       <directory suffix=".php">../../test/</directory>

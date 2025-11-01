@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2015		Jean-François Ferry     	<jfefe@aternatik.fr>
+ * Copyright (C) 2020-2025	Thibault FOUCART			<support@ptibogxiv.net>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		William Mead				<william@m34d.com>
+ * Copyright (C) 2025		Jean François Baillette		<jean-francois@swiiptel.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +24,13 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 
 
 /**
  * API class for users
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -33,14 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 class Users extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'login',
 	);
 
 	/**
-	 * @var User $useraccount {@type User}
+	 * @var User {@type User}
 	 */
 	public $useraccount;
 
@@ -57,9 +62,11 @@ class Users extends DolibarrApi
 
 
 	/**
-	 * List Users
+	 * List users
 	 *
 	 * Get a list of Users
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -72,6 +79,8 @@ class Users extends DolibarrApi
 	 * @return  array               Array of User objects
 	 * @phan-return Object[]
 	 * @phpstan-return Object[]
+	 *
+	 * @throws RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '0', $category = 0, $sqlfilters = '', $properties = '')
 	{
@@ -82,7 +91,7 @@ class Users extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $societe param is ignored and replaced by user's socid
-		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
+		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user AS t LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
@@ -141,7 +150,9 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an user object
+	 * Get a user
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int		$id						ID of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
@@ -149,11 +160,16 @@ class Users extends DolibarrApi
 	 * @phan-return Object
 	 * @phpstan-return Object
 	 *
+	 * @throws RestException 400 Bad request
 	 * @throws RestException 401 Insufficient rights
 	 * @throws RestException 404 User or group not found
 	 */
 	public function get($id, $includepermissions = 0)
 	{
+		if ($id == 0) {
+			throw new RestException(400, 'No user with id=0 can exist');
+		}
+
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && $id != 0 && DolibarrApiAccess::$user->id != $id) {
 			throw new RestException(403, 'Not allowed');
 		}
@@ -179,7 +195,9 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an user object by login
+	 * Get a user by login
+	 *
+	 * @since	13.0.0	Initial implementation
 	 *
 	 * @param	string	$login					Login of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
@@ -220,13 +238,15 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an user object by Email
+	 * Get a user by email
+	 *
+	 * @since	13.0.0	Initial implementation
 	 *
 	 * @param	string	$email					Email of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return	array|mixed						Data without useless information
 	 * @phan-return Object
-	 * @phpstan-return Object[
+	 * @phpstan-return Object
 	 *
 	 * @url GET email/{email}
 	 *
@@ -261,7 +281,11 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get more properties of a user
+	 * Get more properties of the current user (so user of API token).
+	 *
+	 * This route could also ave been named "/users/me".
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @url	GET /info
 	 *
@@ -285,7 +309,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed to current logged user');
 		}
 
 		if ($includepermissions) {
@@ -304,7 +328,9 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Create user account
+	 * Create a user
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param array $request_data New user data
 	 * @phan-param ?array<string,mixed> $request_data
@@ -358,7 +384,9 @@ class Users extends DolibarrApi
 
 
 	/**
-	 * Update user account
+	 * Update a user
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int			$id					Id of account to update
 	 * @param	array		$request_data		Datas
@@ -451,6 +479,8 @@ class Users extends DolibarrApi
 	/**
 	 * Update a user password
 	 *
+	 * @since	21.0.0	Initial implementation
+	 *
 	 * @param   int     $id        			User ID
 	 * @param	bool	$send_password		Only if set to true, the new password will send to the user
 	 * @return  int                			1 if password changed, 2 if password changed and sent
@@ -506,11 +536,14 @@ class Users extends DolibarrApi
 	/**
 	 * List the groups of a user
 	 *
+	 * @since	10.0.0	Initial implementation
+	 *
 	 * @param int $id     Id of user
 	 * @return array      Array of group objects
 	 * @phan-return Object[]
 	 * @phpstan-return Object[]
 	 *
+	 * @throws RestException 400 Bad request
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 *
@@ -518,6 +551,10 @@ class Users extends DolibarrApi
 	 */
 	public function getGroups($id)
 	{
+		if ($id == 0) {
+			throw new RestException(400, 'No user with id=0 can exist');
+		}
+
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403);
 		}
@@ -539,7 +576,9 @@ class Users extends DolibarrApi
 
 
 	/**
-	 * Add a user into a group
+	 * Add a user to a group
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int     $id        User ID
 	 * @param   int     $group     Group ID
@@ -570,11 +609,11 @@ class Users extends DolibarrApi
 		}
 
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
-			$entity = (!empty($entity) ? $entity : $conf->entity);
+			$entity = (!empty($entity) ? (int) $entity : $conf->entity);
 		} else {
 			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
 			// hack the security by giving himself permissions on another entity.
-			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
+			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
 		}
 
 		$result = $this->useraccount->SetInGroup($group, $entity);
@@ -586,9 +625,144 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * List Groups
+	 * Create user group
+	 *
+	 * @param array $request_data New user group data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
+	 * @return int
+	 *
+	 * @url	POST /groups
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 500 Server Error
+	 */
+	public function postGroups($request_data = null)
+	{
+		// Check user authorization
+		if (!DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, "Usergroup creation not allowed for login ".DolibarrApiAccess::$user->login);
+		}
+		$usergroup = new UserGroup($this->db);
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$usergroup->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'id') {
+				throw new RestException(400, 'Creating with id field is forbidden');
+			}
+
+			$usergroup->$field = $this->_checkValForAPI($field, $value, $usergroup);
+		}
+
+		if ($usergroup->create(1) < 0) {
+			throw new RestException(500, 'Error creating', array_merge(array($usergroup->error), $usergroup->errors));
+		}
+		return $usergroup->id;
+	}
+
+	/**
+	 * Update user group
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int			$group					Id of usergroup to update
+	 * @param	array		$request_data		Datas
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
+	 * @return 	Object							Updated object
+	 *
+	 * @url	PUT /groups/{group}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 500 Server Error
+	 */
+	public function putGroups($group, $request_data = null)
+	{
+		// Check user authorization
+		if (!DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'write') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, "Usergroup update not allowed");
+		}
+
+		$usergroup = new UserGroup($this->db);
+
+		$result = $usergroup->fetch($group);
+		if ($result < 1) {
+			throw new RestException(404, 'Usergroup not found');
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				throw new RestException(400, 'Updating with id field is forbidden');
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$usergroup->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'entity' && $value != $usergroup->entity) {
+				throw new RestException(403, 'Changing entity of a user using the APIs is not possible');
+			}
+
+			$usergroup->$field = $this->_checkValForAPI($field, $value, $usergroup);
+		}
+
+		// If there is no error, update() returns the number of affected
+		// rows so if the update is a no op, the return value is zezo.
+		if ($usergroup->update() >= 0) {
+			return $this->infoGroups($group);
+		} else {
+			throw new RestException(500, $usergroup->error);
+		}
+	}
+
+	/**
+	 * Remove user from group (only admin)
+	 *
+	 * @since    23.0.0    Initial implementation
+	 *
+	 * @url POST {id}/remove-group/{group}
+	 *
+	 * @param int $id User ID
+	 * @param int $group Group ID
+	 * @return  array{success:boolean,message:string}
+	 *
+	 * @throws RestException 403 Not allowed - only admin
+	 * @throws RestException 503 Error
+	 *
+	 */
+	public function removeUserFromGroup($id, $group)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only admin can remove users from groups');
+		}
+
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "usergroup_user";
+		$sql .= " WHERE fk_user = " . ((int) $id);
+		$sql .= " AND fk_usergroup = " . ((int) $group);
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			throw new RestException(503, 'DB error: ' . $this->db->lasterror());
+		}
+
+		return [
+			'success' => true,
+			'message' => "User $id removed from group $group"
+		];
+	}
+
+	/**
+	 * List groups of the current user (so user of API token)
 	 *
 	 * Return an array with a list of Groups
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @url	GET /groups
 	 *
@@ -617,7 +791,7 @@ class Users extends DolibarrApi
 		}
 
 		// case of external user, $societe param is ignored and replaced by user's socid
-		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
+		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup AS t LEFT JOIN ".MAIN_DB_PREFIX."usergroup_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
@@ -666,38 +840,47 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an group object
+	 * Get properties of a user group
 	 *
 	 * Return an array with group information
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @url	GET /groups/{group}
 	 *
-	 * @param	int		$group ID of group
-	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
-	 * @return  object               object of User objects
+	 * @param	int		$group				ID of group
+	 * @param	int     $load_members		Load members list or not {@min 0} {@max 1}
+	 * @return  Object				        object of User objects
 	 *
+	 * @throws RestException 400 Bad Request
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
 	 */
 	public function infoGroups($group, $load_members = 0)
 	{
+		if ($group == 0) {
+			throw new RestException(400, 'No usergroup with id=0 can exist');
+		}
+
 		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) ||
 			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'read') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "You are not allowed to read groups");
 		}
 
 		$group_static = new UserGroup($this->db);
-		$result = $group_static->fetch($group, '', $load_members);
+		$result = $group_static->fetch($group, '', (bool) $load_members);
 
-		if (!$result) {
-			throw new RestException(404, 'Group not found');
+		if ($result < 1) {
+			throw new RestException(404, 'Usergroup not found');
 		}
 
-		return $this->_cleanObjectDatas($group_static);
+		return $this->_cleanUserGroup($group_static);
 	}
 
 	/**
-	 * Delete account/user
+	 * Delete a user
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int     $id Account ID
 	 * @return  array
@@ -720,7 +903,7 @@ class Users extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->useraccount->oldcopy = clone $this->useraccount;
+		$this->useraccount->oldcopy = clone $this->useraccount; // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if (!$this->useraccount->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500);
@@ -729,9 +912,335 @@ class Users extends DolibarrApi
 		return array(
 			'success' => array(
 				'code' => 200,
-				'message' => 'Ticket deleted'
+				'message' => 'User deleted'
 			)
 		);
+	}
+
+	/**
+	 * Delete a usergroup
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param   int     $group usergroup ID
+	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @url	DELETE /groups/{group}
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 User not found
+	 */
+	public function deleteGroups($group)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'delete') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, 'Not allowed');
+		}
+
+		$usergroup = new UserGroup($this->db);
+
+		$result = $usergroup->fetch($group);
+		if ($result < 0) {
+			throw new RestException(404, 'Usergroup not found');
+		}
+
+		if (!$usergroup->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Usergroup deleted'
+			)
+		);
+	}
+
+	/**
+	 * Get notifications for a user
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id		ID of the user
+	 *
+	 * @return	array
+	 * @phan-return array<array{id:int,socid:int,event:string,contact_id:int,datec:int,tms:string,type:string}>
+	 * @phpstan-return array<array{id:int,socid:int,event:string,contact_id:int,datec:int,tms:string,type:string}>
+	 *
+	 * @url		GET		{id}/notifications
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Not found
+	 */
+	public function getUserNotification($id)
+	{
+		if (empty($id)) {
+			throw new RestException(400, 'No user with id=0 can exist');
+		}
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403);
+		}
+		if (!DolibarrApi::_checkAccessToResource('user', $id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		/**
+		 * We select all the records that match the socid
+		 */
+
+		$sql = "SELECT rowid as id, fk_action as event, fk_user, type, datec, tms";
+		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$sql .= " WHERE fk_user  = ".((int) $id);
+
+		$result = $this->db->query($sql);
+		if ($this->db->num_rows($result) == 0) {
+			throw new RestException(404, 'Notification not found');
+		}
+
+		$i = 0;
+
+		$notifications = array();
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$notifications[] = $obj;
+				$i++;
+			}
+		} else {
+			throw new RestException(404, 'No notifications found');
+		}
+
+		$fields = array('id', 'fk_user', 'event', 'datec', 'tms', 'type');
+
+		$returnNotifications = array();
+
+		foreach ($notifications as $notification) {
+			$object = array();
+			foreach ($notification as $key => $value) {
+				if (in_array($key, $fields)) {
+					$object[$key] = $value;
+				}
+			}
+			$returnNotifications[] = $object;
+		}
+
+		// Too complex for phan ?: @phan-suppress-next-line PhanTypeMismatchReturn
+		return $returnNotifications;
+	}
+
+	/**
+	 * Create a notification for a user
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the user
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @return	array|mixed				Notification of the user
+	 *
+	 * @url		POST	{id}/notifications
+	 *
+	 * @throws RestException
+	 */
+	public function createUserNotification($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+			throw new RestException(403, "User has no right to update users");
+		}
+		if ($this->useraccount->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating User Notification, User doesn\'t exists');
+		}
+		$notification = new Notify($this->db);
+
+		$notification->fk_user = $id;
+
+		foreach ($request_data as $field => $value) {
+			$notification->$field = $value;
+		}
+
+		$event = $notification->event;
+		if (!$event) {
+			throw new RestException(500, 'Error creating User Notification, request_data missing event');
+		}
+		$fk_user = $notification->fk_user;
+
+		$exists_sql = "SELECT rowid, fk_action as event, fk_user, type, datec, tms as datem";
+		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape((string) $event)."'";
+		$exists_sql .= " AND fk_user = '".$this->db->escape((string) $fk_user)."'";
+
+		$exists_result = $this->db->query($exists_sql);
+		if ($this->db->num_rows($exists_result) > 0) {
+			throw new RestException(403, 'Notification already exists');
+		}
+
+		if ($notification->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating User Notification');
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
+	}
+
+	/**
+	 * Create a notification for a user using action trigger code
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the user
+	 * @param	string	$code			Action Trigger code
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @return	array|mixed				Notification for the user
+	 * @phan-return Notify
+	 *
+	 * @url		POST	{id}/notificationsbycode/{code}
+	 *
+	 * @throws RestException
+	 */
+	public function createUserNotificationByCode($id, $code, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+			throw new RestException(403, "User has no right to update users");
+		}
+		if ($this->useraccount->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating User Notification, User doesn\'t exists');
+		}
+		$notification = new Notify($this->db);
+		$notification->fk_user = $id;
+
+		$sql = "SELECT t.rowid as id FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
+		$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+
+		$result = $this->db->query($sql);
+		if ($this->db->num_rows($result) == 0) {
+			throw new RestException(404, 'Action Trigger code not found');
+		}
+
+		$notification->event = $this->db->fetch_row($result)[0];
+		foreach ($request_data as $field => $value) {
+			if ($field === 'event') {
+				throw new RestException(500, 'Error creating User Notification, request_data contains event key');
+			}
+			if ($field === 'fk_action') {
+				throw new RestException(500, 'Error creating User Notification, request_data contains fk_action key');
+			}
+			$notification->$field = $value;
+		}
+
+		$event = $notification->event;
+		$fk_user = $notification->fk_user;
+
+		$exists_sql = "SELECT rowid, fk_action as event, fk_user, type, datec, tms as datem";
+		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape((string) $event)."'";
+		$exists_sql .= " AND fk_user = '".$this->db->escape((string) $fk_user)."'";
+
+		$exists_result = $this->db->query($exists_sql);
+		if ($this->db->num_rows($exists_result) > 0) {
+			throw new RestException(403, 'Notification already exists');
+		}
+
+		if ($notification->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating User Notification, are request_data well formed?');
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
+	}
+
+	/**
+	 * Delete a notification attached to a user
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the user
+	 * @param	int		$notification_id	ID of UserNotification
+	 *
+	 * @return	int							-1 if error, 1 if correct deletion
+	 *
+	 * @url		DELETE	{id}/notifications/{notification_id}
+	 *
+	 * @throws RestException
+	 */
+	public function deleteUserNotification($id, $notification_id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+			throw new RestException(403, "User has no right to update users");
+		}
+
+		$notification = new Notify($this->db);
+
+		$notification->fetch($notification_id);
+
+		$fk_user = (int) $notification->fk_user;
+
+		if ($fk_user == $id) {
+			return $notification->delete(DolibarrApiAccess::$user);
+		} else {
+			throw new RestException(403, "Not allowed due to bad consistency of input data");
+		}
+	}
+
+	/**
+	 * Update a notification for a user
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the User
+	 * @param	int		$notification_id	ID of UserNotification
+	 * @param	array	$request_data		Request data
+	 * @return	array|mixed					Notification for the user
+	 *
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url		PUT		{id}/notifications/{notification_id}
+	 *
+	 * @throws RestException
+	 */
+	public function updateUserNotification($id, $notification_id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+			throw new RestException(403, "User has no right to update users");
+		}
+		if ($this->useraccount->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Notification, User doesn\'t exists');
+		}
+		$notification = new Notify($this->db);
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		$notification->fetch($notification_id, $id);
+
+		if ($notification->fk_user != $id) {
+			throw new RestException(403, "Not allowed due to bad consistency of input data");
+		}
+
+		foreach ($request_data as $field => $value) {
+			$notification->$field = $value;
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -788,6 +1297,108 @@ class Users extends DolibarrApi
 			unset($object->thm);
 			unset($object->tjm);
 		}
+
+		return $object;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible usergroup object datas
+	 *
+	 * @param   Object	$object		Object to clean
+	 * @return  Object				Object with cleaned properties
+	 */
+	private function _cleanUserGroup($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+		unset($object->actiontypecode);
+		unset($object->all_permissions_are_loaded);
+		unset($object->barcode_type_coder);
+		unset($object->barcode_type);
+		unset($object->canvas);
+		unset($object->civility_code);
+		unset($object->civility_id);
+		unset($object->clicktodial_loaded);
+		unset($object->cond_reglement_id);
+		unset($object->cond_reglement_supplier_id);
+		unset($object->contact_id);
+		unset($object->contacts_ids_internal);
+		unset($object->contacts_ids);
+		unset($object->country_code);
+		unset($object->country_id);
+		unset($object->date_cloture);
+		unset($object->date_creation);
+		unset($object->date_modification);
+		unset($object->date_validation);
+		unset($object->default_values);
+		unset($object->demand_reason_id);
+		unset($object->deposit_percent);
+		unset($object->extraparams);
+		unset($object->firstname);
+		unset($object->fk_account);
+		unset($object->fk_delivery_address);
+		unset($object->fk_incoterms);
+		unset($object->fk_multicurrency);
+		unset($object->fk_project);
+		unset($object->fk_user_creat);
+		unset($object->fk_user_modif);
+		unset($object->globalgroup);
+		unset($object->import_key);
+		unset($object->last_main_doc);
+		unset($object->lastname);
+		unset($object->lastsearch_values_tmp);
+		unset($object->lastsearch_values);
+		unset($object->ldap_sid);
+		unset($object->libelle_incoterms);
+		unset($object->lines);
+		unset($object->linkedObjectsIds);
+		unset($object->location_incoterms);
+		unset($object->members);
+		unset($object->mode_reglement_id);
+		unset($object->module);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_tx);
+		unset($object->nb_rights);
+		unset($object->nb_users);
+		unset($object->note_public);
+		unset($object->origin_id);
+		unset($object->origin_type);
+		unset($object->product);
+		unset($object->ref_ext);
+		unset($object->ref);
+		unset($object->region_id);
+		unset($object->retained_warranty_fk_cond_reglement);
+		unset($object->rights);
+		unset($object->search_sid);
+		unset($object->shipping_method_id);
+		unset($object->shipping_method);
+		unset($object->specimen);
+		unset($object->state_id);
+		unset($object->status);
+		unset($object->statut);
+		unset($object->total_ht);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+		unset($object->total_tva);
+		unset($object->totalpaid_multicurrency);
+		unset($object->totalpaid);
+		unset($object->transport_mode_id);
+		unset($object->TRIGGER_PREFIX);
+		unset($object->user_closing_id);
+		unset($object->user_creation_id);
+		unset($object->user_modification_id);
+		unset($object->user_validation_id);
+		unset($object->user);
+		unset($object->usergroup_entity);
+		unset($object->warehouse_id);
 
 		return $object;
 	}
