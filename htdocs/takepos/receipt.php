@@ -216,11 +216,11 @@ if ($object->status == Facture::STATUS_DRAFT) {
 
 <p class="right">
 <?php
-print $langs->trans('Date')." ".dol_print_date($object->date ? $object->date : dol_now(), 'day').'<br>';
+// Invoice Ref
 if (getDolGlobalString('TAKEPOS_RECEIPT_NAME')) {
 	print getDolGlobalString('TAKEPOS_RECEIPT_NAME') . " ";
 } else {
-	print $langs->trans("TransactionID")." ";
+	print $langs->trans("InvoiceRef")." ";
 }
 if ($object->status == Facture::STATUS_DRAFT || empty($facid) || GETPOST('specimen')) {
 	// Printing ticket is not allowed if invoice not yet validate.
@@ -233,7 +233,8 @@ if ($object->status == Facture::STATUS_DRAFT || empty($facid) || GETPOST('specim
 } else {
 	print $object->ref;
 }
-print '<br>'.$langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : $object->pos_source);
+// POS terminal
+print '<br>'.$langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : ($object->pos_source ? $object->pos_source : 'Backoffice'));
 if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
@@ -245,6 +246,14 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
 }
+// Transaction ID
+if (isALNERunningVersion()) {
+	$unalterablelogid = 'TODO';
+	print "<br>".$langs->trans("TransactionID").': '.$unalterablelogid.'<br>';
+}
+// Date
+print $langs->trans('Date')." ".dol_print_date($object->date_c ? $object->date_c : dol_now(), 'day');
+// Date of printing
 if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
 	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
