@@ -55,7 +55,7 @@ class Productbatch extends CommonObject
 	public $fk_product_stock;
 
 	/**
-	 * @var string batch number
+	 * @var null|string batch number
 	 */
 	public $batch = '';
 
@@ -81,12 +81,13 @@ class Productbatch extends CommonObject
 	public $lotid;
 
 	/**
-	 * @var int|''
+	 * @var int|''|null
 	 * @deprecated
 	 */
 	public $sellby = '';	// dlc
+
 	/**
-	 * @var int|''
+	 * @var int|''|null
 	 * @deprecated
 	 */
 	public $eatby = '';		// dmd/dluo

@@ -59,6 +59,18 @@ class DolibarrApi
 
 		$this->db = $db;
 		$production_mode = getDolGlobalBool('API_PRODUCTION_MODE');
+
+		if ($production_mode) {
+			// Create the directory Defaults::$cacheDirectory if it does not exists. If dir does not exists, using production_mode generates an error 500.
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (!dol_is_dir(Defaults::$cacheDirectory)) {
+				dol_mkdir(Defaults::$cacheDirectory, DOL_DATA_ROOT);
+			}
+			if (getDolGlobalString('MAIN_API_DEBUG')) {
+				dol_syslog("Debug API construct::cacheDirectory=".Defaults::$cacheDirectory, LOG_DEBUG, 0, '_api');
+			}
+		}
+
 		$this->r = new Restler($production_mode, $refreshCache);
 
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -213,6 +225,7 @@ class DolibarrApi
 		unset($object->error);
 		unset($object->errors);
 		unset($object->errorhidden);
+		unset($object->TRIGGER_PREFIX);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -239,7 +252,7 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
-		unset($object->model_pdf);
+		//unset($object->model_pdf);
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);

@@ -59,6 +59,8 @@ if (empty($object) || !is_object($object)) {
 '
 @phan-var-force CommonObject|Facture $this
 @phan-var-force CommonObject $object
+@phan-var-force CommonObjectLine $line
+@phan-var-force ExtraFields $extrafields
 @phan-var-force Societe $buyer
 @phan-var-force Societe $seller
 @phan-var-force int<0,1> $usehm
@@ -514,7 +516,7 @@ if ($nolinesbefore) {
 		<td class="nobottom linecoluttc_currency right">
 			<input type="text" name="multicurrency_price_ttc" id="multicurrency_price_ttc" class="flat right width50" value="<?php echo(GETPOSTISSET("multicurrency_price_ttc") ? GETPOST("multicurrency_price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
-			<?php
+					<?php
 	}
 	$coldisplay++;
 	?>
@@ -844,7 +846,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				}
 			}
 		});
-											<?php
+															<?php
 		} ?>
 
 		/* When changing predefined product, we reload list of supplier prices required for margin combo */
@@ -963,17 +965,10 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
 								<?php
-								// Price by customer
-								if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($object->socid)) {
-									?>
-							$("#remise_percent").val(data.discount);
-									<?php
-								}
-
 								if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
 							var proddesc = data.desc_trans;
-																		<?php
+																						<?php
 									} else { ?>
 							var proddesc = data.desc;
 										<?php
@@ -988,7 +983,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 									editor.setData(proddesc);
 								}
 							}
-																		<?php
+																						<?php
 									} else { ?>
 							jQuery('#dp_desc').text(proddesc);
 										<?php

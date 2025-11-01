@@ -2873,7 +2873,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$result = $measuringUnits->fetchAll('', 'scale', 0, 0, ['t.active' => 1, 't.unit_type' => 'time']);
 					if ($result !== -1) {
 						foreach ($measuringUnits->records as $record) {
-							$durations[$record->short_label] = dol_ucfirst($record->label) . $plural;
+							$durations[$record->short_label] = dol_ucfirst((string) $record->label) . $plural;
 						}
 					}
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';

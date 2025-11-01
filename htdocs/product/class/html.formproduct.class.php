@@ -624,9 +624,9 @@ class FormProduct
 				}
 				$return .= '>';
 				if ($measuring_style == 'time') {
-					$return .= $langs->trans(ucfirst($lines->label));
+					$return .= $langs->trans(ucfirst((string) $lines->label));
 				} else {
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 				}
 				$return .= '</option>';
 			}
@@ -695,7 +695,7 @@ class FormProduct
 					}
 
 					$return .= '>';
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 					$return .= '</option>';
 				}
 			}
