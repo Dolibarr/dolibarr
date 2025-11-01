@@ -1645,8 +1645,8 @@ class Adherent extends CommonObject
 				$this->civility_code = $obj->civility_code;
 				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
-				$this->firstname = $obj->firstname;
-				$this->lastname = $obj->lastname;
+				$this->firstname = $this->db->toNullString($obj, 'firstname');
+				$this->lastname = $this->db->toNullString($obj, 'lastname');
 				$this->gender = $this->db->toNullString($obj, 'gender');
 				$this->login = $this->db->toNullString($obj, 'login');
 				$this->societe = $this->db->toNullString($obj, 'company');
@@ -1657,9 +1657,9 @@ class Adherent extends CommonObject
 				$this->zip = $this->db->toNullString($obj, 'zip');
 				$this->town = $this->db->toNullString($obj, 'town');
 
-				$this->pass = $obj->pass;
-				$this->pass_indatabase = $obj->pass;
-				$this->pass_indatabase_crypted = $obj->pass_crypted;
+				$this->pass = $this->db->toNullString($obj, 'pass');
+				$this->pass_indatabase = $this->db->toNullString($obj, 'pass');
+				$this->pass_indatabase_crypted = $this->db->toNullString($obj, 'pass_crypted');
 
 				$this->state_id = $obj->state_id;
 				$this->state_code = $obj->state_id ? $obj->state_code : '';
@@ -1708,7 +1708,7 @@ class Adherent extends CommonObject
 				$this->user_id = $obj->user_id;
 				$this->user_login = $obj->user_login;
 
-				$this->model_pdf = $obj->model_pdf;
+				$this->model_pdf = $this->db->toNullString($obj, 'model_pdf');
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels

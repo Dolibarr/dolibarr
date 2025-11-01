@@ -1323,6 +1323,166 @@ class DoliDBMysqli extends DoliDB
 	}
 
 	/**
+	 * Return property casted to int
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int
+	 */
+	public function toInt($object, $property)
+	{
+		$type = array_filter($this->fields, function ($element) use ($property) {
+			return isset($element->name) && $element->name === $property;
+		});
+		$type = reset($type);
+		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
+		}
+
+		return (int) $object->$property;
+	}
+
+	/**
+	 * Return property casted to int or null
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int|null
+	 */
+	public function toNullInt($object, $property)
+	{
+		$type = array_filter($this->fields, function ($element) use ($property) {
+			return isset($element->name) && $element->name === $property;
+		});
+		$type = reset($type);
+		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
+		}
+
+		return isset($object->$property) ? (int) $object->$property : null;
+	}
+
+	/**
+	 * Return property casted to int
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int<0,max>
+	 */
+	public function toIntUnsigned($object, $property)
+	{
+		$type = array_filter($this->fields, function ($element) use ($property) {
+			return isset($element->name) && $element->name === $property;
+		});
+		$type = reset($type);
+		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
+		}
+
+		return abs((int) $object->$property);
+	}
+
+	/**
+	 * Return property casted to int or null
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int<0,max>|null
+	 */
+	public function toNullIntUnsigned($object, $property)
+	{
+		$type = array_filter($this->fields, function ($element) use ($property) {
+			return isset($element->name) && $element->name === $property;
+		});
+		$type = reset($type);
+		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
+		}
+
+		return isset($object->$property) ? abs((int) $object->$property) : null;
+	}
+
+	/**
+	 * Return property casted to float
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return float
+	 */
+	public function toFloat($object, $property)
+	{
+		$type = array_filter($this->fields, function ($element) use ($property) {
+			return isset($element->name) && $element->name === $property;
+		});
+		$type = reset($type);
+		if (!in_array($type->type, [4, 5, 246]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
+		}
+
+		return (float) $object->$property;
+	}
+
+	/**
+	 * Return property casted to int or null
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return float|null
+	 */
+	public function toNullFloat($object, $property)
+	{
+		$type = array_filter($this->fields, function ($element) use ($property) {
+			return isset($element->name) && $element->name === $property;
+		});
+		$type = reset($type);
+		if (!in_array($type->type, [4, 5, 246]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
+			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
+		}
+
+		return isset($object->$property) ? (float) $object->$property : null;
+	}
+
+	/**
+	 * Return property casted to string
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return string
+	 */
+	public function toString($object, $property)
+	{
+		$type = array_filter($this->fields, function ($element) use ($property) {
+			return isset($element->name) && $element->name === $property;
+		});
+		$type = reset($type);
+		if (!in_array($type->type, [251, 252, 253, 254, 255]) || !($type->flags & MYSQLI_NOT_NULL_FLAG)) {
+			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
+		}
+
+		return (string) $object->$property;
+	}
+
+	/**
+	 * Return property casted to string or null
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return string|null
+	 */
+	public function toNullString($object, $property)
+	{
+		$type = array_filter($this->fields, function ($element) use ($property) {
+			return isset($element->name) && $element->name === $property;
+		});
+		$type = reset($type);
+		if (!in_array($type->type, [251, 252, 253, 254, 255]) || ($type->flags & MYSQLI_NOT_NULL_FLAG)) {
+			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
+		}
+
+		return isset($object->$property) ? (string) $object->$property : null;
+	}
+
+	/**
 	 * Get column type
 	 *
 	 * @param int $type type of field

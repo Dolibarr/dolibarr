@@ -501,14 +501,7 @@ abstract class DoliDB implements Database
 	 */
 	public function toInt($object, $property)
 	{
-		$type = array_filter($this->db->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
-			dol_syslog(__CLASS__ . ' bad cast for param '. $property, LOG_NOTICE);
-		}
-
+		var_dump($property);
 		return (int) $object->$property;
 	}
 
@@ -521,14 +514,6 @@ abstract class DoliDB implements Database
 	 */
 	public function toNullInt($object, $property)
 	{
-		$type = array_filter($this->db->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
-			dol_syslog(__CLASS__ . ' bad cast for param '. $property, LOG_NOTICE);
-		}
-
 		return isset($object->$property) ? (int) $object->$property : null;
 	}
 
@@ -541,14 +526,6 @@ abstract class DoliDB implements Database
 	 */
 	public function toIntUnsigned($object, $property)
 	{
-		$type = array_filter($this->db->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG)) {
-			dol_syslog(__CLASS__ . ' bad cast for param '. $property, LOG_NOTICE);
-		}
-
 		return abs((int) $object->$property);
 	}
 
@@ -561,14 +538,6 @@ abstract class DoliDB implements Database
 	 */
 	public function toNullIntUnsigned($object, $property)
 	{
-		$type = array_filter($this->db->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG)) {
-			dol_syslog(__CLASS__ . ' bad cast for param '. $property, LOG_NOTICE);
-		}
-
 		return isset($object->$property) ? abs((int) $object->$property) : null;
 	}
 
@@ -581,14 +550,6 @@ abstract class DoliDB implements Database
 	 */
 	public function toFloat($object, $property)
 	{
-		$type = array_filter($this->db->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [4, 5, 246]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
-			dol_syslog(__CLASS__ . ' bad cast for param '. $property, LOG_NOTICE);
-		}
-
 		return (float) $object->$property;
 	}
 
@@ -601,14 +562,6 @@ abstract class DoliDB implements Database
 	 */
 	public function toNullFloat($object, $property)
 	{
-		$type = array_filter($this->db->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [4, 5, 246]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG)) {
-			dol_syslog(__CLASS__ . ' bad cast for param '. $property, LOG_NOTICE);
-		}
-
 		return isset($object->$property) ? (float) $object->$property : null;
 	}
 
@@ -621,14 +574,6 @@ abstract class DoliDB implements Database
 	 */
 	public function toString($object, $property)
 	{
-		$type = array_filter($this->db->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [251, 252, 253, 254, 255]) || !($type->flags & MYSQLI_NOT_NULL_FLAG)) {
-			dol_syslog(__CLASS__ . ' bad cast for param '. $property, LOG_NOTICE);
-		}
-
 		return (string) $object->$property;
 	}
 
@@ -641,14 +586,6 @@ abstract class DoliDB implements Database
 	 */
 	public function toNullString($object, $property)
 	{
-		$type = array_filter($this->db->fields, function ($element) use ($property) {
-			return isset($element->name) && $element->name === $property;
-		});
-		$type = reset($type);
-		if (!in_array($type->type, [251, 252, 253, 254, 255]) || ($type->flags & MYSQLI_NOT_NULL_FLAG)) {
-			dol_syslog(__CLASS__ . ' bad cast for param '. $property, LOG_NOTICE);
-		}
-
 		return isset($object->$property) ? (string) $object->$property : null;
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -755,5 +755,89 @@ class TraceableDB extends DoliDB
 	{
 		// phpcs:enable
 		return $this->db->select_db($database);
+	}
+		/**
+	 * Prepare a SQL statement for execution
+	 *
+	 * This method must be implemented by subclasses.
+	 *
+	 * @param string $sql SQL query to prepare
+	 * @return mixed Driver-specific prepared statement object or false on failure
+	 */
+	public function prepare($sql)
+	{
+		return $this->db->prepare($sql);
+	}
+
+	/**
+	 * Return property casted to int
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int
+	 */
+	public function toInt($object, $property)
+	{
+		return $this->db->toInt($object, $property);
+	}
+
+	/**
+	 * Return property casted to int
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int
+	 */
+	public function toNullInt($object, $property)
+	{
+		return $this->db->toNullInt($object, $property);
+	}
+
+		/**
+	 * Return property casted to int
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int
+	 */
+	public function toIntUnsigned($object, $property)
+	{
+		return $this->db->toIntUnsigned($object, $property);
+	}
+
+	/**
+	 * Return property casted to int
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int
+	 */
+	public function toNullIntUnsigned($object, $property)
+	{
+		return $this->db->toNullIntUnsigned($object, $property);
+	}
+
+	/**
+	 * Return property casted to float
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int
+	 */
+	public function toFloat($object, $property)
+	{
+		return $this->db->toFloat($object, $property);
+	}
+
+	/**
+	 * Return property casted to float or null
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return int
+	 */
+	public function toNullFloat($object, $property)
+	{
+		return $this->db->toNullFloat($object, $property);
 	}
 }

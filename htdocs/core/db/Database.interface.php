@@ -542,13 +542,4 @@ interface Database
 	 */
 	public function select_db($database);
 	// phpcs:enable
-
-	/**
-	 * Return property casted to int
-	 *
-	 * @param stdClass $object object
-	 * @param string $property property
-	 * @return int
-	 */
-	public function toInt($object, $property);
 }
