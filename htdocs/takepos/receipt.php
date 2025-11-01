@@ -5,7 +5,7 @@
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 202        Ferran Marcet      <fmarcet@2byte.es>
  *
@@ -252,7 +252,7 @@ if (isALNERunningVersion()) {
 	print "<br>".$langs->trans("TransactionID").': '.$unalterablelogid.'<br>';
 }
 // Date
-print $langs->trans('Date')." ".dol_print_date($object->date_c ? $object->date_c : dol_now(), 'day');
+print $langs->trans('Date')." ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
 // Date of printing
 if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
 	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
@@ -501,7 +501,7 @@ if (isALNEQualifiedVersion() || isALNERunningVersion()) {
 	if ($mysoc->idprof2) {
 		$labelidprof = $langs->transcountry("ProfId2Short", $mysoc->country_code);
 		print $labelidprof.': '.$mysoc->idprof2;
-	} elseif ($mysoc->ifprod1) {
+	} elseif ($mysoc->idprof1) {
 		$labelidprof = $langs->transcountry("ProfId1Short", $mysoc->country_code);
 		print $labelidprof.': '.$mysoc->idprof1;
 	} else {

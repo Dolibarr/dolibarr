@@ -12679,24 +12679,6 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -12715,34 +12697,10 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransferline.class.php
 
 		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
 			message: '#^Variable \$result might not be defined\.$#'
@@ -12755,12 +12713,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 2
-			path: ../../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
