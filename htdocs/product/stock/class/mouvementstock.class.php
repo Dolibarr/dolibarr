@@ -211,7 +211,7 @@ class MouvementStock extends CommonObject
 	 *	@param		int|string		$datem				Force date of movement
 	 *	@param		int|''			$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		int|''			$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
-	 *	@param		string			$batch				batch number
+	 *	@param		string|null		$batch				batch number
 	 *	@param		bool			$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch table to use)
 	 *  @param		int<0,1>		$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a kit)

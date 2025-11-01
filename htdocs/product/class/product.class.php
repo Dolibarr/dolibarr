@@ -6220,7 +6220,7 @@ class Product extends CommonObject
 	 * @param	int|float		$price          	Price to use for stock eval
 	 * @param	int|''|null		$dlc            	eat-by date
 	 * @param	int|''|null		$dluo           	sell-by date
-	 * @param	string			$lot            	Lot number
+	 * @param	string|null		$lot            	Lot number
 	 * @param	string			$inventorycode  	Inventory code
 	 * @param	string			$origin_element 	Origin element type
 	 * @param	?int			$origin_id      	Origin id of element
