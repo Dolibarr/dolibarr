@@ -18,12 +18,12 @@ return [
     // PhanTypeMismatchDimFetch : 10+ occurrences
     // PhanUndeclaredMethod : 8 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
-    // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
+    // PhanTypeArraySuspiciousNull : 5 occurrences
     // PhanTypeExpectedObjectPropAccess : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanParamTooMany : 3 occurrences
-    // PhanPluginUndeclaredVariableIsset : 3 occurrences
+    // PhanPluginUndeclaredVariableIsset : 2 occurrences
     // PhanTypeMismatchArgumentProbablyReal : 2 occurrences
     // PhanPossiblyUndeclaredVariable : 1 occurrence
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
@@ -69,7 +69,7 @@ return [
         'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgument'],
         'htdocs/compta/tva/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/tva/quadri_detail.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgument'],
+        'htdocs/compta/tva/quadri_detail.php' => ['PhanTypeMismatchArgument'],
         'htdocs/contrat/card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty'],
