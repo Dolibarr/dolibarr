@@ -74,15 +74,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr = array();
 
 	// Home
-	$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
-	if (!empty($landingpage)) {
-		$landingpage = dol_buildpath($landingpage, 1);
+	$homepage = getDolUserString('MAIN_HOME_PAGE', getDolGlobalString('MAIN_HOME_PAGE'));
+	if (!empty($homepage) && !$user->admin) {
+		$homepage = dol_buildpath($homepage, 1);
 	} else {
-		$landingpage = dolBuildUrl('/index.php', ['mainmenu'=>'home', 'leftmenu'=>'home']);
+		$homepage = dolBuildUrl('/index.php', ['mainmenu'=>'home', 'leftmenu'=>'home']);
 	}
 	$menu_arr[] = array(
 		'name' => 'Home',
-		'link' => $landingpage,
+		'link' => $homepage,
 		'title' => "Home",
 		'level' => 0,
 		'enabled' => $showmode = 1,
@@ -1841,8 +1841,8 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 							if ($objp->nature == 5 && isModEnabled('expensereport') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 								$nature = "expensereports";
 							}
-							if ($objp->nature == 1 && isModEnabled('asset')) {
-								$nature = "various";	// Warning: The page /accountancy/journal/variousjournal.php is bugged. It read tables that does not exists.
+							if ($objp->nature == 1 && (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
+								$nature = "various";
 							}
 							if ($objp->nature == 8) {
 								$nature = "inventory";

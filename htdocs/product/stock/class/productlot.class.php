@@ -174,32 +174,32 @@ class Productlot extends CommonObject
 	public $fk_product;
 
 	/**
-	 * @var string batch ref
+	 * @var ?string batch ref
 	 */
 	public $batch;
 
 	/**
-	 * @var int|string eatby
+	 * @var int|''|null eatby
 	 */
 	public $eatby = '';
 
 	/**
-	 * @var int|string sellby
+	 * @var int|''|null sellby
 	 */
 	public $sellby = '';
 
 	/**
-	 * @var int|'' eol_date
+	 * @var int|''|null eol_date
 	 */
 	public $eol_date = '';
 
 	/**
-	 * @var int|'' manufacturing_date
+	 * @var int|''|null manufacturing_date
 	 */
 	public $manufacturing_date = '';
 
 	/**
-	 * @var int|'' scrapping_date
+	 * @var int|''|null scrapping_date
 	 */
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
@@ -217,17 +217,17 @@ class Productlot extends CommonObject
 	public $datec = '';
 
 	/**
-	 * @var int user ID
+	 * @var int|null user ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int user ID
+	 * @var int|null user ID
 	 */
 	public $fk_user_modif;
 
 	/**
-	 * @var string import key
+	 * @var null|string import key
 	 */
 	public $import_key;
 
