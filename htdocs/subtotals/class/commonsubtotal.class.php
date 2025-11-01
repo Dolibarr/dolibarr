@@ -49,6 +49,17 @@ trait CommonSubtotal
 	public static $SUBTOTAL_OPTIONS = ['subtotalshowtotalexludingvatonpdf'];
 
 	/**
+	 * @var string[] element of allowed module class
+	 */
+	public static $ALLOWED_TYPES = [
+		'propal',
+		'commande',
+		'facture',
+		'facturerec',
+		'shipping',
+	];
+
+	/**
 	 * Adds a subtotals line to a document.
 	 * This function inserts a subtotal line based on the given parameters.
 	 *
@@ -72,14 +83,7 @@ trait CommonSubtotal
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-		];
-		if (!in_array($current_module, $allowed_types)) {
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}
@@ -249,14 +253,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-		];
-		if (!in_array($current_module, $allowed_types)) {
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}
@@ -322,14 +319,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-		];
-		if (!in_array($current_module, $allowed_types)) {
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}
@@ -493,14 +483,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = [
-			'propal',
-			'commande',
-			'facture',
-			'facturerec',
-			'shipping',
-		];
-		if (!in_array($current_module, $allowed_types)) {
+		if (!in_array($current_module, self::$ALLOWED_TYPES)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
 			}
