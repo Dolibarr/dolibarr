@@ -1104,6 +1104,12 @@ if ($search_parent_name != '') {
 if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
+if ($search_note_public != '') {
+	$param .= '&search_note_public='.urlencode($search_note_public);
+}
+if ($search_note_private != '') {
+	$param .= '&search_note_private='.urlencode($search_note_private);
+}
 if ($type != '') {
 	$param .= '&type='.urlencode($type);
 }

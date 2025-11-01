@@ -117,6 +117,7 @@ function shipping_prepare_head($object)
 	$h++;
 
 	// Events
+	/* available with v23 only
 	$head[$h][0] = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
@@ -150,6 +151,7 @@ function shipping_prepare_head($object)
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
+	*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
