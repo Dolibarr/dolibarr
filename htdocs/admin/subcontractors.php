@@ -24,6 +24,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -33,22 +40,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminsubcontractors'; // To manage different context of search
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies'));
 
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$error = 0;
 
 $object = new stdClass();
 
@@ -63,8 +60,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if (($action == 'update' && !GETPOST("cancel", 'alpha'))
-|| ($action == 'updateedit')) {
+if (($action == 'update' && !GETPOST("cancel", 'alpha')) || ($action == 'updateedit')) {
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NAME", GETPOST("nom", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ADDRESS", GETPOST("address", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_TOWN", GETPOST("town", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -93,7 +89,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_CODE", GETPOST("itprovider_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NOTE", GETPOST("itprovider_note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
 
-	if ($action != 'updateedit' && !$error) {
+	if ($action != 'updateedit') {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 }
