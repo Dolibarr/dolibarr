@@ -481,7 +481,7 @@ class Propal extends CommonObject
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (!$qty) {
 			$qty = 1;
@@ -725,7 +725,7 @@ class Propal extends CommonObject
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL') && $product_type == 0 && $product->stock_reel < $qty) {
+				if ($product->isStockManaged() && $product->stock_reel < $qty && getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL')) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnProposal', $product->ref);
 					$this->db->rollback();
@@ -3500,7 +3500,7 @@ class Propal extends CommonObject
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$clause = " WHERE";
 
@@ -3529,6 +3529,10 @@ class Propal extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND p.fk_soc = ".((int) $user->socid);
 		}
+		// Add where from hooks
+		$parameters = array('socid' => $user->socid);
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3687,7 +3691,7 @@ class Propal extends CommonObject
 	 */
 	public function loadStateBoard()
 	{
-		global $user;
+		global $user, $hookmanager;
 
 		$this->nb = array();
 		$clause = "WHERE";
@@ -3711,6 +3715,10 @@ class Propal extends CommonObject
 			}
 		}
 
+		// Add where from hooks
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// This assignment in condition is not a bug. It allows walking the results.

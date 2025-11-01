@@ -22,18 +22,11 @@
 /**
  * \file       htdocs/expedition/messaging.php
  * \ingroup    shipping
- * \brief      Page with events on Shipping
+ * \brief      Page with events on Shipments
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/expedition.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expedition.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
 
 // Load translation files required by the page
 $langs->load("sendings");
@@ -78,7 +76,7 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$hookmanager->initHooks(array('shippingcardinfo'));
+$hookmanager->initHooks(array('shippingcardinfo', 'globalcard'));
 
 // Security check
 $id = GETPOSTINT("id");
@@ -101,7 +99,7 @@ $object = new Expedition($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
-	$object->info($object->id);
+	//$object->info($object->id);
 }
 
 $parameters = array('id' => $socid);

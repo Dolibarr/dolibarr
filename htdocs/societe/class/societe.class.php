@@ -5164,6 +5164,7 @@ class Societe extends CommonObject
 	 */
 	public function getOutstandingProposals($mode = 'customer')
 	{
+		global $hookmanager;
 		$table = 'propal';
 		if ($mode == 'supplier') {
 			$table = 'supplier_proposal';
@@ -5178,6 +5179,11 @@ class Societe extends CommonObject
 		}
 
 		dol_syslog("getOutstandingProposals for fk_soc = ".((int) $this->id), LOG_DEBUG);
+
+		// Add where from hooks
+		$parameters = array('mode' => $mode, 'table' => $table);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -5208,6 +5214,7 @@ class Societe extends CommonObject
 	 */
 	public function getOutstandingOrders($mode = 'customer')
 	{
+		global $hookmanager;
 		$table = 'commande';
 		if ($mode == 'supplier') {
 			$table = 'commande_fournisseur';
@@ -5222,6 +5229,10 @@ class Societe extends CommonObject
 		}
 
 		dol_syslog("getOutstandingOrders", LOG_DEBUG);
+		// Add where from hooks
+		$parameters = array('mode' => $mode, 'table' => $table);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$outstandingOpened = 0;
@@ -5436,25 +5447,26 @@ class Societe extends CommonObject
 	/**
 	 * Sets object to supplied categories.
 	 *
-	 * Deletes object from existing categories not supplied.
-	 * Adds it to non existing supplied categories.
-	 * Existing categories are left untouch.
+	 * Assign the object to all categories not yet assigned.
+	 * Unasign object from existing categories not supplied in $categories (if remove_existing==true).
+	 * If remove_existing is false, existing categories are left untouch.
 	 *
-	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @param 	string 		$type_categ 	Category type ('customer' or 'supplier')
-	 * @return	int							Return integer <0 if KO, >0 if OK
+	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
+	 * @param 	string 		$type_categ 		Category type ('customer' or 'supplier')
+	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
+	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function setCategories($categories, $type_categ)
+	public function setCategories($categories, $type_categ, $remove_existing = true)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		// Decode type
 		if (!in_array($type_categ, array(Categorie::TYPE_CUSTOMER, Categorie::TYPE_SUPPLIER))) {
-			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown company category type. Done nothing.', LOG_ERR);
+			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown company category type. Nothing done.', LOG_ERR);
 			return -1;
 		}
 
-		return parent::setCategoriesCommon($categories, $type_categ);
+		return parent::setCategoriesCommon($categories, $type_categ, $remove_existing);
 	}
 
 	/**

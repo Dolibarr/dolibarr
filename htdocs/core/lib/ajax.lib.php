@@ -498,80 +498,67 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
-	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
+	$msg = "\n";
+	$msg .= '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
 	$msg .= "<script>\n";
-
-	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {
-		$msg .= '
-			// lowercase + remove accents
-			function normalizeString(str) {
-				return str
-					.normalize("NFD")
-					.replace(/[\u0300-\u036f]/g, "")
-					.toLowerCase();
-			}
-		';
-	} else {
-		$msg .= '
-			// lowercase only (accents kept)
-			function normalizeString(str) {
-				return str.toLowerCase();
-			}
-		';
-	}
-
-	$msg .= '
-		$(document).ready(function () {
-			$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
-				dir: \'ltr\',';
+	$msg .= '$(document).ready(function () {
+		$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({';
 	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
 	}
-	$msg .= '		width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
-					minimumInputLength: '.((int) $minLengthToAutocomplete).',
-					language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
-					matcher: function (params, data) {
-						if ($.trim(params.term) === "") {
-							return data;
-						}
-						var term = normalizeString(params.term);
-						var text = normalizeString(data.text || "");
-						var keywords = term.split(" ");
-						for (var i = 0; i < keywords.length; i++) {
-							if (text.indexOf(keywords[i]) === -1) {
-								return null;
-							}
-						}
-						return data;
-					},
-					theme: \'default'.dol_escape_js($moreselect2theme).'\',		/* to add css on generated html components */
-					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-					dropdownCssClass: \'ui-dialog\',
-					templateResult: function (data, container) {	/* Format visible output into combo list */
-	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
-						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-						//console.log("data html is "+$(data.element).attr("data-html"));
-						if (data.id == \''.(dol_escape_js($idforemptyvalue)).'\' && $(data.element).attr("data-html") == undefined) {
-							return \'&nbsp;\';
-						}
-						if ($(data.element).attr("data-html") != undefined) {
-							/* If property html set, we decode html entities and use this. */
-							/* Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, \'\', 0, 1) when building the select option. */
-							if (typeof htmlEntityDecodeJs === "function") {
-								return htmlEntityDecodeJs($(data.element).attr("data-html"));
-							}
-						}
-						return data.text;
-					},
-					templateSelection: function (selection) {		/* Format visible output of selected value */
-						if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
-						return selection.text;
-					},
-					escapeMarkup: function(markup) {
-						return markup;
+	$msg .= '
+			dir: \'ltr\',
+			width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
+			minimumInputLength: '.((int) $minLengthToAutocomplete).',
+			language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
+			matcher: function (params, data) {
+				if ($.trim(params.term) === "") { return data; }';
+	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {	// lowercase + remove accents
+		$msg .= '
+				var term = params.term.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+				var text = (data.text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";';
+	} else {															// lowercase only (accent kept)
+		$msg .= '
+				var term = params.term.toLowerCase();
+				var text = (data.text || "").toLowerCase();';
+	}
+	$msg .= '
+				var keywords = term.split(" ");
+				for (var i = 0; i < keywords.length; i++) {
+					if (text.indexOf(keywords[i]) === -1) {
+						return null;
 					}
-				})';
+				}
+				return data;
+			},
+			theme: \'default'.dol_escape_js($moreselect2theme).'\',		/* to add css on generated html components */
+			containerCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+			selectionCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+			dropdownCssClass: \'ui-dialog\',
+			templateResult: function (data, container) {	/* Format visible output into combo list */
+ 				/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
+				if (data.element) { $(container).addClass($(data.element).attr("class")); }
+				/* console.log("data html is "+$(data.element).attr("data-html")); */
+				if (data.id == \''.(dol_escape_js($idforemptyvalue)).'\' && $(data.element).attr("data-html") == undefined) {
+					return \'&nbsp;\';
+				}
+				if ($(data.element).attr("data-html") != undefined) {
+					/* If property html set, we decode html entities and use this. */
+					/* Note that HTML content must have been sanitized against js injection with dol_escape_htmltag(xxx, 0, 0, \'\', 0, 1) when building the select option. */
+					if (typeof htmlEntityDecodeJs === "function") {
+						return htmlEntityDecodeJs($(data.element).attr("data-html"));
+					}
+				}
+				return data.text;
+			},
+			templateSelection: function (selection) {		/* Format visible output of selected value */
+				if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
+				return selection.text;
+			},
+			escapeMarkup: function(markup) {
+				return markup;
+			}
+		})';
 	if ($forcefocus) {
 		$msg .= '.select2(\'focus\')';
 	}
