@@ -11881,12 +11881,6 @@ parameters:
 			path: ../../../htdocs/product/class/productbatch.class.php
 
 		-
-			message: '#^Property Productbatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/product/class/productbatch.class.php
-
-		-
 			message: '#^Property Productbatch\:\:\$qty \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3

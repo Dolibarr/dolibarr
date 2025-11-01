@@ -55,7 +55,7 @@ class Productbatch extends CommonObject
 	public $fk_product_stock;
 
 	/**
-	 * @var string batch number
+	 * @var null|string batch number
 	 */
 	public $batch = '';
 
