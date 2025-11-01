@@ -151,10 +151,11 @@ class box_members_last_subscriptions extends ModeleBoxes
 						'text' => price($obj->subscription),
 					);
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($this->db->jdate($obj->datem), 'dayhour', 'tzuserrel')).'"',
-						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour', 'tzuserrel'),
-					);
+					$datetoprint = dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour', 'tzuserrel');
+					$this->info_box_contents[$line][] = [
+						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone" title="' . dol_escape_htmltag($langs->trans("DateModification") . ': ' . $datetoprint).'"',
+						'text' => $datetoprint,
+					];
 
 					$line++;
 				}
