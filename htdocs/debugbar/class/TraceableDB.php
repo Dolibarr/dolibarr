@@ -786,7 +786,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param stdClass $object object
 	 * @param string $property property
-	 * @return int
+	 * @return int|null
 	 */
 	public function toNullInt($object, $property)
 	{
@@ -798,7 +798,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param stdClass $object object
 	 * @param string $property property
-	 * @return int
+	 * @return int<0,max>
 	 */
 	public function toIntUnsigned($object, $property)
 	{
@@ -810,7 +810,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param stdClass $object object
 	 * @param string $property property
-	 * @return int
+	 * @return int<0,max>|null
 	 */
 	public function toNullIntUnsigned($object, $property)
 	{
@@ -822,7 +822,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param stdClass $object object
 	 * @param string $property property
-	 * @return int
+	 * @return float
 	 */
 	public function toFloat($object, $property)
 	{
@@ -834,10 +834,34 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param stdClass $object object
 	 * @param string $property property
-	 * @return int
+	 * @return float|null
 	 */
 	public function toNullFloat($object, $property)
 	{
 		return $this->db->toNullFloat($object, $property);
+	}
+
+		/**
+	 * Return property casted to string
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return string
+	 */
+	public function toString($object, $property)
+	{
+		return $this->db->toString($object, $property);
+	}
+
+	/**
+	 * Return property casted to string or null
+	 *
+	 * @param stdClass $object object
+	 * @param string $property property
+	 * @return string|null
+	 */
+	public function toNulString($object, $property)
+	{
+		return $this->db->toNullString($object, $property);
 	}
 }
