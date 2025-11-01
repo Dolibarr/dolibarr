@@ -362,8 +362,7 @@ class MouvementStock extends CommonObject
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num > 0) {
-					while ($i < $num) {
-						$obj = $this->db->fetch_object($resql);
+					while ($i < $num && $obj = $this->db->fetch_object($resql)) {
 						if ($obj->eatby) {
 							if ($eatby) {
 								$tmparray = dol_getdate((int) $eatby, true);
@@ -436,8 +435,7 @@ class MouvementStock extends CommonObject
 					$productlot->sellby = $sellby;
 					$result = $productlot->create($user);
 					if ($result <= 0) {
-						$this->error = $productlot->error;
-						$this->errors = $productlot->errors;
+						$this->setErrorsFromObject($productlot);
 						$this->db->rollback();
 						return -4;
 					}
