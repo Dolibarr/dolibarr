@@ -385,8 +385,7 @@ class MouvementStock extends CommonObject
 								$productlot->eatby = $eatby;
 								$result = $productlot->update($user);
 								if ($result <= 0) {
-									$this->error = $productlot->error;
-									$this->errors = $productlot->errors;
+									$this->setErrorsFromObject($productlot);
 									$this->db->rollback();
 									return -5;
 								}
@@ -413,8 +412,7 @@ class MouvementStock extends CommonObject
 								$productlot->sellby = $sellby;
 								$result = $productlot->update($user);
 								if ($result <= 0) {
-									$this->error = $productlot->error;
-									$this->errors = $productlot->errors;
+									$this->setErrorsFromObject($productlot);
 									$this->db->rollback();
 									return -5;
 								}
@@ -982,8 +980,7 @@ class MouvementStock extends CommonObject
 
 				$result = $pdluo->create($user, 1);
 				if ($result < 0) {
-					$this->error = $pdluo->error;
-					$this->errors = $pdluo->errors;
+					$this->setErrorsFromObject($pdluo);
 				}
 			}
 		}
