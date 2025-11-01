@@ -12703,12 +12703,6 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
 
 		-
-			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
