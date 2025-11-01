@@ -810,7 +810,9 @@ class Adherent extends CommonObject
 		// Clean parameters
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname) ? trim($this->firstname) : trim($this->firstname);
-		$this->gender = trim($this->gender);
+		if (isset($this->gender)) {
+			$this->gender = trim($this->gender);
+		}
 		// $this->address = ($this->address ? $this->address : $this->address);
 		// $this->zip = ($this->zip ? $this->zip : $this->zip);
 		// $this->town = ($this->town ? $this->town : $this->town);
