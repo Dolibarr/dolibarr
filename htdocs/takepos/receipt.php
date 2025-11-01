@@ -245,7 +245,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
 }
-if (!getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
+if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
 	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 
@@ -485,9 +485,24 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 	print $newfreetext;
 }
 
-if (isALNEQualifiedVersion()) {	// If necessary, we could replace with "if isALNERunningVersion()"
+if (isALNEQualifiedVersion() || isALNERunningVersion()) {
 	$langs->load("blockedlog");
-	print '<center class="small"><i>'.$langs->trans("LNECertifiedPOSSystem")."</i></center><br>\n";
+	print '<center class="small"><i>';
+	print $langs->trans("LNECertifiedPOSSystem")."<br>";
+	if ($mysoc->idprof2) {
+		$labelidprof = $langs->transcountry("ProfId2Short", $mysoc->country_code);
+		print $labelidprof.': '.$mysoc->idprof2;
+	} elseif ($mysoc->ifprod1) {
+		$labelidprof = $langs->transcountry("ProfId1Short", $mysoc->country_code);
+		print $labelidprof.': '.$mysoc->idprof1;
+	} else {
+		print 'ERROR: SIREN/SIRET not defined. Ticket not valid !!!';
+	}
+	if ($mysoc->tva_intra) {
+		$labelidprof = $langs->trans("VATIntra");
+		print ' - '.$labelidprof.': '.$mysoc->tva_intra;
+	}
+	print "</i></center><br>\n";
 }
 
 
