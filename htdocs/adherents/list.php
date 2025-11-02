@@ -1239,7 +1239,7 @@ while ($i < $imaxinloop) {
 	$datefin = $db->jdate($obj->datefin);
 
 	$memberstatic->id = $db->toInt($obj, 'rowid');
-	$memberstatic->ref = $obj->ref;
+	$memberstatic->ref = $db->toString($obj, 'ref');
 	$memberstatic->civility_code = $obj->civility;
 	$memberstatic->login = $obj->login;
 	$memberstatic->lastname = $obj->lastname;
@@ -1265,8 +1265,8 @@ while ($i < $imaxinloop) {
 			$companynametoshow = null;
 		}
 	} else {
-		$companyname = $obj->company;
-		$companynametoshow = $obj->company;
+		$companyname = $db->toNullString($obj, 'company');
+		$companynametoshow = $db->toNullString($obj, 'company');
 	}
 	$memberstatic->company = (string) $companyname;
 
