@@ -684,7 +684,7 @@ if (empty($reshook)) {
 				}
 				//var_dump($object);exit;
 
-				$nosyncmember = (!getDolGlobalString('SOCIETE_NO_SYNC_LINKED_MEMBER') ? 0 : 1);
+				$nosyncmember = getDolGlobalString('SOCIETE_NO_SYNC_LINKED_MEMBER');
 
 				$result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', $nosyncmember);
 

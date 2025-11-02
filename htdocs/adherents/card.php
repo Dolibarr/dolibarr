@@ -416,7 +416,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$nosyncthirdparty = (!getDolGlobalString('MEMBER_NO_SYNC_LINKED_THIRDPARTY') ? 0 : 1);
+				$nosyncthirdparty = getDolGlobalString('MEMBER_NO_SYNC_LINKED_THIRDPARTY');
 
 				$result = $object->update($user, 0, $nosyncuser, $nosyncuserpass, $nosyncthirdparty);
 
