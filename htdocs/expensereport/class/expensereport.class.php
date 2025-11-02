@@ -2393,19 +2393,19 @@ class ExpenseReport extends CommonObject
 	/**
 	 * periodExists
 	 *
-	 * @param   User       $user          User
+	 * @param   User       $fuser          User
 	 * @param   integer    $startDate     Start date timestamp
 	 * @param   integer    $endDate       End date timestamp
 	 * @return  int                        Return integer <0 if KO, >0 if OK
 	 */
-	public function periodExists(User $user, $startDate, $endDate)
+	public function periodExists(User $fuser, $startDate, $endDate)
 	{
 		global $conf;
 
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
-		$sql .= " AND fk_user_author = ".((int) $user->id);
+		$sql .= " AND fk_user_author = ".((int) $fuser->id);
 		$sql .= " AND (date_fin >= '".$this->db->idate($startDate)."' AND date_debut <= '".$this->db->idate($endDate)."')";
 
 		$row = $this->db->getRow($sql);
