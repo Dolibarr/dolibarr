@@ -861,7 +861,7 @@ class TraceableDB extends DoliDB
 	 * @param string $property property
 	 * @return string|null
 	 */
-	public function toNulString($object, $property)
+	public function toNullString($object, $property)
 	{
 		return $this->db->toNullString($object, $property);
 	}

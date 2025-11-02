@@ -1635,9 +1635,7 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($this->db->num_rows($resql)) {
-				$obj = $this->db->fetch_object($resql);
-
+			if ($this->db->num_rows($resql) && $obj = $this->db->fetch_object($resql)) {
 				$this->entity = $this->db->toInt($obj, 'entity');
 				$this->id = $this->db->toInt($obj, 'rowid');
 				$this->ref = $this->db->toString($obj, 'ref');
@@ -1669,13 +1667,13 @@ class Adherent extends CommonObject
 				$this->state_code = $state_id ? $obj->state_code : '';
 				$this->state = $state_id ? $obj->state : '';
 
-				$this->country_id = $obj->country_id;
-				$country_code = $this->db->toNullString($obj, 'country_code');
+				$this->country_id = $this->db->toInt($obj, 'country_id');
+				$country_code = $this->db->toString($obj, 'country_code');
 				$this->country_code = $country_code;
-				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {
-					$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
+				if ($langs->trans("Country".$country_code) != "Country".$country_code) {
+					$this->country = $langs->transnoentitiesnoconv("Country".$country_code);
 				} else {
-					$this->country = $obj->country;
+					$this->country = $this->db->toString($obj, 'country');
 				}
 
 				$this->phone = $obj->phone;
@@ -1686,10 +1684,10 @@ class Adherent extends CommonObject
 
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
-				$this->photo = $obj->photo;
-				$this->statut = $obj->statut;
-				$this->status = $obj->statut;
-				$this->public = $obj->public;
+				$this->photo = $this->db->toNullString($obj, 'photo');
+				$this->statut = $this->db->toInt($obj, 'statut');
+				$this->status = $this->db->toInt($obj, 'statut');
+				$this->public = $this->db->toInt($obj, 'public');
 
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->date_creation = $this->db->jdate($obj->datec);
@@ -1700,18 +1698,18 @@ class Adherent extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->birth = $this->db->jdate($obj->birthday);
 
-				$this->default_lang = $obj->default_lang;
+				$this->default_lang = $this->db->toNullString($obj, 'default_lang');
 
-				$this->note_private = $obj->note_private;
-				$this->note_public = $obj->note_public;
-				$this->morphy = $obj->morphy;
+				$this->note_private = $this->db->toNullString($obj, 'note_private');
+				$this->note_public = $this->db->toNullString($obj, 'note_public');
+				$this->morphy = $this->db->toString($obj, 'morphy');
 
-				$this->typeid = $obj->fk_adherent_type;
-				$this->type = $obj->type;
-				$this->need_subscription = $obj->subscription;
+				$this->typeid = $this->db->toInt($obj, 'fk_adherent_type');
+				$this->type = $this->db->toString($obj, 'type');
+				$this->need_subscription = (int) $this->db->toString($obj, 'subscription'); // field is varchar(3) NOT NULL DEFAULT '1' in db
 
-				$this->user_id = $obj->user_id;
-				$this->user_login = $obj->user_login;
+				$this->user_id = $this->db->toInt($obj, 'user_id');
+				$this->user_login = $this->db->toString($obj, 'user_login');
 
 				$this->model_pdf = $this->db->toNullString($obj, 'model_pdf');
 

@@ -1333,7 +1333,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$index = array_search($property, array_column($this->fields, 'name'));
 		$type = $index !== false ? $this->fields[$index] : null;
-		if ($type && (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
+		if ($type && (!in_array($type->type, [MYSQLI_TYPE_TINY, MYSQLI_TYPE_SHORT, MYSQLI_TYPE_LONG, 7, MYSQLI_TYPE_LONGLONG, MYSQLI_TYPE_INT24]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1351,7 +1351,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$index = array_search($property, array_column($this->fields, 'name'));
 		$type = $index !== false ? $this->fields[$index] : null;
-		if ($type && (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
+		if ($type && (!in_array($type->type, [MYSQLI_TYPE_TINY, MYSQLI_TYPE_SHORT, MYSQLI_TYPE_LONG, 7, MYSQLI_TYPE_LONGLONG, MYSQLI_TYPE_INT24]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1369,7 +1369,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$index = array_search($property, array_column($this->fields, 'name'));
 		$type = $index !== false ? $this->fields[$index] : null;
-		if ($type && (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG))) {
+		if ($type && (!in_array($type->type, [MYSQLI_TYPE_TINY, MYSQLI_TYPE_SHORT, MYSQLI_TYPE_LONG, 7, MYSQLI_TYPE_LONGLONG, MYSQLI_TYPE_INT24]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1387,7 +1387,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$index = array_search($property, array_column($this->fields, 'name'));
 		$type = $index !== false ? $this->fields[$index] : null;
-		if ($type && (!in_array($type->type, [1, 2, 3, 7, 8, 9]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG))) {
+		if ($type && (!in_array($type->type, [MYSQLI_TYPE_TINY, MYSQLI_TYPE_SHORT, MYSQLI_TYPE_LONG, 7, MYSQLI_TYPE_LONGLONG, MYSQLI_TYPE_INT24]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || !($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1405,7 +1405,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$index = array_search($property, array_column($this->fields, 'name'));
 		$type = $index !== false ? $this->fields[$index] : null;
-		if ($type && (!in_array($type->type, [4, 5, 246]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
+		if ($type && (!in_array($type->type, [MYSQLI_TYPE_FLOAT, MYSQLI_TYPE_DOUBLE, MYSQLI_TYPE_NEWDECIMAL]) || !($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1423,7 +1423,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$index = array_search($property, array_column($this->fields, 'name'));
 		$type = $index !== false ? $this->fields[$index] : null;
-		if ($type && (!in_array($type->type, [4, 5, 246]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
+		if ($type && (!in_array($type->type, [MYSQLI_TYPE_FLOAT, MYSQLI_TYPE_DOUBLE, MYSQLI_TYPE_NEWDECIMAL]) || ($type->flags & MYSQLI_NOT_NULL_FLAG) || ($type->flags & MYSQLI_UNSIGNED_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1441,7 +1441,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$index = array_search($property, array_column($this->fields, 'name'));
 		$type = $index !== false ? $this->fields[$index] : null;
-		if ($type && (!in_array($type->type, [251, 252, 253, 254, 255]) || !($type->flags & MYSQLI_NOT_NULL_FLAG))) {
+		if ($type && (!in_array($type->type, [MYSQLI_TYPE_BLOB, MYSQLI_TYPE_VAR_STRING, MYSQLI_TYPE_STRING]) || !($type->flags & MYSQLI_NOT_NULL_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1459,7 +1459,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$index = array_search($property, array_column($this->fields, 'name'));
 		$type = $index !== false ? $this->fields[$index] : null;
-		if ($type && (!in_array($type->type, [251, 252, 253, 254, 255]) || ($type->flags & MYSQLI_NOT_NULL_FLAG))) {
+		if ($type && (!in_array($type->type, [MYSQLI_TYPE_BLOB, MYSQLI_TYPE_VAR_STRING, MYSQLI_TYPE_STRING]) || ($type->flags & MYSQLI_NOT_NULL_FLAG))) {
 			dol_syslog('Bad cast for param '. $property . getCallerInfoString(), LOG_NOTICE);
 		}
 
@@ -1475,29 +1475,27 @@ class DoliDBMysqli extends DoliDB
 	public function getColumnTypeName($type)
 	{
 		$types = [
-			1 => 'TINYINT',
-			2 => 'SMALLINT',
-			3 => 'INT',
-			4 => 'FLOAT',
-			5 => 'DOUBLE',
-			7 => 'TIMESTAMP',
-			8 => 'BIGINT',
-			9 => 'MEDIUMINT',
-			10 => 'DATE',
-			11 => 'TIME',
-			12 => 'DATETIME',
-			13 => 'YEAR',
-			16 => 'BIT',
-			246 => 'DECIMAL',
-			247 => 'TINYBLOB',
-			248 => 'MEDIUMBLOB',
-			249 => 'LONGBLOB',
-			250 => 'BLOB',
-			251 => 'VAR_STRING',
-			252 => 'STRING',
-			253 => 'VARCHAR',
-			254 => 'CHAR',
-			255 => 'GEOMETRY'
+			MYSQLI_TYPE_TINY => 'TINYINT',
+			MYSQLI_TYPE_SHORT => 'SMALLINT',
+			MYSQLI_TYPE_LONG => 'INT',
+			MYSQLI_TYPE_FLOAT => 'FLOAT',
+			MYSQLI_TYPE_DOUBLE => 'DOUBLE',
+			MYSQLI_TYPE_TIMESTAMP => 'TIMESTAMP',
+			MYSQLI_TYPE_LONGLONG => 'BIGINT',
+			MYSQLI_TYPE_INT24 => 'MEDIUMINT',
+			MYSQLI_TYPE_DATE => 'DATE',
+			MYSQLI_TYPE_TIME => 'TIME',
+			MYSQLI_TYPE_DATETIME => 'DATETIME',
+			MYSQLI_TYPE_YEAR => 'YEAR',
+			MYSQLI_TYPE_BIT => 'BIT',
+			MYSQLI_TYPE_NEWDECIMAL => 'DECIMAL',
+			MYSQLI_TYPE_TINY_BLOB => 'TINYBLOB',
+			MYSQLI_TYPE_MEDIUM_BLOB => 'MEDIUMBLOB',
+			MYSQLI_TYPE_LONG_BLOB => 'LONGBLOB',
+			MYSQLI_TYPE_BLOB => 'BLOB',
+			MYSQLI_TYPE_VAR_STRING => 'VARCHAR',
+			MYSQLI_TYPE_STRING => 'STRING',
+			MYSQLI_TYPE_GEOMETRY => 'GEOMETRY'
 		];
 
 		return $types[$type] ?? 'UNKNOWN';
