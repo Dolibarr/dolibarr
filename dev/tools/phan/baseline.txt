@@ -16,15 +16,14 @@ return [
     // PhanTypeMismatchArgumentNullable : 20+ occurrences
     // PhanTypeInvalidDimOffset : 15+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
-    // PhanUndeclaredMethod : 8 occurrences
+    // PhanUndeclaredMethod : 7 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
-    // PhanTypeComparisonFromArray : 6 occurrences
     // PhanTypeArraySuspiciousNull : 5 occurrences
     // PhanTypeExpectedObjectPropAccess : 5 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
-    // PhanParamTooMany : 3 occurrences
     // PhanPluginUndeclaredVariableIsset : 2 occurrences
     // PhanTypeMismatchArgumentProbablyReal : 2 occurrences
+    // PhanParamTooMany : 1 occurrence
     // PhanPossiblyUndeclaredVariable : 1 occurrence
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
     // PhanTypeMismatchReturn : 1 occurrence
@@ -34,8 +33,8 @@ return [
         'htdocs/bookcal/class/calendar.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/categories/viewcat.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/index.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/action/pertype.php' => ['PhanTypeComparisonFromArray', 'PhanTypeExpectedObjectPropAccess'],
-        'htdocs/comm/action/peruser.php' => ['PhanTypeComparisonFromArray', 'PhanTypeMismatchArgument'],
+        'htdocs/comm/action/pertype.php' => ['PhanTypeExpectedObjectPropAccess'],
+        'htdocs/comm/action/peruser.php' => ['PhanTypeMismatchArgument'],
         'htdocs/comm/card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/mailing/targetemailing.php' => ['PhanUndeclaredProperty'],

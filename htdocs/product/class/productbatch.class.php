@@ -398,16 +398,18 @@ class Productbatch extends CommonObject
 	}
 
 	/**
-	 *  Find first detailed record that match either eat-by, sell-by or batch within the warehouse
+	 *  Load first detailed record that match batch within the warehouse (for a given product or not). Can also retrieve the detailed record
+	 *  from the rowid in product_stock directly.
 	 *
 	 *  @param	int			$fk_product_stock   id product_stock for object
 	 *  @param	int|''		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
 	 *  @param	int|''		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
+	 *  @param	int			$fk_product			filter on product (use it if you don't have $fk_product_stock)
 	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
-	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0)
+	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0, $fk_product = 0)
 	{
 		$where = array();
 
@@ -426,6 +428,9 @@ class Productbatch extends CommonObject
 		} else {
 			$sql .= ", ".$this->db->prefix()."product_stock as ps";
 			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_entrepot = ".((int) $fk_warehouse);
+			if ($fk_product > 0) {
+				 $sql .= " AND ps.fk_product = ".((int) $fk_product);
+			}
 		}
 		if (!empty($eatby)) {
 			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
@@ -441,8 +446,10 @@ class Productbatch extends CommonObject
 		if (!empty($where)) {
 			$sql .= " AND (".$this->db->sanitize(implode(" OR ", $where), 1, 1, 1).")";
 		}
+		// Take the first one found
+		$sql .= $this->db->order("t.tms,t.rowid");
+		$sql .= $this->db->plimit(1);
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -452,7 +459,7 @@ class Productbatch extends CommonObject
 
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_product_stock = $obj->fk_product_stock;
-				$this->sellby = $this->db->jdate($obj->sellby);	// deprecated. do no tuse this data.
+				$this->sellby = $this->db->jdate($obj->sellby);	// deprecated. do not use this data.
 				$this->eatby = $this->db->jdate($obj->eatby);	// deprecated. do not use this data.
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
