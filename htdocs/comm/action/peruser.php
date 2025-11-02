@@ -363,7 +363,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {  // Always false @phpstan-suppress-current-line
+if ($showbirthday) {  // Always false @phpstan-ignore-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -1901,6 +1901,19 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$cases3 = array(); // Color third half hour
 	$cases4 = array(); // Color 4th half hour
 
+	/**
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases1
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases2
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases3
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases4
+	 */
+	'
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases1
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases2
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases3
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases4
+   ';
+
 	$i = 0;
 	$numother = 0;
 	$numbirthday = 0;
@@ -2296,7 +2309,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$title2 = '';
 		$title3 = '';
 		$title4 = '';
-		if (isset($cases1[$h]) && $cases1[$h] != '') {
+		if (isset($cases1[$h])) {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2316,7 +2329,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				}
 			}
 		}
-		if (isset($cases2[$h]) && $cases2[$h] != '') {
+		if (isset($cases2[$h])) {
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2336,7 +2349,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				}
 			}
 		}
-		if (isset($cases3[$h]) && $cases3[$h] != '') {
+		if (isset($cases3[$h])) {
 			//$title3.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases3[$h]) > 1) {
 				$title3 .= count($cases3[$h]).' '.(count($cases3[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2356,7 +2369,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				}
 			}
 		}
-		if (isset($cases4[$h]) && $cases4[$h] != '') {
+		if (isset($cases4[$h])) {
 			//$title4.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases4[$h]) > 1) {
 				$title4 .= count($cases4[$h]).' '.(count($cases4[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
