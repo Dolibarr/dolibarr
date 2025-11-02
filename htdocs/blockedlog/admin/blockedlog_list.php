@@ -417,7 +417,7 @@ print $s;
 print "<br>\n";
 print "</div>\n";
 
-$htmltext .= $langs->trans("UnalterableLogTool1");
+$htmltext = $langs->trans("UnalterableLogTool1");
 if ($mysoc->country_code == 'FR') {
 	$htmltext .= ' '.$langs->trans("UnalterableLogTool1FR");
 }

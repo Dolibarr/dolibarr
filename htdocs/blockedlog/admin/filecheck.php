@@ -115,7 +115,7 @@ if (empty($xmlremote) && getDolGlobalString($param)) {
 if (empty($xmlremote)) {
 	$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 }
-if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
+if (!preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), null, 'errors');
 	$error++;
@@ -130,7 +130,6 @@ $enableremotecheck = true;
 if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || getDolGlobalString('MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE')) {
 	$enableremotecheck = false;
 }
-$enableremotecheck = true;
 
 print '<form name="check" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
