@@ -459,7 +459,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 				if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 					if (!empty($cumulative_ht[$case])) {
 						$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
-						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cumulative_ht[$case], 1).'</a>';
+						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.'&modecompta='.$modecompta.'">'.price($cumulative_ht[$case], 1).'</a>';
 					} else {
 						if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) {
 							print '0';
