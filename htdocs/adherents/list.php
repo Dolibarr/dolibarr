@@ -1238,7 +1238,7 @@ while ($i < $imaxinloop) {
 
 	$datefin = $db->jdate($obj->datefin);
 
-	$memberstatic->id = $obj->rowid;
+	$memberstatic->id = $db->toInt($obj, 'rowid');
 	$memberstatic->ref = $obj->ref;
 	$memberstatic->civility_code = $obj->civility;
 	$memberstatic->login = $obj->login;
