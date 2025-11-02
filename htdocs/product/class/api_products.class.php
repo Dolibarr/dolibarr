@@ -321,8 +321,8 @@ class Products extends DolibarrApi
 	 * @since	4.0.0	Initial implementation
 	 *
 	 * @param  array $request_data Request data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?,string> $request_data
+	 * @phpstan-param ?,string> $request_data
 	 * @return int     ID of product
 	 *
 	 * @throws RestException
@@ -384,8 +384,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  	int   	$id           		Id of product to update
 	 * @param  	array 	$request_data 		Data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?,string> $request_data
+	 * @phpstan-param ?,string> $request_data
 	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException 401
@@ -1422,8 +1422,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of Attribute
 	 * @param	array	$request_data	Data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?,string> $request_data
+	 * @phpstan-param ?,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws RestException
@@ -1761,8 +1761,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of Attribute
 	 * @param	array	$request_data	Data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?,string> $request_data
+	 * @phpstan-param ?,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws RestException 401
@@ -1930,8 +1930,8 @@ class Products extends DolibarrApi
 	 * @param  float $price_impact Price impact of variant
 	 * @param  bool $price_impact_is_percent Price impact in percent (true or false)
 	 * @param  array $features List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
-	 * @phan-param array<string,string> $features
-	 * @phpstan-param array<string,string> $features
+	 * @phan-param ,string> $features
+	 * @phpstan-param ,string> $features
 	 * @param  string $reference Customized reference of variant
 	 * @param  string $ref_ext External reference of variant
 	 * @return int
@@ -1999,8 +1999,8 @@ class Products extends DolibarrApi
 	 * @param  float  $price_impact             Price impact of variant
 	 * @param  bool   $price_impact_is_percent  Price impact in percent (true or false)
 	 * @param  array  $features                 List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
-	 * @phan-param array<string,string> $features
-	 * @phpstan-param array<string,string> $features
+	 * @phan-param ,string> $features
+	 * @phpstan-param ,string> $features
 	 * @return int
 	 *
 	 * @throws RestException 500	System error
@@ -2060,8 +2060,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id ID of Variant
 	 * @param  array $request_data Data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?,string> $request_data
+	 * @phpstan-param ?,string> $request_data
 	 * @return int
 	 *
 	 * @throws RestException 500	System error
@@ -2266,7 +2266,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
-	 * @return array<string{code:int,message:string}>
+	 * @return array<string,{code:int,message:string}>
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
