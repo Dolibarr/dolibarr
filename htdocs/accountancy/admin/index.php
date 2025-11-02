@@ -179,45 +179,33 @@ if ($action == 'updatemode') {
 if ($action == 'update') {
 	$error = 0;
 
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
+
 	if (!$error) {
-		foreach ($list as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'errors');
-		}
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
 if ($action == 'update_binding') {
 	$error = 0;
 
-	if (!$error) {
-		foreach ($list as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
+	foreach ($list_binding as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+
+		if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
+			$constvalue = dol_mktime(0, 0, 0, GETPOSTINT($constname.'month'), GETPOSTINT($constname.'day'), GETPOSTINT($constname.'year'));
 		}
 
-		// option in section binding
-		foreach ($list_binding as $constname) {
-			$constvalue = GETPOST($constname, 'alpha');
-
-			if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
-				$constvalue = dol_mktime(0, 0, 0, GETPOSTINT($constname.'month'), GETPOSTINT($constname.'day'), GETPOSTINT($constname.'year'));
-			}
-
-			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
 		}
 	}
 
@@ -231,11 +219,9 @@ if ($action == 'update_binding') {
 if ($action == 'update_advanced') {
 	$error = 0;
 
-	if (!$error) {
-		if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
-				$error++;
-			}
+	if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
 		}
 	}
 
