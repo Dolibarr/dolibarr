@@ -822,7 +822,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
- *  @template T of 'array:int'|'array:az09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'az09'|'az'|'url'|string
+ *  @template T of 'int'|'intcomma'|'array'|'array:int'|'array:intcomma'|'array:alpha'|'array:alphanohtml'|'array:aZ09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'nohtml'|'restricthtml'|'alphawithlgt'|'aZ09'|'aZ'|'aZ09arobase'|'aZ09comma'|'url'|'san_alpha'|'custom'|'none'|'restricthtmlallowclass'|'restricthtmlallowunvalid'|'restricthtmlallowiframe'|'restricthtmlallowlinkscript'|''
  *  @param  T       $check       Type of check
  *                               '' or 'none'=no check (deprecated)
  *                               'password'=allow characters for a password
@@ -841,15 +841,20 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'nohtml'=check there is no html content
  *                               'restricthtml'=check html content is restricted to some tags only
  *                               'custom'= custom filter specify $filter and $options)
+ *                               'restricthtmlallowclass'
+ *                               'restricthtmlallowunvalid'
+ *                               'restricthtmlallowiframe'
+ *                               'restricthtmlallowlinkscript'
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
  *  @phpstan-return (
+ *      T is 'int' ? numeric-string|'' :
  *      T is 'array:int' ? numeric-string[]|array{} :
- *      T is 'array:az09' | 'array:restricthtml' ? string[] :
- *      T is 'alpha' | 'az' | 'az09' | 'password' | 'email' ? string : string|array<mixed>
+ *      T is 'array' | 'array:az09' | 'array:alpha' | 'array:intcomma' | 'array:restricthtml' ? string[] :
+ *      T is 'alpha' | 'az' | 'az09' | 'password' | 'email' | 'url' | 'alphanohtml' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
  *  )
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
