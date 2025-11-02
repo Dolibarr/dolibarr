@@ -4331,7 +4331,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_BARCODE' => array('class' => 'modBarcode', 'remove' => 1),
 		'MAIN_MODULE_BLOCKEDLOG' => array('class' => 'modBlockedLog', 'deleteinsertmenus' => 1),
 		'MAIN_MODULE_CRON' => array('class' => 'modCron', 'remove' => 1),
-		'MAIN_MODULE_EXTERNALSITE' => array('class' => 'modExternalSite', 'remove' => 1),
 		'MAIN_MODULE_SOCIETE' => array('class' => 'modSociete', 'remove' => 1),
 		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
