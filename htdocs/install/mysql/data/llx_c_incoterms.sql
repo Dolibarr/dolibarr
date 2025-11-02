@@ -31,7 +31,6 @@
 --
 
 -- Incoterms officiels 2025 (CCI)
-ALTER TABLE llx_c_incoterms MODIFY code varchar(8) NOT NULL;
 INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('EXW', 'Ex Works', 'Ex Works, au départ non chargé, non dédouané sortie d''usine (uniquement adapté aux flux domestiques, nationaux)', 1);
 INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('FCA', 'Free Carrier', 'Free Carrier, marchandises dédouanées et chargées dans le pays de départ, chez le vendeur ou chez le commissionnaire de transport de l''acheteur', 1);
 INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('FAS', 'Free Alongside Ship', 'Free Alongside Ship, sur le quai du port de départ', 1);
