@@ -2394,11 +2394,11 @@ class ExpenseReport extends CommonObject
 	 * periodExists
 	 *
 	 * @param   User       $fuser          User
-	 * @param   integer    $date_debut     Start date
-	 * @param   integer    $date_fin       End date
+	 * @param   integer    $startDate     Start date timestamp
+	 * @param   integer    $endDate       End date timestamp
 	 * @return  int                        Return integer <0 if KO, >0 if OK
 	 */
-	public function periodExists($fuser, $date_debut, $date_fin)
+	public function periodExists(User $fuser, $startDate, $endDate)
 	{
 		global $conf;
 
@@ -2406,39 +2406,17 @@ class ExpenseReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
 		$sql .= " AND fk_user_author = ".((int) $fuser->id);
+		$sql .= " AND (date_fin >= '".$this->db->idate($startDate)."' AND date_debut <= '".$this->db->idate($endDate)."')";
 
-		dol_syslog(get_class($this)."::periodExists sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$num_rows = $this->db->num_rows($result);
-			$i = 0;
+		$row = $this->db->getRow($sql);
 
-			if ($num_rows > 0) {
-				$date_d_form = $date_debut;
-				$date_f_form = $date_fin;
-
-				while ($i < $num_rows) {
-					$objp = $this->db->fetch_object($result);
-
-					$date_d_req = $this->db->jdate($objp->date_debut); // 3
-					$date_f_req = $this->db->jdate($objp->date_fin); // 4
-
-					if (!($date_f_form < $date_d_req || $date_d_form > $date_f_req)) {
-						return $objp->rowid;
-					}
-
-					$i++;
-				}
-
-				return 0;
-			} else {
-				return 0;
-			}
-		} else {
+		if ($row === false) {
 			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this)."::periodExists  Error ".$this->error, LOG_ERR);
+			dol_syslog(__CLASS__."::". __METHOD__."  Error ".$this->error, LOG_ERR);
 			return -1;
 		}
+
+		return $row->rowid ?? 0;
 	}
 
 
