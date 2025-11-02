@@ -50,7 +50,7 @@ class Conf extends stdClass
 	public $global;
 
 	/**
-	 * @var Object To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 * @var stdClass To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	 */
 	public $browser;
 

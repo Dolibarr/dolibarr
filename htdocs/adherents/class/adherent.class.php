@@ -106,7 +106,7 @@ class Adherent extends CommonObject
 	public $civility_code;
 
 	/**
-	 * @var int
+	 * @var string Human readable civility
 	 */
 	public $civility;
 
