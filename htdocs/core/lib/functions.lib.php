@@ -822,7 +822,8 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
- *  @param  string  $check	     Type of check
+ *  @template T of 'array:int'|'array:az09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'az09'|'az'|'url'|string
+ *  @param  T       $check       Type of check
  *                               '' or 'none'=no check (deprecated)
  *                               'password'=allow characters for a password
  *                               'email'=allow characters for an email "email@domain.com"
@@ -845,7 +846,11 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
- *  @phpstan-return ($check is 'array:int' ? numeric-string[]|array{} : ($check is 'array:az09' ? string[] : ($check is 'array:restricthtml' ? string[] : string|array<mixed>)))
+ *  @phpstan-return (
+ *      T is 'array:int' ? numeric-string[]|array{} :
+ *      T is 'array:az09' | 'array:restricthtml' ? string[] :
+ *      T is 'alpha' | 'az' | 'az09' | 'password' | 'email' ? string : string|array<mixed>
+ *  )
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
 {
