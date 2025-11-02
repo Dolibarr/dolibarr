@@ -252,7 +252,6 @@ return [
         'htdocs/supplier_proposal/card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/supplier_proposal/class/api_supplier_proposals.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/supplier_proposal/class/supplier_proposal.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/takepos/index.php' => ['PhanPluginUndeclaredVariableIsset'],
         'htdocs/takepos/invoice.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/takepos/split.php' => ['PhanPluginUndeclaredVariableIsset'],
         'htdocs/ticket/card.php' => ['PhanUndeclaredProperty'],
