@@ -1237,11 +1237,10 @@ while ($i < $imaxinloop) {
 	}
 
 	$datefin = $db->jdate($obj->datefin);
-	$rowid = $db->toInt($obj, 'rowid');
-	$memberstatic->id = $rowid;
+	$memberstatic->id = $db->toInt($obj, 'rowid');
 	$memberstatic->ref = $db->toString($obj, 'ref');
 	$memberstatic->civility_code = $obj->civility;
-	$memberstatic->login = $obj->login;
+	$memberstatic->login = $db->toString($obj, 'login');
 	$memberstatic->lastname = $db->toString($obj, 'lastname');
 	$memberstatic->firstname = $db->toString($obj, 'firstname');
 	$memberstatic->gender = $obj->gender;
@@ -1299,10 +1298,10 @@ while ($i < $imaxinloop) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
-				if (in_array($rowid, $arrayofselected)) {
+				if (in_array($memberstatic->id, $arrayofselected)) {
 					$selected = 1;
 				}
-				print '<input id="cb'.$rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '<input id="cb'.$memberstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$memberstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1311,7 +1310,7 @@ while ($i < $imaxinloop) {
 		}
 		// Technical ID
 		if (!empty($arrayfields['d.rowid']['checked'])) {
-			print '<td class="center" data-key="id">'.dolPrintHTML($rowid).'</td>';
+			print '<td class="center" data-key="id">'.dolPrintHTML($memberstatic->id).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1373,7 +1372,7 @@ while ($i < $imaxinloop) {
 		}
 		// Login
 		if (!empty($arrayfields['d.login']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($obj->login).'">'.dolPrintHTML($obj->login)."</td>\n";
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($memberstatic->login).'">'.dolPrintHTML($memberstatic->login)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
