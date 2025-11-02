@@ -21,7 +21,7 @@
  */
 
 /**
- *  \file       htdocs/admin/system/filecheck.php
+ *  \file       htdocs/blockedlog/admin/filecheck.php
  *  \brief      Page to check Dolibarr files integrity
  */
 

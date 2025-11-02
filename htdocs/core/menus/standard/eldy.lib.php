@@ -1228,7 +1228,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == 'admintools_info') {
 				$newmenu->add(dolBuildUrl('/admin/system/modules.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('Modules'), 2);
 				$newmenu->add(dolBuildUrl('/admin/triggers.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('Triggers'), 2);
-				$newmenu->add(dolBuildUrl('/admin/system/filecheck.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('FileCheck'), 2);
+				$newmenu->add(dolBuildUrl('/blockedlog/admin/filecheck.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('FileCheck'), 2);
 				$newmenu->add(dolBuildUrl('/admin/system/about.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools_info']), $langs->trans('ExternalResources'), 2);
 			}
 			$newmenu->add(dolBuildUrl('/admin/system/browser.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans('InfoBrowser'), 1);
