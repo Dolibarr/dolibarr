@@ -2217,7 +2217,7 @@ class Products extends DolibarrApi
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
 	 * @param string $source         external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 * @param int    $notrigger      Disable all triggers
-	 * @return array<string,{code:int,message:string}>
+	 * @return array<string,array{code:int,message:string}>
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
@@ -2266,7 +2266,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
-	 * @return array<string,{code:int,message:string}>
+	 * @return array<string,array{code:int,message:string}>
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
