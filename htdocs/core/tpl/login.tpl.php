@@ -173,7 +173,7 @@ if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 }
 
 // If OpenID Connect is set as an authentication
-if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
+if (getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_ON', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
 	// Set a cookie to transfer rollback page information
 	$prefix = dol_getprefix('');
 	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
@@ -445,7 +445,7 @@ if ($forgetpasslink || $helpcenterlink) {
 	echo '</div>';
 }
 
-if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+if (getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_ON', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
 	dol_include_once('/core/lib/openid_connect.lib.php');
 	$langs->load("users");
 
