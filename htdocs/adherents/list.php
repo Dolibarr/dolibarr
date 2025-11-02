@@ -1237,13 +1237,13 @@ while ($i < $imaxinloop) {
 	}
 
 	$datefin = $db->jdate($obj->datefin);
-
-	$memberstatic->id = $db->toInt($obj, 'rowid');
+	$rowid = $db->toInt($obj, 'rowid');
+	$memberstatic->id = $rowid;
 	$memberstatic->ref = $db->toString($obj, 'ref');
 	$memberstatic->civility_code = $obj->civility;
 	$memberstatic->login = $obj->login;
-	$memberstatic->lastname = $obj->lastname;
-	$memberstatic->firstname = $obj->firstname;
+	$memberstatic->lastname = $db->toString($obj, 'lastname');
+	$memberstatic->firstname = $db->toString($obj, 'firstname');
 	$memberstatic->gender = $obj->gender;
 	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
@@ -1299,10 +1299,10 @@ while ($i < $imaxinloop) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
+				if (in_array($rowid, $arrayofselected)) {
 					$selected = 1;
 				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '<input id="cb'.$rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1311,7 +1311,7 @@ while ($i < $imaxinloop) {
 		}
 		// Technical ID
 		if (!empty($arrayfields['d.rowid']['checked'])) {
-			print '<td class="center" data-key="id">'.dolPrintHTML($obj->rowid).'</td>';
+			print '<td class="center" data-key="id">'.dolPrintHTML($rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1336,7 +1336,7 @@ while ($i < $imaxinloop) {
 		}
 		// Firstname
 		if (!empty($arrayfields['d.firstname']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->firstname).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($memberstatic->firstname).'">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'firstname');
 			//print $obj->firstname;
 			print "</td>\n";
@@ -1346,7 +1346,7 @@ while ($i < $imaxinloop) {
 		}
 		// Lastname
 		if (!empty($arrayfields['d.lastname']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->lastname).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($memberstatic->lastname).'">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
 			//print $obj->lastname;
 			print "</td>\n";
