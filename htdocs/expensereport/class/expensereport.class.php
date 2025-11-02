@@ -2409,7 +2409,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND (date_fin >= '".$this->db->idate($startDate)."' AND date_debut <= '".$this->db->idate($endDate)."')";
 
 		$row = $this->db->getRow($sql);
-		
+
 		if ($row === false) {
 			$this->error = $this->db->lasterror();
 			dol_syslog(__CLASS__."::". __METHOD__."  Error ".$this->error, LOG_ERR);
