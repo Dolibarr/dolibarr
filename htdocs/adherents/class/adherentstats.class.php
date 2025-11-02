@@ -307,25 +307,25 @@ class AdherentStats extends Stats
 				'members_excluded' => 0,
 				'members_resiliated' => 0
 			);
-			while ($i < $num) {
-				$objp = $this->db->fetch_object($result);
-				$MembersCountArray[$objp->fk_categorie] = array(
-					'label' => $objp->label,
-					'members_draft' => (int) $objp->members_draft,
-					'members_pending' => (int) $objp->members_pending,
-					'members_uptodate' => (int) $objp->members_uptodate,
-					'members_expired' => (int) $objp->members_expired,
-					'members_excluded' => (int) $objp->members_excluded,
-					'members_resiliated' => (int) $objp->members_resiliated
+			while ($i < $num && $objp = $this->db->fetch_object($result)) {
+				$fk_category = $this->db->toInt($objp, 'fk_categorie');
+				$MembersCountArray[$fk_category] = array(
+					'label' => $this->db->toString($objp, 'label'),
+					'members_draft' => $this->db->toInt($objp, 'members_draft'),
+					'members_pending' => $this->db->toInt($objp, 'members_pending'),
+					'members_uptodate' => $this->db->toInt($objp, 'members_uptodate'),
+					'members_expired' => $this->db->toInt($objp, 'members_expired'),
+					'members_excluded' => $this->db->toInt($objp, 'members_excluded'),
+					'members_resiliated' => $this->db->toInt($objp, 'members_resiliated')
 				);
 				$totalrow = 0;
-				foreach ($MembersCountArray[$objp->fk_categorie] as $key => $nb) {
+				foreach ($MembersCountArray[$fk_category] as $key => $nb) {
 					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;
 					}
 				}
-				$MembersCountArray[$objp->fk_categorie]['total_adhtag'] = $totalrow;
+				$MembersCountArray[$fk_category]['total_adhtag'] = $totalrow;
 				$i++;
 			}
 			$this->db->free($result);
@@ -366,7 +366,7 @@ class AdherentStats extends Stats
 			while ($line < $num) {
 				$objp = $this->db->fetch_object($result);
 				$lastModifiedMembers[] = [
-					'id' => (int) $objp->rowid,
+					'id' => $this->db->toInt($objp, 'rowid'),
 					'ref' => (string) $objp->ref,
 					'lastname' => (string) $objp->lastname,
 					'firstname' => (string) $objp->firstname,
