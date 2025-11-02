@@ -247,7 +247,7 @@ class Contracts extends DolibarrApi
 			if ($field == 'id') {
 				throw new RestException(400, 'Creating with id field is forbidden');
 			}
-			if ($field == 'entity' && $value != getEntity('contrat')) {
+			if ($field == 'entity' && !in_array((string) $value, explode(',', getEntity('contract')))) {
 				throw new RestException(403, 'Creating entity not the same as your API user is forbidden');
 			}
 
