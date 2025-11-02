@@ -2403,7 +2403,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
 	 * @param int       $active     Vat is active or not (-1 all, 0 = inactive, 1 = active)
-	 * @param string    $fk_country country of vat (if -1 we use company country, 0 = all)
+	 * @param int		$fk_country Country of vat (if -1 we use company country, 0 = all)
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of incoterm types
 	 * @phan-return array<Object|false>
