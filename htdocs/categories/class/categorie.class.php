@@ -103,7 +103,7 @@ class Categorie extends CommonObject
 		'supplier_order'		=> 20,
 		'supplier_invoice'		=> 21,
 		'supplier_proposal'		=> 22,
-		'propal'				=> 23
+		'propal'				=> 23,
 	);
 
 	/**
@@ -226,7 +226,7 @@ class Categorie extends CommonObject
 		'order'					=> 'commande',
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
-		'supplier_invoice'		=> 'facture_fourn'
+		'supplier_invoice'		=> 'facture_fourn',
 	);
 
 	/**

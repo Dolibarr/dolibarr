@@ -271,6 +271,30 @@ ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
 ALTER TABLE llx_blockedlog ADD COLUMN vat double(24,8) DEFAULT NULL;
 
 
+-- Incoterms 2025 and specific terms
+
+-- DAT is replaced by DPU - but not deactivating for existing installations
+-- UPDATE llx_c_incoterms SET active = 0 WHERE code = 'DAT';
+
+-- Add new 2025 Incoterms and specific terms
+INSERT INTO llx_c_incoterms (code, label, libelle, active)
+VALUES
+    ('DPU', 'Delivered at Place Unloaded', 'Delivered at Place Unloaded, marchandises déchargées et livrées au lieu de destination désigné (remplace DAT, élargit les lieux de livraison possibles)', 1),
+    ('DTP', 'Delivered at Terminal Paid', 'Delivered at Terminal Paid, marchandises livrées et dédouanées dans un terminal du pays de destination', 0),
+    ('DPP', 'Delivered at Place Paid', 'Delivered at Place Paid, marchandises livrées et dédouanées à une adresse précise du pays de destination', 0),
+    ('DTP(DHL)', 'Duties and Taxes Paid', 'Duties and Taxes Paid (service DHL) : l''expéditeur paie les droits de douane et taxes à l''importation (spécifique à DHL)', 0)
+ON CONFLICT (code) DO NOTHING;
+UPDATE llx_c_incoterms
+SET libelle = 'Cost and Freight, chargé dans le bateau, livraison au port de départ, frais payés jusqu''au port d''arrivée, sans assurance pour le transport, non déchargé du navire à destination (les frais de déchargement sont inclus ou non au port d''arrivée)'
+WHERE code = 'CFR';
+UPDATE llx_c_incoterms
+SET libelle = 'Cost, Insurance and Freight, chargé sur le bateau, frais jusqu''au port d''arrivée, avec l''assurance marchandise transportée souscrite par le vendeur pour le compte de l''acheteur (couverture standard, 10% de la valeur commerciale)'
+WHERE code = 'CIF';
+UPDATE llx_c_incoterms
+SET libelle = 'Carriage and Insurance Paid to, idem CPT, avec assurance marchandise transportée souscrite par le vendeur pour le compte de l''acheteur (couverture tous risques)'
+WHERE code = 'CIP';
+
+
 -- Fix a wrong migration script
 UPDATE llx_oauth_token SET tokenstring = token, token = NULL WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
 
@@ -285,5 +309,8 @@ ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier
 ALTER TABLE llx_blockedlog DROP INDEX entity;
 ALTER TABLE llx_blockedlog DROP INDEX entity_action_certified;
 ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 
 -- end of migration

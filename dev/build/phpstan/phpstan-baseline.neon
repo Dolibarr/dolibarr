@@ -445,12 +445,6 @@ parameters:
 			path: ../../../htdocs/adherents/type.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/accountant.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 2
@@ -551,12 +545,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/admin/fediverse.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/geoipmaxmind.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -769,12 +757,6 @@ parameters:
 			path: ../../../htdocs/admin/mails_ticket.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/admin/menus/edit.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -814,18 +796,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
-			path: ../../../htdocs/admin/notification.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/notification.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 3
 			path: ../../../htdocs/admin/notification.php
 
 		-
@@ -7429,12 +7399,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -11917,27 +11881,9 @@ parameters:
 			path: ../../../htdocs/product/class/productbatch.class.php
 
 		-
-			message: '#^Property Productbatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/product/class/productbatch.class.php
-
-		-
-			message: '#^Property Productbatch\:\:\$eatby \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/productbatch.class.php
-
-		-
 			message: '#^Property Productbatch\:\:\$qty \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3
-			path: ../../../htdocs/product/class/productbatch.class.php
-
-		-
-			message: '#^Property Productbatch\:\:\$sellby \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/product/class/productbatch.class.php
 
 		-
@@ -12517,30 +12463,6 @@ parameters:
 			path: ../../../htdocs/product/stats/supplier_proposal.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Entrepot\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Entrepot\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Entrepot\) and ''lieu'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12553,63 +12475,9 @@ parameters:
 			path: ../../../htdocs/product/stock/class/productlot.class.php
 
 		-
-			message: '#^Property Productlot\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$eatby \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$eol_date \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
 			message: '#^Property Productlot\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$fk_user_creat \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$fk_user_modif \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$manufacturing_date \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$scrapping_date \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$sellby \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/product/stock/class/productlot.class.php
 
 		-
@@ -12626,12 +12494,6 @@ parameters:
 
 		-
 			message: '#^Property ProductStockEntrepot\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
-			message: '#^Property ProductStockEntrepot\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
 			path: ../../../htdocs/product/stock/class/productstockentrepot.class.php
@@ -12817,24 +12679,6 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -12853,34 +12697,10 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransferline.class.php
 
 		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
 			message: '#^Variable \$result might not be defined\.$#'
@@ -12893,12 +12713,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 2
-			path: ../../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
 			message: '#^Right side of && is always true\.$#'

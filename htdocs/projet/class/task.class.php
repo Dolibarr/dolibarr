@@ -1761,7 +1761,7 @@ class Task extends CommonObjectLine
 		$sql .= " p.rowid as project_id,";
 		$sql .= " p.ref as project_ref,";
 		$sql .= " p.title as project_label,";
-		$sql .= " p.public as public";
+		$sql .= " p.public as project_public";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as ptt, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		$sql .= " WHERE ptt.fk_element = pt.rowid AND pt.fk_projet = p.rowid";
@@ -1790,7 +1790,8 @@ class Task extends CommonObjectLine
 				$newobj->fk_project			= $obj->project_id;
 				$newobj->project_ref		= $obj->project_ref;
 				$newobj->project_label = $obj->project_label;
-				$newobj->public				= $obj->project_public;
+				$newobj->project_public		= $obj->project_public;
+				$newobj->public				= $obj->project_public;		// deprecated
 
 				$newobj->fk_task			= $obj->task_id;
 				$newobj->task_ref = $obj->task_ref;
@@ -1894,7 +1895,7 @@ class Task extends CommonObjectLine
 	 *	@param	User|string	$fuser		Filter on a dedicated user
 	 *  @param	string		$dates		Start date (ex 00:00:00)
 	 *  @param	string		$datee		End date (ex 23:59:59)
-	 *  @return	array{}|array{amount:float,nbseconds:int,nblinesnull:int}	Array of info for task array('amount','nbseconds','nblinesnull')
+	 *  @return	array{}|array{amount:float,nbseconds:int,nblinesnull:int,nbuserthmnull:int}	Array of info for task array('amount','nbseconds','nblinesnull','nbuserthmnull')
 	 */
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	{
@@ -1904,8 +1905,10 @@ class Task extends CommonObjectLine
 
 		$sql = "SELECT";
 		$sql .= " SUM(t.element_duration) as nbseconds,";
+		$sql .= " SUM(".$this->db->ifsql("u.thm IS NULL", '1', '0').") as nbuserthmnull,";
 		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", '0', "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", '1', '0').") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user";
 		$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $id);
 		if (is_object($fuser) && $fuser->id > 0) {
 			$sql .= " AND fk_user = ".((int) $fuser->id);
@@ -1928,6 +1931,7 @@ class Task extends CommonObjectLine
 			$result['amount'] = $obj->amount;
 			$result['nbseconds'] = $obj->nbseconds;
 			$result['nblinesnull'] = $obj->nblinesnull;
+			$result['nbuserthmnull'] = $obj->nbuserthmnull;
 
 			$this->db->free($resql);
 			return $result;
