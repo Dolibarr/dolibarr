@@ -321,8 +321,8 @@ class Products extends DolibarrApi
 	 * @since	4.0.0	Initial implementation
 	 *
 	 * @param  array $request_data Request data
-	 * @phan-param ?,string> $request_data
-	 * @phpstan-param ?,string> $request_data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int     ID of product
 	 *
 	 * @throws RestException
@@ -384,8 +384,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  	int   	$id           		Id of product to update
 	 * @param  	array 	$request_data 		Data
-	 * @phan-param ?,string> $request_data
-	 * @phpstan-param ?,string> $request_data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException 401
@@ -1422,8 +1422,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of Attribute
 	 * @param	array	$request_data	Data
-	 * @phan-param ?,string> $request_data
-	 * @phpstan-param ?,string> $request_data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws RestException
@@ -1761,8 +1761,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of Attribute
 	 * @param	array	$request_data	Data
-	 * @phan-param ?,string> $request_data
-	 * @phpstan-param ?,string> $request_data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws RestException 401
@@ -2060,8 +2060,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id ID of Variant
 	 * @param  array $request_data Data
-	 * @phan-param ?,string> $request_data
-	 * @phpstan-param ?,string> $request_data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int
 	 *
 	 * @throws RestException 500	System error
