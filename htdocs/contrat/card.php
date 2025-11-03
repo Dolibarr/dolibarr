@@ -1233,7 +1233,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Ref').'</td><td>';
 	if (!empty($modCodeContract->code_auto)) {
 		$tmpcode = $langs->trans("Draft");
 	} else {
@@ -2340,7 +2340,7 @@ if ($action == 'create') {
 
 				if (count($arrayforbutaction)) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction('', $langs->trans("Services"), 'default', $arrayforbutaction, '', true, $params);
+					print dolGetButtonAction('', $langs->trans("Enable")." / ".$langs->trans("Close"), 'default', $arrayforbutaction, '', true, $params);
 				}
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {

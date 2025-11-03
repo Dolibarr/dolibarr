@@ -1107,12 +1107,12 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 		// Pre-store some values into variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
-			$entities = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
+			$entities = $type != 'bank-transfer' ? getEntity('invoice', 1) : getEntity('supplier_invoice', 1);	// Return alist of entities
 			$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 			$socOrUser = 'fk_soc';
 			$societeOrUser = 'societe';
 		} else {
-			$entities = getEntity('salary');
+			$entities = getEntity('salary', 1);		// Return a list of entities
 			$sqlTable = 'salary';
 			$socOrUser = 'fk_user';
 			$societeOrUser = 'user';
