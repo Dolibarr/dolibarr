@@ -642,6 +642,20 @@ class Documents extends DolibarrApi
 			$upload_dir = $conf->project->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
 		} elseif ($modulepart == 'task' || $modulepart == 'project_task') {
 			$modulepart = 'project_task';
+			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+
+			$project_static = new Project($this->db);
+			$object = new Task($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Task not found');
+			}
+			$project_static->fetch($object->fk_project);
+
+			$upload_dir = $conf->project->dir_output . "/" . get_exdir(0, 0, 0, 1, $project_static, 'project') . "/" .  get_exdir(0, 0, 0, 1, $object, 'task');
+		} elseif ($modulepart == 'task' || $modulepart == 'project_task') {
+			$modulepart = 'project_task';
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
