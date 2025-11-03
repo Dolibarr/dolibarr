@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Comparison operation "\>\=" between 21\.0 and 22\.0 is always false\.$#'
-			identifier: greaterOrEqual.alwaysFalse
-			count: 1
-			path: ../../../htdocs/index.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/index.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 3
