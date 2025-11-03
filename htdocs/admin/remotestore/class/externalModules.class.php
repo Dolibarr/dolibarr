@@ -136,11 +136,6 @@ class ExternalModules
 	public $numberOfProducts;
 
 	/**
-	 * @var string
-	 */
-	public $error;
-
-	/**
 	 * Constructor
 	 *
 	 * @param	boolean		$debug		Enable debug of request on screen
