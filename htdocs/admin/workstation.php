@@ -446,9 +446,6 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	}
 }
 
-/*if (empty($setupnotempty)) {
-	print '<br>'.$langs->trans("NothingToSetup");
-}*/
 
 // Page end
 print dol_get_fiche_end();
