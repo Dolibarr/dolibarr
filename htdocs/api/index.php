@@ -255,6 +255,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 						$modulenameforenabled = 'supplier_proposal';
 					} elseif ($module == 'ficheinter') {
 						$modulenameforenabled = 'intervention';
+					} elseif ($module == 'product' && !isModEnabled('product') && isModEnabled('service')) {
+						$modulenameforenabled = 'service';
 					}
 
 					dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);

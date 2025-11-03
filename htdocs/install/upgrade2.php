@@ -87,8 +87,8 @@ $error = 0;
 // This page can be long. We increase the allowed delay, but this does not work when we are in safe_mode.
 $err = error_reporting();
 error_reporting(0);
-if (getDolGlobalString('MAIN_OVERRIDE_TIME_LIMIT')) {
-	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
+if (getDolGlobalInt('MAIN_OVERRIDE_TIME_LIMIT')) {
+	@set_time_limit(getDolGlobalInt('MAIN_OVERRIDE_TIME_LIMIT'));
 } else {
 	@set_time_limit(600);
 }
@@ -198,6 +198,53 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	// Load global conf
 	$conf->setValues($db);
+
+
+	// Reforce log activation (samecode than into the inc.php)
+	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+	$conf->modules['syslog'] = 'syslog';
+	$conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
+	if (!defined('SYSLOG_HANDLERS')) {
+		define('SYSLOG_HANDLERS', '["mod_syslog_file"]');
+	}
+	if (!defined('SYSLOG_FILE')) {	// To avoid warning on systems with constant already defined
+		if (@is_writable('/tmp')) {
+			define('SYSLOG_FILE', '/tmp/dolibarr_install.log');
+		} elseif (!empty($_ENV["TMP"]) && @is_writable($_ENV["TMP"])) {
+			define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
+		} elseif (!empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) {
+			define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
+		} elseif (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) {
+			define('SYSLOG_FILE', '../../../../dolibarr_install.log'); // For DoliWamp
+		} elseif (@is_writable('../../')) {
+			define('SYSLOG_FILE', '../../dolibarr_install.log'); // For others
+		}
+		//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
+	}
+	if (defined('SYSLOG_FILE')) {
+		$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
+	}
+	if (!defined('SYSLOG_FILE_NO_ERROR')) {
+		define('SYSLOG_FILE_NO_ERROR', 1);
+	}
+	// We init log handler for install
+	$handlers = array('mod_syslog_file');
+	foreach ($handlers as $handler) {
+		$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
+		if (!file_exists($file)) {
+			throw new Exception('Missing log handler file '.$handler.'.php');
+		}
+
+		require_once $file;
+		$loghandlerinstance = new $handler();
+		if (!$loghandlerinstance instanceof LogHandler) {
+			throw new Exception('Log handler does not extend LogHandler');
+		}
+
+		if (empty($conf->loghandlers[$handler])) {
+			$conf->loghandlers[$handler] = $loghandlerinstance;
+		}
+	}
 
 
 	$listofentities = array(1);
@@ -4323,7 +4370,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		$user = new User($db);	// To avoid error during migration
 	}
 
-	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)));
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)), LOG_NOTICE);
 
 	$reloadactionformodules = array(
 		'MAIN_MODULE_AGENDA' => array('class' => 'modAgenda', 'remove' => 1),
@@ -4392,7 +4439,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$moduletoreloadshort = $reg[1];
 				}
 
-				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode." (generic code)");
+				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode." (generic code)", LOG_NOTICE);
 
 				$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php';
 				if ($res) {
@@ -4404,7 +4451,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$mod->delete_menus(); // We must delete to be sure it is inserted with new values
 					$mod->init($reloadmode);
 				} else {
-					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
+					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php', LOG_ERR);
 
 					$res = @dol_include_once(strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php');
 					if ($res) {

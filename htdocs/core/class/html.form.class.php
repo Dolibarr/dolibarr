@@ -3046,8 +3046,9 @@ class Form
 
 		$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 
-		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'bom_bom as b';
+		$sql = 'SELECT b.rowid, b.ref, b.label as bomLabel, p.label as productLabel';
+		$sql .= ' FROM ' . $this->db->prefix() . 'bom_bom as b';
+		$sql .= ' INNER JOIN ' . $this->db->prefix() . 'product as p ON b.fk_product = p.rowid';
 		$sql .= ' WHERE b.entity IN (' . getEntity('bom') . ')';
 		if (!empty($status)) {
 			$sql .= ' AND status = ' . (int) $status;
@@ -3071,13 +3072,11 @@ class Form
 				$out .= '>&nbsp;</option>';
 			}
 			while ($obj = $db->fetch_object($resql)) {
-				$product = new Product($db);
-				$res = $product->fetch($obj->fk_product);
 				$out .= '<option value="' . $obj->rowid . '"';
 				if ($obj->rowid == $selected) {
 					$out .= 'selected';
 				}
-				$out .= '>' . $obj->ref . ' - ' . $product->label . ' - ' . $obj->label . '</option>';
+				$out .= '>' . $obj->ref . ' - ' . $obj->productLabel . ' - ' . $obj->bomLabel . '</option>';
 			}
 		} else {
 			$error++;
