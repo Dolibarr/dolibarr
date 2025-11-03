@@ -107,14 +107,20 @@ class MemberCardController extends Controller
 		}
 
 		$this->loadTemplate('header');
-		$this->loadTemplate('menu');
-		$this->loadTemplate('hero-header-banner');
+		if (empty($this->formCard->modal)) {
+			$this->loadTemplate('menu');
+			$this->loadTemplate('hero-header-banner');
+		}
 
-		$hookRes = $this->hookPrintPageView();
-		if (empty($hookRes)) {
-			print '<main class="container">';
-			print $this->formCard->elementCard($context);
-			print '</main>';
+		if (isset($this->formCard)) {
+			$hookRes = $this->hookPrintPageView();
+			if (empty($hookRes)) {
+				print '<main class="container">';
+				$this->loadTemplate('card');
+				print '</main>';
+			}
+		} else {
+			$this->loadTemplate('404');
 		}
 
 		$this->loadTemplate('footer');

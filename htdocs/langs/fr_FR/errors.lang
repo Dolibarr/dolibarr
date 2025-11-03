@@ -362,6 +362,7 @@ ErrorIsNotInError=%s n'est pas en erreur
 ErrorFilenameExtensionNotAllowed=Le fichier %s a une extension interdite
 ErrorNoValueForSelectListType=Erreur, une valeur pour ce type de champ est obligatoire
 ErrorOneLineContainsADisactivatedProduct=Erreur, au moins un produit n'a pas le bon statut
+ErrorFieldClassNotFoundForClassName=La classe "%s" gérant le type de champ "%s" n'a pas été trouvée.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -437,6 +438,8 @@ RequireANotEmptyValue = Est requis
 RequireValidDuration = Une durée valide est requise
 RequireValidExistingElement = Une valeur existante est requise
 RequireValidBool = Un booléen valide est requis
+RequireMinValue=La valeur doit être supérieure à %s
+RequireMaxValue=La valeur doit être inférieure à %s
 BadSetupOfField = Erreur mauvaise configuration du champ
 BadSetupOfFieldClassNotFoundForValidation = Erreur mauvaise configuration du champ : Classe introuvable pour validation
 BadSetupOfFieldFileNotFound = Erreur mauvaise configuration du champ : Fichier introuvable pour l'inclusion
