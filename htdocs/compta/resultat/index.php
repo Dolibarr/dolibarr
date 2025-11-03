@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2016  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -1063,7 +1063,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		print '<td class="right">';
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 			if (isset($decaiss[$case]) && $decaiss[$case] != 0) {
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss[$case], 'MT')).'</a>';
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'&modecompta='.$modecompta.'">'.price(price2num($decaiss[$case], 'MT')).'</a>';
 				if (!isset($totsorties[$annee])) {
 					$totsorties[$annee] = 0;
 				}
@@ -1083,7 +1083,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		print '<td class="borderrightlight nowrap right">';
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 			if (isset($encaiss[$case])) {
-				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($encaiss[$case], 'MT')).'</a>';
+				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'&modecompta='.$modecompta.'">'.price(price2num($encaiss[$case], 'MT')).'</a>';
 				if (!isset($totentrees[$annee])) {
 					$totentrees[$annee] = 0;
 				}

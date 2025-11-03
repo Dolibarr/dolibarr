@@ -51,7 +51,7 @@ class Contracts extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->contract = new Contrat($this->db);
 	}
