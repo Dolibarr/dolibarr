@@ -1410,11 +1410,12 @@ class FormWebPortal extends Form
 	/**
 	 * Html for HTML area
 	 *
-	 * @param	string	$htmlName		Html name
-	 * @param	string	$value			[=''] Value
-	 * @param	string	$morecss		[=''] Class
-	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
-	 * @return	string					Html for input with label
+	 * @param	string				$htmlName		Html name
+	 * @param	string				$value			[=''] Value
+	 * @param	string				$morecss		[=''] Class
+	 * @param	string				$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @param	array<string,mixed>	$options		Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @return	string								Html for input with label
 	 */
 	public function inputText($htmlName, $value, $morecss = '', $moreparam = '', $options = array())
 	{

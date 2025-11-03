@@ -79,7 +79,7 @@ class WebPortalTheme
 
 	/**
 	 * Constructor
-	 * @param	bool	Init theme properties
+	 * @param	bool	$init	Init theme properties
 	 */
 	public function __construct($init = true)
 	{

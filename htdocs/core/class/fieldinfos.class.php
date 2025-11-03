@@ -323,4 +323,3 @@ class FieldInfos
 	const FIELD_TYPE_OBJECT = 0;
 	const FIELD_TYPE_EXTRA_FIELD = 1;
 }
-

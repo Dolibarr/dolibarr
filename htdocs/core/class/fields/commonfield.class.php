@@ -268,7 +268,7 @@ abstract class CommonField
 		// Clear error
 		self::$validator->error = '';
 
-		// Todo deplacer dans la classe validate
+		// Todo move this in validate class ?
 		// Required test and empty value
 		if ($this->isEmptyValue($fieldInfos, $value)) {
 			if ($required) {
@@ -290,17 +290,15 @@ abstract class CommonField
 			return false;
 		}
 
-		// Todo deplacer dans la classe validate
+		// Todo move this in validate class ?
 		// MIN Value test
 		if (isset($fieldInfos->minValue) && is_numeric($value) && ((double) $value) < $fieldInfos->minValue) {
-			// Todo rajouter la traduction
 			self::$validator->error = $langs->trans('RequireMinValue', $fieldInfos->minValue);
 			return false;
 		}
 
 		// MAX Value test
 		if (isset($fieldInfos->maxValue) && is_numeric($value) && ((double) $value) > $fieldInfos->maxValue) {
-			// Todo rajouter la traduction
 			self::$validator->error = $langs->trans('RequireMaxValue', $fieldInfos->maxValue);
 			return false;
 		}
