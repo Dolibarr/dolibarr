@@ -7698,7 +7698,7 @@ class Form
 			if ($tmpfieldstoshow) {
 				$fieldstoshow = $tmpfieldstoshow;
 			}
-		} else if ($objecttmp === 'categorie') {
+		} else if ($objecttmp->element === 'category') {
 			$fieldstoshow = 't.label';
 		} else {
 			// For backward compatibility
