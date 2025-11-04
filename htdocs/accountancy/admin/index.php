@@ -238,11 +238,9 @@ if ($action == 'update_export') {
 	// Export options
 	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
 
-	if (!$error) {
-		// reload
-		$configuration = $accountancyexport->getTypeConfig();
-		$listparam = $configuration['param'];
-	}
+	// reload
+	$configuration = $accountancyexport->getTypeConfig();
+	$listparam = $configuration['param'];
 
 	if (!empty($modelcsv)) {
 		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
