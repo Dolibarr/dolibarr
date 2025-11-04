@@ -79,8 +79,8 @@ print '<br>';
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr>';
-print '<tr><td>'.$langs->trans('CronLastResult').' : '.$object->lastresult.'</td></tr>';
-print '<tr><td>'.$langs->trans('CronLastOutput').' : '.$object->lastoutput.'</td></tr>';
+print '<tr><td>'.$langs->trans('CronLastResult').' : '.dolPrintHTML($object->lastresult).'</td></tr>';
+print '<tr><td>'.$langs->trans('CronLastOutput').' : '.dolPrintHTML($object->lastoutput).'</td></tr>';
 print '</table>';
 print '</div>';
 
