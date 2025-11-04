@@ -822,30 +822,39 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
- *  @param  string  $check	     Type of check
- *                               '' or 'none'=no check (deprecated)
- *                               'password'=allow characters for a password
- *                               'email'=allow characters for an email "email@domain.com"
- *                               'url'=allow characters for an url
- *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
- *                               'int'=check it's numeric (integer or float)
- *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
- *                               'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
- *                               'aZ'=check it's a-z only
- *                               'aZ09'=check it's simple alpha string (recommended for keys, it includes a-z0-9_\-\.)
- *                               'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
- *                               'aZ09comma'=check it's a string for a sortfield or sortorder
- *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml'=check there is no html content
- *                               'restricthtml'=check html content is restricted to some tags only
- *                               'custom'= custom filter specify $filter and $options)
+ *  @param 'int'|'intcomma'|'array'|'array:int'|'array:intcomma'|'array:alpha'|'array:alphanohtml'|'array:aZ09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'nohtml'|'restricthtml'|'alphawithlgt'|'aZ09'|'aZ'|'aZ09arobase'|'aZ09comma'|'url'|'san_alpha'|'custom'|'none'|'restricthtmlallowclass'|'restricthtmlallowunvalid'|'restricthtmlallowiframe'|'restricthtmlallowlinkscript'|'' $check Type of check
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 '' or 'none'=no check (deprecated)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'password'=allow characters for a password
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'email'=allow characters for an email "email@domain.com"
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'url'=allow characters for an url
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'int'=check it's numeric (integer or float)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'intcomma'=check it's integer+comma ('1,2,3,4...')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ'=check it's a-Z only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09'=check it's simple alpha string (recommended for keys, it includes a-Z0-9_\-\.)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09comma'=check it's a string for a sortfield or sortorder
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'nohtml'=check there is no html content
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtml'=check html content is restricted to some tags only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'custom'= custom filter specify $filter and $options)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowclass'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowunvalid'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowiframe'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowlinkscript'
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
- *  @phpstan-return ($check is 'array:int' ? numeric-string[]|array{} : ($check is 'array:az09' ? string[] : ($check is 'array:restricthtml' ? string[] : string|array<mixed>)))
+ *  @phpstan-return (
+ *      $check is 'int' ? numeric-string|'' :
+ *      $check is 'array:int' ? numeric-string[]|array{} :
+ *      $check is 'array' | 'array:aZ09' | 'array:alpha' | 'array:intcomma' | 'array:restricthtml' ? string[] :
+ *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
+ *  )
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
 {
@@ -4120,14 +4129,14 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	string		$mode	'auto' => for backward compatibility (avoid this),
- *  							'gmt' => we return GMT timestamp,
- * 								'tzserver' => we add the PHP server timezone
- *  							'tzref' => we add the company timezone. Not implemented.
- * 								'tzuser' or 'tzuserrel' => we add the user timezone
+ *  @param	'auto'|'gmt'|'tzserver'|'tzuser'|'tzuserrel'	$mode	'auto' => for backward compatibility (avoid this),
+ *  																'gmt' => we return GMT timestamp,
+ * 																	'tzserver' => we add the PHP server timezone
+ *  																'tzref' => we add the company timezone. Not implemented.
+ * 																	'tzuser' or 'tzuserrel' => we add the user timezone
  *	@return int   $date	Timestamp
  */
-function dol_now($mode = 'auto')
+function dol_now($mode = 'gmt')
 {
 	$ret = 0;
 
@@ -4141,14 +4150,13 @@ function dol_now($mode = 'auto')
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
 		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
-		//} elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
-		//	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		//	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
-		//	$ret=dol_now('gmt')+($tzsecond*3600);
-		//}
+		// } elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
+		// 	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		// 	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
+		// 	$ret=dol_now('gmt')+($tzsecond*3600);
 	} elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {
 		// Time for now with user timezone added
-		//print 'time: '.time();
+		// print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 		$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
 		$ret = (int) (dol_now('gmt') + ($offsettz + $offsetdst));

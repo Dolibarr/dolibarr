@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,14 @@ if (!$user->admin) {
 }
 
 $moduledir = 'workstation';
-$myTmpObjects = array();
-$myTmpObjects['workstation'] = array('label' => 'Workstation', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Workstation');
+$myTmpObjects = [
+	'workstation' => [
+		'label' => 'Workstation',
+		'includerefgeneration' => 1,
+		'includedocgeneration' => 0,
+		'class' => 'Workstation',
+	],
+];
 
 $tmpobjectkey = GETPOST('object', 'aZ09');
 if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
@@ -97,9 +103,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$nameofclass = ucfirst($tmpobjectkey);
-	$tmpobject = new $nameofclass($db);
-	'@phan-var-force Workstation $tmpobject';
+	$tmpobject = new Workstation($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
@@ -359,6 +363,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
 									'@phan-var-force ModelePDFWorkstation $module';
+									/** @var ModelePDFWorkstation $module */
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -441,9 +446,6 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	}
 }
 
-/*if (empty($setupnotempty)) {
-	print '<br>'.$langs->trans("NothingToSetup");
-}*/
 
 // Page end
 print dol_get_fiche_end();
