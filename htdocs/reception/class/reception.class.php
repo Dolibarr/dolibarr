@@ -1881,6 +1881,34 @@ class Reception extends CommonObject
 		}
 	}
 
+	/**
+	 *	Set the reception date
+	 *
+	 *	@param      User			$user        		Object user that modify
+	 *	@param      integer 		$reception_date		Date of reception
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
+	 */
+	public function setReceptionDate($user, $reception_date)
+	{
+		if ($user->hasRight('reception', 'creer')) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
+			$sql .= " SET date_reception = ".($reception_date ? "'".$this->db->idate($reception_date)."'" : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::setReceptionDate", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$this->date_reception = $reception_date;
+				return 1;
+			} else {
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			return -2;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
