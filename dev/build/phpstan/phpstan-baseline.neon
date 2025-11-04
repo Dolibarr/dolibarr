@@ -139,18 +139,6 @@ parameters:
 			path: ../../../htdocs/accountancy/class/accountancyexport.class.php
 
 		-
-			message: '#^Variable \$invoice might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancyexport.class.php
-
-		-
-			message: '#^Call to function array_key_exists\(\) with ''error'' and array\{ref\: mixed, label\: mixed, acquisition_value_ht\: mixed, depreciation\: non\-empty\-array\<array\{date\: mixed, ref\: mixed, lines\: non\-empty\-array\}\>, disposal\?\: array\{date\: mixed, amount\: mixed, subject_to_vat\: bool\}\} will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: ../../../htdocs/accountancy/class/accountingjournal.class.php
-
-		-
 			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
 			identifier: argument.type
 			count: 3
@@ -169,18 +157,6 @@ parameters:
 			path: ../../../htdocs/accountancy/class/lettering.class.php
 
 		-
-			message: '#^Variable \$save_element_by_link might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
-			message: '#^Variable \$save_link_by_element might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
 			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
 			identifier: argument.type
 			count: 2
@@ -190,12 +166,6 @@ parameters:
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 2
-			path: ../../../htdocs/accountancy/closure/index.php
-
-		-
-			message: '#^Variable \$current_fiscal_period in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 4
 			path: ../../../htdocs/accountancy/closure/index.php
 
 		-
@@ -315,12 +285,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
-			message: '#^Variable \$def_tva might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/accountancy/journal/expensereportsjournal.php
 
@@ -905,18 +869,6 @@ parameters:
 			identifier: notEqual.alwaysTrue
 			count: 1
 			path: ../../../htdocs/admin/system/dolibarr.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
 
 		-
 			message: '#^Loose comparison using \!\= between '''' and ''kanban'' will always evaluate to true\.$#'
@@ -1899,12 +1851,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\<" between int\<1, max\> and 1 is always false\.$#'
 			identifier: smaller.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/action/pertype.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/comm/action/pertype.php
 
@@ -9199,12 +9145,6 @@ parameters:
 			path: ../../../htdocs/exports/export.php
 
 		-
-			message: '#^Variable \$heightforframes might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/externalsite/frames.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -14339,12 +14279,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/reception/class/receptionlinebatch.class.php
 
 		-
 			message: '#^Property ReceptionLineBatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
