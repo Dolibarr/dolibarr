@@ -4120,11 +4120,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	'auto'|'gmt'|'tzserver'|'tzref'|'tzuserrel'	$mode	'auto' => for backward compatibility (avoid this),
- *  															'gmt' => we return GMT timestamp,
- * 																'tzserver' => we add the PHP server timezone
- *  															'tzref' => we add the company timezone. Not implemented.
- * 																'tzuser' or 'tzuserrel' => we add the user timezone
+ *  @param	'auto'|'gmt'|'tzserver'|'tzuser'|'tzuserrel'	$mode	'auto' => for backward compatibility (avoid this),
+ *  																'gmt' => we return GMT timestamp,
+ * 																	'tzserver' => we add the PHP server timezone
+ *  																'tzref' => we add the company timezone. Not implemented.
+ * 																	'tzuser' or 'tzuserrel' => we add the user timezone
  *	@return int   $date	Timestamp
  */
 function dol_now($mode = 'gmt')
