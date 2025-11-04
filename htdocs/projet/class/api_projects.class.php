@@ -828,7 +828,7 @@ class Projects extends DolibarrApi
 	}
 
 	/**
-	 * Get all timespent 
+	 * Get all timespent
 	 *
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
@@ -844,8 +844,8 @@ class Projects extends DolibarrApi
 	 * @phpstan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @url	GET /alltimespent
 	 */
-	 public function listTimespent($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
-	 {
+	public function listTimespent($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
@@ -919,7 +919,6 @@ class Projects extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($obj), $properties);
-				
 				$i++;
 			}
 		} else {
