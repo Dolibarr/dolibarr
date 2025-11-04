@@ -94,6 +94,8 @@ if (empty($sortfield)) {
 	$sortfield = "t.ref";
 }
 
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
+
 // Load variable for pagination
 $limit	= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
@@ -367,7 +369,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/resource/card.php', 1).'?id='.$id);
@@ -480,9 +482,10 @@ print '<table class="tagtable liste">'."\n";
 // Fields title search
 
 print '<tr class="liste_titre_filter">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons();
+	print '<td class="liste_titre maxwidthsearch center">';
+	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
@@ -559,6 +562,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 
 print '<tr class="liste_titre">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
@@ -626,7 +630,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->max_users = $obj->max_users;
 	$objectstatic->url = $obj->url;
 
-	print '<tr class="oddeven row-with-select">';
+	print '<tr data-rowid="'.$obj->rowid.'"  class="oddeven row-with-select">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

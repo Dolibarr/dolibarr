@@ -81,8 +81,8 @@ create table llx_societe
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
   note_public              text,                                        --
-  model_pdf				         varchar(255),
-  last_main_doc			       varchar(255),					-- relative filepath+filename of last main generated document
+  model_pdf				   varchar(255),								-- the last tempate used to generate a document
+  last_main_doc			   varchar(255),								-- relative filepath+filename of the last main generated document
   prefix_comm              varchar(5),                          		-- prefix commercial (deprecated)
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
@@ -103,8 +103,9 @@ create table llx_societe
   cond_reglement_supplier  tinyint,                             		-- payment term supplier
   transport_mode_supplier  tinyint,                             		-- transport mode supplier (Intracomm report)
   fk_shipping_method       integer,                                     -- preferred shipping method id
-  tva_assuj                tinyint        DEFAULT 1,	        		-- assujetti ou non a la TVA
-  vat_reverse_charge       tinyint        DEFAULT 0,	        		-- By default, company not concerned by vat reverse charge
+  tva_assuj                tinyint        DEFAULT 1,	        		-- if company using VAT or is exempted
+  vatexemptcode            varchar(24),									-- if company is exempted, the VAT reason code of exemption
+  vat_reverse_charge       tinyint        DEFAULT 0,	        		-- By default, company is not concerned by vat reverse charge
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax1_value 		   double(7,4),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2

@@ -61,7 +61,13 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_filecheck');
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"), '', 'title_setup');
 
-print '<div class="opacitymedium justify">'.$langs->trans("FileCheckDesc").'</div><br><br>';
+print '<div class="opacitymedium hideonsmartphone justify">'.$langs->trans("FileCheckDesc");
+if (isModEnabled('blockedlog')) {
+	$s = $langs->trans("DataIntegrityDesc", '{s}');
+	$s = str_replace('{s}', DOL_URL_ROOT.'/blockedlog/admin/blockedlog_list.php', $s);
+	print '<br>'.$s;
+}
+print'</div><br><br>';
 
 // Version
 print '<div class="div-table-responsive-no-min">';

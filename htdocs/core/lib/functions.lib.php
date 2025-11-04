@@ -4253,7 +4253,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  * @param	string		$morecss		More CSS
  * @return	string						HTML Link
  */
-function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max = 64, $showinvalid = 1, $withpicto = 0, $morecss = 'paddingrightonly')
+function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max = 0, $showinvalid = 1, $withpicto = 0, $morecss = 'paddingrightonly')
 {
 	global $user, $langs, $hookmanager;
 
@@ -4855,7 +4855,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 			if ($withpicto == 'fax') {
 				$picto = 'phoning_fax';
 			} elseif ($withpicto == 'phone') {
-				$picto = 'phoning';
+				$picto = 'phone';
 			} elseif ($withpicto == 'mobile') {
 				$picto = 'phoning_mobile';
 			} else {
@@ -4869,7 +4869,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		}
 
 		$rep .= $newphoneastart;
-		$rep .= ($withpicto ? img_picto($titlealt, 'object_' . $picto . '.png') : '');
+		$rep .= ($withpicto ? img_picto($titlealt, $picto) : '');
 		if ($separ != 'hidenum') {
 			$rep .= ($withpicto ? ' ' : '') . $newphone;
 		}
