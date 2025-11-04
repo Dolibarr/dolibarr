@@ -154,6 +154,8 @@ class Dolresource extends CommonObject
 	 */
 	public function create(User $user, int $no_trigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 		$this->date_creation = dol_now();
 
@@ -200,7 +202,7 @@ class Dolresource extends CommonObject
 		$sql .= "datec, ";
 		$sql .= "fk_user_author ";
 		$sql .= ") VALUES (";
-		$sql .= getEntity('resource') . ", ";
+		$sql .= (int) (empty($this->entity) ? $conf->entity : $this->entity) . ", ";
 		foreach ($new_resource_values as $value) {
 			$sql .= " " . (!empty($value) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
 		}

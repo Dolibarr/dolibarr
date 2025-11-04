@@ -1371,9 +1371,9 @@ class AccountancyExport
 		$end_line = "\n";
 
 		// parcours du tableau pour recuperation des numero de compte des tiers pour pouvoir les fournir dans la bonne ligne pour istea
-		$tiers=[];
+		$tiers = [];
 		foreach ($objectLines as $line) {
-			if ( $line->subledger_account && substr($line->subledger_account, 0, 1) == '4' ) {
+			if ($line->subledger_account && substr($line->subledger_account, 0, 1) == '4') {
 				$tiers[$line->piece_num] = $line->subledger_label;
 			}
 		}
@@ -1394,11 +1394,11 @@ class AccountancyExport
 			$tab[] = $line->piece_num;	// colonne 1 : numero de piece	ISTEA
 			$tab[] = $date_document;	// colonne 2 : date				ISTEA
 			$tab[] = $line->doc_ref;	// colonne 3 : reference piece 	ISTEA
-			$tab[] = array_key_exists($line->piece_num, $tiers)?$tiers[$line->piece_num]:'';	// colonne 4 : nom tiers	ISTEA
-			$tab[] = length_accountg(($line->subledger_account && ( substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2) ) )?$line->subledger_account:$line->numero_compte);	// colonne 5 : numero de compte	ISTEA
-			$tab[] = length_accountg($line->subledger_account?$line->subledger_account:$line->numero_compte);	// colonne 6 : numero de compte
-			$tab[] = length_accountg($line->subledger_account?$line->numero_compte:'');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
-			$tab[] = ($line->doc_type == 'bank')?$label_operation:($line->subledger_account?$line->subledger_label:$line->label_compte);	// colonne 8 : label de l'operation		ISTEA
+			$tab[] = array_key_exists($line->piece_num, $tiers) ? $tiers[$line->piece_num] : '';	// colonne 4 : nom tiers	ISTEA
+			$tab[] = length_accountg(($line->subledger_account && (substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2))) ? $line->subledger_account : $line->numero_compte);	// colonne 5 : numero de compte	ISTEA
+			$tab[] = length_accountg($line->subledger_account ? $line->subledger_account : $line->numero_compte);	// colonne 6 : numero de compte
+			$tab[] = length_accountg($line->subledger_account ? $line->numero_compte : '');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
+			$tab[] = ($line->doc_type == 'bank') ? $label_operation : ($line->subledger_account ? $line->subledger_label : $line->label_compte);	// colonne 8 : label de l'operation		ISTEA
 			$tab[] = $label_operation;	// colonne 9 : label de l'operation (semble non prise en compte par ISTEA)
 			$tab[] = price2num($line->debit);	// colonne 10 : debit		ISTEA
 			$tab[] = price2num($line->credit);	// colonne 11 : credit		ISTEA
@@ -1474,6 +1474,7 @@ class AccountancyExport
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				$refInvoice = '';
+				$invoice = null;
 				if ($line->doc_type == 'customer_invoice') {
 					// Customer invoice
 					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1576,10 +1577,9 @@ class AccountancyExport
 							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 							}
-						} elseif ($line->doc_type == 'supplier_invoice') {
+						} elseif ($line->doc_type == 'supplier_invoice' && $invoice instanceof FactureFournisseur) {
 							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
 								'@phan-var-force FactureFournisseur $invoice';
-								/** @var FactureFournisseur $invoice */
 								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 								$objectDirPath .= '/' . rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 							}
@@ -1694,6 +1694,7 @@ class AccountancyExport
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				$refInvoice = '';
+				$invoice = null;
 				if ($line->doc_type == 'customer_invoice') {
 					// Customer invoice
 					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1796,10 +1797,9 @@ class AccountancyExport
 							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 							}
-						} elseif ($line->doc_type == 'supplier_invoice') {
+						} elseif ($line->doc_type == 'supplier_invoice' && $invoice instanceof FactureFournisseur) {
 							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
 								'@phan-var-force FactureFournisseur $invoice';
-								/** @var FactureFournisseur $invoice */
 								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 								$objectDirPath .= '/' . rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 							}

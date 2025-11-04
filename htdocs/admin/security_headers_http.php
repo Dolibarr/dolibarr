@@ -101,7 +101,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		}
 	}
 
-	$securityspstring = "";
+	$securitycspstring = "";
 	if (!$error && !empty($forceCSPArr)) {
 		if (isset($sourcekey) && !empty($forceCSPArr[$directive][$sourcekey])) {
 			unset($forceCSPArr[$directive][$sourcekey]);
@@ -110,8 +110,8 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 			unset($forceCSPArr[$directive]);
 		}
 		foreach ($forceCSPArr as $directive => $sourcekeys) {
-			if ($securityspstring != "") {
-				$securityspstring .= "; ";
+			if ($securitycspstring != "") {
+				$securitycspstring .= "; ";
 			}
 			$sourcestring = "";
 			foreach ($sourcekeys as $key => $source) {
@@ -123,9 +123,13 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 					$sourcestring .= " ".$source;
 				}
 			}
-			$securityspstring .= $directive . $sourcestring;
+			$securitycspstring .= $directive . $sourcestring;
 		}
-		$res = dolibarr_set_const($db, 'MAIN_SECURITY_FORCECSP', $securityspstring, 'chaine', 0, '', $conf->entity);
+
+		// Add a protection against bad setup that break Dolibarr
+		$securitycspstring = cleanSecurityCSP($securitycspstring);
+
+		$res = dolibarr_set_const($db, 'MAIN_SECURITY_FORCECSP', $securitycspstring, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -161,7 +165,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		if (isset($sourcecsp)) {
 			$sourcetype = $sourcesarray[$directivetype][$sourcecsp]["data-sourcetype"];
 		}
-		$securityspstring = "";
+		$securitycspstring = "";
 		if (isset($sourcetype) && $sourcetype == "data") {
 			$forceCSPArr[$directivecsp][] = "data:".$sourcedatacsp;
 		} elseif (isset($sourcetype) && $sourcetype == "input") {
@@ -179,8 +183,8 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 			array_unshift($forceCSPArr[$directivecsp], $sourcecsp);
 		}
 		foreach ($forceCSPArr as $directive => $sourcekeys) {
-			if ($securityspstring != "") {
-				$securityspstring .= "; ";
+			if ($securitycspstring != "") {
+				$securitycspstring .= "; ";
 			}
 			$sourcestring = "";
 			foreach ($sourcekeys as $key => $source) {
@@ -192,9 +196,13 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 					$sourcestring .= " ".$source;
 				}
 			}
-			$securityspstring .= $directive . $sourcestring;
+			$securitycspstring .= $directive . $sourcestring;
 		}
-		$res = dolibarr_set_const($db, 'MAIN_SECURITY_FORCECSP', $securityspstring, 'chaine', 0, '', $conf->entity);
+
+		// Add a protection against bad setup that break Dolibarr
+		$securitycspstring = cleanSecurityCSP($securitycspstring);
+
+		$res = dolibarr_set_const($db, 'MAIN_SECURITY_FORCECSP', $securitycspstring, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -215,13 +223,17 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$securityrp = GETPOST('MAIN_SECURITY_FORCERP', 'alpha');
 	$securitysts = GETPOST('MAIN_SECURITY_FORCESTS', 'alpha');
 	$securitypp = GETPOST('MAIN_SECURITY_FORCEPP', 'alpha');
-	$securitysp = GETPOST('MAIN_SECURITY_FORCECSP', 'alpha');
+	$securitycsp = GETPOST('MAIN_SECURITY_FORCECSP', 'alpha');
 	$securitycspro = GETPOST('MAIN_SECURITY_FORCECSPRO', 'alpha');
+
+	// Add a protection against bad setup that break Dolibarr
+	$securitycsp = cleanSecurityCSP($securitycsp);
+	$securitycspro = cleanSecurityCSP($securitycspro);
 
 	$res1 = dolibarr_set_const($db, 'MAIN_SECURITY_FORCERP', $securityrp, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'MAIN_SECURITY_FORCESTS', $securitysts, 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'MAIN_SECURITY_FORCEPP', $securitypp, 'chaine', 0, '', $conf->entity);
-	$res4 = dolibarr_set_const($db, 'MAIN_SECURITY_FORCECSP', $securitysp, 'chaine', 0, '', $conf->entity);
+	$res4 = dolibarr_set_const($db, 'MAIN_SECURITY_FORCECSP', $securitycsp, 'chaine', 0, '', $conf->entity);
 	$res5 = dolibarr_set_const($db, 'MAIN_SECURITY_FORCECSPRO', $securitycspro, 'chaine', 0, '', $conf->entity);
 
 	if ($res1 >= 0 && $res2 >= 0 && $res3 >= 0 && $res4 >= 0 && $res5 >= 0) {
@@ -238,6 +250,33 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$forceCSP = getDolGlobalString("MAIN_SECURITY_FORCECSP");
 }
 
+/**
+ * Function to fix a bad security CSP string
+ *
+ * @param string $securitycsp	Value of Content-Security-Policy to check and sanitize
+ * @return string				New value
+ */
+function cleanSecurityCSP($securitycsp)
+{
+	if (!empty($securitycsp)) {
+		if (!preg_match('/script-src.*self/', $securitycsp) || !preg_match('/script-src.*unsafe-inline/', $securitycsp)) {
+			if (!preg_match('/script-src/', $securitycsp)) {
+				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' script-src \'self\' \'unsafe-inline\';';
+			} else {
+				$securitycsp = preg_replace('/script-src\s+/', 'script-src \'self\' \'unsafe-inline\' ', $securitycsp);
+			}
+		}
+		if (!preg_match('/style-src.*self/', $securitycsp) || !preg_match('/style-src.*unsafe-inline/', $securitycsp)) {
+			if (!preg_match('/style-src/', $securitycsp)) {
+				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' style-src \'self\' \'unsafe-inline\';';
+			} else {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' \'unsafe-inline\' ', $securitycsp);
+			}
+		}
+	}
+	$securitycsp = preg_replace('/\s+/', ' ', $securitycsp);
+	return $securitycsp;
+}
 
 
 /*

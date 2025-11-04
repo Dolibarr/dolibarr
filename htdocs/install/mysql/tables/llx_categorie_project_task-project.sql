@@ -1,6 +1,7 @@
--- ========================================================================
--- Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2020 Udo Tamm             <software@dolibit.de>
+-- ============================================================================
+-- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>	
+-- Copyright (C) 2012 Juanjo Menent  <jmenent@2byte.es>
+-- Copyright (C) 2025 Charlene Benke  <charlene@patas-monkey.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,12 +16,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ============================================================================
 
-CREATE TABLE llx_c_incoterms (
-  rowid integer AUTO_INCREMENT PRIMARY KEY,
-  code varchar(8) NOT NULL,
-  label varchar(100),
-  libelle varchar(255) NOT NULL,
-  active tinyint DEFAULT 1  NOT NULL
-) ENGINE=innodb;
+create table llx_categorie_project_task
+(
+  fk_categorie  integer NOT NULL,
+  fk_project_task    integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;

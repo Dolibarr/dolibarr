@@ -106,6 +106,11 @@ class ExternalModules
 	public $githubFileError;
 
 	/**
+	 * @var string
+	 */
+	public $error;
+
+	/**
 	 * @var int // number of online providers
 	 */
 	public $numberOfProviders;
@@ -129,11 +134,6 @@ class ExternalModules
 	 * @var int Number of products displayed on the page.
 	 */
 	public $numberOfProducts;
-
-	/**
-	 * @var string
-	 */
-	public $error;
 
 	/**
 	 * Constructor

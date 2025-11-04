@@ -13,6 +13,7 @@
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,15 +65,23 @@ class Reception extends CommonObject
 	public $code = "";
 
 	/**
-	 * @var string element name
+	 * @var string ID to identify managed object
 	 */
 	public $element = "reception";
 
 	/**
-	 * @var string Fieldname with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = "fk_reception";
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element = "reception";
+
+	/**
+	 * @var string    Name of subtable line
+	 */
 	public $table_element_line = "receptiondet_batch";
 
 	/**
@@ -213,10 +222,11 @@ class Reception extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+		$this->isextrafieldmanaged = 1;
 	}
 
 	/**
-	 *	Return next contract ref
+	 *	Return next reception ref
 	 *
 	 *	@param	Societe		$soc	Thirdparty object
 	 *	@return string				Free reference for contract
@@ -266,7 +276,7 @@ class Reception extends CommonObject
 	}
 
 	/**
-	 *  Create reception en base
+	 *  Create reception
 	 *
 	 *  @param	User	$user       Object du user qui cree
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -292,6 +302,11 @@ class Reception extends CommonObject
 		if (empty($this->size_units)) {
 			$this->size_units = 0;
 		}
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
+
+		$this->entity = setEntity($this);
 
 		$this->user = $user;
 
@@ -323,12 +338,12 @@ class Reception extends CommonObject
 		$sql .= "'(PROV)'";
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".($this->ref_supplier ? "'".$this->db->escape($this->ref_supplier)."'" : "null");
-		$sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", '".$this->db->idate($this->date_creation)."'";
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->date_reception > 0 ? "'".$this->db->idate($this->date_reception)."'" : "null");
 		$sql .= ", ".($this->date_delivery > 0 ? "'".$this->db->idate($this->date_delivery)."'" : "null");
-		$sql .= ", ".((int) $this->socid);
-		$sql .= ", ".((int) $this->fk_project);
+		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
 		$sql .= ", ".(is_null($this->weight) ? "NULL" : ((float) $this->weight));
@@ -351,8 +366,14 @@ class Reception extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."reception");
 
+			// update ref
+			$initialref = '(PROV'.$this->id.')';
+			if (!empty($this->ref)) {
+				$initialref = $this->ref;
+			}
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
-			$sql .= " SET ref = '(PROV".((int) $this->id).")'";
+			$sql .= " SET ref = '".$this->db->escape($initialref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -416,7 +437,46 @@ class Reception extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Create a reception line
+	 *
+	 * @param 	int		$entrepot_id		Id of warehouse
+	 * @param 	int		$origin_line_id		Id of source line
+	 * @param 	float	$qty				Quantity
+	 * @param 	int		$rang				Rang
+	 * @param	array<string,mixed>	$array_options		extrafields array
+	 * @param 	int		$parent_line_id		Id of parent line for virtual products
+	 * @param 	int		$product_id			Id of product (child of virtual product)
+	 * @return	int							Return integer <0 if KO, line_id if OK
+	 */
+	public function create_line($entrepot_id, $origin_line_id, $qty, $rang = 0, $array_options = [], $parent_line_id = 0, $product_id = 0)
+	{
+		//phpcs:enable
+		global $user;
 
+		$receptionline = new ReceptionLineBatch($this->db);
+		$receptionline->fk_reception = $this->id;
+		$receptionline->entrepot_id = $entrepot_id;
+		$receptionline->fk_elementdet = $origin_line_id;
+		$receptionline->element_type = $this->origin;
+		$receptionline->fk_parent = $parent_line_id;
+		$receptionline->fk_product = $product_id;
+		$receptionline->qty = $qty;
+		$receptionline->rang = $rang;
+		$receptionline->array_options = $array_options;
+
+		if (!($receptionline->fk_product > 0)) {
+			$order_line = new CommandeFournisseurLigne($this->db);
+			$order_line->fetch($receptionline->fk_elementdet);
+			$receptionline->fk_product = $order_line->fk_product;
+		}
+
+		if (($lineId = $receptionline->insert($user)) < 0) {
+			$this->errors[] = $receptionline->error;
+		}
+		return $lineId;
+	}
 
 	/**
 	 *	Get object and lines from database
@@ -531,7 +591,11 @@ class Reception extends CommonObject
 				/*
 				 * Lines
 				 */
-				$result = $this->fetch_lines();
+				if (empty($obj->origin_id)) {
+					$result = $this->fetch_lines_free();
+				} else {
+					$result = $this->fetch_lines();
+				}
 				if ($result < 0) {
 					return -3;
 				}
@@ -973,6 +1037,239 @@ class Reception extends CommonObject
 		return $num;
 	}
 
+	/**
+	 * Add a simple reception line.
+	 *
+	 * @param 	float		$qty							Quantity
+	 * @param 	string		$element_type					Element type
+	 * @param	int			$fk_product      				Id of product
+	 * @param 	int|null	$fk_unit 						Code of the unit to use.
+	 * @param   int			$rang             				Position of line
+	 * @param 	string		$description					Description of line product
+	 * @param	array<string,mixed>		$array_options		extrafields array
+	 * @return	int											Return integer <0 if KO, >0 if OK
+	 */
+	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $array_options = [])
+	{
+		global $mysoc, $langs, $user;
+
+		if ($this->status == self::STATUS_DRAFT) {
+			if (empty($rang)) {
+				$rang = 0;
+			}
+
+			$qty = (float) price2num($qty);
+
+			$this->db->begin();
+
+			// Rank to use
+			$ranktouse = $this->rang;
+			if ($ranktouse == -1) {
+				$rangmax = $this->line_max($this->fk_reception);
+				$ranktouse = $rangmax + 1;
+			}
+
+			// Insert line
+			$this->line = new ReceptionLineBatch($this->db);
+			$this->line->fk_reception = $this->id;
+			$this->line->element_type = $element_type;
+			$this->line->fk_product = $fk_product;
+			$this->line->description = $description;
+
+			$this->line->qty = (float) $qty;
+			$this->line->fk_unit = $fk_unit;
+			$this->line->rang = $ranktouse;
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				$this->line->array_options = $array_options;
+			}
+
+			$result = $this->line->insert($user);
+			if ($result > 0) {
+				if (!isset($this->context['createfromclone'])) {
+					if ($this->fk_reception) {
+						$this->line_order(true, 'DESC');
+					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
+						$linecount = count($this->lines);
+						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+						}
+					}
+					$this->lines[] = $this->line;
+				}
+
+				$this->db->commit();
+				return $this->line->id;
+			} else {
+				$this->error = $this->line->error;
+				dol_syslog(get_class($this)."::addlinefree error=".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		} else {
+			dol_syslog(get_class($this)."::addlinefree status of reception must be Draft to allow use of ->addlinefree()", LOG_ERR);
+			return -3;
+		}
+	}
+
+	/**
+	 * Update a simple reception line.
+	 *
+	 * @param 	int		$rowid							ID of line
+	 * @param 	float	$qty							Quantity
+	 * @param 	string	$element_type					Element type
+	 * @param	int		$fk_product      				Id of product
+	 * @param 	?int	$fk_unit 						Code of the unit to use.
+	 * @param   int		$rang             				Position of line
+	 * @param 	string	$description					Description of line product
+	 * @param 	int		$notrigger					    disable line update trigger
+	 * @param	array<string,mixed>	$array_options		extrafields array
+	 * @return	int										Return integer <0 if KO, >0 if OK
+	 */
+	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $notrigger, $array_options = array())
+	{
+		global $mysoc, $langs, $user;
+
+		if ($this->statut == self::STATUS_DRAFT) {
+			$this->db->begin();
+
+			if (empty($qty)) {
+				$qty = 0;
+			}
+			if (empty($rang)) {
+				$rang = 0;
+			}
+
+			$qty = (float) $qty;
+			$description = trim($description);
+
+			// Fetch current line from the database and then clone the object and set it in $oldline property
+			$line = new ReceptionLineBatch($this->db);
+
+			$line->fetch($rowid);
+			$line->fetch_optionals();
+
+			if (!empty($line->fk_product)) {
+				$product = new Product($this->db);
+				$result = $product->fetch($line->fk_product);
+				$product_type = $product->type;
+			}
+
+			$staticline = clone $line;
+
+			$line->oldline = $staticline;
+			$this->line = $line;
+			$this->line->context = $this->context;
+			$this->line->rang = $rang;
+			$this->line->fk_reception = $this->id;
+			$this->line->element_type = $element_type;
+			$this->line->fk_product = $line->fk_product;
+			$this->line->qty = $qty;
+			$this->line->fk_unit = $fk_unit;
+			$this->line->description = $description;
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				// We replace values in this->line->array_options only for entries defined into $array_options
+				foreach ($array_options as $key => $value) {
+					$this->line->array_options[$key] = $array_options[$key];
+				}
+			}
+
+
+			$result = $this->line->update($user, $notrigger);
+			if ($result > 0) {
+				// Reorder if child line
+
+
+				$this->db->commit();
+				return $result;
+			} else {
+				$this->error = $this->line->error;
+
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = get_class($this)."::updatelinefree reception status makes operation forbidden";
+			$this->errors = array('ReceptionStatusMakeOperationForbidden');
+			return -2;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Load lines of simple reception
+	 *
+	 *	@return	int		>0 if OK, Otherwise if KO
+	 */
+	public function fetch_lines_free()
+	{
+		// phpcs:enable
+		global $mysoc;
+
+		$this->lines = array();
+
+		$sql = 'SELECT rc.rowid, rc.fk_reception, rc.fk_entrepot, rc.fk_product, rc.fk_unit, rc.description, rc.fk_elementdet, rc.fk_element, rc.element_type, rc.qty, rc.rang';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'receptiondet_batch as rc';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = rc.fk_product)';
+		$sql .= ' WHERE rc.fk_reception = '.((int) $this->id);
+
+		$sql .= ' ORDER BY rc.rang, rc.rowid';
+
+		dol_syslog(get_class($this)."::fetch_lines_free", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+
+			$i = 0;
+			while ($i < $num) {
+				$objp = $this->db->fetch_object($result);
+
+				$line = new ReceptionLineBatch($this->db);
+
+				$line->rowid            = $objp->rowid;
+				$line->id              = $objp->rowid;
+				$line->fk_reception       = $this->id;
+
+				$line->description      = $objp->description;
+				$line->qty              = $objp->qty;
+				$line->fk_entrepot      = $objp->fk_entrepot;
+				$line->fk_product       = $objp->fk_product;
+
+				$line->rang             = $objp->rang;
+
+
+				$line->fk_element = $objp->fk_element;
+				$line->fk_unit          = $objp->fk_unit;
+				$line->fk_elementdet = $objp->fk_elementdet;
+				$line->fk_element_type = $objp->element_type;
+				$line->fetch_optionals();
+
+
+
+				$this->lines[$i] = $line;
+
+				$i++;
+			}
+
+			$this->db->free($result);
+
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -3;
+		}
+	}
+
+	/**
+	 * 	Create an array of reception lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
+	 */
+	public function getLinesArray()
+	{
+		return $this->fetch_lines_free();
+	}
 
 	/**
 	 *  Update database

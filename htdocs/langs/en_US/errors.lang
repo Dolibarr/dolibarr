@@ -165,6 +165,7 @@ ErrorDateMustBeInFuture=The date must be greater than today
 ErrorStartDateGreaterEnd=The start date is greater than the end date
 ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+ErrorOpenIDSetupConfNotComplete=For security reason, you must also setup the Dolibarr config file conf.php to allow OpenID authentication
 ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 ErrorWarehouseMustDiffers=Source and target warehouses must differs
 ErrorBadFormat=Bad format!

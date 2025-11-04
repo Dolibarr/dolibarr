@@ -260,7 +260,7 @@ class CodingPhpTest extends CommonClassTest
 			//exit;
 		}
 
-		// Check for unauthorised vardumps
+		// Check for unauthorised var_dumps
 		if (!preg_match('/test\/phpunit/', $file['fullname'])) {
 			$this->verifyNoActiveVardump($filecontent, $report_filepath);
 		}
@@ -632,6 +632,15 @@ class CodingPhpTest extends CommonClassTest
 		}
 		$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
+		// Test we don't have preg_grep with a param without preg_quote
+		$ok = true;
+		$matches = array();
+		preg_match_all('/= getEntity\(["\'a-z]*\)/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			$ok = false;
+			break;
+		}
+		$this->assertTrue($ok, 'Found a sequence "= getEntity(\'...\')" that is not allowed. We should have IN getEntity or = conf->entity in file '.$file['relativename'].'.');
 
 		// Test we don't have "if ($resql >"
 		$ok = true;
