@@ -828,7 +828,7 @@ class Projects extends DolibarrApi
 	}
 
 	/**
- 	 * Get all timespent 
+	 * Get all timespent 
 	 *
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
@@ -844,11 +844,11 @@ class Projects extends DolibarrApi
 	 * @phpstan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @url	GET /alltimespent
 	 */
-	public function listTimespent($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
-	{
-    	if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
-        	throw new RestException(403);
-    	}
+	 public function listTimespent($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	 {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
