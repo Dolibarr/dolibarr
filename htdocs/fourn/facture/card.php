@@ -2744,7 +2744,7 @@ if ($action == 'create') {
 		// Date invoice
 		print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($dateinvoice, '', 0, 0, 0, "add", 1, 1);
+		print $form->selectDate($dateinvoice ? (int) $dateinvoice : '', '', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
 		// Payment term
