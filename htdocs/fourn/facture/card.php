@@ -2910,7 +2910,11 @@ if ($action == 'create') {
 			// We check if Origin document (id and type is known) has already at least one invoice attached to it
 			$objectsrc->fetchObjectLinked($originid, $origin, null, 'invoice_supplier');
 
-			$invoice_supplier = $objectsrc->linkedObjects['invoice_supplier'];
+			if (isset($objectsrc->linkedObjects['invoice_supplier'])) {
+				$invoice_supplier = $objectsrc->linkedObjects['invoice_supplier'];
+			} else {
+				$invoice_supplier = [];
+			}
 			'@phan-var-force null|FactureFournisseur[] $invoice_supplier';
 
 			// count function need a array as argument (Note: the array must implement Countable too)
