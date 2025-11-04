@@ -2740,10 +2740,11 @@ if ($action == 'create') {
 		// Label
 		print '<tr><td>'.$langs->trans('Label').'</td><td><input class="minwidth200" name="label" value="'.dol_escape_htmltag(GETPOST('label')).'" type="text"></td></tr>';
 
+
 		// Date invoice
 		print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate((int) $dateinvoice, '', 0, 0, 0, "add", 1, 1);
+		print $form->selectDate($dateinvoice, '', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
 		// Payment term
