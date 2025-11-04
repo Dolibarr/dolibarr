@@ -4141,14 +4141,13 @@ function dol_now($mode = 'gmt')
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
 		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
-		//} elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
-		//	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		//	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
-		//	$ret=dol_now('gmt')+($tzsecond*3600);
-		//}
+		// } elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
+		// 	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		// 	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
+		// 	$ret=dol_now('gmt')+($tzsecond*3600);
 	} elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {
 		// Time for now with user timezone added
-		//print 'time: '.time();
+		// print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 		$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
 		$ret = (int) (dol_now('gmt') + ($offsettz + $offsetdst));
