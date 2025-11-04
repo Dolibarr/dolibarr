@@ -907,18 +907,6 @@ parameters:
 			path: ../../../htdocs/admin/system/dolibarr.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
-
-		-
 			message: '#^Loose comparison using \!\= between '''' and ''kanban'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -1899,12 +1887,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\<" between int\<1, max\> and 1 is always false\.$#'
 			identifier: smaller.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/action/pertype.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/comm/action/pertype.php
 
@@ -9199,12 +9181,6 @@ parameters:
 			path: ../../../htdocs/exports/export.php
 
 		-
-			message: '#^Variable \$heightforframes might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/externalsite/frames.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -14339,12 +14315,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/reception/class/receptionlinebatch.class.php
 
 		-
 			message: '#^Property ReceptionLineBatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
