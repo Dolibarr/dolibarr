@@ -2432,13 +2432,13 @@ class Setup extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 		if ($active != -1)
-			$sql .= " AND active =".$active;
+			$sql .= " AND active = ".((int) $active);
 
 		if ($fk_country == -1)
-			$sql .= " AND fk_pays =".$mysoc->country_id;
+			$sql .= " AND fk_pays =".((int) $mysoc->country_id);
 
 		if ($fk_country >0)
-			$sql .= " AND fk_pays =".$fk_country;
+			$sql .= " AND fk_pays =".((int) $fk_country);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
