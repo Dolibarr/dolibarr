@@ -599,7 +599,7 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 				if (getDolGlobalString("ACCOUNTING_FILES_DETAIL_VATRATES")) {
 					$infoFile = explode('_', $key);
 					if ($infoFile[0] =="Invoice") {
-						$invoice->id = $infoFile[1];
+						$invoice->id = (int) $infoFile[1];
 						$invoice->fetch_lines();
 						$vatArray = array();
 						foreach ($invoice->lines as $line) {
