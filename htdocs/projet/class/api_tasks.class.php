@@ -766,8 +766,7 @@ class Tasks extends DolibarrApi
 		return $object;
 	}
 
-
-	/**  
+	/**
 	 * Get contacts of given task
 	 *
 	 * Return an array with contact information
