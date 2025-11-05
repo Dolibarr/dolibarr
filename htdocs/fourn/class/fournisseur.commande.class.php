@@ -3070,7 +3070,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param     	int|float	$pu              	Unit price
 	 *	@param     	int|float	$qty             	Quantity
 	 *	@param     	int|float	$remise_percent  	Percent discount on line
-	 *	@param     	int|float	$txtva          	VAT rate
+	 *	@param     	int|float|string	$txtva      VAT Rate (Can be '1.23' or '1.23 (ABC)')
 	 *  @param     	int|float	$txlocaltax1	    Localtax1 tax
 	 *  @param     	int|float	$txlocaltax2   		Localtax2 tax
 	 *  @param     	string		$price_base_type 	Type of price base
