@@ -924,6 +924,7 @@ class Projects extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve timestamp list : '.$this->db->lasterror());
 		}
+		$obj_ret = [];
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
@@ -931,8 +932,6 @@ class Projects extends DolibarrApi
 			$total = $this->db->fetch_object($totalsResult)->total;
 
 			$tmp = $obj_ret;
-			$obj_ret = [];
-
 			$obj_ret['data'] = $tmp;
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
