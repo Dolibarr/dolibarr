@@ -465,7 +465,7 @@ if (empty($reshook)) {
 
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin    = 'commande';
-				$objecttmp->origin_id = $id_order;
+				$objecttmp->origin_id = (int) $id_order;
 
 				$objecttmp->array_options = $cmd->array_options; // Copy extrafields
 

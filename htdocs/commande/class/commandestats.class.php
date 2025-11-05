@@ -100,12 +100,14 @@ class CommandeStats extends Stats
 	 */
 	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
 	{
+		global $hookmanager;
 		$this->db = $db;
 
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
+		$object = null;
 
 		if ($mode == 'customer') {
 			$object = new Commande($this->db);
@@ -142,6 +144,10 @@ class CommandeStats extends Stats
 		if ($categid) {
 			$this->where .= ' AND EXISTS (SELECT rowid FROM '.$this->categ_link.' as cats WHERE cats.fk_soc = c.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
+		// Add where from hooks
+		$parameters = array('socid' => $socid);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$this->where .= $hookmanager->resPrint;
 	}
 
 	/**

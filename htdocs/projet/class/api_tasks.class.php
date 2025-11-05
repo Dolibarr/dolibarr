@@ -196,6 +196,7 @@ class Tasks extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
@@ -218,6 +219,49 @@ class Tasks extends DolibarrApi
 		  }
 		  $this->project->lines = $lines;
 		}*/
+
+		// Auto-generate the "ref" field if it is set to "auto"
+		if ($this->task->ref == -1 || $this->task->ref === 'auto') {
+			$reldir = '';
+			$defaultref = '';
+			$file = '';
+			$classname = '';
+			$filefound = 0;
+			$modele = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
+
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir) {
+				$file = dol_buildpath($reldir."core/modules/project/task/".$modele.'.php', 0);
+				if (file_exists($file)) {
+					$filefound = 1;
+					$classname = $modele;
+					break;
+				}
+			}
+			if ($filefound && !empty($classname)) {
+				$result = dol_include_once($reldir . "core/modules/project/task/" . $modele . '.php');
+				if ($result !== false && class_exists($classname)) {
+					$modTask = new $classname();
+					'@phan-var-force ModeleNumRefTask $modTask';
+					$defaultref = $modTask->getNextValue(null, $this->task);
+				} else {
+					dol_syslog("Failed to include module file or invalid classname: " . $reldir . "core/modules/project/task/" . $modele . '.php', LOG_ERR);
+				}
+			} else {
+				dol_syslog("Module file not found or classname is empty: " . $modele, LOG_ERR);
+			}
+
+			if (is_numeric($defaultref) && $defaultref <= 0) {
+				$defaultref = '';
+			}
+
+			if (empty($defaultref)) {
+				$defaultref = 'TK' . dol_print_date(dol_now(), 'dayrfc');
+			}
+
+			$this->task->ref = $defaultref;
+		}
+
 		if ($this->task->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating task", array_merge(array($this->task->error), $this->task->errors));
 		}
@@ -529,6 +573,7 @@ class Tasks extends DolibarrApi
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
+	 * @param   int|null    $progress           Progress percentage (0-100). If null, progress is not updated
 	 *
 	 * @url POST    {id}/addtimespent
 	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"
@@ -537,7 +582,7 @@ class Tasks extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
-	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
+	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '', $progress = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403);
@@ -563,6 +608,8 @@ class Tasks extends DolibarrApi
 		$this->task->timespent_duration = $duration;
 		$this->task->timespent_fk_user  = $uid;
 		$this->task->timespent_note     = $note;
+		if (!empty($this->task->progress))
+			$this->task->progress  		= $progress;
 
 		$result = $this->task->addTimeSpent(DolibarrApiAccess::$user, 0);
 		if ($result == 0) {

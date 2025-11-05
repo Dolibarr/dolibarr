@@ -163,14 +163,14 @@ $BUILDROOT="$TEMP/buildroot";
 
 
 # Get version $MAJOR, $MINOR and $BUILD
-$result = open( IN, "<" . $SOURCE . "/htdocs/filefunc.inc.php" );
-if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
+$result = open( IN, "<" . $SOURCE . "/htdocs/version.inc.php" );
+if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/version.inc.php\n"; }
 while (<IN>) {
 	if ( $_ =~ /define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
 }
 close IN;
 ($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
-if ($MINOR eq '') { die "Error can't detect version into ".$SOURCE . "/htdocs/filefunc.inc.php"; }
+if ($MINOR eq '') { die "Error can't detect version into ".$SOURCE . "/htdocs/version.inc.php"; }
 
 # Set vars for packaging
 $FILENAME            = "$PROJECT";

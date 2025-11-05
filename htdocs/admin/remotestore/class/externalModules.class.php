@@ -101,6 +101,16 @@ class ExternalModules
 	public $githubFileStatus;
 
 	/**
+	 * @var string
+	 */
+	public $githubFileError;
+
+	/**
+	 * @var string
+	 */
+	public $error;
+
+	/**
 	 * @var int // number of online providers
 	 */
 	public $numberOfProviders;
@@ -169,6 +179,7 @@ class ExternalModules
 
 			$this->getRemoteYamlFile($this->file_source_url, $cachedelayforgithubrepo);
 
+			$this->githubFileError = $this->error;
 			$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
 		}
 
@@ -447,7 +458,11 @@ class ExternalModules
 					$price = '<h3><a href="'.$urlview.'" target="_blank">'.$langs->trans('SeeOnDoliStore').'</a></h3>';
 				} elseif ($product['source'] === 'githubcommunity') {
 					if (array_key_exists('price_ht', $product) && empty($product['price_ht'])) {
-						$price = '<h3>'.$langs->trans('Free').'</h3>';
+						if ($product['status'] == 'soon') {
+							$price = '<h3>'.$langs->trans('StillInDevelopment').'</h3>';
+						} else {
+							$price = '<h3>'.$langs->trans('Free').'</h3>';
+						}
 					} else {
 						if ($product["dolistore-download"]) {
 							$price = '<h3><a href="'.$product["dolistore-download"].'" target="_blank">'.$langs->trans('SeeOnDoliStore').'</a></h3>';
@@ -892,7 +907,10 @@ class ExternalModules
 			$result = getURLContent($file_source_url, 'GET', '', 1, $addheaders);	// TODO Force timeout to 5 s on both connect and response.
 			if (!empty($result) && $result['http_code'] == 200) {
 				$yaml = $result['content'];
-				file_put_contents($cache_file, $yaml);
+				$result = file_put_contents($cache_file, $yaml);
+				if ($result === false) {
+					$this->error = 'Failed to create cache file: ' . $cache_file;
+				}
 			}
 		} else {
 			$yaml = file_get_contents($cache_file);

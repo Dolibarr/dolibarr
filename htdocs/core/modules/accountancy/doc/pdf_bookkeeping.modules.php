@@ -62,7 +62,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	public $update_main_doc_field;
 
 	/**
-	 * @var string document type
+	 * @var string 			Document type
 	 */
 	public $type;
 
@@ -73,12 +73,12 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int $fromDate Start timestamp
+	 * @var int $fromDate 	Start timestamp
 	 */
 	public $fromDate;
 
 	/**
-	 * @var int $toDate Start timestamp
+	 * @var int $toDate 	Start timestamp
 	 */
 	public $toDate;
 
@@ -278,15 +278,15 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pagenb = $pageposbeforeprintlines;
 
 		// Knowing how many month our period covers
-		$fromYear = date('Y', $this->fromDate);
-		$fromMonth = date('m', $this->fromDate);
-		$toYear = date('Y', $this->toDate);
-		$toMonth = date('m', $this->toDate);
+		$fromYear = dol_print_date($this->fromDate, "%Y");
+		$fromMonth = dol_print_date($this->fromDate, "%m");
+		$toYear = dol_print_date($this->toDate, "%Y");
+		$toMonth = dol_print_date($this->toDate, "%m");
 		$nbMonths = (((int) $toYear - (int) $fromYear) * 12) + ((int) $toMonth - (int) $fromMonth) + 1;
-		$datePlusOneMonth = strtotime("-1 month", $this->fromDate);
+		$datePlusOneMonth = dol_time_plus_duree($this->fromDate, -1, 'm');
 		$dates = [];
 		for ($i = 0; $i  < $nbMonths; $i++) {
-			$datePlusOneMonth = strtotime("+1 month", $datePlusOneMonth);
+			$datePlusOneMonth = dol_time_plus_duree($datePlusOneMonth, 1, "m");
 			$dates[$datePlusOneMonth] = dol_print_date($datePlusOneMonth, "%B %Y");
 		}
 
@@ -518,8 +518,8 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			$tab_top_newpage,
 			$totalDebit,
 			$totalCredit,
+			true
 		);
-
 
 
 		// Show square

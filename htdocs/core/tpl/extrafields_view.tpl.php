@@ -323,6 +323,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
+				print '<input type="hidden" value="' . $value . '" name="options_' . $tmpkeyextra . '" id="options_' . $tmpkeyextra . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
 			}
 
 			print '</td>';

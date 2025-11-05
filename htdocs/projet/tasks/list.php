@@ -272,9 +272,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if (empty($search_projectstatus) && $search_projectstatus == '') {
-	$search_projectstatus = 1;
-}
+// already done at line 85
+// if (empty($search_projectstatus) && $search_projectstatus == '') {
+// 	$search_projectstatus = 1;
+// }
 
 /*
  * View
