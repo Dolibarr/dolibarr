@@ -1074,7 +1074,6 @@ class Projects extends DolibarrApi
 		$this->project->getLinesArray(DolibarrApiAccess::$user);
 		$allTimespent = array();
 		foreach ($this->project->lines as $task) {
-
 			$allTimespent[] = $task->getSummaryOfTimeSpent();
 			//var_dump($taskTimespent);
 			//foreach ($taskTimespent as $time) {
