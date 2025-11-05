@@ -334,5 +334,5 @@ ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 
-ALTER TABLE llx_societe MODIFY COLUMN mode_reglement SMALLINT(6);
+ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
 -- end of migration
