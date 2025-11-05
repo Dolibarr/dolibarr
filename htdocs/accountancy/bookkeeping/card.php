@@ -451,44 +451,14 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'clonebookkeepingwriting' && $permissiontoadd) {
+	if ($action == 'clonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
+		// Reread the values sent by the validated form
 		$piece_num = GETPOST('piece_num', 'alpha');
-		$formaccounting = new FormAccounting($db);
+		$journal_code = GETPOST('code_journal', 'alpha');
 
-		$form = new Form($db);
-		$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "create_mvt", 1, 1);
-		$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
-		$inputHidden = '<input type="hidden" name="piece_num_hidden" id="piece_num_hidden" value="'.$piece_num.'">';
+		// Reconstruct the selected date
+		$clonedate = dol_mktime(0, 0, 0, GETPOSTINT('clonedatemonth'), GETPOSTINT('clonedateday'), GETPOSTINT('clonedateyear'));
 
-		$formquestion = array(
-			array(
-				'type' => 'date',
-				'name' => 'clonedate',
-				'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
-				'value' => $input1
-			)
-		);
-
-		if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
-			$formquestion[] = array(
-				'type' => 'text',
-				'name' => 'code_journal',
-				'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
-				'value' => $input2
-			);
-		}
-
-		print $form->formconfirm(
-			$_SERVER["PHP_SELF"],
-			$langs->trans("ConfirmMassCloneBookkeepingWriting"),
-			$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)),
-			"clonebookkeepingwriting",
-			$formquestion,
-			'', 0, 300, 1000, 1
-		);
-	}
-
-	if ($action == 'preclonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
 		$result = $object->newClone($piece_num, $journal_code, $clonedate);
 
 		if ($result == -1) {
@@ -497,7 +467,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$db->commit();
-			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . $object->getNextNumMvt() - 1);
+			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . ($object->getNextNumMvt() - 1));
 			exit();
 		} else {
 			$db->rollback();
@@ -635,6 +605,7 @@ if ($action == 'create') {
 		}*/
 
 		$head = accounting_transaction_prepare_head($object, $mode, $type, $backtopage);
+
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
 		//$object->label = $object->doc_ref;
@@ -650,6 +621,46 @@ if ($action == 'create') {
 		$morehtmlref .= '</div>';
 
 		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
+
+
+		if ($action == 'clonebookkeepingwriting' && $confirm != 'yes' && $permissiontoadd) {
+			$piece_num = GETPOST('piece_num', 'alpha');
+			$formaccounting = new FormAccounting($db);
+
+			$form = new Form($db);
+			$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "", 1, 1);
+			$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1);
+
+			$formquestion = array(
+				array(
+					'type' => 'other',
+					'name' => 'clonedate',
+					'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
+					'value' => $input1
+				)
+			);
+
+			$formquestion[] = array('type' => 'hidden', 'name' => 'piece_num', 'value' => $piece_num);
+
+			if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
+				$formquestion[] = array(
+					'type' => 'text',
+					'name' => 'code_journal',
+					'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
+					'value' => $input2
+				);
+			}
+
+			print $form->formconfirm(
+				$_SERVER["PHP_SELF"],
+				$langs->trans("ConfirmMassCloneBookkeepingWriting"),
+				$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", 1),
+				"clonebookkeepingwriting",
+				$formquestion,
+				'', 0, 300, 1000, 0
+			);
+		}
+
 
 		print '<div class="fichecenter">';
 

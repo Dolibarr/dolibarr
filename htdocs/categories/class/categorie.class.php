@@ -177,8 +177,8 @@ class Categorie extends CommonObject
 		'invoice'				=> 'Facture',
 		'supplier_order'		=> 'CommandeFournisseur',
 		'supplier_invoice'		=> 'FactureFournisseur',
-		'supplier_proposal' => 'SupplierProposal',
-		'propal' => 'Propal',
+		'supplier_proposal' 	=> 'SupplierProposal',
+		'propal' 				=> 'Propal'
 	);
 
 	/**
@@ -205,8 +205,8 @@ class Categorie extends CommonObject
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
 		'supplier_invoice'		=> 'SuppliersInvoices',
-		'propal' => 'Proposals',
-		'supplier_proposal' => 'SupplierProposals',
+		'propal' 				=> 'Proposals',
+		'supplier_proposal' 	=> 'SupplierProposals'
 	);
 
 	/**
