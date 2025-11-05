@@ -649,14 +649,14 @@ while ($i < $imaxinloop) {
 	}
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
-		print '<td>'.$objectstatic->getNomUrl(5).'</td>';
+		print '<td class="tdoverflowmax150">'.$objectstatic->getNomUrl(5).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['ty.label']['checked'])) {
-		print '<td>'.$objectstatic->type_label.'</td>';
+		print '<td class="tdoverflowmax200">'.$objectstatic->type_label.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

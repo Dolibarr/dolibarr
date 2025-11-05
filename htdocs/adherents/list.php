@@ -648,7 +648,7 @@ $query = [];
 if (!empty($mode)) {
 	$query += ['mode' => $mode];
 }
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+if ($contextpage != $_SERVER["PHP_SELF"]) {
 	$query += ['contextpage' => $contextpage];
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
