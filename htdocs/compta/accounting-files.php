@@ -616,7 +616,7 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 								$log .= ',0';
 							}
 						}
-					}else{
+					} else {
 						foreach ($form->cache_vatrates as $key => $val) {
 							$log .= ',';
 						}
