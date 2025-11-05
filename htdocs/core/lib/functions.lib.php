@@ -517,7 +517,6 @@ function getEntity($element, $shared = 1, $currentobject = null)
 			$element = 'supplier_invoice';
 			break; // "/fourn/class/fournisseur.facture.class.php"
 	}
-
 	if (is_object($mc)) {
 		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
@@ -550,7 +549,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 			$out = $hookmanager->resPrint; // replace
 		}
 	}
-
+	if (substr(trim($out), -1) == ',') {
+		$out .= ((int) $conf->entity);
+	}
 	return $out;
 }
 
