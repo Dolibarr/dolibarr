@@ -335,4 +335,8 @@ ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF', '[70,67]', 1, 'Congolese Franc');
+
+ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
+
 -- end of migration

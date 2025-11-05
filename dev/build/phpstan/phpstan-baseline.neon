@@ -349,12 +349,6 @@ parameters:
 			path: ../../../htdocs/accountancy/supplier/list.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/adherents/admin/member.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -389,18 +383,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/adherents/list.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/adherents/list.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/adherents/messaging.php
 
 		-
 			message: '#^Variable \$bankline in empty\(\) always exists and is not falsy\.$#'
@@ -1081,36 +1063,6 @@ parameters:
 			path: ../../../htdocs/admin/workflow.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/workstation.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/workstation.php
-
-		-
-			message: '#^Variable \$label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/admin/workstation.php
-
-		-
-			message: '#^Variable \$scandir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/admin/workstation.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/admin/workstation.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''edit'' and ''edit'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -1221,12 +1173,6 @@ parameters:
 		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
-			message: '#^Variable \$setupnotempty in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/asset/admin/setup.php
 

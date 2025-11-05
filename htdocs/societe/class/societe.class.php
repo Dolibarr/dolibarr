@@ -233,7 +233,7 @@ class Societe extends CommonObject
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 280),
 		//'remise_client' =>array('type'=>'double', 'label'=>'CustomerDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>285, 'isameasure'=>1),
 		//'remise_supplier' =>array('type'=>'double', 'label'=>'SupplierDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>290, 'isameasure'=>1),
-		'mode_reglement' => array('type' => 'tinyint(4)', 'label' => 'Mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 295),
+		'mode_reglement' => array('type' => 'smallint(6)', 'label' => 'Mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 295),
 		'cond_reglement' => array('type' => 'tinyint(4)', 'label' => 'Cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 300),
 		'deposit_percent' => array('type' => 'varchar(63)', 'label' => 'DepositPercent', 'enabled' => 1, 'visible' => -1, 'position' => 301),
 		'mode_reglement_supplier' => array('type' => 'integer', 'label' => 'Mode reglement supplier', 'enabled' => 1, 'visible' => -1, 'position' => 305),

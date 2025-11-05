@@ -66,6 +66,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KYD'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CLP', '[36]', 1,			    	'Chile Peso');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CNY', '[165]', 1,			    	'China Yuan Renminbi');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'COP', '[36]', 1,	    			'Colombia Peso');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF', '[70,67]', 1,		    		'Congolese Franc');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CRC', '[8353]', 1,		  		'Costa Rica Colon');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HRK', '[107,110]', 1,		  	'Croatia Kuna');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CUP', '[8369]', 1,		  		'Cuba Peso');

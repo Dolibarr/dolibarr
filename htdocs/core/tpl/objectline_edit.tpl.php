@@ -102,7 +102,7 @@ if (!empty($inputalsopricewithtax)) {
 if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
@@ -260,7 +260,7 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
@@ -278,7 +278,7 @@ $coldisplay++;
 		print '></td>';
 	}
 
-	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
 		$multicurrency_upinctax = $line->multicurrency_subprice_ttc ? $line->multicurrency_subprice_ttc : null;
 		if (!$multicurrency_upinctax) {

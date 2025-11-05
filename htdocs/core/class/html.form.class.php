@@ -12632,7 +12632,7 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			$retstring .= '<input type="submit" class="button button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
+			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
 		}
 		$retstring .= $withoutdiv ? '' : '</div>';
 
