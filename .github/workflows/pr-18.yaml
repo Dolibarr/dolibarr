@@ -39,13 +39,26 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Assign reviewer
+    - name: Assign Tag
+      env:
+        GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        url: ${{ github.event.pull_request.html_url }}
+      run: |
+        echo "env.url=${{env.url}}"
+          gh pr edit "${{env.url}}" --add-label "Issue for v18 maintenance Team"
+
+    - name: Assign reviewer 1
+      env:
+        GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        url: ${{ github.event.pull_request.html_url }}
+      run: |
+        echo "env.url=${{env.url}}"
+        gh pr edit "${{env.url}}" --add-reviewer lvessiller-opendsi
+
+    - name: Assign reviewer 2
       env:
         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         url: ${{ github.event.pull_request.html_url }}
       run: |
         echo "env.url=${{env.url}}"
         gh pr edit "${{env.url}}" --add-reviewer rycks
-        gh pr edit "${{env.url}}" --add-reviewer lvessiller-opendsi
-        #gh pr edit "${{env.url}}" --add-reviewer eldy
-        gh pr edit "${{env.url}}" --add-label "Issue for v18 maintenance Team"
