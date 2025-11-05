@@ -104,13 +104,15 @@ class WebPortalTheme
 
 		$context = Context::getInstance();
 
-		$urllogo = Context::getRootConfigUrl() . 'img/login_logo.png';
-		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo = $context->getControllerUrl('viewimage') . '&modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-			$urllogo = $context->getControllerUrl('viewimage') . '&modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$mysoc->logo);
-		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/public/webportal/img/dolibarr_logo.svg')) {
-			$urllogo = Context::getRootConfigUrl() . 'img/dolibarr_logo.svg';
+		$urllogo = Context::getRootConfigUrl() . 'img/login_logo.svg';
+		if ($context->userIsLog()) {
+			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
+				$urllogo = $context->getControllerUrl('viewimage') . '&modulepart=mycompany&entity=' . $conf->entity . '&file=' . urlencode('logos/thumbs/' . $mysoc->logo_small);
+			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
+				$urllogo = $context->getControllerUrl('viewimage') . '&modulepart=mycompany&entity=' . $conf->entity . '&file=' . urlencode('logos/' . $mysoc->logo);
+			} elseif (is_readable(DOL_DOCUMENT_ROOT . '/public/webportal/img/dolibarr_logo.svg')) {
+				$urllogo = Context::getRootConfigUrl() . 'img/dolibarr_logo.svg';
+			}
 		}
 
 		$this->loginLogoUrl = getDolGlobalString('WEBPORTAL_LOGIN_LOGO_URL', $urllogo);
