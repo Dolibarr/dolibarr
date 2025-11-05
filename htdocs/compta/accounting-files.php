@@ -7,6 +7,7 @@
  * Copyright (C) 2022-2025	Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		Charlene Benke				<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 
 if (isModEnabled('project')) {
@@ -156,7 +158,20 @@ $listofchoices = array(
 	'selectloanspayment' => array('label' => 'PaymentLoan','picto' => 'loan', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('loan', 'read')),
 );
 
+$form = new Form($db);
+$formfile = new FormFile($db);
+$userstatic = new User($db);
+$invoice = new Facture($db);
+$supplier_invoice = new FactureFournisseur($db);
+$expensereport = new ExpenseReport($db);
+$don = new Don($db);
+$salary_payment = new PaymentSalary($db);
+$charge_sociales = new ChargeSociales($db);
+$various_payment = new PaymentVarious($db);
+$payment_loan = new PaymentLoan($db);
 
+if (getDolGlobalString("ACCOUNTING_FILES_DETAIL_VATRATES"))
+	$form->load_cache_vatrates("'". $mysoc->country_code ."'");
 
 /*
  * Actions
@@ -531,6 +546,11 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 		$log .= ','.$langs->transnoentitiesnoconv("TotalVAT");
 		$log .= ','.$langs->transcountrynoentities("TotalLT1", $mysoc->country_code);
 		$log .= ','.$langs->transcountrynoentities("TotalLT2", $mysoc->country_code);
+		if (getDolGlobalString("ACCOUNTING_FILES_DETAIL_VATRATES")) {
+			foreach ($form->cache_vatrates as $key => $val) {
+				$log .= ','.$langs->transnoentitiesnoconv("TotalVAT").' '.$val['label'];
+			}
+		}
 		$log .= ','.$langs->transnoentitiesnoconv("RevenueStamp");
 		$log .= ','.$langs->transnoentitiesnoconv("Paid");
 		$log .= ','.$langs->transnoentitiesnoconv("Document");
@@ -576,6 +596,32 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 				$log .= ','.$file['amount_vat'];
 				$log .= ','.$file['amount_localtax1'];
 				$log .= ','.$file['amount_localtax2'];
+				if (getDolGlobalString("ACCOUNTING_FILES_DETAIL_VATRATES")) {
+					$infoFile = explode('_', $key);
+					if ($infoFile[0] =="Invoice") {
+						$invoice->id = $infoFile[1];
+						$invoice->fetch_lines();
+						$vatArray = array();
+						foreach ($invoice->lines as $line) {
+							$tva_tx =  price2num($line->tva_tx);
+							if (!isset($vatArray[$tva_tx])) {
+								$vatArray[$tva_tx] = 0;
+							}
+							$vatArray[$tva_tx]+= $line->total_tva;
+						}
+						foreach ($form->cache_vatrates as $key => $val) {
+							if (isset($vatArray[price2num($val['txtva'])])) {
+								$log .= ','.$vatArray[price2num($val['txtva'])];
+							} else {
+								$log .= ',0';
+							}
+						}
+					}else{
+						foreach ($form->cache_vatrates as $key => $val) {
+							$log .= ',';
+						}
+					}
+				}
 				$log .= ','.$file['amount_revenuestamp'];
 				$log .= ','.$file['paid'];
 				$log .= ',"'.$file["name"].'"';
@@ -610,17 +656,6 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
  * View
  */
 
-$form = new Form($db);
-$formfile = new FormFile($db);
-$userstatic = new User($db);
-$invoice = new Facture($db);
-$supplier_invoice = new FactureFournisseur($db);
-$expensereport = new ExpenseReport($db);
-$don = new Don($db);
-$salary_payment = new PaymentSalary($db);
-$charge_sociales = new ChargeSociales($db);
-$various_payment = new PaymentVarious($db);
-$payment_loan = new PaymentLoan($db);
 
 $title = $langs->trans("AccountantFiles").' - '.$langs->trans("List");
 $help_url = '';
@@ -814,7 +849,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 			// Ref
 			print '<td class="nowraponall tdoverflowmax150">';
-
+			$vatArray = array();
 			if ($data['item'] == 'Invoice') {
 				$invoice->id = (int) $data['id'];
 				$invoice->ref = $data['ref'];
@@ -826,6 +861,16 @@ if (!empty($date_start) && !empty($date_stop)) {
 				$invoice->revenuestamp = $data['amount_revenuestamp'];
 				$invoice->multicurrency_code = $data['currency'];
 				print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+				if (getDolGlobalString("ACCOUNTING_FILES_DETAIL_VATRATES")) {
+					$invoice->fetch_lines();
+					$vatArray = array();
+					foreach ($invoice->lines as $line) {
+						if (!isset($vatArray[$line->tva_tx])) {
+							$vatArray[$line->tva_tx] = 0;
+						}
+						$vatArray[$line->tva_tx]+= $line->total_tva;
+					}
+				}
 			} elseif ($data['item'] == 'SupplierInvoice') {
 				$supplier_invoice->id = (int) $data['id'];
 				$supplier_invoice->ref = $data['ref'];
@@ -905,7 +950,20 @@ if (!empty($date_start) && !empty($date_stop)) {
 			print '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltip).'">'.price(price2num($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'], 'MT')).'</span>';
 			print "</span></td>\n";
 			// Total VAT
-			print '<td class="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</span></td>\n";
+			print '<td class="right">';
+			if ((getDolGlobalString("ACCOUNTING_FILES_DETAIL_VATRATES")) && !empty($vatArray)) {
+				$tooltipvat = '';
+				foreach ($vatArray as $tva_tx => $amount_tva) {
+					if ($tooltipvat) {
+						$tooltipvat .= '<br>';
+					}
+					$tooltipvat .= $langs->trans("VATRate").' '.price2num($tva_tx, 'MT').'% : '.price(price2num($data['sens'] ? $amount_tva : -$amount_tva, 'MT'));
+				}
+				print '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltipvat).'">';
+			} else {
+				print '<span class="amount">';
+			}
+			print price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</span></td>\n";
 
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name'])."</td>\n";
 
