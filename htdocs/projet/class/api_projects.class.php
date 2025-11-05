@@ -911,7 +911,7 @@ class Projects extends DolibarrApi
 
 		dol_syslog("API Rest request");
 		$result = $this->db->query($sql);
-
+		$obj_ret = array();
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
@@ -924,7 +924,7 @@ class Projects extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve timestamp list : '.$this->db->lasterror());
 		}
-		$obj_ret = [];
+
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
