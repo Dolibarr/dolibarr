@@ -5,10 +5,11 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2023      Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023      Benjamin GREMBI         <benjamin@oarces.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'multicurrency'));
@@ -75,6 +84,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$accountfrom = array();
 	$accountto = array();
 	$type = array();
+	$number = array();
 	$tabnum = array();
 	$maxtab = 1;
 
@@ -86,6 +96,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 		$accountfrom[$i] = GETPOSTINT($i.'_account_from');
 		$accountto[$i] = GETPOSTINT($i.'_account_to');
 		$type[$i] = GETPOSTINT($i.'_type');
+		$number[$i] = GETPOST($i.'_num_chq', 'alpha');
 
 		$tabnum[$i] = 0;
 		if (!empty($label[$i]) || !($amount[$i] <= 0) || !($accountfrom[$i] < 0) || !($accountto[$i]  < 0)) {
@@ -165,13 +176,13 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				}
 
 				if (!$error) {
-					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * (float) $amount[$n]), '', '', $user);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], (float) price2num(-1 * (float) $amount[$n]), $number[$n], 0, $user);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$error++;
 				}
 				if (!$error) {
-					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', '', $user);
+					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], (float) $amountto[$n], $number[$n], 0, $user);
 				}
 				if (!($bank_line_id_to > 0)) {
 					$error++;
@@ -281,7 +292,7 @@ print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_acco
 print '<span class="opacitymedium">'.$langs->trans("TransferDesc").'</span>';
 print '<br><br>';
 
-print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="add" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add">';
 
@@ -295,6 +306,7 @@ print '<th>'.$langs->trans("TransferFrom").'</th>';
 print '<th>'.$langs->trans("TransferTo").'</th>';
 print '<th>'.$langs->trans("Type").'</th>';
 print '<th>'.$langs->trans("Date").'</th>';
+print '<th>'.$langs->trans("Number").'</th>';
 print '<th>'.$langs->trans("Description").'</th>';
 print '<th class="right">'.$langs->trans("Amount").'</th>';
 print '<td class="hideobject multicurrency right">'.$langs->trans("AmountToOthercurrency").'</td>';
@@ -304,11 +316,13 @@ for ($i = 1 ; $i < $MAXLINESFORTRANSFERT; $i++) {
 	$label = '';
 	$amount = '';
 	$amountto = '';
+	$number = '';
 
 	if ($error) {
 		$label = GETPOST($i.'_label', 'alpha');
 		$amount = GETPOST($i.'_amount', 'alpha');
 		$amountto = GETPOST($i.'_amountto', 'alpha');
+		$number = GETPOST($i.'_num_chq', 'alpha');
 	}
 
 	if ($i == 1) {
@@ -339,6 +353,9 @@ for ($i = 1 ; $i < $MAXLINESFORTRANSFERT; $i++) {
 	print '<td class="nowraponall">';
 	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', 0, 0, 0, 'add');
 	print "</td>\n";
+
+	// Number
+	print '<td><input name="'.$i.'_num_chq" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($number).'"></td>';
 
 	// Description
 	print '<td><input name="'.$i.'_label" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($label).'"></td>';

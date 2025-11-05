@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s kitöltött egy sort.\nA szavazásodat a következő linken
 ShowSurvey=Felmérés megjelenítése
 UserMustBeSameThanUserUsedToVote=Hozzászólás közzétételéhez szavaznia kell, és ugyanazt a felhasználónevet kell használnia, amelyet a szavazáshoz használt
 ListOfOpenSurveys=Nyitott felmérések listája
+AddTheVote=Kattintson a szavazás hozzáadásához

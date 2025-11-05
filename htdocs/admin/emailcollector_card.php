@@ -2,6 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Charlene Benke	   <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,14 @@ use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -64,7 +73,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $operationid = GETPOSTINT('operationid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->emailcollector->dir_output.'/temp/massgeneration/'.$user->id;
@@ -92,13 +101,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 $permissionnote = $user->admin; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->admin; // Used by the include of actions_dellink.inc.php
@@ -280,7 +289,7 @@ llxHeader('', 'EmailCollector', $help_url, '', 0, 0, '', '', '', 'mod-admin page
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEmailCollector", $langs->transnoentitiesnoconv("EmailCollector")));
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -310,7 +319,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("EmailCollector"));
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -447,15 +456,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$credentials = new Credentials(
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
-							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
+							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLCALLBACK')
 						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 
 						// ex service is Google-Emails we need only the first part Google
 						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+						'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 
-						// We have to save the token because Google give it only once
+						// We need to save the token because Google provides it only once
 						$refreshtoken = $tokenobj->getRefreshToken();
 
 						//var_dump($tokenobj);
@@ -465,6 +475,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							throw new Exception("Failed to refresh access token: ".$e->getMessage());
 						}
 
+						// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
@@ -621,6 +632,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Common attributes
 	//$keyforbreak='fieldkeytoswithonsecondcolumn';
+	$nounderbanner = 1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
@@ -629,7 +641,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</table>';
 
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updatefiltersactions">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -637,7 +649,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Filters
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelineoffilters" class="noborder nobordertop noshadow">';
+	print '<table id="tablelineoffilters" class="noborder noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
@@ -826,16 +838,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Move up/down
 		print '<td class="center linecolmove tdlineupdown">';
 		if ($i > 0) {
-			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$ruleaction['id'].'">'.img_up('default', 0, 'imgupforline').'</a>';
+			print '<a class="lineupdown" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'up', 'rowid' => $ruleaction['id']], true).'">'.img_up('default', 0, 'imgupforline').'</a>';
 		}
 		if ($i < count($object->actions) - 1) {
-			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$ruleaction['id'].'">'.img_down('default', 0, 'imgdownforline').'</a>';
+			print '<a class="lineupdown" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'down', 'rowid' => $ruleaction['id']], true).'">'.img_down('default', 0, 'imgdownforline').'</a>';
 		}
 		print '</td>';
 		// Delete
 		print '<td class="right nowraponall">';
 		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
+		print ' <a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'deleteoperation', 'operationid' => $ruleaction['id']], true).'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
 		$i++;

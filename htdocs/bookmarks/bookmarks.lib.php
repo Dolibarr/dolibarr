@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ function printDropdownBookmarksList()
 	$tmpurl = '';
 	// No urlencode, all param $url will be urlencoded later
 	if ($sortfield) {
-		$tmpurl .= ($tmpurl ? '&' : '').'sortfield='.urlencode($sortfield);
+		$tmpurl .= /* ($tmpurl ? '&' : ''). */'sortfield='.urlencode($sortfield);
 	}
 	if ($sortorder) {
 		$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.urlencode($sortorder);
@@ -90,16 +91,16 @@ function printDropdownBookmarksList()
 	$newbtn = '';
 	if ($user->hasRight('bookmark', 'creer')) {
 		if (!preg_match('/bookmarks\/card.php/', $_SERVER['PHP_SELF'])) {
-			//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
-			$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
+			//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);	// With &amp; the GETPOST('url') will fail.
+			$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&url='.urlencode($url);
 			$newbtn .= '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.dol_escape_htmltag($urltoadd).'" >';
-			$newbtn .= img_picto('', 'add', '', false, 0, 0, '', 'paddingright').dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
+			$newbtn .= img_picto('', 'add', '', 0, 0, 0, '', 'pictofixedwidth paddingright').dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
 		}
 	}
 
 	// Url to list/edit bookmark
 	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
-	$listbtn .= img_picto('', 'edit', 'class="paddingright opacitymedium"').$langs->trans('EditBookmarks').'</a>';
+	$listbtn .= img_picto('', 'edit', 'class="pictofixedwidth paddingright opacitymedium"').$langs->trans('EditBookmarks').'</a>';
 
 	$bookmarkList = '';
 	$bookmarkNb = 0;
@@ -121,10 +122,18 @@ function printDropdownBookmarksList()
 			}
 			$bookmarkList .= '</div>';
 
-			$searchForm .= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
+			$searchForm .= '<input ';
+			$searchForm .= ' name="bookmark" ';
+			$searchForm .= ' id="top-bookmark-search-input" ';
+			$searchForm .= ' class="dropdown-search-input" ';
+			$searchForm .= ' placeholder="' . $langs->trans('Bookmarks') . '" ';
+			$searchForm .= ' data-search-tool-target="#dropdown-bookmarks-list .bookmark-item" ';
+			$searchForm .= ' data-counter-target="#top-bookmark-search-filter-count" ';
+			$searchForm .= ' data-no-item-target="#top-bookmark-search-nothing-found" ';
+			$searchForm .= ' autocomplete="off" ';
+			$searchForm .= ' >';
 		} else {
 			$searchForm .= '<select name="bookmark" id="boxbookmark" class="topmenu-bookmark-dropdown .dropdown-toggle maxwidth100">';
-			//$searchForm .= '<option>--'.$langs->trans("Bookmarks").'--</option>';
 			$searchForm .= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
 			$searchForm .= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
 			$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.($user->hasRight('bookmark', 'creer') ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
@@ -209,29 +218,6 @@ function printDropdownBookmarksList()
 				<span id="top-bookmark-search-nothing-found" class="'.($bookmarkNb ? 'hidden-search-result ' : '').'opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
 				</div>
 				';
-
-		$html .= '<!-- script to open/close the popup -->
-				<script>
-				jQuery(document).on("keyup", "#top-bookmark-search-input", function () {
-					console.log("keyup in bookmark search input");
-
-					var filter = $(this).val(), count = 0;
-					jQuery("#dropdown-bookmarks-list .bookmark-item").each(function () {
-						if ($(this).text().search(new RegExp(filter, "i")) < 0) {
-							$(this).addClass("hidden-search-result");
-						} else {
-							$(this).removeClass("hidden-search-result");
-							count++;
-						}
-					});
-					jQuery("#top-bookmark-search-filter-count").text(count);
-					if (count == 0) {
-						jQuery("#top-bookmark-search-nothing-found").removeClass("hidden-search-result");
-					} else {
-						jQuery("#top-bookmark-search-nothing-found").addClass("hidden-search-result");
-					}
-				});
-				</script>';
 	}
 
 	return $html;

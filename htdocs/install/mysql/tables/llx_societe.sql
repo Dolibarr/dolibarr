@@ -38,8 +38,12 @@ create table llx_societe
 
   code_client              varchar(24),                         		-- code client
   code_fournisseur         varchar(24),                         		-- code fournisseur
-  code_compta              varchar(24),                         		-- customer accountancy auxiliary account
-  code_compta_fournisseur  varchar(24),                         		-- supplier accountancy auxiliary account
+  tp_payment_reference     varchar(25),                                 -- SEPA and any other national or custom payment id
+  accountancy_code_customer_general	varchar(32) DEFAULT NULL,			-- customer accountancy general account
+  code_compta              			varchar(32),                        -- customer accountancy auxiliary account
+  accountancy_code_supplier_general varchar(32) DEFAULT NULL,			-- supplier accountancy general account
+  code_compta_fournisseur  			varchar(32),                        -- supplier accountancy auxiliary account
+
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
@@ -51,9 +55,9 @@ create table llx_societe
   geopoint                 point DEFAULT NULL,
   georesultcode            varchar(16),
 
-  phone                    varchar(20),                         		-- phone number
-  phone_mobile             varchar(20),                         		-- mobile phone number
-  fax                      varchar(20),                         		-- fax number
+  phone                    varchar(30),                         		-- phone number
+  phone_mobile             varchar(30),                         		-- mobile phone number
+  fax                      varchar(30),                         		-- fax number
   url                      varchar(255),                        		-- web site
   email                    varchar(128),                        		-- main email
 
@@ -64,6 +68,7 @@ create table llx_societe
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT NULL,                 -- type ent
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
+  birth                    date,				            			-- date of company creation
   fk_currency			   varchar(3),									-- default currency
   siren	                   varchar(128),                         		-- IDProf1: depends on country (example: siren or RCS for france, ...)
   siret                    varchar(128),                         		-- IDProf2: depends on country (example: siret for france, ...)
@@ -76,8 +81,8 @@ create table llx_societe
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
   note_public              text,                                        --
-  model_pdf				         varchar(255),
-  last_main_doc			       varchar(255),					-- relative filepath+filename of last main generated document
+  model_pdf				   varchar(255),								-- the last tempate used to generate a document
+  last_main_doc			   varchar(255),								-- relative filepath+filename of the last main generated document
   prefix_comm              varchar(5),                          		-- prefix commercial (deprecated)
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
@@ -98,8 +103,9 @@ create table llx_societe
   cond_reglement_supplier  tinyint,                             		-- payment term supplier
   transport_mode_supplier  tinyint,                             		-- transport mode supplier (Intracomm report)
   fk_shipping_method       integer,                                     -- preferred shipping method id
-  tva_assuj                tinyint        DEFAULT 1,	        		-- assujetti ou non a la TVA
-  vat_reverse_charge       tinyint        DEFAULT 0,	        		-- By default, company not concerned by vat reverse charge
+  tva_assuj                tinyint        DEFAULT 1,	        		-- if company using VAT or is exempted
+  vatexemptcode            varchar(24),									-- if company is exempted, the VAT reason code of exemption
+  vat_reverse_charge       tinyint        DEFAULT 0,	        		-- By default, company is not concerned by vat reverse charge
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax1_value 		   double(7,4),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
@@ -121,13 +127,15 @@ create table llx_societe
   accountancy_code_sell         varchar(32),                            -- Selling accountancy code
   accountancy_code_buy          varchar(32),                            -- Buying accountancy code
 
-  tms                      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,									-- last modification date
   datec	                   datetime,                            		-- creation date
-  fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info
-  fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info
+  tms                      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,									-- last modification date
+  fk_user_creat            integer NULL,                        		-- creation user
+  fk_user_modif            integer,                             		-- last modification user
 
   fk_multicurrency		   integer,
   multicurrency_code	   varchar(3),
+
+  ip                       varchar(250),                              	-- ip used to create record (for public submission page)
 
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

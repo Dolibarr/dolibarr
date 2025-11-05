@@ -10,9 +10,9 @@ If you want to add your own password generator module. This is steps to follow t
 ***** STEP 1 *****
 
 Copy file
-htdocs/core/modules/security/modGeneratePassNone.class.php
+htdocs/core/modules/security/generate/modGeneratePassNone.class.php
 into
-htdocs/core/modules/mailings/modGeneratePassMygenerator.class.php
+htdocs/core/modules/security/generate/modGeneratePassMygenerator.class.php
 
 You can choose value of your choice instead of "Mygenerator" in name of new file.
 
@@ -23,10 +23,10 @@ Edit this file modGeneratePassMygenerator.class.php and change following text:
 
 "class modGeneratePassNone"     into    "class modGeneratePassMygenerator"
 
-Then add code inside the "getDecription" function. 
-Then add code inside the "getExample" function. 
-Then add code inside the "getNewGeneratedPassword" function. 
-Then add code inside the "validatePassword" function. 
+Then add code inside the "getDecription" function.
+Then add code inside the "getExample" function.
+Then add code inside the "getNewGeneratedPassword" function.
+Then add code inside the "validatePassword" function.
 
 
 ***** STEP 3 *****

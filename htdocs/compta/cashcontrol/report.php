@@ -9,6 +9,7 @@
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("bills", "banks"));
 
@@ -107,7 +117,7 @@ $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
 $sql.= " f.module_source, f.ref as ref";
 $sql.= " FROM ";
-//if ($bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
+//if ($bid) $sql.= MAIN_DB_PREFIX."category_bankline as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'payment'";
@@ -128,12 +138,12 @@ $sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CB);
 $sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
 $sql.=")";
 */
-$sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef as datef, p.datep as datep, pf.amount as amount, b.fk_account as bankid, cp.code";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b";
 $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid";
 $sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
 $sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-$sql .= " AND f.paye = 1";
+//$sql .= " AND f.paye = 1";
 $sql .= " AND p.entity = ".$conf->entity; // Never share entities for features related to accountancy
 /*if ($key == 'cash')       $sql.=" AND cp.code = 'LIQ'";
 elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
@@ -144,11 +154,11 @@ else
 	exit;
 }*/
 if ($syear && !$smonth) {
-	$sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
+	$sql .= " AND datep BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
 } elseif ($syear && $smonth && !$sday) {
-	$sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
+	$sql .= " AND datep BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
 } elseif ($syear && $smonth && $sday) {
-	$sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+	$sql .= " AND datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 } else {
 	dol_print_error(null, 'Year not defined');
 }
@@ -216,6 +226,7 @@ if ($resql) {
 	$totalqty = 0;
 	$totalvat = 0;
 	$totalvatperrate = array();
+	$totalhtperrate = array();
 	$totallocaltax1 = 0;
 	$totallocaltax2 = 0;
 	$cachebankaccount = array();
@@ -247,8 +258,10 @@ if ($resql) {
 				if ($line->tva_tx) {
 					if (empty($totalvatperrate[$line->tva_tx])) {
 						$totalvatperrate[$line->tva_tx] = 0;
+						$totalhtperrate[$line->tva_tx] = 0;
 					}
 					$totalvatperrate[$line->tva_tx] += $line->total_tva;
+					$totalhtperrate[$line->tva_tx] += $line->total_ht;
 				}
 				$totallocaltax1 += $line->total_localtax1;
 				$totallocaltax2 += $line->total_localtax2;
@@ -315,7 +328,7 @@ if ($resql) {
 
 			// Date ope
 			print '<td class="nowrap left">';
-			print '<span id="dateoperation_'.$objp->facid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
+			print '<span id="dateoperation_'.$objp->facid.'">'.dol_print_date($db->jdate($objp->datep), "day")."</span>";
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -393,7 +406,7 @@ if ($resql) {
 		print '<div class="inline-block amount width100"></div>';
 		print '<div class="inline-block amount width100">'.price($cash).'</div>';
 	}
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && $newcash != $object->cash) {
+	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($newcash) != price2num($object->cash)) {
 		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->cash).'</div>';
 	}
 	print "<br>";
@@ -402,7 +415,7 @@ if ($resql) {
 	print $langs->trans("PaymentTypeCHQ").(!empty($transactionspertype['CHQ']) ? ' ('.$transactionspertype['CHQ'].' '.$langs->trans("Articles").')' : '').' : ';
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($cheque).'</div>';
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && $cheque != $object->cheque) {
+	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($cheque) != price2num($object->cheque)) {
 		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").' : '.price($object->cheque).'</div>';
 	}
 	print "<br>";
@@ -411,7 +424,7 @@ if ($resql) {
 	print $langs->trans("PaymentTypeCB").(!empty($transactionspertype['CB']) ? ' ('.$transactionspertype['CB'].' '.$langs->trans("Articles").')' : '').' : ';
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($bank).'</div>';
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && $bank != $object->card) {
+	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($bank) != price2num($object->card)) {
 		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->card).'</div>';
 	}
 	print "<br>";
@@ -438,9 +451,16 @@ if ($resql) {
 	}
 
 	if (!empty($totalvatperrate) && is_array($totalvatperrate)) {
-		print '<br><br><div class="small inline-block">'.$langs->trans("VATRate").'</div>';
+		print '<br><br><div class="small inline-block width100">'.$langs->trans("TotalHT").'</div><div class="small inline-block width100">'.$langs->trans("TotalVAT").'</div>';
+		if (getDolGlobalInt('TAKEPOS_CASHCONTROL_REPORT_SHOW_TOTAL_INCLUDING_TAXES_COLUMN', 0) != 0) {
+			print '<div class="small inline-block width100">'.$langs->trans("TotalTTC").'</div>';
+		}
 		foreach ($totalvatperrate as $keyrate => $valuerate) {
-			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, 1).' : <div class="inline-block amount width100"></div><div class="inline-block amount width100">'.price($valuerate).'</div></div>';
+			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, true).' : <div class="inline-block amount width100">'.price($totalhtperrate[$keyrate] ?? 0).'</div><div class="inline-block amount width100">'.price($valuerate).'</div>';
+			if (getDolGlobalInt('TAKEPOS_CASHCONTROL_REPORT_SHOW_TOTAL_INCLUDING_TAXES_COLUMN', 0) != 0) {
+				print '<div class="inline-block amount width100">'.price(($totalhtperrate[$keyrate] ?? 0) + $valuerate).'</div>';
+			}
+			print '</div>';
 		}
 	}
 

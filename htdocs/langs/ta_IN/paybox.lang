@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox தொகுதி அமைப்பு
 PayBoxDesc=இந்த தொகுதி வாடிக்கையாளர்களால் <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> இல் பணம் செலுத்த அனுமதிக்கும் பக்கங்களை வழங்குகிறது. இது ஒரு இலவச கட்டணத்திற்காக அல்லது ஒரு குறிப்பிட்ட Dolibarr பொருளில் (விலைப்பட்டியல், ஆர்டர், ...) கட்டணம் செலுத்த பயன்படுத்தப்படலாம்.
-FollowingUrlAreAvailableToMakePayments=Dolibarr பொருள்களில் பணம் செலுத்த வாடிக்கையாளருக்கு ஒரு பக்கத்தை வழங்க பின்வரும் URLகள் உள்ளன
-PaymentForm=பணம் செலுத்தும் படிவம்
-WelcomeOnPaymentPage=எங்கள் ஆன்லைன் கட்டண சேவைக்கு வரவேற்கிறோம்
-ThisScreenAllowsYouToPay=%s க்கு ஆன்லைனில் பணம் செலுத்த இந்தத் திரை உங்களை அனுமதிக்கிறது.
-ThisIsInformationOnPayment=பணம் செலுத்துவது பற்றிய தகவல் இது
-ToComplete=முடிக்க
-YourEMail=கட்டண உறுதிப்படுத்தலைப் பெற மின்னஞ்சல்
-Creditor=கடன் கொடுத்தவர்
-PaymentCode=கட்டணக் குறியீடு
 PayBoxDoPayment=Paybox மூலம் பணம் செலுத்துங்கள்
 YouWillBeRedirectedOnPayBox=கிரெடிட் கார்டு தகவலை உள்ளிட, பாதுகாப்பான பேபாக்ஸ் பக்கத்தில் நீங்கள் திருப்பி விடப்படுவீர்கள்
-Continue=அடுத்தது
 SetupPayBoxToHavePaymentCreatedAutomatically=Paybox மூலம் சரிபார்க்கப்படும் போது தானாகவே பணம் உருவாக்கப்படும் வகையில் உங்கள் Paybox ஐ url <b> %s </b> உடன் அமைக்கவும்.
 YourPaymentHasBeenRecorded=உங்கள் கட்டணம் பதிவுசெய்யப்பட்டதை இந்தப் பக்கம் உறுதிப்படுத்துகிறது. நன்றி.
 YourPaymentHasNotBeenRecorded=உங்கள் பணம் பதிவு செய்யப்படவில்லை மற்றும் பரிவர்த்தனை ரத்து செய்யப்பட்டது. நன்றி.
-AccountParameter=கணக்கு அளவுருக்கள்
-UsageParameter=பயன்பாட்டு அளவுருக்கள்
-InformationToFindParameters=உங்கள் %s கணக்குத் தகவலைக் கண்டறிய உதவுங்கள்
 PAYBOX_CGI_URL_V2=பணம் செலுத்துவதற்கான Paybox CGI தொகுதியின் Url
-CSSUrlForPaymentForm=கட்டண படிவத்திற்கான CSS நடை தாள் url
 NewPayboxPaymentReceived=புதிய பேபாக்ஸ் கட்டணம் பெறப்பட்டது
 NewPayboxPaymentFailed=புதிய பேபாக்ஸ் கட்டணம் செலுத்த முயற்சிக்கப்பட்டது ஆனால் தோல்வியடைந்தது
 PAYBOX_PAYONLINE_SENDEMAIL=பணம் செலுத்தும் முயற்சிக்குப் பிறகு மின்னஞ்சல் அறிவிப்பு (வெற்றி அல்லது தோல்வி)

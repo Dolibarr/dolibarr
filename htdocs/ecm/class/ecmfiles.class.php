@@ -4,8 +4,8 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
  * Class to manage ECM files
@@ -46,110 +47,110 @@ class EcmFiles extends CommonObject
 	public $table_element = 'ecm_files';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for ecmfiles. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'folder-open';
 
 	/**
-	 * @var string Ref hash of file path
-	 */
-	public $ref;
-
-	/**
 	 * hash of file content (md5_file(dol_osencode($destfull))
-	 * @var string Ecm Files label
+	 * @var ?string Ecm Files label, null until fetched or set
 	 */
 	public $label;
 
 	/**
-	 * @var string hash for file sharing, empty by default (example: getRandomPassword(true))
+	 * @var ?string hash for file sharing, empty by default (example: getRandomPassword(true))
 	 */
 	public $share;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
-	 * @var string filename, Note: Into ecm database record, the entry $filename never ends with .noexe
+	 * @var ?string filename, Note: Into ecm database record, the entry never ends with .noexe
 	 */
 	public $filename;
 
 	/**
-	 * @var string filepath
+	 * @var ?string filepath
 	 */
 	public $filepath;
 
 	/**
-	 * @var string fullpath origin
+	 * @var ?string fullpath origin
 	 */
 	public $fullpath_orig;
 
 	/**
-	 * @var string description
+	 * @var ?string description
 	 */
 	public $description;
 
 	/**
-	 * @var string keywords
+	 * @var ?string keywords
 	 */
 	public $keywords;
 
 	/**
-	 * @var string cover
+	 * @var ?string content
+	 */
+	public $content;
+
+	/**
+	 * @var ?string cover
 	 */
 	public $cover;
 
 	/**
-	 * @var int position
+	 * @var ?int position
 	 */
 	public $position;
 
 	/**
-	 * @var string can be 'generated', 'uploaded', 'unknown'
+	 * @var 'generated'|'uploaded'|'unknown'|'api'|'copy'|''|null
 	 */
 	public $gen_or_uploaded;
 
 	/**
-	 * @var string extraparams
+	 * @var array<string,string>|string 	Extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams;
 
 	/**
-	 * @var int|string date create
+	 * @var null|int|'' date create
 	 */
 	public $date_c = '';
 
 	/**
-	 * @var int|string date modify
+	 * @var null|int|'' date modify
 	 */
 	public $date_m = '';
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_c;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_m;
 
 	/**
-	 * @var string acl
+	 * @var ?string acl, null until fetched or set
 	 */
 	public $acl;
 
 	/**
-	 * @var string src object type
+	 * @var ?string src object type
 	 */
 	public $src_object_type;
 
 	/**
-	 * @var int src object id
+	 * @var ?int src object id
 	 */
 	public $src_object_id;
+
+	/**
+	 * @var int ID of linked agenda event
+	 */
+	public $agenda_id;
 
 	/**
 	 * @var int section_id		ID of section = ID of EcmDirectory, directory of manual ECM (not stored into database)
@@ -159,20 +160,21 @@ class EcmFiles extends CommonObject
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => -1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => "contains hash from filename+filepath"),
-		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1, 'comment' => "contains hash of file content"),
-		'share' => array('type' => 'varchar(128)', 'label' => 'Share', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1, 'comment' => "contains hash for file sharing"),
+		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1, 'comment' => "contains hash of file content"),
+		'share' => array('type' => 'varchar(128)', 'label' => 'Share', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1, 'comment' => "contains hash for file sharing"),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 50, 'index' => 1),
-		'filepath' => array('type' => 'varchar(255)', 'label' => 'FilePath', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "relative to dolibarr document dir. Example module/def"),
-		'filename' => array('type' => 'varchar(255)', 'label' => 'FileName', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "file name only without any directory"),
-		'src_object_type' => array('type' => 'varchar(64)', 'label' => 'SourceType', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => 0, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "Source object type ('proposal', 'invoice', ...)"),
+		'filepath' => array('type' => 'varchar(255)', 'label' => 'FilePath', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "relative to dolibarr document dir. Example module/def"),
+		'filename' => array('type' => 'varchar(255)', 'label' => 'FileName', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "file name only without any directory"),
+		'src_object_type' => array('type' => 'varchar(64)', 'label' => 'SourceType', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => 0, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "Source object type ('proposal', 'invoice', ...)"),
 		'src_object_id' => array('type' => 'integer', 'label' => 'SourceID', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 90, 'index' => 1, 'comment' => "Source object id"),
-		'fullpath_orig' => array('type' => 'varchar(750)', 'label' => 'FullPathOrig', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "full path of original filename, when file is uploaded from a local computer"),
+		'fullpath_orig' => array('type' => 'varchar(750)', 'label' => 'FullPathOrig', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 0, 'searchall' => 0, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "full path of original filename, when file is uploaded from a local computer"),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 0, 'position' => 110),
-		'keywords' => array('type' => 'varchar(750)', 'label' => 'Keywords', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "list of keywords, separated with comma. Must be limited to most important keywords."),
+		'keywords' => array('type' => 'varchar(750)', 'label' => 'Keywords', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "list of keywords, separated with comma. Must be limited to most important keywords."),
+		'content' => array('type' => 'html', 'label' => 'Content', 'enabled' => 'getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")', 'position' => 120, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax200', 'help' => "Text content of file", 'showoncombobox' => 2, 'validate' => 1,'comment' => "Text content if option to store txt content was set."),
 		'cover' => array('type' => 'text', 'label' => 'Cover', 'enabled' => 1, 'visible' => 0, 'position' => 130, 'comment' => "is this file a file to use for a cover"),
 		'position' => array('type' => 'integer', 'label' => 'Position', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 140, 'index' => 1, 'comment' => "position of file among others"),
-		'gen_or_uploaded' => array('type' => 'varchar(12)', 'label' => 'GenOrUpload', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,'comment' => "'generated' or 'uploaded'"),
-		'extraparams' => array('type' => 'varchar(255)', 'label' => 'ExtraParams', 'enabled' => 1, 'position' => 160, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1, 'comment' => "for stocking other parameters with json format"),
+		'gen_or_uploaded' => array('type' => 'varchar(12)', 'label' => 'GenOrUpload', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,'comment' => "'generated' or 'uploaded'"),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'ExtraParams', 'enabled' => 1, 'position' => 160, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1, 'comment' => "for stocking other parameters with json format"),
 		'date_c' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 175),
 		'fk_user_c' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
@@ -180,6 +182,7 @@ class EcmFiles extends CommonObject
 		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'note_private' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
 		'acl' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160, 'comment' => "for future permission 'per file'"),
+		'agenda_id' => array('type' => 'integer', 'label' => 'IdAgenda', 'enabled' => 1, 'visible' => 0, 'position' => 180, 'comment' => "Link to an actioncomm"),
 	);
 
 
@@ -243,9 +246,6 @@ class EcmFiles extends CommonObject
 		if (isset($this->gen_or_uploaded)) {
 			$this->gen_or_uploaded = trim($this->gen_or_uploaded);
 		}
-		if (isset($this->extraparams)) {
-			$this->extraparams = trim($this->extraparams);
-		}
 		if (isset($this->fk_user_c)) {
 			$this->fk_user_c = (int) $this->fk_user_c;
 		}
@@ -268,7 +268,7 @@ class EcmFiles extends CommonObject
 		// If ref not defined
 		if (empty($this->ref)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$this->ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+			$this->ref = dol_hash($this->filepath.'/'.$this->filename, '3');
 		}
 
 		$maxposition = 0;
@@ -285,7 +285,7 @@ class EcmFiles extends CommonObject
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				return --$error;
 			}
-			$maxposition = $maxposition + 1;
+			$maxposition += 1;
 		} else {
 			$maxposition = $this->position;
 		}
@@ -298,7 +298,14 @@ class EcmFiles extends CommonObject
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity;
 		}
+
+		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
+
 		// Put here code to add control on parameters values
+		if (!empty($this->agenda_id)) {
+			$this->agenda_id = (int) $this->agenda_id;
+		}
 
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
@@ -311,6 +318,9 @@ class EcmFiles extends CommonObject
 		$sql .= 'fullpath_orig,';
 		$sql .= 'description,';
 		$sql .= 'keywords,';
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
+			$sql .= 'content,';
+		}
 		$sql .= 'cover,';
 		$sql .= 'position,';
 		$sql .= 'gen_or_uploaded,';
@@ -321,7 +331,8 @@ class EcmFiles extends CommonObject
 		$sql .= 'fk_user_m,';
 		$sql .= 'acl,';
 		$sql .= 'src_object_type,';
-		$sql .= 'src_object_id';
+		$sql .= 'src_object_id,';
+		$sql .= 'agenda_id';
 		$sql .= ') VALUES (';
 		$sql .= " '".$this->db->escape($this->ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
@@ -332,17 +343,21 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.(!isset($this->fullpath_orig) ? 'NULL' : "'".$this->db->escape($this->fullpath_orig)."'").',';
 		$sql .= ' '.(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(!isset($this->keywords) ? 'NULL' : "'".$this->db->escape($this->keywords)."'").',';
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
+			$sql .= ' '.(!isset($this->content) ? 'NULL' : "'".$this->db->escape($this->content)."'").',';
+		}
 		$sql .= ' '.(!isset($this->cover) ? 'NULL' : "'".$this->db->escape($this->cover)."'").',';
 		$sql .= ' '.((int) $maxposition).',';
 		$sql .= ' '.(!isset($this->gen_or_uploaded) ? 'NULL' : "'".$this->db->escape($this->gen_or_uploaded)."'").',';
-		$sql .= ' '.(!isset($this->extraparams) ? 'NULL' : "'".$this->db->escape($this->extraparams)."'").',';
+		$sql .= ' '.(!isset($extraparams) ? 'NULL' : "'".$this->db->escape($extraparams)."'").',';
 		$sql .= " '".$this->db->idate($this->date_c)."',";
-		$sql .= ' '.(!isset($this->date_m) || dol_strlen($this->date_m) == 0 ? 'NULL' : "'".$this->db->idate($this->date_m)."'").',';
+		$sql .= ' '.(!isset($this->date_m) || dol_strlen((string) $this->date_m) == 0 ? 'NULL' : "'".$this->db->idate($this->date_m)."'").',';
 		$sql .= ' '.(!isset($this->fk_user_c) ? $user->id : $this->fk_user_c).',';
 		$sql .= ' '.(!isset($this->fk_user_m) ? 'NULL' : $this->fk_user_m).',';
 		$sql .= ' '.(!isset($this->acl) ? 'NULL' : "'".$this->db->escape($this->acl)."'").',';
 		$sql .= ' '.(!isset($this->src_object_type) ? 'NULL' : "'".$this->db->escape($this->src_object_type)."'").',';
-		$sql .= ' '.(!isset($this->src_object_id) ? 'NULL' : $this->src_object_id);
+		$sql .= ' '.(!isset($this->src_object_id) ? 'NULL' : $this->src_object_id).',';
+		$sql .= ' '.(empty($this->agenda_id) ? 'NULL' : (int) $this->agenda_id);
 		$sql .= ')';
 
 		$this->db->begin();
@@ -395,9 +410,10 @@ class EcmFiles extends CommonObject
 	 * @param  string $hashforshare    	Hash of file sharing, or 'shared'
 	 * @param  string $src_object_type 	src_object_type to search (value of object->table_element)
 	 * @param  int    $src_object_id 	src_object_id to search
+	 * @param  int    $entity 	        entity
 	 * @return int                 	   	Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $relativepath = '', $hashoffile = '', $hashforshare = '', $src_object_type = '', $src_object_id = 0)
+	public function fetch($id, $ref = '', $relativepath = '', $hashoffile = '', $hashforshare = '', $src_object_type = '', $src_object_id = 0, $entity = 0)
 	{
 		global $conf;
 
@@ -414,6 +430,9 @@ class EcmFiles extends CommonObject
 		$sql .= " t.fullpath_orig,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
+			$sql .= " t.content,";
+		}
 		$sql .= " t.cover,";
 		$sql .= " t.position,";
 		$sql .= " t.gen_or_uploaded,";
@@ -426,7 +445,8 @@ class EcmFiles extends CommonObject
 		$sql .= ' t.note_public,';
 		$sql .= " t.acl,";
 		$sql .= " t.src_object_type,";
-		$sql .= " t.src_object_id";
+		$sql .= " t.src_object_id,";
+		$sql .= " t.agenda_id";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity because filesystem on disk does not know what is Dolibarr entities
@@ -441,17 +461,29 @@ class EcmFiles extends CommonObject
 			if ($filename != '*') {
 				$sql .= " AND t.filename = '".$this->db->escape($filename)."'";
 			}
-			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
+			if (! empty($entity)) {
+				$sql .= " AND t.entity = " . (int) $entity;
+			} else {
+				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+			}
 			$filterfound++;
 		}
 		if (!empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
-			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
+			if (! empty($entity)) {
+				$sql .= " AND t.entity = " . (int) $entity;
+			} else {
+				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+			}
 			$filterfound++;
 		}
 		if (!empty($hashoffile)) {	// hash of content
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
-			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
+			if (! empty($entity)) {
+				$sql .= " AND t.entity = " . (int) $entity;
+			} else {
+				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+			}
 			$filterfound++;
 		}
 		if (!empty($hashforshare)) {
@@ -465,7 +497,11 @@ class EcmFiles extends CommonObject
 		}
 		if ($src_object_type && $src_object_id) {
 			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
-			$sql .= " AND t.entity = ".((int) $conf->entity);
+			if (! empty($entity)) {
+				$sql .= " AND t.entity = " . (int) $entity;
+			} else {
+				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+			}
 			$filterfound++;
 		}
 		if ($id > 0 || empty($filterfound)) {
@@ -492,10 +528,12 @@ class EcmFiles extends CommonObject
 				$this->fullpath_orig = $obj->fullpath_orig;
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;
+				if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
+					$this->content = $obj->content;
+				}
 				$this->cover = $obj->cover;
 				$this->position = $obj->position;
 				$this->gen_or_uploaded = $obj->gen_or_uploaded;
-				$this->extraparams = $obj->extraparams;
 				$this->date_c = $this->db->jdate($obj->date_c);
 				$this->date_m = $this->db->jdate($obj->date_m);
 				$this->fk_user_c = $obj->fk_user_c;
@@ -505,6 +543,8 @@ class EcmFiles extends CommonObject
 				$this->acl = $obj->acl;
 				$this->src_object_type = $obj->src_object_type;
 				$this->src_object_id = $obj->src_object_id;
+				$this->agenda_id = $obj->agenda_id;
+				$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 			}
 
 			// Retrieve all extrafields for ecm_files
@@ -535,7 +575,7 @@ class EcmFiles extends CommonObject
 	 * @param 	string 			$sortfield 		Sort field
 	 * @param 	int    			$limit     		Limit
 	 * @param 	int    			$offset    		Offset limit
-	 * @param 	string|array  	$filter    		filter array
+	 * @param 	string|array<string,mixed> 	$filter		filter array
 	 * @param 	string 			$filtermode 	filter mode (AND or OR)
 	 * @return 	int 							Return integer <0 if KO, >0 if OK
 	 */
@@ -553,6 +593,9 @@ class EcmFiles extends CommonObject
 		$sql .= " t.fullpath_orig,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
+			$sql .= " t.content,";
+		}
 		$sql .= " t.cover,";
 		$sql .= " t.position,";
 		$sql .= " t.gen_or_uploaded,";
@@ -563,7 +606,8 @@ class EcmFiles extends CommonObject
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.acl,";
 		$sql .= " t.src_object_type,";
-		$sql .= " t.src_object_id";
+		$sql .= " t.src_object_id,";
+		$sql .= " t.agenda_id";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 
@@ -613,7 +657,7 @@ class EcmFiles extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new EcmFilesLine();
+				$line = new EcmFilesLine($this->db);
 
 				$line->id = $obj->rowid;
 				$line->ref = $obj->rowid;
@@ -625,6 +669,9 @@ class EcmFiles extends CommonObject
 				$line->fullpath_orig = $obj->fullpath_orig;
 				$line->description = $obj->description;
 				$line->keywords = $obj->keywords;
+				if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
+					$line->content = $obj->content;
+				}
 				$line->cover = $obj->cover;
 				$line->position = $obj->position;
 				$line->gen_or_uploaded = $obj->gen_or_uploaded;
@@ -636,6 +683,7 @@ class EcmFiles extends CommonObject
 				$line->acl = $obj->acl;
 				$line->src_object_type = $obj->src_object_type;
 				$line->src_object_id = $obj->src_object_id;
+				$line->agenda_id = $obj->agenda_id;
 				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
@@ -700,9 +748,6 @@ class EcmFiles extends CommonObject
 		if (isset($this->gen_or_uploaded)) {
 			$this->gen_or_uploaded = trim($this->gen_or_uploaded);
 		}
-		if (isset($this->extraparams)) {
-			$this->extraparams = trim($this->extraparams);
-		}
 		if (isset($this->fk_user_m)) {
 			$this->fk_user_m = (int) $this->fk_user_m;
 		}
@@ -712,13 +757,15 @@ class EcmFiles extends CommonObject
 		if (isset($this->src_object_type)) {
 			$this->src_object_type = trim($this->src_object_type);
 		}
-
-		// Check parameters
-		// Put here code to add a control on parameters values
+		if (!empty($this->agenda_id)) {
+			$this->agenda_id = (int) $this->agenda_id;
+		}
+		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, 3))."',";
+		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, '3'))."',";
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= ' share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null").',';
 		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : $conf->entity).',';
@@ -727,18 +774,21 @@ class EcmFiles extends CommonObject
 		$sql .= ' fullpath_orig = '.(isset($this->fullpath_orig) ? "'".$this->db->escape($this->fullpath_orig)."'" : "null").',';
 		$sql .= ' description = '.(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").',';
 		$sql .= ' keywords = '.(isset($this->keywords) ? "'".$this->db->escape($this->keywords)."'" : "null").',';
+		if (getDolGlobalString("MAIN_SAVE_FILE_CONTENT_AS_TEXT")) {
+			$sql .= ' content = '.(isset($this->content) ? "'".$this->db->escape($this->content)."'" : "null").',';
+		}
 		$sql .= ' cover = '.(isset($this->cover) ? "'".$this->db->escape($this->cover)."'" : "null").',';
-		$sql .= ' position = '.(isset($this->position) ? $this->db->escape($this->position) : "0").',';
+		$sql .= ' position = '.(isset($this->position) ? $this->db->escape((string) $this->position) : "0").',';
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
-		$sql .= ' extraparams = '.(isset($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").',';
+		$sql .= ' extraparams = '.(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
-		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
+		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen((string) $this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';
-		$sql .= ' src_object_type = '.(isset($this->src_object_type) ? "'".$this->db->escape($this->src_object_type)."'" : "null");
+		$sql .= ' src_object_type = '.(isset($this->src_object_type) ? "'".$this->db->escape($this->src_object_type)."'" : "null").',';
+		$sql .= ' agenda_id = '.($this->agenda_id > 0 ? (int) $this->agenda_id : "null");
 		$sql .= ' WHERE rowid='.((int) $this->id);
-
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
@@ -885,10 +935,69 @@ class EcmFiles extends CommonObject
 	}
 
 	/**
+	 * updateAfterRename update entries in ecmfiles if exist to avoid losing info
+	 *
+	 * @param  string $olddir old directory
+	 * @param  string $newdir new directory
+	 * @return void
+	 */
+	public function updateAfterRename($olddir, $newdir)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'ecm_files SET';
+		$sql .= ' filepath = "'.$this->db->escape($newdir).'"';
+		//$sql .= ', fullpath_orig = "'.$dbs->escape($newdir)."'";
+		$sql .= ' WHERE ';
+		$sql .= ' filepath = "'.$this->db->escape($olddir).'"';
+		// $sql .= ' AND fullpath_orig = "'.$dbs->escape($olddir).'"';
+
+		$this->db->query($sql);
+	}
+
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param 	array<string,mixed> 	$params 		params to construct tooltip data
+	 * @return 	array{picto?:string,ref?:string,gen_or_upload?:string}|array{optimize:string}
+	 * @since v21
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('ecm');
+		$datas = [];
+		$nofetch = !empty($params['nofetch']);
+
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			return ['optimize' => $langs->trans("ShowFile")];
+		}
+		$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . '<u>' . $langs->trans("File") . '</u>';
+		if (!empty($this->filename)) {
+			$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.basename($this->filename);
+		}
+		if (!empty($this->ref)) {
+			$datas['ref'] = '<br><b>'.$langs->trans('HashOfFileContent').':</b> '.$this->ref;
+		}
+		if (!empty($this->share)) {
+			$datas['share'] = '<br>'.$langs->trans("FileSharedViaALink");
+		} else {
+			$datas['share'] = '<br>'.$langs->trans("FileNotShared");
+		}
+		if (!empty($this->gen_or_uploaded)) {
+			$datas['gen_or_upload'] = '<br><b>'.$langs->trans('GenOrUpload').':</b> '.$this->gen_or_uploaded;
+		}
+		if (!empty($this->content)) {
+			$datas['content'] = '<br>'.$langs->trans('FileHasAnIndexedTextContent');
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
+	 *	@param	string	$option				On what the link point to (propal, etc) module name
 	 *  @param	int  	$notooltip			1=Disable tooltip
 	 *  @param	int		$maxlen				Max length of visible user name
 	 *  @param  string  $morecss            Add more css on link
@@ -896,9 +1005,7 @@ class EcmFiles extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
-		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager, $hookmanager;
+		global $conf, $hookmanager, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -906,35 +1013,75 @@ class EcmFiles extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("MyModule").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
-		$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
+		if ($option) {
+			if ($option == 'facture_fournisseur') {
+				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/facture\//', '', $this->filepath);
+			} elseif ($option == 'commande_fournisseur') {
+				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/commande\//', '', $this->filepath);
+			} elseif ($option == 'tax-vat') {	// Remove part "tax/vat/"
+				$tmppath = preg_replace('/^(\d+\/)?tax\/vat\//', '', $this->filepath);
+			} elseif ($option == 'remisecheque') {	// Remove part "tax/vat/"
+				$tmppath = preg_replace('/^bank\/checkdeposits\//', '', $this->filepath);
+			} else {
+				if ((int) $this->entity > 1) {
+					// Remove the part "entityid/commande/" into "entityid/commande/REFXXX" to get only the ref
+					$tmppath = preg_replace('/^\d+\/[^\/]+\//', '', $this->filepath);
+				} else {
+					// Remove the part "commande/" into "commande/REFXXX" to get only the ref
+					$tmppath = preg_replace('/^[^\/]+\//', '', $this->filepath);
+				}
+			}
+			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.((int) $this->entity);
+		} else {
+			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
+		}
 
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowProject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$label = $langs->trans("ShowFile");
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
 		$linkstart = '<a href="'.$url.'"';
+		if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+			$linkstart .= 'target="_blank" ';
+		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
+			if (empty($this->filename)) {
+				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
+			} else {
+				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
+			}
 			if ($withpicto != 2) {
 				$result .= ' ';
 			}
 		}
-		$result .= $linkstart.$this->ref.$linkend;
+		$result .= $linkstart.$this->filename.$linkend;
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
@@ -945,6 +1092,7 @@ class EcmFiles extends CommonObject
 		} else {
 			$result .= $hookmanager->resPrint;
 		}
+
 		return $result;
 	}
 
@@ -992,8 +1140,9 @@ class EcmFiles extends CommonObject
 		$this->filename = 'myspecimenfilefile.pdf';
 		$this->filepath = '/aaa/bbb';
 		$this->fullpath_orig = 'c:/file on my disk.pdf';
-		$this->description = 'This is a long description of file';
+		$this->description = 'This is a description of the file';
 		$this->keywords = 'key1,key2';
+		$this->content = 'This is the text content of the file';
 		$this->cover = '1';
 		$this->position = 5;
 		$this->gen_or_uploaded = 'uploaded';
@@ -1014,7 +1163,7 @@ class EcmFiles extends CommonObject
 /**
  * Class of an index line of a document
  */
-class EcmFilesLine
+class EcmFilesLine extends CommonObjectLine
 {
 	/**
 	 * @var string ECM files line label
@@ -1026,8 +1175,17 @@ class EcmFilesLine
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $filename;
+	/**
+	 * @var string
+	 */
 	public $filepath;
+	/**
+	 * @var string
+	 */
 	public $fullpath_orig;
 
 	/**
@@ -1035,12 +1193,39 @@ class EcmFilesLine
 	 */
 	public $description;
 
+	/**
+	 * @var string
+	 */
 	public $keywords;
+
+	/**
+	 * @var string
+	 */
+	public $content;
+
+	/**
+	 * @var string
+	 */
 	public $cover;
+	/**
+	 * @var int
+	 */
 	public $position;
+	/**
+	 * @var 'generated'|'uploaded'|'unknown'|'copy'|''
+	 */
 	public $gen_or_uploaded; // can be 'generated', 'uploaded', 'unknown'
+	/**
+	 * @var string
+	 */
 	public $extraparams;
+	/**
+	 * @var int|''
+	 */
 	public $date_c = '';
+	/**
+	 * @var int|''
+	 */
 	public $date_m = '';
 
 	/**
@@ -1053,7 +1238,16 @@ class EcmFilesLine
 	 */
 	public $fk_user_m;
 
+	/**
+	 * @var string
+	 */
 	public $acl;
+	/**
+	 * @var string
+	 */
 	public $src_object_type;
+	/**
+	 * @var int
+	 */
 	public $src_object_id;
 }

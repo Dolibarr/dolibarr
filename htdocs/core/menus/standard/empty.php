@@ -22,7 +22,9 @@
  */
 
 /**
- *	    Class to manage empty menu
+ *	    Class to manage menu Empty
+ *
+ *	    @phan-suppress PhanRedefineClass
  */
 class MenuManager
 {
@@ -31,26 +33,50 @@ class MenuManager
 	 */
 	public $db;
 
-	public $type_user = 0; // Put 0 for internal users, 1 for external users
-	public $atarget = ""; // To store default target to use onto links
+	/**
+	 * @var int<0,1>	0 for internal users, 1 for external users
+	 */
+	public $type_user = 0;
+
+	/**
+	 * @var string 		To save the default target to use onto links
+	 */
+	public $atarget = "";
+
+	/**
+	 * @var string		Menu name
+	 */
 	public $name = "empty";
 
 	/**
 	 * @var Menu
 	 */
 	public $menu;
+
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}>
+	 */
 	public $menu_array_after;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}>
+	 */
 	public $tabMenu;
 
+	/**
+	 * @var Menu
+	 */
 	public $topmenu;
+	/**
+	 * @var Menu
+	 */
 	public $leftmenu;
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db     		Database handler
-	 *  @param	int			$type_user		Type of user
+	 *  @param	int<0,1>	$type_user		Type of user
 	 */
 	public function __construct($db, $type_user)
 	{
@@ -74,22 +100,20 @@ class MenuManager
 
 
 	/**
-	 *  Show menu
+	 *  Output menu on screen
 	 *
-	 *	@param	string	$mode			'top', 'left', 'jmobile'
-	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int|string				0 or nb of top menu entries if $mode = 'topnb', string inc ase of bad parameter
+	 *	@param	string					$mode		'top', 'left', 'jmobile'
+	 *  @param	?array<string,mixed>	$moredata	An array with more data to output
+	 *  @return int<0,max>|string					0 or nb of top menu entries if $mode = 'topnb', string inc ase of bad parameter
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
-		global $user, $conf, $langs, $dolibarr_main_db_name;
+		global $langs, $user, $dolibarr_main_db_name;
 
 		$id = 'mainmenu';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu = new Menu();
-
-		$res = 'ErrorBadParameterForMode';
 
 		$noout = 0;
 		//if ($mode == 'jmobile') $noout=1;
@@ -126,32 +150,22 @@ class MenuManager
 			$this->menu->liste = dol_sort_array($this->menu->liste, 'position');
 
 			// Output menu entries
-			foreach ($this->menu->liste as $menkey => $menuval) {
-				if (empty($noout)) {
+			if (empty($noout)) {
+				foreach ($this->menu->liste as $menkey => $menuval) {
 					print_start_menu_entry_empty($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-				}
-				if (empty($noout)) {
+
 					print_text_menu_entry_empty($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $this->atarget));
-				}
-				if (empty($noout)) {
+
 					print_end_menu_entry_empty($menuval['enabled']);
 				}
-			}
 
-			if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				print_start_menu_entry_empty('', 'class="tmenuend"', $showmode);
-			}
-			if (empty($noout)) {
+				if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+					print_start_menu_entry_empty('', 'class="tmenuend"', $showmode);
+				}
+
 				print_end_menu_entry_empty($showmode);
-			}
 
-			if (empty($noout)) {
 				print_end_menu_array_empty();
-			}
-
-			if ($mode == 'jmobile') {
-				$this->topmenu = clone $this->menu;
-				unset($this->menu->liste);
 			}
 		}
 
@@ -174,10 +188,17 @@ class MenuManager
 				print '<ul class="ulmenu" data-inset="true">';
 				print '<li class="lilevel0">';
 
-				$val['url'] = make_substitutions($val['url'], $substitarray);
-
 				if ($val['enabled'] == 1) {
-					$relurl = dol_buildpath($val['url'], 1);
+					$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+					$substitarray['__USERID__'] = $user->id; // For backward compatibility
+					$val['url'] = make_substitutions($val['url'], $substitarray);
+
+					if (!preg_match('/^http/', $val['url'])) {
+						$relurl = dol_buildpath($val['url'], 1);
+					} else {
+						$relurl = $val['url'];
+					}
+
 					$canonurl = preg_replace('/\?.*$/', '', $val['url']);
 
 					print '<a class="alilevel0" href="#">';
@@ -265,6 +286,7 @@ class MenuManager
 						if ($val2['level'] > 0) {
 							$levelcursor = $val2['level'] - 1;
 							while ($levelcursor >= 0) {
+								// @phan-suppress-next-line PhanTypeInvalidDimOffset
 								if ($lastlevel2[$levelcursor] != 'enabled') {
 									$showmenu = false;
 								}
@@ -311,7 +333,14 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							}
-							print $val2['titre'];
+
+							// Add font-awesome for level 0 and 1 (if $val2['level'] == 1, we are on level2, if $val2['level'] == 2, we are on level 3...)
+							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
+								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
+							} else {
+								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth"></i>';
+							}
+
 							if ($relurl2) {
 								print '</a>';
 							}
@@ -321,7 +350,15 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<span class="vsmenudisabled">'.$val['titre'].'</span>';
+					print '<span class="spanlilevel0 vsmenudisabled">';
+
+					// Add font-awesome
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print $val['prefix'];
+					}
+
+					print $val['titre'];
+					print '</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";
@@ -370,7 +407,7 @@ class MenuManager
 				return 0;
 			}
 
-			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> $menu_array';
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $menu_array';
 
 			if (empty($noout)) {
 				$alt = 0;
@@ -463,9 +500,10 @@ class MenuManager
 				unset($menu_array);
 			}
 		}
+
 		unset($this->menu);
 
-		return $res;
+		return 0;
 	}
 }
 
@@ -508,25 +546,28 @@ function print_start_menu_entry_empty($idsel, $classname, $showmode)
  * @param	string	$idsel			Id sel
  * @param	string	$classname		Class name
  * @param	string	$atarget		Target
- * @param	array	$menuval		All the $menuval array
+ * @param	array{}|array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string} 	$menuval		All the $menuval array
  * @return	void
  */
 function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
 {
-	global $conf, $langs;
+	global $langs;
 
 	$classnameimg = str_replace('class="', 'class="tmenuimage ', $classname);
 	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
 
 	if ($showmode == 1) {
+		$menuval['prefix'] = 'fa-home fa-fw';
+
 		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
+		$reg = array();
 		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
 			print $menuval['prefix'];
-		} elseif (!empty($menuval['prefix']) && strpos($menuval['prefix'], 'fa-') === 0) {
-			print '<span class="'.$id.' '.$menuval['prefix'].'" id="mainmenuspan_'.$idsel.'"></span>';
+		} elseif (!empty($menuval['prefix']) && preg_match('/^(fa[rsb]? )?fa-/', $menuval['prefix'], $reg)) {
+			print '<span class="'.$id.' '.(empty($reg[1]) ? 'fa ' : '').$menuval['prefix'].'" id="mainmenuspan_'.$idsel.'"></span>';
 		} else {
-			print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
+			print '<span class="'.$id.' tmenuimageforpngaaaaa" id="mainmenuspan_'.$idsel.'"></span>';
 		}
 		print '</div>';
 		print '</a>';

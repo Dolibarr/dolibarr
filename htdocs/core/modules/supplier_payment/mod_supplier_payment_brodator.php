@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -74,10 +75,15 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstsupplierpayment" value="SUPPLIER_PAYMENT_BRODATOR_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
@@ -85,9 +91,9 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplierpayment" value="'.getDolGlobalString("SUPPLIER_PAYMENT_BRODATOR_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplierpayment" value="'.getDolGlobalString("SUPPLIER_PAYMENT_BRODATOR_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -108,7 +114,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
@@ -120,9 +126,9 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc     Object thirdparty
-	 *  @param  PaiementFourn	$object		Object we need next value for
-	 *  @return string|int  				Next value if OK, 0 if KO
+	 *  @param	Societe			$objsoc		Object thirdparty
+	 *  @param  ?PaiementFourn	$object		Object we need next value for
+	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -138,7 +144,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'paiementfourn', 'ref', '', $objsoc, $object->datepaye);
+		$numFinal = get_next_value($db, $mask, 'paiementfourn', 'ref', '', $objsoc, is_object($object) ?$object->datepaye :'');
 
 		return  $numFinal;
 	}

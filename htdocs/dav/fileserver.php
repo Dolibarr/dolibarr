@@ -2,6 +2,7 @@
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2019	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,11 +55,18 @@ require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 //require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $user = new User($db);
 if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != '') {
-	$user->fetch('', $_SERVER['PHP_AUTH_USER']);
-	$user->getrights();
+	$user->fetch(0, $_SERVER['PHP_AUTH_USER']);
+	$user->loadRights();
 }
 
 // Load translation files required by the page
@@ -125,7 +133,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		}
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication)) {
+		if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 			$dolibarr_main_authentication = 'dolibarr';
 		}
 

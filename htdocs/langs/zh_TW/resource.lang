@@ -9,31 +9,30 @@ ActionsOnResource=有關此資源的事件
 ResourcePageIndex=資源清單
 ResourceSingular=資源
 ResourceCard=資源卡
+NewResource=新資源
 AddResource=建立資源
 ResourceFormLabel_ref=資源名稱
-ResourceType=資源類型
 ResourceFormLabel_description=資源說明
-
+ResourceType=資源類型
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=已與元件連結之資源
 
 ShowResource=顯示資源
-
 ResourceElementPage=元件資源
 ResourceCreatedWithSuccess=資源已成功建立
 RessourceLineSuccessfullyDeleted=資源行已成功刪除
 RessourceLineSuccessfullyUpdated=資源行已成功地更新
 ResourceLinkedWithSuccess=已成功連結資源
-
 ConfirmDeleteResource=確認刪除此資源
 RessourceSuccessfullyDeleted=資源已成功地刪除
 DictionaryResourceType=資源類型
-
 SelectResource=選擇資源
-
 IdResource=ID資源
 AssetNumber=序號
 ResourceTypeCode=資源類型代碼
 ImportDataset_resource_1=資源
-
 ErrorResourcesAlreadyInUse=一些資源正在使用中
 ErrorResourceUseInEvent=%s被使用於%s事件
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

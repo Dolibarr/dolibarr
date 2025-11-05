@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Gosod modiwl PayBox
 PayBoxDesc=Mae'r modiwl hwn yn cynnig tudalennau i ganiatáu taliad ar <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> gan gwsmeriaid. Gellir defnyddio hwn ar gyfer taliad am ddim neu am daliad ar wrthrych penodol Dolibarr (anfoneb, archeb, ...)
-FollowingUrlAreAvailableToMakePayments=Mae URLs canlynol ar gael i gynnig tudalen i gwsmer i wneud taliad ar wrthrychau Dolibarr
-PaymentForm=Ffurflen talu
-WelcomeOnPaymentPage=Croeso i'n gwasanaeth talu ar-lein
-ThisScreenAllowsYouToPay=Mae'r sgrin hon yn caniatáu ichi wneud taliad ar-lein i %s.
-ThisIsInformationOnPayment=Dyma wybodaeth am daliad i'w wneud
-ToComplete=I gwblhau
-YourEMail=E-bost i dderbyn cadarnhad taliad
-Creditor=Credydwr
-PaymentCode=Cod talu
 PayBoxDoPayment=Talu gyda Paybox
 YouWillBeRedirectedOnPayBox=Byddwch yn cael eich ailgyfeirio ar dudalen Paybox ddiogel i fewnbynnu gwybodaeth cerdyn credyd i chi
-Continue=Nesaf
 SetupPayBoxToHavePaymentCreatedAutomatically=Gosodwch eich Blwch Talu gydag url <b> %s </b> i greu taliad yn awtomatig pan gaiff ei ddilysu gan Paybox.
 YourPaymentHasBeenRecorded=Mae'r dudalen hon yn cadarnhau bod eich taliad wedi'i gofnodi. Diolch.
 YourPaymentHasNotBeenRecorded=NID yw'ch taliad wedi'i gofnodi ac mae'r trafodiad wedi'i ganslo. Diolch.
-AccountParameter=Paramedrau cyfrif
-UsageParameter=Paramedrau defnydd
-InformationToFindParameters=Helpwch i ddod o hyd i'ch gwybodaeth cyfrif %s
 PAYBOX_CGI_URL_V2=URL modiwl CGI Paybox i'w dalu
-CSSUrlForPaymentForm=url dalen arddull CSS ar gyfer ffurflen dalu
 NewPayboxPaymentReceived=Derbyniwyd taliad Blwch Talu newydd
 NewPayboxPaymentFailed=Ceisiodd taliad Paybox newydd ond methodd
 PAYBOX_PAYONLINE_SENDEMAIL=Hysbysiad e-bost ar ôl ymgais i dalu (llwyddiant neu fethiant)

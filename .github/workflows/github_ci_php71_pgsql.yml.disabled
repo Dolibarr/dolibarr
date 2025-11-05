@@ -35,14 +35,14 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432      
+          - 5432:5432
 
     steps:
     # git clone dolibarr into GITHUB_WORKSPACE = /home/runner/work/dolibarr/dolibarr
     - uses: actions/checkout@v3
       with:
         fetch-depth: 1
-        
+
     - name: Version PHP
       run: |
         php -i | head -
@@ -59,7 +59,7 @@ jobs:
         sudo apt install apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
         sudo update-alternatives --set php /usr/bin/php7.1
         php -i | head -
-        
+
         cd $GITHUB_WORKSPACE
         ls $GITHUB_WORKSPACE
         composer -n require --ignore-platform-reqs phpunit/phpunit ^7.5 \
@@ -76,7 +76,7 @@ jobs:
         sudo rm -fr htdocs/includes/phpunit/php-code-coverage/src/Report/Html
 
     - name: Adding path of binaries tools installed by composer to the PATH
-      run: | 
+      run: |
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
         # We must have a directory bin created by the previous composer call
@@ -107,32 +107,32 @@ jobs:
         psql --version
         echo "Check pgloader version"
         pgloader --version
-        
+
     - name: Create database
       run: |
         pwd
-        echo GITHUB_WORKSPACE = $GITHUB_WORKSPACE 
+        echo GITHUB_WORKSPACE = $GITHUB_WORKSPACE
         sudo apt-get install -y mysql-client
         mysql --version | head -
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SELECT VERSION();"  | head -
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
-        
+
         echo "Drop and create database"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'DROP DATABASE IF EXISTS travis;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
-        
-        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
-        
-        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';" 
 
-        echo "Init postgresql database"        
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';"
+
+        echo "Init postgresql database"
         ps fauxww | grep postgres
         ls /etc/postgresql/14/main/
         sudo chmod -R a+rwx /etc/postgresql/14/main/pg_hba.conf
-        
+
         sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/14/main/pg_hba.conf
         sudo cat /etc/postgresql/14/main/pg_hba.conf
 
@@ -144,7 +144,7 @@ jobs:
 
         sudo mkdir -p /tmp/pgloader
         sudo chmod -R a+rwx /tmp/pgloader/
-        
+
         echo sudo pgloader mysql://root:password@127.0.0.1:32574/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         sudo pgloader mysql://root:password@127.0.0.1:32574/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql postgresql://postgres:postgres@127.0.0.1:5432/travis
@@ -190,7 +190,7 @@ jobs:
         echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_main_data_root=\'/var/www/html\'';' >> $INSTALL_FORCED_FILE
         cat $INSTALL_FORCED_FILE
-    
+
     - name: Create document directory
       run: |
         echo "Create documents directory and set permissions"
@@ -199,9 +199,9 @@ jobs:
         sudo chmod -R a+rwx /var/www/html/documents
         sudo echo "***** First line of dolibarr.log" > /var/www/html/documents/dolibarr.log
         sudo chmod a+rwx /var/www/html/documents/dolibarr.log
-  
+
     - name: Copy app into /var/www
-      run: | 
+      run: |
         sudo cp -r $GITHUB_WORKSPACE/htdocs/. /var/www/html
         sudo mv /var/www/html/index.html /var/www/html/index.disabled.html
         sudo ln -fs /var/www/html /var/www/htdocs
@@ -217,7 +217,7 @@ jobs:
         a2query -s
         a2query -m
         ls /etc/apache2/sites-available
-        #sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
+        #sudo cp -f $GITHUB_WORKSPACE/dev/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
         #sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
         a2ensite 000-default
         a2enmod php7.1
@@ -245,7 +245,7 @@ jobs:
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
         wget -O - --debug http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
         head -n 200 $GITHUB_WORKSPACE/test.html
-        
+
         echo Logs are...
         #sudo cat /tmp/install.log
         sudo cat /var/log/apache2/access.log
@@ -287,7 +287,7 @@ jobs:
         php upgrade.php 6.0.0 7.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade600700.log
         php upgrade2.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-2.log
         php step5.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-3.log
-        
+
         echo "\dt llx_c_paiement" | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
         echo "\dt llx_c_payment_term" | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
 
@@ -324,17 +324,17 @@ jobs:
         php upgrade.php 17.0.0 18.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade17001800.log
         php upgrade2.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-2.log
         php step5.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-3.log
-        
+
     - name: Result of migration scripts
       if: always()
       run: |
         ls -alrt $GITHUB_WORKSPACE/
-        
+
         echo Show content of last file
         cat "$(ls -rt $GITHUB_WORKSPACE/ | tail -n1)"
 
     - name: Enabling new modules
-      run: | 
+      run: |
         # Enable modules not enabled into original dump
         set -e
         cd /var/www/html/install
@@ -361,5 +361,4 @@ jobs:
         includes/bin/phpunit -d memory_limit=-1 -c /var/www/test/phpunit/phpunittest.xml /var/www/test/phpunit/AllTests.php
         phpunitresult=$?
         echo "Phpunit return code = $phpunitresult"
-        set +e     
-
+        set +e

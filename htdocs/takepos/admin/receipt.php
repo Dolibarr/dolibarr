@@ -4,6 +4,7 @@
  * Copyright (C) 2019       Andreu Bisquerra Gaya   <jove@bisquerra.com>
  * Copyright (C) 2021       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
@@ -43,6 +52,7 @@ $langs->loadLangs(array("admin", "cashdesk", "commercial"));
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
@@ -156,10 +166,17 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalStrin
 	print "</td></tr>\n";
 
 	// Print payment method
+	// When LNE is own, we show an information to the user to help himunderstand that the feature is forced.
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('PrintPaymentMethodOnReceipts');
 	print '<td colspan="2">';
-	print ajax_constantonoff("TAKEPOS_PRINT_PAYMENT_METHOD", array(), $conf->entity, 0, 0, 1, 0);
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+	if (isALNERunningVersion()) {
+		$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
+		print ajax_constantonoff("TAKEPOS_PRINT_PAYMENT_METHOD", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '', 1);
+	} else {
+		print ajax_constantonoff("TAKEPOS_PRINT_PAYMENT_METHOD", array(), $conf->entity, 0, 0, 1, 0);
+	}
 	print "</td></tr>\n";
 }
 
@@ -190,7 +207,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && filter_v
 print '<tr class="oddeven"><td>';
 print $langs->trans('PrintWithoutDetailsButton');
 print '<td colspan="2">';
-print ajax_constantonoff('TAKEPOS_PRINT_WITHOUT_DETAILS', array(), $conf->entity, 0, 0, 1, 0);
+print ajax_constantonoff('TAKEPOS_PRINT_WITHOUT_DETAILS', array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '');
 print "</td></tr>\n";
 if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
 	print '<tr class="oddeven"><td>';
@@ -222,7 +239,10 @@ print '<br>';
 print load_fiche_titre($langs->trans("Preview"), '', '');
 print '<div style="width: 50%; float:center;background-color:#606060">';
 print '<center>';
-print '<iframe id="iframe" allowtransparency="true" style="background: #FFFFFF;" src="../receipt.php" width="80%" height="600"></iframe>';
+
+// Call takepos/receipt.php
+print '<iframe id="iframe" allowtransparency="true" style="background: #FFFFFF;" src="'.DOL_URL_ROOT.'/takepos/receipt.php?forcenoautoopen=1&specimen=1" width="80%" height="600"></iframe>';
+
 print '</center>';
 print '</div>';
 

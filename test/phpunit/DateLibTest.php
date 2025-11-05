@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -184,6 +185,15 @@ class DateLibTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+
+		// Check for sunday/sunday with time changing - Sunday 25 october 2025 - Sunday 1 november 2025
+		$date1 = dol_mktime(0, 0, 0, 10, 26, 2025, 'gmt');
+		$date2 = dol_mktime(0, 0, 0, 11, 1, 2025, 'gmt');
+		$result = num_open_day($date1, $date2, 0, 1, 0, 'FR');
+		print __METHOD__." result ".$result."\n";
+		$this->assertEquals(5, $result, 'NumPublicHoliday for FR with date start before date change end inding after');
+
 
 		// With same hours - Tuesday/Wednesday jan 2013
 		$date1 = dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');	// tuesday
@@ -415,9 +425,14 @@ class DateLibTest extends CommonClassTest
 		$outputlangs->setDefaultLang('fr_FR');
 		$outputlangs->load("main");
 
-		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', true, $outputlangs);
+		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', 'gmt', $outputlangs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('02/02/1971 00:00', $result);
+
+		// Add 4 days on a date just before daylight change
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 10, 24, 2025, 'gmt'), 4, 'd'), 'dayhour', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('28/10/2025 00:00', $result);
 
 		return $result;
 	}

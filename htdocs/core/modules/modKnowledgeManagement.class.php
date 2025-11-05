@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021 SuperAdmin
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -145,10 +145,9 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'KnowledgeManagementWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -251,6 +250,11 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Validate articles'; // Permission label
+		$this->rights[$r][4] = 'knowledgerecord_advance'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
+		$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
@@ -295,9 +299,9 @@ class modKnowledgeManagement extends DolibarrModules
 			'langs' => 'knowledgemanagement',
 			'position' => 101,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->knowledgemanagement->enabled',
+			'enabled' => 'isModEnabled("knowledgemanagement")',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -315,9 +319,9 @@ class modKnowledgeManagement extends DolibarrModules
 			'langs' => 'knowledgemanagement',
 			'position' => 111,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->knowledgemanagement->enabled',
+			'enabled' => 'isModEnabled("knowledgemanagement")',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -335,7 +339,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'langs' => 'knowledgemanagement',
 			'position' => 110,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->knowledgemanagement->enabled',
+			'enabled' => 'isModEnabled("knowledgemanagement")',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
 			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "write")',
 			'target' => '',
@@ -347,11 +351,11 @@ class modKnowledgeManagement extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'ticket',
-			'url' => '/categories/index.php?type=13',
+			'url' => '/categories/categorie_list.php?type=13',
 			'langs' => 'knowledgemanagement',
 			'position' => 112,
-			'enabled' => '$conf->knowledgemanagement->enabled',
-			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'enabled' => 'isModEnabled("knowledgemanagement") && isModenabled("category")',
+			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
 			'target' => '',
 			'user' => 0
 		);
@@ -447,9 +451,6 @@ class modKnowledgeManagement extends DolibarrModules
 		$myTmpObjects['KnowledgeRecord'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'KnowledgeRecord') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/knowledgemanagement/template_knowledgerecords.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/knowledgemanagement';
@@ -458,7 +459,7 @@ class modKnowledgeManagement extends DolibarrModules
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

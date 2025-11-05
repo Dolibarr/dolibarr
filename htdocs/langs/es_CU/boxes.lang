@@ -61,7 +61,6 @@ NoContractedProducts=No hay productos/servicios contratados
 NoRecordedInterventions=No hay intervenciones registradas
 BoxLatestSupplierOrders=Últimas órdenes de compra
 BoxLatestSupplierOrdersAwaitingReception=Últimas Órdenes de Compra (con pendiente de recepción)
-NoSupplierOrder=Sin orden de compra registrada
 BoxCustomersInvoicesPerMonth=Facturas de clientes por mes
 BoxCustomersOrdersPerMonth=Órdenes de venta por mes
 BoxSuppliersOrdersPerMonth=Pedidos de proveedores por mes

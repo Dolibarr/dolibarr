@@ -2,6 +2,7 @@
 IdAgenda=Идентификатор на събитие
 Actions=Събития
 Agenda=Календар
+AgendaEvents=Събития в програмата
 TMenuAgenda=Календар
 Agendas=Календари
 LocalAgenda=Календар по подразбиране
@@ -21,7 +22,6 @@ MenuDoneMyActions=Мои завършени събития
 ListOfEvents=Списък със събития (календар по подразбиране)
 ActionsAskedBy=Събития, съобщени от
 ActionsToDoBy=Събития, възложени на
-ActionsDoneBy=Събития, извършени от
 ActionAssignedTo=Събитие, възложено на
 ViewCal=Месечен изглед
 ViewDay=Дневен изглед
@@ -45,6 +45,7 @@ PropalClosedRefusedInDolibarr=Предложение %s е отхвърлено
 PropalValidatedInDolibarr=Предложение %s е валидирано
 PropalBackToDraftInDolibarr=Предложение %s върнете се към състояние на чернова
 PropalClassifiedBilledInDolibarr=Предложение %s е фактурирано
+InvoiceCreatedInDolibarr=Фактура %s е създадена
 InvoiceValidatedInDolibarr=Фактура %s е валидирана
 InvoiceValidatedInDolibarrFromPos=Фактура %s е валидирана от ПОС
 InvoiceBackToDraftInDolibarr=Фактура %s е върната в статус на чернова
@@ -135,12 +136,14 @@ AgendaModelModule=Шаблони за събитие
 DateActionStart=Начална дата
 DateActionEnd=Крайна дата
 AgendaUrlOptions1=Може също да добавите следните параметри за филтриране на резултата:
-AgendaUrlOptions3=<b>logina=%s</b>, за да ограничи показването до събития притежавани от потребител <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b>, за да ограничи показването до събития, които не са собственост на потребител <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> за ограничаване на изхода до действия, притежавани от потребител <b>%s</b> (използвайте <b>logina=!%s</b> за събития, които не са собственост на потребителя).
 AgendaUrlOptions4=<b>logint=%s</b>, за да ограничи показването до събития, които са възложени на потребител <b>%s</b> (като собственик и не).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>, за да ограничи показването до събития, които са свързани с проект <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, за да изключи автоматичните събития.
+AgendaUrlOptionsType=<b>actiontype=%s</b> за получаване на автоматични или ръчни събития
+AgendaUrlOptionsCode=<b>actioncode=%s</b> за да получите само събития с даден код
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b>, за да включи събитията с почивни дни.
+AgendaUrlOptionsLimitDays=<b>noolderthan=%s</b> за ограничаване до събития през последните %s дни (по подразбиране е %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> за ограничаване до последните 50 събития (по подразбиране и максимумът е %s).
 AgendaShowBirthdayEvents=Рождени дни на контакти
 AgendaHideBirthdayEvents=Скриване на рождени дни на контакти
 Busy=Зает
@@ -201,4 +204,9 @@ AppointmentDuration = Продължителност на срещата: %s
 BookingSuccessfullyBooked=Вашата резервация е запазена
 BookingReservationHourAfter=Потвърждаваме резервацията за нашата среща на Дата %s
 BookcalBookingTitle=Онлайн среща
-Transparency = Transparency
+Transparency = Прозрачност
+ReadMore = Прочетете още
+ReadLess = Прочетете по-малко
+RecurringEvent=Повтарящо се събитие
+EventPartOfARecurringSerie=Събитието е част от повтаряща се поредица с идентификатор %s
+BookCalSystem=Онлайн резервация

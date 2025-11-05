@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=Imekubaliwa
 SupplierProposalStatusNotSignedShort=Imekataa
 CopyAskFrom=Unda ombi la bei kwa kunakili ombi lililopo
 CreateEmptyAsk=Unda ombi tupu
-ConfirmCloneAsk=Je, una uhakika unataka kuiga ombi la bei <b> %s </b> ?
 ConfirmReOpenAsk=Je, una uhakika unataka kurudisha ombi la bei <b> %s </b> ?
 SendAskByMail=Tuma ombi la bei kwa barua
 SendAskRef=Inatuma ombi la bei %s

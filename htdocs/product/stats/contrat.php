@@ -2,6 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'products', 'companies'));
 
@@ -42,7 +52,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatscontract'));
 
 // Load variable for pagination
@@ -89,7 +99,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', 'mod-product page-stats_contrat');
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', 'mod-product page-stats_contrat');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -130,10 +140,10 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		$sql = "SELECT";
-		$sql .= " sum(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
-		$sql .= " sum(".$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'", 1, 0).") as nb_running,";
-		$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')", 1, 0).') as nb_late,';
-		$sql .= " sum(".$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
+		$sql .= " sum(".$db->ifsql("cd.statut=0", '1', '0').') as nb_initial,';
+		$sql .= " sum(".$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'", '1', '0').") as nb_running,";
+		$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')", '1', '0').') as nb_late,';
+		$sql .= " sum(".$db->ifsql("cd.statut=5", '1', '0').') as nb_closed,';
 		$sql .= " c.rowid as rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut as statut,";
 		$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -196,7 +206,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-			print_barre_liste($langs->trans("Contrats"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+			print_barre_liste($langs->trans("Contracts"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 			if (!empty($page)) {
 				$option .= '&page='.urlencode((string) ($page));

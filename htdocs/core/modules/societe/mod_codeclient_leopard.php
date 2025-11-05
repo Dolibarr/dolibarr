@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,12 +77,12 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate		$langs		Object langs
+	 * @param	?Translate		$langs		Object langs
 	 * @param	Societe|string	$objsoc		Object thirdparty
-	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = '', $type = -1)
+	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
 		return '';
 	}
@@ -90,8 +90,8 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Societe|string	$objsoc		Object thirdparty
-	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	Societe|string|null	$objsoc	Object third party
+	 * @param	int<-1,2>			$type	Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return next value
 	 */
 	public function getNextValue($objsoc = '', $type = -1)
@@ -106,12 +106,14 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 *	@param	DoliDB		$db		Database handler
 	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
-	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
-	 *  @return int					0 if OK
+	 *  @param  int<0,1>  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int<-6,0>			0 if OK
 	 * 								-1 ErrorBadCustomerCodeSyntax
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
+	 * 								-5 NotConfigured - Setup empty so any value may be ok or not
+	 * 								-6 Other (see this->error)
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{

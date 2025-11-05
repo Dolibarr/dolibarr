@@ -5,6 +5,7 @@
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -71,10 +72,15 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconststocktransfer" value="STOCKTRANSFER_STOCKTRANSFER_ADVANCED_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("StockTransfer"), $langs->transnoentities("StockTransfer"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("StockTransfer"), $langs->transnoentities("StockTransfer"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
@@ -82,9 +88,9 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskStockTransfer" value="'.getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskStockTransfer" value="'.getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADVANCED_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" value="'.$langs->trans("Save").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -125,8 +131,8 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  StockTransfer	$object		Object we need next value for
-	 *  @return string|0      				Value if OK, 0 if KO
+	 *  @param  StockTransfer|StockTransferLine	$object		Object we need next value for
+	 *  @return string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

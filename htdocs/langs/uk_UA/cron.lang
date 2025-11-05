@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Прочитайте заплановану роботу
 Permission23102 = Створити/оновити заплановану роботу
 Permission23103 = Видалити заплановану роботу
@@ -30,7 +29,8 @@ CronExecute=Запустити
 CronConfirmExecute=Ви впевнені, що хочете виконати ці заплановані завдання зараз?
 CronInfo=Модуль запланованих завдань дозволяє планувати завдання для їх автоматичного виконання. Роботи також можна запускати вручну.
 CronTask=Робота
-CronNone=Жодного
+CronNone=Наступний запуск запланованого завдання
+CronNotYetRan=Ніколи не страчено
 CronDtStart=Не раніше
 CronDtEnd=Не після
 CronDtNextLaunch=Наступне виконання
@@ -49,8 +49,8 @@ CronEach=Кожен
 JobFinished=Робота запущена та завершена
 Scheduled=За розкладом
 #Page card
-CronAdd= Додайте вакансії
-CronEvery=Виконайте завдання кожен
+CronAdd=Додайте вакансії
+CronEvery=Виконувати завдання кожні
 CronObject=Примірник/об’єкт для створення
 CronArgs=Параметри
 CronSaveSucess=Зберегти успішно
@@ -77,6 +77,7 @@ CronType=Тип роботи
 CronType_method=Метод виклику класу PHP
 CronType_command=Команда оболонки
 CronCannotLoadClass=Не вдається завантажити файл класу %s (щоб використовувати клас %s)
+CronModuleNotEnabledInThisEntity=Модуль Cron не ввімкнено в цій сутності (використовувати метод %s об'єкта %s)
 CronCannotLoadObject=Файл класу %s завантажено, але об’єкт %s в ньому не знайдено
 UseMenuModuleToolsToAddCronJobs=Перейдіть до меню " <a href="%s"> Головна - Інструменти адміністратора - Заплановані завдання </a> ", щоб переглянути та відредагувати заплановані завдання.
 JobDisabled=Робота відключена

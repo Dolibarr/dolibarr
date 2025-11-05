@@ -39,6 +39,7 @@ create table llx_actioncomm
   fk_user_mod		integer,						-- user id of user that has modified record
 
   fk_project		integer,
+  fk_task			integer,						-- available since v21+
   fk_soc			integer,
   fk_contact		integer,
   fk_parent			integer NOT NULL default 0,

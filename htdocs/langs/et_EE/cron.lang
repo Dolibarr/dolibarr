@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
 Permission23103 = Delete Scheduled job
@@ -8,15 +7,15 @@ Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Plaanitavata programmide haldamise seadistamine
 URLToLaunchCronJobs=URL kvalifitseeritud cron-tööde kontrollimiseks ja käivitamiseks brauserist
-OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+OrToLaunchASpecificJob=Või brauserist konkreetse töö kontrollimiseks ja käivitamiseks
 KeyForCronAccess=Croni käivitatavate programmide URLile ligipääsu turvavõti
-FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
+FileToLaunchCronJobs=Käsurida kvalifitseeritud cron-tööde kontrollimiseks ja käivitamiseks
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
-CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
-CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles
+CronExplainHowToRunWin=Microsoft(tm) Windowsi keskkonnas saate ajastatud ülesannete tööriistu kasutada käsurea käivitamiseks iga 5 minuti järel.
+CronMethodDoesNotExists=Klass %s ei sisalda ühtegi meetodit %s
+CronMethodNotAllowed=Klassi %s meetod %s on keelatud meetodite mustas nimekirjas.
+CronJobDefDesc=Croni tööprofiilid on defineeritud mooduli deskriptorifailis. Kui moodul aktiveeritakse, laaditakse need ja need on saadaval, nii et saate töid hallata administraatori tööriistade menüüst %s.
+CronJobProfiles=Eelnevalt määratletud cron-tööprofiilide loend
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
@@ -26,11 +25,12 @@ CronCommand=Käsk
 CronList=Plaanitud käivitused
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
-CronExecute=Launch now
+CronExecute=Käivita kohe
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Tegevus
-CronNone=Mitte ükski
+CronNone=Ajastatud ülesande järgmine käivitamine
+CronNotYetRan=Mitte kunagi hukatud
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Järgmine käivitus
@@ -43,58 +43,60 @@ CronModule=Moodul
 CronNoJobs=Pole ühtki registreeritud programm
 CronPriority=Prioriteet
 CronLabel=Nimi
-CronNbRun=Number of launches
-CronMaxRun=Maximum number of launches
+CronNbRun=Käivituste arv
+CronMaxRun=Maksimaalne käivituste arv
 CronEach=Iga
 JobFinished=Tegevus käivitatud ja lõpetatud
-Scheduled=Scheduled
+Scheduled=Planeeritud
 #Page card
-CronAdd= Lisa programme
-CronEvery=Execute job each
+CronAdd=Lisa programme
+CronEvery=Käivita töö iga
 CronObject=Instants/objekt, mis luuakse
 CronArgs=Parameetrid
 CronSaveSucess=Save successfully
 CronNote=Kommentaar
 CronFieldMandatory=Välja %s täitmine on nõutud
 CronErrEndDateStartDt=Lõppkuupäev ei saa olla alguskuupäevast varasem
-StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Enable scheduling
+StatusAtInstall=Mooduli paigaldamise olek
+CronStatusActiveBtn=Luba ajastamine
 CronStatusInactiveBtn=Lülita välja
-CronTaskInactive=This job is disabled (not scheduled)
+CronTaskInactive=See töö on keelatud (pole ajastatud)
 CronId=ID
 CronClassFile=Filename with class
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronModuleHelp=Dolibarri mooduli kataloogi nimi (töötab ka välise Dolibarri mooduliga). <BR> Näiteks Dolibarri tooteobjekti /htdocs/<u>product</u>/class/product.class.php toomise meetodi kutsumiseks on mooduli väärtus<br><i>product</i>
+CronClassFileHelp=Laaditava faili suhteline tee ja nimi (tee on veebiserveri juurkataloogi suhtes). <BR> Näiteks Dolibarr Product objekti htdocs/product/class/<u>product.class.php</u> toomise meetodi kutsumiseks on klassi failinime väärtus<br><i>product/class/product.class.php</i>
+CronObjectHelp=Laaditava objekti nimi. <BR> Näiteks Dolibarr Producti objekti /htdocs/product/class/product.class.php fetch-meetodi kutsumiseks on klassi failinime väärtus<br><i>Product</i>
+CronMethodHelp=Käivitatav objektimeetod. <BR> Näiteks Dolibarr Producti objekti /htdocs/product/class/product.class.php meetodi fetch kutsumiseks on meetodi väärtus<br><i>fetch</i>
+CronArgsHelp=Meetodi argumendid. <BR> Näiteks Dolibarr Product objekti /htdocs/product/class/product.class.php meetodi fetch kutsumiseks võivad parameetrite väärtused olla<br><i>0, ProductRef</i>
 CronCommandHelp=Käivitatav süsteemi käsk.
 CronCreateJob=Create new Scheduled Job
 CronFrom=Kellelt
 # Info
 # Common
 CronType=Job type
-CronType_method=Call method of a PHP Class
+CronType_method=PHP klassi kutsumismeetod
 CronType_command=Käsurea käsk
-CronCannotLoadClass=Cannot load class file %s (to use class %s)
-CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+CronCannotLoadClass=Klassifaili %s laadimine ebaõnnestus (klassi %s kasutamiseks)
+CronModuleNotEnabledInThisEntity=Croni moodul pole selles üksuses lubatud (objekti %s meetodi %s kasutamiseks)
+CronCannotLoadObject=Klassifail %s laaditi, kuid objekti %s sellest ei leitud.
+UseMenuModuleToolsToAddCronJobs=Ajastatud tööde vaatamiseks ja muutmiseks minge menüüsse "<a href="%s">Avaleht - Administraatori tööriistad - Ajastatud tööd</a>".
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
-MakeSendLocalDatabaseDumpShort=Send local database backup
-MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
-CleanUnfinishedCronjobShort=Clean unfinished cronjob
-CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+MakeLocalDatabaseDump=Loo lokaalse andmebaasi mälutõmmis. Parameetrid on: tihendus („gz”, „bz” või „none”), varundamise tüüp („mysql”, „pgsql”, „auto”), 1, „auto” või loodava faili nimi, säilitatavate varundusfailide arv.
+MakeSendLocalDatabaseDumpShort=Saada kohaliku andmebaasi varukoopia
+MakeSendLocalDatabaseDump=Saada kohaliku andmebaasi varukoopia e-posti teel. Parameetrid on: saaja, saatja, teema, sõnum, failinimi (saadetud faili nimi), filter ('sql' ainult andmebaasi varundamiseks)
+BackupIsTooLargeSend=Vabandust, viimane varukoopia on e-postiga saatmiseks liiga suur
+CleanUnfinishedCronjobShort=Puhas lõpetamata cronjob
+CleanUnfinishedCronjob=Puhas cronjob jääb töötlemises kinni, kui protsess enam ei tööta
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
-DATAPOLICYJob=Data cleaner and anonymizer
-JobXMustBeEnabled=Job %s must be enabled
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+DATAPOLICYJob=Andmete puhastaja ja anonüümija
+JobXMustBeEnabled=Töö %s peab olema lubatud
+EmailIfError=Veahoiatuse e-kiri
+JobNotFound=Tööülesannet %s ei leitud tööde loendist (proovige moodul keelata/lubada)
+ErrorInBatch=Viga töö %s käivitamisel
 
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+LastExecutedScheduledJob=Viimati teostatud ajastatud töö
+NextScheduledJobExecute=Järgmine ajastatud töö, mida täita
+NumberScheduledJobError=Vigaste ajastatud tööde arv
+NumberScheduledJobNeverFinished=Lõpetamata jäänud ajastatud tööde arv

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,15 @@
 // $db must be defined
 // $conf must be defined
 // $object must be defined (object is loaded in this file with fetch)
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var CommonObject $object
+ * @var User $user
+ *
+ * @var string $action
+ * @var ?string $contextpage
+ */
 // Save selection
 if (GETPOST('formfilteraction', 'alphanohtml') == 'listafterchangingselectedfields') {
 	$tabparam = array();

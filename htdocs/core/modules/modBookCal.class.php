@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,10 +139,9 @@ class modBookCal extends DolibarrModules
 		$this->langfiles = array("agenda");
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'BookCalWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -195,7 +194,7 @@ class modBookCal extends DolibarrModules
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'bookcal@bookcal',
-			// List of tables we want to see into dictonnary editor
+			// List of tables we want to see into dictionary editor
 			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),
@@ -488,42 +487,6 @@ class modBookCal extends DolibarrModules
 		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('availabilities').')';
 		$r++; */
 		/* END MODULEBUILDER EXPORT AVAILABILITIES */
-
-		// Imports profiles provided by this module
-
-		$r = 1;
-		/* BEGIN MODULEBUILDER IMPORT AVAILABILITIES */
-		/*
-		$langs->load("agenda");
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='AvailabilitiesLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='availabilities@bookcal';
-		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'bookcal_availabilities', 'extra' => MAIN_DB_PREFIX.'bookcal_availabilities_extrafields');
-		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
-		$import_sample = array();
-		$keyforclass = 'Availabilities'; $keyforclassfile='/bookcal/class/availabilities.class.php'; $keyforelement='availabilities@bookcal';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinimport.inc.php';
-		$import_extrafield_sample = array();
-		$keyforselect='availabilities'; $keyforaliasextra='extra'; $keyforelement='availabilities@bookcal';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
-		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bookcal_availabilities');
-		$this->import_regex_array[$r] = array();
-		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
-		$this->import_updatekeys_array[$r] = array('t.ref' => 'Ref');
-		$this->import_convertvalue_array[$r] = array(
-			't.ref' => array(
-				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON) ? 'mod_availabilities_standard' : $conf->global->BOOKCAL_AVAILABILITIES_ADDON),
-				'path'=>"/core/modules/commande/".(empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON) ? 'mod_availabilities_standard' : $conf->global->BOOKCAL_AVAILABILITIES_ADDON).'.php'
-				'classobject'=>'Availabilities',
-				'pathobject'=>'/bookcal/class/availabilities.class.php',
-			),
-			't.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
-			't.fk_user_valid' => array('rule' => 'fetchidfromref', 'file' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'user'),
-			't.fk_mode_reglement' => array('rule' => 'fetchidfromcodeorlabel', 'file' => '/compta/paiement/class/cpaiement.class.php', 'class' => 'Cpaiement', 'method' => 'fetch', 'element' => 'cpayment'),
-		);
-		$r++; */
-		/* END MODULEBUILDER IMPORT AVAILABILITIES */
 	}
 
 	/**

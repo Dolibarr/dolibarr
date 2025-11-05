@@ -1,2 +1,6 @@
 # Dolibarr language file - Source file is en_US - accountancy
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for GST payment not defined in setup
+AccountancyAreaDescVat=STEP %s: Define accounting accounts for each GST Rates. For this, use the menu entry %s.
+VATAccountNotDefined=Account for GST not defined
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of GST reverse charge on supplier purchases
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and GST, when no specific account were already set.

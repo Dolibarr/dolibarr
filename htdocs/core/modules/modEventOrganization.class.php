@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,7 @@ class modEventOrganization extends DolibarrModules
 		// A condition to hide module
 		$this->hidden = false;
 		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
-		$this->depends = array('modProjet','modCategorie');
+		$this->depends = array('modProjet', 'modCategorie', 'modAgenda');
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
@@ -129,10 +130,9 @@ class modEventOrganization extends DolibarrModules
 		$this->need_dolibarr_version = array(13, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'EventOrganizationWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -445,9 +445,6 @@ class modEventOrganization extends DolibarrModules
 		$myTmpObjects['ConferenceOrBooth'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'ConferenceOrBooth') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/eventorganization/template_conferenceorbooths.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/eventorganization';
@@ -456,7 +453,7 @@ class modEventOrganization extends DolibarrModules
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

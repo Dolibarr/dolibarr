@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=One click Printing
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
-MenuDirectPrinting=One click Printing jobs
-DirectPrint=One click Print
+Module64000Name=Tisk jedním kliknutím
+Module64000Desc=Povolit systém tisku jedním kliknutím
+PrintingSetup=Nastavení systému tisku jedním kliknutím
+PrintingDesc=Tento modul přidává do různých modulů tlačítko Tisk, které umožňuje tisk dokumentů přímo na tiskárně bez nutnosti otevírat dokument v jiné aplikaci.
+MenuDirectPrinting=Tisk úloh jedním kliknutím
+DirectPrint=Tisk jedním kliknutím
 PrintingDriverDesc=Konfigurace proměnných pro tiskový ovladač.
 ListDrivers=Výpis ovladačů
 PrintTestDesc=Výpis tiskáren
@@ -32,6 +32,7 @@ PRINTIPP_HOST=Tiskový server
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Přihlášení
 PRINTIPP_PASSWORD=Heslo
+PRINTIPP_SSL=Použijte SSL
 NoDefaultPrinterDefined=Není definovaná žádná výchozí tiskárna
 DefaultPrinter=Výchozí tiskárna
 Printer=Tiskárna
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Konfigurace proměnných pro ovladač tisku přes Goo
 PrintingDriverDescprintipp=Konfigurační proměnné pro pohánění tiskových ovladačů.
 PrintTestDescprintgcp=Seznam tiskáren pro Google Cloud Print.
 PrintTestDescprintipp=Seznam tiskáren pro poháry.
+Testbbbb

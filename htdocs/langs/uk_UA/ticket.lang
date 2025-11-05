@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Заявки
 Module56000Desc=Система заявок для управління питаннями або запитами
-
 Permission56001=Дивіться заявки
 Permission56002=Редагувати заявки
 Permission56003=Видалити заявки
 Permission56004=Управління заявками
 Permission56005=Перегляньте заявки всіх контрагентів (не діє для зовнішніх користувачів, завжди обмежуйтеся третьою стороною, від якої вони залежать)
 Permission56006=Експортні квитки
-
 Tickets=Заявки
 TicketDictType=Заявка - Типи
 TicketDictCategory=Квиток - групи
 TicketDictSeverity=Заявка - серйозності
 TicketDictResolution=Заявка - Резолюція
-
 TicketTypeShortCOM=Комерційне питання
 TicketTypeShortHELP=Запит на функціональну допомогу
 TicketTypeShortISSUE=Проблема або помилка
@@ -41,61 +33,51 @@ TicketTypeShortPROBLEM=Проблема
 TicketTypeShortREQUEST=Запит на зміну або покращення
 TicketTypeShortPROJET=Проект
 TicketTypeShortOTHER=Інший
-
 TicketSeverityShortLOW=Низька
 TicketSeverityShortNORMAL=Нормальний
 TicketSeverityShortHIGH=Високий
 TicketSeverityShortBLOCKING=Критичний, блокуючий
-
 TicketCategoryShortOTHER=Інший
-
 ErrorBadEmailAddress=Поле "%s" неправильне
 MenuTicketMyAssign=Мої заявки
 MenuTicketMyAssignNonClosed=Мої відкриті заявки
 MenuListNonClosed=Відкриті заявки
-
 TypeContact_ticket_internal_CONTRIBUTOR=Дописувач
 TypeContact_ticket_internal_SUPPORTTEC=Призначений користувач
 TypeContact_ticket_external_SUPPORTCLI=Контакти з клієнтами / відстеження інцидентів
 TypeContact_ticket_external_CONTRIBUTOR=Зовнішній учасник
-
 OriginEmail=Електронна пошта репортера
+EmailReplyto=Reply-To in Email
+EmailReferences=Посилання в електронних листах
 Notify_TICKET_SENTBYMAIL=Надішліть повідомлення про квиток електронною поштою
-
 ExportDataset_ticket_1=Заявки
-
 # Status
 Read=Прочитані
 Assigned=Призначений
 NeedMoreInformation=Чекаємо відгуку журналіста
 NeedMoreInformationShort=Чекаємо зворотного зв'язку
-TicketAnswered=Answered
 Waiting=Очікування
-SolvedClosed=Вирішено
+SolvedClosed=Зачинено
 Deleted=Видалено
-
 # Dict
-Type=Тип
 Severity=Тяжкість
 TicketGroupIsPublic=Група публічна
 TicketGroupIsPublicDesc=Якщо група квитків є загальнодоступною, вона буде видима у формі під час створення квитка з загальнодоступного інтерфейсу
-
 # Email templates
 MailToSendTicketMessage=Щоб надіслати електронну пошту з квитка
-
-#
 # Admin page
-#
 TicketSetup=Налаштування квиткового модуля
 TicketSettings=Налаштування
 TicketPublicAccess=Загальнодоступний інтерфейс, який не потребує ідентифікації, доступний за наступною URL-адресою
 TicketSetupDictionaries=Тип заявки, складність та аналітичні коди можна налаштувати із словників
 TicketParamModule=Налаштування змінної модуля
 TicketParamMail=Налаштування електронної пошти
-TicketEmailNotificationFrom=Електронна пошта відправника для сповіщення про відповіді
-TicketEmailNotificationFromHelp=Електронна адреса відправника, яка використовуватиметься для надсилання сповіщення електронною поштою, коли відповідь надається в бек-офісі. Наприклад noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Повідомте про створення заявки на цю адресу електронної пошти
-TicketEmailNotificationToHelp=За наявності цієї адреси електронної пошти буде сповіщено про створення заявки
+TicketEmailNotificationToHelp=Якщо ця адреса електронної пошти присутня, її буде повідомлено про створення заявки (на додаток до будь-яких інших одержувачів за замовчуванням)
 TicketNewEmailBodyLabel=Текстове повідомлення надіслано після створення квитка
 TicketNewEmailBodyHelp=Вказаний тут текст буде вставлено в електронний лист із підтвердженням створення нового квитка з загальнодоступного інтерфейсу. Інформація про консультацію квитка додається автоматично.
 TicketParamPublicInterface=Налаштування загальнодоступного інтерфейсу
@@ -116,7 +98,9 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=Цей текст з’явить�
 ExtraFieldsTicket=Додаткові атрибути
 TicketCkEditorEmailNotActivated=Редактор HTML не активований. Помістіть вміст FCKEDITOR_ENABLE_MAIL на 1, щоб отримати його.
 TicketsDisableEmail=Не надсилайте електронні листи для створення квитка або запису повідомлень
-TicketsDisableEmailHelp=За замовчуванням електронні листи надсилаються, коли створюються нові квитки або повідомлення. Увімкніть цей параметр, щоб вимкнути *всі* сповіщення електронною поштою
+TicketsDisableEmailHelp=За замовчуванням сповіщення електронною поштою третім сторонам надсилаються, коли створюються нові заявки або повідомлення як для бек-офісу, так і для публічного інтерфейсу. Увімкніть цю опцію, щоб вимкнути сповіщення електронною поштою третім сторонам, коли створення виконується з бек-офісу.
+TicketsNotifyThirdPartyFromBackOfficeByDefault=Повідомляти третю сторону за замовчуванням про створення заявки з бек-офісу
+TicketsNotifyThirdPartyFromBackOfficeByDefaultHelp=Під час створення заявки з бек-офісу опція «Повідомити третю сторону» буде позначена за замовчуванням.
 TicketsLogEnableEmail=Увімкнути журнал по електронній пошті
 TicketsLogEnableEmailHelp=При кожній зміні **кожному контакту**, пов’язаному з квитком, надсилатиметься електронний лист.
 TicketParams=Параметри
@@ -133,11 +117,13 @@ TicketsLimitViewAssignedOnlyHelp=Будуть видимі лише квитки
 TicketsActivatePublicInterface=Активувати загальнодоступний інтерфейс
 TicketsActivatePublicInterfaceHelp=Публічний інтерфейс дозволяє будь-яким відвідувачам створювати квитки.
 TicketsAutoAssignTicket=Автоматично призначати користувача, який створив квиток
-TicketsAutoAssignTicketHelp=При створенні квитка користувач може бути автоматично призначений до квитка.
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
+TicketAutoChangeStatusOnAnswer=Автоматично призначати статус під час відповіді на запит
+TicketAutoChangeStatusOnAnswerHelp=Коли користувач відповідає на запит, статус автоматично застосовується до запиту.
 TicketNumberingModules=Модуль нумерації квитків
 TicketsModelModule=Шаблони документів для квитків
 TicketNotifyTiersAtCreation=Повідомте третю сторону про створення
-TicketsDisableCustomerEmail=Завжди вимикайте електронні листи, коли квиток створюється з загальнодоступного інтерфейсу
+TicketsDisableCustomerEmail=Завжди вимикайте електронні листи для третіх сторін, коли заявка створюється з бек-офісу
 TicketsPublicNotificationNewMessage=Надсилайте електронні листи, коли до квитка буде додано нове повідомлення/коментар
 TicketsPublicNotificationNewMessageHelp=Надсилати електронні листи, коли з загальнодоступного інтерфейсу додається нове повідомлення (призначеному користувачеві або електронний лист із сповіщеннями (оновлення) та/або повідомлення електронної пошти до)
 TicketPublicNotificationNewMessageDefaultEmail=Сповіщення електронною поштою (оновлення)
@@ -152,15 +138,16 @@ TicketsAutoNotifyClose=Автоматично сповіщати третю ст
 TicketsAutoNotifyCloseHelp=Під час закриття заявки вам буде запропоновано надіслати повідомлення одному з контрагент контактів. При масовому закритті повідомлення буде надіслано на один контакт третьої сторони, пов’язаної з тикетом.
 TicketWrongContact=Наданий контакт не є частиною поточних контактів для квитка. Електронна пошта не надіслана.
 TicketChooseProductCategory=Категорія продуктів для підтримки квитків
-TicketChooseProductCategoryHelp=Виберіть категорію продукту підтримки квитків. Це буде використано для автоматичного зв’язування контракту з квитком.
+TicketChooseProductCategoryHelp=Виберіть категорію продукту для підтримки. Категорія буде використана для пошуку всіх контрактів, які містять продукт у цій категорії. Усі знайдені контракти будуть пов’язані зі створеним запитом.
 TicketUseCaptchaCode=Використовуйте графічний код (CAPTCHA) під час створення квитка
 TicketUseCaptchaCodeHelp=Додає перевірку CAPTCHA під час створення нового квитка.
 TicketsAllowClassificationModificationIfClosed=Дозволяє змінювати класифікацію закритих квитків
 TicketsAllowClassificationModificationIfClosedHelp=Дозволяє змінювати класифікацію (тип, групу заявок, серйозність), навіть якщо заявки закрито.
-
-#
+TicketAutoCheckNotifyThirdParty=Під час створення заявки позначте за замовчуванням опцію «Повідомити третю сторону».
+TicketAutoCheckNotifyThirdPartyHelp=Під час створення заявки опція «Повідомити контрагент» буде автоматично позначена.
+TicketAssignContactToMessage=Призначити зовнішній контакт повідомленню
+TicketAssignContactToMessageHelp=Коли відомий контакт відповідає на повідомлення, його ім'я відображається у списку повідомлень із заявками.
 # Index & list page
-#
 TicketsIndex=Квиткова зона
 TicketList=Список заявок
 TicketAssignedToMeInfos=На цій сторінці відображається список заявок, створений або призначений поточним користувачем
@@ -171,14 +158,9 @@ TicketViewNonClosedOnly=Переглянути лише відкриті кви�
 TicketStatByStatus=Квитки за статусом
 OrderByDateAsc=Сортувати за зростаючою датою
 OrderByDateDesc=Сортувати за датою убування
-ShowAsConversation=Показати як список бесід
-MessageListViewType=Показати як список таблиці
 ConfirmMassTicketClosingSendEmail=Автоматично надсилати електронні листи під час закриття квитків
 ConfirmMassTicketClosingSendEmailQuestion=Ви хочете повідомити третіх осіб про закриття цих квитків?
-
-#
 # Ticket card
-#
 Ticket=Квиток
 TicketCard=Квиткова картка
 CreateTicket=Створити квиток
@@ -220,8 +202,8 @@ ConfirmAbandonTicket=Чи підтверджуєте ви закриття кв�
 ConfirmDeleteTicket=Будь ласка, підтвердьте видалення квитка
 TicketDeletedSuccess=Квиток успішно видалено
 TicketMarkedAsClosed=Квиток позначено як закритий
-TicketDurationAuto=Розрахована тривалість
-TicketDurationAutoInfos=Тривалість розраховується автоматично на основі втручання
+TicketDurationAuto=Тривалість втручань
+TicketDurationAutoInfos=Тривалість розраховується автоматично на основі пов'язаних втручань
 TicketUpdated=Квиток оновлено
 SendMessageByEmail=Надіслати повідомлення електронною поштою
 TicketNewMessage=Нове повідомлення
@@ -278,20 +260,14 @@ TicketsDelayFromLastResponseTooLong=Забагато часу минуло з м
 TicketNoContractFoundToLink=Не знайдено жодного контракту, який би автоматично пов’язано з цим квитком. Будь ласка, зв’яжіть договір вручну.
 TicketManyContractsLinked=Багато контрактів були автоматично пов’язані з цим квитком. Обов’язково перевірте, що слід вибрати.
 TicketRefAlreadyUsed=Посилання [%s] уже використовується, ваше нове посилання [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Квиток %s читає %s
 NoLogForThisTicket=Ще немає журналу для цього квитка
 TicketLogAssignedTo=Квиток %s призначено для %s
 TicketLogPropertyChanged=Квиток %s змінено: класифікація з %s до %s
 TicketLogClosedBy=Квиток %s закрито %s
 TicketLogReopen=Квиток %s знову відкрити
-
-#
 # Public pages
-#
 TicketSystem=Квиткова система
 ShowListTicketWithTrackId=Відображення списку квитків із ідентифікатора треку
 ShowTicketWithTrackId=Показати квиток з ідентифікатора треку
@@ -306,13 +282,14 @@ TicketNewEmailBodyCustomer=Це автоматичний електронний 
 TicketNewEmailBodyInfosTicket=Інформація для моніторингу квитка
 TicketNewEmailBodyInfosTrackId=Номер відстеження квитка: %s
 TicketNewEmailBodyInfosTrackUrl=Ви можете переглянути хід оформлення заявки, натиснувши наступне посилання
-TicketNewEmailBodyInfosTrackUrlCustomer=Ви можете переглянути хід оформлення квитка в спеціальному інтерфейсі, натиснувши наступне посилання
+TicketNewEmailBodyInfosTrackUrlCustomer=Ви можете переглянути статус заявки на публічному порталі заявок, натиснувши на наступне посилання
 TicketCloseEmailBodyInfosTrackUrlCustomer=Ви можете ознайомитися з історією цього квитка, натиснувши наступне посилання
 TicketEmailPleaseDoNotReplyToThisEmail=Будь ласка, не відповідайте безпосередньо на цей електронний лист! Використовуйте посилання, щоб відповісти в інтерфейсі.
+TicketEmailPleaseDoNotReplyToThisEmailNoInterface=Будь ласка, не відповідайте безпосередньо на цей електронний лист!
 TicketPublicInfoCreateTicket=Ця форма дозволяє записати заявку на підтримку в нашій системі управління.
 TicketPublicPleaseBeAccuratelyDescribe=Будь ласка, точно опишіть свій запит. Надайте якомога більше інформації, щоб ми могли правильно визначити ваш запит.
 TicketPublicMsgViewLogIn=Будь ласка, введіть ідентифікатор відстеження квитка
-TicketTrackId=Загальнодоступний ідентифікатор відстеження
+TicketTrackId=Ідентифікатор відстеження
 OneOfTicketTrackId=Один із ваших ідентифікаторів відстеження
 ErrorTicketNotFound=Квиток з ідентифікатором відстеження %s не знайдено!
 Subject=Тема
@@ -330,7 +307,6 @@ NumberOfTicketsByMonth=Кількість заявок за місяць
 NbOfTickets=Кількість заявок
 ExternalContributors=Зовнішні учасники
 AddContributor=Додайте зовнішнього учасника
-
 # notifications
 TicketCloseEmailSubjectCustomer=Квиток закритий
 TicketCloseEmailBodyCustomer=Це автоматичне повідомлення про те, що квиток %s щойно закрито.
@@ -342,12 +318,8 @@ TicketNotificationRecipient=Одержувач сповіщення
 TicketNotificationLogMessage=Повідомлення журналу
 TicketNotificationEmailBodyInfosTrackUrlinternal=Перегляд квитка в інтерфейсі
 TicketNotificationNumberEmailSent=Надіслано сповіщення електронною поштою: %s
-
 ActionsOnTicket=Події за квитком
-
-#
 # Boxes
-#
 BoxLastTicket=Останні створені квитки
 BoxLastTicketDescription=Останні створені квитки %s
 BoxLastTicketContent=
@@ -366,4 +338,7 @@ BoxNumberOfTicketByDay=Кількість нових квитків по дня�
 BoxNewTicketVSClose=Кількість квитків порівняно з закритими квитками (сьогодні)
 TicketCreatedToday=Квиток створено сьогодні
 TicketClosedToday=Квиток сьогодні закритий
-KMFoundForTicketGroup=Ми знайшли теми та поширені запитання, які можуть дати відповідь на ваше запитання, завдяки перевірці їх перед подачею квитка
+KMFoundForTicketGroup=Checkout our FAQ
+SetTitle=Встановити заголовок
+TicketSendToInternalCC=Примусово надсилати електронну пошту як одержувача копії для всіх повідомлень, надісланих зі сторінки заявки.
+TicketSendToInternalCCHelp=Введіть електронну адресу, яку ви хочете автоматично використовувати як одержувача копії під час надсилання електронного листа зі сторінки заявки.

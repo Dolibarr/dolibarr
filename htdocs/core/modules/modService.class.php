@@ -110,6 +110,14 @@ class modService extends DolibarrModules
 		$this->rights[$r][5] = 'read_prices';
 		$r++;
 
+		$this->rights[$r][0] = 535; // id de la permission
+		$this->rights[$r][1] = 'Read supplier prices'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'service_advance';
+		$this->rights[$r][5] = 'read_supplier_prices';
+		$r++;
+
 		$this->rights[$r][0] = 534; // id de la permission
 		$this->rights[$r][1] = 'Delete les services'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
@@ -161,7 +169,7 @@ class modService extends DolibarrModules
 			'p.rowid' => "Id", 'p.ref' => "Ref", 'p.label' => "Label",
 			'p.fk_product_type' => 'Type', 'p.tosell' => "OnSell", 'p.tobuy' => "OnBuy",
 			'p.description' => "Description", 'p.url' => "PublicUrl",
-			'p.customcode' => 'CustomCode', 'p.fk_country' => 'IDCountry',
+			'p.customcode' => 'CustomsCode', 'p.fk_country' => 'IDCountry',
 			$alias_product_perentity . '.accountancy_code_sell' => "ProductAccountancySellCode", $alias_product_perentity . '.accountancy_code_sell_intra' => "ProductAccountancySellIntraCode",
 			$alias_product_perentity . '.accountancy_code_sell_export' => "ProductAccountancySellExportCode", $alias_product_perentity . '.accountancy_code_buy' => "ProductAccountancyBuyCode",
 			$alias_product_perentity . '.accountancy_code_buy_intra' => "ProductAccountancyBuyIntraCode", $alias_product_perentity . '.accountancy_code_buy_export' => "ProductAccountancyBuyExportCode",
@@ -285,7 +293,7 @@ class modService extends DolibarrModules
 		}
 
 		if (!isModEnabled("product")) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
-			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				// Exports product multiprice
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -319,7 +327,7 @@ class modService extends DolibarrModules
 				$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
 			}
 
-			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				// Exports product multiprice
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -327,22 +335,28 @@ class modService extends DolibarrModules
 				$this->export_permission[$r] = array(array("service", "export"));
 				$this->export_fields_array[$r] = array('p.rowid' => "Id", 'p.ref' => "Ref",
 					's.nom' => 'ThirdParty',
+					'pr.date_begin' => "AppliedPricesFrom",
+					'pr.date_end' => "AppliedPricesTo",
 					'pr.price_base_type' => "PriceBase",
 					'pr.price' => "PriceUnitPriceHT", 'pr.price_ttc' => "PriceUnitPriceTTC",
 					'pr.price_min' => "MinPriceUnitPriceHT", 'pr.price_min_ttc' => "MinPriceUnitPriceTTC",
 					'pr.tva_tx' => 'PriceVATRate',
 					'pr.default_vat_code' => 'PriceVATCode',
+					'pr.discount_percent' => 'Discount',
 					'pr.datec' => 'DateCreation');
 				if (is_object($mysoc) && $usenpr) {
 					$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
 				}
 				$this->export_entities_array[$r] = array('p.rowid' => "product", 'p.ref' => "product",
 					's.nom' => 'company',
+					'pr.date_begin' => "product",
+					'pr.date_end' => "product",
 					'pr.price_base_type' => "product", 'pr.price' => "product",
 					'pr.price_ttc' => "product",
 					'pr.price_min' => "product", 'pr.price_min_ttc' => "product",
 					'pr.tva_tx' => 'product',
 					'pr.default_vat_code' => 'product',
+					'pr.discount_percent' => 'product',
 					'pr.recuperableonly' => 'product',
 					'pr.datec' => "product");
 				$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -364,7 +378,7 @@ class modService extends DolibarrModules
 					$alias_product_perentity . '.accountancy_code_sell_export' => "ProductAccountancySellExportCode", $alias_product_perentity . '.accountancy_code_buy' => "ProductAccountancyBuyCode",
 					$alias_product_perentity . '.accountancy_code_buy_intra' => "ProductAccountancyBuyIntraCode", $alias_product_perentity . '.accountancy_code_buy_export' => "ProductAccountancyBuyExportCode",
 					'p.note' => "NotePrivate", 'p.note_public' => 'NotePublic',
-					'p.weight' => "Weight", 'p.length' => "Length", 'p.surface' => "Surface", 'p.volume' => "Volume", 'p.customcode' => 'CustomCode',
+					'p.weight' => "Weight", 'p.length' => "Length", 'p.surface' => "Surface", 'p.volume' => "Volume", 'p.customcode' => 'CustomsCode',
 					'p.price_base_type' => "PriceBase", 'p.price' => "UnitPriceHT", 'p.price_ttc' => "UnitPriceTTC", 'p.tva_tx' => 'VATRate', 'p.tosell' => "OnSell",
 					'p.tobuy' => "OnBuy", 'p.datec' => 'DateCreation', 'p.tms' => 'DateModification'
 				);
@@ -446,7 +460,7 @@ class modService extends DolibarrModules
 			'p.tobuy' => "OnBuy*",
 			'p.description' => "Description",
 			'p.url' => "PublicUrl",
-			'p.customcode' => 'CustomCode',
+			'p.customcode' => 'CustomsCode',
 			'p.fk_country' => 'CountryCode',
 			'p.accountancy_code_sell' => "ProductAccountancySellCode",
 			'p.accountancy_code_sell_intra' => "ProductAccountancySellIntraCode",
@@ -801,14 +815,14 @@ class modService extends DolibarrModules
 				$this->import_updatekeys_array[$r] = array('sp.fk_product' => 'ProductOrService', 'sp.ref_fourn' => 'SupplierRef', 'sp.fk_soc' => 'Supplier');
 			}
 
-			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				// Import products multiprices
 				$r++;
 				$this->import_code[$r] = $this->rights_class.'_multiprice';
 				$this->import_label[$r] = "ProductsOrServiceMultiPrice"; // Translation key
 				$this->import_icon[$r] = $this->picto;
 				$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-				$this->import_tables_array[$r] = array('pr' => MAIN_DB_PREFIX.'product_price');
+				$this->import_tables_array[$r] = array('pr' => MAIN_DB_PREFIX.'product_price', 'extra' => MAIN_DB_PREFIX.'product_price_extrafields');
 				$this->import_tables_creator_array[$r] = array('pr' => 'fk_user_author'); // Fields to store import user id
 				$this->import_fields_array[$r] = array('pr.fk_product' => "ProductOrService*",
 					'pr.price_base_type' => "PriceBase", 'pr.price_level' => "PriceLevel",
@@ -821,6 +835,21 @@ class modService extends DolibarrModules
 				if (is_object($mysoc) && $usenpr) {
 					$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('pr.recuperableonly' => 'NPR'));
 				}
+
+				// Add extra fields
+				$import_extrafield_sample = array();
+				$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'product_price' AND entity IN (0, ".$conf->entity.")";
+				$resql = $this->db->query($sql);
+				if ($resql) {    // This can fail when class is used on old database (during migration for example)
+					while ($obj = $this->db->fetch_object($resql)) {
+						$fieldname = 'extra.'.$obj->name;
+						$fieldlabel = ucfirst($obj->label);
+						$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+						$import_extrafield_sample[$fieldname] = $fieldlabel;
+					}
+				}
+				// End add extra fields
+				$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 				$this->import_regex_array[$r] = array('pr.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'pr.recuperableonly' => '^[0|1]$');
 				$this->import_convertvalue_array[$r] = array(
 					'pr.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')

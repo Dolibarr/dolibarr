@@ -1,6 +1,7 @@
 ---
 # This is a basic workflow to check code with PHPSTAN tool
 name: PHPStan
+
 # Controls when the workflow will run
 on:
   # workflow called by the parent workflow ci.yml
@@ -13,8 +14,9 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: stan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: phpstan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
   CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
@@ -35,15 +37,15 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v5
       # Get PHP and addons
       - name: Setup PHP
         id: setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          tools: phpstan:1, cs2pr
+          coverage: none # disable xdebug, pcov
+          tools: phpstan:2.1.12, cs2pr
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
             mysql, pgsql, sqlite3, ldap, xml, mcrypt
 
@@ -67,7 +69,7 @@ jobs:
       - name: Run PHPStan
         id: phpstan
         run: |
-          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
@@ -79,9 +81,15 @@ jobs:
           key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{
             github.run_id }}
       - name: Provide phpstan log as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: ${{ always() }}
         with:
           name: phpstan-srcrt
           path: ${{ github.workspace }}/_stan.xml
           retention-days: 2
+      # Run PHPStan generate baseline
+      # - name: Run PHPStan generate baseline
+      #   id: phpstan-baseline
+      #   if: ${{ success() }}
+      #   run: |
+      #     phpstan -vv analyse --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php --generate-baseline dev/build/phpstan/phpstan-baseline.neon

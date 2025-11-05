@@ -31,6 +31,7 @@ ErrorFromToAccountsMustDiffers=المصدر والأهداف يجب أن تكو�
 ErrorBadThirdPartyName=قيمة سيئة لاسم الجهة الخارجية
 ForbiddenBySetupRules=ممنوع بواسطة قواعد الإعداد
 ErrorProdIdIsMandatory=و٪ s غير إلزامي
+ErrorProdIdIsMandatoryForEuThirdparties=هذا %s إلزامي للعملاء في المجتمع الاقتصادي الأوروبي -EEC-
 ErrorAccountancyCodeCustomerIsMandatory=كود المحاسبة الخاص بالعميل %s إلزامي
 ErrorAccountancyCodeSupplierIsMandatory=كود المحاسبة لـ مورد %s إلزامي
 ErrorBadCustomerCodeSyntax=سوء تركيب الزبون مدونة
@@ -55,11 +56,12 @@ ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (exam
 ErrorUserCannotBeDelete=لا يمكن حذف المستخدم. ربما يرتبط بكيانات Dolibarr.
 ErrorFieldsRequired=تم ترك بعض الحقول المطلوبة فارغة.
 ErrorSubjectIsRequired=موضوع البريد الإلكتروني مطلوب
-ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
-ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
+ErrorInAddAttachmentsImageBaseOnMedia=خطأ في إنشاء ملفات الصور في دليل الوسائط للمرفقات
+ErrorInAddAttachmentsImageBaseIsSrcData=خطأ في إنشاء ملفات الصور (تم العثور عليها كبيانات:) في الدليل المؤقت للمرفقات
 ErrorFailedToCreateDir=فشل إنشاء دليل. تأكد من أن خادم الويب المستخدم أذونات لكتابة وثائق Dolibarr في الدليل. إذا تم تمكين المعلم <b>safe_mode</b> على هذا PHP ، تحقق من أن ملفات Dolibarr php تملك لخدمة الويب المستخدم (أو مجموعة).
 ErrorNoMailDefinedForThisUser=البريد لا يعرف لهذا المستخدم
 ErrorSetupOfEmailsNotComplete=لم يكتمل إعداد رسائل البريد الإلكتروني
+ErrorAccountingClosureSetupNotComplete=لم يكتمل إعداد حسابات الإغلاق
 ErrorFeatureNeedJavascript=تحتاج هذه الميزة إلى تفعيل JavaScript حتى تعمل. قم بتغيير هذا في الإعداد - العرض.
 ErrorTopMenuMustHaveAParentWithId0=وهناك قائمة من نوع 'توب' لا يمكن أن يكون أحد الوالدين القائمة. 0 وضعت في القائمة أو الأم في اختيار قائمة من نوع 'اليسار'.
 ErrorLeftMenuMustHaveAParentId=وهناك قائمة من نوع 'اليسار' يجب أن يكون لها هوية الوالد.
@@ -76,6 +78,7 @@ ErrorUploadBlockedByAddon=حظر حمل من قبل البرنامج المسا�
 ErrorFileSizeTooLarge=حجم الملف كبير جدًا أو لم يتم توفير الملف.
 ErrorFieldTooLong=الحقل %s طويل جدًا.
 ErrorSizeTooLongForIntType=طويل جدا بالنسبة نوع INT (%s أرقام كحد أقصى) حجم
+ErrorSizeForStarsType=يجب أن يكون حجم النجمة رقمًا بين 1 و 10
 ErrorSizeTooLongForVarcharType=وقتا طويلا لنوع السلسلة (%s حرف كحد أقصى) حجم
 ErrorNoValueForSelectType=يرجى ملء قيمة لقائمة مختارة
 ErrorNoValueForCheckBoxType=يرجى ملء قيمة لقائمة مربع
@@ -138,8 +141,9 @@ ErrorBadValueForCode=سيئة قيمة لرمز الحماية. حاول مرة 
 ErrorBothFieldCantBeNegative=ويمكن لحقول %s و%s لا تكون سلبية
 ErrorFieldCantBeNegativeOnInvoice=لا يمكن أن يكون الحقل <strong>%s</strong> سالبًا في هذا النوع من فاتورة. إذا كنت بحاجة إلى إضافة سطر خصم، فما عليك سوى إنشاء الخصم أولاً (من الحقل '%s' في بطاقة الطرف الثالث) و قم بتطبيقه على فاتورة.
 ErrorLinesCantBeNegativeForOneVATRate=لا يمكن أن يكون إجمالي البنود (صافي الضريبة) سالبًا لمعدل ضريبة القيمة المضافة غير الفارغ (تم العثور على إجمالي سلبي لمعدل ضريبة القيمة المضافة <b> %s </b> %%).
-ErrorLinesCantBeNegativeOnDeposits=لا يمكن أن تكون الأسطر سالبة في الإيداع. ستواجه مشاكل عندما تحتاج إلى استهلاك الإيداع في الفاتورة النهائية إذا قمت بذلك.
+ErrorLinesCantBeNegativeOnDeposits=لا يمكن أن تكون الخطوط سالبة في الدفعة المقدمة. ستواجه مشاكل عندما تحتاج إلى استهلاك الدفعة المقدمة في الفاتورة النهائية إذا فعلت ذلك.
 ErrorQtyForCustomerInvoiceCantBeNegative=كمية لخط في فواتير العملاء لا يمكن أن يكون سلبيا
+ErrorQtyForSupplierInvoiceCantBeNegative=لا يمكن أن تكون الكمية الخاصة بالسطر في فواتير الموردين سلبية
 ErrorWebServerUserHasNotPermission=<b>%s</b> تستخدم حساب مستخدم لتنفيذ خادم الويب لا يوجد لديه إذن لذلك
 ErrorNoActivatedBarcode=لا يوجد نوع الباركود تفعيلها
 ErrUnzipFails=فشل بفك٪ الصورة مع ZipArchive
@@ -222,13 +226,14 @@ ErrorUserNotAssignedToTask=User must be assigned to task to be able to enter tim
 ErrorTaskAlreadyAssigned=Task already assigned to user
 ErrorModuleFileSeemsToHaveAWrongFormat=The module package seems to have a wrong format.
 ErrorModuleFileSeemsToHaveAWrongFormat2=يجب أن يوجد دليل إلزامي واحد على الأقل في ملف مضغوط للوحدة النمطية: <strong> %s </strong> أو <strong> %s </strong>
-ErrorFilenameDosNotMatchDolibarrPackageRules=The file name of the module package (<strong>%s</strong>) does not match the expected name syntax: <strong>%s</strong>
+ErrorFilenameDosNotMatchDolibarrPackageRules=اسم ملف حزمة الوحدة النمطية (<strong>%s</strong>) لا يتطابق مع صيغة الاسم المتوقعة: <strong>%s</strong>
 ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid.
 ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
 ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=لا يمكن التحقق من صحة الكتلة عند تعيين خيار زيادة / تقليل المخزون في هذا الإجراء (يجب التحقق من صحة واحدًا تلو الآخر حتى تتمكن من تحديد المستودع لزيادة / تقليل)
 ErrorObjectMustHaveStatusDraftToBeValidated=يجب أن يكون للكائن %s الحالة "مسودة" ليتم التحقق من صحتها.
+ErrorObjectHasWrongStatus=يجب أن يكون للكائن %s حالة أخرى لهذه العملية.
 ErrorObjectMustHaveLinesToBeValidated=يجب أن يحتوي الكائن %s على سطور ليتم التحقق من صحتها.
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=يمكن إرسال الفواتير التي تم التحقق من صحتها فقط باستخدام الإجراء الجماعي "إرسال عبر البريد الإلكتروني".
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=يجب أن تختار ما إذا كانت المقالة عبارة عن منتج محدد مسبقًا أم لا
@@ -303,8 +308,8 @@ ErrorThirpdartyOrMemberidIsMandatory=طرف ثالث أو عضو في الشرا
 ErrorFailedToWriteInTempDirectory=فشل في الكتابة في الدليل المؤقت
 ErrorQuantityIsLimitedTo=الكمية محدودة بـ %s
 ErrorFailedToLoadThirdParty=فشل العثور على/تحميل جهة خارجية من المعرف=%s، البريد الإلكتروني=%s، الاسم= %s
-ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
-ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
+ErrorThisPaymentModeIsNotDirectDebit=طريقة الدفع ليست الخصم المباشر
+ErrorThisPaymentModeIsNotCreditTransfer=طريقة الدفع ليست تحويل ائتمان
 ErrorStripeCustomerNotFoundCreateFirst=لم يتم تعيين Stripe العميل لهذا الطرف الثالث (أو تم تعيينه على قيمة محذوفة من جانب Stripe). قم بإنشائه (أو إعادة إرفاقه) أولاً.
 ErrorCharPlusNotSupportedByImapForSearch=بحث IMAP غير قادر على البحث في المرسل أو المستلم عن سلسلة تحتوي على الحرف +
 ErrorTableNotFound=الجدول <b>%s</b> غير موجود
@@ -325,8 +330,8 @@ ErrorFixThisHere=<a href="%s">أصلح هذه المشكلة هنا</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=خطأ: عنوان URL للمثيل الحالي لديك (%s) لا يتطابق مع عنوان URL المحدد في إعداد تسجيل الدخول إلى OAuth2 (%s). لا يُسمح بتسجيل الدخول إلى OAuth2 في مثل هذا التكوين.
 ErrorMenuExistValue=توجد قائمة بالفعل بهذا العنوان أو عنوان URL
 ErrorSVGFilesNotAllowedAsLinksWithout=لا يُسمح بملفات SVG كروابط خارجية بدون الخيار %s
-ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
-ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
+ErrorTypeMenu=من المستحيل إضافة قائمة أخرى لنفس الوحدة على شريط التنقل، ولم يتم التعامل مع هذا الأمر بعد
+ErrorGeneratingBarcode=خطأ أثناء إنشاء الرمز الشريطي (ربما يكون شكل الرمز غير صالح)
 ErrorObjectNotFound = لم يتم العثور على الكائن <b>%s</b>، يرجى التحقق من عنوان URL الخاص بك
 ErrorCountryCodeMustBe2Char=يجب أن يكون رمز البلد عبارة عن سلسلة مكونة من حرفين
 ErrorABatchShouldNotContainsSpaces=يجب ألا تحتوي الكمية أو الرقم التسلسلي على مسافات
@@ -335,11 +340,27 @@ ErrorDictionaryNotFound=لم يتم العثور على القاموس <b>%s</b>
 ErrorFailedToCreateSymLinkToMedias=فشل إنشاء الرابط الرمزي %s للإشارة إلى %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=تحقق من الأمر المستخدم للتصدير في الخيارات المتقدمة للتصدير
 ErrorEndTimeMustBeGreaterThanStartTime=يجب أن يكون وقت الانتهاء أكبر من وقت البدء
-ErrorIncoherentDates=Start date must be earlier than end date
-ErrorEndHourIsNull=End date field cannot be empty
-ErrorStartHourIsNull=Start date field cannot be empty
-ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
-ErrorEmptyValueForQty=Quantity cannot be zero.
+ErrorIncoherentDates=يجب أن يكون تاريخ البدء قبل تاريخ النهاية
+ErrorEndHourIsNull=لا يمكن أن يكون حقل تاريخ النهاية فارغًا
+ErrorStartHourIsNull=لا يمكن أن يكون حقل تاريخ البدء فارغًا
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=هناك عدد كبير جدًا من الأسطر التي يتعين معالجتها. يُرجى استخدام مرشح أكثر انتقائية.
+ErrorEmptyValueForQty=الكمية لا يمكن أن تكون صفراً.
+ErrorNoCloneWithoutName=يجب أن يكون للمستخدم الجديد اسم
+ErrorNoCloneWithoutEmail=يجب أن يكون لدى المستخدم الجديد بريد إلكتروني
+ErrorUserClone=خطأ في فئات استنساخ المستخدم
+ErrorQtyOrderedLessQtyShipped = لا يمكن أن تكون الكمية المطلوبة أقل من الكمية المشحونة.
+ErrorVariousPaymentOnBankAccountWithADifferentCurrencyNotYetSupported=خطأ، لا يتم دعم إنشاء دفعة مختلفة على حساب بنكي بعملة مختلفة عن عملة الشركة حتى الآن.
+ErrorStreamMustBeEnabled=لا يتوفر دفق بي إتش بي %s. تحقق من وحدات بي إتش بي و عوامل دوليبار المتغيرة $dolibarr_main_stream_to_disable.
+ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment=خطأ، تحاول سداد فواتير مختلفة بعملات مختلفة في نفس الدفعة
+ErrorLinkNotFoundWithSharedLink=خطأ، لم يتم العثور على رابط بهذا المفتاح المشترك
+ErrorBadNumberOfLinesMustHaveAtLeastOneLinePlusTitle=عدد الأسطر غير صحيح. يجب أن يحتوي الملف على سطرين على الأقل (سطر للعنوان و، وسطر للبيانات).
+ErrorTooManyAttempts= محاولات كثيرة. الرجاء معاودة المحاولة في وقت لاحق
+ErrorThisContactXIsAlreadyDefinedAsThisType=تم تعريف %s بالفعل كجهة اتصال لهذا النوع.
+ErrorThisGroupIsAlreadyDefinedAsThisType=تم بالفعل تعريف جهات الاتصال بهذه المجموعة كجهة اتصال لهذا النوع.
+ErrorIsNotInError=%s ليس في الخطأ
+ErrorFilenameExtensionNotAllowed=صيغته الملف %s محظورة
+ErrorNoValueForSelectListType=خطأ، قيمة لهذا النوع من الحقل إلزامية
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=معلمة PHP upload_max_filesize (%s) أعلى من معلمة PHP post_max_size (%s). هذا ليس إعداد ثابت.
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
@@ -384,10 +405,14 @@ WarningGoOnAccountancySetupToAddAccounts=إذا كانت هذه القائمة �
 WarningCorrectedInvoiceNotFound=لم يتم العثور على فاتورة المصحح
 WarningCommentNotFound=تحذير: لا يمكن العثور على بداية و/ أو تعليقات النهاية للقسم <b>%s </b> في الملف <b>%s</b>
 WarningAlreadyReverse=لقد انعكست حركة الأسهم بالفعل
-WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
-WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
-WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
-WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
+WarningParentIDDoesNotExistAnymore=هذا المعرف الرئيسي لم يعد موجودًا
+WarningReadBankAlsoAllowedIfUserHasPermission=تحذير، قراءة حساب البنك مسموح بها أيضًا مع إذن إدارة مخطط الحساب
+WarningNoDataTransferedInAccountancyYet=يرجى ملاحظة عدم وجود بيانات في جدول المحاسبة. يرجى نقل بياناتك المسجلة في التطبيق إلى قسم المحاسبة أو تغيير وضع الحساب لتحليل البيانات المسجلة خارج المحاسبة.
+WarningChangingThisMayBreakStopTaskScheduler=تحذير، قد يؤدي تغيير هذه القيمة إلى تعطيل المجدول
+WarningAmountOfFileDiffersFromSumOfLines=تحذير، كمية الملف (%s) تختلف عن مجموع الأسطر (%s)
+WarningModuleAffiliatedToAReportedCompany=تحذير، تم الإبلاغ عن هذه الوحدة إلى مؤسسة دوليبار باعتبارها منشورة من قبل شركة تستخدم ممارسات غير قانونية (عدم الامتثال لقواعد استخدام العلامة التجارية لدوليبار، أو جمع بياناتك دون موافقتك أو نشر البرامج الضارة).
+WarningModuleAffiliatedToAPiratPlatform=كن حذرًا عند الحصول على وحدة (مدفوعة أو مجانية) من منصة غير رسمية مشبوهة مثل %s
+
 SwissQrOnlyVIR = لا يمكن إضافة SwissQR فاتورة إلا على الفواتير التي تم تعيينها ليتم دفعها من خلال دفعات تحويل الائتمان.
 SwissQrCreditorAddressInvalid = عنوان الدائن غير صالح (هل تم تعيين مدينة ZIP و؟ (%s)
 SwissQrCreditorInformationInvalid = معلومات الدائن غير صالحة لرقم IBAN (%s): %s
@@ -414,12 +439,9 @@ BadSetupOfField = خطأ في الإعداد السيئ للمجال
 BadSetupOfFieldClassNotFoundForValidation = خطأ في إعداد الحقل غير صحيح: الفئة غير موجودة للتحقق من الصحة
 BadSetupOfFieldFileNotFound = خطأ في إعداد الحقل غير صحيح: الملف غير موجود للتضمين
 BadSetupOfFieldFetchNotCallable = خطأ في إعداد الحقل غير صحيح: الجلب غير قابل للاستدعاء في الفصل الدراسي
-ErrorTooManyAttempts= محاولات كثيرة. الرجاء معاودة المحاولة في وقت لاحق
 TotalAmountEmpty=المبلغ الإجمالي فارغ
 FailedToFoundTheConversionRateForInvoice=فشل العثور على معدل التحويل لـ فاتورة
 ThisIdNotDefined=لم يتم تعريف معرف
 OperNotDefined=طريقة الدفع غير محددة
-ErrorThisContactXIsAlreadyDefinedAsThisType=تم تعريف %s بالفعل كجهة اتصال لهذا النوع.
-ErrorThisGroupIsAlreadyDefinedAsThisType=تم بالفعل تعريف جهات الاتصال بهذه المجموعة كجهة اتصال لهذا النوع.
-EmptyMessageNotAllowedError=Empty message is not allowed
-ErrorIsNotInError=%s is not in error
+EmptyMessageNotAllowedError=لا يسمح بالرسالة الفارغة
+SomeShipmentExists=خطأ، هناك شحنة مرتبطة بـ طلب. تم رفض الحذف.

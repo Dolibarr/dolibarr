@@ -2,6 +2,7 @@
 IdAgenda=Sündmuse ID
 Actions=Tegevused
 Agenda=Päevakava
+AgendaEvents=Päevakorrasündmused
 TMenuAgenda=Päevakava
 Agendas=Päevakavad
 LocalAgenda=Vaikimisi kalender
@@ -21,7 +22,6 @@ MenuDoneMyActions=Minu lõpetatud tegevused
 ListOfEvents=Sündmuste nimestik (vaikimisi kalender)
 ActionsAskedBy=Tegevused, mille sisestas
 ActionsToDoBy=Tegevused, mis on seotud
-ActionsDoneBy=Tegevused, mille tegi
 ActionAssignedTo=Sündmus omistatud kasutajale
 ViewCal=Kuu vaade
 ViewDay=Päeva vaade
@@ -45,6 +45,7 @@ PropalClosedRefusedInDolibarr=Pakkumisest %s keelduti
 PropalValidatedInDolibarr=Pakkumine %s on kinnitatud
 PropalBackToDraftInDolibarr=Pakkumine %s läks tagasi mustandi olekusse
 PropalClassifiedBilledInDolibarr=Pakkumine %s märgiti arveldatuks
+InvoiceCreatedInDolibarr=Arve %s loodud
 InvoiceValidatedInDolibarr=Arve %s on kinnitatud
 InvoiceValidatedInDolibarrFromPos=Arve %s kinnitati POS'is
 InvoiceBackToDraftInDolibarr=Arve %s on tagasi mustandi staatuses
@@ -60,7 +61,7 @@ MemberSubscriptionAddedInDolibarr=Kordustellimus %s liikmele %s lisatud
 MemberSubscriptionModifiedInDolibarr=Kordustellimus %s liikmele %s muudetud
 MemberSubscriptionDeletedInDolibarr=Kordustellimus %s liikmele %s kustutatud
 ShipmentValidatedInDolibarr=Saadetis %s kinnitatud
-ShipmentClassifyClosedInDolibarr=Shipment %s classified closed
+ShipmentClassifyClosedInDolibarr=Saadetis %s on kuulutatud suletuks
 ShipmentUnClassifyCloseddInDolibarr=Saadetis %s märgiti taasavatuks
 ShipmentBackToDraftInDolibarr=Saadetis %s on muudetud mustandiks
 ShipmentDeletedInDolibarr=Saadetis %s kustutatud
@@ -88,7 +89,7 @@ ShippingValidated= Saadetis %s kinnitatud
 InterventionSentByEMail=Sekkumine %s saadetud e-postiga
 ProjectSentByEMail=Projekt %s saadeti e-postiga
 ProjectDeletedInDolibarr=Projekt %s kustutatud
-ProjectClosedInDolibarr=Project %s closed
+ProjectClosedInDolibarr=Projekt %s suletud
 ProposalDeleted=Pakkumine kustutatud
 OrderDeleted=Tellimus kustutatud
 InvoiceDeleted=Arve kustutatud
@@ -128,19 +129,21 @@ MRP_MO_PRODUCEDInDolibarr=TT tehtud
 MRP_MO_DELETEInDolibarr=TT kustutatud
 MRP_MO_CANCELInDolibarr=TT tühistatud
 PAIDInDolibarr=%s makstud
-ENABLEDISABLEInDolibarr=User enabled or disabled
+ENABLEDISABLEInDolibarr=Kasutaja lubatud või keelatud
 CANCELInDolibarr=Tühistatud
 ##### End agenda events #####
 AgendaModelModule=Dokumendimallid sündmusele
 DateActionStart=Alguskuupäev
 DateActionEnd=Lõppkuupäev
 AgendaUrlOptions1=Otsingutulemuste piiramiseks võib kasutada ka järgmisi parameetreid:
-AgendaUrlOptions3=<b>logina=%s</b> piiramaks väljundit kasutaja <b>%s</b> tegevustega.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> piiramaks väljundit mis ei ole kasutaja <b>%s</b> tegevused.
+AgendaUrlOptions3=<b>logina=%s</b>, et piirata väljundit kasutaja omanduses olevate toimingutega <b>%s</b> (kasutage <b>logina=!%s</b> sündmuste puhul, mis ei kuulu kasutajale).
 AgendaUrlOptions4=<b>logint=%s</b> piiramaks väljundit tegevustega, mis on omistatud kasutajale <b>%s</b> (omanik või muud)
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> piiramaks väljundit tegevustega, mis on seostatud projektiga <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> et välistada automaatsed sündmused.
+AgendaUrlOptionsType=<b>actiontype=%s</b> automaatsete või käsitsi sündmuste saamiseks
+AgendaUrlOptionsCode=<b>actioncode=%s</b> ainult antud koodiga sündmuste saamiseks
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> kaasamaks pühadeaegseid sündmusi.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b>, et piirata sündmustega viimase %s päeva jooksul (vaikimisi on %s).
+AgendaUrlOptionsLimit=<b>limit=50</b>, et piirata 50 viimast sündmust (vaike- ja maksimumväärtus on %s ).
 AgendaShowBirthdayEvents=Kontaktide sünnipäevad
 AgendaHideBirthdayEvents=Peida kontaktide sünnipäevad
 Busy=Hõivatud
@@ -182,23 +185,28 @@ BrowserPush=Veebisirvija hüpikteavitus
 Reminders=Meeldetuletused
 ActiveByDefault=Vaikimisi aktiveeritud
 Until=kuni
-DataFromWasMerged=Data from %s was merged
-AgendaShowBookcalCalendar=Booking calendar: %s
-MenuBookcalIndex=Online appointment
-BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
-DurationOfRange=Duration of ranges
-BookCalSetup = Online appointment setup
-BookCalSetupPage = Online appointment setup page
-BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
-BookCalAbout = About BookCal
-BookCalAboutPage = BookCal about page
+DataFromWasMerged=Andmed failist %s liideti
+AgendaShowBookcalCalendar=Broneerimiskalender: %s
+MenuBookcalIndex=Veebipõhine kohtumine
+BookcalLabelAvailabilityHelp=Saadavusvahemiku silt. Näiteks:<br>Üldine saadavus<br>Saadavus jõulupühade ajal
+DurationOfRange=Vahemike kestus
+BookCalSetup = Veebikohtumise seadistamine
+BookCalSetupPage = Veebipõhise kohtumise seadistamise leht
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Liidese pealkiri
+BookCalAbout = Teave BookCali kohta
+BookCalAboutPage = BookCali leht umbes
 Calendars=Kalendrid
-Availabilities=Availabilities
-NewAvailabilities=New availabilities
-NewCalendar=New calendar
-ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
-AppointmentDuration = Appointment Duration : %s
-BookingSuccessfullyBooked=Your booking has been saved
-BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
-BookcalBookingTitle=Online appointment
-Transparency = Transparency
+Availabilities=Saadavus
+NewAvailabilities=Uued saadavused
+NewCalendar=Uus kalender
+ThirdPartyBookCalHelp=Sellesse kalendrisse broneeritud sündmus lingitakse automaatselt selle kolmanda osapoolega.
+AppointmentDuration = Kohtumise kestus: %s
+BookingSuccessfullyBooked=Teie broneering on salvestatud
+BookingReservationHourAfter=Kinnitame oma kohtumise broneeringu kuupäeval %s
+BookcalBookingTitle=Veebipõhine kohtumine
+Transparency = Läbipaistvus
+ReadMore = Loe edasi
+ReadLess = Loe vähem
+RecurringEvent=Korduv sündmus
+EventPartOfARecurringSerie=Sündmus on osa korduvast seeriast ID-ga %s
+BookCalSystem=Veebipõhine broneerimine

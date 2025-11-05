@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2014	Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +34,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
-$id						= GETPOSTINT('id');
 $action					= GETPOST('action', 'aZ09');
 $cancel					= GETPOST('cancel', 'alpha');
+$backtopage				= GETPOST('backtopage', 'alpha');
+
+$id						= GETPOSTINT('id');
 $ref					= GETPOST('ref', 'alpha');
 $address				= GETPOST('address', 'alpha');
 $zip					= GETPOST('zipcode', 'alpha');
@@ -66,8 +77,9 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
+$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
@@ -79,7 +91,6 @@ $permissiontodelete = $user->hasRight('resource', 'delete');
  * Actions
  */
 
-$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 $parameters = array('resource_id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -92,14 +103,14 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
-		if ($action == 'add') {
+		if ($action == 'add') {	// Test on permission not required here
 			header("Location: ".DOL_URL_ROOT.'/resource/list.php');
 			exit;
 		}
 		$action = '';
 	}
 
-	if ($action == 'add' && $user->hasRight('resource', 'write')) {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!$cancel) {
 			$error = '';
 
@@ -144,7 +155,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$cancel && $user->hasRight('resource', 'write')) {
+	if ($action == 'update' && !$cancel && $permissiontoadd) {
 		$error = 0;
 
 		if (empty($ref)) {
@@ -155,6 +166,8 @@ if (empty($reshook)) {
 		if (!$error) {
 			$res = $object->fetch($id);
 			if ($res > 0) {
+				$oldref = $object->ref;
+
 				$object->ref          			= $ref;
 				$object->address				= $address;
 				$object->zip					= $zip;
@@ -176,6 +189,14 @@ if (empty($reshook)) {
 
 				$result = $object->update($user);
 				if ($result > 0) {
+					if ($oldref != $ref) {
+						// We renamed the ref so we must change the directory too
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+						$srcdir = $conf->resource->dir_output.'/'.dol_sanitizeFileName($oldref);
+						$destdir = $conf->resource->dir_output.'/'.dol_sanitizeFileName($ref);
+						dol_move_dir($srcdir, $destdir);
+					}
+
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
@@ -193,7 +214,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
+	if ($action == 'confirm_delete_resource' && $permissiontodelete && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
 			$result = $object->delete($user);
@@ -242,7 +263,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			print '$(document).ready(function () {
                         $("#selectcountry_id").change(function() {
 							console.log("selectcountry_id change");
-                        	document.formresource.action.value="create";
+                        	document.formresource.action.value="' . ($action == 'create' ? 'create' : 'edit') . '";
                         	document.formresource.submit();
                         });
                      });';
@@ -260,7 +281,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input class="minwidth200" name="ref" value="'.($ref ?: $object->ref).'" autofocus="autofocus"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ?: $object->ref).'" autofocus="autofocus" spellcheck="false"></td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
@@ -272,7 +293,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', ($description ?: $object->description), '', '200', 'dolibarr_notes', false);
+		$doleditor = new DolEditor('description', ($description ?: $object->description), '', 200, 'dolibarr_notes');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -281,7 +302,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 		print dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address') : $object->address, 0, 1);
 		print '</textarea>';
-		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
+		print $form->widgetForTranslation("address", $object, (bool) $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 		print '</td></tr>';
 
 		// Zip
@@ -293,13 +314,13 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Town
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
-		print $formresource->select_ziptown(GETPOSTISSET('town') ?  GETPOST('town') : $object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
-		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
+		print $formresource->select_ziptown(GETPOSTISSET('town') ? GETPOST('town') : $object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+		print $form->widgetForTranslation("town", $object, (bool) $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
 		print '</td></tr>';
 
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $object->country_id, 'country_id');
+		print $form->select_country(GETPOSTISSET('country_id') ? (string) GETPOSTINT('country_id') : (string) $object->country_id, 'country_id');
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -334,21 +355,21 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0).'</td>';
 		print '<td>';
 		print img_picto('', 'object_email', 'class="pictofixedwidth"');
-		print '<input type="email" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
+		print '<input type="email" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'" spellcheck="false"></td>';
 		print '</tr>';
 
 		// Max users
-		print '<tr><td>'.$form->editfieldkey('MaxUsers', 'max_users', '', $object, 0).'</td>';
+		print '<tr><td>'.$form->editfieldkey('MaxUsers', 'max_users', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans('MaxUsersResourceDesc')).'</td>';
 		print '<td>';
 		print img_picto('', 'object_user', 'class="pictofixedwidth"');
-		print '<input type="text" class="width75 right" name="max_users" id="max_users" value="'.(GETPOSTISSET('max_users') ? GETPOST('max_users', 'int') : $object->max_users).'"></td>';
+		print '<input type="text" class="width75 right" name="max_users" id="max_users" value="'.(GETPOSTISSET('max_users') ? GETPOST('max_users', 'int') : ($object->max_users > 0 ? $object->max_users : '')).'"></td>';
 		print '</tr>';
 
 		// URL
 		print '<tr><td>'.$form->editfieldkey('URL', 'url', '', $object, 0).'</td>';
 		print '<td>';
 		print img_picto('', 'object_url', 'class="pictofixedwidth"');
-		print '<input type="url" name="url" id="url" value="'.(GETPOSTISSET('url') ? GETPOST('url', 'alpha') : $object->url).'"></td>';
+		print '<input type="url" class="minwidth300" name="url" id="url" value="'.(GETPOSTISSET('url') ? GETPOST('url', 'alpha') : $object->url).'" spellcheck="false"></td>';
 		print '</tr>';
 
 		// Other attributes
@@ -381,7 +402,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print $formconfirm;
 
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref');
 
@@ -389,9 +410,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		/*---------------------------------------
-		 * View object
-		 */
 		print '<table class="border tableforfield centpercent">';
 
 		// Resource type
@@ -414,7 +432,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr>';
 		print '<td>'.$langs->trans("MaxUsers").'</td>';
 		print '<td>';
-		print $object->max_users;
+		print $object->max_users > 0 ? $object->max_users : '';
 		print '</td>';
 		print '</tr>';
 

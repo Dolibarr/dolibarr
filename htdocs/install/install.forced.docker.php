@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Yann Le Doaré      <services@linuxconsole.org>
+ * Copyright (C) 2024       Yann Le Doaré      		<services@linuxconsole.org>
+ * Copyright (C) 2025       Charlene Benke      	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 $force_install_nophpinfo = true;
 
 /** @var int	$force_install_noedit 				1 = Lock and hide environment variables, 2 = Lock all set variables */
-$force_install_noedit = 2;
+$force_install_noedit = 3;
 
 /** @var string	$force_install_message	 			Information message */
 $force_install_message = 'Welcome to your Dolibarr Docker install';
@@ -67,8 +68,11 @@ $force_install_databaserootpass = getenv('DOLI_ROOT_PASSWORD', true) ?: getenv('
 /** @var string $force_install_dolibarrlogin		Dolibarr super-administrator username */
 $force_install_dolibarrlogin = 'admin';
 
+/** @var string $force_install_dolibarrpassword		Dolibarr super-administrator password */
+$force_install_dolibarrpassword = '';
+
 /** @var bool $force_install_lockinstall			Force install locking */
 $force_install_lockinstall = true;
 
 /** @var string $force_install_module				Enable module(s) (Comma separated class names list) */
-$force_install_module = 'modSociete,modFournisseur,modFacture';
+$force_install_module = '';

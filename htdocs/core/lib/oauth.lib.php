@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <florian.henry@opn-concept.pro>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +30,7 @@
 /**
  * Return array of possible OAUTH2 services
  *
- * @return 	array				Array of services
+ * @return 	array<string[]>				Array of services
  */
 function getAllOauth2Array()
 {
@@ -272,9 +274,9 @@ function getAllOauth2Array()
 
 
 /**
- * Return array of tabs to used on pages to setup cron module.
+ * Return array of tabs to use on pages to setup cron module.
  *
- * @return 	array				Array of tabs
+ * @return 	array<string,array<string,string>>		Array of tabs
  */
 function getSupportedOauth2Array()
 {
@@ -340,17 +342,17 @@ function getSupportedOauth2Array()
 		'availablescopes' => 'openid,offline_access,profile,email,User.Read,https://outlook.office.com/.default',
 		'returnurl' => '/core/modules/oauth/microsoft2_oauthcallback.php'
 	);
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		$supportedoauth2array['OAUTH_GENERIC_NAME'] = array(
-			'callbackfile' => 'generic',
-			'picto' => 'generic',
-			'urlforapp' => 'OAUTH_GENERIC_DESC',
-			'name' => 'Other',
-			'urlforcredentials' => '',
-			'availablescopes' => 'Standard',
-			'returnurl' => '/core/modules/oauth/generic_oauthcallback.php'
-		);
-	}
+
+	// Add a generic Oauth token handler. Tested with Mastodon.
+	$supportedoauth2array['OAUTH_GENERIC_NAME'] = array(
+		'callbackfile' => 'generic',
+		'picto' => 'generic',
+		'urlforapp' => 'OAUTH_GENERIC_DESC',
+		'name' => 'Generic',
+		'urlforcredentials' => '',
+		'availablescopes' => 'Standard',
+		'returnurl' => '/core/modules/oauth/generic_oauthcallback.php'
+	);
 
 	return $supportedoauth2array;
 }
@@ -359,7 +361,7 @@ function getSupportedOauth2Array()
 /**
  * Return array of tabs to used on pages to setup cron module.
  *
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function oauthadmin_prepare_head()
 {
@@ -367,12 +369,12 @@ function oauthadmin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath('/admin/oauth.php', 1);
+	$head[$h][0] = DOL_URL_ROOT.'/admin/oauth.php';
 	$head[$h][1] = $langs->trans("OAuthServices");
 	$head[$h][2] = 'services';
 	$h++;
 
-	$head[$h][0] = dol_buildpath('/admin/oauthlogintokens.php', 1);
+	$head[$h][0] = DOL_URL_ROOT.'/admin/oauthlogintokens.php';
 	$head[$h][1] = $langs->trans("TokenManager");
 	$head[$h][2] = 'tokengeneration';
 	$h++;

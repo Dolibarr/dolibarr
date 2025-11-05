@@ -2,7 +2,7 @@
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,12 +137,12 @@ class PaymentSocialContribution extends CommonObject
 	public $chid;
 
 	/**
-	 * @var integer|string datepaye
+	 * @var int|string datepaye
 	 */
 	public $datepaye;
 
 	/**
-	 * @var integer|string paiementtype
+	 * @var int|string paiementtype
 	 */
 	public $paiementtype;
 
@@ -167,8 +167,6 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public function create($user, $closepaidcontrib = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -217,6 +215,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
+			$this->error = 'ErrorPaymentAmountMustNotBeNull';
 			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 		}
 
@@ -291,7 +290,6 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.fk_charge,";
@@ -301,7 +299,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql .= " t.amount,";
 		$sql .= " t.fk_typepaiement,";
 		$sql .= " t.num_paiement as num_payment,";
-		$sql .= " t.note,";
+		$sql .= " t.note as note_private,";
 		$sql .= " t.fk_bank,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
@@ -330,7 +328,7 @@ class PaymentSocialContribution extends CommonObject
 				$this->fk_typepaiement = $obj->fk_typepaiement;
 				$this->num_payment = $obj->num_payment;
 				$this->num_paiement = $obj->num_payment;
-				$this->note_private = $obj->note;
+				$this->note_private = $obj->note_private;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -399,7 +397,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET";
 		$sql .= " fk_charge=".(isset($this->fk_charge) ? ((int) $this->fk_charge) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? price2num($this->amount) : "null").",";
 		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? ((int) $this->fk_typepaiement) : "null").",";
@@ -506,6 +504,7 @@ class PaymentSocialContribution extends CommonObject
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->statut = 0;
+		$object->status = 0;
 
 		// Clear fields
 		// ...
@@ -516,7 +515,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 
@@ -599,7 +598,7 @@ class PaymentSocialContribution extends CommonObject
 				$label,
 				$total,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque
@@ -674,7 +673,7 @@ class PaymentSocialContribution extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
+	 *  Update the link between the Payment and the line generated in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -759,7 +758,7 @@ class PaymentSocialContribution extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Longueur max libelle
@@ -813,17 +812,21 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-	 *	Return if object was dispatched into bookkeeping
+	 *	Return if object was dispatched into bookkeeping, or return the array of bookkeeping id.
 	 *
-	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
+	 *	@param		int		$mode		0=Mode to return the nb of record, 1=Mode to return array of ID in bookkeeping table.
+	 *	@return     int         		Return integer <0 if KO, 0=no, 1=yes or ID transaction
 	 */
-	public function getVentilExportCompta()
+	public function getVentilExportCompta($mode = 0)
 	{
 		$alreadydispatched = 0;
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->bank_line);
+		$sql = " SELECT ".($mode ? 'DISTINCT piece_num' : 'COUNT(ab.rowid)')." as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab";
+		$sql .= " WHERE ab.doc_type = '".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->bank_line);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -836,7 +839,7 @@ class PaymentSocialContribution extends CommonObject
 		}
 
 		if ($alreadydispatched) {
-			return 1;
+			return $alreadydispatched;
 		}
 		return 0;
 	}

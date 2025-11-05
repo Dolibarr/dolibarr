@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox ሞጁል ማዋቀር
 PayBoxDesc=ይህ ሞጁል በደንበኞች <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> ላይ ክፍያ ለመፍቀድ ገጾችን ያቀርባል። ይህ ለነጻ ክፍያ ወይም በአንድ የተወሰነ የዶሊባርር ነገር (ደረሰኝ፣ ትዕዛዝ፣ ...) ላይ ለክፍያ ሊያገለግል ይችላል።
-FollowingUrlAreAvailableToMakePayments=የሚከተሉት ዩአርኤሎች በዶሊባርር ዕቃዎች ላይ ክፍያ ለመፈጸም ለደንበኛ አንድ ገጽ ለማቅረብ ይገኛሉ
-PaymentForm=የክፍያ ቅጽ
-WelcomeOnPaymentPage=ወደ የመስመር ላይ ክፍያ አገልግሎታችን እንኳን በደህና መጡ
-ThisScreenAllowsYouToPay=ይህ ስክሪን ለ%s የመስመር ላይ ክፍያ እንድትከፍል ያስችልሃል።
-ThisIsInformationOnPayment=ይህ በክፍያ ላይ መረጃ ነው
-ToComplete=ለማጠናቀቅ
-YourEMail=የክፍያ ማረጋገጫ ለመቀበል ኢሜይል ያድርጉ
-Creditor=አበዳሪ
-PaymentCode=የክፍያ ኮድ
 PayBoxDoPayment=በ Paybox ይክፈሉ።
 YouWillBeRedirectedOnPayBox=የክሬዲት ካርድ መረጃን ለማስገባት ደህንነቱ በተጠበቀው የ Paybox ገጽ ላይ ይዛወራሉ።
-Continue=ቀጥሎ
 SetupPayBoxToHavePaymentCreatedAutomatically=የክፍያ ሳጥንዎን በ url <b>%s</b> ለመክፈል በራስ-ሰር ሲፈጠር ያዋቅሩ። በ Paybox የተረጋገጠ።
 YourPaymentHasBeenRecorded=ይህ ገጽ ክፍያዎ መመዝገቡን ያረጋግጣል። አመሰግናለሁ.
 YourPaymentHasNotBeenRecorded=ክፍያዎ አልተመዘገበም እና ግብይቱ ተሰርዟል። አመሰግናለሁ.
-AccountParameter=የመለያ መለኪያዎች
-UsageParameter=የአጠቃቀም መለኪያዎች
-InformationToFindParameters=የእርስዎን %s መለያ መረጃ ለማግኘት ያግዙ
 PAYBOX_CGI_URL_V2=የ Paybox CGI ሞጁል ዩአርኤል ለክፍያ
-CSSUrlForPaymentForm=ለክፍያ ቅጽ የCSS ቅጥ ሉህ ዩአርኤል
 NewPayboxPaymentReceived=አዲስ የ Paybox ክፍያ ተቀብሏል።
 NewPayboxPaymentFailed=አዲስ የ Paybox ክፍያ ሞክሮ አልተሳካም።
 PAYBOX_PAYONLINE_SENDEMAIL=ከክፍያ ሙከራ በኋላ የኢሜል ማሳወቂያ (ስኬት ወይም ውድቀት)

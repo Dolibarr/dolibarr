@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005	   Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015	   Francis Appels		<francis.appels@yahoo.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005	    Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2015	    Francis Appels		    <francis.appels@yahoo.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +35,18 @@ class modTcpdfbarcode extends ModeleBarCode
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z''development'|'experimental'|'dolibarr'
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr';
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
+	/**
+	 * @var bool Is this barcode 2d or 1d
+	 */
 	public $is2d = false;
 
 	/**

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -142,6 +143,39 @@ class BankAccountTest extends CommonClassTest
 		print __METHOD__." checkIbanForAccount(".$localobject2->iban.") = ".$result."\n";
 		$this->assertTrue($result);
 
+		return $localobject;
+	}
+
+	/**
+	 * testCheckSwiftForAccount
+	 *
+	 * @param   Account  $localobject    Account
+	 * @return  int
+	 *
+	 * @depends testBankAccountOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCheckSwiftForAccount($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject->bic = 'PSSTFRPPMARBIDON';
+
+		$result = checkSwiftForAccount($localobject);
+		print __METHOD__." checkSwiftForAccount ".$localobject->bic." = ".$result."\n";
+		$this->assertFalse($result);
+
+
+		$localobject->bic = 'PSSTFRPPMAR';
+
+		$result = checkSwiftForAccount($localobject);
+		print __METHOD__." checkSwiftForAccount ".$localobject->bic." = ".$result."\n";
+		$this->assertTrue($result);
+
 		return $localobject->id;
 	}
 
@@ -151,7 +185,7 @@ class BankAccountTest extends CommonClassTest
 	 * @param   int $id     Id of contract
 	 * @return  int
 	 *
-	 * @depends testBankAccountOther
+	 * @depends testCheckSwiftForAccount
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testBankAccountDelete($id)

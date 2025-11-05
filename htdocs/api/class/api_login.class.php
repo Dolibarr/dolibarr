@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +60,8 @@ class Login
 	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
 	 * @return  array                   Response status and user token
+	 * @phan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
 	 *
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 500 System error
@@ -74,7 +77,7 @@ class Login
 	 * Login
 	 *
 	 * Request the API token for a couple username / password.
-	 * WARNING: You should NEVER use this API, like you should never use the similar API that uses the POST method. This will expose your password.
+	 * WARNING: You should NEVER use this API, like you should never use the similar API that uses the GET method. This will expose your password.
 	 * To use the APIs, you should instead set an API token to the user you want to allow to use API (This API token called DOLAPIKEY can be found/set on the user page) and use this token as credential for any API call.
 	 * From the API explorer, you can enter directly the "DOLAPIKEY" into the field at the top right of the page to get access to any allowed APIs.
 	 *
@@ -83,6 +86,8 @@ class Login
 	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
 	 * @return  array                   Response status and user token
+	 * @phan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
 	 *
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 500 System error
@@ -91,7 +96,7 @@ class Login
 	 */
 	public function index($login, $password, $entity = '', $reset = 0)
 	{
-		global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
+		global $dolibarr_main_authentication, $dolibarr_auto_user;
 
 		// Is the login API disabled ? The token must be generated from backoffice only.
 		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
@@ -100,7 +105,7 @@ class Login
 		}
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication)) {
+		if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 			$dolibarr_main_authentication = 'dolibarr';
 		}
 
@@ -137,14 +142,14 @@ class Login
 		$token = 'failedtogenerateorgettoken';
 
 		$tmpuser = new User($this->db);
-		$tmpuser->fetch(0, $login, 0, 0, $entity);
+		$tmpuser->fetch(0, $login, '0', 0, $entity);
 		if (empty($tmpuser->id)) {
 			throw new RestException(500, 'Failed to load user');
 		}
 
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset) {
-			$tmpuser->getrights();
+			$tmpuser->loadRights();
 			if (!$tmpuser->hasRight('user', 'self', 'creer')) {
 				if (empty($tmpuser->api_key)) {
 					throw new RestException(403, 'No API token set for this user and user need write permission on itself to reset its API token');
@@ -154,7 +159,7 @@ class Login
 			}
 
 			// Generate token for user
-			$token = dol_hash($login.uniqid().(!getDolGlobalString('MAIN_API_KEY') ? '' : $conf->global->MAIN_API_KEY), 1);
+			$token = dol_hash($login.uniqid().getDolGlobalString('MAIN_API_KEY'), '1');
 
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";

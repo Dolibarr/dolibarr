@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=ตั๋ว
 Module56000Desc=ระบบตั๋วสำหรับปัญหาหรือการจัดการคำขอ
-
 Permission56001=ดูตั๋ว
 Permission56002=แก้ไขตั๋ว
 Permission56003=ลบตั๋ว
 Permission56004=จัดการตั๋ว
 Permission56005=ดูตั๋วของบุคคลที่สามทั้งหมด (ไม่มีผลกับผู้ใช้ภายนอก จำกัดเฉพาะบุคคลที่สามที่พวกเขาพึ่งพาเสมอ)
 Permission56006=ส่งออกตั๋ว
-
 Tickets=ตั๋ว
 TicketDictType=ตั๋ว - ประเภท
 TicketDictCategory=ตั๋ว - กลุ่ม
 TicketDictSeverity=ตั๋ว - ความเข้มงวด
 TicketDictResolution=ตั๋ว - ความละเอียด
-
 TicketTypeShortCOM=คำถามเชิงพาณิชย์
 TicketTypeShortHELP=ขอความช่วยเหลือด้านการทำงาน
 TicketTypeShortISSUE=ปัญหาหรือข้อผิดพลาด
@@ -41,61 +33,51 @@ TicketTypeShortPROBLEM=ปัญหา
 TicketTypeShortREQUEST=คำขอเปลี่ยนแปลงหรือปรับปรุง
 TicketTypeShortPROJET=โครงการ
 TicketTypeShortOTHER=อื่น ๆ
-
 TicketSeverityShortLOW=ต่ำ
 TicketSeverityShortNORMAL=ปกติ
 TicketSeverityShortHIGH=สูง
 TicketSeverityShortBLOCKING=สำคัญ, การบล็อก
-
 TicketCategoryShortOTHER=อื่น ๆ
-
 ErrorBadEmailAddress=ฟิลด์ '%s' ไม่ถูกต้อง
 MenuTicketMyAssign=ตั๋วของฉัน
 MenuTicketMyAssignNonClosed=ตั๋วที่เปิดอยู่ของฉัน
 MenuListNonClosed=เปิดตั๋ว
-
 TypeContact_ticket_internal_CONTRIBUTOR=ผู้สนับสนุน
 TypeContact_ticket_internal_SUPPORTTEC=ผู้ใช้ที่ได้รับมอบหมาย
 TypeContact_ticket_external_SUPPORTCLI=ติดต่อลูกค้า/ติดตามเหตุการณ์
 TypeContact_ticket_external_CONTRIBUTOR=ผู้มีส่วนร่วมภายนอก
-
 OriginEmail=อีเมล์ผู้รายงาน
+EmailReplyto=Reply-To in Email
+EmailReferences=การอ้างอิงในอีเมล์
 Notify_TICKET_SENTBYMAIL=ส่งข้อความตั๋วทางอีเมล
-
 ExportDataset_ticket_1=ตั๋ว
-
 # Status
 Read=อ่าน
 Assigned=ที่ได้รับมอบหมาย
 NeedMoreInformation=รอความเห็นจากนักข่าว
 NeedMoreInformationShort=รอคำติชม
-TicketAnswered=Answered
 Waiting=ที่รอ
-SolvedClosed=แก้ไขแล้ว
+SolvedClosed=ปิด
 Deleted=ลบแล้ว
-
 # Dict
-Type=ชนิด
 Severity=ความรุนแรง
 TicketGroupIsPublic=กลุ่มเป็นแบบสาธารณะ
 TicketGroupIsPublicDesc=หากกลุ่มตั๋วเป็นแบบสาธารณะ กลุ่มนั้นจะมองเห็นได้ในแบบฟอร์มเมื่อสร้างตั๋วจากอินเทอร์เฟซสาธารณะ
-
 # Email templates
 MailToSendTicketMessage=เพื่อส่งอีเมลจากข้อความตั๋ว
-
-#
 # Admin page
-#
 TicketSetup=การตั้งค่าโมดูลตั๋ว
 TicketSettings=การตั้งค่า
 TicketPublicAccess=อินเทอร์เฟซสาธารณะที่ไม่ต้องมีการระบุตัวตนมีอยู่ที่ URL ต่อไปนี้
 TicketSetupDictionaries=ประเภทของตั๋ว ความเข้มงวด และรหัสการวิเคราะห์สามารถกำหนดค่าได้จากพจนานุกรม
 TicketParamModule=การตั้งค่าตัวแปรโมดูล
 TicketParamMail=การตั้งค่าอีเมล
-TicketEmailNotificationFrom=ส่งอีเมลเพื่อแจ้งเตือนคำตอบ
-TicketEmailNotificationFromHelp=อีเมลผู้ส่งเพื่อใช้ส่งอีเมลแจ้งเตือนเมื่อมีการตอบกลับภายในแบ็คออฟฟิศ ตัวอย่างเช่น noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=แจ้งการสร้างตั๋วไปยังที่อยู่อีเมลนี้
-TicketEmailNotificationToHelp=หากมีอยู่ ที่อยู่อีเมลนี้จะได้รับแจ้งเกี่ยวกับการสร้างตั๋ว
+TicketEmailNotificationToHelp=หากมีที่อยู่อีเมลนี้จะได้รับการแจ้งเตือนเกี่ยวกับการสร้างตั๋ว (นอกเหนือจากผู้รับเริ่มต้นอื่น ๆ)
 TicketNewEmailBodyLabel=ข้อความที่ส่งหลังจากสร้างตั๋ว
 TicketNewEmailBodyHelp=ข้อความที่ระบุที่นี่จะถูกแทรกลงในอีเมลยืนยันการสร้างตั๋วใหม่จากอินเทอร์เฟซสาธารณะ ข้อมูลเกี่ยวกับการให้คำปรึกษาของตั๋วจะถูกเพิ่มโดยอัตโนมัติ
 TicketParamPublicInterface=การตั้งค่าอินเทอร์เฟซสาธารณะ
@@ -116,7 +98,9 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=ข้อความนี้จ�
 ExtraFieldsTicket=คุณสมบัติพิเศษ
 TicketCkEditorEmailNotActivated=ไม่ได้เปิดใช้งานโปรแกรมแก้ไข HTML โปรดใส่เนื้อหา FCKEDITOR_ENABLE_MAIL เป็น 1 เพื่อรับเนื้อหา
 TicketsDisableEmail=อย่าส่งอีเมลเพื่อสร้างตั๋วหรือบันทึกข้อความ
-TicketsDisableEmailHelp=ตามค่าเริ่มต้น อีเมลจะถูกส่งเมื่อมีการสร้างตั๋วหรือข้อความใหม่ เปิดใช้งานตัวเลือกนี้เพื่อปิดใช้งานการแจ้งเตือนทางอีเมล *ทั้งหมด*
+TicketsDisableEmailHelp=โดยค่าเริ่มต้น ระบบจะส่งอีเมลแจ้งเตือนไปยังบุคคลที่สามเมื่อมีการสร้างตั๋วหรือข้อความใหม่สำหรับทั้ง BackOffice และอินเทอร์เฟซสาธารณะ เปิดใช้งานตัวเลือกนี้เพื่อปิดใช้งานการแจ้งเตือนทางอีเมลไปยังบุคคลที่สามเมื่อสร้างจาก BackOffice
+TicketsNotifyThirdPartyFromBackOfficeByDefault=แจ้งให้บุคคลที่สามทราบตามค่าเริ่มต้นเมื่อสร้างตั๋วจาก BackOffice
+TicketsNotifyThirdPartyFromBackOfficeByDefaultHelp=เมื่อสร้างตั๋วจากแบ็คออฟฟิศ ตัวเลือก "แจ้งบุคคลที่สาม" จะถูกทำเครื่องหมายไว้ตามค่าเริ่มต้น
 TicketsLogEnableEmail=เปิดใช้งานการเข้าสู่ระบบทางอีเมล
 TicketsLogEnableEmailHelp=ในการเปลี่ยนแปลงแต่ละครั้ง อีเมลจะถูกส่ง **ถึงผู้ติดต่อแต่ละราย** ที่เกี่ยวข้องกับตั๋ว
 TicketParams=พารามิเตอร์
@@ -133,11 +117,13 @@ TicketsLimitViewAssignedOnlyHelp=เฉพาะตั๋วที่กำห�
 TicketsActivatePublicInterface=เปิดใช้งานอินเทอร์เฟซสาธารณะ
 TicketsActivatePublicInterfaceHelp=ส่วนต่อประสานสาธารณะอนุญาตให้ผู้เยี่ยมชมสร้างตั๋วได้
 TicketsAutoAssignTicket=กำหนดผู้ใช้ที่สร้างตั๋วโดยอัตโนมัติ
-TicketsAutoAssignTicketHelp=เมื่อสร้างตั๋ว ผู้ใช้สามารถกำหนดให้กับตั๋วได้โดยอัตโนมัติ
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
+TicketAutoChangeStatusOnAnswer=กำหนดสถานะอัตโนมัติเมื่อตอบรับตั๋ว
+TicketAutoChangeStatusOnAnswerHelp=เมื่อผู้ใช้ตอบตั๋ว สถานะจะถูกนำไปใช้กับตั๋วโดยอัตโนมัติ
 TicketNumberingModules=โมดูลการนับตั๋ว
 TicketsModelModule=เทมเพลตเอกสารสำหรับตั๋ว
 TicketNotifyTiersAtCreation=แจ้งให้บุคคลที่สามทราบเมื่อมีการสร้าง
-TicketsDisableCustomerEmail=ปิดการใช้งานอีเมลเสมอเมื่อมีการสร้างตั๋วจากอินเทอร์เฟซสาธารณะ
+TicketsDisableCustomerEmail=ปิดการใช้งานอีเมลไปยังบุคคลที่สามเสมอเมื่อมีการสร้างตั๋วจากแบ็คออฟฟิศ
 TicketsPublicNotificationNewMessage=ส่งอีเมลเมื่อมีการเพิ่มข้อความ/ความคิดเห็นใหม่ไปยังตั๋ว
 TicketsPublicNotificationNewMessageHelp=ส่งอีเมลเมื่อมีการเพิ่มข้อความใหม่จากอินเทอร์เฟซสาธารณะ (ถึงผู้ใช้ที่ได้รับมอบหมายหรืออีเมลแจ้งเตือนถึง (อัปเดต) และ/หรืออีเมลแจ้งเตือนถึง)
 TicketPublicNotificationNewMessageDefaultEmail=อีเมล์แจ้งเตือนไปที่ (อัพเดต)
@@ -152,15 +138,16 @@ TicketsAutoNotifyClose=แจ้งบุคคลที่สามโดยอ
 TicketsAutoNotifyCloseHelp=เมื่อปิดตั๋ว คุณจะถูกเสนอให้ส่งข้อความไปยังผู้ติดต่อบุคคลที่สาม เมื่อปิดการขายจำนวนมาก ข้อความจะถูกส่งไปยังผู้ติดต่อรายหนึ่งของบุคคลที่สามที่เชื่อมโยงกับตั๋ว
 TicketWrongContact=การติดต่อที่ให้ไว้ไม่ได้เป็นส่วนหนึ่งของการติดต่อเกี่ยวกับตั๋วปัจจุบัน ไม่ได้ส่งอีเมล
 TicketChooseProductCategory=หมวดหมู่สินค้าสำหรับการสนับสนุนตั๋ว
-TicketChooseProductCategoryHelp=เลือกหมวดหมู่ผลิตภัณฑ์ของการสนับสนุนตั๋ว ซึ่งจะใช้เพื่อเชื่อมโยงสัญญากับตั๋วโดยอัตโนมัติ
+TicketChooseProductCategoryHelp=เลือกหมวดหมู่ผลิตภัณฑ์สำหรับการสนับสนุน หมวดหมู่นี้จะใช้เพื่อค้นหาสัญญาที่มีผลิตภัณฑ์ในหมวดหมู่นี้ทั้งหมด สัญญาทั้งหมดที่พบจะเชื่อมโยงกับตั๋วที่สร้างขึ้น
 TicketUseCaptchaCode=ใช้โค้ดกราฟิก (CAPTCHA) เมื่อสร้างตั๋ว
 TicketUseCaptchaCodeHelp=เพิ่มการตรวจสอบ CAPTCHA เมื่อสร้างตั๋วใหม่
 TicketsAllowClassificationModificationIfClosed=อนุญาตให้แก้ไขการจำแนกประเภทของตั๋วที่ปิด
 TicketsAllowClassificationModificationIfClosedHelp=อนุญาตให้แก้ไขการจัดหมวดหมู่ (ประเภท, กลุ่มตั๋ว, ความร้ายแรง) แม้ว่าตั๋วจะปิดแล้วก็ตาม
-
-#
+TicketAutoCheckNotifyThirdParty=เลือกค่าเริ่มต้น “แจ้งบุคคลที่สาม” เมื่อสร้างตั๋ว
+TicketAutoCheckNotifyThirdPartyHelp=เมื่อสร้างตั๋ว ตัวเลือก "แจ้งบุคคลที่สาม" จะถูกทำเครื่องหมายโดยอัตโนมัติ
+TicketAssignContactToMessage=กำหนดผู้ติดต่อภายนอกให้กับข้อความ
+TicketAssignContactToMessageHelp=เมื่อผู้ติดต่อที่รู้จักตอบข้อความ ชื่อของผู้ติดต่อนั้นจะปรากฏบนรายการข้อความตั๋ว
 # Index & list page
-#
 TicketsIndex=พื้นที่จำหน่ายตั๋ว
 TicketList=รายการตั๋ว
 TicketAssignedToMeInfos=หน้านี้แสดงรายการตั๋วที่สร้างโดยหรือกำหนดให้กับผู้ใช้ปัจจุบัน
@@ -171,14 +158,9 @@ TicketViewNonClosedOnly=ดูเฉพาะตั๋วที่เปิด�
 TicketStatByStatus=ตั๋วตามสถานะ
 OrderByDateAsc=เรียงตามวันที่จากน้อยไปหามาก
 OrderByDateDesc=เรียงตามวันที่จากมากไปน้อย
-ShowAsConversation=แสดงเป็นรายการสนทนา
-MessageListViewType=แสดงเป็นรายการตาราง
 ConfirmMassTicketClosingSendEmail=ส่งอีเมลโดยอัตโนมัติเมื่อปิดตั๋ว
 ConfirmMassTicketClosingSendEmailQuestion=คุณต้องการแจ้งให้บุคคลที่สามทราบเมื่อปิดตั๋วเหล่านี้หรือไม่?
-
-#
 # Ticket card
-#
 Ticket=ตั๋ว
 TicketCard=บัตรกำนัล
 CreateTicket=สร้างตั๋ว
@@ -220,7 +202,7 @@ ConfirmAbandonTicket=คุณยืนยันการปิดตั๋ว�
 ConfirmDeleteTicket=กรุณายืนยันการลบตั๋ว
 TicketDeletedSuccess=ลบตั๋วสำเร็จแล้ว
 TicketMarkedAsClosed=ตั๋วทำเครื่องหมายว่าปิดแล้ว
-TicketDurationAuto=ระยะเวลาที่คำนวณได้
+TicketDurationAuto=ระยะเวลาในการแทรกแซง
 TicketDurationAutoInfos=ระยะเวลาคำนวณโดยอัตโนมัติจากการแทรกแซงที่เกี่ยวข้อง
 TicketUpdated=อัปเดตตั๋วแล้ว
 SendMessageByEmail=ส่งข้อความทางอีเมล
@@ -278,20 +260,14 @@ TicketsDelayFromLastResponseTooLong=เวลาผ่านไปนานเ�
 TicketNoContractFoundToLink=ไม่พบสัญญาที่เชื่อมโยงกับตั๋วนี้โดยอัตโนมัติ โปรดเชื่อมโยงสัญญาด้วยตนเอง
 TicketManyContractsLinked=สัญญาหลายฉบับเชื่อมโยงกับตั๋วนี้โดยอัตโนมัติ ตรวจสอบให้แน่ใจว่าควรเลือกอันไหน
 TicketRefAlreadyUsed=ข้อมูลอ้างอิง [%s] ถูกใช้แล้ว ข้อมูลอ้างอิงใหม่ของคุณคือ [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=ตั๋ว %s อ่านโดย %s
 NoLogForThisTicket=ยังไม่มีบันทึกสำหรับตั๋วนี้
 TicketLogAssignedTo=ตั๋ว %s กำหนดให้กับ %s
 TicketLogPropertyChanged=ตั๋ว %s ถูกแก้ไขแล้ว: การจัดหมวดหมู่จาก %s เป็น %s
 TicketLogClosedBy=ตั๋ว %s ปิดโดย %s
 TicketLogReopen=ตั๋ว %s เปิดอีกครั้ง
-
-#
 # Public pages
-#
 TicketSystem=ระบบตั๋ว
 ShowListTicketWithTrackId=แสดงรายการตั๋วจากรหัสแทร็ก
 ShowTicketWithTrackId=แสดงตั๋วจากรหัสแทร็ก
@@ -306,13 +282,14 @@ TicketNewEmailBodyCustomer=นี่คืออีเมลอัตโนม�
 TicketNewEmailBodyInfosTicket=ข้อมูลสำหรับการตรวจสอบตั๋ว
 TicketNewEmailBodyInfosTrackId=หมายเลขติดตามตั๋ว: %s
 TicketNewEmailBodyInfosTrackUrl=คุณสามารถดูความคืบหน้าของตั๋วได้โดยคลิกลิงก์ต่อไปนี้
-TicketNewEmailBodyInfosTrackUrlCustomer=คุณสามารถดูความคืบหน้าของตั๋วได้ในอินเทอร์เฟซเฉพาะโดยคลิกลิงก์ต่อไปนี้
+TicketNewEmailBodyInfosTrackUrlCustomer=คุณสามารถดูความคืบหน้าของตั๋วได้ในพอร์ทัลตั๋วสาธารณะโดยคลิกที่ลิงก์ต่อไปนี้
 TicketCloseEmailBodyInfosTrackUrlCustomer=คุณสามารถดูประวัติของตั๋วนี้ได้โดยคลิกลิงก์ต่อไปนี้
 TicketEmailPleaseDoNotReplyToThisEmail=กรุณาอย่าตอบกลับอีเมลนี้โดยตรง! ใช้ลิงก์เพื่อตอบกลับอินเทอร์เฟซ
+TicketEmailPleaseDoNotReplyToThisEmailNoInterface=โปรดอย่าตอบกลับอีเมลนี้โดยตรง!
 TicketPublicInfoCreateTicket=แบบฟอร์มนี้ช่วยให้คุณสามารถบันทึกตั๋วสนับสนุนในระบบการจัดการของเรา
 TicketPublicPleaseBeAccuratelyDescribe=โปรดอธิบายคำขอของคุณอย่างถูกต้อง ให้ข้อมูลมากที่สุดเท่าที่จะเป็นไปได้เพื่อให้เราสามารถระบุคำขอของคุณได้อย่างถูกต้อง
 TicketPublicMsgViewLogIn=กรุณากรอกรหัสติดตามตั๋ว
-TicketTrackId=รหัสติดตามสาธารณะ
+TicketTrackId=ติดตาม ID
 OneOfTicketTrackId=หนึ่งในรหัสติดตามของคุณ
 ErrorTicketNotFound=ไม่พบตั๋วที่มีรหัสติดตาม %s!
 Subject=เรื่อง
@@ -330,7 +307,6 @@ NumberOfTicketsByMonth=จำนวนตั๋วต่อเดือน
 NbOfTickets=จำนวนตั๋ว
 ExternalContributors=ผู้มีส่วนร่วมภายนอก
 AddContributor=เพิ่มผู้มีส่วนร่วมภายนอก
-
 # notifications
 TicketCloseEmailSubjectCustomer=ปิดตั๋วแล้ว
 TicketCloseEmailBodyCustomer=นี่เป็นข้อความอัตโนมัติเพื่อแจ้งให้คุณทราบว่าตั๋ว %s เพิ่งถูกปิด
@@ -342,12 +318,8 @@ TicketNotificationRecipient=ผู้รับการแจ้งเตือ�
 TicketNotificationLogMessage=บันทึกข้อความ
 TicketNotificationEmailBodyInfosTrackUrlinternal=ดูตั๋วในอินเทอร์เฟซ
 TicketNotificationNumberEmailSent=ส่งอีเมลแจ้งเตือนแล้ว: %s
-
 ActionsOnTicket=กิจกรรมบนตั๋ว
-
-#
 # Boxes
-#
 BoxLastTicket=ตั๋วที่สร้างขึ้นล่าสุด
 BoxLastTicketDescription=ตั๋ว %s ที่สร้างล่าสุด
 BoxLastTicketContent=
@@ -366,4 +338,7 @@ BoxNumberOfTicketByDay=จำนวนตั๋วใหม่ในแต่ล
 BoxNewTicketVSClose=จำนวนตั๋วเทียบกับตั๋วที่ปิด (วันนี้)
 TicketCreatedToday=ตั๋วที่สร้างขึ้นในวันนี้
 TicketClosedToday=ปิดรับบัตรแล้ววันนี้
-KMFoundForTicketGroup=เราพบหัวข้อและคำถามที่พบบ่อยที่อาจตอบคำถามของคุณได้ โปรดตรวจสอบก่อนส่งตั๋ว
+KMFoundForTicketGroup=Checkout our FAQ
+SetTitle=ตั้งชื่อเรื่อง
+TicketSendToInternalCC=บังคับให้มีอีเมลเป็นผู้รับ CC สำหรับข้อความทั้งหมดที่ส่งจากหน้าตั๋ว
+TicketSendToInternalCCHelp=ป้อนอีเมลที่คุณต้องการใช้โดยอัตโนมัติเป็นผู้รับสำเนาคาร์บอนเมื่อส่งอีเมลจากหน้าตั๋ว

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2008-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -91,9 +100,17 @@ $error = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('ecmmediascard', 'globalcard'));
+
 $result = restrictedArea($user, 'ecm', 0);
 
+$permissiontoread = ($user->hasRight('ecm', 'read') || $user->hasRight('mailing', 'lire') || $user->hasRight('website', 'read'));
 $permissiontouploadfile = ($user->hasRight('ecm', 'setup') || $user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+$permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+
+
 $diroutput = $conf->medias->multidir_output[$conf->entity];
 
 $relativepath = $section_dir;
@@ -101,10 +118,7 @@ $upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', ''
 
 $websitekey = '';
 
-$permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('ecmmediascard', 'globalcard'));
 
 /*
  *	Actions
@@ -122,16 +136,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 's
 
 $backtopage = $savbacktopage;
 
-if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
+if ($action == 'renamefile') {	// Test on permission not required here. Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
 	$action = 'file_manager';
 }
 
 
 // Add directory
 if ($action == 'add' && $permissiontouploadfile) {
-	$ecmdir->ref                = 'NOTUSEDYET';
-	$ecmdir->label              = GETPOST("label");
-	$ecmdir->description        = GETPOST("desc");
+	$ecmdir->ref = 'NOTUSEDYET';
+	$ecmdir->label = GETPOST("label");
+	$ecmdir->description = GETPOST("desc");
 
 	$id = $ecmdir->create($user);
 	if ($id > 0) {
@@ -146,7 +160,7 @@ if ($action == 'add' && $permissiontouploadfile) {
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes') {
+if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 
@@ -156,7 +170,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes') 
 // Refresh directory view
 // This refresh list of dirs, not list of files (for performance reason). List of files is refresh only if dir was not synchronized.
 // To refresh content of dir with cache, just open the dir in edit mode.
-if ($action == 'refreshmanual') {
+if ($action == 'refreshmanual' && $permissiontoread) {
 	$ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
@@ -166,7 +180,7 @@ if ($action == 'refreshmanual') {
 	$diroutputslash .= '/';
 
 	// Scan directory tree on disk
-	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', '', 0);
+	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
 	$sqltree = $ecmdirstatic->get_full_arbo(0);
@@ -174,8 +188,6 @@ if ($action == 'refreshmanual') {
 	$adirwascreated = 0;
 
 	// Now we compare both trees to complete missing trees into database
-	//var_dump($disktree);
-	//var_dump($sqltree);
 	foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 		$dirisindatabase = 0;
 		foreach ($sqltree as $dirsqldesc) {
@@ -188,7 +200,6 @@ if ($action == 'refreshmanual') {
 		if (!$dirisindatabase) {
 			$txt = "Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
 			dol_syslog($txt);
-			//print $txt."<br>\n";
 
 			// We must first find the fk_parent of directory to create $dirdesc['fullname']
 			$fk_parent = -1;
@@ -223,23 +234,24 @@ if ($action == 'refreshmanual') {
 			}
 
 			if ($fk_parent >= 0) {
-				$ecmdirtmp->ref                = 'NOTUSEDYET';
-				$ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
-				$ecmdirtmp->description        = '';
-				$ecmdirtmp->fk_parent          = $fk_parent;
+				$ecmdirtmp->ref = 'NOTUSEDYET';
+				$ecmdirtmp->label = dol_basename($dirdesc['fullname']);
+				$ecmdirtmp->description = '';
+				$ecmdirtmp->fk_parent = $fk_parent;
 
 				$txt = "We create directory ".$ecmdirtmp->label." with parent ".$fk_parent;
 				dol_syslog($txt);
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id' => $id,
-									 'id_mere' => $ecmdirtmp->fk_parent,
-									 'label' => $ecmdirtmp->label,
-									 'description' => $ecmdirtmp->description,
-									 'fullrelativename' => $relativepathmissing);
+					$newdirsql = [
+						'id' => $id,
+						'id_mere' => $ecmdirtmp->fk_parent,
+						'label' => $ecmdirtmp->label,
+						'description' => $ecmdirtmp->description,
+						'fullrelativename' => $relativepathmissing,
+					];
 					$sqltree[] = $newdirsql; // We complete fulltree for following loops
-					//var_dump($sqltree);
 					$adirwascreated = 1;
 				} else {
 					dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
@@ -247,7 +259,6 @@ if ($action == 'refreshmanual') {
 			} else {
 				$txt = "Parent of ".$dirdesc['fullname']." not found";
 				dol_syslog($txt);
-				//print $txt."<br>\n";
 			}
 		}
 	}
@@ -286,19 +297,14 @@ $maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenhe
 $moreheadcss = '';
 $moreheadjs = '';
 
-//$morejs=array();
-$morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+$morejs=array();
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
-$moreheadjs .= '<script type="text/javascript">'."\n";
-$moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
-$moreheadjs .= '</script>'."\n";
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_medias');
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
-
-$head = ecm_prepare_dasboard_head(null);
+$head = ecm_prepare_dasboard_head();
 print dol_get_fiche_head($head, 'index_medias', '', -1, '');
 
 

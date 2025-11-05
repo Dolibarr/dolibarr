@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014 Florian Henry florian.henry@open-concept.pro
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ class FormMailing extends Form
 
 		$options = array();
 
-		$options = $options + $mailing->statut_dest;
+		$options += $mailing->statut_dest;
 
 		// Note -1 is used for error, so we use -2 for tempty value
 		return Form::selectarray($htmlname, $options, $selectedid, ($show_empty ? -2 : 0), 0, 0, '', 1, 0, 0, '', $morecss);

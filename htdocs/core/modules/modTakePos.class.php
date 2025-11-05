@@ -107,10 +107,9 @@ class modTakePos extends DolibarrModules
 		$this->langfiles = array("cashdesk");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(4, 0); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw'); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array('FR' => array('WarningNoteModulePOSForFrenchLaw', 'WarningNoteModulePOSForFrenchLaw2', 'WarningNoteModulePOSForFrenchLaw3')); // Warning to show when we activate module. array('always' => 'text') or array('FR' => array('text1', 'text2))
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'TakePosWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -269,6 +268,7 @@ class modTakePos extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs, $user, $mysoc;
+
 		$langs->load("cashdesk");
 
 		dolibarr_set_const($this->db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
@@ -301,7 +301,7 @@ class modTakePos extends DolibarrModules
 		$categories = new Categorie($this->db);
 		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
 		if (is_array($cate_arbo)) {
-			if (!count($cate_arbo) || !getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID')) {
+			if (!count($cate_arbo) || (!getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID') || getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID') == '-1')) {
 				$category = new Categorie($this->db);
 
 				$category->label = $langs->trans("DefaultPOSCatLabel");
@@ -339,6 +339,8 @@ class modTakePos extends DolibarrModules
 				$cashaccount->type = Account::TYPE_CASH;
 				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
 				$cashaccount->date_solde = dol_now();
+				$idjournal = dol_getIdFromCode($this->db, 'BQ', 'accounting_journal', 'code', 'rowid');
+				$cashaccount->fk_accountancy_journal = (int) $idjournal;
 				$searchaccountid = $cashaccount->create($user);
 			}
 			if ($searchaccountid > 0) {

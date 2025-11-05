@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2009-2016 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2011      Herve Prot     <herve.prot@symeos.com>
- * Copyright (C) 2014      Philippe Grand <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2009-2016  Regis Houssin  			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Herve Prot     			<herve.prot@symeos.com>
+ * Copyright (C) 2014       Philippe Grand 			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ class ActionsStripeconnect extends CommonHookActions
 	 */
 	public $db;
 
-	private $config = array();
+	private $config = array(); // @phpstan-ignore-line
 
 
 	/**
@@ -58,18 +59,18 @@ class ActionsStripeconnect extends CommonHookActions
 	/**
 	 * formObjectOptions
 	 *
-	 * @param	array			$parameters		Parameters
-	 * @param	CommonObject	$object			Object
-	 * @param	string			$action			Action
-	 * @return int
+	 * @param	array<string,mixed>	$parameters		Parameters
+	 * @param	CommonObject		$object			Object
+	 * @param	string				$action			Action
+	 * @return	int
 	 */
 	public function formObjectOptions($parameters, &$object, &$action)
 	{
-		global $conf, $langs;
+		global $langs;
 
-		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 			$service = 'StripeTest';
-			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 		} else {
 			$service = 'StripeLive';
 		}
@@ -81,6 +82,7 @@ class ActionsStripeconnect extends CommonHookActions
 		}
 
 		if (is_object($object) && $object->element == 'societe') {
+			'@phan-var-force Societe $object';
 			$this->resprints .= '<tr><td>';
 			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('StripeCustomer');
@@ -98,6 +100,7 @@ class ActionsStripeconnect extends CommonHookActions
 			}
 			$this->resprints .= '</td></tr>';
 		} elseif ($object instanceof CommonObject && $object->element == 'member') {
+			'@phan-var-force Adherent $object';
 			$this->resprints .= '<tr><td>';
 			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('StripeCustomer');
@@ -123,7 +126,7 @@ class ActionsStripeconnect extends CommonHookActions
 			$this->resprints .= '</td>';
 			$this->resprints .= '<td colspan="3">';
 			$stripe = new Stripe($this->db);
-			if (7 == 4) {
+			if (7 == 4) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 				$object->fetch_thirdparty();
 				$customer = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
 				$this->resprints .= $customer->id;
@@ -132,6 +135,7 @@ class ActionsStripeconnect extends CommonHookActions
 			}
 			$this->resprints .= '</td></tr>';
 		} elseif ($object instanceof CommonObject && $object->element == 'adherent_type') {
+			'@phan-var-force Adherent $object';
 			$this->resprints .= '<tr><td>';
 			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('PlanStripe');
@@ -141,7 +145,7 @@ class ActionsStripeconnect extends CommonHookActions
 			$this->resprints .= '</td>';
 			$this->resprints .= '<td colspan="3">';
 			$stripe = new Stripe($this->db);
-			if (7 == 4) {
+			if (7 == 4) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 				$object->fetch_thirdparty();
 				$customer = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
 				$this->resprints .= $customer->id;
@@ -156,9 +160,9 @@ class ActionsStripeconnect extends CommonHookActions
 	/**
 	 * addMoreActionsButtons
 	 *
-	 * @param array	 	$parameters	Parameters
-	 * @param Object	$object		Object
-	 * @param string	$action		action
+	 * @param array<string,mixed> 	$parameters	Parameters
+	 * @param Object				$object		Object
+	 * @param string				$action		action
 	 * @return int					0
 	 */
 	public function addMoreActionsButtons($parameters, &$object, &$action)
@@ -192,7 +196,14 @@ class ActionsStripeconnect extends CommonHookActions
 			if ($object->statut > Facture::STATUS_DRAFT && $object->statut < Facture::STATUS_ABANDONED && $object->paye == 0) {
 				$stripe = new Stripe($this->db);
 				if ($resteapayer > 0) {
-					if ($stripe->getStripeAccount($conf->entity)) {  // a modifier avec droit stripe
+					if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
+						$service = 'StripeTest';
+						dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
+					} else {
+						$service = 'StripeLive';
+					}
+
+					if ($stripe->getStripeAccount($service, 0, $conf->entity)) {  // To modify with stripe authorizations
 						$langs->load("withdrawals");
 						print '<a class="butActionDelete" href="'.dol_buildpath('/stripeconnect/payment.php?facid='.$object->id.'&action=create', 1).'" title="'.dol_escape_htmltag($langs->trans("StripeConnectPay")).'">'.$langs->trans("StripeConnectPay").'</a>';
 					} else {

@@ -2,7 +2,8 @@
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
+/**
+ * @var ?Conf $conf
+ * @var User $user
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -29,7 +33,14 @@ echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedobjectblock.tpl.php -->\n";
 global $user;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
+/**
+ * @var Translate $langs
+ * @var CommonObject $object
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force Subscription[] $linkedObjectBlock';
+/** @var Subscription[] $linkedObjectBlock */
 $langs->load("members");
 
 $total = 0;
@@ -46,7 +57,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '</td>';
 	echo '<td class="right"></td>';
-	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	echo '<td class="right"><a class="reposition" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'dellink', 'dellinkid' => $key], true).'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	echo '</tr>';
 }
 

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - cron
 # Permissions
-Permission23101 = Geplante Aufgabe einsehen
+Permission23101 = Geplante Jobs einsehen
 Permission23102 = Erstelle/aktualisiere geplanten Job
 Permission23103 = Lösche geplanten Job
 Permission23104 = Führe geplanten Job aus
@@ -27,9 +27,10 @@ CronDelete=Geplante Jobs löschen
 CronConfirmDelete=Sind Sie sicher, dass Sie diese geplanten Aufträge jetzt löschen möchten?
 CronExecute=Jetzt starten
 CronConfirmExecute=Sind Sie sicher, dass Sie diese geplante Aufträge jetzt ausführen möchten?
-CronInfo=Das Modul "Cron-Jobs" erlaubt es Aufgaben zu bestimmten Zeitpunkten auszuführen. Die Aufgaben können auch manuell gestartet werden.
+CronInfo=Das Modul "Geplante Jobs" erlaubt es, Jobs (automatisierte Vorgänge) zu bestimmten Zeitpunkten auszuführen. Die Jobs können auch manuell gestartet werden.
 CronTask=Job
-CronNone=Keine
+CronNone=Nächster Lauf des geplanten Jobs
+CronNotYetRan=Niemals ausgeführt
 CronDtStart=Nicht vor
 CronDtEnd=Nicht nach
 CronDtNextLaunch=Nächste Ausführung
@@ -48,8 +49,8 @@ CronEach=Jede
 JobFinished=Job gestartet und beendet
 Scheduled=Geplant
 #Page card
-CronAdd= Jobs hinzufügen
-CronEvery=Jeden Job ausführen
+CronAdd=Jobs hinzufügen
+CronEvery=Ausführung des Jobs alle
 CronObject=Instanz/Objekt zu erstellen
 CronArgs=Parameter
 CronSaveSucess=Erfolgreich gespeichert
@@ -57,8 +58,8 @@ CronNote=Kommentar
 CronFieldMandatory=Feld %s ist zwingend nötig
 CronErrEndDateStartDt=Enddatum kann nicht vor dem Startdatum liegen
 StatusAtInstall=Status bei der Modulinstallation
-CronStatusActiveBtn=Zeitplanung aktivieren
-CronStatusInactiveBtn=Deaktivieren
+CronStatusActiveBtn=Job aktivieren
+CronStatusInactiveBtn=Job deaktivieren
 CronTaskInactive=Dieser Job ist deaktiviert (keine Ausführung geplant)
 CronId=ID
 CronClassFile=Dateiname mit Klasse
@@ -76,6 +77,7 @@ CronType=Job Typ
 CronType_method=Aufruf-Methode einer PHP-Klasse
 CronType_command=Shell-Befehl
 CronCannotLoadClass=Die Klassendatei %s kann nicht geladen werden (um die Klasse %s zu verwenden)
+CronModuleNotEnabledInThisEntity=Cron Modul ist in dieser Entität nicht aktiviert (um die Methode %s von %s Objekt zu verwenden)
 CronCannotLoadObject=Die Klassendatei %s wurde geladen, aber das Objekt %s wurde nicht gefunden
 UseMenuModuleToolsToAddCronJobs=Gehen Sie in das Menü "<a href="%s"> Home - Admin-Tools - Geplante Jobs </a>", um geplante Jobs anzuzeigen und zu bearbeiten.
 JobDisabled=Job deaktiviert
@@ -96,5 +98,5 @@ ErrorInBatch=Fehler beim Ausführen des Jobs %s
 # Cron Boxes
 LastExecutedScheduledJob=Zuletzt ausgeführter geplanter Job
 NextScheduledJobExecute=Nächster geplanter Job, der ausgeführt werden soll
-NumberScheduledJobError=Anzahl der fehlerhaften geplanten Jobs
+NumberScheduledJobError=Anzahl der ausgeführten geplanten Jobs mit Fehlern
 NumberScheduledJobNeverFinished=Anzahl der geplanten Jobs, die nie beendet wurden

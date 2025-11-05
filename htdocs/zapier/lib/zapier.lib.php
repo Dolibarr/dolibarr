@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019-2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 /**
  * Prepare admin pages header
  *
- * @return array		Returns an array with list of tab entries
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function zapierAdminPrepareHead()
 {

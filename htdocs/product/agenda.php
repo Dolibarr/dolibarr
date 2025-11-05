@@ -6,6 +6,8 @@
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("companies");
@@ -73,7 +82,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productagenda'));
 
 $object = new Product($db);
@@ -82,7 +91,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
-$socid =0;
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -200,13 +209,13 @@ if (isModEnabled('agenda')) {
 	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
 		if (get_class($objproduct) == 'Product') {
-			$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
+			$out .= '&prodid='.$objproduct->id.'&origin=product&originid='.$id;
 		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id;
+		$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	}
 
 	$linktocreatetimeBtnStatus = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
-	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', (int) $linktocreatetimeBtnStatus);
 }
 
 
