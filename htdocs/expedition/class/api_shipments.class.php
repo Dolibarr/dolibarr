@@ -641,7 +641,7 @@ class Shipments extends DolibarrApi
 		}
 
 		$objectsrc = clone $this->shipment;
-
+		$typeobject = "";
 		if (!empty($this->shipment->origin)) {
 			$typeobject = $this->shipment->origin;
 			$this->shipment->fetch_origin();
