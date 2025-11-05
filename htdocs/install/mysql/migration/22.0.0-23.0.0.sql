@@ -133,6 +133,7 @@ ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_an
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
 ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
 ALTER TABLE llx_facture ADD COLUMN pos_print_counter integer DEFAULT 0;
+ALTER TABLE llx_facture ADD COLUMN email_sent_counter integer DEFAULT 0;
 
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
@@ -164,6 +165,7 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite, numer
 UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AL','AT','AX','BE','BG','BL','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GF','GG','GI','GP','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MF','MK','MQ','MT','NL','NO','PL','PM','PT','RE','RO','RS','SE','SI','SK','SM','VA','YT');
 
 ALTER TABLE llx_user DROP COLUMN egroupware_id;
+ALTER TABLE llx_user ADD COLUMN access_hours varchar(128) DEFAULT NULL;
 
 ALTER TABLE llx_adherent ADD COLUMN birth_place varchar(64) after birth;
 
@@ -333,4 +335,5 @@ ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 
+ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
 -- end of migration

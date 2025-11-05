@@ -2617,6 +2617,8 @@ if ($id > 0) {
 								}
 							} elseif (in_array($value, array('leftmargin', 'topmargin', 'spacex', 'spacey', 'width', 'height', 'custom_x', 'custom_y'))) {
 								$valuetoshow = price2num($valuetoshow);
+							} elseif ($value == 'type' && $id == DICT_ACTIONCOMM && !empty($obj->module)) {
+								$titletoshow = $langs->trans("Module").' '.$obj->module;
 							}
 
 
