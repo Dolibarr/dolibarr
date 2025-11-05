@@ -156,7 +156,7 @@ if (empty($reshook)) {
 			$ret = -1;
 			foreach ($TSkillsToAdd as $k => $v) {
 				$skillAdded = new SkillRank($db);
-				$skillAdded->fk_skill = $v;
+				$skillAdded->fk_skill = (int) $v;
 				$skillAdded->fk_object = $id;
 				$skillAdded->objecttype = $objecttype;
 				$ret = $skillAdded->create($user);
@@ -177,7 +177,7 @@ if (empty($reshook)) {
 						$objEval = $db->fetch_object($result);
 						$line = new EvaluationLine($db);
 						$line->fk_evaluation = $objEval->rowid;
-						$line->fk_skill = $v;
+						$line->fk_skill = (int) $v;
 						$line->required_rank = 0;
 						$line->fk_rank = 0;
 

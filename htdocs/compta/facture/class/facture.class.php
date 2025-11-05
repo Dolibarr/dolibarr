@@ -310,7 +310,7 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
@@ -918,8 +918,7 @@ class Facture extends CommonInvoice
 						);
 
 						if ($result < 0) {
-							$this->error = $newinvoiceline->error;
-							$this->errors = array_merge($this->errors, $newinvoiceline->errors);
+							$this->setErrorsFromObject($newinvoiceline);
 							$error++;
 							break;
 						}
@@ -3737,8 +3736,7 @@ class Facture extends CommonInvoice
 							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
 							if ($result < 0) {
 								$error++;
-								$this->error = $mouvP->error;
-								$this->errors = array_merge($this->errors, $mouvP->errors);
+								$this->setErrorsFromObject($mouvP);
 							}
 						} else {
 							// TODO If warehouseid has been set into invoice line, we should use this value in priority
@@ -3790,8 +3788,7 @@ class Facture extends CommonInvoice
 											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 											if ($result < 0) {
 												$error++;
-												$this->error = $mouvP->error;
-												$this->errors = array_merge($this->errors, $mouvP->errors);
+												$this->setErrorsFromObject($mouvP);
 												break;
 											}
 
@@ -3815,8 +3812,7 @@ class Facture extends CommonInvoice
 												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 												if ($result < 0) {
 													$error++;
-													$this->error = $mouvP->error;
-													$this->errors = array_merge($this->errors, $mouvP->errors);
+													$this->setErrorsFromObject($mouvP);
 												}
 											}
 										}
@@ -3828,8 +3824,7 @@ class Facture extends CommonInvoice
 								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
 								if ($result < 0) {
 									$error++;
-									$this->error = $mouvP->error;
-									$this->errors = array_merge($this->errors, $mouvP->errors);
+									$this->setErrorsFromObject($mouvP);
 								}
 							}
 						}
@@ -4231,7 +4226,7 @@ class Facture extends CommonInvoice
 			if (empty($fk_prev_id)) {
 				$fk_prev_id = 'null';
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
 				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative)
 				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 					$situation_percent = 0;
@@ -4282,7 +4277,7 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product->isStockManaged()) {
 					// get real stock
 					$productChildrenNb = 0;
 					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
@@ -4632,7 +4627,7 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product->isStockManaged()) {
 					// get real stock
 					$productChildrenNb = 0;
 					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {

@@ -1113,6 +1113,7 @@ SearchIntoTickets=Tickets
 SearchIntoCustomerPayments=Customer payments
 SearchIntoVendorPayments=Vendor payments
 SearchIntoMiscPayments=Miscellaneous payments
+SearchIntoResources=Resources
 CommentLink=Comments
 NbComments=Number of comments
 CommentPage=Comments space

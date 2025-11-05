@@ -999,7 +999,7 @@ if (empty($reshook)) {
 				} elseif ($value == 'taux' || $value == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($value == 'entity') {
-					$_POST[$keycode] = getEntity($tablename);
+					$_POST[$keycode] = (int) getEntity($tablename, 0);
 				}
 
 				if ($i) {
@@ -1068,7 +1068,7 @@ if (empty($reshook)) {
 				} elseif ($field == 'taux' || $field == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($field == 'entity') {
-					$_POST[$keycode] = getEntity($tablename);
+					$_POST[$keycode] = (int) getEntity($tablename, 0);
 				}
 
 				if ($i) {
@@ -1585,7 +1585,7 @@ if ($id > 0) {
 				$tdsoffields = '<tr class="liste_titre">';
 				foreach ($fieldlist as $field => $value) {
 					if ($value == 'entity') {
-						$withentity = getEntity($tabname[$id]);
+						$withentity = (int) getEntity($tabname[$id], 0);
 						continue;
 					}
 

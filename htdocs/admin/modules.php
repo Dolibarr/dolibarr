@@ -36,18 +36,6 @@ if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
-
-'
-@phan-var-force string $dolibarr_main_url_root_alt
-';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -58,6 +46,17 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
  *
  * @var string $dolibarr_main_url_root_alt
  */
+'
+@phan-var-force string $dolibarr_main_url_root_alt
+';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
@@ -75,6 +74,8 @@ if (GETPOSTISSET('mode')) {
 $action = GETPOST('action', 'aZ09');
 $page_y = GETPOSTINT('page_y');
 $optioncss = GETPOST('optioncss', 'aZ09');
+$sortfield = GETPOST('sortfield', 'aZ09');
+$sortorder = GETPOST('sortorder', 'aZ09');
 
 $value = GETPOST('value', 'alpha');
 $search_keyword = GETPOST('search_keyword', 'alpha');
@@ -712,10 +713,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
-	if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+	if (getDolGlobalInt('MAIN_SETUP_MODULES_DESC') || $nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
-	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message. A good usage for SaaS with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
+	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Add a custom info message. A good usage for SaaS in combination with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
 		$deschelp .= '<div class="info">'.$langs->trans(getDolGlobalString('MAIN_SETUP_MODULES_INFO'))."<br></div>\n";
 	}
 	if ($deschelp) {
@@ -1212,8 +1213,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Help
 			print '<td class="center nowrap" style="width: 82px;">';
-			//print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20', 0, 2, 1);
-			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">';
+			print img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo, '', 0, 0, 0, '', 'purple');
+			print '</a>';
 			print '</td>';
 
 			// Version
@@ -1338,7 +1340,11 @@ if ($mode == 'marketplace') {
 	print '</td>';
 	print '<td class="center">';
 	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' is in the local cache file '.$remotestore->cache_file.' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
+		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		if ($remotestore->githubFileError) {
+			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
+		}
 		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
 	}
 	print '</td>';

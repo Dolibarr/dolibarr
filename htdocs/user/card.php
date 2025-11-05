@@ -711,7 +711,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
 			// Success
-			if ($action == 'confirm_passwordsend' && $confirm == 'yes') {	// Test on permission already done
+			if ($action == 'confirm_passwordsend') {	// Test on permission already done
 				if ($object->send_password($user, $newpassword) > 0) {
 					setEventMessages($langs->trans("PasswordChangedAndSentTo", $object->email), null, 'mesgs');
 				} else {

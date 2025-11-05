@@ -50,7 +50,7 @@ class Conf extends stdClass
 	public $global;
 
 	/**
-	 * @var Object To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 * @var stdClass To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	 */
 	public $browser;
 
@@ -402,6 +402,7 @@ class Conf extends stdClass
 
 		// Common objects that are not modules and set by the main and not into the this->setValues()
 		$this->browser = new stdClass();
+		$this->browser->stringforfirstkey = '';
 
 		// Common arrays
 		$this->cache = array();
@@ -613,6 +614,7 @@ class Conf extends stdClass
 								}
 
 								if (!empty($newvalue)) {
+									// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal,PhanTypeMismatchProperty
 									$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $newvalue)); // $value may be a string or an array
 								}
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg)) {

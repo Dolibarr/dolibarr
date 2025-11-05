@@ -6,7 +6,7 @@
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -661,15 +661,16 @@ if ($action == 'create') {
 				$totalarray['pos'][$totalarray['nbfield']] = 'units';
 				$totalarray['type'][$totalarray['nbfield']] = 'string';
 			}
+			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
+			if ($usercancreadsupplierprice) {
+				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
 
-			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-			$totalarray['nbfield']++;
-
-			print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-			$totalarray['nbfield']++;
-			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
-			$totalarray['type'][$totalarray['nbfield']] = '';
-
+				print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
+				$totalarray['type'][$totalarray['nbfield']] = '';
+			}
 
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -832,14 +833,14 @@ if ($action == 'create') {
 						print $productstatic->getLabelOfUnit('long', $langs);
 						print '</td>';
 					}
+					if ($usercancreadsupplierprice) {
+						// Price buy PMP
+						print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
-					// Price buy PMP
-					print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
-
-					// Total PMP
-					print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
-					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
-
+						// Total PMP
+						print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
+						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
+					}
 					$pricemin = 0;
 					// Price sell min
 					if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
