@@ -1790,18 +1790,20 @@ class FormWebPortal extends Form
 	/**
 	 * Convert all link of the provided html output
 	 *
-	 * @param	string		$html				Html output
-	 * @return	string							Html output with all link converted
+	 * @param	string		$html						Html output
+	 * @param	string		$additionalViewImageParams	Additional parameters for viewimage link
+	 * @param	string		$additionalDocumentParams	Additional parameters for document link
+	 * @return	string									Html output with all link converted
 	 */
-	public static function convertAllLink($html)
+	public static function convertAllLink($html, $additionalViewImageParams = '', $additionalDocumentParams = '')
 	{
 		require_once DOL_DOCUMENT_ROOT . '/webportal/class/context.class.php';
 		$context = Context::getInstance();
 
-		$html = str_replace(DOL_URL_ROOT . '/viewimage.php?', $context->getControllerUrl('viewimage') . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/viewimage.php?')), urlencode(dol_escape_js($context->getControllerUrl('viewimage') . '&')), $html);
-		$html = str_replace(DOL_URL_ROOT . '/document.php?', $context->getControllerUrl('document') . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/document.php?')), urlencode(dol_escape_js($context->getControllerUrl('document') . '&')), $html);
+		$html = str_replace(DOL_URL_ROOT . '/viewimage.php?', $context->getControllerUrl('viewimage') . $additionalViewImageParams . '&', $html);
+		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/viewimage.php?')), urlencode(dol_escape_js($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&')), $html);
+		$html = str_replace(DOL_URL_ROOT . '/document.php?', $context->getControllerUrl('document') . $additionalDocumentParams . '&', $html);
+		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/document.php?')), urlencode(dol_escape_js($context->getControllerUrl('document') . $additionalDocumentParams . '&')), $html);
 
 		return $html;
 	}
