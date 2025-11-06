@@ -846,7 +846,7 @@ class Tasks extends DolibarrApi
 
 		$contacts = array_merge($contacts, $socpeoples);
 
-		return $this->_cleanObjectDatas($contacts);
+		return $contacts;	// Return array
 	}
 
 	/**
