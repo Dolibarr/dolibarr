@@ -64,10 +64,10 @@ class CommonSelectField extends CommonField
 						$fieldValueParent = trim($fieldValueParent);
 					}
 
-					$optionLabel = is_string($optionLabel) ? $langs->trans($optionLabel) : $optionLabel;
-
 					if (empty($optionLabel)) {
 						$optionLabel = '(not defined)';
+					} else {
+						$optionLabel = $langs->trans($optionLabel);
 					}
 
 					$options[$optionKey] = array(

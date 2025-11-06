@@ -40,9 +40,34 @@ class CommonSellistField extends CommonField
 	public static $options = array();
 
 	/**
+	 * @var array<int,string> 	Code mapping from ID. For backward compatibility
+	 */
+	const MAP_ID_TO_CODE = array(
+		0  => 'product',
+		1  => 'supplier',
+		2  => 'customer',
+		3  => 'member',
+		4  => 'contact',
+		5  => 'bank_account',
+		6  => 'project',
+		7  => 'user',
+		8  => 'bank_line',
+		9  => 'warehouse',
+		10 => 'actioncomm',
+		11 => 'website_page',
+		12 => 'ticket',
+		13 => 'knowledgemanagement',
+		14 => 'fichinter',
+		16 => 'order',
+		17 => 'invoice',
+		20 => 'supplier_order',
+		21 => 'supplier_invoice'
+	);
+
+	/**
 	 * Get all parameters in the options
 	 *
-	 * @param	array		$options	Options of the field
+	 * @param	array<string,mixed>		$options	Options of the field
 	 * @return	array{all:string,tableName:string,labelFullFields:string[],labelFields:string[],labelAlias:string[],keyField:string,parentName:string,parentFullField:string,parentField:string,parentAlias:string,filter:string,categoryType:string,categoryRoots:string,sortField:string}
 	 */
 	public function getOptionsParams($options)
@@ -93,6 +118,7 @@ class CommonSellistField extends CommonField
 
 		$tableName = (string) ($InfoFieldList[0] ?? '');
 		$labelFullFields = (string) ($InfoFieldList[1] ?? '');
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$labelFullFields = array_filter(array_map('trim', explode('|', $labelFullFields)), 'strlen');
 		$labelFields = array();
 		$labelAlias = array();
@@ -114,7 +140,7 @@ class CommonSellistField extends CommonField
 		$categoryType = (string) ($InfoFieldList[5] ?? '');
 		if (is_numeric($categoryType)) {    // deprecated: must use the category code instead of id. For backward compatibility.
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-			$categoryType = Categorie::$MAP_ID_TO_CODE[(int) $categoryType] ?? '';
+			$categoryType = self::MAP_ID_TO_CODE[(int) $categoryType] ?? '';
 		}
 		$categoryRoots = (string) ($InfoFieldList[6] ?? '');
 		$sortField = (string) ($InfoFieldList[7] ?? '');
@@ -166,12 +192,12 @@ class CommonSellistField extends CommonField
 	/**
 	 * Get list of options
 	 *
-	 * @param   FieldInfos    										$fieldInfos     Array of properties for field to show
-	 * @param	string												$key			Key of field
-	 * @param	bool												$addEmptyValue	Add also empty value if needed
-	 * @param 	bool												$reload			Force reload options
-	 * @param	string|array<int,string>							$selectedValues Only selected values
-	 * @return  array<string,array{label:string,parent:string}>
+	 * @param   FieldInfos    											$fieldInfos     Array of properties for field to show
+	 * @param	string													$key			Key of field
+	 * @param	bool													$addEmptyValue	Add also empty value if needed
+	 * @param 	bool													$reload			Force reload options
+	 * @param	string|array<int,string>								$selectedValues Only selected values
+	 * @return  array<string,array{label:string,parent:string}>|null					Return null if error
 	 */
 	public function getOptions($fieldInfos, $key, $addEmptyValue = false, $reload = false, $selectedValues = array())
 	{

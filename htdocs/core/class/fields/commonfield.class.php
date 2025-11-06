@@ -56,12 +56,12 @@ abstract class CommonField
 	public $label;
 
 	/**
-	 * @var Form 	Form handler.
+	 * @var Form|null 	Form handler.
 	 */
 	public static $form;
 
 	/**
-	 * @var Validate 	Validate handler.
+	 * @var Validate|null 	Validate handler.
 	 */
 	public static $validator;
 
@@ -149,9 +149,9 @@ abstract class CommonField
 	/**
 	 * Check if the value is deemed as empty
 	 *
-	 * @param	FieldInfos		$fieldInfos		Properties of the field
-	 * @param	mixed			$value			Value to check (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param	array			$emptyValues	List of value deemed as empty
+	 * @param	FieldInfos			$fieldInfos		Properties of the field
+	 * @param	mixed				$value			Value to check (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param	array<int,mixed>	$emptyValues	List of value deemed as empty
 	 * @return	bool
 	 */
 	public function isEmptyValue($fieldInfos, $value, $emptyValues = null)
