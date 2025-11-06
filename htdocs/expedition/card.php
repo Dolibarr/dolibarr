@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005		    Simon TOSSER			<simon@kornog-computing.com>
+ * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
@@ -1485,6 +1485,23 @@ if ($action == 'create' && $usercancreate) {
 		}
 		print '</tr>'."\n";
 
+		// Project
+		if (isModEnabled('project') && is_object($formproject)) {
+			$projectid = GETPOSTINT('projectid');
+			if (empty($projectid) && !empty($object->fk_project)) {
+				$projectid = (int) $object->fk_project;
+			}
+
+			$langs->load("projects");
+			print '<tr>';
+			print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
+			print img_picto('', 'project', 'class="pictofixedwidth"');
+			print $formproject->select_projects($soc->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'widthcentpercentminusxx');
+			print ' <a class="paddingleft" href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $soc->id) . '"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+			print '</td>';
+			print '</tr>';
+		}
+
 		// Date sending
 		print '<tr><td>'.$langs->trans("DateShipping").'</td>';
 		print '<td colspan="3">';
@@ -2739,8 +2756,10 @@ if ($action == 'create' && $usercancreate) {
 	// Ref customer shipment
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string' . (isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
+
 	// Thirdparty
 	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1);
+
 	// Project
 	if ($origin && $origin_id > 0) {
 		if (isModEnabled('project')) {
@@ -2768,12 +2787,12 @@ if ($action == 'create' && $usercancreate) {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if ($usercancreate) {
+			if ($permissiontoadd) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
