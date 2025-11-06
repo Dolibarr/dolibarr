@@ -107,6 +107,7 @@ class PartnershipCardController extends AbstractCardController
 			$this->loadTemplate('hero-header-banner');
 		}
 
+		// @phpstan-ignore-next-line
 		if (isset($this->formCard)) {
 			$hookRes = $this->hookPrintPageView();
 			if (empty($hookRes)) {

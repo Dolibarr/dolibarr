@@ -281,13 +281,13 @@ class FieldsManager
 	/**
 	 *	Get list of fields infos for the provided mode into X columns
 	 *
-	 * @param	CommonObject																			$object			Object handler
-	 * @param	ExtraFields																				$extrafields	ExtraFields handler
-	 * @param	string																					$mode			Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
-	 * @param	int																						$nbColumn		Split fields infos into X columns
-	 * @param	array<int,string>																		$breakKeys		Key used for break on each column (ex: array(1 => 'total_ht', ...))
-	 * @param	array<string,mixed>																		$params			Other params
-	 * @return	array{columns:array<int,<string,FieldInfos>>,hiddenFields:array<string,FieldInfos>}						List of fields info by column and hidden
+	 * @param	CommonObject																				$object			Object handler
+	 * @param	ExtraFields																					$extrafields	ExtraFields handler
+	 * @param	string																						$mode			Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
+	 * @param	int																							$nbColumn		Split fields infos into X columns
+	 * @param	array<int,string>																			$breakKeys		Key used for break on each column (ex: array(1 => 'total_ht', ...))
+	 * @param	array<string,mixed>																			$params			Other params
+	 * @return	array{columns:array<int,array<string,FieldInfos>>,hiddenFields:array<string,FieldInfos>}					List of fields info by column and hidden
 	 */
 	public function getAllFieldsInfos(&$object, &$extrafields = null, $mode = 'view', $nbColumn = 2, $breakKeys = array(), $params = array())
 	{
