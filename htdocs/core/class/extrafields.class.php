@@ -2448,7 +2448,7 @@ class ExtraFields
 						$tmpobject->fetch($value);
 
 						if (get_class($tmpobject) == 'Categorie') {
-							// For category object, rendering must use the same method than the one deinfed into showCategories()
+							// For category object, rendering must use the same method than the one defined into showCategories()
 							$color = $tmpobject->color;
 							$sfortag = '<span class="noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
 							$sfortag .= $tmpobject->getNomUrl(3);
