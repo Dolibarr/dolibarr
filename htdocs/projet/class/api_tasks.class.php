@@ -820,7 +820,7 @@ class Tasks extends DolibarrApi
 	 *
 	 * @param int    $id     ID of task
 	 * @param string $type   Type of the contact
-	 * @return array         Array with cleaned properties
+	 * @return array<int,mixed>		Array with cleaned properties
 	 *
 	 * @url GET {id}/contacts
 	 *
