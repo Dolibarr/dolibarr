@@ -170,7 +170,7 @@ class CommonSellistField extends CommonField
 	 * @param	string												$key			Key of field
 	 * @param	bool												$addEmptyValue	Add also empty value if needed
 	 * @param 	bool												$reload			Force reload options
-	 * @param	string|array										$selectedValues	Only selected values
+	 * @param	string|array<int,string>							$selectedValues Only selected values
 	 * @return  array<string,array{label:string,parent:string}>
 	 */
 	public function getOptions($fieldInfos, $key, $addEmptyValue = false, $reload = false, $selectedValues = array())
