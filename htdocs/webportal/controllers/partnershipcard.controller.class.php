@@ -87,38 +87,4 @@ class PartnershipCardController extends AbstractCardController
 
 		return 1;
 	}
-
-	/**
-	 * Display
-	 *
-	 * @return  void
-	 */
-	public function display()
-	{
-		$context = Context::getInstance();
-		if (!$context->controllerInstance->checkAccess()) {
-			$this->display404();
-			return;
-		}
-
-		$this->loadTemplate('header');
-		if (empty($this->formCard->modal)) {
-			$this->loadTemplate('menu');
-			$this->loadTemplate('hero-header-banner');
-		}
-
-		// @phpstan-ignore-next-line
-		if (isset($this->formCard)) {
-			$hookRes = $this->hookPrintPageView();
-			if (empty($hookRes)) {
-				print '<main class="container">';
-				$this->loadTemplate('card');
-				print '</main>';
-			}
-		} else {
-			$this->loadTemplate('404');
-		}
-
-		$this->loadTemplate('footer');
-	}
 }

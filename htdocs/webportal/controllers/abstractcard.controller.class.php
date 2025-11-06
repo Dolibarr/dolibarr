@@ -33,4 +33,44 @@ abstract class AbstractCardController extends Controller
 	 * @var FormCardWebPortal Form for card
 	 */
 	public $formCard;
+
+	/**
+	 * Display
+	 *
+	 * @return  void
+	 */
+	public function display()
+	{
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			$this->display404();
+			return;
+		}
+
+		$this->loadTemplate('header');
+		if (empty($this->formCard->modal)) {
+			$this->loadTemplate('menu');
+			$this->loadTemplate('hero-header-banner');
+		}
+
+		// @phpstan-ignore-next-line
+		if (isset($this->formCard)) {
+			$hookRes = $this->hookPrintPageView();
+			if (empty($hookRes)) {
+				print '<main class="container">';
+				if ($this->formCard->object->id > 0) {
+					if ($this->formCard->action == 'edit' && $this->formCard->permissiontoadd) {
+						$this->loadTemplate('card-edit');
+					} else {
+						$this->loadTemplate('card-view');
+					}
+				}
+				print '</main>';
+			}
+		} else {
+			$this->loadTemplate('404');
+		}
+
+		$this->loadTemplate('footer');
+	}
 }
