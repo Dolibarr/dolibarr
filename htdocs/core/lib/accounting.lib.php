@@ -366,9 +366,7 @@ function getDefaultDatesForTransfer()
 			$obj = $db->fetch_object($res);
 
 			$date_start = $db->jdate($obj->date_start);
-			$tmp_end = dol_print_date($obj->date_end, '%Y-%m-%d');
-			list($year_end, $month_end, $day_end) = explode('-', $tmp_end);
-			$date_end = dol_mktime(23, 59, 59, (int) $month_end, (int) $day_end, (int) $year_end);
+			$date_end = dol_get_last_hour($db->jdate($obj->date_end));
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			$year_start = (int) dol_print_date(dol_now(), '%Y');
