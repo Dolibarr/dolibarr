@@ -39,7 +39,7 @@
 class FieldInfos
 {
 	/**
-	 * @var CommonObject	Object handler (by reference)
+	 * @var CommonObject|null	Object handler (by reference)
 	 */
 	public $object = null;
 
@@ -130,7 +130,7 @@ class FieldInfos
 	public $editable = true;
 
 	/**
-	 * @var bool	Field always editable
+	 * @var bool|null	Field always editable
 	 */
 	public $alwaysEditable = null;
 
@@ -140,22 +140,22 @@ class FieldInfos
 	public $defaultValue = '';
 
 	/**
-	 * @var int 	Field string min length
+	 * @var int|null 	Field string min length
 	 */
 	public $minLength = null;
 
 	/**
-	 * @var int 	Field string max length
+	 * @var int|null 	Field string max length
 	 */
 	public $maxLength = null;
 
 	/**
-	 * @var double 	Field numeric min value
+	 * @var double|null 	Field numeric min value
 	 */
 	public $minValue = null;
 
 	/**
-	 * @var double 	Field numeric max value
+	 * @var double|null 	Field numeric max value
 	 */
 	public $maxValue = null;
 
@@ -285,32 +285,32 @@ class FieldInfos
 	public $listChecked = true;
 
 	/**
-	 * @var string	Alias table used for sql request (ex 't.')
+	 * @var string|null	Alias table used for sql request (ex 't.')
 	 */
 	public $sqlAlias = null;
 
 	/**
-	 * @var string		Dependency value (used for filter list from ajax)
+	 * @var string|null		Dependency value (used for filter list from ajax)
 	 */
 	public $optionsSqlDependencyValue = null;
 
 	/**
-	 * @var int		Current page when get sql result for options on 'sellist' and 'chkbxlst' field type
+	 * @var int|null		Current page when get sql result for options on 'sellist' and 'chkbxlst' field type
 	 */
 	public $optionsSqlPage = null;
 
 	/**
-	 * @var int		Current offset when get sql result for options on 'sellist' and 'chkbxlst' field type
+	 * @var int|null		Current offset when get sql result for options on 'sellist' and 'chkbxlst' field type
 	 */
 	public $optionsSqlOffset = null;
 
 	/**
-	 * @var int		Current limit when get sql result for options on 'sellist' and 'chkbxlst' field type
+	 * @var int|null		Current limit when get sql result for options on 'sellist' and 'chkbxlst' field type
 	 */
 	public $optionsSqlLimit = null;
 
 	/**
-	 * @var string		getNameUrl() parameters 'xxx:xxx:xxx:...'
+	 * @var string|null		getNameUrl() parameters 'xxx:xxx:xxx:...'
 	 */
 	public $getNameUrlParams = null;
 
