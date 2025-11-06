@@ -117,9 +117,9 @@ if ($object instanceof CommonObject) {
 			}
 
 			/**
-			 * @var CommonSellistField|CommonSelectField $field
+			 * @var CommonSellistField $field
 			 */
-			// @phan-var-force CommonSellistField|CommonSelectField $field
+			// @phan-var-force CommonSellistField $field
 			$options = $field->getOptions($fieldInfos, $objectkey, $page == 1, true);
 			if (is_array($options)) {
 				$nbResult = count($options);
