@@ -49,6 +49,8 @@ class RadioField extends CommonSelectField
 	 */
 	public function printInputSearchField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
+		global $conf;
+
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
 		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;

@@ -66,6 +66,8 @@ class CheckboxField extends CommonSelectField
 	 */
 	public function printInputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
+		global $conf;
+
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
 		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;

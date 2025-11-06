@@ -49,6 +49,8 @@ class SellistField extends CommonSellistField
 	 */
 	public function printInputSearchField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
+		global $conf;
+
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
 		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
@@ -77,6 +79,8 @@ class SellistField extends CommonSellistField
 	 */
 	public function printInputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
+		global $conf;
+
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
 		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
