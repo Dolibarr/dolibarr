@@ -639,7 +639,7 @@ class Don extends CommonObject
 				// For remove dir
 				if (dol_is_dir($dir)) {
 					if (!dol_delete_dir_recursive($dir)) {
-						$this->errors[] = $this->error;
+						$this->errors[] = 'ErrorFailToDeleteDir';
 					}
 				}
 			}

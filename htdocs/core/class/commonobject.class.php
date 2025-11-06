@@ -11051,6 +11051,16 @@ abstract class CommonObject
 			}
 		}
 
+		if (!$error) {
+			$dir = getMultidirOutput($this)."/".dol_sanitizeFileName($this->ref);
+			// For remove dir
+			if (dol_is_dir($dir)) {
+				if (!dol_delete_dir_recursive($dir)) {
+					$this->errors[] = 'ErrorFailToDeleteDir';
+				}
+			}
+		}
+
 		// Delete linked object
 		$res = $this->deleteObjectLinked();
 		if ($res < 0) {
