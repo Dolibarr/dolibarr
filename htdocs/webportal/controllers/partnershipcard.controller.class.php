@@ -25,18 +25,13 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formcardwebportal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/controllers/abstractcard.controller.class.php';
 
 /**
  * Class for PartnershipCardController
  */
-class PartnershipCardController extends Controller
+class PartnershipCardController extends AbstractCardController
 {
-	/**
-	 * @var FormCardWebPortal Form for card
-	 */
-	public $formCard;
-
-
 	/**
 	 * Check current access to controller
 	 *

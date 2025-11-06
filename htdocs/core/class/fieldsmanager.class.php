@@ -156,6 +156,7 @@ class FieldsManager
 			);
 
 			$hookmanager->executeHooks('getFieldClass', $parameters, $this); // Note that $object may have been modified by hook
+			// @phpstan-ignore-next-line
 			if (isset($field) && is_object($field)) {
 				self::$fieldClasses[$type] = $field;
 			} else {
@@ -280,13 +281,13 @@ class FieldsManager
 	/**
 	 *	Get list of fields infos for the provided mode into X columns
 	 *
-	 * @param	CommonObject																	$object			Object handler
-	 * @param	ExtraFields																		$extrafields	ExtraFields handler
-	 * @param	string																			$mode			Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
-	 * @param	int																				$nbColumn		Split fields infos into X columns
-	 * @param	array<int,string>																$breakKeys		Key used for break on each column (ex: array(1 => 'total_ht', ...))
-	 * @param	array<string,mixed>																$params			Other params
-	 * @return	array{columns:array<string,FieldInfos>,hiddenFields:array<string,FieldInfos>}					List of fields info by column and hidden
+	 * @param	CommonObject																			$object			Object handler
+	 * @param	ExtraFields																				$extrafields	ExtraFields handler
+	 * @param	string																					$mode			Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
+	 * @param	int																						$nbColumn		Split fields infos into X columns
+	 * @param	array<int,string>																		$breakKeys		Key used for break on each column (ex: array(1 => 'total_ht', ...))
+	 * @param	array<string,mixed>																		$params			Other params
+	 * @return	array{columns:array<int,<string,FieldInfos>>,hiddenFields:array<string,FieldInfos>}						List of fields info by column and hidden
 	 */
 	public function getAllFieldsInfos(&$object, &$extrafields = null, $mode = 'view', $nbColumn = 2, $breakKeys = array(), $params = array())
 	{
@@ -382,6 +383,7 @@ class FieldsManager
 
 		// Get object fields
 		$fields = array();
+		// @phpstan-ignore-next-line
 		if (isset($object->fields) && is_array($object->fields)) {
 			$keyPrefix = getDolGlobalInt('MAIN_FIELDS_NEW_OBJECT_KEY_PREFIX') ? 'object_' : '';
 			foreach ($object->fields as $key => $field) {
@@ -409,7 +411,7 @@ class FieldsManager
 	 * @param	ExtraFields						$extrafields	ExtraFields handler
 	 * @param	string							$mode			Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
 	 * @param	array<string,mixed>				$params			Other params
-	 * @return    array<string,FieldInfos>                    	List of fields infos
+	 * @return  array<string,FieldInfos>                    	List of fields infos
 	 */
 	public function getAllExtraFieldsInfos(&$object, &$extrafields = null, $mode = 'view', $params = array())
 	{
@@ -446,7 +448,7 @@ class FieldsManager
 	 * @param	ExtraFields				$extrafields	ExtraFields handler
 	 * @param	string					$mode			Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
 	 * @param	array<string,mixed>		$params			Other params
-	 * @return	FieldInfos								Get field info
+	 * @return	FieldInfos|null							Get field info or null if not found
 	 */
 	public function getFieldsInfos($key, &$object, &$extrafields = null, $mode = 'view', $params = array())
 	{
@@ -473,7 +475,7 @@ class FieldsManager
 	 * @param	string					$key		Field key
 	 * @param	string					$mode		Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
 	 * @param	array<string,mixed>		$params		Other params
-	 * @return	FieldInfos							Properties of the field
+	 * @return	FieldInfos|null						Properties of the field or null if field not found
 	 */
 	public function getFieldInfosFromObjectField(&$object, $key, $mode = 'view', $params = array())
 	{
@@ -562,7 +564,7 @@ class FieldsManager
 	 * @param	string					$key			Field key
 	 * @param	string					$mode			Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
 	 * @param	array<string,mixed>		$params			Other params
-	 * @return	FieldInfos								Properties of the field
+	 * @return	FieldInfos|null							Properties of the field or null if not found
 	 */
 	public function getFieldInfosFromExtraField(&$object, &$extrafields, $key, $mode = 'view', $params = array())
 	{
@@ -670,7 +672,7 @@ class FieldsManager
 			$fieldInfos->options = array();
 			$fieldInfos->type = 'varchar';
 			$fieldInfos->size = $reg[1];
-			$fieldInfos->maxLength = $reg[1];
+			$fieldInfos->maxLength = (int) $reg[1];
 		} elseif (preg_match('/varchar/', $fieldInfos->originType)) {
 			$fieldInfos->options = array();
 			$fieldInfos->type = 'varchar';
@@ -945,6 +947,7 @@ class FieldsManager
 	{
 		global $hookmanager;
 
+		$value = '';
 		$parameters = array(
 			'fieldInfos' => &$fieldInfos,
 			'key' => $key,
