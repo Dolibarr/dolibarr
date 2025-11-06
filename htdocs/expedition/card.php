@@ -1677,7 +1677,6 @@ if ($action == 'create') {
 								}
 
 								$tmpwarehouseObject->fetch($warehouse_id);
-
 								if ($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 									$stock = + $stock_warehouse->real; // Convert it to number
 									$deliverableQty = min($quantityToBeDelivered, $stock);
