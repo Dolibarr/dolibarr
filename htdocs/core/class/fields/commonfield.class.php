@@ -66,7 +66,7 @@ abstract class CommonField
 	public static $validator;
 
 	/**
-	 * @var array 	List of value deemed as empty (null always deemed as empty)
+	 * @var array<int,mixed> 	List of value deemed as empty (null always deemed as empty)
 	 */
 	public $emptyValues = array('', 0, array());
 

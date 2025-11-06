@@ -165,12 +165,12 @@ class FieldInfos
 	public $size = '';
 
 	/**
-	 * @var array 	Field options (for select, sellist, ...)
+	 * @var array<string,string> 	Field options (for select, sellist, ...)
 	 */
 	public $options = array();
 
 	/**
-	 * @var array 	List of value deemed as empty (null always deemed as empty)
+	 * @var array<int,mixed> 	List of value deemed as empty (null always deemed as empty)
 	 */
 	public $emptyValues = array();
 
@@ -275,7 +275,7 @@ class FieldInfos
 	public $listHelp = '';
 
 	/**
-	 * @var string	Add total in list footer
+	 * @var bool	Add total in list footer
 	 */
 	public $listTotalizable = false;
 

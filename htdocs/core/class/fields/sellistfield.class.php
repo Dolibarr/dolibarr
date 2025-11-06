@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/fields/commonsellistfield.class.ph
 class SellistField extends CommonSellistField
 {
 	/**
-	 * @var array    List of value deemed as empty (null always deemed as empty)
+	 * @var array<int,mixed> 	List of value deemed as empty (null always deemed as empty)
 	 */
 	public $emptyValues = array('', array());
 

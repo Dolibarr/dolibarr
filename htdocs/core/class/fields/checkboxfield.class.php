@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/fields/commonselectfield.class.php
 class CheckboxField extends CommonSelectField
 {
 	/**
-	 * @var array    List of value deemed as empty (null always deemed as empty)
+	 * @var array<int,mixed> 	List of value deemed as empty (null always deemed as empty)
 	 */
 	public $emptyValues = array(array(), '');
 
