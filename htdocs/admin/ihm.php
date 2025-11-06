@@ -31,14 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'projects', 'hrm', 'agenda'));
@@ -450,7 +449,6 @@ if ($mode == 'other') {
 	$pictohelp = '<span class="fa fa-question-circle"></span>';
 	print '<tr class="oddeven"><td>' . str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')) . '</td><td>';
 	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	//print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -503,14 +501,12 @@ if ($mode == 'other') {
 
 	// Hide unauthorized menus
 	print '<tr class="oddeven"><td>' . $langs->trans("HideUnauthorizedMenu") . '</td><td>';
-	//print $form->selectyesno('MAIN_MENU_HIDE_UNAUTHORIZED', isset($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) ? $conf->global->MAIN_MENU_HIDE_UNAUTHORIZED : 0, 1);
 	print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
 	print '</tr>';
 
 	// Hide unauthorized button
 	print '<tr class="oddeven"><td>' . $langs->trans("ButtonHideUnauthorized") . '</td><td>';
-	//print $form->selectyesno('MAIN_BUTTON_HIDE_UNAUTHORIZED', isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) ? $conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED : 0, 1);
 	print ajax_constantonoff("MAIN_BUTTON_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
 	print '</tr>';
@@ -698,7 +694,7 @@ if ($mode == 'login') {
 	}
 	print $form->textwithpicto($langs->trans("MessageLogin"), $texthelp, 1, 'help', '', 0, 2, 'tooltipmessagelogin');
 	print '</td><td>';
-	$doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME) ? $conf->global->MAIN_HOME : ''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
+	$doleditor = new DolEditor('main_home', getDolGlobalString('MAIN_HOME'), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>' . "\n";
 

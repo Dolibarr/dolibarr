@@ -231,6 +231,11 @@ if ($socid > 0) {
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhereOpenedOrders', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " ORDER BY c.rowid ASC";
 
 $resql = $db->query($sql);

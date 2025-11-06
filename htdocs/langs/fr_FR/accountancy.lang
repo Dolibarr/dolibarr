@@ -391,6 +391,7 @@ Modelcsv_winfic=Export pour Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export vers Gestinum (v3)
 Modelcsv_Gestinumv5=Export vers Gestinum (v5)
 Modelcsv_charlemagne=Export pour Aplin Charlemagne
+Modelcsv_ISTEA=Export vers ISTEA
 ChartofaccountsId=Id plan comptable
 ExportToPdf = Exporter au format PDF
 ExportToCsv = Exporter au format CSV

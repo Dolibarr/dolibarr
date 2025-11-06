@@ -594,7 +594,11 @@ textarea:focus {
 input:focus, textarea:focus,
 button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus,
 .select2-container--focus span.selection span.select2-selection {
+<?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+	border: 1px solid #666 !important;
+<?php } else { ?>
 	border-bottom: 1px solid #666;
+<?php } ?>
 }
 
 textarea.cke_source:focus
@@ -6431,6 +6435,9 @@ table.jPicker tr:first-of-type td {
 	height: 2px !important;
 	line-height: 2px;
 }
+.jPicker .Icon {
+	margin-left: 2px;
+}
 .jPicker .Move {
 	background: unset !important;
 	border: unset !important;
@@ -6449,6 +6456,9 @@ table.jPicker {
 	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
 	width: 300px !important;
+}
+span.jPicker {
+	vertical-align: middle;
 }
 .jPicker .Grid {
 	background-image: unset !important;
@@ -6471,6 +6481,9 @@ table.jPicker {
 	border-radius: 4px;
 	border-collapse: collapse;
 	border: none;
+}
+.jPicker td.Text input {
+	width: 35px !important;
 }
 
 A.color, A.color:active, A.color:visited {

@@ -1456,6 +1456,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		// If France, show VAT mention if applicable
+		$showvatmention = 0;
 		if (in_array($this->emetteur->country_code, array('FR')) && empty($object->total_tva)) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -1465,11 +1466,20 @@ class pdf_octopus extends ModelePDFFactures
 				} else {
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', false);
 				}
+				$showvatmention++;
 			} elseif (getDolGlobalString("INVOICE_VAT_SHOW_REVERSE_CHARGE_MENTION") && $this->emetteur->country_code != $object->thirdparty->country_code && $this->emetteur->isInEEC() && $object->thirdparty->isInEEC()) {
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedReverseChargeProcedure"), 0, 'L', false);
+				$showvatmention++;
 			}
-			$posy = $pdf->GetY() + 4;
+			$posy = $pdf->GetY();
 		}
+
+		$showvatmention += pdfCertifMention($pdf, $outputlangs, $this->emetteur, $default_font_size, $posy, $this);
+
+		if ($showvatmention) {
+			$posy += 3;
+		}
+
 
 		$posxval = 52;	// Position of values of properties shown on left side
 		$posxend = 110;	// End of x for text on left side
@@ -2754,7 +2764,7 @@ class pdf_octopus extends ModelePDFFactures
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -2862,7 +2872,7 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => 'Chantier', // use lang key is useful in somme case with module
+				'textkey' => 'Chantier', // use lang key is useful in some case with module
 				'align' => 'C',
 				'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'width' => 18

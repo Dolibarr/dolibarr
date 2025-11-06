@@ -203,7 +203,7 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
@@ -1585,14 +1585,20 @@ jQuery(document).ready(function() {
 
 // Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
 function showOptions(child_list, parent_list) {
-		   var val = $("select[name="+parent_list+"]").val();
-		   var parentVal = parent_list + ":" + val;
-		if(val > 0) {
-			$("select[name=\""+child_list+"\"] option[parent]").hide();
-			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+	var parentInput = $("select[name="+parent_list+"]");
+	if (parentInput.length === 0) { // when parent extra-field is in view mode and the child is edited directly on card (on line edit)
+		parentInput = $("input[name="+parent_list+"]");
+	}
+	if (parentInput.length > 0) {
+		var val = parentInput.val();
+		var parentVal = parent_list + ":" + val;
+		if (val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").prop("disabled", true).hide(); // hide not work with select2 element so disabled it
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").prop('disabled', false).show(); // show not work with select2 element so enabled it
 		} else {
-			$("select[name=\""+child_list+"\"] option").show();
+			$("select[name=\""+child_list+"\"] option").prop("disabled", false).show(); // show not work with select2 element so enabled it
 		}
+	}
 }
 function setListDependencies() {
 		console.log("setListDependencies");

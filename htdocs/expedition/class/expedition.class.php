@@ -82,13 +82,18 @@ class Expedition extends CommonObject
 	public $table_element_line = "expeditiondet";
 
 	/**
+	 * @var string    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'ExpeditionLigne';
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'dolly';
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -565,7 +570,9 @@ class Expedition extends CommonObject
 								if ($line_id <= 0) {
 									$error++;
 								}
-								if (isset($kits_list[$line->fk_product])) $kits_id_cached[$line->fk_product] = $line_id;
+								if (isset($kits_list[$line->fk_product])) {
+									$kits_id_cached[$line->fk_product] = $line_id;
+								}
 							} else {    // with batch management
 								if ($this->create_line_batch($line, $line->array_options) <= 0) {
 									$error++;
@@ -1045,9 +1052,9 @@ class Expedition extends CommonObject
 		// Change status of order to "shipment in process"
 		$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
 		if ($this->origin == 'commande') {
-			$triggerKey.= 'ORDER_SHIPMENTONPROCESS';
+			$triggerKey .= 'ORDER_SHIPMENTONPROCESS';
 		} else {
-			$triggerKey.= strtoupper($this->origin).'_SHIPMENTONPROCESS';
+			$triggerKey .= strtoupper($this->origin).'_SHIPMENTONPROCESS';
 		}
 
 		// TODO : load the origin object to trigger the right setStatus according to origin object
@@ -1276,7 +1283,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	* Add a simple expedition line.
+	 * Add a simple expedition line.
 	 *
 	 * @param 	float		$qty							Quantity
 	 * @param 	string		$element_type					Element type
@@ -2809,7 +2816,7 @@ class Expedition extends CommonObject
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				$label = $langs->trans('SendingMethod'.$obj->code);
-				$this->listmeths[$i]= [
+				$this->listmeths[$i] = [
 					'rowid' => (int) $obj->rowid,
 					'code' => $obj->code,
 					'libelle' => ($label != 'SendingMethod'.$obj->code ? $label : $obj->label),

@@ -370,25 +370,26 @@ input, input.flat, form.flat select, select, select.flat, .dataTables_length lab
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	color: var(--colortext);
-	border-radius: 3px;
+	<?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+	border-radius: 5px;
+	<?php } ?>
 	font-family: <?php print $fontlist ?>;
 	outline: none;
 	margin: 0px 0px 0px 0px;
 	background-color: var(--inputbackgroundcolor);
 	<?php if (!getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
-		border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+		border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php } ?>
 }
 
 .liste_titre input, .liste_titre select {
 	border: none;
-	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
-	/* padding: 5px; */
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 }
 .divadvancedsearchfieldcompinput,
 div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
-	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php
 	if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
 		background-color: #f8f8fa;
@@ -414,16 +415,38 @@ input[type=checkbox], input[type=radio] {
 	margin: 0 5px 0 1px;
 	transform: scale(1.25);
 }
+
+.integrated-radio {
+	display: inline-block;
+	cursor : pointer;
+	border-radius: 3px;
+	padding: 4px;
+	background-color: #ededed;
+}
+.integrated-radio input[type="radio"] {
+	display: none;
+}
+.integrated-radio:has(input:checked) {
+	background-color: var(--colortextlink, #0a58ca);
+}
+
+/* input fields */
 .kanban input.checkforselect {
 	margin-right: 0px;
 	margin-top: 5px;
 }
 input {
-	padding: 4px;
+	padding: 5px;
 	padding-left: 5px;
+	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	<?php } ?>
 }
 .liste_titre input {
 	line-height: 1.3em;
+	padding: 3px;
+	padding-left: 3px;
 }
 .tableforfield input {
 	padding-left: 2px;
@@ -496,9 +519,13 @@ div.tabBar textarea:focus:not(.textarea-ai_feature):not(.cke_source) {
 input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
  .select2-container--focus span.selection span.select2-selection {
+<?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+	border: 1px solid #666 !important;
+<?php } else { ?>
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
+<?php } ?>
 }
 textarea.cke_source:focus
 {
@@ -786,7 +813,7 @@ input[type=file]    {
 	border-left: none;
 	border-right: none;
 	<?php } ?>
-	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
@@ -2888,7 +2915,7 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;	/* Do not use em unit here */
+	width: 22px;	/* Do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
@@ -6539,6 +6566,9 @@ table.jPicker tr:first-of-type td {
 	height: 2px !important;
 	line-height: 2px;
 }
+.jPicker .Icon {
+	margin-left: 2px;
+}
 .jPicker .Move {
 	background: unset !important;
 	border: unset !important;
@@ -6557,6 +6587,9 @@ table.jPicker {
 	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
 	width: 300px !important;
+}
+span.jPicker {
+	vertical-align: middle;
 }
 .jPicker .Grid {
 	background-image: unset !important;
@@ -6579,6 +6612,9 @@ table.jPicker {
 	border-radius: 4px;
 	border-collapse: collapse;
 	border: none;
+}
+.jPicker td.Text input {
+	width: 35px !important;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -7359,7 +7395,7 @@ input.select2-input {
 	border-right: none;
 	<?php } ?>
 
-	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 
 	box-shadow: none !important;
 	border-radius: 3px;

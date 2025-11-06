@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
+/* Copyright (C) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2016	    Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -63,9 +63,19 @@ class Entrepot extends CommonObject
 	public $label;
 
 	/**
+	 * @var string  barcode
+	 */
+	public $barcode;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
+
+	/**
+	 * @var int
+	 */
+	public $fk_departement;
 
 	/**
 	 * @var int
@@ -158,7 +168,7 @@ class Entrepot extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
@@ -273,12 +283,9 @@ class Entrepot extends CommonObject
 			$id = $this->db->last_insert_id($this->db->prefix()."entrepot");
 			if ($id > 0) {
 				$this->id = $id;
-
-				if (!$error) {
-					$result = $this->update($id, $user);
-					if ($result <= 0) {
-						$error++;
-					}
+				$result = $this->update($id, $user);
+				if ($result <= 0) {
+					$error++;
 				}
 
 				// Actions on extra fields
@@ -351,6 +358,8 @@ class Entrepot extends CommonObject
 		}
 
 		$this->label = trim($this->label);
+		$this->barcode = trim($this->barcode);
+		$this->model_pdf = trim($this->model_pdf);
 
 		$this->description = trim($this->description);
 
@@ -374,6 +383,13 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".((int) $this->country_id);
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
+		$sql .= ", barcode = '".$this->db->escape($this->barcode)."'";
+		$sql .= ", fk_departement = ".((int) $this->fk_departement);
+		$sql .= ", fk_barcode_type = ".((int) $this->barcode_type);
+		$sql .= ", warehouse_usage = ".((int) $this->warehouse_usage);
+		$sql .= ", fk_user_author = ".((int) $this->user_creation_id);
+		$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
+		$sql .= ", import_key = ".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
@@ -430,7 +446,7 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && empty($notrigger)) {
+		if (empty($notrigger)) {
 			// Call trigger
 			$result = $this->call_trigger('WAREHOUSE_DELETE', $user);
 			if ($result < 0) {
@@ -465,7 +481,7 @@ class Entrepot extends CommonObject
 			}
 		}
 
-		// Removed extrafields
+		// Remove extrafields
 		if (!$error) {
 			$result = $this->deleteExtraFields();
 			if ($result < 0) {
@@ -527,7 +543,7 @@ class Entrepot extends CommonObject
 		}
 
 		$sql  = "SELECT rowid, entity, fk_parent, fk_project, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
-		$sql .= " model_pdf, import_key";
+		$sql .= " model_pdf, import_key, datec as date_creation, tms as date_modification, fk_departement, barcode, fk_barcode_type, warehouse_usage, fk_user_author as user_creation_id";
 		$sql .= " FROM ".$this->db->prefix()."entrepot";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -551,6 +567,7 @@ class Entrepot extends CommonObject
 				$this->label          = $obj->label;
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;
+				$this->status         = $obj->statut;
 				$this->lieu           = $obj->lieu;
 				$this->address        = $obj->address;
 				$this->zip            = $obj->zip;
@@ -558,6 +575,16 @@ class Entrepot extends CommonObject
 				$this->country_id     = $obj->country_id;
 				$this->phone          = $obj->phone;
 				$this->fax            = $obj->fax;
+
+				$this->date_creation  = $obj->date_creation;
+				$this->barcode		  = $obj->barcode;
+				$this->fk_departement = $obj->fk_departement;
+				$this->barcode_type   = $obj->fk_barcode_type;
+				$this->warehouse_id   = $obj->rowid;
+
+				$this->warehouse_usage = $obj->warehouse_usage;
+				$this->user_creation_id = $obj->user_creation_id;
+				$this->date_modification = $obj->date_modification;
 
 				$this->model_pdf      = $obj->model_pdf;
 				$this->import_key     = $obj->import_key;
@@ -972,9 +999,7 @@ class Entrepot extends CommonObject
 	{
 		// phpcs:enable
 
-		$sql = "SELECT rowid
-				FROM ".$this->db->prefix()."entrepot
-				WHERE fk_parent = ".((int) $id);
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."entrepot WHERE fk_parent = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1054,11 +1079,11 @@ class Entrepot extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</div>';
 		$return .= '<div class="info-box-content" >';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'lieu') && (!empty($this->lieu))) {
+		if (!empty($this->lieu)) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->lieu.'</span>';
 		}
 		if ($arraydata['sellvalue'] != 0) {
@@ -1068,9 +1093,7 @@ class Entrepot extends CommonObject
 				$return .= '<br><span class="info-box-label amount">'.price($arraydata['sellvalue']).'</span>';
 			}
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

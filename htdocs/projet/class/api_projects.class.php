@@ -827,6 +827,122 @@ class Projects extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Get all timespent
+	 *
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
+	 * @param string		   $thirdparty_ids		Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param  int    		   $category   		Use this param to filter list by category
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    	   $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return  array                               Array of project objects
+	 * @phan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @url	GET /alltimespent
+	 */
+	public function listTimespent($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
+
+		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
+
+		$sql = "SELECT et.rowid, et.element_duration, et.element_datehour, et.fk_user, et.note as time_note, et.thm,";
+		$sql .= " u.login as user_login, u.firstname as user_firstname, u.lastname as user_lastname,";
+		$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
+		$sql .= " t.rowid as task_id, t.ref as task_ref, t.label as task_label,";
+		$sql .= " s.rowid as soc_id, s.nom as soc_name";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t ON (t.fk_projet = p.rowid)";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_time as et ON (et.fk_element = t.rowid AND et.elementtype = 'task')";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = p.fk_soc)";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON (u.rowid = et.fk_user)";
+		$sql .= ' WHERE t.entity IN ('.getEntity('project').')';
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
+		}
+		// Select projects of given category
+		if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_project = t.rowid ";
+		}
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog("API Rest request");
+		$result = $this->db->query($sql);
+		$obj_ret = array();
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($obj), $properties);
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve timestamp list : '.$this->db->lasterror());
+		}
+
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
+		return $obj_ret;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**

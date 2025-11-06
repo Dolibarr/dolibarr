@@ -100,8 +100,8 @@ class DolEditor
 	 *  @param 	string				$content		        		Content of WYSIWYG field
 	 *  @param	int|string			$width							Width in pixel of edit area (auto by default)
 	 *  @param 	int					$height			       		 	Height in pixel of edit area (200px by default)
-	 *  @param 	string				$toolbarname	       		 	Name of the toolbar set to use ('dolibarr_details[_encoded]'=the less featured, 'dolibarr_notes[_encoded]' for notes content, 'dolibarr_mailings[_encoded]' for emailing content, 'dolibarr_readonly').
-	 *  @param  string				$toolbarlocation       			Deprecated. Not used
+	 *  @param 	string				$toolbarname	       		 	Name of the toolbar set to use ('Basic', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_notes[_encoded]' for notes content, 'dolibarr_mailings[_encoded]' for emailing content, 'dolibarr_readonly').
+	 *  @param  string				$notused		       			Deprecated. Not used
 	 *  @param  bool				$toolbarstartexpanded  			Bar is visible or not at start
 	 *  @param	bool|int			$uselocalbrowser				Enabled to add links to local object with a local media filemanager. -1=auto, false=only external images URL can be added into content, or images saved inline with src="data:..." with a cut/paste.
 	 *  @param  bool|int|string		$okforextendededitor    		1 or True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
@@ -112,7 +112,7 @@ class DolEditor
 	 *  @param	array{x?:string,y?:string,find?:string}	$poscursor	Array for initial cursor position array('x'=>x, 'y'=>y).
 	 *                      	                       				array('find'=> 'word')  can be used to go to line were the word has been found
 	 */
-	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = -1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
+	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $notused = '', $toolbarstartexpanded = false, $uselocalbrowser = -1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
 	{
 		global $conf;
 

@@ -506,7 +506,7 @@ class Setup extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$state = new Cstate($this->db);
 				if ($state->fetch($obj->rowid) > 0) {
-					if (empty($filter) || stripos($state->label, $filter) !== false) {
+					if (empty($filter) || stripos((string) $state->label, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($state);
 					}
 				}
@@ -619,7 +619,7 @@ class Setup extends DolibarrApi
 					// and then apply the filter if there is one.
 					$this->translateLabel($country, $lang, 'Country');
 
-					if (empty($filter) || stripos($country->label, $filter) !== false) {
+					if (empty($filter) || stripos((string) $country->label, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($country);
 					}
 				}
@@ -2390,6 +2390,78 @@ class Setup extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of incoterm types : '.$this->db->lasterror());
+		}
+
+		return $list;
+	}
+
+	/**
+	 * Get the list of vat.
+	 *
+	 * @param string    $sortfield  Sort field
+	 * @param string    $sortorder  Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number (starting from zero)
+	 * @param int       $active     Vat is active or not (-1 all, 0 = inactive, 1 = active)
+	 * @param int		$fk_country Country of vat (if -1 we use company country, 0 = all)
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+	 * @return array				List of incoterm types
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
+	 *
+	 * @url     GET dictionary/vat
+	 *
+	 * @throws RestException 503 Error when retrieving list of vatcode types
+	 */
+	public function getListOfVAT($sortfield = "taux", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $fk_country = -1, $sqlfilters = '')
+	{
+		$list = array();
+		global $mysoc;
+
+		$sql = "SELECT rowid, code, type_vat, active, fk_pays, taux, localtax1, localtax2,  localtax1_type, localtax2_type, note";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
+		$sql .= " WHERE 1=1";
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+		}
+		if ($active != -1)
+			$sql .= " AND active = ".((int) $active);
+
+		if ($fk_country == -1)
+			$sql .= " AND fk_pays =".((int) $mysoc->country_id);
+
+		if ($fk_country >0)
+			$sql .= " AND fk_pays =".((int) $fk_country);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			for ($i = 0; $i < $min; $i++) {
+				$type = $this->db->fetch_object($result);
+				$list[] = $type;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of vat types : '.$this->db->lasterror());
 		}
 
 		return $list;

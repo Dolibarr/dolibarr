@@ -90,7 +90,7 @@ class Workstation extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -462,7 +462,7 @@ class Workstation extends CommonObject
 		foreach ($groups as $id_group) {
 			$ws_usergroup = new WorkstationUserGroup($this->db);
 			$ws_usergroup->fk_workstation = $this->id;
-			$ws_usergroup->fk_usergroup = $id_group;
+			$ws_usergroup->fk_usergroup = (int) $id_group;
 			$ws_usergroup->createCommon($user);
 			$this->usergroups[] = $id_group;
 		}
@@ -475,7 +475,7 @@ class Workstation extends CommonObject
 			foreach ($resources as $id_resource) {
 				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $this->id;
-				$ws_resource->fk_resource = $id_resource;
+				$ws_resource->fk_resource = (int) $id_resource;
 				$ws_resource->createCommon($user);
 				$this->resources[] = $id_resource;
 			}

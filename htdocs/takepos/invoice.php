@@ -78,7 +78,7 @@ if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 	accessforbidden('No permission to use the TakePOS');
 }
 
-if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "") {
 		if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') == "1") {
@@ -1316,10 +1316,9 @@ if (empty($reshook)) {
 
 		$customprinterallowed = true;
 		$customprinttemplateallowed = true;
-		$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
-		if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
-			$customprinterallowed = true;
-			$customprinttemplateallowed = false;
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		if (isALNERunningVersion()) {		// No need to show this option because it has no effect when isALNERunningVersion is true.
+			$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 		}
 
 		if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
@@ -1333,7 +1332,8 @@ if (empty($reshook)) {
 			}
 		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {	// @phpstan-ignore-line
 			// If we set to use a specific receipt printer
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+			$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
 		} else {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
@@ -1348,7 +1348,7 @@ if (empty($reshook)) {
 		}
 
 		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
-			$sectionwithinvoicelink .= '<script type="text/javascript">$("#buttonprint").click();</script>';
+			$sectionwithinvoicelink .= '<script type="text/javascript">console.log("Emulate click on #buttonprint"); $("#buttonprint").click();</script>';
 		}
 	}
 }
@@ -1361,7 +1361,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 // llxHeader
-if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
@@ -1555,6 +1555,9 @@ function TakeposConnector(id){
 	return true;
 }
 
+<?php
+$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+?>
 // Call the ajax to execute the print.
 // With some external module another method may be called.
 function DolibarrTakeposPrinting(id) {
@@ -1565,7 +1568,7 @@ function DolibarrTakeposPrinting(id) {
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 		success: function(){
-				showPrintResultPopup('<?php echo dol_escape_js($langs->trans("SentToPrinter")); ?>', 2000);
+				showPrintResultPopup('<?php echo dol_escape_js($langs->trans("SentToPrinter").' '.$nameOfPrinter); ?>', 2000);
 			},
 		error: function(){
 				showPrintResultPopup("<?php echo dol_escape_js($langs->trans("FailedToSendToPrinter")); ?>", 2000);
@@ -2250,6 +2253,6 @@ if ($action == "search") {
 print '</div>';
 
 // llxFooter
-if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	print '</body></html>';
 }

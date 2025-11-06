@@ -25,6 +25,7 @@
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		Josep Lluís Amador Teruel	<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		Benoît PASCAL				<contact@p-ben.com>
+ * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -821,29 +822,39 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
- *  @param  string  $check	     Type of check
- *                               '' or 'none'=no check (deprecated)
- *                               'password'=allow characters for a password
- *                               'email'=allow characters for an email "email@domain.com"
- *                               'url'=allow characters for an url
- *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
- *                               'int'=check it's numeric (integer or float)
- *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
- *                               'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
- *                               'aZ'=check it's a-z only
- *                               'aZ09'=check it's simple alpha string (recommended for keys, it includes a-z0-9_\-\.)
- *                               'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
- *                               'aZ09comma'=check it's a string for a sortfield or sortorder
- *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml'=check there is no html content
- *                               'restricthtml'=check html content is restricted to some tags only
- *                               'custom'= custom filter specify $filter and $options)
+ *  @param 'int'|'intcomma'|'array'|'array:int'|'array:intcomma'|'array:alpha'|'array:alphanohtml'|'array:aZ09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'nohtml'|'restricthtml'|'alphawithlgt'|'aZ09'|'aZ'|'aZ09arobase'|'aZ09comma'|'url'|'san_alpha'|'custom'|'none'|'restricthtmlallowclass'|'restricthtmlallowunvalid'|'restricthtmlallowiframe'|'restricthtmlallowlinkscript'|'' $check Type of check
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 '' or 'none'=no check (deprecated)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'password'=allow characters for a password
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'email'=allow characters for an email "email@domain.com"
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'url'=allow characters for an url
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'int'=check it's numeric (integer or float)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'intcomma'=check it's integer+comma ('1,2,3,4...')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ'=check it's a-Z only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09'=check it's simple alpha string (recommended for keys, it includes a-Z0-9_\-\.)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09comma'=check it's a string for a sortfield or sortorder
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'nohtml'=check there is no html content
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtml'=check html content is restricted to some tags only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'custom'= custom filter specify $filter and $options)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowclass'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowunvalid'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowiframe'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowlinkscript'
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
+ *  @phpstan-return (
+ *      $check is 'int' ? numeric-string|'' :
+ *      $check is 'array:int' ? numeric-string[]|array{} :
+ *      $check is 'array' | 'array:aZ09' | 'array:alpha' | 'array:intcomma' | 'array:restricthtml' ? string[] :
+ *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
+ *  )
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
 {
@@ -2886,13 +2897,19 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		$url .= '?dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=' . urlencode($name);
 	}
 
+	if (preg_match('/^https/i', $url)) {
+		$urltoopen = $url;
+	} else {
+		$urltoopen = DOL_URL_ROOT . $url;
+	}
+
 	$out = '';
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out .= '<!-- a link for button to open url into a dialog popup -->';
 	$out .= '<a ' . ($accesskey ? ' accesskey="' . $accesskey . '"' : '') . ' class="cursorpointer reposition button_' . $name . ($morecss ? ' ' . $morecss : '') . '"' . $disabled . ' title="' . dol_escape_htmltag($label) . '"';
 	if (empty($conf->use_javascript_ajax)) {
-		$out .= ' href="' . DOL_URL_ROOT . $url . '" target="_blank"';
+		$out .= ' href="' . $urltoopen . '" target="_blank"';
 	} elseif ($jsonopen) {
 		$out .= ' href="#" onclick="' . $jsonopen . '"';
 	} else {
@@ -2909,9 +2926,9 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		$out .= '<script nonce="' . getNonce() . '" type="text/javascript">
 					jQuery(document).ready(function () {
 						jQuery(".button_' . $name . '").click(function () {
-							console.log(\'Open popup with jQuery(...).dialog() on URL ' . dol_escape_js(DOL_URL_ROOT . $url) . '\');
+							console.log(\'Open popup with jQuery(...).dialog() on URL ' . dol_escape_js($urltoopen) . '\');
 							var $tmpdialog = $(\'#idfordialog' . $name . '\');
-							$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog' . $name . '" style="border: 0px;" src="' . DOL_URL_ROOT . $url . '" width="100%" height="98%"></iframe>\');
+							$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog' . $name . '" style="border: 0px;" src="' . $urltoopen . '" width="100%" height="98%"></iframe>\');
 							$tmpdialog.dialog({
 								autoOpen: false,
 							 	modal: true,
@@ -3466,7 +3483,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$object->totaldeposits = $object->getSumDepositsUsed(0);
 			$object->alreadypaid = $object->totalpaid + $object->totalcreditnotes + $object->totaldeposits;
 		}
-		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		$tmptxt = $object->getLibStatut(6, (float) $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, (float) $object->alreadypaid);
 		}
@@ -3557,6 +3574,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// $morehtml is the right part (link "Back to list")
+	// $morehtmlref is the part after the ref
 	// $morehtmlleft is the picto or photo of banner
 	// $morehtmlstatus is part under the status
 	// $morehtmlright is part of htmlright
@@ -3848,12 +3866,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', (string) $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
-		dol_print_error(null, "Functions.lib::dol_print_date function called with a bad value from page " . (empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]));
+		dol_print_error(null, "Functions.lib::dol_print_date function called with a bad value" . getCallerInfoString());
 		return '';
 	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', (string) $time, $reg)) {    // Still available to solve problems in extrafields of type date
 		// This part of code should not be used anymore.
-		dol_syslog("Functions.lib::dol_print_date function called with a bad value from page " . (empty($_SERVER["PHP_SELF"]) ? 'unknown' : $_SERVER["PHP_SELF"]), LOG_WARNING);
-		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
+		dol_syslog("Functions.lib::dol_print_date function called with a bad value" . getCallerInfoString(), LOG_WARNING);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
 		$syear	= (!empty($reg[1]) ? $reg[1] : '');
 		$smonth = (!empty($reg[2]) ? $reg[2] : '');
@@ -3886,22 +3903,27 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	} else {
 		// Date is a timestamps
 		if ($time < 100000000000) {	// Protection against bad date values
-			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
-
+			$dtts = new DateTime();
 			if ($to_gmt) {
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+				$dtts->setTimezone($tzo);	// important: must be before the setTimestamp
+				$dtts->setTimestamp((int) $time);
 			} else {
+				$timetouse = (int) $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
+
 				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+				$dtts->setTimestamp($timetouse);	// TODO May be we can invert setTimestamp and setTimezone
+				$dtts->setTimezone($tzo);
 			}
-			$dtts = new DateTime();
-			$dtts->setTimestamp($timetouse);
-			$dtts->setTimezone($tzo);
+
 			$newformat = str_replace(
 				array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', '%w', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
 				array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', 'w', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
 				$format
 			);
+
 			$ret = $dtts->format($newformat);
+			//var_dump($timetouse, $offsettz, $offsetdst, $tzo, $newformat, $ret);
 			$ret = str_replace(
 				array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
 				array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
@@ -4107,14 +4129,14 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	string		$mode	'auto' => for backward compatibility (avoid this),
- *  							'gmt' => we return GMT timestamp,
- * 								'tzserver' => we add the PHP server timezone
- *  							'tzref' => we add the company timezone. Not implemented.
- * 								'tzuser' or 'tzuserrel' => we add the user timezone
+ *  @param	'auto'|'gmt'|'tzserver'|'tzuser'|'tzuserrel'	$mode	'auto' => for backward compatibility (avoid this),
+ *  																'gmt' => we return GMT timestamp,
+ * 																	'tzserver' => we add the PHP server timezone
+ *  																'tzref' => we add the company timezone. Not implemented.
+ * 																	'tzuser' or 'tzuserrel' => we add the user timezone
  *	@return int   $date	Timestamp
  */
-function dol_now($mode = 'auto')
+function dol_now($mode = 'gmt')
 {
 	$ret = 0;
 
@@ -4128,14 +4150,13 @@ function dol_now($mode = 'auto')
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
 		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
-		//} elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
-		//	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		//	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
-		//	$ret=dol_now('gmt')+($tzsecond*3600);
-		//}
+		// } elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
+		// 	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		// 	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
+		// 	$ret=dol_now('gmt')+($tzsecond*3600);
 	} elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {
 		// Time for now with user timezone added
-		//print 'time: '.time();
+		// print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 		$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
 		$ret = (int) (dol_now('gmt') + ($offsettz + $offsetdst));
@@ -4231,7 +4252,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  * Show EMail link formatted for HTML output.
  *
  * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
- * @param 	int			$cid 			Id of contact if known
+ * @param 	int			$contactid 		Id of contact if known
  * @param 	int			$socid 			Id of third party if known
  * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty presend email
  * @param	int			$max			Max number of characters to show. Use -1 to hide the mail text and show only the picto.
@@ -4240,7 +4261,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  * @param	string		$morecss		More CSS
  * @return	string						HTML Link
  */
-function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, $showinvalid = 1, $withpicto = 0, $morecss = 'paddingrightonly')
+function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max = 0, $showinvalid = 1, $withpicto = 0, $morecss = 'paddingrightonly')
 {
 	global $user, $langs, $hookmanager;
 
@@ -4278,11 +4299,11 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email), '', 'paddingrightonly');
 		}
 
-		if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
+		if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_EMAIL';
 			$linktoaddaction = '';
 			if (getDolGlobalString('AGENDA_ADDACTIONFOREMAIL')) {
-				$linktoaddaction = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode=' . urlencode($type) . '&amp;contactid=' . ((int) $cid) . '&amp;socid=' . ((int) $socid) . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+				$linktoaddaction = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode=' . urlencode($type) . '&amp;contactid=' . ((int) $contactid) . '&amp;socid=' . ((int) $socid) . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 			}
 			if ($linktoaddaction) {
 				$newemail = '<div>' . $newemail . ' ' . $linktoaddaction . '</div>';
@@ -4312,7 +4333,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	$rep = $newemail;
 
 	if ($hookmanager) {
-		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
+		$parameters = array('cid' => $contactid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
 
 		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
 		if ($reshook > 0) {
@@ -4338,11 +4359,13 @@ function getArrayOfSocialNetworks()
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 	$cachekey = 'socialnetworks_' . $conf->entity;
 	$dataretrieved = dol_getcache($cachekey);
+
 	if (!is_null($dataretrieved)) {
 		$socialnetworks = $dataretrieved;
 	} else {
 		$sql = "SELECT rowid, code, label, url, icon, active FROM " . MAIN_DB_PREFIX . "c_socialnetworks";
-		$sql .= " WHERE entity =" . ((int) $conf->entity);
+		$sql .= " WHERE entity = " . ((int) $conf->entity);
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
@@ -4365,13 +4388,13 @@ function getArrayOfSocialNetworks()
  * Show social network link
  *
  * @param	string		$value				Social network ID to show (only skype, without 'Name of recipient' before)
- * @param	int 		$cid 				Id of contact if known
+ * @param	int 		$contactid 			Id of contact if known
  * @param	int 		$socid 				Id of third party if known
- * @param	string 		$type				'skype','facebook',...
+ * @param	string 		$type				Type of social network: 'skype','facebook',...
  * @param	array<string,array{rowid:int,label:string,url:string,icon:string,active:int}>	$dictsocialnetworks		List of socialnetworks available
  * @return	string							HTML Link
  */
-function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetworks = array())
+function dol_print_socialnetworks($value, $contactid, $socid, $type, $dictsocialnetworks = array())
 {
 	global $hookmanager, $langs, $user;
 
@@ -4396,11 +4419,11 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			$htmllink .= '?chat" alt="' . $langs->trans("Chat") . '&nbsp;' . $value . '" title="' . dol_escape_htmltag($langs->trans("Chat") . ' ' . $value) . '">';
 			$htmllink .= '<img class="paddingleft" src="' . DOL_URL_ROOT . '/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
-			if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create')) {
+			if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create')) {
 				$addlink = 'AC_SKYPE';
 				$link = '';
 				if (getDolGlobalString('AGENDA_ADDACTIONFORSKYPE')) {
-					$link = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode=' . $addlink . '&amp;contactid=' . $cid . '&amp;socid=' . $socid . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+					$link = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode=' . $addlink . '&amp;contactid=' . $contactid . '&amp;socid=' . $socid . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 				}
 				$htmllink .= ($link ? ' ' . $link : '');
 			}
@@ -4453,7 +4476,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 	if ($hookmanager) {
 		$parameters = array(
 			'value' => $value,
-			'cid' => $cid,
+			'cid' => $contactid,
 			'socid' => $socid,
 			'type' => $type,
 			'dictsocialnetworks' => $dictsocialnetworks,
@@ -4525,7 +4548,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  *
  * 	@param  string  $phone          Phone number to format
  * 	@param  string  $countrycode    Country code to use for formatting
- * 	@param 	int		$cid 		    Id of contact if known
+ * 	@param 	int		$contactid		Id of contact if known
  * 	@param 	int		$socid          Id of third party if known
  * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set), 'tel'=Force "tel:..." link
  * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx. You can also use 'hidenum' to hide the number, keep only the picto.
@@ -4535,7 +4558,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  *  @param	string	$morecss		Add more css
  * 	@return string 				    Formatted phone number
  */
-function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = 'paddingright')
+function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = 'paddingright')
 {
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
@@ -4802,7 +4825,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 
-		//if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
+		//if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
 			$addlinktoagenda = '';
@@ -4810,7 +4833,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				$type = 'AC_FAX';
 			}
 			if (getDolGlobalString('AGENDA_ADDACTIONFORPHONE')) {
-				$addlinktoagenda = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=' . urlencode($_SERVER['REQUEST_URI']) . '&amp;actioncode=' . $type . ($cid ? '&amp;contactid=' . $cid : '') . ($socid ? '&amp;socid=' . $socid : '') . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+				$addlinktoagenda = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=' . urlencode($_SERVER['REQUEST_URI']) . '&amp;actioncode=' . $type . ($contactid ? '&amp;contactid=' . $contactid : '') . ($socid ? '&amp;socid=' . $socid : '') . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 			}
 			if ($addlinktoagenda) {
 				$newphone = '<span>' . $newphone . ' ' . $addlinktoagenda . '</span>';
@@ -4830,7 +4853,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	$rep = '';
 
 	if ($hookmanager) {
-		$parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid, 'titlealt' => $titlealt, 'picto' => $withpicto);
+		$parameters = array('countrycode' => $countrycode, 'cid' => $contactid, 'socid' => $socid, 'titlealt' => $titlealt, 'picto' => $withpicto);
 		$reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
 		$rep .= $hookmanager->resPrint;
 	}
@@ -4840,7 +4863,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			if ($withpicto == 'fax') {
 				$picto = 'phoning_fax';
 			} elseif ($withpicto == 'phone') {
-				$picto = 'phoning';
+				$picto = 'phone';
 			} elseif ($withpicto == 'mobile') {
 				$picto = 'phoning_mobile';
 			} else {
@@ -4854,7 +4877,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 
 		$rep .= $newphoneastart;
-		$rep .= ($withpicto ? img_picto($titlealt, 'object_' . $picto . '.png') : '');
+		$rep .= ($withpicto ? img_picto($titlealt, $picto) : '');
 		if ($separ != 'hidenum') {
 			$rep .= ($withpicto ? ' ' : '') . $newphone;
 		}
@@ -5204,7 +5227,7 @@ function dolGetFirstLetters($s, $nbofchar = 1)
 /**
  * Make a strlen call. Works even if mbstring module not enabled
  *
- * @param   string		$string				String to calculate length
+ * @param   ?string		$string				String to calculate length
  * @param   string		$stringencoding		Encoding of string
  * @return  int								Length of string
  */
@@ -5563,6 +5586,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'switch_on_grey',
 				'switch_on_red',
 				'switch_off',
+				'switch_off_grey',
+				'switch_off_red',
 				'uparrow',
 				'1uparrow',
 				'1downarrow',
@@ -5620,9 +5645,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'switch_on' => 'font-status4',
 				'switch_on_warning' => 'font-status4 warning',
 				'switch_on_red' => 'font-status8',
+				'switch_off_warning' => 'font-status4 warning',
+				'switch_off_red' => 'font-status8',
 				'holiday' => 'infobox-holiday',
 				'info' => 'opacityhigh',
-				'info_black' => 'font-status1',
+				'info_black' => 'purple',
 				'invoice' => 'infobox-commande',
 				'knowledgemanagement' => 'infobox-contrat rotate90',
 				'loan' => 'infobox-bank_account',
@@ -5775,8 +5802,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			if ($type == 'main') {
 				continue;
 			}
-			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommended
-			if (file_exists($dirroot . '/' . $path . '/img/' . $picto)) {
+			// This consumes a lot of time, that's why enabling alternative dir like "custom" dir should be avoid
+			if (file_exists($dirroot . '/' . $path . '/img/' . $picto) && !empty($conf->file->dol_url_root)) {
 				$url = DOL_URL_ROOT . $conf->file->dol_url_root[$type];
 				break;
 			}
@@ -5896,6 +5923,9 @@ function getImgPictoConv($mode = 'fa')
 			'movement' => 'people-carry',
 			'sign-out' => 'sign-out-alt',
 			'switch_off' => 'toggle-off',
+			'switch_off_grey' => 'toggle-off',
+			'switch_off_warning' => 'toggle-off',
+			'switch_off_red' => 'toggle-off',
 			'switch_on' => 'toggle-on',
 			'switch_on_grey' => 'toggle-on',
 			'switch_on_warning' => 'toggle-on',
@@ -6582,13 +6612,13 @@ function img_searchclear($titlealt = 'default', $other = '')
 /**
  *	Show information in HTML for admin users or standard users
  *
- *	@param	string	$text				Text info
- *	@param  integer	$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
- *	@param	int		$nodiv				No div
- *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'info', 'error', 'warning', 'xxx'=Other
- *  @param	string	$morecss			More CSS ('', 'warning', 'error')
- *  @param	string	$textfordropdown	Show a text to click to dropdown the info box.
- *  @param	string	$picto				'' or 'warning'
+ *	@param	string		$text				Text info
+ *	@param  integer		$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param	int			$nodiv				No div
+ *  @param  string|int  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'info', 'error', 'warning', 'xxx'=Other
+ *  @param	string		$morecss			More CSS ('', 'warning', 'error')
+ *  @param	string		$textfordropdown	Show a text to click to dropdown the info box.
+ *  @param	string		$picto				'' or 'warning'
  *	@return	string						String with info text
  */
 function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
@@ -6602,12 +6632,14 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 			$textfordropdown = '';
 		}
 
-		$class = (empty($admin) ? 'undefined' : ($admin == '1' ? 'info' : $admin));
+		$class = (empty($admin) ? 'undefined' : ((string) $admin == '1' ? 'info' : $admin));
 		$fa = 'info-circle';
 		if ($picto == 'warning') {
 			$fa = 'exclamation-triangle';
 		}
-		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">') . '<span class="fa fa-' . $fa . '" title="' . dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')) . '"></span> ';
+		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">');
+		$result .= img_picto((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note'), $fa);
+		$result .= ' ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
@@ -7012,10 +7044,11 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
  * 	@param	string	$id					To force an id on html objects
  *  @param  string  $morecssontable     More css on table
  *	@param	string	$morehtmlcenter		Added message to show on center
+ *  @param	string	$morecssonpicto		More css on picto
  * 	@return	string
  *  @see print_barre_liste()
  */
-function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
+function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '', $morecssonpicto = 'widthpictotitle')
 {
 	$return = '';
 
@@ -7027,7 +7060,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 	$return .= '<table ' . ($id ? 'id="' . $id . '" ' : '') . 'class="centpercent notopnoleftnoright table-fiche-title' . ($morecssontable ? ' ' . $morecssontable : '') . '">'; // margin bottom must be same than into print_barre_list
 	$return .= '<tr class="toptitle">';
 	if ($picto) {
-		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath) . '</td>';
+		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle pictotitle'.($morecssonpicto ? ' '.$morecssonpicto : '').'"', $pictoisfullpath) . '</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
@@ -8230,6 +8263,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
 
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
+ *   VATRULE 0: If we are in mode SERVICE_ARE_ECOMMERCE_200238EC and customer is not a company with a vat id, we use default product VAT in buyer country
  *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
  *   VATRULE 2: If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
  *	 VATRULE 3: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
@@ -8273,7 +8307,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {
 		if ($seller_in_cee && $buyer_in_cee) {
 			$isacompany = $thirdparty_buyer->isACompany();
-			if ($isacompany && getDolGlobalString('MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL')) {
+			if ($isacompany && !getDolGlobalString('MAIN_USE_VAT_ZERO_FOR_COMPANIES_IN_EEC_EVEN_IF_VAT_ID_UNKNOWN')) {
 				require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 				if (!isValidVATID($thirdparty_buyer)) {
 					$isacompany = 0;
@@ -8290,6 +8324,11 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If seller does not use VAT, default VAT is 0. End of rule.
 	if (!$seller_use_vat) {
 		//print 'VATRULE 1';
+		// TODO get the VAT Code of exemption asked into setup if country isInEEC (from an array list of possible
+		// values like VATEX-EU-132-*, VATEX-FR-FRANCHISE, VATEX-EU-AE...
+		// When we had recorded it, we also added a corresponding entry into table of vat code if it does not exists yet.
+		// Here we test if entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-132-xx)'
+		// If not, we add it and we return '0 (VATEX-EU-132-xx)'
 		return 0;
 	}
 
@@ -8342,7 +8381,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if ($isacompany && getDolGlobalString('MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL')) {
+		if ($isacompany && !getDolGlobalString('MAIN_USE_VAT_ZERO_FOR_COMPANIES_IN_EEC_EVEN_IF_VAT_ID_UNKNOWN')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 			if (!isValidVATID($thirdparty_buyer)) {
 				$isacompany = 0;
@@ -8354,12 +8393,15 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 		} else {
 			//print 'VATRULE 6';
+			// TODO This is the case of VAT exemption 'VATEX-EU-IC'
+			// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-IC)'
+			// If not, we add it and we return '0 (VATEX-EU-IC)'
 			return 0;
 		}
 	}
 
 	// If (seller in the European Community and buyer outside the European Community and private buyer) then VAT by default = VAT of the product sold. End of rule
-	// I don't see any use case that need this rule.
+	// I don't see any use case that need this rule, this case is on only if MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC set
 	if (getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if (!$isacompany) {
@@ -8371,6 +8413,9 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// Otherwise the VAT proposed by default=0. End of rule.
 	// Rem: This means that at least one of the 2 is outside the European Community and the country differs
 	//print 'VATRULE 7';
+	// TODO This is the case of VAT exemption 'VATEX-EU-G'
+	// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-xxx)'
+	// If not, we add it and we return '0 (VATEX-xxx)'
 	return 0;
 }
 
@@ -10309,6 +10354,28 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					/** @var FactureFournisseur $object */
 					$substitutionarray['__URL_SUPPLIER_INVOICE__'] = DOL_MAIN_URL_ROOT . "/fourn/facture/card.php?id=" . $object->id;
 				}
+				if (is_object($object) && $object->element == 'payment_supplier') {
+					'@phan-var-force PaiementFourn $object';
+					/** @var PaiementFourn $object */
+					//print_r($object);
+					$liste_factures = [];
+					$total = 0;
+
+					$sql = 'SELECT f.ref,f.multicurrency_code as f_mccode, pf.*
+							FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf
+							JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON pf.fk_facturefourn = f.rowid
+							WHERE pf.fk_paiementfourn = '.((int) $object->id);
+
+					$resql = $db->query($sql);
+					if ($resql) {
+						while ($objp = $db->fetch_object($resql)) {
+							$liste_factures[] = ' - '.$outputlangs->trans('Invoice').' '. $objp->ref.' '.$outputlangs->trans('AmountPayed').' '.price($objp->multicurrency_amount, 0, $outputlangs, 0, -1, -1, $objp->multicurrency_code);
+						}
+					}
+					$substitutionarray['__SUPPLIER_PAYMENT_INVOICES_LIST__'] =  implode("\n", $liste_factures);
+					;
+					$substitutionarray['__SUPPLIER_PAYMENT_INVOICES_TOTAL__'] = price($object->multicurrency_amount, 0, $outputlangs, 0, -1, -1, $object->multicurrency_code ? $object->multicurrency_code : $conf->currency);
+				}
 				if (is_object($object) && $object->element == 'shipping') {
 					'@phan-var-force Expedition $object';
 					/** @var Expedition $object */
@@ -11147,6 +11214,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 					// Add other keys
 					if (!empty($tmpmultikey[1])) {
 						$newindex = $tmpmultikey[1];
+						// @phan-suppress-next-line PhanTypeArraySuspicious,PhanTypeMismatchDimFetch
 						$temp[$key] .= '__' . (empty($array[$key][$newindex]) ? 0 : $array[$key][$newindex]);
 					}
 				}
@@ -11187,8 +11255,8 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 /**
  *	Check if a string is in UTF8. Seems similar to utf8_valid() but in pure PHP.
  *
- *	@param	string	$str        String to check
- *	@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special non utf8 char or Binary)
+ *	@param	null|string|int	$str    String to check
+ *	@return	boolean					True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special non utf8 char or Binary)
  *	@see utf8_valid()
  */
 function utf8_check($str)
@@ -11295,10 +11363,10 @@ function dol_osencode($str)
  *
  * 		@param	DoliDB				$db				Database handler
  * 		@param	string|int			$key			Code (string) or Id (int) to get Id or Code
- * 		@param	string				$tablename		Table name without prefix
+ * 		@param	string				$tablename		Table name without prefix. Example 'c_input_method'
  * 		@param	string				$fieldkey		Field to search the key into
  * 		@param	string				$fieldid		Field to get
- *      @param  int					$entityfilter	Filter by entity
+ *      @param  int					$entityfilter	1=Filter by entity
  *      @param	string				$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
  *      @param	bool    			$useCache       If true (default), cache will be queried and updated.
  *      @return int<-1,max>|string					ID of code if OK, 0 if key empty, -1 if KO
@@ -11442,14 +11510,14 @@ function dol_eval_new($s)
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-		$db, $langs, $user, $website, $websitepage,
-		$action, $mainmenu, $leftmenu,
-		$mysoc,
-		$objectoffield,	// To allow the use of $objectoffield in computed fields
+	$db, $langs, $user, $website, $websitepage,
+	$action, $mainmenu, $leftmenu,
+	$mysoc,
+	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
-		// Old variables used
-		$object,
-		$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	// Old variables used
+	$object,
+	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
@@ -11803,7 +11871,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
 				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 				$scheck = preg_replace('/^!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '!('
-				$scheck = preg_replace('/\s!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '... !('
+				$scheck = preg_replace('/\s!\(/', ' __NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '... !('
 				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
@@ -12822,11 +12890,12 @@ function dol_getmypid()
  * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list,
  * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search inside a string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
- * @return 	string 			$res 		The statement to append to the SQL query
+ * @param   string			$sqltoadd	Additional SQL to append at the end of the generated SQL. Usually it is ''.
+ * @return	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
  * @see forgeSQLFromUniversalSearchCriteria()
  */
-function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
+function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd = '')
 {
 	global $db, $langs;
 
@@ -13010,6 +13079,11 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				$i2++; // a criteria for 1 more field was added to string
 			}
 		}
+
+		if ($sqltoadd) {
+			$newres .= ($newres ? '' : ' OR ').str_replace('__KEYTOSEARCH__', $crit, $sqltoadd);
+		}
+
 		if ($newres) {
 			$res = $res . ($res ? ' AND ' : '') . ($i2 > 1 ? '(' : '') . $newres . ($i2 > 1 ? ')' : '');
 		}
@@ -13683,7 +13757,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string  			$type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
  * @param   ''|'pill'|'dot'		$mode		Default '' , 'pill', 'dot'
  * @param   string  			$url        the url for link
- * @param   array<string,mixed>	$params		Various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
+ * @param   array{attr?:array{class:string,title:string},css?:string}	$params		Various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              			Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
@@ -14041,6 +14115,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
+	// TODO replace $TCompiledAttr generation by commonHtmlAttributeBuilder given below
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
@@ -14054,11 +14129,11 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 		$TCompiledAttr[] = $key . '="' . $value . '"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
 	}
-
+	// TODO replace $TCompiledAttr generation by uncomment line below and remove old code
+	//  $TCompiledAttr = commonHtmlAttributeBuilder($attr,$params['use_unsecured_unescapedattr'] ?? []);
 	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
-
 
 	$parameters = array(
 		'TCompiledAttr' => $TCompiledAttr,				// array
@@ -14088,6 +14163,126 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	} else {
 		return $hookmanager->resPrint;
 	}
+}
+
+/**
+ * Builds an array of safe and properly escaped HTML attributes from a key-value pair list.
+ *
+ * This function ensures that HTML attributes are correctly encoded for safe output,
+ * while allowing certain attributes to remain unescaped if explicitly specified.
+ * Special handling is applied for attributes such as `href`, which are processed
+ * using `dolPrintHTMLForAttributeUrl()`. All other attributes are escaped using
+ * `dolPrintHTMLForAttribute()`.
+ *
+ * ⚠️ Note: Disabling escaping (via `$unescapedAttr`) is **not recommended** unless you
+ * fully trust the input data, as it may lead to XSS vulnerabilities.
+ *
+ * Example:
+ * ```php
+ * $attr = [
+ *     'href' => 'https://example.com?a=1&b=2',
+ *     'class' => 'btn btn-primary',
+ *     'title' => 'View details'
+ * ];
+ * $result = commonHtmlAttributeBuilder($attr);
+ *
+ * // Output:
+ * // [
+ * //   'href' => 'href="https://example.com?a=1&amp;b=2"',
+ * //   'class' => 'class="btn btn-primary"',
+ * //   'title' => 'title="View details"'
+ * // ]
+ * ```
+ *
+ * @param array<string, string|int|float|null|bool> $attr          Associative array of attribute names and their values.
+ * @param string[]                            $unescapedAttr  Optional list of attribute names that should **not** be escaped.
+ *
+ * @return array<string, string> An array where each key corresponds to the attribute name
+ *                               and each value is a full `key="escaped_value"` string ready for HTML output.
+ */
+function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
+{
+	$TCompiledAttr = array();
+	if (empty($attr)) {
+		return [];
+	}
+
+	foreach ($attr as $key => $value) {
+		// special boolean attributes case
+		if (in_array($key, getListOfHtmlBooleanAttributes())) {
+			if ($value) {
+				$TCompiledAttr[$key] = $key;
+			}
+			continue;
+		}
+
+		if (!empty($unescapedAttr) && in_array($key, $unescapedAttr)) {
+			// Not recommended
+			$value = dol_htmlentities((string) $value, ENT_QUOTES | ENT_SUBSTITUTE);
+		} elseif ($key == 'href') {
+			$value = dolPrintHTMLForAttributeUrl((string) $value);
+		} else {
+			$value = dolPrintHTMLForAttribute((string) $value);
+		}
+
+		$TCompiledAttr[$key] = $key . '="' . $value . '"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
+	}
+
+	return 	$TCompiledAttr;
+}
+
+/**
+ * Returns a list of HTML boolean attributes.
+ *
+ * Boolean attributes are attributes whose presence on an HTML element
+ * represents a true value, and absence represents false. They do not
+ * require a value like name="value"; simply including the attribute
+ * enables its behavior.
+ *
+ * Examples of usage:
+ * <input type="checkbox" checked>
+ * <input type="text" readonly>
+ *
+ * @return string[] An array of HTML boolean attribute names.
+ */
+function getListOfHtmlBooleanAttributes(): array
+{
+	return [
+		// Input / Form
+		'checked',
+		'disabled',
+		'readonly',
+		'required',
+		'autofocus',
+		'multiple',
+
+		// Option
+		'selected',
+
+		// Form / General
+		'novalidate',
+		'formnovalidate',
+
+		// Media
+		'autoplay',
+		'controls',
+		'loop',
+		'muted',
+		'playsinline',
+
+		// Other elements
+		'hidden',
+		'open',
+		'ismap',
+		'reversed',
+		'allowfullscreen',
+		'itemscope',
+		'nomodule',
+		'defer',
+		'async',
+		'default',
+		'inert',
+	];
 }
 
 
@@ -15119,7 +15314,7 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 
 	$tag = 'span'; 	// Using div (like any style of type 'block') does not work when using the js copy code.
 
-	$result = '<span class="clipboardCP' . ($showonlyonhover ? ' clipboardCPShowOnHover' : '') . '">';
+	$result = '<span class="clipboardCP' . ($showonlyonhover ? ' clipboardCPShowOnHover valignmiddle' : '') . '">';
 	if ($texttoshow === 'none') {
 		$result .= '<' . $tag . ' class="clipboardCPValue hidewithsize">' . dol_escape_htmltag($valuetocopy, 1, 1) . '</' . $tag . '>';
 		$result .= '<span class="clipboardCPValueToPrint"></span>';
@@ -16259,12 +16454,12 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$contactList = '';
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
-					if (empty($conf->cache['contact'][$histo[$key]['contact_id']])) {
+					if (empty($conf->cache['contact'][$cid])) {
 						$contact = new Contact($db);
 						$contact->fetch($cid);
-						$conf->cache['contact'][$histo[$key]['contact_id']] = $contact;
+						$conf->cache['contact'][$cid] = $contact;
 					} else {
-						$contact = $conf->cache['contact'][$histo[$key]['contact_id']];
+						$contact = $conf->cache['contact'][$cid];
 					}
 
 					if ($contact) {
@@ -16489,4 +16684,47 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 		}
 	}
 	exit(0);
+}
+
+/**
+ * Recursively merges two arrays while preserving keys and replacing existing values.
+ *
+ * Unlike PHP's native array_merge_recursive(), this function does not combine values
+ * into an array when duplicate keys are found. Instead, values from the second array
+ * will override values from the first array, unless both values are arrays, in which
+ * case the function will merge them recursively.
+ *
+ * Note : function name is not in camelCase because of name of native php function named array_merge_recursive
+ * this approach will help developers to find this function
+ *
+ * Example:
+ *  $a = ['color' => 'blue', 'style' => ['font' => 'Arial', 'size' => 10]];
+ *  $b = ['color' => 'red', 'style' => ['size' => 12]];
+ *  Result:
+ *  [
+ *      'color' => 'red',
+ *      'style' => [
+ *          'font' => 'Arial',
+ *          'size' => 12
+ *      ]
+ *  ]
+ *
+ * @template T of mixed
+ * @param array<string, T> $array1  The base array (default parameters).
+ * @param array<string, T> $array2  The array with values to override or extend the base array.
+ * @return array<string, T>			The merged array with recursive replacement.
+ */
+function array_merge_recursive_distinct(array $array1, array $array2): array
+{
+	$merged = $array1;
+
+	foreach ($array2 as $key => $value) {
+		if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
+			$merged[$key] = array_merge_recursive_distinct($merged[$key], $value);
+		} else {
+			$merged[$key] = $value;
+		}
+	}
+
+	return $merged;
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -470,7 +470,7 @@ if ($action == 'create') {
 	} else {
 		$label = $langs->trans("VATPayment");
 	}
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.(GETPOSTISSET("label") ? GETPOST("label", '', 2) : $label).'" autofocus></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.(GETPOSTISSET("label") ? GETPOST("label", 'alphanohtml', 2) : $label).'" autofocus></td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
 	print $form->selectDate((GETPOSTINT("datevmonth") ? $datev : -1), "datev", 0, 0, 0, 'add', 1, 1);

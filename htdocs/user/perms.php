@@ -34,10 +34,6 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
@@ -237,11 +236,15 @@ $permsgroupbyentity = array();
 $sql = "SELECT DISTINCT gr.fk_id, gu.entity";	// fk_id are permission id and entity is entity of the group
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";	// all groups of a user
-$sql .= " WHERE gr.entity = ".((int) $entity);
+$sql .= " WHERE gr.entity = ".((int) $entity); // it's very important, don't change please !
 // The entity on the table gu=usergroup_user should be useless and should never be used because it is already into gr and r.
 // but when using MULTICOMPANY_TRANSVERSE_MODE, we may have inserted record that make rubbish result here due to the duplicate record of
 // other entities, so we are forced to add a filter on gu here
-$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+if (getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE_FIX_WHEN_GU_CONTAINS_0")) {
+	$sql .= " AND gu.entity IN (0,". ((int) $entity).")";
+} else {
+	$sql .= " AND gu.entity = ".((int) $entity);
+}
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql .= " AND gu.fk_user = ".((int) $object->id);
 
@@ -329,13 +332,24 @@ print '</span>';
 print '</td></tr>'."\n";
 
 print '</table>';
-
 print '</div>';
+
+
 print '<br>';
 
 
 if ($user->admin) {
-	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom"));
+	$s = $langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom");
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+		$s .= '<br>';
+		$s .= img_picto($langs->trans('InfoAdmin'), 'info-circle').' ';
+		$s .= $langs->trans("YouAreUsingTheAdvancedPermissionsMode");
+	} else {
+		$s .= '<br>';
+		$s .= img_picto($langs->trans('InfoAdmin'), 'info-circle').' ';
+		$s .= $langs->trans("YouAreUsingTheSimplePermissionsMode");
+	}
+	print info_admin($s);
 }
 // If edited user is an extern user, we show warning for external users
 if (!empty($object->socid)) {

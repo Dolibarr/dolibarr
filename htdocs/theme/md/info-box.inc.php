@@ -141,7 +141,7 @@ div.login_block_other:not(.takepos) a {
 	color: var(--colortextbackvmenu);
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
@@ -168,12 +168,6 @@ div.login_block_other:not(.takepos) a {
 }
 .infobox-bank_account{
 	color: #b0a53e;
-}
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
 }
 .infobox-holiday{
 	color: #755114;

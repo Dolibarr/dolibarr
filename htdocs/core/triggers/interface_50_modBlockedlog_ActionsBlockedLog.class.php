@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018  Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		if (!is_object($object) || !property_exists($object, 'element') || !in_array($object->element, $listofqualifiedelement)) {
 			return 1;
 		}
-
+		/** @var Facture|Don|Paiement|PaymentDonation|Subscription|PaymentVarious|CashControl $object */
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -104,8 +105,10 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
+					/** @var Don|Subscription $object */
 				$amounts = (float) $object->amount;
 			} elseif ($action == 'CASHCONTROL_VALIDATE') {
+				/** @var CashControl $object */
 				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
 			} elseif (property_exists($object, 'total_ttc')) {
 				$amounts = (float) $object->total_ttc;

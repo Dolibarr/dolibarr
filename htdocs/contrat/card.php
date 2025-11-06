@@ -1233,7 +1233,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Ref').'</td><td>';
 	if (!empty($modCodeContract->code_auto)) {
 		$tmpcode = $langs->trans("Draft");
 	} else {
@@ -1404,7 +1404,7 @@ if ($action == 'create') {
 		} elseif ($action == 'activate') {
 			$formquestion = array(
 				array('type' => 'date', 'name' => 'd_start', 'label' => $langs->trans("DateServiceActivate"), 'value' => dol_now()),
-				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), /*'value' => $form->selectDate('', "end", $usehm, $usehm, '', "active", 1, 0),*/ 0 => '', 1 => ''),
+				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), 0 => '', 1 => ''),
 				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', 0 => '', 1 => '', 'class' => 'minwidth300', 'moreattr' => 'autofocus')
 			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
@@ -2340,7 +2340,7 @@ if ($action == 'create') {
 
 				if (count($arrayforbutaction)) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction('', $langs->trans("Services"), 'default', $arrayforbutaction, '', true, $params);
+					print dolGetButtonAction('', $langs->trans("Enable")." / ".$langs->trans("Close"), 'default', $arrayforbutaction, '', true, $params);
 				}
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {

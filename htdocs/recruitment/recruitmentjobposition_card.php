@@ -111,14 +111,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/recruitment/recruitmentjobposition_list.php', 1);
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/recruitment/recruitmentjobposition_list.php');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/recruitment/recruitmentjobposition_card.php', 1).'?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/recruitment/recruitmentjobposition_card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
 			}
 		}
 	}
@@ -210,7 +210,7 @@ if ($action == 'create') {
 		$_POST['fk_user_recruiter'] = $user->id;
 	}
 
-	print dol_get_fiche_head(array(), '');
+	print dol_get_fiche_head([], '');
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -268,7 +268,7 @@ if (($id || $ref) && $action == 'edit') {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = recruitmentjobpositionPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentJobPosition"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 

@@ -163,7 +163,11 @@ foreach ($arrayofcateg as $idtype => $val) {
 	print dolPrintHTML($arrayofcateg[$idtype]['label']);
 	print '</td>';
 	print '<td class="center">';
-	print $arrayofcateg[$idtype]['nb'];
+	if (empty($arrayofcateg[$idtype]['nb'])) {
+		print '<span class="opacitymedium">'.$arrayofcateg[$idtype]['nb'].'</span>';
+	} else {
+		print $arrayofcateg[$idtype]['nb'];
+	}
 	print '</td>';
 	print '<td class="center"><a class="editfielda" href="'.dolBuildUrl(DOL_URL_ROOT.'/categories/categorie_list.php', ['mode' => 'hierarchy', 'type' => $key]).'">'.img_picto('', 'edit').'</a></td>';
 	print '</tr>';
