@@ -217,7 +217,7 @@ class FormCardWebPortal
 
 		// Load object
 		if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0)) {
-			if (($id > 0 && is_numeric($id)) || !empty($ref)) {    // To discard case when id is list of ids like '1,2,3...'
+			if (($id > 0 && is_numeric((string) $id)) || !empty($ref)) {    // To discard case when id is list of ids like '1,2,3...'
 				if ($object->element == 'usergroup') {
 					$ret = $object->fetch($id, (empty($ref) ? '' : $ref), true); // to load $object->members
 				} else {
@@ -330,7 +330,7 @@ class FormCardWebPortal
 				$action = 'edit';
 			} else {
 				$action = 'view';
-				$urltogo = $backtopage ? str_replace('__ID__', $object->id, $backtopage) : $backurlforlist;
+				$urltogo = $backtopage ? str_replace('__ID__', (string) $object->id, $backtopage) : $backurlforlist;
 				$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 				if ($urltogo && empty($noback)) {
 					header("Location: " . $urltogo);

@@ -102,7 +102,7 @@ if ($jsOut) {
 print '<script src="'.$context->getControllerUrl().'/js/theme.js"></script>';
 
 // Wrapper to manage document_preview and modal_card
-if ($conf->browser->layout != 'phone') { ?>
+if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 	<script nonce="<?php print dolPrintHTMLForAttribute(getNonce()) ?>">
 		/* JS CODE TO ENABLE document_preview */
 		jQuery(document).ready(function () {
