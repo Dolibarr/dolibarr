@@ -58,7 +58,7 @@ class LinkField extends CommonField
 			// Example: 'ObjectName:classPath:1:(status:=:1)'
 			$objectDesc = $optionParams['all'];
 			if (strpos($objectDesc, '$ID$') !== false && !empty($fieldInfos->object->id)) {
-				$objectDesc = str_replace('$ID$', $fieldInfos->object->id, $objectDesc);
+				$objectDesc = str_replace('$ID$', (string) $fieldInfos->object->id, $objectDesc);
 			}
 
 			$out = self::$form->selectForForms($objectDesc, $htmlName, (int) $value, 0, '', '', $moreCss, $moreAttrib);
@@ -97,7 +97,7 @@ class LinkField extends CommonField
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
 		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
-		$placeHolder = $fieldInfos->inputPlaceholder ?? '';
+		$placeHolder = $fieldInfos->inputPlaceholder;
 		$autoFocus = $fieldInfos->inputAutofocus ? ' autofocus' : '';
 		$htmlName = $keyPrefix . $key . $keySuffix;
 		$showEmpty = $fieldInfos->required && !$this->isEmptyValue($fieldInfos, $fieldInfos->defaultValue) ? 0 : 1;
@@ -119,7 +119,7 @@ class LinkField extends CommonField
 			// Example: 'ObjectName:classPath:1:(status:=:1)'
 			$objectDesc = $optionParams['all'];
 			if (strpos($objectDesc, '$ID$') !== false && !empty($fieldInfos->object->id)) {
-				$objectDesc = str_replace('$ID$', $fieldInfos->object->id, $objectDesc);
+				$objectDesc = str_replace('$ID$', (string) $fieldInfos->object->id, $objectDesc);
 			}
 
 			$out = self::$form->selectForForms($objectDesc, $htmlName, (int) $value, $showEmpty, '', $placeHolder, $moreCss, $moreAttrib . $autoFocus, 0, $fieldInfos->inputDisabled ? 1 : 0);
@@ -156,7 +156,7 @@ class LinkField extends CommonField
 			$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid=' . GETPOSTINT('originid') : '');
 			$paramforthenewlink .= '&fk_' . strtolower($class) . '=--IDFORBACKTOPAGE--';
 			// TODO Add JavaScript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
-			$out .= '<a class="butActionNew" title="' . $langs->trans("New") . '" href="' . $url_path . '?action=create&backtopage=' . urlencode($_SERVER['PHP_SELF'] . ($paramforthenewlink ? '?' . $paramforthenewlink : '')) . '"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+			$out .= '<a class="butActionNew" title="' . $langs->trans("New") . '" href="' . $url_path . '?action=create&backtopage=' . urlencode($_SERVER['PHP_SELF'] . $paramforthenewlink) . '"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
 
 		return $out;
@@ -369,7 +369,7 @@ class LinkField extends CommonField
 	/**
 	 * Get all parameters in the options
 	 *
-	 * @param	array		$options	Options of the field
+	 * @param	array<string,mixed>		$options	Options of the field
 	 * @return	array{all:string,objectClass:string,pathToClass:string,addCreateButton:bool,getNomUrlParam1:string,getNomUrlParam2:string,filter:string,sortField:string}
 	 */
 	public function getOptionsParams($options)

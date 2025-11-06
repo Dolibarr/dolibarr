@@ -83,7 +83,7 @@ class SelectField extends CommonSelectField
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
 		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
-		$placeHolder = $fieldInfos->inputPlaceholder ?? '';
+		$placeHolder = $fieldInfos->inputPlaceholder;
 		if (!empty($placeHolder)) $placeHolder = ' placeholder="' . dolPrintHTMLForAttribute($placeHolder) . '"';
 		$autoFocus = $fieldInfos->inputAutofocus ? ' autofocus' : '';
 		$htmlName = $keyPrefix . $key . $keySuffix;

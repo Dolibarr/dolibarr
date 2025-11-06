@@ -491,7 +491,7 @@ class FieldsManager
 		$fieldInfos = new FieldInfos();
 		$fieldInfos->fieldType = FieldInfos::FIELD_TYPE_OBJECT;
 		$fieldInfos->originType = $attributes['type'] ?? '';
-		$fieldInfos->size = $attributes['length'] ?? 0;
+		$fieldInfos->size = $attributes['length'] ?? '';
 		$fieldInfos->label = $attributes['label'] ?? '';
 		$fieldInfos->langFile = $attributes['langfile'] ?? '';
 		$fieldInfos->sqlAlias = $attributes['alias'] ?? null;
@@ -586,7 +586,7 @@ class FieldsManager
 		$fieldInfos->defaultValue = $attributes['default'][$key] ?? '';
 		$fieldInfos->css = $attributes['css'][$key] ?? '';
 		$fieldInfos->help = $attributes['help'][$key] ?? '';
-		$fieldInfos->size = $attributes['size'][$key] ?? 0;
+		$fieldInfos->size = $attributes['size'][$key] ?? '';
 		$fieldInfos->computed = $attributes['computed'][$key] ?? '';
 		$fieldInfos->unique = !empty($attributes['unique'][$key]);
 		$fieldInfos->alwaysEditable = !empty($attributes['alwayseditable'][$key]);

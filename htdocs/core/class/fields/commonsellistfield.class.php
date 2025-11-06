@@ -118,7 +118,7 @@ class CommonSellistField extends CommonField
 
 		$tableName = (string) ($InfoFieldList[0] ?? '');
 		$labelFullFields = (string) ($InfoFieldList[1] ?? '');
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		// @phpstan-ignore-next-line
 		$labelFullFields = array_filter(array_map('trim', explode('|', $labelFullFields)), 'strlen');
 		$labelFields = array();
 		$labelAlias = array();
