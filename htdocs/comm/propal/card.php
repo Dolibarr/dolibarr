@@ -1641,9 +1641,6 @@ if (empty($reshook)) {
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} else {
-					setEventMessages($langs->trans("ErrorMinPriceCheck", $langs->transnoentitiesnoconv("Type")), null, 'errors');
-					$error++;
 				}
 			}
 		} else {
