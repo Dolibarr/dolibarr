@@ -81,9 +81,9 @@ class FieldsManager
 	 */
 	public $expand_display = array();
 
-	/**
-	 * @var array<string,string>    Array of type to label
-	 */
+	///**
+	// * @var array<string,string>    Array of type to label
+	// */
 	//public static $type2label = array(
 	//	'varchar' => 'String1Line',
 	//	'text' => 'TextLongNLines',
@@ -122,8 +122,8 @@ class FieldsManager
 	/**
 	 *    Constructor
 	 *
-	 * @param DoliDB	$db 		Database handler
-	 * @param Form		$form		Specific form handler
+	 * @param DoliDB		$db 		Database handler
+	 * @param Form|null		$form		Specific form handler
 	 */
 	public function __construct($db, $form = null)
 	{
@@ -149,6 +149,7 @@ class FieldsManager
 		$type = trim($type);
 
 		if (!isset(self::$fieldClasses[$type])) {
+			$field = null;
 			$parameters = array(
 				'type' => $type,
 				'field' => &$field,

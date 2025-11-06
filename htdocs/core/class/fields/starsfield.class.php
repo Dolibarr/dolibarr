@@ -51,7 +51,7 @@ class StarsField extends CommonField
 	{
 		global $langs;
 
-		$size = (int) ($fieldInfos->size ?? 0);
+		$size = (int) $fieldInfos->size;
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
 		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
@@ -81,7 +81,7 @@ class StarsField extends CommonField
 	 */
 	public function printInputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
-		$size = (int) ($fieldInfos->size ?? 0);
+		$size = (int) $fieldInfos->size;
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
 		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
@@ -106,7 +106,7 @@ class StarsField extends CommonField
 	 */
 	public function printOutputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
-		$size = (int) ($fieldInfos->size ?? 0);
+		$size = (int) $fieldInfos->size;
 		$value = (int) $value;
 
 		return self::$form->outputStars($size, $value);
@@ -138,7 +138,7 @@ class StarsField extends CommonField
 	public function verifyFieldValue($fieldInfos, $key, $value)
 	{
 		$fieldInfos->minValue = 0;
-		$fieldInfos->maxValue = (int) ($fieldInfos->size ?? 0);
+		$fieldInfos->maxValue = (int) $fieldInfos->size;
 
 		$result = parent::verifyFieldValue($fieldInfos, $key, $value);
 		if ($result && !$this->isEmptyValue($fieldInfos, $value)) {
@@ -233,7 +233,7 @@ class StarsField extends CommonField
 			$value = (int) $value;
 
 			if ($value >= 0) {
-				return natural_search($alias . ($fieldInfos->nameInTable ?? $key), $value, 1);
+				return natural_search($alias . ($fieldInfos->nameInTable ?? $key), (string) $value, 1);
 			}
 		}
 

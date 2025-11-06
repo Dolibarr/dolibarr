@@ -69,7 +69,7 @@ class IntField extends CommonField
 	 */
 	public function printInputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
-		$size = (int) ($fieldInfos->size ?? 0);
+		$size = (int) $fieldInfos->size;
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$maxLength = ''; // $size > 0 ? ' maxlength="' . $size . '"' : ''; // TODO rework, wrong method
 		$autoFocus = $fieldInfos->inputAutofocus ? ' autofocus' : '';
