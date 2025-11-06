@@ -33,5 +33,4 @@ abstract class AbstractCardController extends Controller
 	 * @var FormCardWebPortal Form for card
 	 */
 	public $formCard;
-
 }
