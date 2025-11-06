@@ -226,16 +226,16 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
-		if ($conf->recruitment->dir_output.'/recruitmentjobposition') {
+		if (getMultidirOutput($object)) {
 			$object->fetch_thirdparty();
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = $conf->recruitment->dir_output.'/recruitmentjobposition';
+				$dir = getMultidirOutput($object);
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->recruitment->dir_output.'/recruitmentjobposition/'.$objectref;
+				$dir = getMultidirOutput($object) . '/'.$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir)) {
