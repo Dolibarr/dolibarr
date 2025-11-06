@@ -153,7 +153,9 @@ print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmlt
 
 // Address
 print '<tr class="oddeven"><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
-print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'">'.dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_ADDRESS')).'</textarea></td></tr>'."\n";
+print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'">';
+print dolPrintText(GETPOSTISSET('address') ? GETPOST('address', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_ADDRESS'));
+print '</textarea></td></tr>'."\n";
 
 // ZIP
 print '<tr class="oddeven"><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';
@@ -231,7 +233,9 @@ print '<input name="itprovider_nom" id="itprovider_name" class="minwidth200" val
 
 // Address
 print '<tr class="oddeven"><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
-print '<textarea name="itprovider_address" id="itprovider_address" class="quatrevingtpercent" rows="'.ROWS_2.'">'.dol_escape_htmltag(GETPOSTISSET('itprovider_address') ? GETPOST('itprovider_address', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_ADDRESS')).'</textarea></td></tr>'."\n";
+print '<textarea name="itprovider_address" id="itprovider_address" class="quatrevingtpercent" rows="'.ROWS_2.'">';
+print dolPrintText(GETPOSTISSET('itprovider_address') ? GETPOST('itprovider_address', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_ADDRESS'));
+print '</textarea></td></tr>'."\n";
 
 // ZIP
 print '<tr class="oddeven"><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';

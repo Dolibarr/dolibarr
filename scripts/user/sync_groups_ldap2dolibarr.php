@@ -152,7 +152,7 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$group = new UserGroup($db);
-			$group->fetch(0, $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')]);
+			$group->fetch(0, $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')], true); // Fetch LDAP groups AND members
 			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] ?? '';
 			$group->nom = $group->name; // For backward compatibility
 			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] ?? '';

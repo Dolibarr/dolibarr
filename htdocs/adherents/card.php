@@ -1088,8 +1088,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$listetype_natures_json = json_encode($listetype_natures);
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
-		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
-		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'</label><input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></span>';
+		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'</label><input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></span>';
 
 		// Add JS to manage the background of nature
 		if ($conf->use_javascript_ajax) {

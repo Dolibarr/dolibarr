@@ -6450,6 +6450,9 @@ table.jPicker {
 	box-shadow: 0px 0px 10px #ccc;
 	width: 300px !important;
 }
+span.jPicker {
+	vertical-align: middle;
+}
 .jPicker .Grid {
 	background-image: unset !important;
 }

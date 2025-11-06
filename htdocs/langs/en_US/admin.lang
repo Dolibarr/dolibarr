@@ -2069,6 +2069,7 @@ HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
 HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
 UseBorderOnTable=Show left-right borders on tables
+UseBorderOnInputFields=Show border on form input fields
 TableLineHeight=Table line height
 BtnActionColor=Color of the action button
 TextBtnActionColor=Text color of the action button
