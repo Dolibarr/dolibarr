@@ -80,14 +80,14 @@ class FieldInfos
 	public $type = '';
 
 	/**
-	 * @var string	Name of the field in the class
+	 * @var string|null	Name of the field in the class
 	 */
-	public $nameInClass = '';
+	public $nameInClass = null;
 
 	/**
-	 * @var string	Name of the field in the table
+	 * @var string|null	Name of the field in the table
 	 */
-	public $nameInTable = '';
+	public $nameInTable = null;
 
 	/**
 	 * @var string	Field label (the translation key)
