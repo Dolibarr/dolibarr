@@ -10,7 +10,7 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
- * Copyright (C) 2022-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2022-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024  Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
@@ -3566,9 +3566,12 @@ class pdf_octopus extends ModelePDFFactures
 
 			$ref = $outputlangs->transnoentities("InvoiceSituation").$outputlangs->convToOutputCharset(" n°".$invoice->situation_counter);
 
-			if ($invoice->situation_final) {
-				$ref .= ' - DGD';
-				$force_to_zero = true;
+			// TODO Discuss whether to declare a final invoice as a DGD (definitive general statement like 'décompte général définitif') or not.
+			if (getDolGlobalInt('INVOICE_SITUATION_USE_DGD')) {
+				if ($invoice->situation_final) {
+					$ref .= ' - DGD';
+					$force_to_zero = true;
+				}
 			}
 
 			$ref .= ' - '. $invoice->ref;
@@ -3816,7 +3819,7 @@ class pdf_octopus extends ModelePDFFactures
 				$posy = $this->tab_top_newpage + 1;
 			} else {
 				$idinv++;
-				$remain_to_pay -= ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
+				$remain_to_pay += ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
 
 				$rem = 0;
 				if (count($invoice->lines)) {
