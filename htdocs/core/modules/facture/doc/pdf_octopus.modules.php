@@ -581,7 +581,12 @@ class pdf_octopus extends ModelePDFFactures
 				$nexY = $this->tab_top - 1;
 
 				// Specific stuff for situations invoices first page
-				$tab_top = 90;
+				if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS')) {
+					$tab_top = 130;
+				} else {
+					$tab_top = 90;
+				}
+
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -2476,6 +2481,8 @@ class pdf_octopus extends ModelePDFFactures
 				}
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
+
+					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
 
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
