@@ -174,7 +174,7 @@ class SellistField extends CommonSellistField
 				if ($optionParams['tableName'] == 'categorie' && !empty($optionParams['categoryType'])) {
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 					$c = new Categorie($this->db);
-					$c->fetch($value);
+					$c->fetch((int) $value);
 					$color = ' style="background: #' . ($c->color ? $c->color : 'bbb') . ';"';
 					$label = img_object('', 'category') . ' ' . $value;
 					$out = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr"><li class="select2-search-choice-dolibarr noborderoncategories"' . $color . '>' . $label . '</li></ul></div>';

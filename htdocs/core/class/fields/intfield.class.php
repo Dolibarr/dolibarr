@@ -93,7 +93,7 @@ class IntField extends CommonField
 	 */
 	public function printOutputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
-		return !$this->isEmptyValue($fieldInfos, $value) ? (int) $value : '';
+		return !$this->isEmptyValue($fieldInfos, $value) ? (string) $value : '';
 	}
 
 	/**

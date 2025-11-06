@@ -143,7 +143,7 @@ abstract class CommonField
 	 */
 	public function errorsToString($separator = ', ')
 	{
-		return $this->error . (is_array($this->errors) ? (!empty($this->error) ? $separator : '') . join($separator, $this->errors) : '');
+		return $this->error . (is_array($this->errors) ? (!empty($this->error) ? $separator : '') . implode($separator, $this->errors) : '');
 	}
 
 	/**

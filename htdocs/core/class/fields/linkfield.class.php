@@ -198,7 +198,7 @@ class LinkField extends CommonField
 
 						if ($object->element === 'product') {
 							'@phan-var-force Product $object';
-							$get_name_url_param_arr = array($getNomUrlParam1, $getNomUrlParam2, 0, -1, 0, '', 0);
+							$get_name_url_param_arr = array($getNomUrlParam1, $getNomUrlParam2, 0, -1, 0, '', 0, ' - ');
 							if (isset($fieldInfos->getNameUrlParams)) {
 								$get_name_url_params = explode(':', $fieldInfos->getNameUrlParams);
 								if (!empty($get_name_url_params)) {
@@ -215,16 +215,16 @@ class LinkField extends CommonField
 							/**
 							 * @var Product $object
 							 */
-							return self::$form->getNomUrl($object, $get_name_url_param_arr[0], $get_name_url_param_arr[1], $get_name_url_param_arr[2], $get_name_url_param_arr[3], $get_name_url_param_arr[4], $get_name_url_param_arr[5], $get_name_url_param_arr[6]);
+							return self::$form->getNomUrl($object, (int) $get_name_url_param_arr[0], $get_name_url_param_arr[1], (int) $get_name_url_param_arr[2], (int) $get_name_url_param_arr[3], (int) $get_name_url_param_arr[4], $get_name_url_param_arr[5], (int) $get_name_url_param_arr[6], $get_name_url_param_arr[7]);
 						} elseif (get_class($object) == 'Categorie') {
 							// For category object, rendering must use the same method than the one deinfed into showCategories()
 							$color = $object->color;
 							$sfortag = '<span class="noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
-							$sfortag .= self::$form->getNomUrl($object, $getNomUrlParam1, $getNomUrlParam2);
+							$sfortag .= self::$form->getNomUrl($object, (int) $getNomUrlParam1, $getNomUrlParam2);
 							$sfortag .= '</span>';
 							return $sfortag;
 						} else {
-							return self::$form->getNomUrl($object, $getNomUrlParam1, $getNomUrlParam2);
+							return self::$form->getNomUrl($object, (int) $getNomUrlParam1, $getNomUrlParam2);
 						}
 					}
 				} else {

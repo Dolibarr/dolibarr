@@ -182,7 +182,7 @@ class DurationField extends CommonField
 	 */
 	public function getPostSearchFieldValue($fieldInfos, $key, $defaultValue = null, $keyPrefix = '', $keySuffix = '')
 	{
-		return $this->getPostFieldValue($fieldInfos, $key, $defaultValue, $keySuffix, $keyPrefix);
+		return $this->getPostFieldValue($fieldInfos, $key, $defaultValue, $keyPrefix, $keySuffix);
 	}
 
 	/**
