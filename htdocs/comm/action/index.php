@@ -1714,25 +1714,26 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		let norm = Math.floor(Math.abs(num));
 		return (norm < 10 ? '0' : '') + norm;
 	}
-</script><?php
+</script>
+	<?php
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
 	// Column title of weeks numbers
 	echo '  <td class="center">#</td>';
 	$i = 0;
-while ($i < 7) {
-	print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
-	$numdayinweek = (($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7);
-	if (!empty($conf->dol_optimize_smallscreen)) {
-		$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
-		print $langs->trans($labelshort[$numdayinweek]);
-	} else {
-		print $langs->trans("Day".$numdayinweek);
+	while ($i < 7) {
+		print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
+		$numdayinweek = (($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7);
+		if (!empty($conf->dol_optimize_smallscreen)) {
+			$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
+			print $langs->trans($labelshort[$numdayinweek]);
+		} else {
+			print $langs->trans("Day".$numdayinweek);
+		}
+		print '  </td>'."\n";
+		$i++;
 	}
-	print '  </td>'."\n";
-	$i++;
-}
 	echo ' </tr>'."\n";
 
 	$todayarray = dol_getdate($now, true);
@@ -1740,69 +1741,69 @@ while ($i < 7) {
 
 	// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
 	//var_dump($eventarray);
-for ($iter_week = 0; $iter_week < 6; $iter_week++) {
-	echo " <tr>\n";
-	// Get date of the current day, format 'yyyy-mm-dd'
-	if ($tmpday <= 0) { // If number of the current day is in previous month
-		$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
-	} elseif ($tmpday <= $max_day_in_month) { // If number of the current day is in current month
-		$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
-	} else { // If number of the current day is in next month
-		$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
-	}
-	// Get week number for the targeted date '$currdate0'
-	$numweek0 = date("W", strtotime(date($currdate0)));
-	// Show the week number, and define column width
-	echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
-
-	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
-		if ($tmpday <= 0) {
-			/* Show days before the beginning of the current month (previous month)  */
-			$style = 'cal_other_month cal_past';
-			if ($iter_day == 6) {
-				$style .= ' cal_other_month_right';
-			}
-			echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
-			echo "  </td>\n";
-		} elseif ($tmpday <= $max_day_in_month) {
-			/* Show days of the current month */
-			$curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
-			$style = 'cal_current_month';
-			if ($iter_day == 6) {
-				$style .= ' cal_current_month_right';
-			}
-			$today = 0;
-			if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) {
-				$today = 1;
-			}
-			if ($today) {
-				$style = 'cal_today';
-			}
-			if ($curtime < $todaytms) {
-				$style .= ' cal_past';
-			}
-			//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
-			echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam, 0, 60, 0, $bookcalcalendars);
-			echo "</td>\n";
-		} else {
-			/* Show days after the current month (next month) */
-			$style = 'cal_other_month';
-			if ($iter_day == 6) {
-				$style .= ' cal_other_month_right';
-			}
-			echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
-			echo "</td>\n";
+	for ($iter_week = 0; $iter_week < 6; $iter_week++) {
+		echo " <tr>\n";
+		// Get date of the current day, format 'yyyy-mm-dd'
+		if ($tmpday <= 0) { // If number of the current day is in previous month
+			$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
+		} elseif ($tmpday <= $max_day_in_month) { // If number of the current day is in current month
+			$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
+		} else { // If number of the current day is in next month
+			$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
 		}
-		$tmpday++;
+		// Get week number for the targeted date '$currdate0'
+		$numweek0 = date("W", strtotime(date($currdate0)));
+		// Show the week number, and define column width
+		echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
+
+		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+			if ($tmpday <= 0) {
+				/* Show days before the beginning of the current month (previous month)  */
+				$style = 'cal_other_month cal_past';
+				if ($iter_day == 6) {
+					$style .= ' cal_other_month_right';
+				}
+				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
+				echo "  </td>\n";
+			} elseif ($tmpday <= $max_day_in_month) {
+				/* Show days of the current month */
+				$curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
+				$style = 'cal_current_month';
+				if ($iter_day == 6) {
+					$style .= ' cal_current_month_right';
+				}
+				$today = 0;
+				if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) {
+					$today = 1;
+				}
+				if ($today) {
+					$style = 'cal_today';
+				}
+				if ($curtime < $todaytms) {
+					$style .= ' cal_past';
+				}
+				//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
+				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam, 0, 60, 0, $bookcalcalendars);
+				echo "</td>\n";
+			} else {
+				/* Show days after the current month (next month) */
+				$style = 'cal_other_month';
+				if ($iter_day == 6) {
+					$style .= ' cal_other_month_right';
+				}
+				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
+				echo "</td>\n";
+			}
+			$tmpday++;
+		}
+		echo " </tr>\n";
 	}
-	echo " </tr>\n";
-}
 	print "</table>\n";
 	print '</div>';
 
