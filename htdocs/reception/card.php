@@ -204,11 +204,11 @@ if (empty($reshook)) {
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			 if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
-				 $backtopage = $backurlforlist;
-			 } else {
-				 $backtopage = DOL_URL_ROOT.'/reception/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
-			 }
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/reception/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
 		}
 	}
 
@@ -362,7 +362,6 @@ if (empty($reshook)) {
 			}
 		}
 		if ($origin && $origin_id > 0) {
-
 			$object->note = GETPOST('note', 'alpha');
 			$object->note_private = GETPOST('note', 'alpha');
 			$object->origin = $origin;
@@ -405,7 +404,7 @@ if (empty($reshook)) {
 
 			$num = 0;
 			foreach ($_POST as $key => $value) {
-			// without batch module enabled
+				// without batch module enabled
 
 				if (strpos($key, 'qtyasked') !== false) {
 					$num++;
@@ -2324,7 +2323,6 @@ if ($action == 'create' && $permissiontoadd) {
 	* Lines of simple reception
 	*/
 	if (!$origin_id && getDolGlobalString('RECEPTION_STANDALONE')) {
-
 		if (!empty($object->table_element_line)) {
 			// Show object lines
 			$result = $object->getLinesArray();
@@ -2374,9 +2372,7 @@ if ($action == 'create' && $permissiontoadd) {
 			print "</form>\n";
 		}
 	} elseif (!empty($object->origin) && $object->origin_id > 0) {
-
 		// Lines of products of origin
-
 		if ($action == 'editline') {
 			print '<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
 			<input type="hidden" name="token" value="' . newToken().'">
