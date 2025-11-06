@@ -513,12 +513,12 @@ $paramnoactionodate = preg_replace('/mode=[a-z_]+/', '', preg_replace('/action=[
 
 $head = calendars_prepare_head($paramnoaction);
 
-print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-if ($optioncss != '') {
-	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-}
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
+// print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+// if ($optioncss != '') {
+// 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+// }
+// print '<input type="hidden" name="token" value="'.newToken().'">';
+// print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $viewmode = '<div class="navmode inline-block">';
@@ -1609,14 +1609,14 @@ if (is_readable($color_file)) {
 
 $massactionbutton = '';
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+// print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 if ($nbevents > $MAXONSAMEPAGE) {
 	print info_admin('Number of results has been truncated to '.$MAXONSAMEPAGE, 0, 0, 'warning').'<br>';
 }
 
 // Show div with list of calendars
-print $s;
+// print $s;
 
 
 if (empty($mode) || $mode == 'show_month') {      // View by month
@@ -1631,10 +1631,23 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
 	$newparam .= '&viewcal=1';
 
-	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
-	print '</div>';
-	print '<div id="ec" class="col"></div>';?>
+	//print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	//print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+	//print '</div>';
+	?>
+	<style type="text/css">
+		.row {
+			display: flex;
+		}
+		.col {
+			flex: 1 1 0%;
+			min-width: 0;
+			max-width: 100%;
+		}
+	</style>
+	<div class="row">
+	<div id="ec" class="col"></div>
+	<div>
 
 	<script type="text/javascript">
 	const ec = EventCalendar.create(document.getElementById('ec'), {
@@ -1716,6 +1729,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	}
 </script>
 	<?php
+	exit;
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
