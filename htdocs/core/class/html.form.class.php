@@ -13174,7 +13174,6 @@ class Form
 	{
 		if (is_object($object) && method_exists($object, 'getNomUrl')) {
 			$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
-			$out = dol_string_nohtmltag($out);
 			return $out;
 		} else {
 			return '';
