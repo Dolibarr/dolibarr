@@ -251,7 +251,9 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->recruitment->dir_output) {
+		$dir = getMultidirOutput($object);
+
+		if ($dir) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -263,7 +265,6 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				}
 			}
 
-			$dir = getMultidirOutput($object);
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
