@@ -437,15 +437,16 @@ class Reception extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'order_supplier'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
-		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+
 		if ($id) {
-			$sql .= " AND e.rowid = ".((int) $id);
-		}
-		if ($ref) {
-			$sql .= " AND e.ref = '".$this->db->escape($ref)."'";
-		}
-		if ($ref_ext) {
-			$sql .= " AND e.ref_ext = '".$this->db->escape($ref_ext)."'";
+			$sql .= " WHERE e.rowid = ".((int) $id);
+		} else {
+			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+			if ($ref) {
+				$sql .= " AND e.ref = '".$this->db->escape($ref)."'";
+			} elseif ($ref_ext) {
+				$sql .= " AND e.ref_ext = '".$this->db->escape($ref_ext)."'";
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -631,6 +632,7 @@ class Reception extends CommonObject
 					if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 						continue;
 					}
+
 					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 					//var_dump($this->lines[$i]);
@@ -1748,7 +1750,8 @@ class Reception extends CommonObject
 						if ($qty <= 0) {
 							continue;
 						}
-						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
@@ -1905,7 +1908,6 @@ class Reception extends CommonObject
 						if ($qty <= 0) {
 							continue;
 						}
-
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
@@ -2037,6 +2039,10 @@ class Reception extends CommonObject
 						$obj = $this->db->fetch_object($resql);
 
 						$qty = $obj->qty;
+
+						if ($qty <= 0) {
+							continue;
+						}
 
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 

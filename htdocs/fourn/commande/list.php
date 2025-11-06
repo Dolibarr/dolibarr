@@ -1773,6 +1773,7 @@ if ($resql) {
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
+		$objectstatic->status = $obj->fk_statut;
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {

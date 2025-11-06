@@ -90,7 +90,29 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 	}
 }
 
+
 $takeposterminal = isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '';
+
+// When session has expired (selected terminal has been lost from session), redirect to the terminal selection.
+if (empty($takeposterminal)) {
+	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
+		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+		$takeposterminal = 1;
+	} elseif (!empty($_COOKIE["takeposterminal"])) {
+		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
+		$takeposterminal = $_SESSION["takeposterminal"];
+	} else {
+		print <<<SCRIPT
+<script language="javascript">
+	$( document ).ready(function() {
+		ModalBox('ModalTerminal');
+	});
+</script>
+SCRIPT;
+		exit;
+	}
+}
+
 
 /**
  * Abort invoice creation with a given error message
@@ -614,8 +636,14 @@ if (empty($reshook)) {
 	if (($action == "addline" || $action == "freezone") && $placeid == 0 && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$invoice->socid = getDolGlobalInt($constforcompanyid);
 
+		$dolnowtzuserrel = dol_now('tzuserrel');	// If user is 02 january 22:00, we want to store '02 january'
+		$monthuser = dol_print_date($dolnowtzuserrel, '%m', 'gmt');
+		$dayuser = dol_print_date($dolnowtzuserrel, '%d', 'gmt');
+		$yearuser = dol_print_date($dolnowtzuserrel, '%Y', 'gmt');
+		$dateinvoice = dol_mktime(0, 0, 0, (int) $monthuser, (int) $dayuser, (int) $yearuser, 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$invoice->date = dol_get_first_hour(dol_now('tzuserrel'));		// Invoice::create() needs a date with no hours
+		$invoice->date = $dateinvoice;		// Invoice::create() needs a date with no hours
 
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;

@@ -275,7 +275,7 @@ if (empty($reshook)) {
 				$object->origin_email = null;
 				$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 				$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
-				$object->context['contact_id'] = GETPOSTINT('contact_id');
+				$object->context['contact_id'] = GETPOSTINT('contactid');
 				$id = $object->create($user);
 			} else {
 				$id = $object->update($user);
@@ -451,6 +451,9 @@ if (empty($reshook)) {
 
 	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
+		if (GETPOSTISSET('contactid')) {
+			$object->context['contact_id'] = GETPOSTINT('contactid');
+		}
 
 		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
@@ -467,7 +470,7 @@ if (empty($reshook)) {
 	if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
-			$object->context['contact_id'] = GETPOSTINT('contact_id');
+			$object->context['contact_id'] = GETPOSTINT('contactid');
 
 			$object->close($user);
 

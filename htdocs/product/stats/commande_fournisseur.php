@@ -278,7 +278,7 @@ if ($id > 0 || !empty($ref)) {
 
 						$supplierorderstatic->id = $objp->commandeid;
 						$supplierorderstatic->ref = $objp->ref;
-						$supplierorderstatic->statut = $objp->statut;
+						$supplierorderstatic->status = $objp->statut;
 						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';

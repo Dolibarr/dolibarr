@@ -30,7 +30,7 @@
  * - common local lookup ips like 127.*.*.* are automatically added
  *
  * @param	string	  $url 				    URL to call.
- * @param	'POST'|'GET'|'HEAD'|'PUT'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
+ * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
  * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
  * @param	int<0,1>  $followlocation		0=Do not follow, 1=Follow location.
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
@@ -148,6 +148,19 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'PUTALREADYFORMATED') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
+	} elseif ($postorget == 'PATCH') {
+		$array_param = null;
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH'); // RFC 5789
+		if (!is_array($param)) {
+			parse_str($param, $array_param);  // @phan-suppress-current-line PhanPluginConstantVariableNull
+		} else {
+			dol_syslog("parameter param must be a string", LOG_WARNING);
+			$array_param = $param;
+		}
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));
+	} elseif ($postorget == 'PATCHALREADYFORMATED') {
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH'); // RFC 5789
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $param);
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);

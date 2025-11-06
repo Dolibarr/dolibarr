@@ -1301,7 +1301,7 @@ class DoliDBSqlite3 extends DoliDB
 		// FIXME: not for SQLite
 		$fullpathofdump = '/pathtomysqldump/mysqldump';
 
-		$resql = $this->query('SHOW VARIABLES LIKE \'basedir\'');
+		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
 		if ($resql) {
 			$liste = $this->fetch_array($resql);
 			$basedir = $liste['Value'];
@@ -1320,7 +1320,7 @@ class DoliDBSqlite3 extends DoliDB
 		// FIXME: not for SQLite
 		$fullpathofimport = '/pathtomysql/mysql';
 
-		$resql = $this->query('SHOW VARIABLES LIKE \'basedir\'');
+		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
 		if ($resql) {
 			$liste = $this->fetch_array($resql);
 			$basedir = $liste['Value'];
@@ -1387,7 +1387,9 @@ class DoliDBSqlite3 extends DoliDB
 		$result = array();
 		/*
 		$sql='SHOW STATUS';
-		if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
+		if ($filter) {
+			$sql.=" LIKE '".$this->escape($filter)."'";
+		}
 		$resql=$this->query($sql);
 		if ($resql)
 		{

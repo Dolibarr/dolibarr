@@ -196,6 +196,7 @@ class Facture extends CommonInvoice
 	 * @var int id of source invoice if replacement invoice or credit note
 	 */
 	public $fk_facture_source;
+
 	public $linked_objects = array();
 
 	/**
@@ -1305,6 +1306,7 @@ class Facture extends CommonInvoice
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
+		$object->fk_fac_rec_source  = 0;
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';
@@ -3951,7 +3953,7 @@ class Facture extends CommonInvoice
 			if (empty($fk_prev_id)) {
 				$fk_prev_id = 'null';
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
 				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative)
 				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 					$situation_percent = 0;

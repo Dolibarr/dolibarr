@@ -869,7 +869,7 @@ if ($num > 0) {
 				print '</td>';
 				// Warning late icon and note
 				print '<td class="nobordernopadding nowrap">';
-				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) {
+				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toapprove')) {
 					print img_warning($langs->trans("Late"));
 				}
 				if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) {

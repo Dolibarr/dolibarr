@@ -152,8 +152,14 @@ if (!function_exists('dol_loginfunction')) {
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
+
+		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($customapplication) {
+			if (preg_match('/^\+/', $customapplication)) {
+				$title .= $customapplication;
+			} else {
+				$title = $customapplication;
+			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 

@@ -89,6 +89,21 @@ if (!empty($batchnumber)) {
 }
 $cost_price = GETPOST('cost_price', 'alpha');
 
+
+// Load variable for pagination
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -676,7 +691,7 @@ if ($id > 0 || $ref) {
 
 
 			// AWP
-			print '<tr><td class="titlefield">';
+			print '<tr><td class="titlefieldmiddle">';
 			print $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc"));
 			print '</td>';
 			print '<td>';

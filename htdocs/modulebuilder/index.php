@@ -1318,6 +1318,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				}
 
 				// type
+				$picto = '';
 				if (isset($obj->Picto)) {
 					$picto = $obj->Picto;
 				}
@@ -1840,7 +1841,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'name' => GETPOST('propname', 'aZ09'),
 				'label' => GETPOST('proplabel', 'alpha'),
 				'type' => strtolower(GETPOST('proptype', 'alpha')),
-				'arrayofkeyval' => GETPOST('proparrayofkeyval', 'alphawithlgt'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'arrayofkeyval' => GETPOST('proparrayofkeyval', 'nohtml'), 	// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible' => GETPOST('propvisible', 'alphanohtml'),
 				'enabled' => GETPOST('propenabled', 'alphanohtml'),
 				'position' => GETPOSTINT('propposition'),

@@ -781,13 +781,12 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  @param  string  $check	     Type of check
  *                               '' or 'none'=no check (deprecated)
  *                               'password'=allow characters for a password
- *                               'email'=allow characters for an email
+ *                               'email'=allow characters for an email "email@domain.com"
  *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alpha'=Same than alphanohtml
- *                               'alphawithlgt'=alpha with lgt
- *                               'alphanohtml'=check there is no html content and no " and no ../
+ *                               'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
+ *                               'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
  *                               'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
@@ -1142,7 +1141,6 @@ function GETPOSTINT($paramname, $method = 0)
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
-
 /**
  *  Return the value of a $_GET or $_POST supervariable, converted into float.
  *
@@ -1156,7 +1154,6 @@ function GETPOSTFLOAT($paramname, $rounding = '')
 	// price2num() is used to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
 	return (float) price2num(GETPOST($paramname), $rounding, 2);
 }
-
 
 /**
  * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
@@ -1278,7 +1275,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'alpha':		// No html and no ../ and "
-		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
+		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters. Not valid for json string.
 			if (!is_array($out)) {
 				$out = trim($out);
 				do {
@@ -1317,7 +1314,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				} while ($oldstringtoclean != $out);
 			}
 			break;
-		case 'nohtml':		// No html
+		case 'nohtml':		// No html. Valid for JSON strings.
 			$out = dol_string_nohtmltag($out, 0);
 			break;
 		case 'restricthtmlnolink':
@@ -2053,14 +2050,14 @@ function dolPrintText($s)
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  * With dolPrintHTML(), only content not already in HTML is encoded with HTML.
  *
- * @param	string	$s				String to print
- * @param	int		$allowiframe	Allow iframe tags
- * @return	string					String ready for HTML output (sanitized and escape)
+ * @param	int|float|string	$s				String to print
+ * @param	int					$allowiframe	Allow iframe tags
+ * @return	string								String ready for HTML output (sanitized and escape)
  * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea()
  */
 function dolPrintHTML($s, $allowiframe = 0)
 {
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $s), 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
 }
 
 /**
@@ -8047,7 +8044,6 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		$level = $arrayforoldpath[$modulepart];
 	}
-
 	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
 		if (empty($num) && is_object($object)) {
@@ -8072,8 +8068,12 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// We will enhance here a common way of forging path for document storage.
 		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
-		//var_dump($modulepart);
-		$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
+		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceOf Societe) {
+			// Special case for thirdparty, where the ref is a company name that is not unique so path on disk is using the ID instead of the ref
+			$path = dol_sanitizeFileName((string) $object->id);
+		} else {
+			$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
+		}
 	}
 
 	if (empty($withoutslash) && !empty($path)) {
@@ -8374,14 +8374,21 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 {
 	if (is_null($allowed_attributes)) {
 		$allowed_attributes = array(
-			"allow", "allowfullscreen", "alt", "async", "class", "content", "contenteditable", "crossorigin", "data-html", "frameborder", "height", "href", "id", "name", "property", "rel", "src", "style", "target", "title", "type", "width",
+			"allow", "allowfullscreen", "alt", "async", "class", "contenteditable", "crossorigin", "data-html", "frameborder", "height", "href", "id", "name", "property", "rel", "src", "style", "target", "title", "type", "width",
 			// HTML5
 			"header", "footer", "nav", "section", "menu", "menuitem"
 		);
 	}
+	// Always add content and http-equiv for meta tags, required to force encoding and keep html content in utf8 by load/saveHTML functions.
+	if (!in_array("content", $allowed_attributes)) {
+		$allowed_attributes[] = "content";
+	}
+	if (!in_array("http-equiv", $allowed_attributes)) {
+		$allowed_attributes[] = "http-equiv";
+	}
 
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
-		$stringtoclean = '<?xml encoding="UTF-8"><html><body>'.$stringtoclean.'</body></html>';
+		$stringtoclean = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'.$stringtoclean.'</body></html>';
 
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument('', 'UTF-8');
@@ -8432,12 +8439,15 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			}
 		}
 
+		$dom->encoding = 'UTF-8';
+
 		$return = $dom->saveHTML();	// This may add a LF at end of lines, so we will trim later
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
 
 		$return = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $return);
-		$return = preg_replace('/^'.preg_quote('<html><body>', '/').'/', '', $return);
-		$return = preg_replace('/'.preg_quote('</body></html>', '/').'$/', '', $return);
+		$return = preg_replace('/^'.preg_quote('<html><head><', '/').'[^<>]*'.preg_quote('></head><body>', '/').'/', '', $return);
+		$return = preg_replace('/'.preg_quote('</body></html>', '/').'$/', '', trim($return));
+
 		return trim($return);
 	} else {
 		return $stringtoclean;
@@ -8609,17 +8619,24 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 
 					if (dol_textishtml($out)) {
-						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
+						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
-						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.dol_nl2br($out).'</div>';
+						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
+
+					$dom->encoding = 'UTF-8';
+
 					$out = trim($dom->saveHTML());
 
-					// Remove the trick added to solve pb with text without parent tag
-					$out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
-					$out = preg_replace('/<\/div>$/', '', $out);
+					// Remove the trick added to solve pb with text in utf8 and text without parent tag
+					$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
+					$out = preg_replace('/^'.preg_quote('<html><head><', '/').'[^<>]+'.preg_quote('></head><body><div class="tricktoremove">', '/').'/', '', $out);
+					$out = preg_replace('/'.preg_quote('</div></body></html>', '/').'$/', '', trim($out));
+					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
+					//                  $out = preg_replace('/<\/div>$/', '', $out);
+					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
@@ -10865,6 +10882,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpfunctions = array();
 		// @phpcs:ignore
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64"."_"."decode", "rawurl"."decode", "url"."decode", "str"."_rot13", "hex"."2bin")); // name of forbidden functions are split to avoid false positive
+
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
@@ -13457,7 +13475,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'facture_fourn') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -15061,12 +15079,12 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$contactList = '';
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
-					if (empty($conf->cache['contact'][$histo[$key]['contact_id']])) {
+					if (empty($conf->cache['contact'][$cid])) {
 						$contact = new Contact($db);
 						$contact->fetch($cid);
-						$conf->cache['contact'][$histo[$key]['contact_id']] = $contact;
+						$conf->cache['contact'][$cid] = $contact;
 					} else {
-						$contact = $conf->cache['contact'][$histo[$key]['contact_id']];
+						$contact = $conf->cache['contact'][$cid];
 					}
 
 					if ($contact) {

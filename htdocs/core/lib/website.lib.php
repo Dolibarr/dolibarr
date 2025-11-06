@@ -1290,8 +1290,10 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'"; // TODO Use a better way to scan keywords
+			// TODO Use a better way to scan keywords
+			$searchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$searchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$searchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		if (preg_match('/content/', $algo)) {
 			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";

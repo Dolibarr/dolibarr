@@ -1330,6 +1330,18 @@ if (isModEnabled('accounting')) {
 $sellOrEatByMandatoryList = null;
 if (isModEnabled('productbatch')) {
 	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
+
+	$disableSellBy = getDolGlobalString('PRODUCT_DISABLE_SELLBY');
+	$disableEatBy  = getDolGlobalString('PRODUCT_DISABLE_EATBY');
+
+	if ($disableSellBy) {
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY]);
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
+	}
+	if ($disableEatBy) {
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY]);
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
+	}
 }
 
 $title = $langs->trans('ProductServiceCard');
@@ -2903,12 +2915,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Unit
 				if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-					$unit = $object->getLabelOfUnit();
+					$unit = $object->getLabelOfUnit('long', $langs);
 
 					print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td><td>';
-					if ($unit !== '') {
-						print $langs->trans($unit);
-					}
+					print $unit;
 					print '</td></tr>';
 				}
 

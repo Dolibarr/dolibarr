@@ -318,14 +318,12 @@ if ($resql) {
 		}
 
 		// Qty
-		$label = $sub_bom_product->getLabelOfUnit('long');
+		$label = $sub_bom_product->getLabelOfUnit('long', $langs);
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') {
-					print $langs->trans($label);
-				}
+				print $label;
 				print '</td>';
 			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
@@ -333,9 +331,7 @@ if ($resql) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * (float) $line->qty, 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') {
-					print $langs->trans($label);
-				}
+				print $label;
 				print '</td>';
 			}
 

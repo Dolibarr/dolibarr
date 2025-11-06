@@ -927,23 +927,23 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 					$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-					$sqlwhere[] = $this->db->sanitize($key).' LIKE \''.$this->db->escape($this->db->escapeforlike($value)).'%\'';
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '".$this->db->escape($this->db->escapeforlike($value))."%'";
 				} elseif ($key == 't.date_creation>=') {
-					$sqlwhere[] = 't.date_creation >= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = "t.date_creation >= '".$this->db->idate($value)."'";
 				} elseif ($key == 't.date_creation<=') {
-					$sqlwhere[] = 't.date_creation <= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = "t.date_creation <= '".$this->db->idate($value)."'";
 				} elseif ($key == 't.date_export>=') {
-					$sqlwhere[] = 't.date_export >= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = "t.date_export >= '".$this->db->idate($value)."'";
 				} elseif ($key == 't.date_export<=') {
-					$sqlwhere[] = 't.date_export <= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = "t.date_export <= '".$this->db->idate($value)."'";
 				} elseif ($key == 't.date_validated>=') {
-					$sqlwhere[] = 't.date_validated >= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = "t.date_validated >= '".$this->db->idate($value)."'";
 				} elseif ($key == 't.date_validated<=') {
-					$sqlwhere[] = 't.date_validated <= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = "t.date_validated <= '".$this->db->idate($value)."'";
 				} elseif ($key == 't.date_lim_reglement>=') {
-					$sqlwhere[] = 't.date_lim_reglement>=\''.$this->db->idate($value).'\'';
+					$sqlwhere[] = "t.date_lim_reglement>='".$this->db->idate($value)."'";
 				} elseif ($key == 't.date_lim_reglement<=') {
-					$sqlwhere[] = 't.date_lim_reglement<=\''.$this->db->idate($value).'\'';
+					$sqlwhere[] = "t.date_lim_reglement<='".$this->db->idate($value)."'";
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.reconciled_option') {
@@ -955,7 +955,7 @@ class BookKeeping extends CommonObject
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
 				} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
-					$sqlwhere[] = 't.numero_compte IN ('.$this->db->sanitize($value, 1).')';
+					$sqlwhere[] = "t.numero_compte IN (".$this->db->sanitize($value, 1).")";
 				} else {
 					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}
@@ -1108,7 +1108,7 @@ class BookKeeping extends CommonObject
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if ($key == 't.doc_date') {
-						$sqlwhere[] = $this->db->sanitize($key).' = \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 					} elseif ($key == 't.doc_date>=') {
 						$sqlwhere[] = "t.doc_date >= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.doc_date<=') {
@@ -1128,23 +1128,23 @@ class BookKeeping extends CommonObject
 					} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 						$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
 					} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-						$sqlwhere[] = $this->db->sanitize($key).' LIKE \''.$this->db->escape($value).'%\'';
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '".$this->db->escape($value)."%'";
 					} elseif ($key == 't.date_creation>=') {
-						$sqlwhere[] = 't.date_creation >= \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = "t.date_creation >= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.date_creation<=') {
-						$sqlwhere[] = 't.date_creation <= \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = "t.date_creation <= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.tms>=') {
-						$sqlwhere[] = 't.tms >= \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = "t.tms >= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.tms<=') {
-						$sqlwhere[] = 't.tms <= \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = "t.tms <= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.date_export>=') {
-						$sqlwhere[] = 't.date_export >= \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = "t.date_export >= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.date_export<=') {
-						$sqlwhere[] = 't.date_export <= \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = "t.date_export <= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.date_validated>=') {
-						$sqlwhere[] = 't.date_validated >= \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = "t.date_validated >= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.date_validated<=') {
-						$sqlwhere[] = 't.date_validated <= \''.$this->db->idate($value).'\'';
+						$sqlwhere[] = "t.date_validated <= '".$this->db->idate($value)."'";
 					} elseif ($key == 't.credit' || $key == 't.debit') {
 						$sqlwhere[] = natural_search($key, $value, 1, 1);
 					} elseif ($key == 't.code_journal' && !empty($value)) {
@@ -1159,7 +1159,7 @@ class BookKeeping extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND '.implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
+				$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 			}
 
 			$filter = '';

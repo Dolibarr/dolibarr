@@ -324,13 +324,13 @@ class DoliDBPgsql extends DoliDB
 
 			// To have PostgreSQL case sensitive
 			$count_like = 0;
-			$line = str_replace(' LIKE \'', ' ILIKE \'', $line, $count_like);
+			$line = str_replace(" LIKE '", " ILIKE '", $line, $count_like);
 			if (getDolGlobalString('PSQL_USE_UNACCENT') && $count_like > 0) {
 				// @see https://docs.PostgreSQL.fr/11/unaccent.html : 'unaccent()' function must be installed before
 				$line = preg_replace('/\s+(\(+\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
 			}
 
-			$line = str_replace(' LIKE BINARY \'', ' LIKE \'', $line);
+			$line = str_replace(" LIKE BINARY '", " LIKE '", $line);
 
 			// Replace INSERT IGNORE into INSERT
 			$line = preg_replace('/^INSERT IGNORE/', 'INSERT', $line);

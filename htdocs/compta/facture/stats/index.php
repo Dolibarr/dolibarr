@@ -99,7 +99,6 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
-llxHeader();
 
 $picto = 'bill';
 $title = $langs->trans("BillsStatistics");
@@ -111,6 +110,7 @@ if ($mode == 'supplier') {
 	$dir = $conf->fournisseur->facture->dir_temp;
 }
 
+llxHeader('', $title);
 
 print load_fiche_titre($title, '', $picto);
 

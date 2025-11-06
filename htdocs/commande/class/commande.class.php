@@ -1757,9 +1757,12 @@ class Commande extends CommonOrder
 							$this->line_order(true, 'DESC');
 						} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
 							// Update all rank of all other lines starting from the same $ranktouse
-							$linecount = count($this->lines);
-							for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-								$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+							foreach ($this->lines as $tmpline) {
+								if ($tmpline->rang >= $ranktouse) {
+									if (!empty($tmpline->id)) {
+										$this->updateRangOfLine($tmpline->id, $tmpline->rang + 1);
+									}
+								}
 							}
 						}
 
@@ -3419,6 +3422,7 @@ class Commande extends CommonOrder
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
+		$sql .= " fk_warehouse=".($this->warehouse_id > 0 ? $this->warehouse_id : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
