@@ -13155,4 +13155,29 @@ class Form
 
 		return $out;
 	}
+
+	/**
+	 * Return link of object
+	 *
+	 * @param	CommonObject	$object					Object handler
+	 * @param	int				$withpicto				Add picto into link
+	 * @param	string			$option					Where point the link ('stock', 'composition', 'category', 'supplier', '')
+	 * @param	int				$maxlength				Maxlength of ref
+	 * @param 	int				$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int				$notooltip				No tooltip
+	 * @param  	string  		$morecss            	''=Add more css on link
+	 * @param	int				$add_label				0=Default, 1=Add label into string, >1=Add first chars into string
+	 * @param	string			$sep					' - '=Separator between ref and label if option 'add_label' is set
+	 * @return	string									String with URL
+	 */
+	public function getNomUrl(&$object, $withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
+	{
+		if (is_object($object) && method_exists($object, 'getNomUrl')) {
+			$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			$out = dol_string_nohtmltag($out);
+			return $out;
+		} else {
+			return '';
+		}
+	}
 }
