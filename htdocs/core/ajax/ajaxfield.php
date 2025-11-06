@@ -57,7 +57,7 @@ $objecttype = GETPOST('objecttype', 'aZ09arobase');
 $objectkey = GETPOST('objectkey', 'restricthtml');
 $search = GETPOST('search', 'restricthtml');
 $page = GETPOSTINT('page');
-$mode = GETPOSTINT('mode');
+$mode = GETPOST('mode', 'aZ09');
 $value = GETPOST('value', 'alphanohtml');
 $dependencyvalue = GETPOST('dependencyvalue', 'alphanohtml');
 $limit = 10;
@@ -116,6 +116,10 @@ if ($object instanceof CommonObject) {
 				$fieldInfos->optionsSqlDependencyValue = $dependencyvalue;
 			}
 
+			/**
+			 * @var CommonSellistField|CommonSelectField $field
+			 */
+			// @phan-var-force CommonSellistField|CommonSelectField $field
 			$options = $field->getOptions($fieldInfos, $objectkey, $page == 1, true);
 			if (is_array($options)) {
 				$nbResult = count($options);
