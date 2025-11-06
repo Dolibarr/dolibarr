@@ -1049,7 +1049,7 @@ class Projects extends DolibarrApi
 	 * Get timespent of a project (from all its tasks)
 	 *
 	 * @param int   $id         ID of project
-	 * @return array            Array of timespent objects
+	 * @return array<int,mixed>            Array of timespent objects
 	 *
 	 * @url GET {id}/timespent
 	 *
