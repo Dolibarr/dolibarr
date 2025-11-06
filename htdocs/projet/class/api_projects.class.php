@@ -947,7 +947,7 @@ class Projects extends DolibarrApi
 	 * @param string $type_contact   Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
 	 * @param string $source         external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 * @param int    $notrigger      Disable all triggers
-	 * @param array  $affect_to_tasks Array of task IDs to also add the contact to (empty array = all tasks, null = no tasks)
+	 * @param int[]		$affect_to_tasks	Array of task IDs to also add the contact to (empty array = all tasks, null = no tasks)
 	 *
 	 * @url POST {id}/contacts
 	 *
