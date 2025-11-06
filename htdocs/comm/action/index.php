@@ -257,7 +257,7 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
-llxHeader('', $langs->trans("Agenda"), $help_url);
+llxHeader('', $langs->trans("Agenda"), $help_url, '', 0, 0, ['includes/event-calendar/event-calendar.min.js'], ['includes/event-calendar/event-calendar.min.css']);
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
@@ -1634,25 +1634,105 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 	print '</div>';
+	print '<div id="ec" class="col"></div>';?>
 
+	<script type="text/javascript">
+	const ec = EventCalendar.create(document.getElementById('ec'), {
+		view: 'dayGridMonth',
+		headerToolbar: {
+			start: 'prev,next today',
+			center: 'title',
+			end: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek resourceTimeGridWeek,resourceTimelineWeek'
+		},
+		resources: [
+			{id: 1, title: 'Resource A'},
+			{id: 2, title: 'Resource B'}
+		],
+		scrollTime: '09:00:00',
+		events: createEvents(),
+		views: {
+			timeGridWeek: {pointer: true},
+			resourceTimeGridWeek: {pointer: true},
+			resourceTimelineWeek: {
+				slotDuration: '00:15',
+				slotLabelInterval: '01:00',
+				slotMinTime: '09:00',
+				slotMaxTime: '21:00',
+				slotWidth: 16,
+				resources: [
+					{id: 1, title: 'Resource A'},
+					{id: 2, title: 'Resource B'},
+					{id: 3, title: 'Resource C'},
+					{id: 4, title: 'Resource D'},
+					{id: 5, title: 'Resource E'},
+					{id: 6, title: 'Resource F'},
+					{id: 7, title: 'Resource G'},
+					{id: 8, title: 'Resource H'},
+					{id: 9, title: 'Resource I', children: [
+						{id: 10, title: 'Resource J'},
+						{id: 11, title: 'Resource K'},
+						{id: 12, title: 'Resource L', children: [
+							{id: 13, title: 'Resource M'},
+							{id: 14, title: 'Resource N'},
+							{id: 15, title: 'Resource O'}
+						]}
+					]}
+				]
+			}
+		},
+		dayMaxEvents: true,
+		nowIndicator: true,
+		selectable: true
+	});
+
+	function createEvents() {
+		let days = [];
+		for (let i = 0; i < 7; ++i) {
+			let day = new Date();
+			let diff = i - day.getDay();
+			day.setDate(day.getDate() + diff);
+			days[i] = day.getFullYear() + "-" + _pad(day.getMonth()+1) + "-" + _pad(day.getDate());
+		}
+
+		return [
+			{start: days[0] + " 00:00", end: days[0] + " 09:00", resourceId: 1, display: "background"},
+			{start: days[1] + " 12:00", end: days[1] + " 14:00", resourceId: 2, display: "background"},
+			{start: days[2] + " 17:00", end: days[2] + " 24:00", resourceId: 1, display: "background"},
+			{start: days[0] + " 10:00", end: days[0] + " 14:00", resourceId: 1, title: "The calendar can display background and regular events", color: "#FE6B64"},
+			{start: days[1] + " 16:00", end: days[2] + " 08:00", resourceId: 2, title: "An event may span to another day", color: "#B29DD9"},
+			{start: days[2] + " 09:00", end: days[2] + " 13:00", resourceId: 2, title: "Events can be assigned to resources and the calendar has the resources view built-in", color: "#779ECB"},
+			{start: days[3] + " 14:00", end: days[3] + " 20:00", resourceId: 1, title: "", color: "#FE6B64"},
+			{start: days[3] + " 15:00", end: days[3] + " 18:00", resourceId: 1, title: "Overlapping events are positioned properly", color: "#779ECB"},
+			{start: days[5] + " 10:00", end: days[5] + " 16:00", resourceId: 2, title: {html: "You have complete control over the <i><b>display</b></i> of events…"}, color: "#779ECB"},
+			{start: days[5] + " 14:00", end: days[5] + " 19:00", resourceId: 2, title: "…and you can drag and drop the events!", color: "#FE6B64"},
+			{start: days[5] + " 18:00", end: days[5] + " 21:00", resourceId: 2, title: "", color: "#B29DD9"},
+			{start: days[1], end: days[3], resourceId: 1, title: "All-day events can be displayed at the top", color: "#B29DD9", allDay: true}
+		];
+	}
+
+	function _pad(num) {
+		let norm = Math.floor(Math.abs(num));
+		return (norm < 10 ? '0' : '') + norm;
+	}
+</script><?php
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
 	// Column title of weeks numbers
 	echo '  <td class="center">#</td>';
 	$i = 0;
-	while ($i < 7) {
-		print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
-		$numdayinweek = (($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7);
-		if (!empty($conf->dol_optimize_smallscreen)) {
-			$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
-			print $langs->trans($labelshort[$numdayinweek]);
-		} else {
-			print $langs->trans("Day".$numdayinweek);
-		}
-		print '  </td>'."\n";
-		$i++;
+while ($i < 7) {
+	print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
+	$numdayinweek = (($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7);
+	if (!empty($conf->dol_optimize_smallscreen)) {
+		$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
+		print $langs->trans($labelshort[$numdayinweek]);
+	} else {
+		print $langs->trans("Day".$numdayinweek);
 	}
+	print '  </td>'."\n";
+	$i++;
+}
 	echo ' </tr>'."\n";
 
 	$todayarray = dol_getdate($now, true);
@@ -1660,69 +1740,69 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 	// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
 	//var_dump($eventarray);
-	for ($iter_week = 0; $iter_week < 6; $iter_week++) {
-		echo " <tr>\n";
-		// Get date of the current day, format 'yyyy-mm-dd'
-		if ($tmpday <= 0) { // If number of the current day is in previous month
-			$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
-		} elseif ($tmpday <= $max_day_in_month) { // If number of the current day is in current month
-			$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
-		} else { // If number of the current day is in next month
-			$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
-		}
-		// Get week number for the targeted date '$currdate0'
-		$numweek0 = date("W", strtotime(date($currdate0)));
-		// Show the week number, and define column width
-		echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
-
-		for ($iter_day = 0; $iter_day < 7; $iter_day++) {
-			if ($tmpday <= 0) {
-				/* Show days before the beginning of the current month (previous month)  */
-				$style = 'cal_other_month cal_past';
-				if ($iter_day == 6) {
-					$style .= ' cal_other_month_right';
-				}
-				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
-				echo "  </td>\n";
-			} elseif ($tmpday <= $max_day_in_month) {
-				/* Show days of the current month */
-				$curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
-				$style = 'cal_current_month';
-				if ($iter_day == 6) {
-					$style .= ' cal_current_month_right';
-				}
-				$today = 0;
-				if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) {
-					$today = 1;
-				}
-				if ($today) {
-					$style = 'cal_today';
-				}
-				if ($curtime < $todaytms) {
-					$style .= ' cal_past';
-				}
-				//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
-				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam, 0, 60, 0, $bookcalcalendars);
-				echo "</td>\n";
-			} else {
-				/* Show days after the current month (next month) */
-				$style = 'cal_other_month';
-				if ($iter_day == 6) {
-					$style .= ' cal_other_month_right';
-				}
-				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
-				echo "</td>\n";
-			}
-			$tmpday++;
-		}
-		echo " </tr>\n";
+for ($iter_week = 0; $iter_week < 6; $iter_week++) {
+	echo " <tr>\n";
+	// Get date of the current day, format 'yyyy-mm-dd'
+	if ($tmpday <= 0) { // If number of the current day is in previous month
+		$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
+	} elseif ($tmpday <= $max_day_in_month) { // If number of the current day is in current month
+		$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
+	} else { // If number of the current day is in next month
+		$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
 	}
+	// Get week number for the targeted date '$currdate0'
+	$numweek0 = date("W", strtotime(date($currdate0)));
+	// Show the week number, and define column width
+	echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
+
+	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+		if ($tmpday <= 0) {
+			/* Show days before the beginning of the current month (previous month)  */
+			$style = 'cal_other_month cal_past';
+			if ($iter_day == 6) {
+				$style .= ' cal_other_month_right';
+			}
+			echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
+			echo "  </td>\n";
+		} elseif ($tmpday <= $max_day_in_month) {
+			/* Show days of the current month */
+			$curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
+			$style = 'cal_current_month';
+			if ($iter_day == 6) {
+				$style .= ' cal_current_month_right';
+			}
+			$today = 0;
+			if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) {
+				$today = 1;
+			}
+			if ($today) {
+				$style = 'cal_today';
+			}
+			if ($curtime < $todaytms) {
+				$style .= ' cal_past';
+			}
+			//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
+			echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam, 0, 60, 0, $bookcalcalendars);
+			echo "</td>\n";
+		} else {
+			/* Show days after the current month (next month) */
+			$style = 'cal_other_month';
+			if ($iter_day == 6) {
+				$style .= ' cal_other_month_right';
+			}
+			echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
+			echo "</td>\n";
+		}
+		$tmpday++;
+	}
+	echo " </tr>\n";
+}
 	print "</table>\n";
 	print '</div>';
 
