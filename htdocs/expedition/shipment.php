@@ -802,7 +802,7 @@ if ($order_id > 0 || !empty($ref)) {
 
 					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 						print '<td class="center">';
-						if ($objp->stockable_product==Product::ENABLED_STOCK) {
+						if ($objp->stockable_product == Product::ENABLED_STOCK) {
 							print $product->stock_reel;
 							if ($product->stock_reel < $toBeShipped[$objp->fk_product]) {
 								print ' ' . img_warning($langs->trans("StockTooLow"));
