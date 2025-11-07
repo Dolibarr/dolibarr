@@ -128,8 +128,15 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * @var string inventory code
+	 * @deprecated
+	 * @see $movement_code
 	 */
 	public $inventorycode;
+
+	/**
+	 * @var string inventory code
+	 */
+	public $movement_code;
 
 	/**
 	 * @var string batch reference
@@ -749,7 +756,8 @@ class MouvementStock extends CommonObject
 				$this->origintype = $obj->origin_type;	// For backward compatibility
 				$this->origin_id = $obj->origin_id;
 				$this->origin_type = $obj->origin_type;
-				$this->inventorycode = $obj->inventorycode;
+				$this->inventorycode = $obj->inventorycode;	// For backward compatibility
+				$this->movement_code = $obj->movement_code;
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
