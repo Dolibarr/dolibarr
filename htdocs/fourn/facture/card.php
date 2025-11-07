@@ -148,7 +148,7 @@ $permissiontodelete = $usercandelete;
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $error = 0;
@@ -2765,10 +2765,11 @@ if ($action == 'create') {
 		// Label
 		print '<tr><td>'.$langs->trans('Label').'</td><td><input class="minwidth200" name="label" value="'.dol_escape_htmltag(GETPOST('label')).'" type="text"></td></tr>';
 
+
 		// Date invoice
 		print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate((int) $dateinvoice, '', 0, 0, 0, "add", 1, 1);
+		print $form->selectDate($dateinvoice ? (int) $dateinvoice : '', '', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
 		// Payment term
@@ -2934,7 +2935,11 @@ if ($action == 'create') {
 			// We check if Origin document (id and type is known) has already at least one invoice attached to it
 			$objectsrc->fetchObjectLinked($originid, $origin, null, 'invoice_supplier');
 
-			$invoice_supplier = $objectsrc->linkedObjects['invoice_supplier'];
+			if (isset($objectsrc->linkedObjects['invoice_supplier'])) {
+				$invoice_supplier = $objectsrc->linkedObjects['invoice_supplier'];
+			} else {
+				$invoice_supplier = [];
+			}
 			'@phan-var-force null|FactureFournisseur[] $invoice_supplier';
 
 			// count function need a array as argument (Note: the array must implement Countable too)

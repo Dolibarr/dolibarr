@@ -698,7 +698,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		// YAxis
 		print '<div class="divadvancedsearchfield">';
 		foreach ($object->fields as $key => $val) {
-			if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
+			if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval((string) $val['enabled'], 1, 1, '1'))) {
 				if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) {
 					continue;
 				}

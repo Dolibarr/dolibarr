@@ -2397,7 +2397,7 @@ class Facture extends CommonInvoice
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;
 								$objectoffield = $this;
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
+								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -2618,7 +2618,7 @@ class Facture extends CommonInvoice
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;
 								$objectoffield = $line;
-								$line->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
+								$line->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -5395,9 +5395,9 @@ class Facture extends CommonInvoice
 		}
 
 		if (getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED') > 0) {
-			$sql .= " ORDER BY CASE WHEN f.rowid = ".((int) GETPOST('fac_avoir'))."' THEN 0 ELSE 1 END, f.ref";
-			$sql .= " DESC";
-			$sql .= " LIMIT " . getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED');
+			$sql .= " ORDER BY CASE WHEN f.rowid = ".((int) GETPOST('fac_avoir'))." THEN 0 ELSE 1 END, f.ref";
+			$sql .= $this->db->order('DESC');
+			$sql .= $this->db->plimit(getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED'));
 		} else {
 			$sql .= " ORDER BY f.ref";
 		}

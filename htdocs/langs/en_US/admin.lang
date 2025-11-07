@@ -2749,4 +2749,4 @@ DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND=Disabled by option ADD_UNSPLASH_LO
 GlobalParameters=Global parameters
 SpecificParameters=Specific parameters
 YouAreUsingTheAdvancedPermissionsMode=You are using the advanced permission mode. Granularity of permissions is higher. Go to Home - Setup - Security to go back to the simple mode.
-YouAreUsingTheSimplePermissionsMode=You are using the simple permission mode. Go to Home - Setup - Security to switch to advanced mode if you need for granularity on permissions.
+YouAreUsingTheSimplePermissionsMode=You are using the simple permission mode. Go to Home - Setup - Security to switch to advanced mode if you need more granularity on permissions.
