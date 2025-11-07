@@ -7,6 +7,7 @@
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2024		Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		Vincent de Grandporé        <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,9 +103,20 @@ $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
 
+$list_account[] = 'ACCOUNTING_LT1_SOLD_ACCOUNT';
+$list_account[] = 'ACCOUNTING_LT1_BUY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_LT1_PAY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_LT2_SOLD_ACCOUNT';
+$list_account[] = 'ACCOUNTING_LT2_BUY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_LT2_PAY_ACCOUNT';
+
 if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
+	$list_account[] = 'ACCOUNTING_LT1_BUY_REVERSE_CHARGES_CREDIT';
+	$list_account[] = 'ACCOUNTING_LT1_BUY_REVERSE_CHARGES_DEBIT';
+	$list_account[] = 'ACCOUNTING_LT2_BUY_REVERSE_CHARGES_CREDIT';
+	$list_account[] = 'ACCOUNTING_LT2_BUY_REVERSE_CHARGES_DEBIT';
 }
 if (isModEnabled('bank')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
@@ -285,7 +297,13 @@ foreach ($list_account as $key) {
 			print img_picto('', 'service', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_VAT_PAY_ACCOUNT/', $key)) {
 			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_LT1_PAY_ACCOUNT/', $key)) {
+			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_LT2_PAY_ACCOUNT/', $key)) {
+			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_VAT/', $key)) {
+			print img_picto('', 'vat', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_LT/', $key)) {
 			print img_picto('', 'vat', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_CUSTOMER/', $key)) {
 			print img_picto('', 'bill', 'class="pictofixedwidth"');
