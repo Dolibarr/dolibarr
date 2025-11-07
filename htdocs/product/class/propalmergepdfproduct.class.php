@@ -381,16 +381,14 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
-			$sql .= " WHERE rowid=".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
+		$sql .= " WHERE rowid=".((int) $this->id);
 
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -425,20 +423,18 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
-			$sql .= " WHERE fk_product = ".((int) $product_id);
+		$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
+		$sql .= " WHERE fk_product = ".((int) $product_id);
 
-			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($lang_id)) {
-				$sql .= " AND lang = '".$this->db->escape($lang_id)."'";
-			}
+		if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($lang_id)) {
+			$sql .= " AND lang = '".$this->db->escape($lang_id)."'";
+		}
 
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -470,16 +466,14 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
-			$sql .= " WHERE fk_product = ".((int) $this->fk_product)." AND file_name = '".$this->db->escape($this->file_name)."'";
+		$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
+		$sql .= " WHERE fk_product = ".((int) $this->fk_product)." AND file_name = '".$this->db->escape($this->file_name)."'";
 
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
