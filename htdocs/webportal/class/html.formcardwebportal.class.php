@@ -203,6 +203,8 @@ class FormCardWebPortal
 
 		// Initialize a technical objects
 		$object = new $objectclass($this->db);
+		'@phan-var-force CommonObject $object';
+		/** @var CommonObject $object */
 		//$extrafields = new ExtraFields($db);
 		$hookmanager->initHooks(array('webportal' . $elementEn . 'card', 'globalcard')); // Note that conf->hooks_modules contains array
 

@@ -686,13 +686,13 @@ class FieldsManager
 			$fieldInfos->type = 'int';
 		} elseif ($fieldInfos->originType == 'mail') {
 			$fieldInfos->type = 'email';
-		} elseif (preg_match('/^(text):(.*)/i', $fieldInfos->originType)) {
+		} elseif (preg_match('/^(text):(.*)/i', $fieldInfos->originType, $reg)) {
 			$fieldInfos->type = 'text';
-			$fieldInfos->getPostCheck = $reg[2] ?? '';
-		} elseif (preg_match('/^(html):(.*)/i', $fieldInfos->originType)) {
+			$fieldInfos->getPostCheck = $reg[2];
+		} elseif (preg_match('/^(html):(.*)/i', $fieldInfos->originType, $reg)) {
 			$fieldInfos->type = 'html';
-			$fieldInfos->getPostCheck = $reg[2] ?? '';
-		} elseif (preg_match('/^double\(([0-9]+,[0-9]+)\)/', $fieldInfos->originType)) {
+			$fieldInfos->getPostCheck = $reg[2];
+		} elseif (preg_match('/^double\(([0-9]+,[0-9]+)\)/', $fieldInfos->originType, $reg)) {
 			$fieldInfos->type = 'double';
 			$fieldInfos->size = $reg[1];
 		}

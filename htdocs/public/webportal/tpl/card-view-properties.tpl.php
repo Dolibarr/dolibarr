@@ -37,7 +37,7 @@ $fieldShowList = $formCard->fieldsmanager->getAllFieldsInfos($formCard->object, 
 				// Display fields for this column
 				foreach ($fields as $fieldKey => $fieldInfos) {
 					// TODO make support of separator in web portal
-					if ($fields->fieldType == 'separate') {
+					if ($fieldInfos->fieldType == 'separate') {
 						//$formCard->fieldsmanager->printSeparator($fieldKey, $formCard->object);
 						continue;
 					}
