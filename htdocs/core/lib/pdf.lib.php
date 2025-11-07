@@ -2597,6 +2597,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			// For invoice, we don't want to have a reference line on document. Image we are using recurring invoice, we will have a line longer than document width.
 		} elseif ($objecttype == 'propal' || $objecttype == 'supplier_proposal') {
 			'@phan-var-force array<Propal|SupplierProposal> $objects';
+			/** @var array<Propal|SupplierProposal> $objects */
 			$outputlangs->load('propal');
 
 			foreach ($objects as $elementobject) {
