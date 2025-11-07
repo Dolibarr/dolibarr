@@ -208,6 +208,7 @@ class CodingPhpTest extends CommonClassTest
 					'webportal/class/html.formcardwebportal.class.php',
 					'webportal/class/html.formlistwebportal.class.php',
 					'webportal/controllers/document.controller.class.php',
+					'webportal/controllers/viewimage.controller.class.php',
 					'workstation/class/workstation.class.php',
 				))) {
 				// Must not find GETPOST
