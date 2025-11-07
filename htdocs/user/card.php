@@ -518,8 +518,8 @@ if (empty($reshook)) {
 					$object->fk_warehouse = GETPOSTINT('fk_warehouse');
 				}
 
-				// Informations about HRM, salary and cost calcul
-				if ($permissiontoeditsalary){
+				// Information about HRM, salary and cost calcul
+				if ($permissiontoeditsalary) {
 					$object->job = GETPOST("job", 'alphanohtml');
 					$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 					$object->thm = price2num($object->thm);
