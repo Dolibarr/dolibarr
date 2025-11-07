@@ -869,6 +869,7 @@ if (isModEnabled('stock')) {
 	$langs->load('stocks');
 }
 
+print '<!-- Begin PROFIT table -->';
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
 print '<table class="noborder centpercent">';
@@ -1079,7 +1080,8 @@ foreach ($listofreferent as $key => $value) {
 
 			print '<tr class="oddeven">';
 			// Module
-			print '<td class="left">'.$name.'</td>';
+			print '<!-- // Module '.$name.' with tablename '.$tablename.' -->';
+			print '<td class="left"><a href="#table_'.$tablename.'">'.$name.'</a></td>';
 			// Nb
 			print '<td class="right">'.$i.'</td>';
 			// Amount HT
@@ -1148,6 +1150,7 @@ if ($total_revenue_ht) {
 }
 
 print "</table>";
+print '<!-- End PROFIT table -->';
 
 
 print '<br><br>';
@@ -1288,6 +1291,7 @@ foreach ($listofreferent as $key => $value) {
 						 </script></div>';
 		}
 
+		print '<a id="table_'.$tablename.'"></a>';
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print "\n".'<!-- Table for tablename = '.$tablename.' -->'."\n";

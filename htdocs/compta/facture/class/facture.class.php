@@ -310,7 +310,7 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
@@ -2397,7 +2397,7 @@ class Facture extends CommonInvoice
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;
 								$objectoffield = $this;
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
+								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -2618,7 +2618,7 @@ class Facture extends CommonInvoice
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;
 								$objectoffield = $line;
-								$line->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
+								$line->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -4226,7 +4226,7 @@ class Facture extends CommonInvoice
 			if (empty($fk_prev_id)) {
 				$fk_prev_id = 'null';
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
 				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative)
 				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 					$situation_percent = 0;
@@ -5395,9 +5395,9 @@ class Facture extends CommonInvoice
 		}
 
 		if (getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED') > 0) {
-			$sql .= " ORDER BY CASE WHEN f.rowid = ".((int) GETPOST('fac_avoir'))."' THEN 0 ELSE 1 END, f.ref";
-			$sql .= " DESC";
-			$sql .= " LIMIT " . getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED');
+			$sql .= " ORDER BY CASE WHEN f.rowid = ".((int) GETPOST('fac_avoir'))." THEN 0 ELSE 1 END, f.ref";
+			$sql .= $this->db->order('DESC');
+			$sql .= $this->db->plimit(getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED'));
 		} else {
 			$sql .= " ORDER BY f.ref";
 		}

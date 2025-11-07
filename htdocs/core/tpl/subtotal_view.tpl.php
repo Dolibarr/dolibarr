@@ -94,7 +94,7 @@ if ($line->qty > 0) { ?>
 	</td>
 	<td class="linecoluht"></td>
 	<?php
-	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 		print '<td class="linecoluht_currency"></td>';
 	}
 	// Handling colspan if MAIN_NO_INPUT_PRICE_WITH_TAX conf is enabled
@@ -160,7 +160,7 @@ if ($line->qty > 0) { ?>
 	}
 	?>
 	<td class="linecolht"></td>
-	<?php if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) { ?>
+	<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
 		<td class="linecolutotalht_currency"></td>
 	<?php } ?>
 <?php } elseif ($line->qty < 0) {

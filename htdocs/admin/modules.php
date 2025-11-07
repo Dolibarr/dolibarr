@@ -36,18 +36,6 @@ if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
-
-'
-@phan-var-force string $dolibarr_main_url_root_alt
-';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -58,6 +46,17 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
  *
  * @var string $dolibarr_main_url_root_alt
  */
+'
+@phan-var-force string $dolibarr_main_url_root_alt
+';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
@@ -75,6 +74,8 @@ if (GETPOSTISSET('mode')) {
 $action = GETPOST('action', 'aZ09');
 $page_y = GETPOSTINT('page_y');
 $optioncss = GETPOST('optioncss', 'aZ09');
+$sortfield = GETPOST('sortfield', 'aZ09');
+$sortorder = GETPOST('sortorder', 'aZ09');
 
 $value = GETPOST('value', 'alpha');
 $search_keyword = GETPOST('search_keyword', 'alpha');
@@ -712,10 +713,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
-	if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+	if (getDolGlobalInt('MAIN_SETUP_MODULES_DESC') || $nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
-	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message. A good usage for SaaS with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
+	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Add a custom info message. A good usage for SaaS in combination with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
 		$deschelp .= '<div class="info">'.$langs->trans(getDolGlobalString('MAIN_SETUP_MODULES_INFO'))."<br></div>\n";
 	}
 	if ($deschelp) {

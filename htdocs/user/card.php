@@ -711,7 +711,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
 			// Success
-			if ($action == 'confirm_passwordsend' && $confirm == 'yes') {	// Test on permission already done
+			if ($action == 'confirm_passwordsend') {	// Test on permission already done
 				if ($object->send_password($user, $newpassword) > 0) {
 					setEventMessages($langs->trans("PasswordChangedAndSentTo", $object->email), null, 'mesgs');
 				} else {
@@ -1094,7 +1094,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// Administrator
 	if (!empty($user->admin)) {
-		print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc"), 1, 'star').'</td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc"), 1, 'help').'</td>';
 		print '<td>';
 		print $form->selectyesno('admin', GETPOST('admin'), 1, false, 0, 1);
 
@@ -1211,7 +1211,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		$valuetoshow .= ($valuetoshow ? ' + ' : '').$langs->trans("HTTPBasicPassword");
 	}
 	if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
-		if (!empty($ldap_pass)) {	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
+		if (!empty($ldap_pass)) {	// For very old system compatibility. Now clear password can't be viewed from LDAP read
 			$valuetoshow .= ($valuetoshow ? ' + ' : '').'<input type="hidden" name="password" value="'.dol_escape_htmltag($ldap_pass).'">'; // Dolibarr password is preffiled with LDAP known password
 			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
 		} else {
@@ -1469,7 +1469,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 		print '</td>';
 		print '<td>';
-		print '<input size="8" type="text" name="thm" value="'.dol_escape_htmltag(GETPOST('thm')).'"> '.$langs->getCurrencySymbol($conf->currency);
+		print '<input size="8" type="text" name="thm" value="'.dol_escape_htmltag(GETPOST('thm')).'"> <span class="opacitymedium">'.$langs->getCurrencySymbol().'</span>';
 		print '</td>';
 		print "</tr>\n";
 
@@ -1479,14 +1479,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 		print '</td>';
 		print '<td>';
-		print '<input size="8" type="text" name="tjm" value="'.dol_escape_htmltag(GETPOST('tjm')).'"> '.$langs->getCurrencySymbol($conf->currency);
+		print '<input size="8" type="text" name="tjm" value="'.dol_escape_htmltag(GETPOST('tjm')).'"> <span class="opacitymedium">'.$langs->getCurrencySymbol().'</span>';
 		print '</td>';
 		print "</tr>\n";
 
 		// Salary
 		print '<tr><td>'.$langs->trans("Salary").'</td>';
 		print '<td>';
-		print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input class="width100" type="text" name="salary" value="'.dol_escape_htmltag(GETPOST('salary')).'"> '.$langs->getCurrencySymbol($conf->currency);
+		print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input class="width100" type="text" name="salary" value="'.dol_escape_htmltag(GETPOST('salary')).'"> <span class="opacitymedium">'.$langs->getCurrencySymbol().'</span>';
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -1643,7 +1643,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$morehtmlref .= '</a>';
 
 			$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-			$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'valignmiddle nohover');
+			$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 			dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -1974,7 +1974,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</th>';
 			print '<th class="liste_titre right">';
 			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
-				$s = '<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
+				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
 				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
 			}
 			print '</th>';
@@ -3017,6 +3017,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td>'.$langs->trans("Salary").'</td>';
 				print '<td>';
 				print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary') ? GETPOST('salary') : $object->salary).'">';
+				print ' <span class="opacitymedium">'.$langs->getCurrencySymbol().'</span>';
 				print '</td>';
 				print "</tr>\n";
 
@@ -3028,6 +3029,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>';
 				if ($permissiontoedit) {
 					print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm') ? GETPOST('thm') : $object->thm).'">';
+					print ' <span class="opacitymedium">'.$langs->getCurrencySymbol().'</span>';
 				} else {
 					print($object->thm != '' ? price($object->thm, 0, $langs, 1, -1, -1, $conf->currency) : '');
 				}
@@ -3042,6 +3044,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>';
 				if ($permissiontoedit) {
 					print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm') ? GETPOST('tjm') : $object->tjm).'">';
+					print ' <span class="opacitymedium">'.$langs->getCurrencySymbol().'</span>';
 				} else {
 					print($object->tjm != '' ? price($object->tjm, 0, $langs, 1, -1, -1, $conf->currency) : '');
 				}
@@ -3148,7 +3151,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 // Add button to autosuggest a key
 include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-print dolJSToSetRandomPassword('password', 'generate_password', 0);
+$usegenericrule = getDolGlobalString('USER_PASSWORD_GENERATED') == 'none' ? 1 : 0;
+print dolJSToSetRandomPassword('password', 'generate_password', $usegenericrule);
 if (isModEnabled('api')) {
 	print dolJSToSetRandomPassword('api_key', 'generate_api_key', 1);
 }

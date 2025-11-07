@@ -51,7 +51,7 @@ class Contracts extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->contract = new Contrat($this->db);
 	}
@@ -232,6 +232,7 @@ class Contracts extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'creer')) {
 			throw new RestException(403, "Insufficient rights");
 		}
@@ -247,8 +248,8 @@ class Contracts extends DolibarrApi
 			if ($field == 'id') {
 				throw new RestException(400, 'Creating with id field is forbidden');
 			}
-			if ($field == 'entity' && $value != getEntity('contrat')) {
-				throw new RestException(403, 'Creating entity not the same as your API user is forbidden');
+			if ($field == 'entity' && ((int) $value) != ((int) $conf->entity)) {
+				throw new RestException(403, 'Creating with entity='.((int) $value).' MUST be the same entity='.((int) $conf->entity).' as your API user/key belongs to');
 			}
 
 			if ($field == 'socid') {

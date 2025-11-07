@@ -110,3 +110,16 @@ GET http://{{hostnport}}/api/index.php/contracts?limit=1
 HTTP 200
 [Captures]
 contract_id: jsonpath "$[0]['id']"
+
+# POST socid 0
+POST http://{{hostnport}}/api/index.php/contracts
+{
+"entity" : "1",
+"socid": "0",
+"date_contrat": 1759738652,
+"commercial_signature_id": 1,
+"commercial_suivi_id": 1,
+"note_public": "TEST 22.0.2"
+}
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Thirdparty with id=0 not found"}}

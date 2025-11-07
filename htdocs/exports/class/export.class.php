@@ -849,7 +849,7 @@ class Export
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								//$computestring = is_string($item) ? $item : json_encode($item);
-								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
+								//$tmp = (string) dol_eval((string) $computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
 								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." extrafields is not yet supported, please remove field.";

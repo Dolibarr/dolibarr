@@ -44,6 +44,21 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_T
 -- V23 migration
 ALTER TABLE llx_usergroup ADD color VARCHAR(6) AFTER tms;
 
+create table llx_categorie_project_task (
+  fk_categorie  	integer NOT NULL,
+  fk_project_task   integer NOT NULL,
+  import_key    	varchar(14)
+) ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_project_task);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
+
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet (rowid);
+
 UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
 
 ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
@@ -118,6 +133,7 @@ ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_an
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
 ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
 ALTER TABLE llx_facture ADD COLUMN pos_print_counter integer DEFAULT 0;
+ALTER TABLE llx_facture ADD COLUMN email_sent_counter integer DEFAULT 0;
 
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
@@ -149,10 +165,12 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite, numer
 UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AL','AT','AX','BE','BG','BL','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GF','GG','GI','GP','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MF','MK','MQ','MT','NL','NO','PL','PM','PT','RE','RO','RS','SE','SI','SK','SM','VA','YT');
 
 ALTER TABLE llx_user DROP COLUMN egroupware_id;
+ALTER TABLE llx_user ADD COLUMN access_hours varchar(128) DEFAULT NULL;
 
 ALTER TABLE llx_adherent ADD COLUMN birth_place varchar(64) after birth;
 
 ALTER TABLE llx_societe ADD COLUMN birth date DEFAULT NULL after fk_forme_juridique;
+ALTER TABLE llx_societe ADD vatexemptcode varchar(24) DEFAULT NULL;
 
 DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
 DELETE FROM llx_usergroup_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
@@ -316,5 +334,9 @@ ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
+
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF', '[70,67]', 1, 'Congolese Franc');
+
+ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
 
 -- end of migration
