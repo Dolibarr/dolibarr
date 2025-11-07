@@ -176,7 +176,7 @@ class StockMovements extends DolibarrApi
 	 *
 	 * You can use the following message to test this REST API:
 	 *
-	 * { "product_id": 1, "warehouse_id": 1, "qty": 1, "batch": "", "movementcode": "INV123", "label": "Inventory 123", "price": 0 }
+	 * { "product_id": 1, "warehouse_id": 1, "qty": 1, "batch": "", "movement_code": "INV123", "label": "Inventory 123", "price": 0 }
 	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
 	 * $eatBy Eat-by date. Will be used if a batch does not exist yet and will be created.
 	 * sellBy Sell-by date. Will be used if a batch does not exist yet and will be created.
@@ -186,8 +186,8 @@ class StockMovements extends DolibarrApi
 	 * @param	float	$qty			Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
 	 * @param	int		$type			Optionally specify the type of movement. 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase). {@from body} {@type int}
 	 * @param	string	$batch			Lot {@from body}
-	 * @param	string	$movementcode	Movement code {@from body}
-	 * @param	string	$movementlabel	Movement label {@from body}
+	 * @param	string	$movement_code	Movement code {@from body}
+	 * @param	string	$label			Movement label {@from body}
 	 * @param	string	$price			To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
 	 * @param	string	$datem			Date of movement {@from body} {@type date}
 	 * @param	string	$sellBy			Eat-by date. {@from body} {@type date}
@@ -198,7 +198,7 @@ class StockMovements extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function post($product_id, $warehouse_id, $qty, $type = 2, $batch = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $sellBy = '', $eatBy = '', $origin_type = '', $origin_id = 0)
+	public function post($product_id, $warehouse_id, $qty, $type = 2, $batch = '', $movement_code = '', $label = '', $price = '', $datem = '', $sellBy = '', $eatBy = '', $origin_type = '', $origin_id = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
 			throw new RestException(403);
@@ -222,7 +222,7 @@ class StockMovements extends DolibarrApi
 		$dateMvt = empty($datem) ? '' : dol_stringtotime($datem);
 
 		$this->stockmovement->setOrigin($origin_type, $origin_id);
-		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, (float) $price, $movementlabel, $movementcode, $dateMvt, $dluo, $dlc, $batch) <= 0) {
+		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, (float) $price, $label, $movement_code, $dateMvt, $dluo, $dlc, $batch) <= 0) {
 			$errormessage = $this->stockmovement->error;
 			if (empty($errormessage)) {
 				$errormessage = implode(',', $this->stockmovement->errors);
