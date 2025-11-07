@@ -507,6 +507,8 @@ if (empty($reshook)) {
 				$object->fk_user_expense_validator = GETPOSTINT("fk_user_expense_validator") > 0 ? GETPOSTINT("fk_user_expense_validator") : 0;
 				$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 				$object->employee = GETPOSTINT('employee');
+				$object->datestartvalidity = $datestartvalidity;
+				$object->dateendvalidity = $dateendvalidity;
 
 				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 				$object->birth = $dateofbirth;
@@ -530,8 +532,6 @@ if (empty($reshook)) {
 					$object->weeklyhours = price2num($object->weeklyhours);
 					$object->dateemployment = $dateemployment;
 					$object->dateemploymentend = $dateemploymentend;
-					$object->datestartvalidity = $datestartvalidity;
-					$object->dateendvalidity = $dateendvalidity;
 				}
 
 				$object->lang = GETPOST('default_lang', 'aZ09');
