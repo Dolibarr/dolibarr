@@ -238,7 +238,7 @@ class SellistField extends CommonSellistField
 	public function verifyPostFieldValue($fieldInfos, $key, $keyPrefix = '', $keySuffix = '')
 	{
 		$htmlName = $keyPrefix . $key . $keySuffix;
-		$value = GETPOST($htmlName, 'none');
+		$value = GETPOST($htmlName, 'restricthtml');
 		$value = trim($value);
 
 		return $this->verifyFieldValue($fieldInfos, $key, $value);

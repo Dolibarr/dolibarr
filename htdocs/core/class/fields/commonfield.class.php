@@ -320,7 +320,7 @@ abstract class CommonField
 	{
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
-		return $this->verifyFieldValue($fieldInfos, $key, GETPOST($htmlName, 'none'));
+		return $this->verifyFieldValue($fieldInfos, $key, GETPOST($htmlName, 'restricthtml'));
 	}
 
 	/**

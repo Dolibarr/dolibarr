@@ -144,7 +144,7 @@ class RealField extends CommonField
 	public function verifyPostFieldValue($fieldInfos, $key, $keyPrefix = '', $keySuffix = '')
 	{
 		$htmlName = $keyPrefix . $key . $keySuffix;
-		$value = GETPOST($htmlName, 'none');
+		$value = GETPOST($htmlName, 'restricthtml');
 		$value = str_replace(',', '.', $value);
 
 		return $this->verifyFieldValue($fieldInfos, $key, $value);

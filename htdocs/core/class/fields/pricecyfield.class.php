@@ -172,7 +172,7 @@ class PricecyField extends CommonField
 	public function verifyPostFieldValue($fieldInfos, $key, $keyPrefix = '', $keySuffix = '')
 	{
 		$htmlName = $keyPrefix . $key . $keySuffix;
-		$value = GETPOST($htmlName, 'none') . ':' . GETPOST($htmlName . "currency_id", 'none');
+		$value = GETPOST($htmlName, 'restricthtml') . ':' . GETPOST($htmlName . "currency_id", 'restricthtml');
 		$value = str_replace(',', '.', $value);
 
 		return $this->verifyFieldValue($fieldInfos, $key, $value);
