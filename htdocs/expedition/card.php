@@ -154,7 +154,7 @@ $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $upload_dir = $conf->expedition->dir_output . '/sending';
@@ -2029,7 +2029,7 @@ if ($action == 'create' && $usercancreate) {
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
-					if ($line->product_type == 1 && !getDolGlobalString('STOCK_SUPPORTS_SERVICES') && !getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+					if ($line->product_type == Product::TYPE_SERVICE && !getDolGlobalString('STOCK_SUPPORTS_SERVICES') && !getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						$quantityToBeDelivered = 0;
 					} else {
 						if (is_numeric($quantityDelivered)) {
@@ -2513,8 +2513,8 @@ if ($action == 'create' && $usercancreate) {
 								if ($product->stockable_product == Product::DISABLED_STOCK) {
 									$disabled = '';
 								}
-								print '<input class="qtyl right" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="0"' . ($disabled ? ' ' . $disabled : '') . '> ';
-								if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
+								if (empty($disabled) && (!getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') || $product->stockable_product == Product::DISABLED_STOCK)) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
 							} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
@@ -2525,7 +2525,7 @@ if ($action == 'create' && $usercancreate) {
 								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
 									$disabled = 'disabled="disabled"';
 								}
-								print '<input class="qtyl right" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="' . $quantityToBeDelivered . '"' . ($disabled ? ' ' . $disabled : '') . '> ';
+								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$quantityToBeDelivered.'"'.($disabled ? ' '.$disabled : '').'> ';
 								if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
@@ -2536,7 +2536,7 @@ if ($action == 'create' && $usercancreate) {
 
 							print '<td class="left">';
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-								if ($warehouse_selected_id > 0) {
+								if ($warehouse_selected_id > 0 && $product->stockable_product == Product::ENABLED_STOCK) {
 									$warehouseObject = new Entrepot($db);
 									$warehouseObject->fetch($warehouse_selected_id);
 									print img_warning() . ' ' . $langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);

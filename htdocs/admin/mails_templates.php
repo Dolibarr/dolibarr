@@ -1244,7 +1244,7 @@ if ($num) {
 					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
 				}
 				// Test on 'enabled'
-				if (! (int) dol_eval($obj->enabled, 1, 1, '1')) {
+				if (! (int) dol_eval((string) $obj->enabled, 1, 1, '1')) {
 					$i++;
 					continue; // Email template not qualified
 				}

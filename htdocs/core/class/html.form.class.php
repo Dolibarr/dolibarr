@@ -9174,7 +9174,7 @@ class Form
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+				if (! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -10901,7 +10901,7 @@ class Form
 
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe') {
-			$ret .= dol_htmlentities((string) $object->name);
+			$ret .= '<span class="valignmiddle">'.dol_htmlentities((string) $object->name).'</span>';
 
 			// List of extra languages
 			$arrayoflangcode = array();
@@ -10938,9 +10938,9 @@ class Form
 			$ret .= $object->ref . '<br>';
 			$fullname = $object->getFullName($langs);
 			if ($object->morphy == 'mor' && $object->societe) {
-				$ret .= dol_htmlentities((string) $object->societe) . ((!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '');
+				$ret .= '<span class="valignmiddle">'.dol_htmlentities((string) $object->societe) . ((!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '').'</span>';
 			} else {
-				$ret .= dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '');
+				$ret .= '<span class="valignmiddle">'.dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '').'</span>';
 			}
 		} elseif (in_array($object->element, array('contact', 'user'))) {
 			$ret .= '<span class="valignmiddle">'.dol_htmlentities($object->getFullName($langs)).'</span>'.$addgendertxt;
@@ -10954,9 +10954,9 @@ class Form
 		} elseif ($object->element == 'ecm_directories') {
 			$ret .= '';
 		} elseif ($object->element == 'accountingbookkeeping' && !empty($object->context['mode']) && $object->context['mode'] == '_tmp') {
-			$ret .= $langs->trans("Draft");
+			$ret .= '<span class="valignmiddle">'.$langs->trans("Draft").'</span>';
 		} elseif ($fieldref != 'none') {
-			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
+			$ret .= '<span class="valignmiddle">'.dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "").'</span>';
 		}
 		if ($morehtmlref) {
 			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
