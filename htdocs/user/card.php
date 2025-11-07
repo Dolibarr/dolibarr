@@ -16,6 +16,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		François Brichart			<franbrich@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +132,8 @@ $permissiontoedit = (!empty($user->admin) || $user->hasRight("user", "user", "wr
 $permissiontodisable = (!empty($user->admin) || $user->hasRight("user", "user", "delete")) && (empty($user->socid) || $user->socid == $object->socid);
 $permissiontoreadgroup = $permissiontoread;
 $permissiontoeditgroup = $permissiontoedit;
+$permissiontoeditsalary = (!empty($user->admin) || $user->hasRight("user", "self", "salary")) && (empty($user->socid) || $user->socid == $object->socid);
+
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read")) && (empty($user->socid) || $user->socid == $object->socid);
 	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write")) && (empty($user->socid) || $user->socid == $object->socid);
@@ -428,7 +431,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && ($permissiontoedit || $permissiontoeditpasswordandsee)) {
+	if ($action == 'update' && ($permissiontoedit || $permissiontoeditpasswordandsee || $permissiontoeditsalary)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if ($permissiontoedit) {    // Case we can edit all field
@@ -497,7 +500,6 @@ if (empty($reshook)) {
 				}
 
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
-				$object->job = GETPOST("job", 'alphanohtml');
 				$object->signature = GETPOST("signature", 'restricthtml');
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 				$object->openid = GETPOST("openid", 'alphanohtml');
@@ -506,26 +508,30 @@ if (empty($reshook)) {
 				$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 				$object->employee = GETPOSTINT('employee');
 
-				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
-				$object->thm = price2num($object->thm);
-				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
-				$object->tjm = price2num($object->tjm);
-				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
-				$object->salary = price2num($object->salary);
-				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-				$object->salaryextra = price2num($object->salaryextra);
-				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
-				$object->weeklyhours = price2num($object->weeklyhours);
-
 				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
-				$object->dateemployment = $dateemployment;
-				$object->dateemploymentend = $dateemploymentend;
-				$object->datestartvalidity = $datestartvalidity;
-				$object->dateendvalidity = $dateendvalidity;
 				$object->birth = $dateofbirth;
 
 				if (isModEnabled('stock')) {
 					$object->fk_warehouse = GETPOSTINT('fk_warehouse');
+				}
+
+				// Informations about HRM, salary and cost calcul
+				if ($permissiontoeditsalary){
+					$object->job = GETPOST("job", 'alphanohtml');
+					$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+					$object->thm = price2num($object->thm);
+					$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+					$object->tjm = price2num($object->tjm);
+					$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+					$object->salary = price2num($object->salary);
+					$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+					$object->salaryextra = price2num($object->salaryextra);
+					$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+					$object->weeklyhours = price2num($object->weeklyhours);
+					$object->dateemployment = $dateemployment;
+					$object->dateemploymentend = $dateemploymentend;
+					$object->datestartvalidity = $datestartvalidity;
+					$object->dateendvalidity = $dateendvalidity;
 				}
 
 				$object->lang = GETPOST('default_lang', 'aZ09');
@@ -2986,7 +2992,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Position/Job
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 			print '<td>';
-			if ($permissiontoedit) {
+			if ($permissiontoeditsalary) {
 				print '<input type="text" class="minwidth300 maxwidth500" name="job" value="'.dol_escape_htmltag($object->job).'">';
 			} else {
 				print '<input type="hidden" name="job" value="'.dol_escape_htmltag($object->job).'">';
@@ -2997,7 +3003,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Weeklyhours
 			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 			print '<td>';
-			if ($permissiontoedit) {
+			if ($permissiontoeditsalary) {
 				print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours') ? GETPOST('weeklyhours') : $object->weeklyhours).'">';
 			} else {
 				print price2num($object->weeklyhours);
@@ -3014,7 +3020,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 				// Salary
 				print '<tr><td>'.$langs->trans("Salary").'</td>';
 				print '<td>';
-				print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary') ? GETPOST('salary') : $object->salary).'">';
+				if ($permissiontoeditsalary) {
+					print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary') ? GETPOST('salary') : $object->salary).'">';
+				} else {
+					print($object->salary != '' ? price($object->salary, 0, $langs, 1, -1, -1, $conf->currency) : '');
+				}
 				print '</td>';
 				print "</tr>\n";
 
@@ -3024,7 +3034,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				if ($permissiontoedit) {
+				if ($permissiontoeditsalary) {
 					print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm') ? GETPOST('thm') : $object->thm).'">';
 				} else {
 					print($object->thm != '' ? price($object->thm, 0, $langs, 1, -1, -1, $conf->currency) : '');
@@ -3038,7 +3048,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				if ($permissiontoedit) {
+				if ($permissiontoeditsalary) {
 					print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm') ? GETPOST('tjm') : $object->tjm).'">';
 				} else {
 					print($object->tjm != '' ? price($object->tjm, 0, $langs, 1, -1, -1, $conf->currency) : '');
@@ -3050,7 +3060,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			if ($permissiontoedit) {
+			if ($permissiontoeditsalary) {
 				print $form->selectDate($dateemployment ? $dateemployment : $object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1, 0, '', '', '', '', 1, '', $langs->trans("from"));
 			} else {
 				print dol_print_date($object->dateemployment, 'day');
@@ -3060,7 +3070,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print ' - ';
 			}
 
-			if ($permissiontoedit) {
+			if ($permissiontoeditsalary) {
 				print $form->selectDate($dateemploymentend ? $dateemploymentend : $object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 			} else {
 				print dol_print_date($object->dateemploymentend, 'day');

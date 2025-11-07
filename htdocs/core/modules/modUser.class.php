@@ -2,6 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2025		François Brichart			<franbrich@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,6 +158,13 @@ class modUser extends DolibarrModules
 		$this->rights[$r][self::KEY_DEFAULT] = 0;
 		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'writeperms';
+
+		$r++;
+		$this->rights[$r][self::KEY_ID] = 345;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify its own HRM/salary informations';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'salary';
 
 		$r++;
 		$this->rights[$r][self::KEY_ID] = 351;

@@ -906,6 +906,7 @@ Permission341=Read its own permissions
 Permission342=Create/modify his own user information
 Permission343=Modify his own password
 Permission344=Modify its own permissions
+Permission345=Modify its own HRM/salary informations
 Permission351=Read groups
 Permission352=Read groups permissions
 Permission353=Create/modify groups
