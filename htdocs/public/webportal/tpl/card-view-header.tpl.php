@@ -29,7 +29,7 @@ $formCard = $this->formCard;
 				<div class="floatleft inline-block valignmiddle divphotoref">
 					<?php
 					if ($formCard->object->element == 'member') {
-						print $formCard->form->showphoto('memberphoto', $formCard->object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, 1);
+						print $formCard->form->showphoto('memberphoto', $formCard->object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0);
 					}
 					?>
 				</div>
@@ -39,11 +39,11 @@ $formCard = $this->formCard;
 				<div><strong><?php print $langs->trans("Ref") . ' : ' . dol_escape_htmltag($formCard->object->ref) ?></strong></div>
 
 				<?php if ($formCard->object->element == 'member') {
+					$object = $formCard->object;
 					'@phan-var-force Adherent $object';
 					/**
 					 * @var Adherent	$object
 					 */
-					$object = $formCard->object;
 					$addgendertxt = '';
 					//if (property_exists($object, 'gender') && !empty($object->gender)) {
 					//    switch ($object->gender) {

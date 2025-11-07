@@ -152,10 +152,12 @@ class FieldsManager
 			$field = null;
 			$parameters = array(
 				'type' => $type,
+				// @phan-suppress-next-line PhanPluginConstantVariableNull
 				'field' => &$field,
 			);
 
 			$hookmanager->executeHooks('getFieldClass', $parameters, $this); // Note that $object may have been modified by hook
+			// @phan-suppress-next-line PhanPluginConstantVariableNull
 			// @phpstan-ignore-next-line
 			if (isset($field) && is_object($field)) {
 				self::$fieldClasses[$type] = $field;
@@ -686,10 +688,10 @@ class FieldsManager
 			$fieldInfos->type = 'email';
 		} elseif (preg_match('/^(text):(.*)/i', $fieldInfos->originType)) {
 			$fieldInfos->type = 'text';
-			$fieldInfos->getPostCheck = $reg[2];
+			$fieldInfos->getPostCheck = $reg[2] ?? '';
 		} elseif (preg_match('/^(html):(.*)/i', $fieldInfos->originType)) {
 			$fieldInfos->type = 'html';
-			$fieldInfos->getPostCheck = $reg[2];
+			$fieldInfos->getPostCheck = $reg[2] ?? '';
 		} elseif (preg_match('/^double\(([0-9]+,[0-9]+)\)/', $fieldInfos->originType)) {
 			$fieldInfos->type = 'double';
 			$fieldInfos->size = $reg[1];
