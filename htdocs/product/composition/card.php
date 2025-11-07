@@ -435,6 +435,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<th class="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
 			print '</tr>';
 			$i = 0;
+			$num = 0;
 			if ($resql) {
 				$num = $db->num_rows($resql);
 
