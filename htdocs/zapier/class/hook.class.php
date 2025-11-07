@@ -267,9 +267,9 @@ class Hook extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User 	$user       User that creates
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int             		Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -422,9 +422,9 @@ class Hook extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User 	$user      	User that modifies
+	 * @param  int<0,1>	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int             		Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -434,9 +434,9 @@ class Hook extends CommonObject
 	/**
 	 *  Delete object in database
 	 *
-	 * @param User 	$user       User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param User 		$user       User that deletes
+	 * @param int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -529,7 +529,7 @@ class Hook extends CommonObject
 	/**
 	 *  Return label of the status
 	 *
-	 *  @param  int     $mode       0 = long label
+	 *  @param  int<0,6>    $mode   0 = long label
 	 *                              1 = short label
 	 *                              2 = Picto + short label
 	 *                              3 = Picto, 4=Picto + long label
@@ -546,10 +546,10 @@ class Hook extends CommonObject
 	/**
 	 *  Return the status
 	 *
-	 *  @param  int     $status     Id status
-	 *  @param  int     $mode       0 = long label,
-	 *                              1 = short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string              Label of status
+	 *  @param  int     	$status     Id status
+	 *  @param  int<0,6>	$mode       0 = long label,
+	 *                              	1 = short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string              	Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
