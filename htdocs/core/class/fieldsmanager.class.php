@@ -157,8 +157,7 @@ class FieldsManager
 			);
 
 			$hookmanager->executeHooks('getFieldClass', $parameters, $this); // Note that $object may have been modified by hook
-			// @phan-suppress-next-line PhanPluginConstantVariableNull
-			// @phpstan-ignore-next-line
+			// @phpstan-ignore-next-line @phan-suppress-next-line PhanPluginConstantVariableNull
 			if (isset($field) && is_object($field)) {
 				self::$fieldClasses[$type] = $field;
 			} else {
