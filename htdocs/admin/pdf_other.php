@@ -7,7 +7,7 @@
  * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-205   Nick Fragoulis
+ * Copyright (C) 2024-2025  Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

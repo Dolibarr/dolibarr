@@ -405,7 +405,7 @@ class SupplierProposal extends CommonObject
 					return -1;
 				}
 			} else {
-				$this->error = $supplier_proposalligne->error;
+				$this->setErrorsFromObject($supplier_proposalligne);
 				$this->db->rollback();
 				return -2;
 			}
@@ -700,8 +700,7 @@ class SupplierProposal extends CommonObject
 					return -1;
 				}
 			} else {
-				$this->error = $this->line->error;
-				$this->errors = $this->line->errors;
+				$this->setErrorsFromObject($this->line);
 				$this->db->rollback();
 				return -2;
 			}
@@ -2554,6 +2553,7 @@ class SupplierProposal extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModeleNumRefSupplierProposal $obj';
+			/** @var ModeleNumRefSupplierProposal $obj */
 			$numref = "";
 			$numref = $obj->getNextValue($soc, $this);
 

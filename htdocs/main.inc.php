@@ -222,24 +222,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"])) {
 	}
 }
 
-// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
-// accesskey is for Mac:               CTRL + Option + key for all browsers
-if (!defined('NOREQUIRETRAN')) {
-	$langs->load('main');
-	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->os == 'macintosh') {
-		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
-	} else {
-		if ($conf->browser->name == 'chrome') {
-			$conf->browser->stringforfirstkey .= ' ALT +';
-		} elseif ($conf->browser->name == 'firefox') {
-			$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
-		} else {
-			$conf->browser->stringforfirstkey .= ' CTL +';
-		}
-	}
-}
-
 // If theme is forced
 if (GETPOST('theme', 'aZ09')) {
 	$conf->theme = GETPOST('theme', 'aZ09');
@@ -1112,7 +1094,6 @@ if (!defined('NOLOGIN')) {
 		}
 	}
 
-
 	// If user admin, we force the rights-based modules
 	if ($user->admin) {
 		$user->rights->user->user->lire = 1;
@@ -1289,6 +1270,21 @@ dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["
 if (!defined('NOREQUIRETRAN')) {
 	// Load translation files required by page
 	$langs->loadLangs(array('main', 'dict'));
+
+	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+	// accesskey is for Mac:               CTRL + Option + key for all browsers
+	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
+	if ($conf->browser->os == 'macintosh') {
+		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$conf->browser->stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$conf->browser->stringforfirstkey .= ' CTL +';
+		}
+	}
 }
 
 // Define some constants used for style of arrays

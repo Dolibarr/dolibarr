@@ -145,13 +145,13 @@ class Form
 	 * @param 	string				$text 			Text of label or key to translate
 	 * @param 	string				$htmlname 		Name of select field ('edit' prefix will be added)
 	 * @param 	string				$preselected 	Value to show/edit (not used in this function)
-	 * @param 	object				$object 		Object (on the page we show)
+	 * @param 	?object				$object 		Object (on the page we show)
 	 * @param 	int<0,1>|boolean	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param 	string	 			$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param 	string				$moreparam		More param to add on a href URL.
 	 * @param 	int<0,1>			$fieldrequired	1 if we want to show field as mandatory using the "fieldrequired" CSS.
 	 * @param 	int<0,3>			$notabletag		1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
-	 * @param 	string				$paramid 		Key of parameter for id ('id', 'socid')
+	 * @param 	'id'|'socid'|'projectid'	$paramid 	Key of parameter for id ('id', 'socid')
 	 * @param 	string				$help 			Tooltip help
 	 * @return  string								HTML edit field
 	 */
@@ -215,7 +215,7 @@ class Form
 			if (empty($notabletag) && $perm) {
 				$ret .= '<td class="right">';
 			}
-			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm) {
+			if ($htmlname && GETPOST('action', 'aZ09') != 'edit' . $htmlname && $perm && is_object($object)) {
 				$ret .= '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit' . $htmlname, $paramid => $object->id], true) . $moreparam . '">';
 				$ret .= img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1));
 				$ret .= '</a>';
@@ -915,7 +915,7 @@ class Form
 		if (!empty($conf->use_javascript_ajax)) {
 			$ret .= '<!-- JS CODE TO ENABLE mass action select -->
     		<script nonce="' . getNonce() . '">
-				function initCheckForSelect(mode, name, cssclass) {	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
+				function initCheckForSelect(mode, name, cssclass) {	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the check for select boxes */
         			atleastoneselected=0;
 					jQuery("."+cssclass).each(function( index ) {
     	  				/* console.log( index + ": " + $( this ).text() ); */
@@ -936,7 +936,8 @@ class Form
 
         	jQuery(document).ready(function () {
                     initCheckForSelect(0, "' . $name . '", "' . $cssclass . '");
-                    jQuery(".' . $cssclass . '").click(function() {
+                    jQuery(".' . $cssclass . '").change(function() {
+						console.log("A change was done on .' . $cssclass . '");
                         initCheckForSelect(1, "' . $name . '", "' . $cssclass . '");
                     });
                     jQuery(".' . $name . 'select").change(function() {
@@ -1550,6 +1551,7 @@ class Form
 	 * @param int<0,1>			$showcode 		Show code in list
 	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
 	 * @see select_company()
+	 * @phpstan-return ($outputmode is 1 ? array<int,array{key:int,value:string,label:string,labelhtml:string}> : string)
 	 */
 	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
@@ -3046,8 +3048,9 @@ class Form
 
 		$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 
-		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'bom_bom as b';
+		$sql = 'SELECT b.rowid, b.ref, b.label as bomLabel, p.label as productLabel';
+		$sql .= ' FROM ' . $this->db->prefix() . 'bom_bom as b';
+		$sql .= ' INNER JOIN ' . $this->db->prefix() . 'product as p ON b.fk_product = p.rowid';
 		$sql .= ' WHERE b.entity IN (' . getEntity('bom') . ')';
 		if (!empty($status)) {
 			$sql .= ' AND status = ' . (int) $status;
@@ -3071,13 +3074,11 @@ class Form
 				$out .= '>&nbsp;</option>';
 			}
 			while ($obj = $db->fetch_object($resql)) {
-				$product = new Product($db);
-				$res = $product->fetch($obj->fk_product);
 				$out .= '<option value="' . $obj->rowid . '"';
 				if ($obj->rowid == $selected) {
 					$out .= 'selected';
 				}
-				$out .= '>' . $obj->ref . ' - ' . $product->label . ' - ' . $obj->label . '</option>';
+				$out .= '>' . $obj->ref . ' - ' . $obj->productLabel . ' - ' . $obj->bomLabel . '</option>';
 			}
 		} else {
 			$error++;
@@ -3345,7 +3346,7 @@ class Form
 
 				// include search in supplier ref
 				if (getDolGlobalString('MAIN_SEARCH_PRODUCT_BY_FOURN_REF')) {
-					$sqlSupplierSearch .= !empty($sqlSupplierSearch) ? ' AND ':'';
+					$sqlSupplierSearch .= !empty($sqlSupplierSearch) ? ' AND ' : '';
 					$sqlSupplierSearch .= " pfp.ref_fourn LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
 				$sql .= ")";
@@ -9142,7 +9143,7 @@ class Form
 	 * Output html form to select an object.
 	 * Note, this function is called by selectForForms or by ajax selectobject.php
 	 *
-	 * @param Object 		$objecttmp 			Object to know the table to scan for combo.
+	 * @param CommonObject	$objecttmp 			Object to know the table to scan for combo.
 	 * @param string 		$htmlname 			Name of HTML select component
 	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
 	 * @param string|int<0,1>	$showempty 		''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
@@ -9173,7 +9174,7 @@ class Form
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+				if (! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -9185,7 +9186,7 @@ class Form
 			}
 		} else {
 			// For backward compatibility
-			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'showoncombobox' => 1);
+			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'visible' => 4, 'showoncombobox' => 1);
 		}
 
 		if (empty($fieldstoshow)) {
@@ -9219,6 +9220,7 @@ class Form
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
 		if (!empty($objecttmp->parent_element)) {	// If parent_element is defined
+			'@phan-var-force CommonObjectLine $objecttmp';
 			$parent_properties = getElementProperties($objecttmp->parent_element);
 			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$objecttmp->fk_parent_attribute;
 		}
@@ -10518,10 +10520,10 @@ class Form
 
 
 			// If we ask a resource form external module (instead of default path)
-			$module='';
+			$module = '';
 			if (preg_match('/^([^@]+)@([^@]+)$/i', $key, $regs)) {	// 'myobject@mymodule'
 				$key = $regs[1];
-				$module=$regs[2];
+				$module = $regs[2];
 			}
 
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
@@ -10535,7 +10537,7 @@ class Form
 					$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
 					$htmltoenteralink .= '<input type="hidden" name="action" value="addlinkbyref">';
 					$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
-					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key .(!empty($module)?'@'.$module:''). '">';
+					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key .(!empty($module) ? '@'.$module : ''). '">';
 					$htmltoenteralink .= '<table class="noborder">';
 					$htmltoenteralink .= '<tr class="liste_titre">';
 					//print '<td>' . $langs->trans("Ref") . '</td>';
@@ -10564,7 +10566,7 @@ class Form
 						$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
 						$htmltoenteralink .= '<input type="hidden" name="action" value="addlink">';
 						$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
-						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . (!empty($module)?'@'.$module:''). '">';
+						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . (!empty($module) ? '@'.$module : ''). '">';
 						$htmltoenteralink .= '<table class="noborder">';
 						$htmltoenteralink .= '<tr class="liste_titre">';
 						$htmltoenteralink .= '<td class="nowrap"></td>';
@@ -10899,7 +10901,7 @@ class Form
 
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe') {
-			$ret .= dol_htmlentities((string) $object->name);
+			$ret .= '<span class="valignmiddle">'.dol_htmlentities((string) $object->name).'</span>';
 
 			// List of extra languages
 			$arrayoflangcode = array();
@@ -10936,9 +10938,9 @@ class Form
 			$ret .= $object->ref . '<br>';
 			$fullname = $object->getFullName($langs);
 			if ($object->morphy == 'mor' && $object->societe) {
-				$ret .= dol_htmlentities((string) $object->societe) . ((!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '');
+				$ret .= '<span class="valignmiddle">'.dol_htmlentities((string) $object->societe) . ((!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '').'</span>';
 			} else {
-				$ret .= dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '');
+				$ret .= '<span class="valignmiddle">'.dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '').'</span>';
 			}
 		} elseif (in_array($object->element, array('contact', 'user'))) {
 			$ret .= '<span class="valignmiddle">'.dol_htmlentities($object->getFullName($langs)).'</span>'.$addgendertxt;
@@ -10952,9 +10954,9 @@ class Form
 		} elseif ($object->element == 'ecm_directories') {
 			$ret .= '';
 		} elseif ($object->element == 'accountingbookkeeping' && !empty($object->context['mode']) && $object->context['mode'] == '_tmp') {
-			$ret .= $langs->trans("Draft");
+			$ret .= '<span class="valignmiddle">'.$langs->trans("Draft").'</span>';
 		} elseif ($fieldref != 'none') {
-			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
+			$ret .= '<span class="valignmiddle">'.dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "").'</span>';
 		}
 		if ($morehtmlref) {
 			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
@@ -11055,32 +11057,34 @@ class Form
 			$email = $object->email;
 		} elseif ($modulepart == 'contact') {
 			$dir = $conf->societe->multidir_output[$entity] . '/contact';
-			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->photo)) {
+			$photo = $object->photo;  // Copy to help static analysis
+			if (!empty($photo)) {
+				if (dolIsAllowedForPreview($photo)) {
 					if ((string) $imagesize == 'mini') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . getImageFileNameForSize($object->photo, '_mini');
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . getImageFileNameForSize($photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . getImageFileNameForSize($object->photo, '_small');
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . getImageFileNameForSize($photo, '_small');
 					} else {
-						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . $object->photo;
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . $photo;
 					}
-					$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . $object->photo;
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact') . 'photos/' . $photo;
 				}
 			}
 			$email = $object->email;
 			$capture = 'user';
 		} elseif ($modulepart == 'userphoto') {
 			$dir = $conf->user->dir_output;
-			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->photo)) {
+			$photo = $object->photo;  // Copy to help static analysis
+			if (!empty($photo)) {
+				if (dolIsAllowedForPreview($photo)) {
 					if ((string) $imagesize == 'mini') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . getImageFileNameForSize($object->photo, '_mini');
+						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . getImageFileNameForSize($photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . getImageFileNameForSize($object->photo, '_small');
+						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . getImageFileNameForSize($photo, '_small');
 					} else {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . $object->photo;
+						$file = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . $photo;
 					}
-					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . $object->photo;
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user') . 'photos/' . $photo;
 				}
 			}
 			if (getDolGlobalString('MAIN_OLD_IMAGE_LINKS')) {
@@ -11090,16 +11094,17 @@ class Form
 			$capture = 'user';
 		} elseif ($modulepart == 'memberphoto') {
 			$dir = $conf->adherent->dir_output;
-			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->photo)) {
+			$photo = $object->photo;  // Copy to help static analysis
+			if (!empty($photo)) {
+				if (dolIsAllowedForPreview($photo)) {
 					if ((string) $imagesize == 'mini') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . getImageFileNameForSize($object->photo, '_mini');
+						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . getImageFileNameForSize($photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . getImageFileNameForSize($object->photo, '_small');
+						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . getImageFileNameForSize($photo, '_small');
 					} else {
-						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . $object->photo;
+						$file = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . $photo;
 					}
-					$originalfile = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . $object->photo;
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'member') . 'photos/' . $photo;
 				}
 			}
 			if (getDolGlobalString('MAIN_OLD_IMAGE_LINKS')) {
@@ -11382,12 +11387,13 @@ class Form
 			$out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "' . $massactionname . '", "' . $cssclass . '"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		}
 		$out .= '         });
+/*
         	        $(".' . $cssclass . '").change(function() {
 						console.log("We check and change the tr class highlight after a change on .'.$cssclass.'");
 						var $row = $(this).closest("tr");
 						if ($row.length) {
 	    					var anyChecked = $row.find(\'input[type="checkbox"].checkforselect:checked\').length > 0;
-							console.log(anyChecked);
+							console.log("anychecked="+anyChecked);
 							if (!anyChecked) {
 								$row.removeClass("highlight");
 							} else {
@@ -11395,6 +11401,7 @@ class Form
 							}
 						}
 					});
+*/
 		 	});
     	</script>';
 
@@ -12629,7 +12636,7 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			$retstring .= '<input type="submit" class="button button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
+			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
 		}
 		$retstring .= $withoutdiv ? '' : '</div>';
 

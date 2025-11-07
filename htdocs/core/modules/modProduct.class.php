@@ -10,6 +10,7 @@
  * Copyright (C) 2020-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +145,15 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'product_advance';
 		$this->rights[$r][5] = 'read_supplier_prices';
+		$r++;
+
+			// EN: Advanced permission to write supplier prices
+		$this->rights[$r][0] = 36; // id de la permission
+		$this->rights[$r][1] = 'Write supplier prices'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'product_advance';
+		$this->rights[$r][5] = 'write_supplier_prices';
 		$r++;
 
 		$this->rights[$r][0] = 34; // id de la permission

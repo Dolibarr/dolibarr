@@ -26,7 +26,7 @@
 /**
  *  Return array head with list of tabs to view object information
  *
- *  @param	Object	$object         Holiday
+ *  @param	Holiday	$object         Holiday
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function holiday_prepare_head($object)

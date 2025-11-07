@@ -406,7 +406,7 @@ if ($resql) {
 		print '<div class="inline-block amount width100"></div>';
 		print '<div class="inline-block amount width100">'.price($cash).'</div>';
 	}
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && $newcash != $object->cash) {
+	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($newcash) != price2num($object->cash)) {
 		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->cash).'</div>';
 	}
 	print "<br>";
@@ -415,7 +415,7 @@ if ($resql) {
 	print $langs->trans("PaymentTypeCHQ").(!empty($transactionspertype['CHQ']) ? ' ('.$transactionspertype['CHQ'].' '.$langs->trans("Articles").')' : '').' : ';
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($cheque).'</div>';
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && $cheque != $object->cheque) {
+	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($cheque) != price2num($object->cheque)) {
 		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").' : '.price($object->cheque).'</div>';
 	}
 	print "<br>";
@@ -424,7 +424,7 @@ if ($resql) {
 	print $langs->trans("PaymentTypeCB").(!empty($transactionspertype['CB']) ? ' ('.$transactionspertype['CB'].' '.$langs->trans("Articles").')' : '').' : ';
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($bank).'</div>';
-	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && $bank != $object->card) {
+	if (!$summaryonly && $object->status == $object::STATUS_VALIDATED && price2num($bank) != price2num($object->card)) {
 		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->card).'</div>';
 	}
 	print "<br>";

@@ -10,6 +10,7 @@
  * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2025		Hannes Hieronimi		<hannes@innwerk.org>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1206,15 +1207,15 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 					$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 					if ($idx < $nb_operation) {
 						$amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
-						$total_operation += $amount;
+						$total_operation += (float) $amount;
 					} else {
 						$amount = $payment_total_ht - $total_operation;
 					}
-					$total_check -= $amount;
+					$total_check -= (float) $amount;
 
 					$bookkeepingToCreate = new BookKeeping($db);
 					//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
-					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
+					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), - (float) $amount, $journal, $journal_label, '');
 					if ($result < 0) {
 						$errorforline++;
 
@@ -1482,11 +1483,11 @@ if (empty($action) || $action == 'view') {
 				if (!empty($operation['total_ht'])) {
 					if ($idx < $nb_operation) {
 						$value = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
-						$total_operation += $value;
+						$total_operation += (float) $value;
 					} else {
 						$value = $payment_total_ht - $total_operation;
 					}
-					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), $payment['type_payment'], -$value);
+					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), $payment['type_payment'], - (float) $value);
 				}
 				$idx++;
 			}

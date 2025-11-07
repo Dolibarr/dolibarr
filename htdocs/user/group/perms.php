@@ -33,18 +33,19 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
@@ -143,6 +144,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 $title = $object->name." - ".$langs->trans('Permissions');
 $help_url = '';
@@ -226,6 +228,7 @@ if ($object->id > 0) {
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 
+	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 
 	print '<div class="underbanner clearboth"></div>';
@@ -250,16 +253,23 @@ if ($object->id > 0) {
 	}
 
 	unset($object->fields['nom']); // Name already displayed in banner
+	unset($object->fields['color']);
 
 	// Common attributes
 	$keyforbreak = '';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	print '<tr><td>'.$langs->trans("ColorGroup").'</td>';
+	print '<td>';
+	print $formother->showColor($object->color, '');
+	print '</td></tr>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 
+	print '</div>';
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
@@ -268,7 +278,18 @@ if ($object->id > 0) {
 
 
 	if ($user->admin) {
-		print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom"));
+		$s = $langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom");
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$s .= '<br>';
+			$s .= img_picto($langs->trans('InfoAdmin'), 'info-circle').' ';
+			$s .= $langs->trans("YouAreUsingTheAdvancedPermissionsMode");
+		} else {
+			$s .= '<br>';
+			$s .= img_picto($langs->trans('InfoAdmin'), 'info-circle').' ';
+			$s .= $langs->trans("YouAreUsingTheSimplePermissionsMode");
+		}
+		print info_admin($s);
+
 		print '<br>';
 	}
 

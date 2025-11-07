@@ -378,15 +378,21 @@ class AccountingJournal extends CommonObject
 				case 1: // Various Journal
 					if (isModEnabled('asset') && !getDolGlobalInt('ACCOUNTING_DISABLE_TRANSFER_ON_ASSETS')) {
 						$tmp = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
-						if (is_array($tmp)) $data = array_merge($data, $tmp);
+						if (is_array($tmp)) {
+							$data = array_merge($data, $tmp);
+						}
 					}
 					if (isModEnabled('invoice') && !getDolGlobalInt('ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS')) {
 						$tmp = $this->getDiscountCustomer($user, $type, $date_start, $date_end, $in_bookkeeping);
-						if (is_array($tmp)) $data = array_merge($data, $tmp);
+						if (is_array($tmp)) {
+							$data = array_merge($data, $tmp);
+						}
 					}
 					if (isModEnabled('supplier_invoice') && !getDolGlobalInt('ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS')) {
 						$tmp = $this->getDiscountSupplier($user, $type, $date_start, $date_end, $in_bookkeeping);
-						if (is_array($tmp)) $data = array_merge($data, $tmp);
+						if (is_array($tmp)) {
+							$data = array_merge($data, $tmp);
+						}
 					}
 					break;
 					//              case 2: // Sells Journal
@@ -520,7 +526,7 @@ class AccountingJournal extends CommonObject
 
 			$element = array(
 				'ref' => dol_trunc($element_static->ref, 16, 'right', 'UTF-8', 1),
-				'error' => array_key_exists('error', $pre_data_info) ? $pre_data_info['error'] : '',
+				'error' => array_key_exists('error', $pre_data_info) ? $pre_data_info['error'] : '',  // @phpstan-ignore-line
 				'blocks' => array(),
 			);
 
@@ -745,8 +751,12 @@ class AccountingJournal extends CommonObject
 		$langs->loadLangs(array('bills'));
 
 		// Clean parameters
-		if (empty($type)) $type = 'view';
-		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
+		if (empty($type)) {
+			$type = 'view';
+		}
+		if (empty($in_bookkeeping)) {
+			$in_bookkeeping = 'notyet';
+		}
 
 		// Build SQL - Customer invoices closed by discount
 		$sql = "SELECT f.rowid, f.ref, f.datef, f.fk_soc, f.total_ttc";
@@ -794,7 +804,9 @@ class AccountingJournal extends CommonObject
 		$acc_vat_coll_def = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT');			// Normal to apply vat default account for buy with customer's discount
 
 		while ($obj = $this->db->fetch_object($resql)) {
-			if ($invoice_static->fetch((int) $obj->rowid) <= 0) continue;
+			if ($invoice_static->fetch((int) $obj->rowid) <= 0) {
+				continue;
+			}
 
 			$customer_static->fetch($invoice_static->socid);
 			$account_customer_general = !empty($customer_static->accountancy_code_customer_general) ? $customer_static->accountancy_code_customer_general : getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
@@ -808,18 +820,25 @@ class AccountingJournal extends CommonObject
 			$useddep = (float) price2num($invoice_static->getSumDepositsUsed(), 'MT');
 			$ttc_inv = (float) price2num($invoice_static->total_ttc, 'MT');
 			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
-			if ($escompte_ttc <= 0) continue;
+			if ($escompte_ttc <= 0) {
+				continue;
+			}
 
 			$bookkeeping_static = new BookKeeping($this->db);
 			$label_discount = $bookkeeping_static->accountingLabelForOperation($customer_static->getNomUrl(1, 'customer'), $invoice_static->ref, $langs->trans('DiscountGranted'));
 
 			// Distribution including VAT by rate
-			$ttcByRate = array(); $totalTTC = 0.0;
+			$ttcByRate = array();
+			$totalTTC = 0.0;
 			foreach ((array) $invoice_static->lines as $li) {
 				$ttc = (float) $li->total_ttc;
-				if (!$ttc) continue;
+				if (!$ttc) {
+					continue;
+				}
 				$key = number_format((float) $li->tva_tx, 3, '.', '');
-				if (!isset($ttcByRate[$key])) $ttcByRate[$key] = 0.0;
+				if (!isset($ttcByRate[$key])) {
+					$ttcByRate[$key] = 0.0;
+				}
 				$ttcByRate[$key] += $ttc;
 				$totalTTC += $ttc;
 			}
@@ -831,7 +850,7 @@ class AccountingJournal extends CommonObject
 			$element = array(
 				'ref'   => dol_trunc($invoice_static->ref, 16, 'right', 'UTF-8', 1),
 				'error' => '',
-				'blocks'=> array(),
+				'blocks' => array(),
 			);
 
 			$docdate = $this->db->jdate($obj->datef);
@@ -853,10 +872,11 @@ class AccountingJournal extends CommonObject
 				}
 
 				if ($rate > 0) {
-					$ht_part  = (float) price2num($ttc_part / (1 + $rate/100), 'MT');
+					$ht_part  = (float) price2num($ttc_part / (1 + $rate / 100), 'MT');
 					$tva_part = (float) price2num($ttc_part - $ht_part, 'MT');
 				} else {
-					$ht_part = $ttc_part; $tva_part = 0.0;
+					$ht_part = $ttc_part;
+					$tva_part = 0.0;
 				}
 
 				// VAT deductible account (by rate if available)
@@ -1035,8 +1055,12 @@ class AccountingJournal extends CommonObject
 		$langs->loadLangs(array('suppliers'));
 
 		// Clean parameters
-		if (empty($type)) $type = 'view';
-		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
+		if (empty($type)) {
+			$type = 'view';
+		}
+		if (empty($in_bookkeeping)) {
+			$in_bookkeeping = 'notyet';
+		}
 
 		// SQL - Supplier invoices closed by discount
 		$sql = "SELECT ff.rowid, ff.ref, ff.datef, ff.fk_soc, ff.total_ttc";
@@ -1084,7 +1108,9 @@ class AccountingJournal extends CommonObject
 		$acc_vat_ded_def  = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT');			// Normal to apply vat default account for sold with supplier's discount
 
 		while ($obj = $this->db->fetch_object($resql)) {
-			if ($invoicesupplier_static->fetch((int) $obj->rowid) <= 0) continue;
+			if ($invoicesupplier_static->fetch((int) $obj->rowid) <= 0) {
+				continue;
+			}
 
 			$supplier_static->fetch($invoicesupplier_static->socid);
 			$account_supplier_general = !empty($supplier_static->accountancy_code_supplier_general) ? $supplier_static->accountancy_code_supplier_general : getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
@@ -1098,33 +1124,45 @@ class AccountingJournal extends CommonObject
 			$useddep = (float) price2num($invoicesupplier_static->getSumDepositsUsed(), 'MT');
 			$ttc_inv = (float) price2num($invoicesupplier_static->total_ttc, 'MT');
 			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
-			if ($escompte_ttc <= 0) continue;
+			if ($escompte_ttc <= 0) {
+				continue;
+			}
 
 			$bookkeeping_static = new BookKeeping($this->db);
 			$label_discount = $bookkeeping_static->accountingLabelForOperation($supplier_static->getNomUrl(1, 'supplier'), $invoicesupplier_static->ref, $langs->trans('DiscountReceived'));
 
 			// Distribution including VAT by rate
-			$ttcByRate = array(); $totalTTC = 0.0;
+			$ttcByRate = array();
+			$totalTTC = 0.0;
 			foreach ((array) $invoicesupplier_static->lines as $li) {
 				$ttc = (float) $li->total_ttc;
-				if (!$ttc) continue;
+				if (!$ttc) {
+					continue;
+				}
 				$key = number_format((float) $li->tva_tx, 3, '.', '');
-				if (!isset($ttcByRate[$key])) $ttcByRate[$key] = 0.0;
+				if (!isset($ttcByRate[$key])) {
+					$ttcByRate[$key] = 0.0;
+				}
 				$ttcByRate[$key] += $ttc;
 				$totalTTC += $ttc;
 			}
-			if ($totalTTC <= 0) { $ttcByRate = array("0.000" => $escompte_ttc); $totalTTC = $escompte_ttc; }
+			if ($totalTTC <= 0) {
+				$ttcByRate = array("0.000" => $escompte_ttc);
+				$totalTTC = $escompte_ttc;
+			}
 
 			$element = array(
 				'ref'   => dol_trunc($invoicesupplier_static->ref, 16, 'right', 'UTF-8', 1),
 				'error' => '',
-				'blocks'=> array(),
+				'blocks' => array(),
 			);
 
 			$docdate = $this->db->jdate($obj->datef);
 			$docdate_fmt = dol_print_date($docdate, 'day');
 
-			$sumTTC = 0.0; $i = 0; $n = count($ttcByRate);
+			$sumTTC = 0.0;
+			$i = 0;
+			$n = count($ttcByRate);
 			foreach ($ttcByRate as $rateStr => $ttcRateOnInvoice) {
 				$i++;
 				$rate = (float) $rateStr;
@@ -1138,9 +1176,12 @@ class AccountingJournal extends CommonObject
 				}
 
 				if ($rate > 0) {
-					$ht_part  = (float) price2num($ttc_part / (1 + $rate/100), 'MT');
+					$ht_part  = (float) price2num($ttc_part / (1 + $rate / 100), 'MT');
 					$tva_part = (float) price2num($ttc_part - $ht_part, 'MT');
-				} else { $ht_part = $ttc_part; $tva_part = 0.0; }
+				} else {
+					$ht_part = $ttc_part;
+					$tva_part = 0.0;
+				}
 
 				// VAT collected account (by rate if available)
 				// TODO write function to search the same vat code like the supplier invoice
@@ -1273,9 +1314,11 @@ class AccountingJournal extends CommonObject
 					}
 				} else {
 					// si TVA = 0, pousser les 2 lignes view/bookkeeping déjà constituées
-					if ($type == 'view') $element['blocks'][] = $lines_view;
-					elseif ($type == 'bookkeeping') $element['blocks'][] = $lines_book;
-					else { // csv
+					if ($type == 'view') {
+						$element['blocks'][] = $lines_view;
+					} elseif ($type == 'bookkeeping') {
+						$element['blocks'][] = $lines_book;
+					} else { // csv
 						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($account_supplier_general), $label_discount.' - '.$langs->transnoentitiesnoconv('Supplier'), price($ttc_part), '');
 						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($acc_disc_recv), $label_discount.' ('.$rateStr.'%)', '', price($ht_part));
 					}

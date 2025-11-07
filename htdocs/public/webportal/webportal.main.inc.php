@@ -133,7 +133,13 @@ if (!defined('WEBPORTAL_NOREQUIRETRAN') || (!defined('WEBPORTAL_NOLOGIN') && !em
 /*
  * Phase authentication / login
  */
-if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->accessNeedLoggedUser)) {
+if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts['webportallogin']) && is_array($conf->modules_parts['webportallogin'])) {
+	foreach ($conf->modules_parts['webportallogin'] as $module => $file) {
+		$path=dol_buildpath("/$module/$file");
+		include_once $path;
+		break;
+	}
+} elseif (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->accessNeedLoggedUser)) {
 	$error = 0;
 
 	// Hooks for security access
