@@ -137,7 +137,7 @@ class LinkField extends CommonField
 		}
 
 		if ($optionParams['addCreateButton'] &&                                                                                              // If we have to add a create button
-			(!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage', 'alpha'), $_SERVER['PHP_SELF']) === 0) &&        // To avoid to open several times the 'Plus' button (we accept only one level)
+			(!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0) &&        // To avoid to open several times the 'Plus' button (we accept only one level)
 			!$fieldInfos->inputDisabled &&                                                                                            // To avoid to show the button if the field is protected by a "disabled".
 			empty($fieldInfos->otherParams['nonewbutton'])                                                                            // manually disable new button
 		) {
