@@ -1099,7 +1099,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				'name' => 'projectid',
 				'label' => $langs->trans('MergeOriginProject'),
 				'type' => 'other',
-				'value' => $form->selectProjects('', 'projectid', '', '', 0, 0, array(), 0, 'minwidth200', '', '', 1, null, true),
+				'value' => $form->selectProjects('', 'projectid', '', 0, 1, '','', array(), 0,1, '', 'minwidth200', 1),
 			)
 		);
 
