@@ -1903,12 +1903,6 @@ parameters:
 			path: ../../../htdocs/comm/action/pertype.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/action/pertype.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''show_pertype'' and ''show_day'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -9197,12 +9191,6 @@ parameters:
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 3
 			path: ../../../htdocs/exports/export.php
-
-		-
-			message: '#^Variable \$heightforframes might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/externalsite/frames.php
 
 		-
 			message: '#^If condition is always true\.$#'

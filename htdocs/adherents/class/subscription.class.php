@@ -263,19 +263,19 @@ class Subscription extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id             = $obj->rowid;
-				$this->ref            = $obj->rowid;
+				$this->id = $this->db->toInt($obj, 'rowid');
+				$this->ref = (string) $this->db->toInt($obj, 'rowid');
 
-				$this->fk_type        = $obj->fk_type;
-				$this->fk_adherent    = $obj->fk_adherent;
-				$this->datec          = $this->db->jdate($obj->datec);
-				$this->datem          = $this->db->jdate($obj->tms);
-				$this->dateh          = $this->db->jdate($obj->dateh);
-				$this->datef          = $this->db->jdate($obj->datef);
-				$this->amount         = $obj->subscription;
-				$this->note           = $obj->note_public;	// deprecated
-				$this->note_public    = $obj->note_public;
-				$this->fk_bank        = $obj->fk_bank;
+				$this->fk_type = $this->db->toNullInt($obj, 'fk_type');
+				$this->fk_adherent = $this->db->toNullInt($obj, 'fk_adherent');
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->datem = $this->db->jdate($obj->tms);
+				$this->dateh = $this->db->jdate($obj->dateh);
+				$this->datef = $this->db->jdate($obj->datef);
+				$this->amount = $obj->subscription;
+				$this->note = $obj->note_public;	// deprecated
+				$this->note_public = $obj->note_public;
+				$this->fk_bank = $obj->fk_bank;
 				return 1;
 			} else {
 				return 0;

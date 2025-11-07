@@ -1664,7 +1664,7 @@ class Adherent extends CommonObject
 
 				$state_id = $this->db->toNullInt($obj, 'state_id');
 				$this->state_id = $state_id;
-				$this->state_code = $state_id ? $obj->state_code : '';
+				$this->state_code = $state_id ? $this->db->toString($obj, 'state_code') : '';
 				$this->state = $state_id ? $obj->state : '';
 
 				$this->country_id = $this->db->toInt($obj, 'country_id');
@@ -1676,11 +1676,11 @@ class Adherent extends CommonObject
 					$this->country = $this->db->toString($obj, 'country');
 				}
 
-				$this->phone = $obj->phone;
-				$this->phone_perso = $obj->phone_perso;
-				$this->phone_mobile = $obj->phone_mobile;
-				$this->email = $obj->email;
-				$this->url = $obj->url;
+				$this->phone = $this->db->toNullString($obj, 'phone');
+				$this->phone_perso = $this->db->toNullString($obj, 'phone_perso');
+				$this->phone_mobile = $this->db->toNullString($obj, 'phone_mobile');
+				$this->email = $this->db->toNullString($obj, 'email');
+				$this->url = $this->db->toNullString($obj, 'url');
 
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
