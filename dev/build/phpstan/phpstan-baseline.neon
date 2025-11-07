@@ -8947,12 +8947,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
 			message: '#^Variable \$rowEnd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -14293,12 +14287,6 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 2
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''commande'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 2
@@ -14329,25 +14317,7 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Variable \$originid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Variable \$reception might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/reception/card.php
