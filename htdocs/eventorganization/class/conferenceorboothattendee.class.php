@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -134,11 +134,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public $email;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $firstname;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $lastname;
 	/**
@@ -161,14 +161,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var string|float (Price)
 	 */
 	public $amount;
-	/**
-	 * @var string
-	 */
-	public $note_public;
-	/**
-	 * @var string
-	 */
-	public $note_private;
+
 	/**
 	 * @var int
 	 */
@@ -182,15 +175,16 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public $last_main_doc;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $import_key;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $model_pdf;
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 	// END MODULEBUILDER PROPERTIES
@@ -350,28 +344,17 @@ class ConferenceOrBoothAttendee extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) {
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$object->ref = empty($this->fields['ref']['default']) ? "(PROV)" : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'status')) {
-			$object->status = self::STATUS_DRAFT;
-		}
-		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
-		}
-		if (property_exists($object, 'date_modification')) {
-			$object->date_modification = null;
-		}
-		// ...
+		$object->ref = "(PROV)";
+		$object->status = self::STATUS_DRAFT;
+		$object->date_creation = dol_now();
+		$object->date_modification = null;
+
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key);
-					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -397,7 +380,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+			if (!empty($this->fk_soc) && $this->fk_soc == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -483,7 +466,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 					if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
 						$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
 					} elseif (!empty($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} elseif ($key == 'customsql') {
 						$sqlwhere[] = $value;
 					} elseif (strpos($value, '%') === false) {
@@ -612,7 +595,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		// Define new ref
 		$num = (string) $this->ref;
-		if (!$error && (preg_match('/^[\(]?PROV/i', $num) || empty($num))) { // empty should not happened, but when it occurs, the test saves life
+		if (preg_match('/^[\(]?PROV/i', $num) || empty($num)) { // empty should not happened, but when it occurs, the test saves life
 			$num = $this->getNextNumRef();
 		}
 
@@ -730,8 +713,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$project = new Project($this->db);
 		$result = $project->fetch($this->fk_project);
 
-		$this->projet = $project; // deprecated
 		$this->project = $project;
+
 		return $result;
 	}
 
@@ -1096,7 +1079,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("eventorganization@eventorganization");
 
@@ -1112,41 +1094,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		$modelpath = "core/modules/eventorganization/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
 	}
 
 	/**
@@ -1185,7 +1137,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		$ret = '';
 
-		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+		$ret .= dolGetFirstLastname((string) $firstname, (string) $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
 	}

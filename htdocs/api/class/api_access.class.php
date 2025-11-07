@@ -55,17 +55,17 @@ class DolibarrApiAccess implements iAuthenticate
 	public $db;
 
 	/**
-	 * @var string[]	role required by API method		user / external / admin
+	 * @var string[]	Role required by API method		user / external / admin
 	 */
 	public static $requires = array('user', 'external', 'admin');
 
 	/**
-	 * @var string		user role
+	 * @var string		User role
 	 */
 	public static $role = 'user';
 
 	/**
-	 * @var User		$user	Loggued user
+	 * @var User		Loggued user
 	 */
 	public static $user = null;
 
@@ -194,7 +194,7 @@ class DolibarrApiAccess implements iAuthenticate
 						$mysoc = $fmysoc;
 
 						// Reload langs
-						$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+						$langcode = (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
 						if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 							$langcode = $user->conf->MAIN_LANG_DEFAULT;
 						}

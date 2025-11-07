@@ -336,7 +336,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
+			} elseif ($type == 'email' || $type == 'mail' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -1127,23 +1127,41 @@ class ExtraFields
 	 * Code very similar with showInputField of common object
 	 *
 	 * @param  string        		$key            		Key of attribute
-	 * @param  string|array{start:int,end:int}  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
+	 * @param  string|array{start:int,end:int}  $value 		Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
 	 * @param  string        		$moreparam      		To add more parameters on html input tag
 	 * @param  string        		$keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param  string        		$keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        		$morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
 	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
-	 * @param  int	         		$mode                  1=Used for search filters
+	 * @param  int	         		$mode                  	1=Used for search filters
 	 * @return string
 	 */
 	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
 	{
-		global $conf, $langs, $form;
+		global $conf, $langs, $form, $hookmanager;
 
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
+		}
+
+		$parameters = array(
+			'key'                  => $key,
+			'value'                => &$value,
+			'moreparam'            => $moreparam,
+			'keysuffix'            => $keysuffix,
+			'keyprefix'            => $keyprefix,
+			'morecss'              => $morecss,
+			'object'               => $object,
+			'extrafieldsobjectkey' => $extrafieldsobjectkey,
+			'mode'                 => $mode
+		);
+		$action = '';
+
+		$reshook = $hookmanager->executeHooks('showInputExtraField', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
 		}
 
 		$objectid = (is_numeric($object) ? $object : $object->id);
@@ -1446,6 +1464,7 @@ class ExtraFields
 				}
 			}
 			if (!getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
+				//$out .= '<!-- type = sellist -->';
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 				if (is_array($param['options'])) {
 					// WARNING!! @FIXME This code is duplicated into core/class/extrafields.class.php
@@ -1520,8 +1539,8 @@ class ExtraFields
 					}
 
 					if (!$filter_categorie) {
-						$fields_label = explode('|', $InfoFieldList[1]);
-						if (is_array($fields_label)) {
+						$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+						if (!empty($fields_label)) {
 							$keyList .= ', ';
 							$keyList .= implode(', ', $fields_label);
 						}
@@ -1625,16 +1644,22 @@ class ExtraFields
 								$labeltoshow = '';
 								$obj = $this->db->fetch_object($resql);
 
-								// Several field into label (eq table:code|label:rowid)
+								$nameFields = $InfoFieldList[1];
+								// If text is "field1|f(a,b,c) as xxx|field2", we must convert string into 'field1|xxx|field2'
+								$nameFields = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $nameFields);
+								// Sanitize field names to avoid error when doing $obj->field
+								$nameFields = preg_replace('/[^0-9a-z_\.\|]/i', '', $nameFields);
+
+								// Several fields into label (eq table:code|label:rowid)
 								$notrans = false;
-								$fields_label = explode('|', $InfoFieldList[1]);
+								$fields_label = explode('|', $nameFields);
 								if (is_array($fields_label) && count($fields_label) > 1) {
 									$notrans = true;
 									foreach ($fields_label as $field_toshow) {
 										$labeltoshow .= $obj->$field_toshow.' ';
 									}
 								} else {
-									$labeltoshow = $obj->{$InfoFieldList[1]};
+									$labeltoshow = $obj->$nameFields;
 								}
 
 								if ($value == $obj->rowid) {
@@ -1647,7 +1672,7 @@ class ExtraFields
 									$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 								} else {
 									if (!$notrans) {
-										$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+										$translabel = $langs->trans($obj->$nameFields);
 										$labeltoshow = $translabel;
 									}
 									if (empty($labeltoshow)) {
@@ -1655,6 +1680,8 @@ class ExtraFields
 									}
 
 									if (!empty($InfoFieldList[3]) && $parentField) {
+										// Sanitize parent field name to avoid when doing $obj->field
+										$parentField = preg_replace('/[^a-zA-Z0-9_\-]/', '', $parentField);
 										$parent = $parentName.':'.$obj->{$parentField};
 									}
 
@@ -2058,7 +2085,7 @@ class ExtraFields
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (is_null($outputlangs) || !is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -2067,6 +2094,21 @@ class ExtraFields
 		if (empty($extrafieldsobjectkey)) {
 			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_ERR);
 			return 'BadValueForParamExtraFieldsObjectKey';
+		}
+
+		$parameters = array(
+			'key'                  => $key,
+			'value'                => &$value,
+			'moreparam'            => $moreparam,
+			'extrafieldsobjectkey' => $extrafieldsobjectkey,
+			'outputlangs'          => $outputlangs,
+			'object'               => $object
+		);
+		$action = '';
+
+		$reshook = $hookmanager->executeHooks('showOutputExtraField', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
 		}
 
 		$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
@@ -2272,11 +2314,15 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			if (!isset($param['options'][$value])) {
+			if ($required && !isset($param['options'][$value])) {
 				$outputlangs->load('errors');
-				$value = $outputlangs->trans('ErrorNoValueForRadioType');
+				$value = '<span class="opacitymedium">'.$outputlangs->trans('ErrorNoValueForRadioType').'</span>';
 			} else {
-				$value = $outputlangs->trans($param['options'][$value]);
+				if (isset($param['options'][$value])) {
+					$value = $outputlangs->trans($param['options'][$value]);
+				} else {
+					$value = '';
+				}
 			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);

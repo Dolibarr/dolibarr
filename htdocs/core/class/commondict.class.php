@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,17 +55,17 @@ abstract class CommonDict
 	public $entity;
 
 	/**
-	 * @var string 		The code
+	 * @var ?string 		The code
 	 */
 	public $code;
 
 	/**
-	 * @var string 		The label
+	 * @var ?string 		The label
 	 */
 	public $label;
 
 	/**
-	 * @var int<0,1>	1 if the entry is active, 0 if not
+	 * @var ?int<0,1>	1 if the entry is active, 0 if not
 	 */
 	public $active;
 }

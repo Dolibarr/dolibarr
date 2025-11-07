@@ -616,7 +616,7 @@ array(
 "class" => "poscolordelete"
 ),
 );
-$numpad = getDolGlobalString('TAKEPOS_NUMPAD');
+$numpad = getDolGlobalInt('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);

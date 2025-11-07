@@ -220,8 +220,9 @@ class pdf_cyan extends ModelePDFPropales
 				$arephoto = false;
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
-						if ($conf->entity != $objphoto->entity) {
-							$dir = $conf->product->multidir_output[$objphoto->entity].'/'.$midir; //Check repertories of current entities
+						$entity = $objphoto->entity;
+						if ($entity !== null && $conf->entity != $entity) {
+							$dir = $conf->product->multidir_output[$entity].'/'.$midir; //Check repertories of current entities
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
@@ -666,23 +667,7 @@ class pdf_cyan extends ModelePDFPropales
 							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 						} else {
 							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
-							$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
-							$pdf->SetXY($pdf->GetX(), $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite  - $this->marge_gauche, 6, '', 0, '', true);
-							$previous_align = array();
-							$previous_align['align'] = $this->cols['desc']['content']['align'];
-							if ($object->lines[$i]->qty < 0) {
-								$langs->load("subtotals");
-								$object->lines[$i]->desc = $langs->trans("SubtotalOf", $object->lines[$i]->desc);
-								if ($previous_align['align'] == 'L') {
-									$this->cols['desc']['content']['align'] = 'R';
-								} elseif ($previous_align['align'] == 'R') {
-									$this->cols['desc']['content']['align'] = 'L';
-								}
-							}
-							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
-							$this->cols['desc']['content']['align'] = $previous_align['align']; // Re align if we printed a subtotal ligne
+							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						}
 					}
 
@@ -1250,7 +1235,7 @@ class pdf_cyan extends ModelePDFPropales
 						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					}
 					$account = new Account($this->db);
-					$account->fetch($bankid);
+					$account->fetch((int) $bankid);
 
 					$curx = $this->marge_gauche;
 					$cury = $posy;
@@ -2128,7 +2113,7 @@ class pdf_cyan extends ModelePDFPropales
 			'width' => 10,
 			'status' => getDolGlobalInt('PDF_CYAN_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
-				'textkey' => '#', // use lang key is useful in somme case with module
+				'textkey' => '#', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -2146,7 +2131,7 @@ class pdf_cyan extends ModelePDFPropales
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

@@ -45,6 +45,11 @@ class Opensurveysondage extends CommonObject
 	public $table_element = 'opensurvey_sondage';
 
 	/**
+	 * @var string
+	 */
+	public $table_rowid = 'id_sondage';
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'poll';
@@ -108,7 +113,7 @@ class Opensurveysondage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'id_sondage' => array('type' => 'varchar(16)', 'label' => 'Idsondage', 'enabled' => '1', 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -141,12 +146,12 @@ class Opensurveysondage extends CommonObject
 	public $commentaires;
 
 	/**
-	 * @var string admin mail
+	 * @var ?string admin mail
 	 */
 	public $mail_admin;
 
 	/**
-	 * @var string admin name
+	 * @var ?string admin name
 	 */
 	public $nom_admin;
 
@@ -156,13 +161,13 @@ class Opensurveysondage extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var string title of survey
+	 * @var ?string title of survey
 	 * @deprecated Rename the field titre into title into the table to allow to change this in fields and remove this declaration.
 	 */
 	public $titre;
 
 	/**
-	 * @var string title of survey
+	 * @var ?string title of survey
 	 */
 	public $title;
 
@@ -170,28 +175,29 @@ class Opensurveysondage extends CommonObject
 	 * @var int|'' end date of survey
 	 */
 	public $date_fin = '';
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
 	/**
-	 * @var string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
+	 * @var ?string format 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
 	 */
 	public $format;
 
 	/**
-	 * @var int to allow send mail
+	 * @var ?int to allow send mail
 	 */
 	public $mailsonde;
 
 	/**
-	 * @var int		Allow comments on this poll
+	 * @var ?int		Allow comments on this poll
 	 */
 	public $allow_comments;
 
 	/**
-	 * @var int		Allow users see others vote
+	 * @var ?int		Allow users see others vote
 	 */
 	public $allow_spy;
 
@@ -272,10 +278,10 @@ class Opensurveysondage extends CommonObject
 		$sql .= "'".$this->db->escape($this->id_sondage)."',";
 		$sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
 		$sql .= " ".(int) $user->id.",";
-		$sql .= " '".$this->db->escape($this->title)."',";
+		$sql .= " '".$this->db->escape((string) $this->title)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".(int) $this->status.",";
-		$sql .= " '".$this->db->escape($this->format)."',";
+		$sql .= " '".$this->db->escape((string) $this->format)."',";
 		$sql .= " ".((int) $this->mailsonde).",";
 		$sql .= " ".((int) $this->allow_comments).",";
 		$sql .= " ".((int) $this->allow_spy).",";

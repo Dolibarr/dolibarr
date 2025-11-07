@@ -57,3 +57,5 @@ ReceptionMustBeInTheSameCurrencyThanOther=Reception have to be int the same curr
 AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=Automatic validation is not possible when stock is decreased on invoice validation
 ReceptionSentByEMail=Reception sent by email
 ReceptionValidated=Reception validated
+DateReception=Reception date
+SetReceptionDate=Set reception date

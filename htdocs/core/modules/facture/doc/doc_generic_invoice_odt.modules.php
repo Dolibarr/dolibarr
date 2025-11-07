@@ -270,7 +270,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 
-				$newfiletmp = $objectref . '_' . $newfiletmp;
+				if (getDolGlobalString('MAIN_ODT_AS_PDF_OMIT_TEMPLATE_NAME')) {
+					$newfiletmp = $objectref;
+				} else {
+					$newfiletmp = $objectref . '_' . $newfiletmp;
+				}
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
@@ -455,7 +459,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				// retrieve the constant to apply a ratio for image size or set the ratio to 1
 				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
 				} else {
 					$ratio = 1;
 				}

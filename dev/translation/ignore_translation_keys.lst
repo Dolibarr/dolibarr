@@ -175,7 +175,6 @@ Child of
 ClassNotFound
 Clear
 ClickToDial
-Clients
 Clone
 CloneAffectation
 CloneChanges
@@ -198,8 +197,6 @@ ConfirmActionMyObject
 ConfirmActionTarget
 ConfirmCloneMyObject
 ConfirmCloneTask
-ConfirmCreateAdherent
-ConfirmDeleteAdherent
 ConfirmDeleteIndividual
 ConfirmDeleteReport
 ConfirmDeleteWebsiteAccount
@@ -263,7 +260,6 @@ Dictionaries
 DictionaryEmpty
 DictionaryNameUpdated
 Directory
-DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND
 Document
 Documentation
 Dolibarr
@@ -287,7 +283,6 @@ EmailcollectorFilter
 EmailingTargetSelector
 Empty
 End
-EnterAnIP
 EnterNameOfDictionnaryToDeleteDesc
 Entries
 ErrSCAAuthentication
@@ -329,7 +324,6 @@ ErrorFailedToGetListOfNotificationsToSend
 ErrorFailedToLoadBankAccount
 ErrorFailedToLoadDiscount
 ErrorFailedToSetNewPassword
-ErrorFaviconMustBeASquaredImage
 ErrorFileNameInvalid
 ErrorImportOfChartLimitedToCurrentChart
 ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT
@@ -406,7 +400,6 @@ Filename
 FilteredFrom
 Flashy
 ForcedByGlobalSetup
-Form for public lead registration has not been enabled
 Free
 FreeLegalTextOnReceptions
 FrequencyPer_
@@ -428,7 +421,6 @@ Gzip
 HTTPBasicPassword
 HelpAbandonProductReturned
 HideVersionLink
-HolidayStarted
 Hook
 Hooks
 IBANNotDefined
@@ -630,17 +622,13 @@ Poll
 Posts
 PredefinedInterventional
 PrevRangeToThisRange
-PreviousFingerprint
 Print
 PrintDriver
 PrintModule
 PrintUserConfDesc
 PrinterId
 PrinterIdEmpty
-PrinterLocation
-PrinterNameEmpty
 PrinterParameterEmpty
-Printers
 Printing
 ProductCodeDesc
 ProductFournisseurPrice
@@ -813,7 +801,6 @@ TicketTypeShort
 TimeOnly
 Timezone
 ToGetBack
-ToPay
 Token
 Tooltip
 TooltipEditAndRevertStockMovement

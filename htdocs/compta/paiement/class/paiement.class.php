@@ -708,6 +708,7 @@ class Paiement extends CommonObject
 
 		// Delete bank urls. If payment is on a conciliated line, return error.
 		if ($bank_line_id > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accline = new AccountLine($this->db);
 
 			$result = $accline->fetch($bank_line_id);
@@ -1557,6 +1558,7 @@ class Paiement extends CommonObject
 	 */
 	public function isReconciled()
 	{
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$accountline = new AccountLine($this->db);
 		$accountline->fetch($this->bank_line);
 		return $accountline->rappro ? true : false;

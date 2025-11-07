@@ -473,3 +473,4 @@ NewSocNameForClone=Nouveau nom société
 ConfirmCloneThirdparties=Êtes-vous sûr de vouloir cloner <b>%s</b> société ?
 SocialNetworksBusiness=Réseaux sociaux de la société
 ErrorCommercialNotAllowedForThirdparty=Le utilisateur %s n'a pas l'autorisation de voir tous les tiers et n'est pas un représentant commercial autorisé du société.
+ImpossibleToCreateUserFromContact=Impossible de créer l'utilisateur à partir ce ce contact

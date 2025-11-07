@@ -150,7 +150,7 @@ class PaymentSalary extends CommonObject
 	public $datev = '';
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -639,7 +639,7 @@ class PaymentSalary extends CommonObject
 				$this->datev
 			);
 
-			// Update fk_bank into llx_paiement_salary.
+			// Update fk_bank into llx_payment_salary.
 			// so we know the payment that was used to generated the bank entry.
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
@@ -848,13 +848,12 @@ class PaymentSalary extends CommonObject
 	 *  @param  int     $notooltip      			1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  string  $option         			''=Show ref, 'nolink'=No link
 	 *	@return	string								Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1, $option = '')
 	{
 		global $conf, $langs, $hookmanager;
-
-		$option = '';
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -901,19 +900,17 @@ class PaymentSalary extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		// if ($option == 'nolink') {
-		// 	$linkstart = '<span';
-		// } else {
-		// 	$linkstart = '<a href="'.$url.'"';
-		// }
-		// $linkstart .= $linkclose.'>';
-		// if ($option == 'nolink') {
-		// 	$linkend = '</span>';
-		// } else {
-		// 	$linkend = '</a>';
-		// }
-		$linkstart = '<a href="'.$url.'"';
-		$linkend = '</a>';
+		if ($option == 'nolink') {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
+		$linkstart .= $linkclose.'>';
+		if ($option == 'nolink') {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
 
 		$result .= $linkstart;
 

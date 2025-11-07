@@ -9,6 +9,7 @@
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +92,11 @@ class UserGroup extends CommonObject
 	public $note;
 
 	/**
+	 * @var string Color
+	 */
+	public $color;
+
+	/**
 	 * @var User[]  Array of users
 	 */
 	public $members = array();
@@ -127,6 +133,7 @@ class UserGroup extends CommonObject
 		'note' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => -1, 'searchall' => 1),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 50, 'notnull' => 1,),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 60, 'notnull' => 1,),
+		'color' => array('type' => 'varchar(6)', 'label' => 'Color', 'enabled' => 1, 'visible' => 1, 'position' => 70, 'notnull' => -1, 'comment' => 'Color for pictogram'),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPDF', 'enabled' => 1, 'visible' => 0, 'position' => 100),
 	);
 
@@ -178,6 +185,7 @@ class UserGroup extends CommonObject
 		}
 
 		$this->name = $this->nom; // For compatibility with field name
+		$this->note_private = $this->note; // For compatibility with old field note
 
 		if ($result) {
 			if ($load_members) {
@@ -700,6 +708,9 @@ class UserGroup extends CommonObject
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
+		if (!empty($this->note_private)) {
+			$this->note = $this->note_private; // Field for 'note_private' is called 'note' in database
+		}
 
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
@@ -720,6 +731,10 @@ class UserGroup extends CommonObject
 
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
+		}
+
+		if (!empty($this->note_private)) {
+			$this->note = $this->note_private; // Field for 'note_private' is called 'note' in database
 		}
 
 		return $this->updateCommon($user, $notrigger);
@@ -753,7 +768,7 @@ class UserGroup extends CommonObject
 			}
 		}
 
-		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+		$ret .= dolGetFirstLastname((string) $firstname, (string) $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
 	}
@@ -847,10 +862,11 @@ class UserGroup extends CommonObject
 		}
 
 		if ($option == 'permissions') {
-			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/perms.php';
 		} else {
-			$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/user/group/card.php';
 		}
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -859,9 +875,10 @@ class UserGroup extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = "";
 		if (empty($notooltip)) {

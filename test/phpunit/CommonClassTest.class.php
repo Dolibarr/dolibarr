@@ -394,7 +394,6 @@ abstract class CommonClassTest extends TestCase
 		'expensereport' => 'ExpenseReport',
 		'export' => 'Export',
 		'externalrss' => 'ExternalRss',  // TODO: fill in proper name
-		'externalsite' => 'ExternalSite',
 		'fckeditor' => 'Fckeditor',
 		'fournisseur' => 'Fournisseur',
 		'ftp' => 'FTP',

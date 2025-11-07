@@ -198,7 +198,7 @@ class FormActions
 				$projectid = $object->id;
 			}
 			$taskid = 0;
-			if ($typeelement == 'task') {
+			if ($typeelement == 'project_task') {
 				$taskid = $object->id;
 			}
 

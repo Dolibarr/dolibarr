@@ -76,6 +76,7 @@ require_once $dolibarr_main_document_root.'/core/lib/price.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
+require_once $dolibarr_main_document_root.'/user/class/user.class.php';
 
 global $langs;
 
@@ -86,8 +87,8 @@ $error = 0;
 // This page can be long. We increase the allowed delay, but this does not work when we are in safe_mode.
 $err = error_reporting();
 error_reporting(0);
-if (getDolGlobalString('MAIN_OVERRIDE_TIME_LIMIT')) {
-	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
+if (getDolGlobalInt('MAIN_OVERRIDE_TIME_LIMIT')) {
+	@set_time_limit(getDolGlobalInt('MAIN_OVERRIDE_TIME_LIMIT'));
 } else {
 	@set_time_limit(600);
 }
@@ -129,7 +130,6 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
-	$path = __DIR__.'/';
 	if (substr($sapi_type, 0, 3) == 'cli') {
 		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";
 		print 'Example, upgrade from 19 to 20: '.$script_file." 19.0.0 20.0.0\n";
@@ -198,6 +198,53 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	// Load global conf
 	$conf->setValues($db);
+
+
+	// Reforce log activation (samecode than into the inc.php)
+	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+	$conf->modules['syslog'] = 'syslog';
+	$conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
+	if (!defined('SYSLOG_HANDLERS')) {
+		define('SYSLOG_HANDLERS', '["mod_syslog_file"]');
+	}
+	if (!defined('SYSLOG_FILE')) {	// To avoid warning on systems with constant already defined
+		if (@is_writable('/tmp')) {
+			define('SYSLOG_FILE', '/tmp/dolibarr_install.log');
+		} elseif (!empty($_ENV["TMP"]) && @is_writable($_ENV["TMP"])) {
+			define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
+		} elseif (!empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) {
+			define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
+		} elseif (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) {
+			define('SYSLOG_FILE', '../../../../dolibarr_install.log'); // For DoliWamp
+		} elseif (@is_writable('../../')) {
+			define('SYSLOG_FILE', '../../dolibarr_install.log'); // For others
+		}
+		//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
+	}
+	if (defined('SYSLOG_FILE')) {
+		$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
+	}
+	if (!defined('SYSLOG_FILE_NO_ERROR')) {
+		define('SYSLOG_FILE_NO_ERROR', 1);
+	}
+	// We init log handler for install
+	$handlers = array('mod_syslog_file');
+	foreach ($handlers as $handler) {
+		$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
+		if (!file_exists($file)) {
+			throw new Exception('Missing log handler file '.$handler.'.php');
+		}
+
+		require_once $file;
+		$loghandlerinstance = new $handler();
+		if (!$loghandlerinstance instanceof LogHandler) {
+			throw new Exception('Log handler does not extend LogHandler');
+		}
+
+		if (empty($conf->loghandlers[$handler])) {
+			$conf->loghandlers[$handler] = $loghandlerinstance;
+		}
+	}
 
 
 	$listofentities = array(1);
@@ -275,7 +322,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
-			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', isset($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_UPGRADE : (isset($conf->global->MAIN_VERSION_LAST_INSTALL) ? $conf->global->MAIN_VERSION_LAST_INSTALL : ''));
+			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 
 			// Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
 			// dans la 1ere colonne, la description de l'action a faire
@@ -628,10 +675,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_CRON' => 'newboxdefonly',
 				'MAIN_MODULE_COMMANDE' => 'newboxdefonly',
 				'MAIN_MODULE_BLOCKEDLOG' => 'noboxes',
-				'MAIN_MODULE_DEPLACEMENT' => 'newboxdefonly',
 				'MAIN_MODULE_DON' => 'newboxdefonly',
 				'MAIN_MODULE_ECM' => 'newboxdefonly',
-				'MAIN_MODULE_EXTERNALSITE' => 'newboxdefonly',
 				'MAIN_MODULE_EXPENSEREPORT' => 'newboxdefonly',
 				'MAIN_MODULE_FACTURE' => 'newboxdefonly',
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
@@ -4323,7 +4368,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		$user = new User($db);	// To avoid error during migration
 	}
 
-	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)));
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)), LOG_NOTICE);
 
 	$reloadactionformodules = array(
 		'MAIN_MODULE_AGENDA' => array('class' => 'modAgenda', 'remove' => 1),
@@ -4331,7 +4376,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_BARCODE' => array('class' => 'modBarcode', 'remove' => 1),
 		'MAIN_MODULE_BLOCKEDLOG' => array('class' => 'modBlockedLog', 'deleteinsertmenus' => 1),
 		'MAIN_MODULE_CRON' => array('class' => 'modCron', 'remove' => 1),
-		'MAIN_MODULE_EXTERNALSITE' => array('class' => 'modExternalSite', 'remove' => 1),
 		'MAIN_MODULE_SOCIETE' => array('class' => 'modSociete', 'remove' => 1),
 		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
@@ -4393,7 +4437,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$moduletoreloadshort = $reg[1];
 				}
 
-				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode." (generic code)");
+				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode." (generic code)", LOG_NOTICE);
 
 				$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php';
 				if ($res) {
@@ -4405,7 +4449,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$mod->delete_menus(); // We must delete to be sure it is inserted with new values
 					$mod->init($reloadmode);
 				} else {
-					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
+					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php', LOG_ERR);
 
 					$res = @dol_include_once(strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php');
 					if ($res) {
@@ -5380,10 +5424,10 @@ function migrate_accountingbookkeeping(int $entity)
  */
 function migrate_apiresttokens()
 {
-	global $db, $langs;
+	global $conf, $db, $langs;
 
 	print '<tr class="trforrunsql"><td colspan="4">';
-	print '<b>'.$langs->trans('MigrationApiRestTokens')."</b><br>\n";
+	print '<b>'.$langs->trans('MigrationApiRestTokens')."</b>:\n";
 
 	$error = 0;
 	$nbofmigration = 0;
@@ -5408,17 +5452,26 @@ function migrate_apiresttokens()
 	}
 
 	if (!$error) {
-		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, CURRENT_TIMESTAMP AS datec, u.entity";
+		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, u.entity";
 		$sql .= " FROM llx_user AS u";
-		$sql .= " WHERE u.api_key IS NOT NULL";
+		$sql .= " WHERE u.api_key IS NOT NULL AND u.api_key <> ''";
 
 		$result = $db->query($sql);
 
 		if ($result) {
+			$tmpuser = new User($db);
+
 			while ($obj = $db->fetch_object($result)) {
 				if (!in_array(dolDecrypt($obj->token), $allexistingtokens)) {
-					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, fk_user, datec, entity)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape($obj->token)."', ".((int) $obj->fk_user).", '".$db->escape($obj->datec)."', ".((int) $obj->entity).")";
+					// Load the object of the user of token so we can get the API_COUNT_CALL
+					unset($tmpuser->conf); $tmpuser->conf = new stdClass();
+					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
+
+					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->token)))."', ";
+					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
+					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
+					$sqlforinsert .= ")";
 
 					$insertresult = $db->query($sqlforinsert);
 					if (!$insertresult) {
@@ -5442,10 +5495,9 @@ function migrate_apiresttokens()
 	}
 
 	if (!$nbofmigration) {
-		print '</td></tr>';
-		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+		print $langs->trans("NothingToDo")."\n";
 	} else {
 		print $langs->trans('MigratedTokens', $nbofmigration);
-		print '</td></tr>';
 	}
+	print '</td></tr>';
 }

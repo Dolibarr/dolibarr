@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2019 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,10 +139,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	// Search template files
 	$file = '';
 	$classname = '';
-	$dirmodels = array('/');
-	if (is_array($conf->modules_parts['models'])) {
-		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-	}
+	$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$modele.".modules.php";

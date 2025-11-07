@@ -298,7 +298,7 @@ $arrayfields = array(
 if (! empty($conf->stock->enabled)) {
 	// service
 	if ($type == 1) {
-		if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => '0', 'position' => 1001);
 		}
 	} else {
@@ -984,7 +984,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if (!empty($catid)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'product/list.php');
+	$ways = $c->print_all_ways('auto', 'product/list.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
@@ -1700,7 +1700,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

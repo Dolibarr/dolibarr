@@ -52,6 +52,11 @@ class Workstation extends CommonObject
 	 */
 	public $picto = 'workstation';
 
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'WORKSTATION';
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -85,7 +90,7 @@ class Workstation extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -132,12 +137,12 @@ class Workstation extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var int User ID
+	 * @var ?int User ID
 	 */
 	public $fk_user_modif;
 
 	/**
-	 * @var int status enabled or disabled
+	 * @var ?int status enabled or disabled
 	 */
 	public $status;
 
@@ -188,7 +193,7 @@ class Workstation extends CommonObject
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -291,23 +296,12 @@ class Workstation extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) {
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'label')) {
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		}
-		if (property_exists($object, 'status')) {
-			$object->status = self::STATUS_DISABLED;
-		}
-		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
-		}
-		if (property_exists($object, 'date_modification')) {
-			$object->date_modification = null;
-		}
-		// ...
+		$object->ref = "Copy_Of_".$object->ref;
+		$object->label = $langs->trans("CopyOf")." ".$object->label;
+		$object->status = self::STATUS_DISABLED;
+		$object->date_creation = dol_now();
+		$object->date_modification = null;
+
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
@@ -326,8 +320,7 @@ class Workstation extends CommonObject
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -393,7 +386,7 @@ class Workstation extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return Workstation[]|int<-1,-1>                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -469,7 +462,7 @@ class Workstation extends CommonObject
 		foreach ($groups as $id_group) {
 			$ws_usergroup = new WorkstationUserGroup($this->db);
 			$ws_usergroup->fk_workstation = $this->id;
-			$ws_usergroup->fk_usergroup = $id_group;
+			$ws_usergroup->fk_usergroup = (int) $id_group;
 			$ws_usergroup->createCommon($user);
 			$this->usergroups[] = $id_group;
 		}
@@ -482,7 +475,7 @@ class Workstation extends CommonObject
 			foreach ($resources as $id_resource) {
 				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $this->id;
-				$ws_resource->fk_resource = $id_resource;
+				$ws_resource->fk_resource = (int) $id_resource;
 				$ws_resource->createCommon($user);
 				$this->resources[] = $id_resource;
 			}
@@ -721,19 +714,17 @@ class Workstation extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'label')) {
+		if (!empty($this->label)) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+		if (isset($this->thirdparty) && is_object($this->thirdparty)) {
 			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
@@ -898,7 +889,6 @@ class Workstation extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("workstation");
 
@@ -914,9 +904,7 @@ class Workstation extends CommonObject
 
 		$modelpath = "core/modules/workstation/doc/";
 
-		if ($includedocgeneration) {
-			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		}
+		$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 
 		return $result;
 	}

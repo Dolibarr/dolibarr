@@ -635,23 +635,7 @@ class pdf_espadon extends ModelePdfExpedition
 					if ($this->getColumnStatus('desc')) {
 						if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
 							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
-							$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
-							$pdf->SetXY($pdf->GetX() + 1, $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite  - $this->marge_gauche - 2, 6, '', 0, '', true);
-							$previous_align = array();
-							$previous_align['align'] = $this->cols['desc']['content']['align'];
-							if ($object->lines[$i]->qty < 0) {
-								$langs->load("subtotals");
-								$object->lines[$i]->desc = $langs->trans("SubtotalOf", $object->lines[$i]->desc);
-								if ($previous_align['align'] == 'L') {
-									$this->cols['desc']['content']['align'] = 'R';
-								} elseif ($previous_align['align'] == 'R') {
-									$this->cols['desc']['content']['align'] = 'L';
-								}
-							}
-							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
-							$this->cols['desc']['content']['align'] = $previous_align['align']; // Re align if we printed a subtotal ligne
+							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						} else {
 							$pdf->startTransaction();
 
@@ -1179,7 +1163,7 @@ class pdf_espadon extends ModelePdfExpedition
 				}
 				$Yoff += 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
-				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), 0, 'R');
+				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities((string) $text), 0, 'R');
 				$Yoff += 3;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date, "day", false, $outputlangs, true), 0, 'R');
@@ -1380,7 +1364,7 @@ class pdf_espadon extends ModelePdfExpedition
 			'width' => 10,
 			'status' => getDolGlobalInt('PDF_ESPADON_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
-				'textkey' => '#', // use lang key is useful in somme case with module
+				'textkey' => '#', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -1398,7 +1382,7 @@ class pdf_espadon extends ModelePdfExpedition
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

@@ -103,7 +103,7 @@ class Asset extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -1042,13 +1042,12 @@ class Asset extends CommonObject
 				}
 
 				// Delete old lines
-				$sql = "DELETE " . MAIN_DB_PREFIX . "asset_depreciation FROM " . MAIN_DB_PREFIX . "asset_depreciation";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab ON ab.doc_type = 'asset' AND ab.fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid";
-				$sql .= " WHERE " . MAIN_DB_PREFIX . "asset_depreciation.fk_asset = " . (int) $this->id;
-				$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " AND ab.fk_docdet IS NULL";
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
+				$sql .= " WHERE fk_asset = " . (int) $this->id;
+				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+				$sql .= " AND NOT EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset' AND fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid)";
 				if ($last_depreciation_date !== "") {
-					$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
+					$sql .= " AND ref <> ''";
 				}
 				$resql = $this->db->query($sql);
 				if (!$resql) {

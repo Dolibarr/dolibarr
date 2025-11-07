@@ -204,11 +204,11 @@ function dol_getcache($memoryid, $filecache = 0)
 		//print "Get memoryid=".$memoryid;
 		$data = $m->get($memoryid);
 		$rescode = $m->getResultCode();
-		//print "memoryid=".$memoryid." - rescode=".$rescode." - count(response)=".count($data)."\n<br>";
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - count(response)=".json_encode($data)."\n<br>";
 		//var_dump($data);
 		if ($rescode == 0) {
 			return $data;
-		} elseif ($rescode == 16) {		// = Memcached::MEMCACHED_NOTFOUND but this constant doe snot exists.
+		} elseif ($rescode == 16) {		// = Memcached::MEMCACHED_NOTFOUND but this constant does not exists.
 			return null;
 		} else {
 			return -$rescode;

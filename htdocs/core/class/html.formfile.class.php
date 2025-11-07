@@ -530,7 +530,6 @@ class FormFile
 		$i = 0;
 
 		$out .= "\n".'<!-- Start show_document -->'."\n";
-		//print 'filedir='.$filedir;
 
 		if (preg_match('/massfilesarea_/', $modulepart)) {
 			$out .= '<div id="show_files"><br></div>'."\n";
@@ -922,7 +921,7 @@ class FormFile
 			if ((!empty($file_list) || !empty($link_list) || preg_match('/^massfilesarea/', $modulepart))
 				&& !$headershown) {
 				$headershown = 1;
-				$out .= '<div class="titre">'.$titletoshow.'</div>'."\n";
+				$out .= '<div class="titre paddingbottom">'.$titletoshow.'</div>'."\n";
 				$out .= '<div class="div-table-responsive-no-min">';
 				$out .= '<table class="noborder centpercent" id="'.$modulepart.'_table">'."\n";
 			}
@@ -1063,7 +1062,7 @@ class FormFile
 						if ($printer) {
 							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
 							$out .= ($param ? '&'.$param : '');
-							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
+							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
 						}
 						if ($morepicto) {
 							$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
@@ -2068,7 +2067,10 @@ class FormFile
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
-							if (!($result = $object_instance->fetch(0, $ref))) {
+							$result = $object_instance->fetch(0, $ref);
+							if ($result < 0) {
+								print $object_instance->error;
+							} elseif ($result == 0) {
 								// fetchOneLike looks for objects with wildcards in its reference.
 								// It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?
@@ -2395,7 +2397,7 @@ class FormFile
 		global $langs, $conf;
 
 		$out = '';
-		if ($conf->browser->layout != 'phone' && !empty($conf->use_javascript_ajax)) {
+		if (($conf->browser->layout != 'phone' || getDolGlobalString('MAIN_SHOW_PREVIEW_PICTO_EVEN_ON_PHONE')) && !empty($conf->use_javascript_ajax)) {
 			$urladvancedpreview = getAdvancedPreviewUrl($modulepart, $relativepath, 1, $param); // Return if a file is qualified for preview.
 			if (count($urladvancedpreview)) {
 				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';

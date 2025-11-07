@@ -602,7 +602,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						}
 					}
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+					if (((int) $object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
 					if (!isset($this->tva[$vatrate])) {
@@ -894,7 +894,7 @@ class pdf_standard_asset extends ModelePDFAsset
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->projet->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
 			}
 		}
 
@@ -1112,7 +1112,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

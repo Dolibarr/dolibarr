@@ -537,7 +537,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 		$category->fetch($categoryid);
 
 		foreach ($toselect as $tmpid) {
-			$tmpwebsitepage->id = $tmpid;
+			$tmpwebsitepage->id = (int) $tmpid;
 			$result = $category->add_type($tmpwebsitepage, 'website_page');
 			if ($result < 0 && $result != -3) {
 				$error++;
@@ -576,7 +576,7 @@ if ($massaction == 'delcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 		$category->fetch($categoryid);
 
 		foreach ($toselect as $tmpid) {
-			$tmpwebsitepage->id = $tmpid;
+			$tmpwebsitepage->id = (int) $tmpid;
 			$result = $category->del_type($tmpwebsitepage, 'website_page');
 			if ($result < 0 && $result != -3) {
 				$error++;
@@ -3438,18 +3438,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm', 'editsecurity')) || in_array($mode, array('replacesite'))) {
 		if ($action == 'editcss' || $action == 'editsecurity') {
-			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
-			// accesskey is for Mac:               CTRL + key for all browsers
-			$stringforfirstkey = $langs->trans("KeyboardShortcut");
-			if ($conf->browser->name == 'chrome') {
-				$stringforfirstkey .= ' ALT +';
-			} elseif ($conf->browser->name == 'firefox') {
-				$stringforfirstkey .= ' ALT + SHIFT +';
-			} else {
-				$stringforfirstkey .= ' CTL +';
-			}
-
-			print '<input type="submit" accesskey="s" title="'.dol_escape_htmltag($stringforfirstkey.' s').'" id="savefileandstay" class="button buttonforacesave hideonsmartphone small" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+			print '<input type="submit" accesskey="s" title="'.dol_escape_htmltag($conf->browser->stringforfirstkey.' s').'" id="savefileandstay" class="button buttonforacesave hideonsmartphone small" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		}
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') {
 			print '<input type="submit" id="savefile" class="button buttonforacesave button-save small" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -3633,6 +3622,9 @@ if (!GETPOST('hide_websitemenu')) {
 						$onlylang['none'] = 'none';
 						$textifempty = $langs->trans("Default");
 					}
+
+					$formheight = 300;
+
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value' => $objectpage->pageurl),
 						array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite((string) $object->id, 'newwebsite', 0)),
@@ -3641,12 +3633,13 @@ if (!GETPOST('hide_websitemenu')) {
 						);
 					if (count($onlylang) > 1) {
 						$formquestion[] = array('type' => 'checkbox', 'tdclass' => 'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss' => 'margintoponly');
+						$formheight += 50;
 					}
 
 					$value = $formadmin->select_language($preselectedlanguage, 'newlang', 0, array(), $textifempty, 0, 0, 'minwidth200', 1, 0, 0, $onlylang, 1);
 					$formquestion[] = array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $value);
 
-					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
+					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, $formheight, 550);
 
 					print $formconfirm;
 				}
@@ -3943,18 +3936,7 @@ if (!GETPOST('hide_websitemenu')) {
 		}
 		if (!in_array($mode, array('replacesite')) && !in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite', 'editsecurity'))) {
 			if ($action == 'editsource' || $action == 'editmeta') {
-				// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
-				// accesskey is for Mac:               CTRL + key for all browsers
-				$stringforfirstkey = $langs->trans("KeyboardShortcut");
-				if ($conf->browser->name == 'chrome') {
-					$stringforfirstkey .= ' ALT +';
-				} elseif ($conf->browser->name == 'firefox') {
-					$stringforfirstkey .= ' ALT + SHIFT +';
-				} else {
-					$stringforfirstkey .= ' CTL +';
-				}
-
-				print '<input type="submit" accesskey="s" title="'.dol_escape_htmltag($stringforfirstkey.' s').'" id="savefileandstay" class="button buttonforacesave hideonsmartphone small" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+				print '<input type="submit" accesskey="s" title="'.dol_escape_htmltag($conf->browser->stringforfirstkey.' s').'" id="savefileandstay" class="button buttonforacesave hideonsmartphone small" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 			}
 			if (preg_match('/^create/', $action)) {
 				print '<input type="submit" id="savefile" class="button buttonforacesave button-save small" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -5398,7 +5380,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 	print '</div>';
 	print '<div class="tagtd">';
 	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionpagecontent" name="optionpagecontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optionpagecontent', 'aZ09')) ? ' checked' : '').'> <label for="checkboxoptionpagecontent" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Content").'</label><br>';
-	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("WEBSITE_PAGENAME").' | '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
 	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionsitefiles" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionsitefiles" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("GlobalCSSorJS").'</label><br>';
 	print '</div>';
 	print '</div>';

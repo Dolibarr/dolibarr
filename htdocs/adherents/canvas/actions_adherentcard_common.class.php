@@ -93,11 +93,12 @@ abstract class ActionsAdherentCardCommon
 	/**
 	 *  Set content of ->tpl array, to use into template
 	 *
-	 *  @param	string		$action    Type of action
+	 *  @param	string		$action		Type of action
 	 *  @param	int			$id			Id
+	 * 	@param	string		$ref		Object ref (if id not provided) / Unused here
 	 *  @return	void
 	 */
-	public function assign_values(&$action, $id)
+	public function assign_values(&$action, $id, $ref = '')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user, $canvas;
@@ -250,7 +251,7 @@ abstract class ActionsAdherentCardCommon
 			array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
 			array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
 
-			$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateAdherent"), "confirm_create_user", $formquestion, 'no');
+			$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateMember"), "confirm_create_user", $formquestion, 'no');
 		}
 	}
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,7 +199,7 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 
 
 if ($result || !($id > 0)) {
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if (empty($id) || $notab) {
 		print '<input type="hidden" name="notab" value="1">';

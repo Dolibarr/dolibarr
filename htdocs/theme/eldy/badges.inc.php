@@ -52,6 +52,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	box-sizing: border-box;
 }
 
+.badge-text {
+	padding: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 5px;
+}
+
 .badge-status {
 	font-size: 0.95em;
 	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */
@@ -69,10 +76,17 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	}
 }
 
-.badge-pill, .tabs .badge {
+.tabs .badge {
 	padding-right: .5em;
 	padding-left: .5em;
 	border-radius: 0.25rem;
+}
+
+.badge-pill{
+	/* Use the .badge-pill modifier class to make badges more rounded (with a larger border-radius and additional horizontal padding). */
+	padding-right: .8em;
+	padding-left: 0.8em;
+	border-radius: 0.5rem;
 }
 
 .badge-dot {

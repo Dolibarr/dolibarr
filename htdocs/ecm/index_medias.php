@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2008-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts'));
@@ -143,9 +143,9 @@ if ($action == 'renamefile') {	// Test on permission not required here. Must be 
 
 // Add directory
 if ($action == 'add' && $permissiontouploadfile) {
-	$ecmdir->ref                = 'NOTUSEDYET';
-	$ecmdir->label              = GETPOST("label");
-	$ecmdir->description        = GETPOST("desc");
+	$ecmdir->ref = 'NOTUSEDYET';
+	$ecmdir->label = GETPOST("label");
+	$ecmdir->description = GETPOST("desc");
 
 	$id = $ecmdir->create($user);
 	if ($id > 0) {
@@ -188,8 +188,6 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 	$adirwascreated = 0;
 
 	// Now we compare both trees to complete missing trees into database
-	//var_dump($disktree);
-	//var_dump($sqltree);
 	foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 		$dirisindatabase = 0;
 		foreach ($sqltree as $dirsqldesc) {
@@ -202,7 +200,6 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 		if (!$dirisindatabase) {
 			$txt = "Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
 			dol_syslog($txt);
-			//print $txt."<br>\n";
 
 			// We must first find the fk_parent of directory to create $dirdesc['fullname']
 			$fk_parent = -1;
@@ -237,23 +234,24 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 			}
 
 			if ($fk_parent >= 0) {
-				$ecmdirtmp->ref                = 'NOTUSEDYET';
-				$ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
-				$ecmdirtmp->description        = '';
-				$ecmdirtmp->fk_parent          = $fk_parent;
+				$ecmdirtmp->ref = 'NOTUSEDYET';
+				$ecmdirtmp->label = dol_basename($dirdesc['fullname']);
+				$ecmdirtmp->description = '';
+				$ecmdirtmp->fk_parent = $fk_parent;
 
 				$txt = "We create directory ".$ecmdirtmp->label." with parent ".$fk_parent;
 				dol_syslog($txt);
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id' => $id,
-									 'id_mere' => $ecmdirtmp->fk_parent,
-									 'label' => $ecmdirtmp->label,
-									 'description' => $ecmdirtmp->description,
-									 'fullrelativename' => $relativepathmissing);
+					$newdirsql = [
+						'id' => $id,
+						'id_mere' => $ecmdirtmp->fk_parent,
+						'label' => $ecmdirtmp->label,
+						'description' => $ecmdirtmp->description,
+						'fullrelativename' => $relativepathmissing,
+					];
 					$sqltree[] = $newdirsql; // We complete fulltree for following loops
-					//var_dump($sqltree);
 					$adirwascreated = 1;
 				} else {
 					dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
@@ -261,7 +259,6 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 			} else {
 				$txt = "Parent of ".$dirdesc['fullname']." not found";
 				dol_syslog($txt);
-				//print $txt."<br>\n";
 			}
 		}
 	}

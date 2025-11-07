@@ -160,12 +160,6 @@ if (empty($action) && empty($object->id)) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
-$parameters = array('socid' => $socid);
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-
 $TRemindTypes = [];
 if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1));
@@ -180,8 +174,20 @@ if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
 	];
 }
-
-$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
+$TDurationTypes = $form->getDurationTypes($langs);
+$TDurationTypesExcluded = ['y', 'm', 's'];
+$enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
+$parameters = [
+	'socid' => $socid,
+	'TRemindTypes' => &$TRemindTypes,
+	'enablereminders' => &$enablereminders,
+	'TDurationTypes' => &$TDurationTypes,
+	'TDurationTypesExcluded' => &$TDurationTypesExcluded,
+];
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
@@ -438,7 +444,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 			$object->fk_element = $taskid;
 			$object->elementid = $taskid;
-			$object->elementtype = 'task';
+			$object->elementtype = 'project_task';
 		}
 
 		$object->datep = $datep;
@@ -957,7 +963,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 
 			$object->fk_element = $taskid;
 			$object->elementid = $taskid;
-			$object->elementtype = 'task';
+			$object->elementtype = 'project_task';
 		}
 
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
@@ -1179,7 +1185,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 }
 
 // Delete event
-if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes') {
+if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes' && $usercancreate) {
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
@@ -1202,7 +1208,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
  * Action move update, used when user move an event in calendar by drag'n drop
  * TODO Move this into page comm/action/index that trigger this call by the drag and drop of event.
  */
-if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
+if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancreate) {
 	$error = 0;
 
 	$shour = (int) dol_print_date($object->datep, "%H", 'tzuserrel');		// We take the date visible by user $newdate is also date visible by user.
@@ -1797,7 +1803,7 @@ if ($action == 'create') {
 		}
 		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
 
-		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
+		if (! in_array($origin, array('societe', 'project', 'project_task', 'user'))) {
 			// We do not use link for object that already contains a hard coded field to make links with agenda events
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
 			print '<td colspan="3">';
@@ -1839,7 +1845,7 @@ if ($action == 'create') {
 	print '</table>';
 
 
-	if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+	if ($enablereminders) {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
@@ -1852,7 +1858,7 @@ if ($action == 'create') {
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
+		print $form->selectTypeDuration('offsetunit', 'i', $TDurationTypesExcluded);
 		print '</td></tr>';
 
 		//Reminder Type
@@ -2315,7 +2321,7 @@ if ($id > 0 && $action != 'create') {
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
 
-			if ($object->elementtype == 'task' && isModEnabled('project')) {
+			if ($object->elementtype == 'project_task' && isModEnabled('project')) {
 				print '<td id="project-task-input-container" >';
 
 				$urloption = '?action=create&donotclearsession=1'; // we use create not edit for more flexibility
@@ -2399,7 +2405,7 @@ if ($id > 0 && $action != 'create') {
 		print '</table>';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
@@ -2439,7 +2445,7 @@ if ($id > 0 && $action != 'create') {
 			// Reminder
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> ';
-			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, array('y', 'm'));
+			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, $TDurationTypesExcluded);
 			print '</td></tr>';
 
 			// Reminder Type
@@ -2599,7 +2605,7 @@ if ($id > 0 && $action != 'create') {
 			if ($usercancreate) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -2838,7 +2844,7 @@ if ($id > 0 && $action != 'create') {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;

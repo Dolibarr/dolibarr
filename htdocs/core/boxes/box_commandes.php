@@ -65,7 +65,7 @@ class box_commandes extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs, $conf, $hookmanager;
 		$langs->load('orders');
 
 		$this->max = $max;
@@ -108,9 +108,15 @@ class box_commandes extends ModeleBoxes
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			if ($user->socid) {
-				$sql .= " AND s.rowid = ".((int) $user->socid);
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid) {
+					$sql .= " AND s.rowid = " . ((int) $user->socid);
+				}
 			}
+			$sql .= $hookmanager->resPrint;
 			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
 			} else {

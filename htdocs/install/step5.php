@@ -101,8 +101,8 @@ if (!empty($action) && preg_match('/upgrade/i', $action)) {
 $langs->loadLangs(array("admin", "install"));
 
 $login = GETPOST('login', 'alpha') ? GETPOST('login', 'alpha') : (empty($argv[5]) ? '' : $argv[5]);
-$pass = GETPOST('pass', 'alpha') ? GETPOST('pass', 'alpha') : (empty($argv[6]) ? '' : $argv[6]);
-$pass_verif = GETPOST('pass_verif', 'alpha') ? GETPOST('pass_verif', 'alpha') : (empty($argv[7]) ? '' : $argv[7]);
+$pass = GETPOST('pass', 'password') ? GETPOST('pass', 'password') : (empty($argv[6]) ? '' : $argv[6]);
+$pass_verif = GETPOST('pass_verif', 'password') ? GETPOST('pass_verif', 'password') : (empty($argv[7]) ? '' : $argv[7]);
 
 $success = 0;
 
@@ -496,7 +496,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 // If first install
 if ($action == "set") {
 	if ($success) {
-		if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
+		if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') == DOL_VERSION)) {
 			// Install is finished (database is on same version than files)
 			print '<br>'.$langs->trans("SystemIsInstalled")."<br>";
 
@@ -583,10 +583,11 @@ if ($action == "set") {
 		$morehtml .= '</a></div><br>';
 	} else {
 		// If here MAIN_VERSION_LAST_UPGRADE is not empty
-		print $langs->trans("VersionLastUpgrade").': <b><span class="ok">' . getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span></b><br>';
-		print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
+		print $langs->trans("VersionLastUpgrade").': <b><span class="okinversed">' . getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span></b><br>';
+		print '<br>';
+		print $langs->trans("VersionProgram").': <b><span class="okinversed">'.DOL_VERSION.'</span></b>';
 
-		print "<br>";
+		print "<br><br>";
 
 		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../install/index.php">';
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");

@@ -198,6 +198,11 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
 			$action = '';
 		}
+		$subledger_account_str = is_array($subledger_account) ? reset($subledger_account) : (string) $subledger_account;
+		if (!checkGeneralAccountAllowsAuxiliary($db, $accountingaccount_number, $subledger_account_str)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
+		}
 
 		if (!$error) {
 			if (GETPOSTINT('doc_datemonth') && GETPOSTINT('doc_dateday') && GETPOSTINT('doc_dateyear')) {
@@ -446,44 +451,14 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'clonebookkeepingwriting' && $permissiontoadd) {
+	if ($action == 'clonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
+		// Reread the values sent by the validated form
 		$piece_num = GETPOST('piece_num', 'alpha');
-		$formaccounting = new FormAccounting($db);
+		$journal_code = GETPOST('code_journal', 'alpha');
 
-		$form = new Form($db);
-		$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "create_mvt", 1, 1);
-		$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
-		$inputHidden = '<input type="hidden" name="piece_num_hidden" id="piece_num_hidden" value="'.$piece_num.'">';
+		// Reconstruct the selected date
+		$clonedate = dol_mktime(0, 0, 0, GETPOSTINT('clonedatemonth'), GETPOSTINT('clonedateday'), GETPOSTINT('clonedateyear'));
 
-		$formquestion = array(
-			array(
-				'type' => 'date',
-				'name' => 'clonedate',
-				'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
-				'value' => $input1
-			)
-		);
-
-		if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
-			$formquestion[] = array(
-				'type' => 'text',
-				'name' => 'code_journal',
-				'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
-				'value' => $input2
-			);
-		}
-
-		print $form->formconfirm(
-			$_SERVER["PHP_SELF"],
-			$langs->trans("ConfirmMassCloneBookkeepingWriting"),
-			$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)),
-			"clonebookkeepingwriting",
-			$formquestion,
-			'', 0, 300, 1000, 1
-		);
-	}
-
-	if ($action == 'preclonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
 		$result = $object->newClone($piece_num, $journal_code, $clonedate);
 
 		if ($result == -1) {
@@ -492,7 +467,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$db->commit();
-			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . $object->getNextNumMvt() - 1);
+			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . ($object->getNextNumMvt() - 1));
 			exit();
 		} else {
 			$db->rollback();
@@ -518,6 +493,29 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accounta
 if ($action == 'delete') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
+}
+
+// Update fields properties in realtime
+if (!empty($conf->use_javascript_ajax)) {
+	print "\n" . '<script type="text/javascript">';
+	print '$(document).ready(function () {
+			function toggleSubledger() {
+				var isCentral = $("#accountingaccount_number option:selected").data("centralized");
+				console.log("the selected general ledger account is centralised?", isCentral);
+				if (isCentral) {
+					$("#subledger_account, #subledger_label").prop("disabled", false);
+				} else {
+					$("#subledger_account, #subledger_label").prop("disabled", true);
+				}
+			}
+
+			toggleSubledger();
+
+			$("#accountingaccount_number").on("change", toggleSubledger);
+			$("#accountingaccount_number").on("select2:select", toggleSubledger);
+		';
+	print '	});' . "\n";
+	print '	</script>' . "\n";
 }
 
 if ($action == 'create') {
@@ -606,12 +604,7 @@ if ($action == 'create') {
 			print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
 		}*/
 
-		$head = array();
-		$h = 0;
-		$head[$h][0] = DOL_URL_ROOT."/accountancy/bookkeeping/card.php".'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
-		$head[$h][1] = $langs->trans("Transaction");
-		$head[$h][2] = 'transaction';
-		$h++;
+		$head = accounting_transaction_prepare_head($object, $mode, $type, $backtopage);
 
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
@@ -628,6 +621,46 @@ if ($action == 'create') {
 		$morehtmlref .= '</div>';
 
 		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
+
+
+		if ($action == 'clonebookkeepingwriting' && $confirm != 'yes' && $permissiontoadd) {
+			$piece_num = GETPOST('piece_num', 'alpha');
+			$formaccounting = new FormAccounting($db);
+
+			$form = new Form($db);
+			$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "", 1, 1);
+			$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1);
+
+			$formquestion = array(
+				array(
+					'type' => 'other',
+					'name' => 'clonedate',
+					'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
+					'value' => $input1
+				)
+			);
+
+			$formquestion[] = array('type' => 'hidden', 'name' => 'piece_num', 'value' => $piece_num);
+
+			if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
+				$formquestion[] = array(
+					'type' => 'text',
+					'name' => 'code_journal',
+					'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
+					'value' => $input2
+				);
+			}
+
+			print $form->formconfirm(
+				$_SERVER["PHP_SELF"],
+				$langs->trans("ConfirmMassCloneBookkeepingWriting"),
+				$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", 1),
+				"clonebookkeepingwriting",
+				$formquestion,
+				'', 0, 300, 1000, 0
+			);
+		}
+
 
 		print '<div class="fichecenter">';
 
@@ -1001,7 +1034,7 @@ if ($action == 'create') {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 						}
 						// Add also input for subledger label
-						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
+						print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
 						print '<td class="right"><input type="text" class="right width50" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
@@ -1028,7 +1061,7 @@ if ($action == 'create') {
 							} else {
 								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
 							}
-							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+							print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . dol_escape_htmltag($label_operation) . '"/></td>';
 							print '<td class="right"><input type="text" class="right width50" name="debit" value=""/></td>';

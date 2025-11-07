@@ -900,6 +900,8 @@ class FormSetupItem
 			$out .= $this->generateInputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out .= $this->generateInputFieldSelect();
+		} elseif ($this->type == 'radio') {
+			$out .= $this->generateInputFieldRadio();
 		} elseif ($this->type == 'selectUser') {
 			$out .= $this->generateInputFieldSelectUser();
 		} elseif ($this->type == 'textarea') {
@@ -911,12 +913,13 @@ class FormSetupItem
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
 				$input = $this->fieldParams['input'] ?? array();
-				$revertonoff = !empty($this->fieldParams['revertonoff']) ? 1 : 0;
-				$forcereload = !empty($this->fieldParams['forcereload']) ? 1 : 0;
+				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
+				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
+				$suffixarray = array('ifoff' => empty($this->fieldParams['alertifoff']) ? '' : '_red', 'ifon' => empty($this->fieldParams['alertifon']) ? '' : '_red');
 
-				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload);
+				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, $suffixarray, '', $this->cssClass);
 			} else {
-				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1, false, 0, 0, $this->cssClass);
 			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			$out .= $this->generateInputFieldEmailTemplate();
@@ -931,6 +934,7 @@ class FormSetupItem
 		} elseif ($this->type == 'product') {
 			if (isModEnabled("product") || isModEnabled("service")) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
+				$out .= img_picto('', 'product', 'class="pictofixedwidth"');
 				$out .= $this->form->select_produits((int) $selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} elseif ($this->type == 'selectBankAccount') {
@@ -942,6 +946,12 @@ class FormSetupItem
 			$out .= $this->generateInputFieldPassword('dolibarr');
 		} elseif ($this->type == 'genericpassword') {
 			$out .= $this->generateInputFieldPassword('generic');
+		} elseif ($this->type == 'price') {
+			$out .= $this->generateInputFieldPrice();
+		} elseif ($this->type == 'email') {
+			$out .= $this->generateInputFieldEmail();
+		} elseif ($this->type == 'url') {
+			$out .= $this->generateInputFieldUrl();
 		} else {
 			$out .= $this->generateInputFieldText();
 		}
@@ -960,6 +970,48 @@ class FormSetupItem
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
 		}
 		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+	}
+
+	/**
+	 * Generate default input field
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldPrice()
+	{
+		global $langs, $mysoc;
+
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
+			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth40 maxwidth75' : $this->cssClass);
+		}
+		//return img_picto('', 'currency', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' /> '.$langs->getCurrencySymbol($mysoc->currency_code);
+		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' /> '.$langs->getCurrencySymbol($mysoc->currency_code);
+	}
+
+	/**
+	 * Generate default input field
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldEmail()
+	{
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
+			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth100 maxwidth500' : $this->cssClass);
+		}
+		return img_picto('', 'email', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+	}
+
+	/**
+	 * Generate default input field
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldUrl()
+	{
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
+			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth100 maxwidth500' : $this->cssClass);
+		}
+		return img_picto('', 'url', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 	}
 
 	/**
@@ -1118,7 +1170,6 @@ class FormSetupItem
 		return $this->form->multiselectarray($this->confKey, $this->fieldOptions, $TSelected, 0, 0, '', 0, 0, 'style="min-width:100px"');
 	}
 
-
 	/**
 	 * generateInputFieldSelect
 	 *
@@ -1132,6 +1183,23 @@ class FormSetupItem
 		}
 
 		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue, 0, 0, 0, '', 0, 0, 0, '', $this->cssClass);
+
+		return $s;
+	}
+
+	/**
+	 * generateInputFieldSelect
+	 *
+	 * @return string
+	 */
+	public function generateInputFieldRadio()
+	{
+		$s = '';
+		if ($this->picto) {
+			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
+		}
+
+		$s .= $this->form->radio($this->confKey, $this->fieldOptions, $this->fieldValue, ['attrLabel' => ['class' => $this->cssClass]]);
 
 		return $s;
 	}
@@ -1230,7 +1298,7 @@ class FormSetupItem
 				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
 				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
 
-				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload);
+				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, '', '', $this->cssClass); // TODO possibility to add $input parameter
 			} else {
 				if ($this->fieldValue == 1) {
 					$out .= $langs->trans('yes');
@@ -1258,7 +1326,7 @@ class FormSetupItem
 			if ($result < 0) {
 				$this->setErrors($c->errors);
 			}
-			$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+			$ways = $c->print_all_ways('auto', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 			$toprint = array();
 			foreach ($ways as $way) {
 				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
@@ -1450,6 +1518,17 @@ class FormSetupItem
 	}
 
 	/**
+	 * Set type of input as string
+	 *
+	 * @return self
+	 */
+	public function setAsUrl()
+	{
+		$this->type = 'url';
+		return $this;
+	}
+
+	/**
 	 * Set type of input as color
 	 *
 	 * @return self
@@ -1539,6 +1618,17 @@ class FormSetupItem
 	}
 
 	/**
+	 * Set type of input as product
+	 *
+	 * @return self
+	 */
+	public function setAsPrice()
+	{
+		$this->type = 'price';
+		return $this;
+	}
+
+	/**
 	 * Set type of input as a category selector
 	 * TODO add default value
 	 *
@@ -1592,6 +1682,23 @@ class FormSetupItem
 		}
 
 		$this->type = 'select';
+		return $this;
+	}
+
+
+	/**
+	 * Set type of input as a simple title. No data to store
+	 *
+	 * @param  ?array<string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
+	 * @return self
+	 */
+	public function setAsRadio($fieldOptions)
+	{
+		if (is_array($fieldOptions)) {
+			$this->fieldOptions = $fieldOptions;
+		}
+
+		$this->type = 'radio';
 		return $this;
 	}
 

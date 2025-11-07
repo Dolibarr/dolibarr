@@ -1,42 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 3
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 3
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 3
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''type_cdr'' and ''type_cdr'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/card.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/admin/card.php
-
-		-
 			message: '#^Variable \$cat_id in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -55,28 +19,10 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/categories_list.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 4
-			path: ../../../htdocs/accountancy/admin/fiscalyear_card.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''ACCOUNTING_LABEL…'' and ''ACCOUNTING_LABEL…'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../htdocs/accountancy/admin/index.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/index.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 7
-			path: ../../../htdocs/accountancy/admin/journals_list.php
 
 		-
 			message: '#^Loose comparison using \!\= between 35 and 10 will always evaluate to true\.$#'
@@ -89,6 +35,12 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/accountancy/admin/journals_list.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: ../../../htdocs/accountancy/admin/productaccount.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
@@ -157,60 +109,6 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: '#^Property AccountancyCategory\:\:\$active \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$category_type \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$fk_country \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$formula \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$position \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$range_account \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$sens \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -247,18 +145,6 @@ parameters:
 			path: ../../../htdocs/accountancy/class/accountancyexport.class.php
 
 		-
-			message: '#^Variable \$invoice might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancyexport.class.php
-
-		-
-			message: '#^Call to function array_key_exists\(\) with ''error'' and array\{ref\: mixed, label\: mixed, acquisition_value_ht\: mixed, depreciation\: non\-empty\-array\<array\{date\: mixed, ref\: mixed, lines\: non\-empty\-array\}\>, disposal\?\: array\{date\: mixed, amount\: mixed, subject_to_vat\: bool\}\} will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: ../../../htdocs/accountancy/class/accountingjournal.class.php
-
-		-
 			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
 			identifier: argument.type
 			count: 3
@@ -277,18 +163,6 @@ parameters:
 			path: ../../../htdocs/accountancy/class/lettering.class.php
 
 		-
-			message: '#^Variable \$save_element_by_link might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
-			message: '#^Variable \$save_link_by_element might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
 			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
 			identifier: argument.type
 			count: 2
@@ -298,12 +172,6 @@ parameters:
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 2
-			path: ../../../htdocs/accountancy/closure/index.php
-
-		-
-			message: '#^Variable \$current_fiscal_period in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 4
 			path: ../../../htdocs/accountancy/closure/index.php
 
 		-
@@ -427,12 +295,6 @@ parameters:
 			path: ../../../htdocs/accountancy/journal/expensereportsjournal.php
 
 		-
-			message: '#^Variable \$def_tva might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/accountancy/journal/expensereportsjournal.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -487,20 +349,8 @@ parameters:
 			path: ../../../htdocs/accountancy/supplier/list.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/adherents/admin/member.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/adherents/card.php
-
-		-
-			message: '#^Variable \$public in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
 			count: 1
 			path: ../../../htdocs/adherents/card.php
 
@@ -535,24 +385,6 @@ parameters:
 			path: ../../../htdocs/adherents/list.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/adherents/list.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/adherents/messaging.php
-
-		-
-			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/adherents/partnership.php
-
-		-
 			message: '#^Variable \$bankline in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -563,12 +395,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 2
 			path: ../../../htdocs/adherents/type.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/accountant.php
 
 		-
 			message: '#^Ternary operator condition is always true\.$#'
@@ -673,12 +499,6 @@ parameters:
 			path: ../../../htdocs/admin/fediverse.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/geoipmaxmind.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -749,12 +569,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/admin/index.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -895,12 +709,6 @@ parameters:
 			path: ../../../htdocs/admin/mails_ticket.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/admin/menus/edit.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -919,27 +727,27 @@ parameters:
 			path: ../../../htdocs/admin/modules.php
 
 		-
+			message: '#^Loose comparison using \=\= between ''common''\|''commonkanban'' and ''expdev'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: ../../../htdocs/admin/modules.php
+
+		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/admin/modules.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$langfiles \(array\<string\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
 			path: ../../../htdocs/admin/modules.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 5
-			path: ../../../htdocs/admin/modules.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
 			path: ../../../htdocs/admin/modules.php
 
 		-
@@ -952,18 +760,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
-			path: ../../../htdocs/admin/notification.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/notification.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 3
 			path: ../../../htdocs/admin/notification.php
 
 		-
@@ -1039,6 +835,18 @@ parameters:
 			path: ../../../htdocs/admin/sms.php
 
 		-
+			message: '#^Loose comparison using \=\= between ''add'' and ''add'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/admin/spip.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: ../../../htdocs/admin/spip.php
+
+		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -1073,24 +881,6 @@ parameters:
 			identifier: notEqual.alwaysTrue
 			count: 1
 			path: ../../../htdocs/admin/system/dolibarr.php
-
-		-
-			message: '#^Call to function is_array\(\) with non\-empty\-list\<array\{filename\: string\|null, md5\: non\-falsy\-string\|false\}\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
 
 		-
 			message: '#^Loose comparison using \!\= between '''' and ''kanban'' will always evaluate to true\.$#'
@@ -1225,12 +1015,6 @@ parameters:
 			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 2
-			path: ../../../htdocs/admin/triggers.php
-
-		-
 			message: '#^Variable \$label might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -1279,46 +1063,10 @@ parameters:
 			path: ../../../htdocs/admin/workflow.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/workstation.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/workstation.php
-
-		-
-			message: '#^Variable \$label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/admin/workstation.php
-
-		-
-			message: '#^Variable \$scandir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/admin/workstation.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/admin/workstation.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''edit'' and ''edit'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../htdocs/ai/admin/setup.php
-
-		-
-			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|Expedition\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
 			message: '#^Variable \$modulepart in empty\(\) always exists and is not falsy\.$#'
@@ -1429,20 +1177,8 @@ parameters:
 			path: ../../../htdocs/asset/admin/setup.php
 
 		-
-			message: '#^Variable \$setupnotempty in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/asset/card.php
-
-		-
-			message: '#^Property Asset\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/asset/card.php
 
@@ -1450,12 +1186,6 @@ parameters:
 			message: '#^Property Asset\:\:\$date_start \(int\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/asset/class/asset.class.php
-
-		-
-			message: '#^Property Asset\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/asset/class/asset.class.php
 
 		-
@@ -1507,12 +1237,6 @@ parameters:
 			path: ../../../htdocs/asset/class/assetmodel.class.php
 
 		-
-			message: '#^Property AssetModel\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/asset/class/assetmodel.class.php
-
-		-
 			message: '#^Variable \$lines in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -1535,12 +1259,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/asset/model/accountancy_codes.php
-
-		-
-			message: '#^Property AssetModel\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/asset/model/card.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -1583,12 +1301,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/depreciation_options_view.tpl.php
 
 		-
 			message: '#^Variable \$parameters might not be defined\.$#'
@@ -1639,12 +1351,6 @@ parameters:
 			path: ../../../htdocs/blockedlog/class/blockedlog.class.php
 
 		-
-			message: '#^Property BOM\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/bom_card.php
-
-		-
 			message: '#^Variable \$idprod might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -1669,18 +1375,6 @@ parameters:
 			path: ../../../htdocs/bom/bom_net_needs.php
 
 		-
-			message: '#^Property BOM\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/bom_net_needs.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/bom_net_needs.php
-
-		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
@@ -1691,18 +1385,6 @@ parameters:
 			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(BOM\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(BOM\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bom/class/bom.class.php
 
 		-
 			message: '#^Method BOM\:\:getNetNeedsTree\(\) has parameter \$TNetNeeds with no value type specified in iterable type array\.$#'
@@ -1723,22 +1405,10 @@ parameters:
 			path: ../../../htdocs/bom/tpl/objectline_edit.tpl.php
 
 		-
-			message: '#^Variable \$dateSelector might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/bom/tpl/objectline_edit.tpl.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/bom/tpl/objectline_title.tpl.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/tpl/objectline_view.tpl.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -1767,12 +1437,6 @@ parameters:
 		-
 			message: '#^Variable \$permissiontoadd in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/bookcal/availabilities_card.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/bookcal/availabilities_card.php
 
@@ -1905,7 +1569,13 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 2
+			count: 1
+			path: ../../../htdocs/bookmarks/bookmarks.lib.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-empty\-array\<mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
 			path: ../../../htdocs/bookmarks/bookmarks.lib.php
 
 		-
@@ -1919,6 +1589,18 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/categories/card.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''hierarchy'' and ''common'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: ../../../htdocs/categories/categorie_list.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''hierarchy'' and ''hierarchy'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/categories/categorie_list.php
 
 		-
 			message: '#^Method Categorie\:\:get_full_arbo\(\) should return \-1\|array\<int, array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\> but returns array\<array\{rowid\: mixed, id\: mixed, fk_parent\: mixed, label\: mixed, description\: mixed, color\: mixed, position\: mixed, visible\: mixed, \.\.\.\}\>\.$#'
@@ -2089,15 +1771,21 @@ parameters:
 			path: ../../../htdocs/comm/action/index.php
 
 		-
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: ../../../htdocs/comm/action/index.php
+
+		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/comm/action/index.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
+			message: '#^Parameter \#16 \$usergroupid of function print_actions_filter expects array\<int\>\|int, string given\.$#'
+			identifier: argument.type
+			count: 3
 			path: ../../../htdocs/comm/action/index.php
 
 		-
@@ -2139,7 +1827,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 4
+			count: 3
 			path: ../../../htdocs/comm/action/list.php
 
 		-
@@ -2157,12 +1845,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\<" between int\<1, max\> and 1 is always false\.$#'
 			identifier: smaller.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/action/pertype.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/comm/action/pertype.php
 
@@ -2243,6 +1925,12 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/comm/action/pertype.php
+
+		-
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: ../../../htdocs/comm/action/peruser.php
 
 		-
 			message: '#^Loose comparison using \!\= between ''show_peruser'' and ''show_day'' will always evaluate to true\.$#'
@@ -2473,6 +2161,30 @@ parameters:
 			path: ../../../htdocs/comm/mailing/targetemailing.php
 
 		-
+			message: '#^Loose comparison using \=\= between ''setemail_errorsto''\|''setevenunsubscribe''\|''setreplyto'' and ''setemail_replyto'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: ../../../htdocs/comm/mailing/targetemailing.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''setevenunsubscribe''\|''setreplyto'' and ''setfrom'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: ../../../htdocs/comm/mailing/targetemailing.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''setevenunsubscribe''\|''setreplyto'' and ''settitle'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: ../../../htdocs/comm/mailing/targetemailing.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: ../../../htdocs/comm/mailing/targetemailing.php
+
+		-
 			message: '#^Variable \$filter might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -2503,120 +2215,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/card.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 4
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Propal\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Propal\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Propal\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Propal\) and ''total_ht'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Method Propal\:\:liste_array\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 4
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_ht \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_localtax1 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_localtax2 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_ttc \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_tva \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property Propal\:\:\$date_signature \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property Propal\:\:\$ref_client \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property Propal\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
-
-		-
-			message: '#^Property PropaleLigne\:\:\$info_bits \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
-
-		-
-			message: '#^Property PropaleLigne\:\:\$pa_ht \(float\|int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -2641,118 +2239,22 @@ parameters:
 			path: ../../../htdocs/comm/propal/list.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../../htdocs/commande/card.php
-
-		-
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/commande/card.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 2
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Orders\:\:_cleanObjectDatas\(\) expects object, array\<int, array\<string, int\|string\>\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 5
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property Commande\:\:\$mode_reglement_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property Commande\:\:\$ref_client \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property Commande\:\:\$ref_customer \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property Commande\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$shipping_method_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_ht \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_localtax1 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_localtax2 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_ttc \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$total_tva \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/commande/class/orderline.class.php
-
-		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/commande/customer.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../../../htdocs/commande/list.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Commande and ''fetch_lines'' will always evaluate to true\.$#'
@@ -2769,7 +2271,7 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
+			count: 3
 			path: ../../../htdocs/commande/list.php
 
 		-
@@ -2833,6 +2335,18 @@ parameters:
 			path: ../../../htdocs/compta/accounting-files.php
 
 		-
+			message: '#^Parameter \#1 \$array of function array_sum expects array, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../../../htdocs/compta/ajaxpayment.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_key_exists expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../../htdocs/compta/ajaxpayment.php
+
+		-
 			message: '#^Variable \$ve might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -2866,6 +2380,12 @@ parameters:
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
+			path: ../../../htdocs/compta/bank/bankentries_list.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 2
 			path: ../../../htdocs/compta/bank/bankentries_list.php
 
 		-
@@ -3157,6 +2677,48 @@ parameters:
 			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
+			message: '#^Loose comparison using \=\= between ''close'' and ''close'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 4
+			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''close'' and ''start'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 4
+			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''create''\|''start'' and ''close'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 2
+			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''start'' and ''close'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 2
+			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''start'' and ''start'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 6
+			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
+
+		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 3
@@ -3253,12 +2815,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
 			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -3311,12 +2867,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/facture/card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 4
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -3559,6 +3109,12 @@ parameters:
 			path: ../../../htdocs/compta/facture/list.php
 
 		-
+			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 2
+			path: ../../../htdocs/compta/facture/list.php
+
+		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -3721,7 +3277,7 @@ parameters:
 			path: ../../../htdocs/compta/localtax/list.php
 
 		-
-			message: '#^Call to function is_array\(\) with list\<array\<string, mixed\>\> will always evaluate to true\.$#'
+			message: '#^Call to function is_array\(\) with list\<non\-empty\-array\<string, mixed\>\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/compta/localtax/quadri_detail.php
@@ -3823,31 +3379,13 @@ parameters:
 			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
-
-		-
 			message: '#^Property Cpaiement\:\:\$accountancy_code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
-
-		-
-			message: '#^Property Cpaiement\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
 			path: ../../../htdocs/compta/paiement/class/cpaiement.class.php
@@ -3943,78 +3481,6 @@ parameters:
 			path: ../../../htdocs/compta/prelevement/card.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(BonPrelevement\) and ''LibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(BonPrelevement\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(BonPrelevement\) and ''date_echeance'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(BonPrelevement\) and ''total'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between 0 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Property BonPrelevement\:\:\$amount \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Property BonPrelevement\:\:\$date_trans \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Property BonPrelevement\:\:\$factures has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Property BonPrelevement\:\:\$invoice_in_error has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
-			message: '#^Property BonPrelevement\:\:\$thirdparty_in_error has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/compta/prelevement/class/bonprelevement.class.php
-
-		-
 			message: '#^Right side of \|\| is always true\.$#'
 			identifier: booleanOr.rightAlwaysTrue
 			count: 2
@@ -4033,10 +3499,22 @@ parameters:
 			path: ../../../htdocs/compta/prelevement/create.php
 
 		-
+			message: '#^Loose comparison using \!\= between ''''\|''0''\|''direct\-debit'' and ''bank\-transfer'' will always evaluate to true\.$#'
+			identifier: notEqual.alwaysTrue
+			count: 1
+			path: ../../../htdocs/compta/prelevement/create.php
+
+		-
 			message: '#^Variable \$massaction might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/prelevement/demandes.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''bank\-transfer'' and ''bank\-transfer'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/compta/prelevement/list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -4057,16 +3535,10 @@ parameters:
 			path: ../../../htdocs/compta/recap-compta.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 2
-			path: ../../../htdocs/compta/recap-compta.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 2
-			path: ../../../htdocs/compta/recap-compta.php
+			message: '#^Loose comparison using \=\= between ''RECETTES\-DEPENSES'' and ''CREANCES\-DETTES'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: ../../../htdocs/compta/resultat/clientfourn.php
 
 		-
 			message: '#^Variable \$description might not be defined\.$#'
@@ -4084,12 +3556,6 @@ parameters:
 			message: '#^Variable \$description might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/compta/resultat/index.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
 			path: ../../../htdocs/compta/resultat/index.php
 
 		-
@@ -4147,12 +3613,6 @@ parameters:
 			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
 
 		-
-			message: '#^Property Cchargesociales\:\:\$active \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
-
-		-
 			message: '#^Property Cchargesociales\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -4160,12 +3620,6 @@ parameters:
 
 		-
 			message: '#^Property Cchargesociales\:\:\$deductible \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
-
-		-
-			message: '#^Property Cchargesociales\:\:\$fk_pays \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
@@ -4387,8 +3841,20 @@ parameters:
 			path: ../../../htdocs/compta/stats/index.php
 
 		-
+			message: '#^Loose comparison using \=\= between ''BOOKKEEPINGCOLLECTED''\|''RECETTES\-DEPENSES'' and ''RECETTES\-DEPENSES'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/compta/stats/supplier_turnover.php
+
+		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
+			count: 1
+			path: ../../../htdocs/compta/stats/supplier_turnover.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/compta/stats/supplier_turnover.php
 
@@ -4561,12 +4027,6 @@ parameters:
 			path: ../../../htdocs/compta/tva/clients.php
 
 		-
-			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../../htdocs/compta/tva/clients.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between true and true will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -4695,7 +4155,7 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
+			count: 6
 			path: ../../../htdocs/contact/list.php
 
 		-
@@ -4973,12 +4433,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_setnotes.inc.php
 
 		-
 			message: '#^Loose comparison using \=\= between ''directory'' and ''directory'' will always evaluate to true\.$#'
@@ -5647,51 +5101,9 @@ parameters:
 			path: ../../../htdocs/core/class/ccountry.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ccountry.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ccountry.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ccountry.class.php
-
-		-
-			message: '#^Method CGenericDic\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
-			message: '#^Property CGenericDic\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
-			message: '#^Property CGenericDic\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cgenericdic.class.php
-
-		-
-			message: '#^Property CGenericDic\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/core/class/cgenericdic.class.php
 
 		-
@@ -5713,27 +5125,9 @@ parameters:
 			path: ../../../htdocs/core/class/cleadstatus.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../../htdocs/core/class/cleadstatus.class.php
 
 		-
@@ -5811,7 +5205,7 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 9
+			count: 8
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
@@ -6169,70 +5563,10 @@ parameters:
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property Cregion\:\:\$cheflieu \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property Cregion\:\:\$code_region \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property Cregion\:\:\$fk_pays \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property Cregion\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cstate.class.php
 
 		-
 			message: '#^Property Cstate\:\:\$code_departement \(string\) in isset\(\) is not nullable\.$#'
@@ -6259,18 +5593,6 @@ parameters:
 			path: ../../../htdocs/core/class/cstate.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctypent.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctypent.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -6295,24 +5617,6 @@ parameters:
 			path: ../../../htdocs/core/class/ctyperesource.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctyperesource.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctyperesource.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/ctyperesource.class.php
-
-		-
 			message: '#^Property CUnits\:\:\$short_label \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -6331,31 +5635,13 @@ parameters:
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
 			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
-			message: '#^Constructor of class DolEditor has an unused parameter \$toolbarlocation\.$#'
+			message: '#^Constructor of class DolEditor has an unused parameter \$notused\.$#'
 			identifier: constructor.unusedParameter
 			count: 1
 			path: ../../../htdocs/core/class/doleditor.class.php
@@ -6429,7 +5715,7 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 11
+			count: 10
 			path: ../../../htdocs/core/class/extrafields.class.php
 
 		-
@@ -7111,21 +6397,9 @@ parameters:
 			path: ../../../htdocs/core/class/timespent.class.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 2
-			path: ../../../htdocs/core/class/translate.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with list\<string\|false\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/core/class/utils.class.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 2
 			path: ../../../htdocs/core/class/utils.class.php
 
 		-
@@ -7399,12 +6673,6 @@ parameters:
 			path: ../../../htdocs/core/filemanagerdol/connectors/php/connector.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/core/get_info.php
-
-		-
 			message: '#^Variable \$var in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
@@ -7417,19 +6685,13 @@ parameters:
 			path: ../../../htdocs/core/lib/admin.lib.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/core/lib/admin.lib.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''llx_'' and ''llx_'' will always evaluate to false\.$#'
 			identifier: notEqual.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/lib/admin.lib.php
 
 		-
-			message: '#^Offset 1 on array\{string, non\-falsy\-string, string\} in empty\(\) always exists and is not falsy\.$#'
+			message: '#^Offset 1 on array\{non\-falsy\-string, non\-falsy\-string, string\} in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.offset
 			count: 1
 			path: ../../../htdocs/core/lib/admin.lib.php
@@ -7441,12 +6703,6 @@ parameters:
 			path: ../../../htdocs/core/lib/admin.lib.php
 
 		-
-			message: '#^Variable \$strictw3c in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 13
-			path: ../../../htdocs/core/lib/admin.lib.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
@@ -7455,7 +6711,7 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/lib/company.lib.php
 
 		-
@@ -7581,7 +6837,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 3
+			count: 4
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
@@ -7615,19 +6871,19 @@ parameters:
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^Offset ''list'' on array\{list\: array\{\}\}\|array\{list\: non\-empty\-array\<int, object\>\} in isset\(\) always exists and is not nullable\.$#'
+			message: '#^Offset ''list'' on array\{list\: array\{\}\}\|array\{list\: non\-empty\-list\<object\>\} in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.offset
 			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^Offset 1 on array\{string, non\-falsy\-string\} in empty\(\) always exists and is not falsy\.$#'
+			message: '#^Offset 1 on array\{non\-falsy\-string, non\-falsy\-string\} in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.offset
 			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^Offset 1 on array\{string, non\-falsy\-string\} in isset\(\) always exists and is not nullable\.$#'
+			message: '#^Offset 1 on array\{non\-falsy\-string, non\-falsy\-string\} in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.offset
 			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
@@ -7679,18 +6935,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/core/lib/functions2.lib.php
-
-		-
-			message: '#^Parameter \#3 \$value of function curl_setopt expects 0\|2, bool given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/geturl.lib.php
-
-		-
-			message: '#^Parameter \#3 \$value of function curl_setopt expects bool, int given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/core/lib/geturl.lib.php
 
 		-
 			message: '#^Call to function function_exists\(\) with ''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
@@ -7765,12 +7009,6 @@ parameters:
 			path: ../../../htdocs/core/lib/order.lib.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 11
-			path: ../../../htdocs/core/lib/pdf.lib.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 4
@@ -7813,12 +7051,6 @@ parameters:
 			path: ../../../htdocs/core/lib/signature.lib.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 6
-			path: ../../../htdocs/core/lib/tax.lib.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7833,18 +7065,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/lib/website.lib.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/lib/website.lib.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/core/lib/website.lib.php
 
@@ -7863,6 +7083,12 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: ../../../htdocs/core/lib/xcal.lib.php
+
+		-
+			message: '#^Offset 0 on array\{non\-falsy\-string, non\-empty\-string\} in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.offset
 			count: 1
 			path: ../../../htdocs/core/lib/xcal.lib.php
 
@@ -8071,20 +7297,8 @@ parameters:
 			path: ../../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
 
 		-
-			message: '#^Property modTcpdfbarcode\:\:\$is2d has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/barcode/doc/tcpdfbarcode.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
-			message: '#^Parameter \#2 \$object of method BordereauChequeBlochet\:\:_pagefoot\(\) expects CommonObject, null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
 
@@ -8092,12 +7306,6 @@ parameters:
 			message: '#^Property Commande\:\:\$availability \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
@@ -8116,12 +7324,6 @@ parameters:
 			message: '#^Property Commande\:\:\$availability \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
@@ -8251,18 +7453,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -8287,12 +7477,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -8311,40 +7495,10 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixcreditnote has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixdeposit has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixinvoice has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
-
-		-
-			message: '#^Property mod_facture_mars\:\:\$prefixreplacement has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/facture/mod_facture_mars.php
 
 		-
 			message: '#^Access to constant TYPE_NON on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
@@ -8545,30 +7699,6 @@ parameters:
 			path: ../../../htdocs/core/modules/import/import_xlsx.modules.php
 
 		-
-			message: '#^Property mailing_contacts1\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/contacts1.modules.php
-
-		-
-			message: '#^Property mailing_contacts1\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/contacts1.modules.php
-
-		-
-			message: '#^Property mailing_fraise\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/fraise.modules.php
-
-		-
-			message: '#^Property mailing_fraise\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/fraise.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -8593,82 +7723,16 @@ parameters:
 			path: ../../../htdocs/core/modules/mailings/modules_mailings.php
 
 		-
-			message: '#^Property mailing_xinputfile\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/xinputfile.modules.php
-
-		-
-			message: '#^Property mailing_xinputfile\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/xinputfile.modules.php
-
-		-
-			message: '#^Property mailing_xinputuser\:\:\$require_admin has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/xinputuser.modules.php
-
-		-
-			message: '#^Property mailing_xinputuser\:\:\$require_module has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mailings/xinputuser.modules.php
-
-		-
 			message: '#^Comparison operation "\>" between 1 and 0 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 2
 			path: ../../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''compute'', type\: ''double'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''cleanAmount''\|''computeAmount'', element\: ''Accountancy''\}\|array\{rule\: ''compute'', type\: ''int'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''computePieceNum'', element\: ''Accountancy''\}\|array\{rule\: ''compute'', type\: ''varchar'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''computeDirection'', element\: ''Accountancy''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAccounting.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/accountancy/class…'', class\: ''AccountancyCategory'', method\: ''fetch'', dict\: ''DictionaryAccountan…''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/accountancy/class…'', class\: ''AccountingAccount'', method\: ''fetch'', element\: ''AccountingAccount''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAccounting.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAccounting.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryStateCode''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: ''getrefifauto'', class\: string, path\: non\-falsy\-string\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryStateCode''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''getrefifauto'', class\: string, path\: non\-falsy\-string\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
 			message: '#^Variable \$user in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
 			path: ../../../htdocs/core/modules/modAgenda.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeandl…'', classfile\: ''/categories/class…'', class\: ''Categorie'', method\: ''fetch'', element\: ''category'', codefromfield\: ''ca\.type''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCategorie.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/categories/class…'', class\: ''Categorie'', method\: ''fetch'', element\: ''category''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/class…'', class\: ''Product'', method\: ''fetch'', element\: ''Product''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCategorie.class.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -8869,36 +7933,6 @@ parameters:
 			path: ../../../htdocs/core/modules/modPrelevement.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', dict\: ''DictionaryUnits''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''CProductNature'', method\: ''fetch'', dict\: ''DictionaryProductNa…''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''CProductNature'', method\: ''fetch'', dict\: ''DictionaryProductNa…''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''CProductNature'', method\: ''fetch'', dict\: ''DictionaryProductNa…''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/product/class…'', class\: ''Product'', method\: ''fetch'', element\: ''Product''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Entrepot''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/projet/class…'', class\: ''Project'', method\: ''fetch'', element\: ''Project''\}\|array\{rule\: ''getrefifauto'', class\: mixed, path\: non\-falsy\-string\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProjet.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PROPALE_ADDON'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -8983,40 +8017,10 @@ parameters:
 			path: ../../../htdocs/core/modules/modRecruitment.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''Ctyperesource'', method\: ''fetch'', dict\: ''DictionaryResourceT…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modResource.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 2
 			path: ../../../htdocs/core/modules/modSalaries.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', dict\: ''DictionaryUnits''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modService.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modService.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modService.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/product/class…'', class\: ''Product'', method\: ''fetch'', element\: ''Product''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modService.class.php
 
 		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''COMPANY_ADDON_PDF…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
@@ -9052,18 +8056,6 @@ parameters:
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 5
-			path: ../../../htdocs/core/modules/modSociete.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/user/class/user…'', class\: ''User'', method\: ''fetch'', element\: ''User''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modSociete.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../../../htdocs/core/modules/modSociete.class.php
 
 		-
@@ -9103,18 +8095,6 @@ parameters:
 			path: ../../../htdocs/core/modules/modStock.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryStateCode''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''ref''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modStock.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/product/class…'', class\: ''Product'', method\: ''fetch'', element\: ''product''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''ref''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modStock.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''SUPPLIER_PROPOSAL…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 3
@@ -9127,25 +8107,7 @@ parameters:
 			path: ../../../htdocs/core/modules/modSupplierProposal.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/compta/paiement…'', class\: ''Cpaiement'', method\: ''fetch'', element\: ''Cpaiement''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modTax.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/compta/sociales…'', class\: ''Cchargesociales'', method\: ''fetch'', element\: ''Cchargesociales''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modTax.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$export_permission \(array\<array\<array\{string, string\}\>\>\) does not accept non\-empty\-array\<array\<array\{0\: string, 1\?\: string\}\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modUser.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryState''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''numeric''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/modUser.class.php
@@ -9171,12 +8133,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
@@ -9307,22 +8263,10 @@ parameters:
 			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -9361,12 +8305,6 @@ parameters:
 			path: ../../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
 
 		-
-			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 2
@@ -9385,12 +8323,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
 		-
-			message: '#^Property CommandeFournisseur\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 2
@@ -9405,12 +8337,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
@@ -9433,12 +8359,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: '#^Property SupplierProposal\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -9447,12 +8367,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property SupplierProposal\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -9571,18 +8485,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/contacts.tpl.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
 			message: '#^Variable \$filearray might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -9625,19 +8527,7 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_array_fields.tpl.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
-
-		-
 			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
-
-		-
-			message: '#^Variable \$obj might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
@@ -9647,18 +8537,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
 
 		-
 			message: '#^Variable \$param might not be defined\.$#'
@@ -9675,36 +8553,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: '#^Variable \$ecmdir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: '#^Variable \$filepathnoext might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: '#^Variable \$module in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
-			message: '#^Variable \$pageid might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/filemanager.tpl.php
 
@@ -9769,18 +8617,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/objectline_title.tpl.php
 
 		-
-			message: '#^Variable \$outputalsopricetotalwithtax might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
-			message: '#^Variable \$usemargins might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -9791,18 +8627,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/objectlinked_lineimport.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/objectlinked_lineimport.tpl.php
 
 		-
 			message: '#^Variable \$langs might not be defined\.$#'
@@ -9853,54 +8677,6 @@ parameters:
 			path: ../../../htdocs/core/website.inc.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$websitekey might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Loose comparison using \=\= between 1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/cron/card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 2
-			path: ../../../htdocs/cron/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 2
-			path: ../../../htdocs/cron/card.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 5
-			path: ../../../htdocs/cron/card.php
-
-		-
 			message: '#^Variable \$mc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -9917,114 +8693,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$command \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$dateend \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$datenextrun \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$datestart \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$email_alert \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$frequency \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$jobtype \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$lastoutput \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$lastresult \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$libname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$maxrun \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$nbrun \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$processing \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$test \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Property Cronjob\:\:\$unitfrequency \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/cron/class/cronjob.class.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 10
-			path: ../../../htdocs/cron/list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -10079,96 +8747,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/document.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/document.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/don/class/api_donations.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 5
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$amount \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_bank \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_donation \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_typepayment \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_user_creat \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$fk_user_modif \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Property PaymentDonation\:\:\$num_payment \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Result of && is always true\.$#'
-			identifier: booleanAnd.alwaysTrue
-			count: 2
-			path: ../../../htdocs/don/class/paymentdonation.class.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/document.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/info.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/note.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -10273,108 +8851,6 @@ parameters:
 			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(ConferenceOrBooth\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(ConferenceOrBooth\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ConferenceOrBooth\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ConferenceOrBooth\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Method ConferenceOrBooth\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Method ConferenceOrBooth\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorbooth.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ConferenceOrBoothAttendee\) and ''fk_soc'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with ConferenceOrBoothAttendee and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with ConferenceOrBoothAttendee and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with ConferenceOrBoothAttendee and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with ConferenceOrBoothAttendee and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Property ConferenceOrBoothAttendee\:\:\$lastname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Property ConferenceOrBoothAttendee\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -10387,20 +8863,8 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
 
 		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
 
@@ -10413,12 +8877,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_document.php
-
-		-
-			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorbooth_document.php
 
@@ -10459,12 +8917,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
 		-
-			message: '#^Property ConferenceOrBoothAttendee\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
-
-		-
 			message: '#^Variable \$withproject in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -10495,33 +8947,9 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 5
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Variable \$extrafields in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
+			count: 1
 			path: ../../../htdocs/expedition/card.php
 
 		-
@@ -10825,12 +9253,6 @@ parameters:
 			path: ../../../htdocs/exports/export.php
 
 		-
-			message: '#^Variable \$heightforframes might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/externalsite/frames.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -10927,12 +9349,6 @@ parameters:
 			path: ../../../htdocs/fourn/card.php
 
 		-
-			message: '#^Parameter \#1 \$object of method SupplierOrders\:\:_cleanObjectDatas\(\) expects object, array\<mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
 			message: '#^Variable \$contact might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -10987,32 +9403,8 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 3
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$ref_supplier \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
@@ -11047,18 +9439,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Property CommandeFournisseur\:\:\$user_author_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -11075,42 +9455,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 2
 			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.ligne.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(FactureFournisseur\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(FactureFournisseur\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(FactureFournisseur\) and ''date'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(FactureFournisseur\) and ''total_ht'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 6
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
 			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
@@ -11299,26 +9643,8 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.product.class.php
 
 		-
-			message: '#^Property Product\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.product.class.php
-
-		-
-			message: '#^Property Product\:\:\$status_buy \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.product.class.php
-
-		-
 			message: '#^Property ProductFournisseur\:\:\$fourn_unitprice \(int\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.product.class.php
-
-		-
-			message: '#^Result of && is always true\.$#'
-			identifier: booleanAnd.alwaysTrue
 			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.product.class.php
 
@@ -11461,18 +9787,6 @@ parameters:
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
-			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/document.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -11539,12 +9853,6 @@ parameters:
 			path: ../../../htdocs/fourn/paiement/document.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/paiement/document.php
-
-		-
 			message: '#^Variable \$arrayofselected might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
@@ -11596,12 +9904,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/holiday/card.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
 			path: ../../../htdocs/holiday/card_group.php
 
 		-
@@ -11643,7 +9945,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 3
+			count: 2
 			path: ../../../htdocs/holiday/class/holiday.class.php
 
 		-
@@ -11668,6 +9970,12 @@ parameters:
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 3
+			path: ../../../htdocs/holiday/define_holiday.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_keys expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
 			path: ../../../htdocs/holiday/define_holiday.php
 
 		-
@@ -11929,12 +10237,6 @@ parameters:
 			path: ../../../htdocs/hrm/class/skilldet.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/hrm/class/skilldet.class.php
-
-		-
 			message: '#^Call to function property_exists\(\) with SkillRank and ''date_creation'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12001,16 +10303,16 @@ parameters:
 			path: ../../../htdocs/hrm/compare.php
 
 		-
+			message: '#^Loose comparison using \=\= between ''edit'' and ''edit'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/hrm/establishment/card.php
+
+		-
 			message: '#^Variable \$k might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/evaluation_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/evaluation_document.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -12029,12 +10331,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/job_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/job_document.php
 
 		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
@@ -12059,12 +10355,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/position.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/position_document.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -12107,12 +10397,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/skill_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/skill_document.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -12541,12 +10825,6 @@ parameters:
 			path: ../../../htdocs/knowledgemanagement/knowledgerecord_card.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/knowledgerecord_document.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -12593,96 +10871,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_bank \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_loan \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_payment_loan \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_typepayment \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_user_creat \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$fk_user_modif \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property LoanSchedule\:\:\$num_payment \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/loan/class/loanschedule.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$amount_capital \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$amount_insurance \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_bank \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_loan \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_typepayment \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_user_creat \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$fk_user_modif \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
-			message: '#^Property PaymentLoan\:\:\$num_payment \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/loan/class/paymentloan.class.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -12754,18 +10942,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/main.inc.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/main.inc.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 35
 			path: ../../../htdocs/main.inc.php
 
 		-
@@ -12847,50 +11023,14 @@ parameters:
 			path: ../../../htdocs/margin/tabs/thirdpartyMargins.php
 
 		-
-			message: '#^Variable \$dolibarr_main_db_character_set might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/master.inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_collation might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/master.inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_cryptkey might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/master.inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_encryption might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/master.inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_prefix might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/master.inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/master.inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_limit_users might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/master.inc.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../../../htdocs/modulebuilder/index.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''objects'' and ''specifications'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
 			count: 1
 			path: ../../../htdocs/modulebuilder/index.php
 
@@ -12898,12 +11038,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 34
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
@@ -13117,30 +11251,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
-			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
-			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -13175,12 +11285,6 @@ parameters:
 			identifier: include.fileNotFound
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/js/mymodule.js.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 4
-			path: ../../../htdocs/modulebuilder/template/lib/mymodule_myobject.lib.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -13249,12 +11353,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/myobject_card.php
 
 		-
-			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -13287,12 +11385,6 @@ parameters:
 		-
 			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
 			identifier: include.fileNotFound
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/myobject_document.php
 
@@ -13363,12 +11455,6 @@ parameters:
 			path: ../../../htdocs/mrp/class/api_mos.class.php
 
 		-
-			message: '#^Property MoLine\:\:\$fk_warehouse \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/mrp/class/api_mos.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -13402,54 +11488,6 @@ parameters:
 			message: '#^Method Mo\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 3
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$fk_warehouse \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$mrptype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$qty \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/class/mo.class.php
-
-		-
-			message: '#^Property Mo\:\:\$tpl \(array\<string, int\|string\>\) does not accept array\<string, float\|int\|string\>\.$#'
-			identifier: assign.propertyType
-			count: 6
 			path: ../../../htdocs/mrp/class/mo.class.php
 
 		-
@@ -13495,24 +11533,6 @@ parameters:
 			path: ../../../htdocs/mrp/mo_agenda.php
 
 		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/mo_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/mo_document.php
-
-		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/mrp/mo_movements.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -13534,12 +11554,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between ''consumeandproduceall'' and ''consumeandproduceall'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 2
-			path: ../../../htdocs/mrp/mo_production.php
-
-		-
-			message: '#^Property Mo\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/mrp/mo_production.php
 
 		-
@@ -13603,43 +11617,7 @@ parameters:
 			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
-			message: '#^Property Opensurveysondage\:\:\$format \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
 			message: '#^Property Opensurveysondage\:\:\$id_sondage \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$mail_admin \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$mailsonde \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$nom_admin \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
-
-		-
-			message: '#^Property Opensurveysondage\:\:\$title \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
@@ -13661,6 +11639,18 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/opensurvey/results.php
+
+		-
+			message: '#^Parameter \#5 \$day of function dol_mktime expects int, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../../../htdocs/opensurvey/wizard/choix_date.php
+
+		-
+			message: '#^Parameter \#5 \$day of function mktime expects int\|null, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../../../htdocs/opensurvey/wizard/choix_date.php
 
 		-
 			message: '#^Left side of && is always false\.$#'
@@ -13735,12 +11725,6 @@ parameters:
 			path: ../../../htdocs/partnership/class/partnership.class.php
 
 		-
-			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/partnership/class/partnership.class.php
-
-		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 1
@@ -13773,12 +11757,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/partnership/partnership_card.php
-
-		-
-			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/partnership/partnership_card.php
 
@@ -13975,152 +11953,8 @@ parameters:
 			path: ../../../htdocs/product/class/html.formproduct.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Product\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Product\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Product\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Product\) and ''price'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Product\) and ''price_ttc'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Product\) and ''stock_reel'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Comparison operation "\>\=" between 0 and 0 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between 1 and 1 will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Method Product\:\:_get_stats\(\) should return \-1\|array\<int\<0, 11\>, array\<int, float\|int\>\> but returns non\-empty\-array\<int\<0, 11\>, array\{string, \(float\|int\)\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property Product\:\:\$accountancy_code_buy \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property Product\:\:\$accountancy_code_sell \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property Product\:\:\$desiredstock \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property Product\:\:\$fk_default_bom \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property Product\:\:\$seuil_stock_alerte \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property Product\:\:\$sousprods \(array\<string, array\<int, array\<int, float\|int\|string\>\>\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property Product\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Property Product\:\:\$status_buy \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Result of && is always true\.$#'
-			identifier: booleanAnd.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 2
-			path: ../../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/class/productbatch.class.php
-
-		-
-			message: '#^Property Productbatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/product/class/productbatch.class.php
-
-		-
-			message: '#^Property Productbatch\:\:\$eatby \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/product/class/productbatch.class.php
 
@@ -14128,12 +11962,6 @@ parameters:
 			message: '#^Property Productbatch\:\:\$qty \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3
-			path: ../../../htdocs/product/class/productbatch.class.php
-
-		-
-			message: '#^Property Productbatch\:\:\$sellby \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/product/class/productbatch.class.php
 
 		-
@@ -14413,6 +12241,12 @@ parameters:
 			path: ../../../htdocs/product/list.php
 
 		-
+			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: ../../../htdocs/product/list.php
+
+		-
 			message: '#^Loose comparison using \=\= between ''add_customer_price'' and ''add_customer_price'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -14468,12 +12302,6 @@ parameters:
 
 		-
 			message: '#^Variable \$obj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/price.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/price.php
@@ -14719,30 +12547,6 @@ parameters:
 			path: ../../../htdocs/product/stats/supplier_proposal.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Entrepot\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Entrepot\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Entrepot\) and ''lieu'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/product/stock/class/entrepot.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -14755,63 +12559,9 @@ parameters:
 			path: ../../../htdocs/product/stock/class/productlot.class.php
 
 		-
-			message: '#^Property Productlot\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$eatby \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$eol_date \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
 			message: '#^Property Productlot\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$fk_user_creat \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$fk_user_modif \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$manufacturing_date \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$scrapping_date \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/stock/class/productlot.class.php
-
-		-
-			message: '#^Property Productlot\:\:\$sellby \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/product/stock/class/productlot.class.php
 
 		-
@@ -14828,12 +12578,6 @@ parameters:
 
 		-
 			message: '#^Property ProductStockEntrepot\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
-			message: '#^Property ProductStockEntrepot\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
 			path: ../../../htdocs/product/stock/class/productstockentrepot.class.php
@@ -14911,30 +12655,6 @@ parameters:
 			path: ../../../htdocs/product/stock/massstockmove.php
 
 		-
-			message: '#^Variable \$datatoimport might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: '#^Variable \$endatlinenb might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: '#^Variable \$excludefirstline might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: '#^Variable \$format might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
 			message: '#^Variable \$producttmp might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -14973,18 +12693,6 @@ parameters:
 		-
 			message: '#^Variable \$diroutputmassaction in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$idAlreadyReverse might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$listofobjectref might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/movement_list.php
 
@@ -15055,24 +12763,6 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransfer.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -15091,34 +12781,10 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/class/stocktransferline.class.php
 
 		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_agenda.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Property StockTransfer\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
 			message: '#^Variable \$result might not be defined\.$#'
@@ -15127,22 +12793,10 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_contact.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_document.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 2
-			path: ../../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
@@ -15259,6 +12913,12 @@ parameters:
 			path: ../../../htdocs/projet/agenda.php
 
 		-
+			message: '#^Loose comparison using \=\= between ''gettasks'' and ''gettasks'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/projet/ajax/projects.php
+
+		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -15309,12 +12969,6 @@ parameters:
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(Project\) and ''thirdparty'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/class/project.class.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
 			count: 1
 			path: ../../../htdocs/projet/class/project.class.php
 
@@ -15603,7 +13257,7 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
+			count: 2
 			path: ../../../htdocs/projet/list.php
 
 		-
@@ -15685,12 +13339,6 @@ parameters:
 			path: ../../../htdocs/projet/tasks/contact.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Task and ''fetchComments'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/tasks/contact.php
-
-		-
 			message: '#^Property Project\:\:\$budget_amount \(float\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -15709,12 +13357,6 @@ parameters:
 			path: ../../../htdocs/projet/tasks/document.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Task and ''fetchComments'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/tasks/document.php
-
-		-
 			message: '#^Property Project\:\:\$budget_amount \(float\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -15723,12 +13365,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/projet/tasks/document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/tasks/document.php
 
@@ -15748,12 +13384,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 5
-			path: ../../../htdocs/projet/tasks/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''0''\|array\{\} and '''' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
 			path: ../../../htdocs/projet/tasks/list.php
 
 		-
@@ -16069,12 +13699,6 @@ parameters:
 			path: ../../../htdocs/public/eventorganization/subscriptionok.php
 
 		-
-			message: '#^Variable \$suffix might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/eventorganization/subscriptionok.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -16105,18 +13729,6 @@ parameters:
 			path: ../../../htdocs/public/fichinter/agendaexport.php
 
 		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/public/members/new.php
-
-		-
-			message: '#^Variable \$php_self might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/members/new.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -16131,6 +13743,12 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: ../../../htdocs/public/onlinesign/newonlinesign.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''expedition'' and ''expedition'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../htdocs/public/onlinesign/newonlinesign.php
 
@@ -16177,12 +13795,6 @@ parameters:
 			path: ../../../htdocs/public/partnership/new.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/public/partnership/new.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -16204,12 +13816,6 @@ parameters:
 			message: '#^Variable \$customer might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/public/payment/newpayment.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/public/payment/newpayment.php
 
 		-
@@ -16423,21 +14029,9 @@ parameters:
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
-			message: '#^Variable \$SECUREKEY might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
 			message: '#^Variable \$backtopage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
@@ -16456,12 +14050,6 @@ parameters:
 			message: '#^Variable \$suffix might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
@@ -16585,12 +14173,6 @@ parameters:
 			path: ../../../htdocs/public/ticket/create_ticket.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/ticket/create_ticket.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -16685,12 +14267,6 @@ parameters:
 			identifier: booleanAnd.alwaysFalse
 			count: 2
 			path: ../../../htdocs/public/webportal/tpl/menu.tpl.php
-
-		-
-			message: '#^Path in include\(\) "\.\./\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
-			identifier: include.fileNotFound
-			count: 1
-			path: ../../../htdocs/public/webportal/webportal.main.inc.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -16801,12 +14377,6 @@ parameters:
 			path: ../../../htdocs/reception/class/reception.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$shipping_method_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
 			message: '#^Property Reception\:\:\$ref_supplier \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -16859,12 +14429,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/reception/class/receptionlinebatch.class.php
 
 		-
 			message: '#^Property ReceptionLineBatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
@@ -17017,12 +14581,6 @@ parameters:
 			path: ../../../htdocs/reception/list.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/admin/public_interface.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -17109,12 +14667,6 @@ parameters:
 		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/recruitment/class/recruitmentcandidature.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/recruitment/class/recruitmentcandidature.class.php
 
@@ -17263,12 +14815,6 @@ parameters:
 			path: ../../../htdocs/recruitment/recruitmentcandidature_card.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentcandidature_document.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -17312,12 +14858,6 @@ parameters:
 
 		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
@@ -17461,18 +15001,6 @@ parameters:
 			path: ../../../htdocs/salaries/list.php
 
 		-
-			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 1
-			path: ../../../htdocs/salaries/paiement_salary.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/salaries/paiement_salary.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
@@ -17516,12 +15044,6 @@ parameters:
 
 		-
 			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/admin/societe.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/societe/admin/societe.php
@@ -17653,24 +15175,6 @@ parameters:
 			path: ../../../htdocs/societe/class/companybankaccount.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Societe\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Societe\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Societe\) and ''code_client'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''email''\|''mobile'' and ''poste'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 2
@@ -17683,20 +15187,8 @@ parameters:
 			path: ../../../htdocs/societe/class/societe.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 6
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
 			message: '#^Property Contact\:\:\$roles \(array\<int, array\{id\: int, socid\: int, element\: string, source\: string, code\: string, label\: string\}\>\|null\) does not accept non\-empty\-list\<string\>\.$#'
 			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^Property Societe\:\:\$bank_account \(Account\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/societe/class/societe.class.php
 
@@ -17714,12 +15206,6 @@ parameters:
 
 		-
 			message: '#^Property Societe\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^Property Societe\:\:\$stcomm_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/societe/class/societe.class.php
@@ -17767,10 +15253,10 @@ parameters:
 			path: ../../../htdocs/societe/consumption.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/document.php
+			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 5
+			path: ../../../htdocs/societe/list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -17867,24 +15353,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/societe/price.php
-
-		-
-			message: '#^Variable \$parameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/project.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/societe/tpl/linesalesrepresentative.tpl.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -18121,12 +15589,6 @@ parameters:
 			path: ../../../htdocs/takepos/ajax/ajax.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/css/pos.css.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 4
@@ -18223,7 +15685,7 @@ parameters:
 			path: ../../../htdocs/takepos/printbox.php
 
 		-
-			message: '#^Loose comparison using \!\= between mixed and '''' will always evaluate to true\.$#'
+			message: '#^Loose comparison using \!\= between non\-empty\-string and '''' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
 			path: ../../../htdocs/takepos/receipt.php
@@ -18235,22 +15697,10 @@ parameters:
 			path: ../../../htdocs/takepos/send.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/smpcb.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: ../../../htdocs/takepos/split.php
-
-		-
-			message: '#^Variable \$fontlist might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/eldy/btn.inc.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -18505,12 +15955,6 @@ parameters:
 			path: ../../../htdocs/ticket/class/ticket.class.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/document.php
-
-		-
 			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -18715,12 +16159,6 @@ parameters:
 			path: ../../../htdocs/user/class/usergroup.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$lastname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/user/class/usergroup.class.php
-
-		-
 			message: '#^Property UserGroup\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -18753,12 +16191,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/user/document.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/user/document.php
 
@@ -19039,12 +16471,6 @@ parameters:
 			path: ../../../htdocs/webhook/class/target.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/webhook/class/target.class.php
-
-		-
 			message: '#^Property Target\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -19069,16 +16495,16 @@ parameters:
 			path: ../../../htdocs/webhook/target_list.php
 
 		-
+			message: '#^Variable \$mode in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: ../../../htdocs/webhook/target_list.php
+
+		-
 			message: '#^Loose comparison using \=\= between ''auto'' and ''auto'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../htdocs/webportal/class/context.class.php
-
-		-
-			message: '#^Offset 0 on non\-empty\-list\<string\> in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formcardwebportal.class.php
 
 		-
 			message: '#^Result of && is always false\.$#'
@@ -19113,7 +16539,7 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 8
+			count: 7
 			path: ../../../htdocs/webportal/class/html.formwebportal.class.php
 
 		-
@@ -19207,12 +16633,6 @@ parameters:
 			path: ../../../htdocs/webportal/class/webportalpartnership.class.php
 
 		-
-			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/webportal/class/webportalpartnership.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(WebPortalPropal\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -19221,12 +16641,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(WebPortalPropal\) and ''getNomUrl'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/webportal/class/webportalpropal.class.php
-
-		-
-			message: '#^Property Propal\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/webportal/class/webportalpropal.class.php
 
@@ -19357,9 +16771,39 @@ parameters:
 			path: ../../../htdocs/website/index.php
 
 		-
+			message: '#^Loose comparison using \!\= between ''editcss'' and ''createcontainer'' will always evaluate to true\.$#'
+			identifier: notEqual.alwaysTrue
+			count: 1
+			path: ../../../htdocs/website/index.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''createcontainer'' and ''createcontainer'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/website/index.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''createsite'' and ''createcontainer'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: ../../../htdocs/website/index.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''createsite'' and ''createsite'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
+			count: 1
+			path: ../../../htdocs/website/index.php
+
+		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
+			path: ../../../htdocs/website/index.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 2
 			path: ../../../htdocs/website/index.php
 
 		-
@@ -19417,90 +16861,6 @@ parameters:
 			path: ../../../htdocs/website/websiteaccount_card.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Workstation\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Workstation\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Workstation\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Workstation\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Workstation and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Method Workstation\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
-			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/workstation/workstation_card.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/workstation/workstation_document.php
-
-		-
 			message: '#^Variable \$val might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -19511,18 +16871,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/workstation/workstation_list.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 3
-			path: ../../../htdocs/zapier/class/api_zapier.class.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/zapier/class/api_zapier.class.php
 
 		-
 			message: '#^Variable \$num in isset\(\) always exists and is not nullable\.$#'
@@ -19565,30 +16913,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../scripts/emailings/reset-invalid-emails.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../scripts/members/sync_members_dolibarr2ldap.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../scripts/members/sync_members_ldap2dolibarr.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../scripts/members/sync_members_types_dolibarr2ldap.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../scripts/members/sync_members_types_ldap2dolibarr.php
 
 		-
 			message: '#^Loose comparison using \=\= between ''product'' and ''product'' will always evaluate to true\.$#'

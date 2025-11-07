@@ -327,7 +327,8 @@ class FormWebPortal extends Form
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
+
+				$tmpout .= '<a href="' . $url . '"  class="btn-download-link ' . $morecss . '" role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
@@ -413,7 +414,6 @@ class FormWebPortal extends Form
 		$classpath = $InfoFieldList[1];
 		$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 		$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
-
 		if (!empty($classpath)) {
 			dol_include_once($classpath);
 
@@ -516,6 +516,10 @@ class FormWebPortal extends Form
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
 				$sql .= " INNER JOIN " . $this->db->prefix() . $tmparray[1] . " as parenttable ON parenttable.rowid = t." . $tmparray[0];
 			}
+		}
+
+		if (!empty($objecttmp->isextrafieldmanaged)) {
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
 
 		// Add where from hooks
@@ -842,8 +846,8 @@ class FormWebPortal extends Form
 				}
 
 				if (!$filter_categorie) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
+					$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+					if (!empty($fields_label)) {
 						$keyList .= ', ';
 						$keyList .= implode(', ', $fields_label);
 					}

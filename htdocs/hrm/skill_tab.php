@@ -4,7 +4,7 @@
  * Copyright (C) 2021       Greg Rastklan       <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021       Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021       Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -156,7 +156,7 @@ if (empty($reshook)) {
 			$ret = -1;
 			foreach ($TSkillsToAdd as $k => $v) {
 				$skillAdded = new SkillRank($db);
-				$skillAdded->fk_skill = $v;
+				$skillAdded->fk_skill = (int) $v;
 				$skillAdded->fk_object = $id;
 				$skillAdded->objecttype = $objecttype;
 				$ret = $skillAdded->create($user);
@@ -177,7 +177,7 @@ if (empty($reshook)) {
 						$objEval = $db->fetch_object($result);
 						$line = new EvaluationLine($db);
 						$line->fk_evaluation = $objEval->rowid;
-						$line->fk_skill = $v;
+						$line->fk_skill = (int) $v;
 						$line->required_rank = 0;
 						$line->fk_rank = 0;
 
@@ -397,7 +397,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$linkback = '<a href="' . $listLink . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 		$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
