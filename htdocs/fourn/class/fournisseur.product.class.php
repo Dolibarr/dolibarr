@@ -131,12 +131,12 @@ class ProductFournisseur extends Product
 	public $fourn_pu;
 
 	/**
-	 * @var float		The total price for a given Minimum Order Quantity (MOQ).
+	 * @var ?float		The total price for a given Minimum Order Quantity (MOQ).
 	 */
 	public $fourn_price;
 
 	/**
-	 * @var float		The discount in percentage for a given Minimum Order Quantity (MOQ).
+	 * @var ?float		The discount in percentage for a given Minimum Order Quantity (MOQ).
 	 */
 	public $fourn_remise_percent;
 
@@ -219,19 +219,19 @@ class ProductFournisseur extends Product
 	public $fourn_multicurrency_id;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $fourn_multicurrency_code;
 	/**
-	 * @var int|float|string
+	 * @var int|float|string|null
 	 */
 	public $fourn_multicurrency_tx;
 	/**
-	 * @var int|string
+	 * @var int|float|string|null
 	 */
 	public $fourn_multicurrency_price;
 	/**
-	 * @var int|string
+	 * @var int|float|string
 	 */
 	public $fourn_multicurrency_unitprice;
 
