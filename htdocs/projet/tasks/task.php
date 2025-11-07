@@ -316,7 +316,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-task
 
 if ($id > 0 || !empty($ref)) {
 	$res = $object->fetch_optionals();
-	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
 		$object->fetchComments();
 	}
 
