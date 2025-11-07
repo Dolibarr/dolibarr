@@ -12103,42 +12103,6 @@ parameters:
 			path: ../../../htdocs/product/class/productfournisseurprice.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 3
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$file_name \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$fk_user_author \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$fk_user_mod \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$lang \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
