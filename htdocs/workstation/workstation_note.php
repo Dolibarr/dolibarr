@@ -75,7 +75,9 @@ restrictedArea($user, $object->element, $object->id, $object->table_element, 'wo
  * Actions
  */
 $parameters = array();
+// \PHPStan\dumpType($object);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);     // Note that $action and $object may have been modified by some hooks
+// \PHPStan\dumpType($object);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
