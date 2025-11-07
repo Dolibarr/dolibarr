@@ -51,7 +51,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 //$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'aZ09');
 $mode = GETPOST('mode', 'aZ');
 
@@ -80,7 +80,7 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array:int');
 
 if (!isset($search_projectstatus) || $search_projectstatus === '') {
 	if ($search_all != '') {
@@ -272,9 +272,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if (empty($search_projectstatus) && $search_projectstatus == '') {
-	$search_projectstatus = 1;
-}
+// already done at line 85
+// if (empty($search_projectstatus) && $search_projectstatus == '') {
+// 	$search_projectstatus = 1;
+// }
 
 /*
  * View
@@ -1211,7 +1212,7 @@ while ($i < $imaxinloop) {
 		if ($userAccess >= 0) {
 			// Show here line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1673,6 +1674,10 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		}
 	}
 	print '</tr>';
+}
+
+if ($num == 0) {
+	print '<tr><td colspan="'.$savnbfield.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 $db->free($resql);

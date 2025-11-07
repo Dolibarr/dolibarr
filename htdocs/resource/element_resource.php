@@ -108,6 +108,12 @@ if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUC
 	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
 }
 
+// TODO
+//$permissiontoadd should be set according to $element
+//$permissiontodelete should be set according to $element
+$permissiontoadd = $user->hasRight('resource', 'write');
+$permissiontodelete = $user->hasRight('resource', 'delete');
+
 
 /*
  * Actions
@@ -123,7 +129,7 @@ if (empty($reshook)) {
 	$error = 0;
 	$objstat = null;
 
-	if ($action == 'add_element_resource' && !$cancel) {
+	if ($action == 'add_element_resource' && !$cancel && $permissiontoadd) {	// Test on permission already done in header before actions
 		$res = 0;
 		if (!($resource_id > 0)) {
 			$error++;
@@ -206,16 +212,16 @@ if (empty($reshook)) {
 	}
 
 	// Update resource
-	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha') && is_object($objstat)) {
+	if ($action == 'update_linked_resource' && $permissiontoadd && !$cancel) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement instanceof ActionComm && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;  // @phan-suppress-current-line PhanUndeclaredProperty
 				$eventDateEnd   = $object->objelement->datef;  // @phan-suppress-current-line PhanUndeclaredProperty
-				$isFullDayEvent = $objstat->fulldayevent;
+				$isFullDayEvent = $object->objelement->fulldayevent; // @phan-suppress-current-line PhanUndeclaredProperty
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -251,7 +257,7 @@ if (empty($reshook)) {
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
-					$object->error    = $db->lasterror();
+					$object->error = $db->lasterror();
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
@@ -261,7 +267,7 @@ if (empty($reshook)) {
 						while ($obj = $db->fetch_object($resql)) {
 							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
 						}
-						$object->errors[] = $objstat->error;
+						$object->errors[] = $object->error;
 					}
 					$db->free($resql);
 				}
@@ -285,13 +291,18 @@ if (empty($reshook)) {
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
-		$result = $object->delete_resource($lineid, $element);
+	if ($action == 'confirm_delete_linked_resource' && $permissiontodelete && $confirm === 'yes') {
+		$res = $object->fetchElementResource($lineid); // to have correct object deleting resource
+		if ($res) {
+			$result = $object->objelement->delete_resource($lineid, '');
 
-		if ($result >= 0) {
-			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
+			if ($result >= 0) {
+				setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -399,7 +410,7 @@ if (!$ret) {
 				if (0) {	// @phpstan-ignore-line
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
 					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {

@@ -260,7 +260,7 @@ class CodingPhpTest extends CommonClassTest
 			//exit;
 		}
 
-		// Check for unauthorised vardumps
+		// Check for unauthorised var_dumps
 		if (!preg_match('/test\/phpunit/', $file['fullname'])) {
 			$this->verifyNoActiveVardump($filecontent, $report_filepath);
 		}
@@ -292,6 +292,22 @@ class CodingPhpTest extends CommonClassTest
 		$this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['relativename']);
 		//exit;
 
+
+		// Part to scan code vulnerability on SQL injection
+
+
+		// Check sql using ' instead of "
+		$ok = true;
+		$matches = array();
+		preg_match_all('/LIKE \\\/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			var_dump($matches);
+			$ok = false;
+			break;
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, "Found a LIKE \' when we should have LIKE ' - Bad.");
+		//exit;
 
 
 		// Check sql string DELETE|OR|AND|WHERE|INSERT ... yyy = ".$xxx
@@ -616,6 +632,15 @@ class CodingPhpTest extends CommonClassTest
 		}
 		$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
+		// Test we don't have preg_grep with a param without preg_quote
+		$ok = true;
+		$matches = array();
+		preg_match_all('/= getEntity\(["\'a-z]*\)/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			$ok = false;
+			break;
+		}
+		$this->assertTrue($ok, 'Found a sequence "= getEntity(\'...\')" that is not allowed. We should have IN getEntity or = conf->entity in file '.$file['relativename'].'.');
 
 		// Test we don't have "if ($resql >"
 		$ok = true;
@@ -692,27 +717,43 @@ class CodingPhpTest extends CommonClassTest
 
 			// Get the part of string to use for analysis
 			$reg = array();
-			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {
+			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {	// search '* Action... * View'
 				$filecontentaction = $reg[1];
 			} else {
 				$filecontentaction = $filecontent;
 			}
 
-			preg_match_all('/if.*\$action\s*==\s*[\'"][a-z\-_]+[\'"].*$/si', $filecontentaction, $matches, PREG_SET_ORDER);
+			// Uncomment this for a scan on one given file
+			//          if ($file['fullname'] != '/home/ldestailleur/git/dolibarr_22.0/htdocs/holiday/card.php') return;
+			//          if ($file['fullname'] != '/home/ldestailleur/git/dolibarr_22.0/htdocs/bom/bom_card.php') return;
+
+			/*
+			$filecontentaction = <<<'EOT'
+			Note that $action and $object may have been modified by some hooks
+
+			if ($action == 'add' && $permissiontoadd) {
+			// aaa
+
+			EOT;
+			*/
+			//var_dump($filecontentaction);
+			preg_match_all('/if\s[^\n\r]+\$action\s*==\s*[\'"][a-z\-_]+[\'"].*$/mi', $filecontentaction, $matches, PREG_SET_ORDER);
 
 			foreach ($matches as $key => $val) {
 				if (!preg_match('/\$user->hasR/', $val[0])
 					&& !preg_match('/\$permission/', $val[0])
 					&& !preg_match('/\$permto/', $val[0])
 					&& !preg_match('/\$usercan/', $val[0])
+					&& !preg_match('/\$candelete/', $val[0])
 					&& !preg_match('/\$canedit/', $val[0])
 					&& !preg_match('/\$user->admin/', $val[0])
+					&& !preg_match('/\->getRights\(\)->/', $val[0])
 					&& !preg_match('/already done/i', $val[0])
 					&& !preg_match('/done later/i', $val[0])
 					&& !preg_match('/not required/i', $val[0])) {
 					$ok = false;
 
-					//var_dump($file['fullname'].' '.$filecontentaction);exit;
+					var_dump($file['fullname'].' '.$val[0].' '.$filecontentaction);exit;
 
 					print "File ".$file['relativename']." - Line: ".$val[0]."\n";
 					break;

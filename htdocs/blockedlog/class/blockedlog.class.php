@@ -45,6 +45,12 @@ class BlockedLog
 	public $entity;
 
 	/**
+	 * Picto
+	 * @var string
+	 */
+	public $picto = 'blockedlog';
+
+	/**
 	 * @var string Error message
 	 */
 	public $error = '';
@@ -72,10 +78,25 @@ class BlockedLog
 	public $amounts = null;
 
 	/**
+	 * @var float|string|null
+	 */
+	public $vat = null;
+
+	/**
 	 * trigger action
 	 * @var string
 	 */
 	public $action = '';
+
+	/**
+	 * @var string $linktype. Example 'paymentofinvoice'
+	 */
+	public $linktype = '';
+
+	/**
+	 * @var string $linktoref
+	 */
+	public $linktoref = '';
 
 	/**
 	 * Object element
@@ -176,13 +197,18 @@ class BlockedLog
 
 		$this->trackedevents = array();
 
+		$sep = 0;
+
 		// Customer Invoice/Facture / Payment
 		if (isModEnabled('invoice')) {
-			$this->trackedevents['BILL_VALIDATE'] = array('id' => 'BILL_VALIDATE', 'label' => 'logBILL_VALIDATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_VALIDATE'));
-			//$this->trackedevents['BILL_UPDATE'] = array('id' => 'BILL_VALIDATE', 'label' => 'logBILL_UPDATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_UPDATE'));
-			$this->trackedevents['BILL_SENTBYMAIL'] = array('id' => 'BILL_SENTBYMAIL', 'label' => 'logBILL_SENTBYMAIL', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_SENTBYMAIL'));
-			$this->trackedevents['DOC_DOWNLOAD'] = array('id' => 'DOC_DOWNLOAD', 'label' => 'BlockedLogBillDownload', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('BlockedLogBillDownload'));
-			$this->trackedevents['DOC_PREVIEW'] = array('id' => 'DOC_PREVIEW', 'label' => 'BlockedLogBillPreview', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('BlockedLogBillPreview'));
+			$sep++;
+			$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("Invoices").' | '.$langs->trans("Payments").'</span>', 'disabled' => 1);
+
+			$this->trackedevents['BILL_VALIDATE']           = array('id' => 'BILL_VALIDATE', 'label' => 'logBILL_VALIDATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_VALIDATE'));
+			//$this->trackedevents['BILL_UPDATE']           = array('id' => 'BILL_VALIDATE', 'label' => 'logBILL_UPDATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_UPDATE'));
+			$this->trackedevents['BILL_SENTBYMAIL']         = array('id' => 'BILL_SENTBYMAIL', 'label' => 'logBILL_SENTBYMAIL', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logBILL_SENTBYMAIL'));
+			$this->trackedevents['DOC_DOWNLOAD']            = array('id' => 'DOC_DOWNLOAD', 'label' => 'BlockedLogBillDownload', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('BlockedLogBillDownload'));
+			$this->trackedevents['DOC_PREVIEW']             = array('id' => 'DOC_PREVIEW', 'label' => 'BlockedLogBillPreview', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('BlockedLogBillPreview'));
 			$this->trackedevents['PAYMENT_CUSTOMER_CREATE'] = array('id' => 'PAYMENT_CUSTOMER_CREATE', 'label' => 'logPAYMENT_CUSTOMER_CREATE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_CUSTOMER_CREATE'));
 			$this->trackedevents['PAYMENT_CUSTOMER_DELETE'] = array('id' => 'PAYMENT_CUSTOMER_DELETE', 'label' => 'logPAYMENT_CUSTOMER_DELETE', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_CUSTOMER_DELETE'));
 		}
@@ -202,53 +228,82 @@ class BlockedLog
 
 		// Donation
 		if (isModEnabled('don')) {
-			$this->trackedevents['DON_VALIDATE'] = 'logDON_VALIDATE';
-			$this->trackedevents['DON_DELETE'] = 'logDON_DELETE';
-			//$this->trackedevents['DON_SENTBYMAIL']='logDON_SENTBYMAIL';
-			$this->trackedevents['DONATION_PAYMENT_CREATE'] = 'logDONATION_PAYMENT_CREATE';
-			$this->trackedevents['DONATION_PAYMENT_DELETE'] = 'logDONATION_PAYMENT_DELETE';
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----  '.$langs->trans("Donations").' | '.$langs->trans("Payments").'</span>', 'disabled' => 1);
+			}
+
+			$this->trackedevents['DON_VALIDATE'] = array('id' => 'DON_VALIDATE', 'label' => 'logDON_VALIDATE', 'labelhtml' => img_picto('', 'donation', 'class="pictofixedwidth").').$langs->trans('logDON_VALIDATE'));
+			$this->trackedevents['DON_DELETE'] = array('id' => 'DON_DELETE', 'label' => 'logDON_DELETE', 'labelhtml' => img_picto('', 'donation', 'class="pictofixedwidth").').$langs->trans('logDON_DELETE'));
+			//$this->trackedevents['DON_SENTBYMAIL'] = array('id' => 'BILL_VALIDATE', img_picto('', 'don', 'class="pictofixedwidth").').$langs->trans('labelhtml' => 'logDON_SENTBYMAIL');
+			$this->trackedevents['DONATION_PAYMENT_CREATE'] = array('id' => 'DONATION_PAYMENT_CREATE', 'label' => 'logDONATION_PAYMENT_CREATE', 'labelhtml' => img_picto('', 'donation', 'class="pictofixedwidth").').$langs->trans('logDONATION_PAYMENT_CREATE'));
+			$this->trackedevents['DONATION_PAYMENT_DELETE'] = array('id' => 'DONATION_PAYMENT_DELETE', 'label' => 'logDONATION_PAYMENT_DELETE', 'labelhtml' => img_picto('', 'donation', 'class="pictofixedwidth").').$langs->trans('logDONATION_PAYMENT_DELETE'));
 		}
 
 		/*
 		// Salary
 		if (isModEnabled('salary')) {
-			$this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
-			$this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
-			$this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
+			$this->trackedevents['PAYMENT_SALARY_CREATE'] = 'BlockedLogSalaryPaymentCreate';
+			$this->trackedevents['PAYMENT_SALARY_MODIFY'] = 'BlockedLogSalaryPaymentCreate';
+			$this->trackedevents['PAYMENT_SALARY_DELETE'] = 'BlockedLogSalaryPaymentCreate';
 		}
 		 */
 
 		// Members
 		if (isModEnabled('member')) {
-			$this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = 'logMEMBER_SUBSCRIPTION_CREATE';
-			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
-			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("MenuMembers").'</span>', 'disabled' => 1);
+			}
+
+			$this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = array('id' => 'MEMBER_SUBSCRIPTION_CREATE', 'label' => 'logMEMBER_SUBSCRIPTION_CREATE', 'labelhtml' => img_picto('', 'member', 'class="pictofixedwidth").').$langs->trans('logMEMBER_SUBSCRIPTION_CREATE'));
+			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = array('id' => 'MEMBER_SUBSCRIPTION_MODIFY', 'label' => 'logMEMBER_SUBSCRIPTION_MODIFY', 'labelhtml' => img_picto('', 'member', 'class="pictofixedwidth").').$langs->trans('logMEMBER_SUBSCRIPTION_MODIFY'));
+			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = array('id' => 'MEMBER_SUBSCRIPTION_DELETE', 'label' => 'logMEMBER_SUBSCRIPTION_DELETE', 'labelhtml' => img_picto('', 'member', 'class="pictofixedwidth").').$langs->trans('logMEMBER_SUBSCRIPTION_DELETE'));
 		}
 
 		// Bank
 		if (isModEnabled("bank")) {
-			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
-			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
-			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----  '.$langs->trans("VariousPayment").'</span>', 'disabled' => 1);
+			}
+
+			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = array('id' => 'PAYMENT_VARIOUS_CREATE', 'label' => 'logPAYMENT_VARIOUS_CREATE', 'labelhtml' => img_picto('', 'bank', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_VARIOUS_CREATE'));
+			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = array('id' => 'PAYMENT_VARIOUS_MODIFY', 'label' => 'logPAYMENT_VARIOUS_MODIFY', 'labelhtml' => img_picto('', 'bank', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_VARIOUS_MODIFY'));
+			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = array('id' => 'PAYMENT_VARIOUS_DELETE', 'label' => 'logPAYMENT_VARIOUS_DELETE', 'labelhtml' => img_picto('', 'bank', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_VARIOUS_DELETE'));
 		}
 
-		// Cashdesk
+		// Cash register closing
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
 		$moduleposenabled = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalString('BANK_ENABLE_POS_CASHCONTROL'));
 		if ($moduleposenabled) {
-			$this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">-----   '.$langs->trans("CashControl").'</span>', 'disabled' => 1);
+			}
+
+			$this->trackedevents['CASHCONTROL_VALIDATE'] = array('id' => 'CASHCONTROL_VALIDATE', 'label' => 'logCASHCONTROL_VALIDATE', 'labelhtml' => img_picto('', 'pos', 'class="pictofixedwidth").').$langs->trans('logCASHCONTROL_VALIDATE'));
 		}
 
 		// Add more action to track from a conf variable
 		// For example: STOCK_MOVEMENT,...
 		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
+			if (!empty($this->trackedevents)) {
+				$sep++;
+				$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----------</span>', 'disabled' => 1);
+			}
+
 			$tmparrayofmoresupportedevents = explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'));
 			foreach ($tmparrayofmoresupportedevents as $val) {
-				$this->trackedevents[$val] = 'log'.$val;
+				$this->trackedevents[$val] = array('id' => $val, 'label' => 'log'.$val, 'labelhtml' => img_picto('', 'generic', 'class="pictofixedwidth").').$langs->trans('log'.$val));
 			}
 		}
 
-		$this->trackedevents['BLOCKEDLOG_EXPORT'] = 'logBLOCKEDLOG_EXPORT';
+		if (!empty($this->trackedevents)) {
+			$sep++;
+			$this->trackedevents['separator_'.$sep] = array('id' => 'separator_'.$sep, 'label' => '----------', 'labelhtml' => '<span class="opacitymedium">----- '.$langs->trans("Other").'</span>', 'disabled' => 1);
+		}
+		$this->trackedevents['BLOCKEDLOG_EXPORT'] = array('id' => 'BLOCKEDLOG_EXPORT', 'label' => 'logBLOCKEDLOG_EXPORT', 'labelhtml' => img_picto('', $this->picto, 'class="pictofixedwidth").').$langs->trans('logBLOCKEDLOG_EXPORT'));
 
 		return 1;
 	}
@@ -500,9 +555,9 @@ class BlockedLog
 				}
 				if (!in_array($key, array(
 				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
-				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
+				'tva_intra', 'tva_assuj', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 				))) {
-					continue; // Discard if not into a dedicated list
+					continue; // Discard if not into this dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
 					$this->object_data->thirdparty->$key = $value;
@@ -520,9 +575,9 @@ class BlockedLog
 				}
 				if (!in_array($key, array(
 				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
-				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
+				'tva_assuj', 'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 				))) {
-					continue; // Discard if not into a dedicated list
+					continue; // Discard if not into this dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
 					$this->object_data->mycompany->$key = $value;
@@ -822,15 +877,15 @@ class BlockedLog
 				$this->id 				= $obj->rowid;
 				$this->entity 			= $obj->entity;
 
-				$this->date_creation 	= $this->db->jdate($obj->date_creation);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_creation 	= $this->db->jdate($obj->date_creation);	// TODO Use gmt ?
+				$this->date_modification = $this->db->jdate($obj->tms);				// TODO Use gmt ?
 
 				$this->amounts			= (float) $obj->amounts;
 				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
 				$this->fk_object = $obj->fk_object;
-				$this->date_object = $this->db->jdate($obj->date_object);
+				$this->date_object = $this->db->jdate($obj->date_object);			// TODO Use gmt ?
 				$this->ref_object = $obj->ref_object;
 
 				$this->fk_user = $obj->fk_user;
@@ -1062,7 +1117,7 @@ class BlockedLog
 
 		//$signature_line = dol_hash($concatenatedata, '5'); // Not really useful
 		$signature = dol_hash($previoushash.$concatenatedata, 'sha256');
-		//var_dump($previoushash); var_dump($concatenatedata); var_dump($signature_line); var_dump($signature);
+
 
 		$res = ($signature === $this->signature);
 
@@ -1305,7 +1360,11 @@ class BlockedLog
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT = $fingerprint;
 		}
 
-		return $conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT;
+		if (!getDolGlobalString('BLOCKEDLOG_LAST_RECORD_FINGERPRINT')) {
+			dolibarr_set_const($db, 'BLOCKEDLOG_LAST_RECORD_FINGERPRINT', '0:none', 'chaine', 0, 'Last record fingerprint', $conf->entity);
+		}
+
+		return getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT');
 	}
 
 
@@ -1317,29 +1376,7 @@ class BlockedLog
 	 */
 	public function alreadyUsed($ignoresystem = 0)
 	{
-		global $conf;
-
-		$result = false;
-
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
-		if ($ignoresystem) {
-			$sql .= " AND action not in ('MODULE_SET','MODULE_RESET')";
-		}
-		$sql .= $this->db->plimit(1);
-
-		$res = $this->db->query($sql);
-		if ($res !== false) {
-			$obj = $this->db->fetch_object($res);
-			if ($obj) {
-				$result = true;
-			}
-		} else {
-			dol_print_error($this->db);
-		}
-
-		dol_syslog("Module Blockedlog alreadyUsed(ignoresystem=".$ignoresystem.") returns ".json_encode($result));
-
-		return $result;
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		return isBlockedLogused($ignoresystem);
 	}
 }

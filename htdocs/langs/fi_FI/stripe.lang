@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Yritä uudelleen napsauttamalla tätä...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Vahvan asiakkaan Autentikointi sääntöjen vuoksi kortti on luotava Stripen taustatoimistosta. Napsauta tätä ottaaksesi Stripe-asiakastietueen käyttöön: %s
 STRIPE_CARD_PRESENT=Korttilahja Stripe-päätteille
 TERMINAL_LOCATION=Stripe Terminalsin sijainti (osoite).
-RequestDirectDebitWithStripe=Pyydä suoraveloitus Stripen kautta
-RequesCreditTransferWithStripe=Pyydä tilisiirtoa Stripelta
-STRIPE_SEPA_DIRECT_DEBIT=Ota suoraveloitusmaksut käyttöön Stripen kautta
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Aktivoi Klarna maksut
 STRIPE_BANCONTACT=Ota maksut käyttöön BANCONTACTin avulla
 STRIPE_IDEAL=Ota maksut käyttöön IDEALin avulla
@@ -91,3 +92,19 @@ ExampleOnlyForDECustomers=Vain saksaksi asiakkaat
 ExampleOnlyForNLCustomers=Vain hollanniksi asiakkaat
 ExampleOnlyForATBEDEITNLESCustomers=Vain asiakkaat-laitteille Itävallasta, Belgiasta, Saksasta, Italiasta, Alankomaista ja Espanjasta
 ListOfSupportedHooksToActivate=Luettelo tuetuista aktivoitavista koukuista
+# Paybox
+PayBoxSetup=PayBox moduulin asetukset
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=Sinut ohjataan on turvattu Paybox sivu tuloliittimeen voit luottokortin tiedot
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=Tämä sivu vahvistaa, että maksu on kirjattu. Kiitos.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url on Paybox CGI moduuli maksaa
+NewPayboxPaymentReceived=Uusi Paybox maksu vastaanotettu
+NewPayboxPaymentFailed=Uusi Paybox maksu epäonnistui
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=PBX SITE arvo
+PAYBOX_PBX_RANG=PBX Rang arvo
+PAYBOX_PBX_IDENTIFIANT=PBX ID arvo
+PAYBOX_HMAC_KEY=HMAC key

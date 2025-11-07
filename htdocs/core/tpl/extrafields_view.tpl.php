@@ -86,12 +86,12 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
-			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
 		}
 
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
-			$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '1');
+			$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '1');
 		}
 		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
@@ -305,9 +305,10 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
+				print '<input type="hidden" name="page_y" value="">';
 				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element);
 
-				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
+				print '<input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 
 				print '</form>';
 
@@ -322,6 +323,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
+				print '<input type="hidden" value="' . $value . '" name="options_' . $tmpkeyextra . '" id="options_' . $tmpkeyextra . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
 			}
 
 			print '</td>';

@@ -111,7 +111,7 @@ $permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 // Security check
@@ -184,6 +184,9 @@ if (empty($reshook)) {
 				$errors = $nuser->errors;
 				$db->rollback();
 			}
+			if ($error) {
+				setEventMessage($langs->trans('ImpossibleToCreateUserFromContact').' : '.$nuser->errorsToString(), 'errors');
+			}
 		} else {
 			$error = $object->error;
 			$errors = $object->errors;
@@ -240,7 +243,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		$object->email = (string) GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
+		$object->email = (string) GETPOST('email', 'email');
 		$object->no_email = GETPOSTINT("no_email");
 		$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
 		$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
@@ -359,13 +362,13 @@ if (empty($reshook)) {
 			$action = 'edit';
 		}
 
-		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOSTINT("no_email") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOSTINT("no_email") == -1 && !empty(GETPOST('email', 'email'))) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'edit';
 		}
 
-		if (!empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL)) && !isValidEmail(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (!empty(GETPOST('email', 'email')) && !isValidEmail(GETPOST('email', 'email'))) {
 			$langs->load("errors");
 			$error++;
 			$errors[] = $langs->trans("ErrorBadEMail", GETPOST('email', 'alpha'));
@@ -378,7 +381,7 @@ if (empty($reshook)) {
 			$object->fetchRoles();
 
 			// Photo save
-			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
+			$dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/contact/".$object->id."/photos";
 			$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 			if (GETPOST('deletephoto') && $object->photo) {
 				$fileimg = $dir.'/'.$object->photo;
@@ -664,7 +667,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</script>'."\n";
 			}
 
-			print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="post" name="formsoc" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -1327,7 +1330,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 		$morehtmlref .= '<div class="refidno">';

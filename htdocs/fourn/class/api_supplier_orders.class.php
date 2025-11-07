@@ -247,7 +247,7 @@ class SupplierOrders extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 
 		if (!is_array($request_data)) {
@@ -335,14 +335,79 @@ class SupplierOrders extends DolibarrApi
 	}
 
 	/**
+	 * Add a line to a given supplier order
+	 *
+	 * @param int   $id             Id of order to update
+	 * @param array $request_data   OrderLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url	POST {id}/lines
+	 *
+	 * @return int
+	 */
+	public function postLine($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+
+		$updateRes = $this->order->addline(
+			$request_data->desc,
+			$request_data->subprice,
+			$request_data->qty,
+			$request_data->tva_tx,
+			$request_data->localtax1_tx,
+			$request_data->localtax2_tx,
+			$request_data->fk_product,
+			$request_data->fk_prod_fourn_price,
+			$request_data->ref_fourn,
+			$request_data->remise_percent,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
+			$request_data->pu_ttc,
+			$request_data->product_type,
+			$request_data->info_bits,
+			$request_data->notrigger,
+			$request_data->date_start,
+			$request_data->date_end,
+			$request_data->array_options,
+			$request_data->fk_unit,
+			$request_data->multicurrency_subprice,
+			$request_data->origin,
+			$request_data->origin_id,
+			$request_data->rang,
+			$request_data->special_code,
+		);
+
+		if ($updateRes > 0) {
+			return $updateRes;
+		} else {
+			throw new RestException(400, $this->order->error);
+		}
+	}
+
+	/**
 	 * Get contacts of given supplier order
 	 *
 	 * Return an array with contact information
 	 *
-	 * @param	int		$id			ID of supplier order
-	 * @param	string	$source		Source of the contact (internal, external, all).
-	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
-	 * @return	Object				Object with cleaned properties
+	 * @param	int					$id			ID of supplier order
+	 * @param	string				$source		Source of the contact (internal, external, all).
+	 * @param	string				$type		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
+	 * @return	array<int,mixed>				Array of contacts
 	 *
 	 * @url	GET {id}/contacts
 	 *
@@ -374,7 +439,7 @@ class SupplierOrders extends DolibarrApi
 			$contacts = array_merge($contacts, $tmpContacts);
 		}
 
-		return $this->_cleanObjectDatas($contacts);
+		return $contacts;
 	}
 
 	/**

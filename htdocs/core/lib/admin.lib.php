@@ -52,8 +52,10 @@ function versiontostring($versionarray)
 }
 
 /**
- *	Compare 2 versions (stored into 2 arrays).
- *  To check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *	Compare 2 versions (stored into 2 arrays), to know if a version (a,b,c) is lower than (x,y,z)
+ *  To check using a string version do a preg_split('/[\.\-]/', strinversion) to convert the string into an array.
+ *  To check with Dolibarr version use versiondolibarrarray() to get the array of Dolibarr current version
+ *
  *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-5)) >= 0) is true if version is 4.0 alpha or higher.
  *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,0)) >= 0) is true if version is 4.0 final or higher.
  *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,1)) >= 0) is true if version is 4.0.1 or higher.
@@ -61,9 +63,9 @@ function versiontostring($versionarray)
  *
  *	@param      array<int|string>	$versionarray1	Array of version (vermajor,verminor,patch)
  *	@param      array<int|string>	$versionarray2	Array of version (vermajor,verminor,patch)
- *	@return     int<-4,4>			      	-4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
- * 												0 if same
- * 												1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
+ *	@return     int<-4,4>			      			-4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
+ * 													0 if same
+ * 													1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
  *  @see versiontostring()
  */
 function versioncompare($versionarray1, $versionarray2)
@@ -118,7 +120,7 @@ function versioncompare($versionarray1, $versionarray2)
 		}
 	}
 	//print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
-	return $ret;
+	return $ret;	// return level=1 if difference is on the main version, level=2 on minor version, level=3 on maintenance version, level=4 on development phase version
 }
 
 
@@ -136,12 +138,12 @@ function versionphparray()
 /**
  *	Return version Dolibarr
  *
- *	@return     array<int<0,2>,string>	Tableau de version (vermajeur,vermineur,autre)
+ *	@return     array<int<0,2>,string>	Array of version (vermajor,verminor,vermaintenance,other)
  *  @see versioncompare()
  */
 function versiondolibarrarray()
 {
-	return explode('.', DOL_VERSION);
+	return preg_split('/[\-\.]/', DOL_VERSION);
 }
 
 
@@ -207,7 +209,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 
 				// restrict on database type
 				if (!empty($reg[1])) {
-					if (!preg_match('/'.preg_quote($reg[1]).'/i', $db->type)) {
+					if (!preg_match('/'.preg_quote($reg[1], '/').'/i', $db->type)) {
 						$qualified = 0;
 					}
 				}
@@ -552,7 +554,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 		});
 		</script>';
 		if (count($arraysql)) {
-			print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
+			print ' - <a class="trforrunsqlshowhide'.$keyforsql.' reposition" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
 		} else {
 			print ' - <span class="opacitymedium">'.$langs->trans("ScriptIsEmpty").'</span>';
 		}
@@ -772,9 +774,10 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
 
 	$h = 0;
 	$head = array();
+
 	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
-	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled)
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['mode' => $mode]);
+	if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
 		$head[$h][1] = $langs->trans("AvailableModules");
 		$head[$h][1] .= $form->textwithpicto('', $langs->trans("YouMustEnableOneModule").'.<br><br><span class="opacitymedium">'.$desc.'</span>', 1, 'warning');
@@ -785,17 +788,17 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
 	$head[$h][2] = 'modules';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=marketplace";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['mode' => 'marketplace']);
 	$head[$h][1] = $langs->trans("ModulesMarketPlaces");
 	$head[$h][2] = 'marketplace';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=deploy";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['mode' => 'deploy']);
 	$head[$h][1] = $langs->trans("AddExtensionThemeModuleOrOther");
 	$head[$h][2] = 'deploy';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=develop";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['mode' => 'develop']);
 	$head[$h][1] = $langs->trans("ModulesDevelopYourModule");
 	$head[$h][2] = 'develop';
 	$h++;
@@ -814,35 +817,37 @@ function ihm_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'other']);
 	$head[$h][1] = $langs->trans("LanguageAndPresentation");
 	$head[$h][2] = 'other';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=template";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'template']);
 	$head[$h][1] = $langs->trans("SkinAndColors");
 	$head[$h][2] = 'template';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=dashboard";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'dashboard']);
 	$head[$h][1] = $langs->trans("Dashboard");
 	$head[$h][2] = 'dashboard';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'login']);
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=css";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ihm.php', ['mode' => 'css']);
 	$head[$h][1] = $langs->trans("CSSPage");
 	$head[$h][2] = 'css';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/tools/ui/index.php";
+	/* Not a user setup of a feature. Useless for an end users, so has been moved into the Modulebuilder main page (for dev).
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/tools/ui/index.php');
 	$head[$h][1] = $langs->trans("UxComponentsDoc").' '.img_picto('', 'external-link-square-alt');
-	$head[$h][2] = 'css';
+	$head[$h][2] = 'ux';
 	$h++;
+	*/
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
 
@@ -864,44 +869,44 @@ function security_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_other.php");
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'misc';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_captcha.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_captcha.php");
 	$head[$h][1] = $langs->trans("Captcha");
 	$head[$h][2] = 'captcha';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security.php");
 	$head[$h][1] = $langs->trans("Passwords");
 	$head[$h][2] = 'passwords';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_file.php");
 	$head[$h][1] = $langs->trans("Files").' ('.$langs->trans("UploadName").' | '.$langs->trans("Download").')';
 	$head[$h][2] = 'file';
 	$h++;
 
 	/*
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_file_download.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_file_download.php");
 	$head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Download").')';
 	$head[$h][2] = 'filedownload';
 	$h++;
 	*/
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/proxy.php");
 	$head[$h][1] = $langs->trans("ExternalAccess");
 	$head[$h][2] = 'proxy';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/events.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/events.php");
 	$head[$h][1] = $langs->trans("Audit");
 	$head[$h][2] = 'audit';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/openid_connect.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/openid_connect.php");
 	$head[$h][1] = $langs->trans("OpenIDconnectSetup");
 	$head[$h][2] = 'openid';
 	$h++;
@@ -928,7 +933,7 @@ function security_prepare_head()
 	}
 
 	if (getDolGlobalString('MAIN_SECURITY_USE_DEFAULT_PERMISSIONS')) {
-		$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/perms.php");
 		$head[$h][1] = $langs->trans("DefaultRights");
 		if ($nbPerms > 0) {
 			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
@@ -937,7 +942,7 @@ function security_prepare_head()
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/security_headers_http.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_headers_http.php");
 	$head[$h][1] = $langs->trans("MainHttpSecurityHeaders");
 	$head[$h][2] = 'headers_http';
 	$h++;
@@ -960,18 +965,18 @@ function modulehelp_prepare_head($object)
 	// FIX for compatibility habitual tabs
 	$object->id = $object->numero;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=desc';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modulehelp.php', ['id' => $object->id, 'mode' => 'desc']);
 	$head[$h][1] = $langs->trans("Description");
 	$head[$h][2] = 'desc';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=feature';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modulehelp.php', ['id' => $object->id, 'mode' => 'feature']);
 	$head[$h][1] = $langs->trans("TechnicalServicesProvided");
 	$head[$h][2] = 'feature';
 	$h++;
 
 	if ($object->isCoreOrExternalModule() == 'external') {
-		$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=changelog';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/modulehelp.php', ['id' => $object->id, 'mode' => 'changelog']);
 		$head[$h][1] = $langs->trans("ChangeLog");
 		$head[$h][2] = 'changelog';
 		$h++;
@@ -995,12 +1000,12 @@ function translation_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/translation.php', ['mode' => 'searchkey']);
 	$head[$h][1] = $langs->trans("TranslationKeySearch");
 	$head[$h][2] = 'searchkey';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/translation.php', ['mode' => 'overwrite']);
 	$head[$h][1] = '<span class="valignmiddle">'.$langs->trans("TranslationOverwriteKey").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 	$head[$h][2] = 'overwrite';
 	$h++;
@@ -1109,7 +1114,7 @@ function listOfSessions()
 						$idsess = $tmp[1];
 						$regs = array();
 						$arrayofSessions[$idsess]["login"] = '';
-						$loginfound = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i', $sessValues, $regs);
+						$loginfound = preg_match('/dol_login\|s:[0-9]+:"([^"]+)"/i', $sessValues, $regs);
 						if ($loginfound) {
 							$arrayofSessions[$idsess]["login"] = (string) $regs[1];
 						}
@@ -1220,6 +1225,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	$objMod = new $modName($db);
 	'@phan-var-force DolibarrModules $objMod';
+	/** @var DolibarrModules $objMod */
 
 	// Test if PHP version ok
 	$verphp = versionphparray();
@@ -1362,6 +1368,7 @@ function unActivateModule($value, $requiredby = 1)
 	if ($found) {
 		$objMod = new $modName($db);
 		'@phan-var-force DolibarrModules $objMod';
+		/** @var DolibarrModules $objMod */
 		$result = $objMod->remove();
 		if ($result <= 0) {
 			$ret = $objMod->error;
@@ -1435,6 +1442,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
+						/** @var DolibarrModules $objMod */
 
 						if ($objMod->numero > 0) {
 							$j = $objMod->numero;
@@ -1602,6 +1610,7 @@ function activateModulesRequiredByCountry($country_code)
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
+						/** @var DolibarrModules $objMod */
 
 						$modulequalified = 1;
 
@@ -1678,6 +1687,7 @@ function complete_elementList_with_modules(&$elementList)
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						/** @var DolibarrModules $objMod */
 
 						if ($objMod->numero > 0) {
 							$j = $objMod->numero;
@@ -1753,51 +1763,37 @@ function complete_elementList_with_modules(&$elementList)
  *  @param	string		$text			Text to use for the column name of values
  *	@return	void
  */
-function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Value')
+function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = '')
 {
 	global $db, $langs, $conf, $user;
 	global $_Avery_Labels;
 
 	$form = new Form($db);
 
-	if (empty($strictw3c)) {
-		dol_syslog("Warning: Function 'form_constantes' was called with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_WARNING);
-	}
-	if (!empty($strictw3c) && $strictw3c == 1) {
-		print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="updateall">';
-	}
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$text = $langs->trans($text);
-	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
-	print '</td>';
-	if (empty($strictw3c)) {
-		print '<td class="center" width="80">'.$langs->trans("Action").'</td>';
+	if ($text) {
+		$text = $langs->trans($text);
+		print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
 	}
+	print '</td>';
 	print "</tr>\n";
 
-	$label = '';
 	foreach ($tableau as $key => $const) {	// Loop on each param
 		$label = '';
 		// $const is a const key like 'MYMODULE_ABC'
-		if (is_numeric($key)) {		// Very old behaviour
-			$type = 'string';
+		if (is_array($const)) {
+			$type = $const['type'];
+			$label = $const['label'];
+			$const = $key;
 		} else {
-			if (is_array($const)) {
-				$type = $const['type'];
-				$label = $const['label'];
-				$const = $key;
-			} else {
-				$type = $const;
-				$const = $key;
-			}
+			$type = $const;
+			$const = $key;
 		}
+
 		$sql = "SELECT ";
 		$sql .= "rowid";
 		$sql .= ", ".$db->decrypt('name')." as name";
@@ -1819,19 +1815,12 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				$obj = (object) array('rowid' => '', 'name' => $const, 'value' => '', 'type' => $type, 'note' => '');
 			}
 
-			if (empty($strictw3c)) {	// deprecated. must be always true.
-				print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="page_y" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="update">';
-			}
-
 			print '<tr class="oddeven">';
 
 			// Show label of parameter
 			print '<td>';
-			print '<input type="hidden" name="rowid'.(empty($strictw3c) ? '' : '[]').'" value="'.$obj->rowid.'">';
-			print '<input type="hidden" name="constname'.(empty($strictw3c) ? '' : '[]').'" value="'.$const.'">';
+			print '<input type="hidden" name="rowid[]" value="'.$obj->rowid.'">';
+			print '<input type="hidden" name="constname[]" value="'.$const.'">';
 			print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 			print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
 
@@ -1886,36 +1875,35 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				foreach (array_keys($_Avery_Labels) as $codecards) {
 					$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 				}
-				print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
+				print $form->selectarray('constvalue'.($strictw3c == 3 ? '_'.$const : '[]'), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
 				print '<input type="hidden" name="consttype" value="yesno">';
-				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+				print '<input type="hidden" name="constnote[]" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				print '</td>';
 			} else {
 				print '<td>';
-				print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.($obj->type ? $obj->type : 'string').'">';
-				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+				print '<input type="hidden" name="consttype'.($strictw3c == 3 ? '_'.$const : '[]').'" value="'.($obj->type ? $obj->type : 'string').'">';
+				print '<input type="hidden" name="constnote'.($strictw3c == 3 ? '_'.$const : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				if ($obj->type == 'textarea' || in_array($const, array('ADHERENT_CARD_TEXT', 'ADHERENT_CARD_TEXT_RIGHT', 'ADHERENT_ETIQUETTE_TEXT'))) {
-					print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" cols="50" rows="5" wrap="soft">'."\n";
+					print '<textarea class="flat" name="constvalue'.($strictw3c == 3 ? '_'.$const : '[]').'" cols="50" rows="5" wrap="soft">'."\n";
 					print $obj->value;
 					print "</textarea>\n";
 				} elseif ($obj->type == 'html') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
+					$doleditor = new DolEditor('constvalue'.($strictw3c == 3 ? '_'.$const : '[]'), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
-					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1, false, 0, 1);
+					print $form->selectyesno('constvalue'.($strictw3c == 3 ? '_'.$const : '[]'), $obj->value, 1, false, 0, 1);
 				} elseif (preg_match('/emailtemplate/', $obj->type)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
 
 					$tmp = explode(':', $obj->type);
 
-					$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
-					//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+					$formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
+
 					$arrayofmessagename = array();
 					if (is_array($formmail->lines_model)) {
 						foreach ($formmail->lines_model as $modelmail) {
-							//var_dump($modelmail);
 							$moreonlabel = '';
 							if (!empty($arrayofmessagename[$modelmail->label])) {
 								$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
@@ -1924,40 +1912,23 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 							$arrayofmessagename[$modelmail->label.':'.$tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
 						}
 					}
-					//var_dump($arraydefaultmessage);
-					//var_dump($arrayofmessagename);
+
 					print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 
-					print '<a href="'.DOL_URL_ROOT.'/admin/mails_templates.php?action=create&type_template='.urlencode($tmp[1]).'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('', 'add').'</a>';
+					print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/mails_templates.php', ['action' => 'create', 'type_template' => $tmp[1], 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"])]).'">'.img_picto('', 'add').'</a>';
 				} elseif (preg_match('/MAIL_FROM$/i', $const)) {
-					print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
+					print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue'.($strictw3c == 3 ? '_'.$const : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
 				} else { // type = 'string' ou 'chaine'
-					print '<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
+					print '<input type="text" class="flat minwidth300" name="constvalue'.($strictw3c == 3 ? '_'.$const : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
 				}
 				print '</td>';
 			}
 
-			// Submit button
-			if (empty($strictw3c)) {	// deprecated. must be always true.
-				print '<td class="center">';
-				print '<input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update">';
-				print "</td>";
-			}
-
 			print "</tr>\n";
-
-			if (empty($strictw3c)) {
-				print "</form>\n";
-			}
 		}
 	}
 	print '</table>';
 	print '</div>';
-
-	if (!empty($strictw3c) && $strictw3c == 1) {
-		print '<div align="center"><input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update"></div>';
-		print "</form>\n";
-	}
 }
 
 
@@ -2114,7 +2085,7 @@ function company_admin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/company.php";
-	$head[$h][1] = $langs->trans("Company");
+	$head[$h][1] = $langs->trans("MyOrganization");
 	$head[$h][2] = 'company';
 	$h++;
 
@@ -2128,9 +2099,9 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'openinghours';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
-	$head[$h][1] = $langs->trans("Accountant");
-	$head[$h][2] = 'accountant';
+	$head[$h][0] = DOL_URL_ROOT."/admin/subcontractors.php";
+	$head[$h][1] = $langs->trans("Subcontractors");
+	$head[$h][2] = 'subcontractors';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');

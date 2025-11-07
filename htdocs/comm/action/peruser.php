@@ -363,7 +363,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {  // Always false @phpstan-suppress-current-line
+if ($showbirthday) {  // Always false @phpstan-ignore-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -714,24 +714,24 @@ $sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual v
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode))	|| $actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
-			if ($actioncode == 'AC_OTH') {
+			if ((is_array($actioncode) && in_array('AC_OTH', $actioncode)) || $actioncode == 'AC_OTH') {
 				$sql .= " AND ca.type != 'systemauto'";
 			}
-			if ($actioncode == 'AC_OTH_AUTO') {
+			if ((is_array($actioncode) && in_array('AC_OTH_AUTO', $actioncode)) || $actioncode == 'AC_OTH_AUTO') {
 				$sql .= " AND ca.type = 'systemauto'";
 			}
 		}
 	} else {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode))	|| $actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
-		} elseif ($actioncode !== '-1' && $actioncode !== '-3') {
+		} elseif ((is_array($actioncode) && !in_array('-1', $actioncode) && !in_array('-3', $actioncode)) || ($actioncode !== '-1' && $actioncode !== '-3')) {
 			if (is_array($actioncode)) {
 				foreach ($actioncode as $key => $val) {
 					if ($val == '-1' || $val == '-2') {
@@ -1493,14 +1493,28 @@ $maxnbofchar = 18;
 $cachethirdparties = array();
 $cachecontacts = array();
 $cacheusers = array();
-
+// default values
+$theme_datacolor = array(
+	array(137, 86, 161),
+	array(60, 147, 183),
+	array(250, 190, 80),
+	array(80, 166, 90),
+	array(190, 190, 100),
+	array(91, 115, 247),
+	array(140, 140, 220),
+	array(190, 120, 120),
+	array(115, 125, 150),
+	array(100, 170, 20),
+	array(150, 135, 125),
+	array(85, 135, 150),
+	array(150, 135, 80),
+	array(150, 80, 150)
+);
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
 	include $color_file;
-}
-if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
+	global $theme_datacolor;
 }
 
 $massactionbutton = '';
@@ -1577,7 +1591,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			continue;
 		}
 		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
+		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + getDolGlobalInt('MAIN_START_WEEK', 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) {
 			print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day', 'tzuserrel');
@@ -1886,6 +1900,19 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$cases2 = array(); // Color second half hour
 	$cases3 = array(); // Color third half hour
 	$cases4 = array(); // Color 4th half hour
+
+	/**
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases1
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases2
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases3
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases4
+	 */
+	'
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases1
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases2
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases3
+   @phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases4
+   ';
 
 	$i = 0;
 	$numother = 0;
@@ -2282,7 +2309,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$title2 = '';
 		$title3 = '';
 		$title4 = '';
-		if (isset($cases1[$h]) && $cases1[$h] != '') {
+		if (isset($cases1[$h])) {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2294,15 +2321,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style1 .= 'peruser_busy ';
 			}
 			foreach ($cases1[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style1 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style1 .= ' peruser_busy';
 				}
-				if ($ev['css']) {
+				if (!empty($ev['css'])) {
 					$style1 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases2[$h]) && $cases2[$h] != '') {
+		if (isset($cases2[$h])) {
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2314,15 +2341,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style2 .= 'peruser_busy ';
 			}
 			foreach ($cases2[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style2 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style2 .= ' peruser_busy';
 				}
-				if ($ev['css']) {
+				if (!empty($ev['css'])) {
 					$style2 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases3[$h]) && $cases3[$h] != '') {
+		if (isset($cases3[$h])) {
 			//$title3.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases3[$h]) > 1) {
 				$title3 .= count($cases3[$h]).' '.(count($cases3[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2334,15 +2361,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style3 .= 'peruser_busy ';
 			}
 			foreach ($cases3[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style3 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style3 .= ' peruser_busy';
 				}
-				if ($ev['css']) {
+				if (!empty($ev['css'])) {
 					$style3 .= $ev['css'].' ';
 				}
 			}
 		}
-		if (isset($cases4[$h]) && $cases4[$h] != '') {
+		if (isset($cases4[$h])) {
 			//$title4.=count($cases3[$h]).' '.(count($cases3[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases4[$h]) > 1) {
 				$title4 .= count($cases4[$h]).' '.(count($cases4[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -2354,10 +2381,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$style4 .= 'peruser_busy ';
 			}
 			foreach ($cases4[$h] as $id => $ev) {
-				if ($ev['busy']) {
-					$style4 .= 'peruser_busy ';
+				if (!empty($ev['busy'])) {
+					$style4 .= ' peruser_busy';
 				}
-				if ($ev['css']) {
+				if (!empty($ev['css'])) {
 					$style4 .= $ev['css'].' ';
 				}
 			}

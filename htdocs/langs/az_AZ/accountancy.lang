@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=İanələrin qeydiyyatı üçün istifadə ediləcək
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Üzvlük abunəliklərinin qeydiyyatı üçün istifadə ediləcək hesab (Hesab Planından) (Üzvlük modulu - əgər üzvlük fakturasız qeydə alınıbsa)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Müştəri depozitini qeydiyyata almaq üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından).
 UseAuxiliaryAccountOnCustomerDeposit=Müştəri hesabını ilkin ödəniş xətləri üçün köməkçi mühasibat kitabçasında fərdi hesab kimi saxlayın (deaktiv edilərsə, ilkin ödəniş xətləri üçün fərdi hesab boş qalacaq)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Defolt olaraq istifadə ediləcək hesab (Hesab Planından).
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Təchizatçı hesabını ilkin ödəniş xətləri üçün köməkçi mühasibat kitabçasında fərdi hesab kimi saxlayın (əgər deaktiv edilərsə, ilkin ödəniş xətləri üçün fərdi hesab boş qalacaq)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Müştərilərin saxlanmış zəmanətini qeyd etmək üçün standart olaraq mühasibat hesabı
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Eyni ölkə daxilində satın alınan məhsullar üçün standart hesab kimi istifadə ediləcək hesab (Hesab Planından) (məhsul vərəqində müəyyən edilmədikdə istifadə olunur)
@@ -278,6 +278,7 @@ PcgtypeDesc=Hesab qrupu bəzi mühasibat hesabatları üçün əvvəlcədən mü
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Barışıq
 Centralized=Mərkəzləşdirilmiş hesab
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Vergidən əvvəl ümumi dövriyyə
 TotalMarge=Ümumi satış marjası
 DescVentilCustomer=Hesab planından məhsul hesabına bağlı (və ya olmayan) müştəri hesab-faktura xətlərinin siyahısına burada müraciət edin
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Təchizatçı alışlarında ƏDV-nin
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Köməkçi kitabçaya baxmaq üçün üçüncü tərəf kartlarında nişanı aktivləşdirin
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Bu seçim aktivləşdirildikdə, üçüncü tərəfin mühasibat uçotuna baxmaq və idarə etmək üçün üçüncü tərəf kartlarında yeni tab göstərilir.
+
 ## Export
 NotExportLettering=Fayl yaradarkən hərfləri ixrac etməyin
 NotifiedExportDate=Hələ ixrac edilməmiş sətirləri İxrac edilmiş kimi qeyd edin <span class="warning">(eksport edilmiş kimi qeyd olunan xətti dəyişmək üçün bütün tranzaksiyanı silməli və yenidən mühasibat uçotuna köçürməlisiniz)</span>

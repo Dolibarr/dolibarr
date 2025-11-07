@@ -322,8 +322,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/'.getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -715,7 +715,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						}
 					}
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+					if (((int) $object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
 
@@ -820,6 +820,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1256,7 +1258,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

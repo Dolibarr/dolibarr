@@ -102,6 +102,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$outref = $object->ref;
 		$outlabel = $object->label;
 		$outlabel_trans = '';
+		$default_unit = $object->fk_unit;
 		$outdesc = $object->description;
 		$outdesc_trans = '';
 		$outtype = $object->type;
@@ -294,7 +295,9 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
-			'array_options' => $object->array_options
+			'array_options' => $object->array_options,
+
+			'default_unit'=>$default_unit
 		);
 	}
 

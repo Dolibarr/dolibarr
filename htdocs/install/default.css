@@ -281,31 +281,39 @@ table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	color: #000000;
 }
 
-/* OK */
-div.ok {
-	color: #009933;
-}
-span.ok {
-	color: #009933;
+.fas.fa-check {
+	color: rgb(0,113,121) !important;
 }
 
-/* Warning */
-div.warning {
-	color: #777711;
+/* OK */
+div.ok, span.ok {
+	color: rgb(0,113,121)
 }
-span.warning {
+
+span.okinversed {
+	color: #fff;
+	background-color: #aaa;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	font-weight: normal;
+}
+
+
+/* Warning */
+div.warning, span.warning {
 	color: #777711;
 }
 
 /* Error */
 div.error {
-	color: #550000;
+	color: #660000;
 	font-weight: bold;
 	padding: 0.2em 0.2em 0.2em 0;
 	margin: 0.5em 0 0.5em 0;
 }
 span.error {
-	color: #550000;
+	color: #660000;
 	font-weight: bold;
 }
 
@@ -458,28 +466,16 @@ a.button:hover {
 }
 
 
-
-/* For support section */
-
-.tablesupport {
-	padding: 6px;
-	width: 500px;
+.pictofixedwidth {
+	text-align: start;
+	width: 20px;	/* Do not use em unit here */
+	/* padding-right: 0; */
+}
+img.pictofixedwidth {
+	width: 18px;	/* Do not use em unit here */
+	padding-right: 2px;
 }
 
-table.login.tablesupport .title {
-    background: #eee !important;
-}
-
-.blocksupport {
-	padding: 12px;
-	/* width: 90%; */
-}
-
-table.tablesupport {
-	min-height: 300px;
-	border: 1px solid #E0E0E0;
-    background: #FFF;
-}
 
 
 /* Force values for small screen 570 */

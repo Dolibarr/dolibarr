@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016-2023  Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2016-2025  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2025	MDW	                    <mdeweerd@users.noreply.github.com>
@@ -758,7 +758,7 @@ abstract class CommonDocGenerator
 			if (property_exists($object, 'fk_account') && $object->fk_account > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 				$bank_account = new Account($this->db);
-				$bank_account->fetch($object->fk_account);
+				$bank_account->fetch((int) $object->fk_account);
 			}
 
 			$resarray[$array_key.'_bank_iban'] = (empty($bank_account) ? '' : $bank_account->iban);
@@ -880,12 +880,13 @@ abstract class CommonDocGenerator
 			'line_product_desc' => (empty($line->product_desc) ? '' : $line->product_desc),
 
 			'line_desc' => $line->desc,
-			'line_vatrate' => vatrate($line->tva_tx, true, $line->info_bits),
+			'line_vatrate' => vatrate($line->tva_tx, true, (int) $line->info_bits),
 			'line_up' => price2num($line->subprice),
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
 			'line_total_up' => price2num($line->subprice * (float) $line->qty),
 			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
 			'line_qty' => $line->qty,
+			'line_qty_locale' => price($line->qty),
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
 			'line_price_ttc' => price2num($line->total_ttc),
@@ -943,8 +944,9 @@ abstract class CommonDocGenerator
 
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			$resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
-			$resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
+			$resarray['line_unit'] = $line->getLabelOfUnit('long', $outputlangs);
+			$resarray['line_unit_short'] = $line->getLabelOfUnit('short', $outputlangs);
+			//$resarray['line_unit_code'] = $line->getLabelOfUnit('code', $outputlangs);
 		}
 
 		// Retrieve extrafields
@@ -1614,6 +1616,8 @@ abstract class CommonDocGenerator
 	 */
 	public function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
 	{
+		global $hookmanager;
+
 		// load desc col params
 		$colDef = $this->cols[$colKey];
 		// save current cell padding
@@ -1637,6 +1641,19 @@ abstract class CommonDocGenerator
 		$extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
 		if (!empty($extrafieldDesc)) {
 			$this->printStdColumnContent($pdf, $posYAfterDescription, $colKey, $extrafieldDesc);
+		}
+
+		$parameters = array(
+			'curY' => &$curY,
+			'colKey' => $colKey,
+			'object' => $object,
+			'i' => $i,
+			'outputlangs' => $outputlangs,
+			'pdf' => &$pdf,
+		);
+		$reshook = $hookmanager->executeHooks('printColDescContent', $parameters, $this); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 	}
 
@@ -2128,7 +2145,7 @@ abstract class CommonDocGenerator
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

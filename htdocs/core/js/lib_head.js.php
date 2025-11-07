@@ -26,49 +26,54 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1);
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', 1);
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	if (!defined('NOREQUIRESOC')) {
+		define('NOREQUIRESOC', '1');
+	}
+	if (!defined('NOCSRFCHECK')) {
+		define('NOCSRFCHECK', 1);
+	}
+	if (!defined('NOTOKENRENEWAL')) {
+		define('NOTOKENRENEWAL', 1);
+	}
+	if (!defined('NOLOGIN')) {
+		define('NOLOGIN', 1);
+	}
+	if (!defined('NOREQUIREMENU')) {
+		define('NOREQUIREMENU', 1);
+	}
+	if (!defined('NOREQUIREHTML')) {
+		define('NOREQUIREHTML', 1);
+	}
+	if (!defined('NOREQUIREAJAX')) {
+		define('NOREQUIREAJAX', '1');
+	}
 
-session_cache_limiter('public');
+	session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+	require_once '../../main.inc.php';
+}
 /**
  * @var Conf $conf
  * @var Translate $langs
+ *
+ * @var string $dolibarr_nocache
  */
 
-/*
+
+/**
  * View
  */
-
-// Define javascript type
-top_httphead('text/javascript; charset=UTF-8');
-// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	// Define javascript type
+	top_httphead('text/javascript; charset=UTF-8');
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	if (empty($dolibarr_nocache)) {
+		header('Cache-Control: max-age=10800, public, must-revalidate');
+	} else {
+		header('Cache-Control: no-cache');
+	}
 }
-
 
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
@@ -198,7 +203,7 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
@@ -562,36 +567,28 @@ function cleanSerialize(expr) {
 
 /*
  * =================================================================
- * Purpose: Display a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fieldId
- * Input:   message
- * Author:  Regis Houssin
+ * Purpose: Fonction to open a confirm popup on a clie of a link
+ * Input:   msg
+ * Input:   width
  * Licence: GPL
  * ==================================================================
  */
-function displayMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	if (textbox.value == '') {
-		textbox.style.color = 'grey';
-		textbox.value = message;
-	}
-}
-
-/*
- * =================================================================
- * Purpose: Hide a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fiedId
- * Input:   message
- * Author:  Regis Houssin
- * Licence: GPL
- * ==================================================================
- */
-function hideMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	textbox.style.color = 'black';
-	if (textbox.value == message) textbox.value = '';
+function confirmDolibarr(msg, id, width = 400) {
+  let alink = document.getElementById(id);
+  if (alink.getAttribute("data-alreadyclicked") === "0") {
+	  new Promise(res => {
+		$("#dialogforpopup").text(msg).dialog({
+		  modal: true,
+		  width: width,
+		  buttons: {
+			OK() { $(this).dialog("close"); res(false); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); },
+		  }
+		});
+	  });
+	  return false;
+  } else {
+	  return true;
+  }
 }
 
 
@@ -1588,14 +1585,20 @@ jQuery(document).ready(function() {
 
 // Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
 function showOptions(child_list, parent_list) {
-		   var val = $("select[name="+parent_list+"]").val();
-		   var parentVal = parent_list + ":" + val;
-		if(val > 0) {
-			$("select[name=\""+child_list+"\"] option[parent]").hide();
-			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+	var parentInput = $("select[name="+parent_list+"]");
+	if (parentInput.length === 0) { // when parent extra-field is in view mode and the child is edited directly on card (on line edit)
+		parentInput = $("input[name="+parent_list+"]");
+	}
+	if (parentInput.length > 0) {
+		var val = parentInput.val();
+		var parentVal = parent_list + ":" + val;
+		if (val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").prop("disabled", true).hide(); // hide not work with select2 element so disabled it
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").prop('disabled', false).show(); // show not work with select2 element so enabled it
 		} else {
-			$("select[name=\""+child_list+"\"] option").show();
+			$("select[name=\""+child_list+"\"] option").prop("disabled", false).show(); // show not work with select2 element so enabled it
 		}
+	}
 }
 function setListDependencies() {
 		console.log("setListDependencies");
@@ -1699,5 +1702,97 @@ function onKanbanColumnChange(item, newColumn) {
 	item.data('original-column', newColumn);
 }
 
+/*
+* Intuitive table selection
+*/
+$(function() {
+
+	/**
+	 * @param {jQuery}  el
+	 * @param {Integer}  status
+	 */
+	let setLastClickedRowStatus = function (el, status = 1){
+		$('.row-with-select').attr('data-is-last-changed', 0);
+		el.attr('data-is-last-changed', status === 0 ? 0 : 1);
+	}
+
+	/**
+	 * Remove data-is-last-changed on double click
+	 * Because if data-is-last-changed is present the user can't select text
+	 */
+	$(document).on("dblclick", ".row-with-select", function(e) {
+		$('.row-with-select[data-is-last-changed]').removeAttr( 'data-is-last-changed' );
+	});
+
+	/**
+	 * DISABLE on click a and button
+	 * Because Ctrl + Click on link is also used for open ion a new tab
+	 * we need to block select tool
+	 */
+	$(document).on("click", ".row-with-select a, .row-with-select button", function (e) {
+		// we need to block select tool
+		if (e.ctrlKey) {
+			e.stopPropagation();
+		}
+	});
+
+	$(document).on("mousedown click", ".row-with-select input.checkforselect", function (e) {
+		// Prevents automatic change of “checked”
+		e.preventDefault();
+		e.stopPropagation(); // parent click trigger will be done below
+
+		let parentRow = $(this).closest(".row-with-select");
+
+		// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
+		// We simulate a click on the parent line
+		console.log("Emulate click on parent line");
+		parentRow.trigger({
+			type: "click",
+			ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+			metaKey: !e.shiftKey, // simulate metaKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+			shiftKey: e.shiftKey,
+			originalEvent: e
+		});
+
+	});
+
+	$(document).on("click", ".row-with-select", function (e) {
+		console.log("A click on line was done");
+
+		let checkBox = $(this).find('.checkforselect');
+		let nextCheckStatus = !checkBox.is(':checked')
+
+		if (e.ctrlKey || e.metaKey) {
+			// Add line to selection
+			if (checkBox) {
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+			}
+			setLastClickedRowStatus($(this), 1);
+		}
+
+		if (e.shiftKey) {
+			let lastLastChanged = $(this).closest('table').find('.row-with-select[data-is-last-changed="1"]');
+
+			if (lastLastChanged.length>0) {
+				// Add all lines to selection beetwin last selected line
+				if ($(this).index() === lastLastChanged.index()) {
+					return null;
+				}
+
+				if ($(this).index() < lastLastChanged.index()) {
+					$(this).nextUntil(lastLastChanged, ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				}else{
+					lastLastChanged.nextUntil($(this), ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				}
+
+
+				lastLastChanged.find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+
+				setLastClickedRowStatus($(this), 1);
+			}
+		}
+	});
+});
 
 // End of lib_head.js.php

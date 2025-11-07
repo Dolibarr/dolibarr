@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur	<eldy@users.sourceforge.net>
 /* Copyright (C) 2022       Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -84,7 +84,7 @@ class RecruitmentJobPosition extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -102,7 +102,7 @@ class RecruitmentJobPosition extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
@@ -139,10 +139,6 @@ class RecruitmentJobPosition extends CommonObject
 	 * @var string ref
 	 */
 	public $ref;
-	/**
-	 * @var int
-	 */
-	public $entity;
 
 	/**
 	 * @var string label
@@ -357,8 +353,7 @@ class RecruitmentJobPosition extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -509,7 +504,6 @@ class RecruitmentJobPosition extends CommonObject
 	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**
@@ -560,7 +554,7 @@ class RecruitmentJobPosition extends CommonObject
 		if (/* !$error && */ (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
@@ -814,6 +808,38 @@ class RecruitmentJobPosition extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param	array<string,string> 	$params 	Params to construct tooltip data
+	 *
+	 * @return	array{optimize?:string,picto?:string,ref?:string}
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('recruitment');
+
+		$datas = [];
+
+		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			return ['optimize' => $langs->trans("ShowPositionToBeFilled")];
+		}
+		$datas['picto'] = img_picto('', $this->picto) . ' <u class="paddingrightonly">' . $langs->trans("PositionToBeFilled") . '</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' ' . $this->getLibStatut(5);
+		}
+		if (!empty($this->ref)) {
+			$datas['ref'] = '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		}
+		if (!empty($this->label)) {
+			$datas['ref'] = '<br>' . $langs->trans('Label') . ':</b> ' . $this->label;
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int<0,2>	$withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -832,36 +858,43 @@ class RecruitmentJobPosition extends CommonObject
 		}
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("PositionToBeFilled").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$params = [
+			'id' => (string) $this->id,
+			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 
-		$url = dol_buildpath('/recruitment/recruitmentjobposition_card.php', 1).'?id='.$this->id;
-
-		if ($option != 'nolink') {
+		$baseurl = DOL_URL_ROOT . '/recruitment/recruitmentjobposition_card.php';
+		$query = ['id' => $this->id];
+		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowRecruitmentJobPosition");
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("ShowPositionToBeFilled");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}

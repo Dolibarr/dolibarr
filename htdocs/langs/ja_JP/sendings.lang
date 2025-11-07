@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=請求書が検証されたときに送信を
 NoWarehouseInBase=基地に倉庫はない
 ShipmentUpdated=発送は正常に更新済
 ShipmentIncrementStockOnDelete = 削除時に 在庫 を増やす
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=配送
+DeliveryRef=参照配送
+DeliveryCard=配送領収書
+DeliveryOrder=配送領収書
+DeliveryDate=配送日
+CreateDeliveryOrder=配送領収書を生成する
+DeliveryStateSaved=保存された配送状態
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=出荷の日付を設定する
+ValidateDeliveryReceipt=配送の領収書を検証
+ValidateDeliveryReceiptConfirm=この配送領収書を検証してもよいか？
+DeleteDeliveryReceipt=配送済メッセージを削除する
+DeleteDeliveryReceiptConfirm=領収書<b>%s </b>を削除してもよいか？
+DeliveryMethod=配送方法
+TrackingNumber=追跡番号
+DeliveryNotValidated=配送は未検証済
+StatusDeliveryCanceled=キャンセル
+StatusDeliveryDraft=下書き
+StatusDeliveryValidated=受領された
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=良好な状態で上記の品物を受け取っている。
+Deliverer=配送者：
+Sender=差出人
+Recipient=受領者
+ErrorStockIsNotEnough=在庫が不十分
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=出荷可能な状態を表示する
+ShowReceiving=配送領収書を表示する
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = 前の行に既に割り当てられている在庫数量
 
 # Sending methods
 # ModelDocument

@@ -124,6 +124,11 @@ if (isModEnabled('loan')) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
+if (isModEnabled('invoice') || isModEnabled('supplier_invoice')) {
+	$list_account[] = '---Discounts---';
+	$list_account[] = 'ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED';
+	$list_account[] = 'ACCOUNTING_ACCOUNT_DISCOUNT_RECEIVED';
+}
 if (isModEnabled('societe')) {
 	$list_account[] = '---Deposits---';
 }

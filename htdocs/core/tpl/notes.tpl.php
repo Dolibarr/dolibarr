@@ -25,6 +25,9 @@
  * @var User $user
  *
  * @var ?int<0,1> $permissionnote
+ * @var ?int<0,1> $permission
+ * @var	?string $textNotePub
+ * @var	?string $textNotePrive
  * @var string $moreparam
  * @var ?int $colwidth
  * @var string $cssclass

@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - accountancy
 Accountancy=Rechnungswesen
+AccountingAccount=Buchhaltungskonto
 ACCOUNTING_EXPORT_DATE=Datumsformat für Exportdatei
 ACCOUNTING_EXPORT_PIECE=Exportiere die Anzahl Teile
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportiere mit Globalkonto

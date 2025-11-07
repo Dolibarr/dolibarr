@@ -3,7 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,7 +327,8 @@ class FormWebPortal extends Form
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
+
+				$tmpout .= '<a href="' . $url . '"  class="btn-download-link ' . $morecss . '" role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
@@ -413,7 +414,6 @@ class FormWebPortal extends Form
 		$classpath = $InfoFieldList[1];
 		$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 		$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
-
 		if (!empty($classpath)) {
 			dol_include_once($classpath);
 
@@ -478,7 +478,7 @@ class FormWebPortal extends Form
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+				if (! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -516,6 +516,10 @@ class FormWebPortal extends Form
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
 				$sql .= " INNER JOIN " . $this->db->prefix() . $tmparray[1] . " as parenttable ON parenttable.rowid = t." . $tmparray[0];
 			}
+		}
+
+		if (!empty($objecttmp->isextrafieldmanaged)) {
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
 
 		// Add where from hooks
@@ -842,8 +846,8 @@ class FormWebPortal extends Form
 				}
 
 				if (!$filter_categorie) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
+					$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+					if (!empty($fields_label)) {
 						$keyList .= ', ';
 						$keyList .= implode(', ', $fields_label);
 					}
@@ -1068,7 +1072,7 @@ class FormWebPortal extends Form
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = (string) dol_eval($computed, 1, 0, '2');
+			$value = (string) dol_eval((string) $computed, 1, 0, '2');
 		}
 
 		// Format output value differently according to properties of field
@@ -1077,7 +1081,7 @@ class FormWebPortal extends Form
 		//
 		if (in_array($key, array('rowid', 'ref'))) {
 			if (property_exists($object, 'ref')) {
-				$value = $object->ref;
+				$value = (string) $object->ref;
 			} elseif (property_exists($object, 'id')) {
 				$value = $object->id;
 			} else {
@@ -1357,15 +1361,16 @@ class FormWebPortal extends Form
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						'@phan-var-force CommonObject $object';
+						/** @var CommonObject $object */
 						$result = $object->fetch($value);
 						$value = '';
 						if ($result > 0) {
 							if (property_exists($object, 'label')) {
-								$value = $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'libelle')) {
-								$value = $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
-								$value = $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}

@@ -1,9 +1,10 @@
 <?php
 
-/* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -528,10 +529,22 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// 	$features = substr($features, 0, -4);
 	// }
 
-	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
+	// print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
-	$parameters = array('features' => $features, 'originalfeatures' => $originalfeatures, 'objectid' => $objectid, 'dbt_select' => $dbt_select, 'idtype' => $dbt_select, 'isdraft' => $isdraft);
+	$parameters = array(
+		'features' => $features,
+		'feature2' => $feature2,
+		'originalfeatures' => $originalfeatures,
+		'tableandshare' => $tableandshare,
+		'object' => $object,
+		'objectid' => $objectid,
+		'dbt_keyfield' => $dbt_keyfield,
+		'dbt_select' => $dbt_select,
+		'idtype' => $dbt_select,
+		'isdraft' => $isdraft,
+		'mode' => $mode,
+	);
 	if (!empty($hookmanager)) {
 		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
@@ -1062,7 +1075,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND (sc.fk_user = ".((int) $user->id);
 				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 					$userschilds = $user->getAllChildIds();
-					$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+					if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
 				}
 				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
@@ -1172,9 +1185,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND (sc.fk_user = ".((int) $user->id);
 					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 						$userschilds = $user->getAllChildIds();
-						foreach ($userschilds as $key => $value) {
-							$sql .= ' OR sc.fk_user = '.((int) $value);
-						}
+						if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
 					}
 					$sql .= ')';
 				} else {

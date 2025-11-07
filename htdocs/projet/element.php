@@ -1,15 +1,17 @@
 <?php
-/* Copyright (C) 2001-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2016  Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2021  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2023  Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2023-2024 	Frédéric France      <frederic.france@free.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021-2023  Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021       Noé Cendrier            <noe.cendrier@altairis.fr>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Günter Lukas			<github@gl.co.at>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -38,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
 
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -110,6 +113,7 @@ if (isModEnabled('stocktransfer')) {
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -179,7 +183,6 @@ if ($id == '' && $ref == '') {
 }
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
@@ -204,11 +207,95 @@ $othermessage = '';
 $tmpprojtime = array();
 $nbAttendees = 0;
 
+$permissiontoadd = $user->hasRight('projet', 'creer');
+$permissiontodelete = $user->hasRight('projet', 'supprimer');
+$permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include of actions_dellink.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
 /*
  * Actions
  */
 
-// None
+// Quick edit for extrafields
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$error = 0;
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+	$attribute_name = GETPOST('attribute', 'aZ09');
+
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+
+	if (!$error) {
+		$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if ($error) {
+		$action = 'edit_extras';
+	}
+}
+if ($action == 'updatelasthourlyrate' && $permissiontoadd) {
+	$error = 0;
+	if (!GETPOSTISSET('taskid')) {
+		$error++;
+	}
+	if (!$error) {
+		$taskid = GETPOSTINT("taskid");
+		$sql = "SELECT et.rowid as id, u.thm as thmuser";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as et";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = et.fk_user";
+		$sql .= " WHERE et.elementtype = 'task'";
+		$sql .= " AND et.fk_element = ".((int) $taskid);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				if (empty($obj->thmuser)) {
+					$error++;
+					break;
+				}
+				$timespent = new TimeSpent($db);
+				$res = $timespent->fetch($obj->id);
+				if ($res <= 0) {
+					setEventMessages($timespent->error, $timespent->errors, 'errors');
+					$error++;
+					break;
+				}
+				$timespent->thm = $obj->thmuser;
+				$res = $timespent->update($user);
+				if ($res <= 0) {
+					setEventMessages($timespent->error, $timespent->errors, 'errors');
+					$error++;
+					break;
+				}
+				$i++;
+			}
+		} else {
+			dol_print_error($db);
+			$error++;
+		}
+	}
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("TaskHourlyRateUpdated"), null);
+		$action = '';
+	} else {
+		$db->rollback();
+	}
+}
 
 
 /*
@@ -782,6 +869,7 @@ if (isModEnabled('stock')) {
 	$langs->load('stocks');
 }
 
+print '<!-- Begin PROFIT table -->';
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
 print '<table class="noborder centpercent">';
@@ -992,7 +1080,8 @@ foreach ($listofreferent as $key => $value) {
 
 			print '<tr class="oddeven">';
 			// Module
-			print '<td class="left">'.$name.'</td>';
+			print '<!-- // Module '.$name.' with tablename '.$tablename.' -->';
+			print '<td class="left"><a href="#table_'.$tablename.'">'.$name.'</a></td>';
 			// Nb
 			print '<td class="right">'.$i.'</td>';
 			// Amount HT
@@ -1061,6 +1150,7 @@ if ($total_revenue_ht) {
 }
 
 print "</table>";
+print '<!-- End PROFIT table -->';
 
 
 print '<br><br>';
@@ -1154,7 +1244,7 @@ foreach ($listofreferent as $key => $value) {
 		}
 
 		if (is_array($elementarray) && count($elementarray) > 0 && $key == "order_supplier") {
-			$addform = '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
+			$addform .= '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
 						 <span id="textBtnShow" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("CanceledShown").'</span><span id="minus-circle" class="fa fa-eye valignmiddle paddingleft"></span>
 						 </a>
 						 <script>
@@ -1175,9 +1265,33 @@ foreach ($listofreferent as $key => $value) {
 								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
 							}
 						 });
-						 </script></div> '.$addform;
+						 </script></div>';
+
+			$addform .= '<div class="inline-block valignmiddle"><a id="btnShowPaid" class="buttonxxx marginleftonly" href="#" onClick="return false;">
+						 <span id="textBtnShowPaid" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("PaidShown").'</span><span id="minus-circle-paid" class="fa fa-eye valignmiddle paddingleft"></span>
+						 </a>
+						 <script>
+						 $("#btnShowPaid").on("click", function () {
+							console.log("We click to show or hide the paid lines");
+							var attr = $(this).attr("data-paidarehidden");
+							if (typeof attr !== "undefined" && attr !== false) {
+								console.log("Show paid");
+								$(".tr_paid").show();
+								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidShown")).'");
+								$("#btnShowPaid").removeAttr("data-paidarehidden");
+								$("#minus-circle-paid").removeClass("fa-eye-slash").addClass("fa-eye");
+							} else {
+								console.log("Hide paid");
+								$(".tr_paid").hide();
+								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidHidden")).'");
+								$("#btnShowPaid").attr("data-paidarehidden", 1);
+								$("#minus-circle-paid").removeClass("fa-eye").addClass("fa-eye-slash");
+							}
+						 });
+						 </script></div>';
 		}
 
+		print '<a id="table_'.$tablename.'"></a>';
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print "\n".'<!-- Table for tablename = '.$tablename.' -->'."\n";
@@ -1305,12 +1419,12 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->close_code) && $element->close_code == 'replaced') {
 						$qualifiedfortotal = false; // Replacement invoice, do not include into total
 					}
-				} elseif ($key == 'order_supplier' && $element->status == 7) {
+				} elseif ($key == 'order_supplier' && ($element->status == 6 || $element->status == 7)) {
 					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				if ($key == "order_supplier" && $element->status == 7) {
-					print '<tr class="oddeven tr_canceled" style=display:none>';
+				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
+					print '<tr class="oddeven tr_canceled">';
 				} else {
 					print '<tr class="oddeven" >';
 				}
@@ -1348,18 +1462,18 @@ foreach ($listofreferent as $key => $value) {
 					$filename = dol_sanitizeFileName($element->ref);
 					if (!empty($conf->$element_doc)) {
 						$confelementdoc = $conf->$element_doc;
-						$filedir = $confelementdoc->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $confelementdoc->multidir_output[$element->entity ?? $conf->entity].'/'.dol_sanitizeFileName($element->ref);
 					} else {
 						$filedir = '';
 					}
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc = 'commande_fournisseur';
-						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity ?? $conf->entity].'/'.dol_sanitizeFileName($element->ref);
 					} elseif ($element_doc === 'invoice_supplier') {
 						$element_doc = 'facture_fournisseur';
 						$filename = get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.$filename;
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity ?? $conf->entity].'/'.$filename;
 					}
 
 					print '<div class="inline-block valignmiddle">';
@@ -1559,6 +1673,15 @@ foreach ($listofreferent as $key => $value) {
 					if ($warning) {
 						print ' '.img_warning($warning);
 					}
+					if ($tmpprojtime['nblinesnull'] > 0) {
+						if ($tmpprojtime['nbuserthmnull'] > 0) {
+							$title = $langs->trans("EnterUsersHourlyRateFirst");
+							print ' '.img_picto($title, "sync", '', 0, 0, 0, '', 'opacitymedium');
+						} else {
+							$title = $langs->trans("UpdateWithLastHourlyRate");
+							print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updatelasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync").'</a>';
+						}
+					}
 					print '</td>';
 				} else {
 					print '<td></td>';
@@ -1613,6 +1736,15 @@ foreach ($listofreferent as $key => $value) {
 					}
 					if ($warning) {
 						print ' '.img_warning($warning);
+					}
+					if ($tmpprojtime['nblinesnull'] > 0) {
+						if ($tmpprojtime['nbuserthmnull'] > 0) {
+							$title = $langs->trans("EnterUsersHourlyRateFirst");
+							print ' '.img_picto($title, "sync", '', 0, 0, 0, '', 'opacitymedium');
+						} else {
+							$title = $langs->trans("UpdateWithLastHourlyRate");
+							print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updatelasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync").'</a>';
+						}
 					}
 					print '</td>';
 				} else {

@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Contabilità
 Accounting=Contabilità
+AccountingAccount=Conto di contabilità
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Separatore delle colonne nel file di esportazione
 ACCOUNTING_EXPORT_DATE=Formato della data per i file di esportazione
 ACCOUNTING_EXPORT_PIECE=Esporta il numero di pezzi
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to reg
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=conto (dalla Carta Dei conto) da utilizzare per registrare gli abbonamenti abbonamenti (iscrizione modulo - if iscrizione registrato senza fattura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=conto (dalla tabella di conto) da utilizzare come default conto per registrare cliente deposito
 UseAuxiliaryAccountOnCustomerDeposit=Memorizzare il conto cliente come conto individuale nel libro mastro sussidiario per le righe di acconto (se disabilitato, il conto individuale per le righe di acconto rimarrà vuoto)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=conto (dalla tabella di conto) da utilizzare come default
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Memorizzare il conto fornitore come conto individuale nel libro mastro sussidiario per le righe di acconto (se disabilitato, il conto individuale per le righe di acconto rimarrà vuoto)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Contabilità conto da default per registrarti  cliente garanzia trattenuta
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=conto (dalla tabella di conto) da utilizzare come default conto per i prodotti acquistati nello stesso Paese (utilizzato se non definito nella scheda prodotto)
@@ -278,6 +280,7 @@ PcgtypeDesc=Il gruppo di conti viene utilizzato come criterio 'filtro' e 'raggru
 AccountingCategoriesDesc=È possibile utilizzare gruppo degli account personalizzati per gruppo Contabilità degli account in un unico nome per semplificare l'uso di filtri o la creazione di report personalizzati.
 Reconcilable=riconciliabile
 Centralized=Centralizzato conto
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Fatturato totale al lordo delle imposte
 TotalMarge=Margine totale sulle vendite
 DescVentilCustomer=Consulta qui il Elenco di cliente fattura linee legato (o meno) a un prodotto conto dal grafico di  conto
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Attiva la gestione del reverse charge
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Quando questa opzione è abilitata, puoi definire che un fornitore o un dato Fornitore fattura deve essere trasferito in contabilità in modo diverso: un debito aggiuntivo e un credito linea verrà generato nel Contabilità su 2 account specificati dal grafico di conto definito nella pagina di configurazione "%s".
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Attiva una scheda sulle schede di terze parti per visualizzare la sussidiaria libro contabile
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Quando questa opzione è abilitata, viene visualizzata una nuova scheda nelle schede di terze parti per visualizzare e e gestire Contabilità per la terza parte per la riconciliazione, la stampa e altro ancora.
+
 ## Export
 NotExportLettering=Non esportare i caratteri durante la generazione di file
 NotifiedExportDate=Flag non ancora esportato linee come esportato <span class="warning">(in modifica a linea contrassegnato come esportato, dovrai cancella l'intera transazione e ri- trasferiscilo in Contabilità)</span>

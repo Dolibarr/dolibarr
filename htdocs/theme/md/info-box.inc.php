@@ -45,6 +45,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 ?>
 
+.spannature {
+	padding-top: 5px !important;
+	padding-bottom: 6px !important;
+	vertical-align: middle;
+}
+
 .nonature-back {
 	background-color: #EEE;
 	padding: 2px;
@@ -136,7 +142,7 @@ div.login_block_other:not(.takepos) a {
 	color: var(--colortextbackvmenu);
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
@@ -164,12 +170,6 @@ div.login_block_other:not(.takepos) a {
 .infobox-bank_account{
 	color: #b0a53e;
 }
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
-}
 .infobox-holiday{
 	color: #755114;
 }
@@ -183,7 +183,7 @@ a.info-box-text.info-box-text-a {
 	/* display: table-cell; */
 	display: contents;
 }
-a.info-box-text-a i.fa.fa-exclamation-triangle {
+a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
 }
 
@@ -575,7 +575,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 

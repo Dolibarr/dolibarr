@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -132,7 +132,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			$HEIGHT = '192';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
-			$stats->where = "f.fk_statut > 0";
+			$stats->where = "f.entity IN (".getEntity('supplier_invoice').") AND f.fk_statut > 0";
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
@@ -229,7 +229,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					});
 					</script>';
 				$stringtoshow .= '<div class="center hideobject" id="idfilter'.$this->boxcode.'">'; // hideobject is to start hidden
-				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';

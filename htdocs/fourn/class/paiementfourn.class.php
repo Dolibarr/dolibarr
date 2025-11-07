@@ -341,9 +341,15 @@ class PaiementFourn extends Paiement
 												$discount->amount_ht = abs($amount_ht[$tva_tx]);
 												$discount->amount_tva = abs($amount_tva[$tva_tx]);
 												$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+												$discount->total_ht = abs($amount_ht[$tva_tx]);
+												$discount->total_tva = abs($amount_tva[$tva_tx]);
+												$discount->total_ttc = abs($amount_ttc[$tva_tx]);
 												$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 												$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 												$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+												$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$tva_tx]);
+												$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$tva_tx]);
+												$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
 												$discount->tva_tx = abs((float) $tva_tx);
 
 												$result = $discount->create($user);

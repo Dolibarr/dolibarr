@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check - Protection if external user
 // if ($user->socid > 0) accessforbidden();
 // if ($user->socid > 0) $socid = $user->socid;
-// $result = restrictedArea($user, 'bom', $id);
+// restrictedArea($user, 'bom', $id);
 
 // Load variables for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

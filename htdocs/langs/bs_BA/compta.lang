@@ -3,10 +3,10 @@ MenuFinancial=Fakture | Plaćanja
 TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
 OptionMode=Opcija za računovodstvo
-OptionModeTrue=Akrualno računovodstvo
-OptionModeVirtual=Računovodstvo gotovine
-OptionModeTrueDesc=U ovom kontekstu, promet se izračunava na osnovu plaćanja (datum plaćanja). Validnost podataka je osigurana samo ako se knjigovodstvo provjeri kroz ulazne/izlazne podatke o plaćanjima.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=In this context, the turnover is calculated over invoices (date of validation). When these invoices are due, whether they have been paid or not, they are listed in the turnover output.
+OptionModeTrueDesc=U ovom kontekstu, promet se izračunava na osnovu plaćanja (datum plaćanja). Validnost podataka je osigurana samo ako se knjigovodstvo provjeri kroz ulazne/izlazne podatke o plaćanjima.
 FeatureIsSupportedInInOutModeOnly=Feature only available in CREDITS-DEBTS accountancy mode (See Accountancy module configuration)
 VATReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Tax module setup.
 LTReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Company setup.
@@ -302,7 +302,6 @@ ByVatRate=Po stopi poreza na promet
 TurnoverbyVatrate=Promet fakturisan po stopi poreza na promet
 TurnoverCollectedbyVatrate=Promet naplaćen po stopi poreza na promet
 PurchasebyVatrate=Kupovina po stopi poreza na promet
-LabelToShow=Kratka etiketa
 PurchaseTurnover=Promet kupovine
 PurchaseTurnoverCollected=Naplaćeni promet od kupovine
 RulesPurchaseTurnoverDue=- Uključuje dospele fakture dobavljača da li su plaćene ili ne. <br>- Zasnovan je na datumu fakture ovih faktura.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Pravilo za datume u redovima
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Postavi pravilo za datume u redovima
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

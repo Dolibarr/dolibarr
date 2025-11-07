@@ -1,4 +1,7 @@
 ---
+# This is a basic workflow to check code with PHPSTAN tool
+name: Phan
+
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:
@@ -12,15 +15,15 @@ on:
 concurrency:
   group: phan-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
   PHAN_CONFIG: dev/tools/phan/config.php
   PHAN_BASELINE: dev/tools/phan/baseline.txt
-  PHAN_MIN_PHP: 7.0
+  PHAN_MIN_PHP: 7.2
   PHAN_QUICK: ${{ github.event.schedule && '' || '--quick' }}
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 
-name: phan
 jobs:
   phan:
     name: Run phan
@@ -30,7 +33,7 @@ jobs:
       github.repository == 'Dolibarr/dolibarr'
       || github.event.schedule == false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:

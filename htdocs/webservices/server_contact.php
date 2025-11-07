@@ -73,6 +73,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrContact', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 

@@ -163,7 +163,7 @@ $permissiontoadd = $user->hasRight('societe', 'creer');
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 
@@ -184,7 +184,7 @@ if (empty($reshook)) {
 	}
 
 	// set accountancy code
-	if ($action == 'setcustomeraccountancycodegeneral') {
+	if ($action == 'setcustomeraccountancycodegeneral' && $permissiontoadd) {
 		$result = $object->fetch($id);
 		$object->accountancy_code_customer_general = GETPOST("customeraccountancycodegeneral");
 		$result = $object->update($object->id, $user, 1, 1, 0);
@@ -208,7 +208,7 @@ if (empty($reshook)) {
 	// Payment terms of the settlement
 	if ($action == 'setconditions' && $permissiontoadd) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTINT('cond_reglement_id_deposit_percent'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -622,12 +622,12 @@ if ($object->id > 0) {
 		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $permissiontoadd);
 		print '</td><td>';
 		if ($action == 'editwarehouse') {
-			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_warehouse, 'fk_warehouse', 1);
 		} else {
 			if ($object->fk_warehouse > 0) {
 				print img_picto('', 'stock', 'class="paddingrightonly"');
 			}
-			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_warehouse, 'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -667,7 +667,7 @@ if ($object->id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'edittransportmode') {
-			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'transport_mode_id', 1);
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'transport_mode_id', 1, 1);
 		} else {
 			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'none');
 		}
@@ -762,7 +762,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Max nb of elements in lists
-	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 	// Link summary/status board
 	$boxstat .= '<div class="box divboxtable box-halfright">';
@@ -891,6 +891,7 @@ if ($object->id > 0) {
 	 * Latest proposals
 	 */
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
+		$propal_static = new Propal($db);
 		$langs->load("propal");
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_projet, p.fk_statut, p.total_ht";
@@ -902,12 +903,13 @@ if ($object->id > 0) {
 		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $propal_static); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY p.datep DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$propal_static = new Propal($db);
-
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -996,6 +998,7 @@ if ($object->id > 0) {
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
+		$commande_static = new Commande($db);
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
 		$sql .= ", c.total_tva";
@@ -1007,12 +1010,13 @@ if ($object->id > 0) {
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND c.entity IN (".getEntity('commande').')';
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $commande_static); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY c.date_commande DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$commande_static = new Commande($db);
-
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				// Check if there are orders billable

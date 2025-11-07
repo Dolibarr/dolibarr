@@ -369,6 +369,7 @@ WebPortalSetupNotComplete=Η ρύθμιση του web portal δεν έχει ο
 DeleteWebsiteAccount=Διαγραφή λογαριασμού ιστότοπου
 ConfirmDeleteWebsiteAccount=Είστε σίγουροι ότι θέλετε για να διαγράψετε αυτόν τον λογαριασμό.
 ConfirmDeleteWebsiteAccount2=Εάν αυτός ο λογαριασμός χρησιμοποιήθηκε για σύνδεση στη δημόσια πύλη ή σε οποιονδήποτε άλλο ιστότοπο που υποστηρίζεται από το Dolibarr, η σύνδεση ενδέχεται να μην είναι πλέον δυνατή.
+WebsiteSecurityOptions=Επιλογές ασφάλειας ιστότοπου
 ContentSecurityPolicy=Website HTTP "Content-Security-Policy"
 WebsiteSecurityForceRP=Website HTTP "Referer-Policy"
 WebsiteSecurityForceSTS=Website HTTP "Strict-Transport-Security"

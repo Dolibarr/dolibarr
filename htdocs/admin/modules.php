@@ -36,18 +36,6 @@ if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
-
-'
-@phan-var-force string $dolibarr_main_url_root_alt
-';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -58,6 +46,17 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
  *
  * @var string $dolibarr_main_url_root_alt
  */
+'
+@phan-var-force string $dolibarr_main_url_root_alt
+';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
@@ -75,6 +74,8 @@ if (GETPOSTISSET('mode')) {
 $action = GETPOST('action', 'aZ09');
 $page_y = GETPOSTINT('page_y');
 $optioncss = GETPOST('optioncss', 'aZ09');
+$sortfield = GETPOST('sortfield', 'aZ09');
+$sortorder = GETPOST('sortorder', 'aZ09');
 
 $value = GETPOST('value', 'alpha');
 $search_keyword = GETPOST('search_keyword', 'alpha');
@@ -165,11 +166,14 @@ if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 	$allowonlineinstall = false;
 }
 
-//$remotestore = new Dolistore(false);
-$remotestore = new ExternalModules();
+$debug = false;
+$remotestore = new ExternalModules($debug);
 if ($mode == 'marketplace') {
 	// Make remote calls
-	$remotestore->loadRemoteSources();
+	if (GETPOSTINT('dol_resetcache')) {
+		dol_delete_file($remotestore->cache_file);
+	}
+	$remotestore->loadRemoteSources(false);
 }
 
 $object = new stdClass();
@@ -540,6 +544,7 @@ foreach ($modulesdir as $dir) {
 						if (class_exists($modName)) {
 							$objMod = new $modName($db);
 							'@phan-var-force DolibarrModules $objMod';
+							/** @var DolibarrModules $objMod */
 							$modNameLoaded[$modName] = $dir;
 							if (!$objMod->numero > 0 && $modName != 'modUser') {
 								dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
@@ -653,6 +658,7 @@ foreach ($modulesdir as $dir) {
 }
 
 '@phan-var-force array<string,DolibarrModules> $modules';
+/** @var array<string,DolibarrModules> $modules */
 
 if ($action == 'reset_confirm' && $user->admin) {
 	if (!empty($modules[$value])) {
@@ -691,7 +697,7 @@ $nbofactivatedmodules = count($conf->modules);
 
 // Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
-$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+$listofmodulesautoenabled = array('user', 'agenda', 'fckeditor', 'export', 'import');
 foreach ($listofmodulesautoenabled as $moduleautoenable) {
 	if (in_array($moduleautoenable, $conf->modules)) {
 		$nbmodulesnotautoenabled--;
@@ -707,10 +713,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
-	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+	if (getDolGlobalInt('MAIN_SETUP_MODULES_DESC') || $nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
-	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message. A good usage for SaaS with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
+	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Add a custom info message. A good usage for SaaS in combination with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
 		$deschelp .= '<div class="info">'.$langs->trans(getDolGlobalString('MAIN_SETUP_MODULES_INFO'))."<br></div>\n";
 	}
 	if ($deschelp) {
@@ -733,7 +739,7 @@ $head = modules_prepare_head($nbofactivatedmodules, count($modules), $nbmodulesn
 if ($mode == 'common' || $mode == 'commonkanban') {
 	dol_set_focus('#search_keyword');
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if (isset($optioncss) && $optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -764,7 +770,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter .= '<div class="divfilteralone colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
-	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
+	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" spellcheck="false" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
@@ -794,7 +800,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dolPrintHTMLForAttribute($langs->trans("Refresh")).'">';
 	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
-		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
+		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom nomargintop nomarginbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
 	}
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
@@ -1058,22 +1064,26 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Set $codetoconfig
 			if (!empty($objMod->config_page_url) && !$disableSetup) {
-				$backtourlparam = '';
+				$backtourlquery = [];
 				if ($search_keyword != '') {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_keyword='.urlencode($search_keyword); // No urlencode here, done later
+					$backtourlquery += ['search_keyword' => $search_keyword]; // No urlencode here, done later
 				}
 				if ($search_nature > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.urlencode($search_nature); // No urlencode here, done later
+					$backtourlquery += ['search_nature' => $search_nature]; // No urlencode here, done later
 				}
 				if ($search_version > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.urlencode($search_version); // No urlencode here, done later
+					$backtourlquery += ['search_version' => $search_version]; // No urlencode here, done later
 				}
 				if ($search_status > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.urlencode($search_status); // No urlencode here, done later
+					$backtourlquery += ['search_status' => $search_status]; // No urlencode here, done later
 				}
-				$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
+				$backtourl = dolBuildUrl($_SERVER["PHP_SELF"], $backtourlquery);
 
 				$regs = array();
+				$query = [
+					'save_lastsearch_values' => 1,
+					'backtopage' => $backtourl,
+				];
 				if (is_array($objMod->config_page_url)) {
 					$i = 0;
 					foreach ($objMod->config_page_url as $page) {
@@ -1104,7 +1114,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($objMod->always_enabled)) {
 				// A 'always_enabled' module should not never be disabled. If this happen, we keep a link to re-enable it.
 				$codeenabledisable .= '<!-- Message to show: an always_enabled module has been disabled -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" id="idalways'.$objMod->numero.'" data-alreadyclicked="0" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');
 				$codeenabledisable .= "</a>\n";
@@ -1117,7 +1127,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$codeenabledisable .= '<!-- This module is a core module and it may have a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
 					foreach ($arrayofwarnings[$modName] as $keycountry => $cursorwarningmessage) {
 						if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry))) {
-							$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code);
+							if (!is_array($cursorwarningmessage)) {
+								$cursorwarningmessage = array($cursorwarningmessage);
+							}
+							foreach ($cursorwarningmessage as $messagetoshow) {
+								// TODO Use replacement instead of always adding param module name and country code to the string message
+								$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($messagetoshow, $objMod->getName(), $mysoc->country_code);
+							}
 						}
 					}
 				}
@@ -1125,15 +1141,21 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$codeenabledisable .= '<!-- This module is an external module and it may have a warning to show (note: your country is '.$mysoc->country_code.') -->'."\n";
 					foreach ($arrayofwarningsext as $keymodule => $arrayofwarningsextbycountry) {
 						$keymodulelowercase = strtolower(preg_replace('/^mod/', '', $keymodule));
-						if (in_array($keymodulelowercase, $conf->modules)) {    // If module that request warning is on
+						if (preg_match('/^always/', $keymodulelowercase) || in_array($keymodulelowercase, $conf->modules)) {    // If module that trigger the warning is on
 							foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage) {
 								if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry))) {
-									$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+									if (!is_array($cursorwarningmessage)) {
+										$cursorwarningmessage = array($cursorwarningmessage);
+									}
+									foreach ($cursorwarningmessage as $messagetoshow) {
+										// TODO Use replacement instead of always adding param module name to enable and country code to the string message and triggering module
+										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans($messagetoshow, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
+									}
 									$warningmessage .= ($warningmessage ? "\n" : "").($warningmessage ? "\n" : "").$langs->trans("Module").' : '.$objMod->getName();
 									if (!empty($objMod->editor_name)) {
 										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans("Publisher").' : '.$objMod->editor_name;
 									}
-									if (!empty($objMod->editor_name)) {
+									if ($keymodulelowercase != 'always') {
 										$warningmessage .= ($warningmessage ? "\n" : "").$langs->trans("ModuleTriggeringThisWarning").' : '.$modules[$keymodule]->getName();
 									}
 								}
@@ -1141,10 +1163,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 						}
 					}
 				}
+
+				$urltogo = $_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param;
+				$popupwidth = 500;
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" id="idqualified'.$objMod->numero.'" data-alreadyclicked="0" href="'.$urltogo.'"';
 				if ($warningmessage) {
-					$codeenabledisable .= ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
+					$codeenabledisable .= ' onclick="return confirmDolibarr(\''.dol_escape_js($warningmessage).'\', \'idqualified'.$objMod->numero.'\', '.$popupwidth.');"';
 				}
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -1188,8 +1213,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Help
 			print '<td class="center nowrap" style="width: 82px;">';
-			//print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20', 0, 2, 1);
-			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">';
+			print img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo, '', 0, 0, 0, '', 'purple');
+			print '</a>';
 			print '</td>';
 
 			// Version
@@ -1263,8 +1289,7 @@ if ($mode == 'marketplace') {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
-	print '<td class="hideonsmartphone">'.$form->textwithpicto($langs->trans("Provider"), $langs->trans("WebSiteDesc")).'</td>';
-	print '<td></td>';
+	print '<td colspan="2" class="hideonsmartphone">'.$form->textwithpicto($langs->trans("ModuleProviderSites"), $langs->trans("WebSiteDesc")).'</td>';
 	print '<td>';
 	print '</td>';
 	print '<td></td>';
@@ -1275,7 +1300,7 @@ if ($mode == 'marketplace') {
 	// Marketplace
 	print '<tr class="oddeven">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
-	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
+	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 	print '<td>';
 	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE', array(), null, 0, 0, 1);
@@ -1308,14 +1333,18 @@ if ($mode == 'marketplace') {
 	// Community
 	print '<tr class="oddeven">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
-	print '<td><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
+	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 	print '<td>';
 	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
 	print '</td>';
 	print '<td class="center">';
 	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' is in the local cache file '.$remotestore->cache_file.' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
+		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		if ($remotestore->githubFileError) {
+			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
+		}
 		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
 	}
 	print '</td>';
@@ -1336,11 +1365,11 @@ if ($mode == 'marketplace') {
 		//$remotestore->getRemoteCategories();
 		//$remotestore->getRemoteProducts($options);
 
-		print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
+		//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
 		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
-		$products_list = $remotestore->getProducts($options);
+		$products_list = $remotestore->getProducts($options);	// Get list of product from all sources
 
 		$previouslink = $remotestore->get_previous_link();
 
@@ -1354,11 +1383,13 @@ if ($mode == 'marketplace') {
 					<input type="hidden" name="mode" value="marketplace">
 					<input type="hidden" name="page_y" value="">
 					<div class="divsearchfield">
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>">
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>" spellcheck="false">
 					</div>
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
 		<?php
+		print $form->textwithpicto('', $langs->trans('DOLISTOREdescriptionLong'));
+
 		if ($search_keyword !== '') {
 			print '<a class="buttonreset reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marketplace">'.$langs->trans('Reset').'</a>';
 		}
@@ -1579,18 +1610,17 @@ if ($mode == 'develop') {
 	print '<br>';
 
 	// Marketplace
+	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
-	//print '<td>'.$langs->trans("Logo").'</td>';
-	print '<td colspan="2">'.$langs->trans("DevelopYourModuleDesc").'</td>';
-	print '<td>'.$langs->trans("URL").'</td>';
+	print '<td colspan="3">'.$langs->trans("DevelopYourModuleDesc").'</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
-	print '<td class="center">';
+	print '<td class="center hideonsmartphone">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
-	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
+	print '<td class="minwidth500imp smallonsmartphone">'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
 	print '<td class="maxwidth300">';
 	if (isModEnabled('modulebuilder')) {
 		print $langs->trans("SeeTopRightMenu");
@@ -1602,16 +1632,17 @@ if ($mode == 'develop') {
 
 	print '<tr class="oddeven" height="80">'."\n";
 	$url = 'https://partners.dolibarr.org';
-	print '<td class="center">';
+	print '<td class="center hideonsmartphone">';
 	print'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
 	print '</td>';
-	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
+	print '<td class="minwidth500imp smallonsmartphone">'.$langs->trans("DoliPartnersDesc").'</td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
 	print img_picto('', 'url', 'class="pictofixedwidth"');
 	print $url.'</a></td>';
 	print '</tr>';
 
 	print "</table>\n";
+	print '</div>';
 
 	print dol_get_fiche_end();
 }

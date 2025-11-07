@@ -81,24 +81,24 @@ abstract class CommonInvoice extends CommonObject
 	public $date_lim_reglement;
 
 	/**
-	 * @var int
+	 * @var ?int		Payment term ID
 	 */
 	public $cond_reglement_id; // Id in llx_c_paiement
 	/**
-	 * @var string|int Code in llx_c_paiement
+	 * @var string|int 	Code in llx_c_paiement
 	 */
 	public $cond_reglement_code; // Code in llx_c_paiement
 	/**
-	 * @var string
+	 * @var string		Label in llx_c_paiement
 	 */
 	public $cond_reglement_label;
 	/**
-	 * @var string Code in llx_c_paiement
+	 * @var string 		Label for doc in llx_c_paiement
 	 */
 	public $cond_reglement_doc;
 
 	/**
-	 * @var int
+	 * @var ?int 		Payment method ID (cheque, cash, ...)
 	 */
 	public $mode_reglement_id;
 	/**
@@ -940,6 +940,7 @@ abstract class CommonInvoice extends CommonObject
 			'nbofopendirectdebitorcredittransfer' => $this->nbofopendirectdebitorcredittransfer,
 			'close_code' => $this->close_code,
 			'close_note' => $this->close_note,
+			'dispute_status' => $this->dispute_status
 		);
 
 		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $moreparams);
@@ -1021,12 +1022,19 @@ abstract class CommonInvoice extends CommonObject
 			}
 		}
 
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-already-paid' => $alreadypaid > 0 ? 1 : 0,
+			'data-status' => (int) $status
+		)));
+
 		$parameters = array(
 			'status'      => $status,
 			'mode'        => $mode,
 			'paye'        => $paye,
 			'alreadypaid' => $alreadypaid,
-			'type'        => $type
+			'type'        => $type,
+			'paramsBadge'=>& $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -1051,12 +1059,22 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			//$paramsbutton = array('badgeParams' => array('attr' => array('title' => 'rrrr')));
-			$paramsbutton = array('badgeParams' => array('attr' => array('title' => $titlestringtoshow)));
-		} else {
-			$paramsbutton = array();
+			$paramsBadge['badgeParams' ]['attr']['title'] = $titlestringtoshow;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
+		/*
+		if (isset($moreparams['dispute_status'])) {
+			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("DisputeOpen"), 'warning') : '';
+		}
+		*/
+		if (isset($moreparams['dispute_status']) && $moreparams['dispute_status']) {
+			$labelStatus .= ' - '.$langs->trans("DisputeOpen");
+			$statusType = 'status8';
+		}
+
+		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsBadge);
+
+		return $statusbadge;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1344,7 +1362,7 @@ abstract class CommonInvoice extends CommonObject
 			$bac = new CompanyBankAccount($this->db);	// Table societe_rib
 			$result = $bac->fetch(0, '', $this->socid, 1, 'ban');
 			if ($result <= 0 || empty($bac->id)) {
-				$this->error = $langs->trans("ThirdpartyHasNoDefaultBanAccount");
+				$this->error = $langs->trans("ThirdpartyHasNoDefaultBankAccount");
 				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error);
 				return -1;
@@ -1896,9 +1914,18 @@ abstract class CommonInvoice extends CommonObject
 
 		// Add the bank account information
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-		$bankAccount = new Account($this->db);
-		if ($this->fk_account > 0) {
-			$bankAccount->fetch($this->fk_account);
+
+		$idofbankaccountouse = $this->fk_account;
+		if (empty($idofbankaccountouse)) {
+			$idofbankaccountouse = $this->fk_bank;	// for backward compatibility
+		}
+		if (empty($idofbankaccountouse)) {
+			$idofbankaccountouse = getDolGlobalInt('FACTURE_RIB_NUMBER');
+		}
+
+		if ($idofbankaccountouse > 0) {
+			$bankAccount = new Account($this->db);
+			$bankAccount->fetch($idofbankaccountouse);
 			$lines[] = $bankAccount->bic; //BIC (required)
 			if (!empty($bankAccount->owner_name)) {
 				$lines[] = $bankAccount->owner_name; //Owner of the bank account, if present (required)

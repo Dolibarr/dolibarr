@@ -106,11 +106,11 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	if (empty($user) || empty($user->id)) {
 		print 'Page is called as an include but $user and its permission loaded with loadRights() are not defined. We stop here.';
-		exit(-1);
+		exit(1);
 	}
 	if (empty($object)) {
 		print 'Page is called as an include but $object is not defined. We stop here.';
-		exit(-1);
+		exit(1);
 	}
 }
 
@@ -698,7 +698,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		// YAxis
 		print '<div class="divadvancedsearchfield">';
 		foreach ($object->fields as $key => $val) {
-			if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
+			if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval((string) $val['enabled'], 1, 1, '1'))) {
 				if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) {
 					continue;
 				}
@@ -1227,7 +1227,7 @@ print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreports
 
 if (empty($newarrayoftype)) {
 	$langs->load("admin");
-	print info_admin($langs->trans("NoSupportedModulesHaveBeenActivated"), 0, 0, 'warning');
+	print info_admin($langs->trans("NoSupportedModulesHaveBeenActivated").' '.$langs->trans("YouCanEnableModulesFrom"), 0, 0, 'info');
 }
 
 if ($mode == 'grid') {

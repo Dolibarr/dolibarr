@@ -348,6 +348,7 @@ VATIntraManualCheck=এছাড়াও আপনি ইউরোপীয় 
 ErrorVATCheckMS_UNAVAILABLE=চেক করা সম্ভব নয়। সদস্য রাষ্ট্র দ্বারা চেক পরিষেবা প্রদান করা হয় না (%s)।
 NorProspectNorCustomer=না সম্ভাবনা, না গ্রাহক
 JuridicalStatus=ব্যবসায়িক সত্তার ধরন
+CompnanyBirthDate=Εstablishment date of company
 Workforce=কর্মশক্তি
 Staff=কর্মচারীদের
 ProspectLevelShort=সম্ভাব্য

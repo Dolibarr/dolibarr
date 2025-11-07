@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
  * Copyright (C) 2019       Maxime Kohlhaas             <maxime@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,9 +156,10 @@ class Mos extends DolibarrApi
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new Mo($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
@@ -433,7 +434,7 @@ class Mos extends DolibarrApi
 								$moline->fk_mo = $this->mo->id;
 								$moline->position = $pos;
 								$moline->fk_product = $value["objectid"];
-								$moline->fk_warehouse = $value["fk_warehouse"];
+								$moline->fk_warehouse = (int) $value["fk_warehouse"];
 								$moline->qty = $qtytoprocess;
 								$moline->batch = (string) $tmpproduct->status_batch;
 								$moline->role = 'toproduce';
@@ -534,9 +535,9 @@ class Mos extends DolibarrApi
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
@@ -594,9 +595,9 @@ class Mos extends DolibarrApi
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							} else {
-								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;

@@ -583,7 +583,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("VAT").implode($def_tva[$key][$k]).' %')).'"'.$sep;
+				print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($userstatic->name, '', $langs->trans("VAT").(isset($def_tva[$key]) ? implode($def_tva[$key][$k]) : '').' %')).'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"';
 				print "\n";

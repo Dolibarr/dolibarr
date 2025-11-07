@@ -182,7 +182,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries", "compta"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "sendginds", "compta"));
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
@@ -194,7 +194,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries", "compta"));
+			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "sendginds", "compta"));
 		}
 
 		$nblines = (is_array($object->lines) ? count($object->lines) : 0);
@@ -228,8 +228,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$realpath = null;
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
-						if ($conf->entity != $objphoto->entity) {
-							$dir = $conf->product->multidir_output[$objphoto->entity].'/'.$midir; //Check repertories of current entities
+						$entity = $objphoto->entity;
+						if ($entity !== null && $conf->entity != $entity) {
+							$dir = $conf->product->multidir_output[$entity].'/'.$midir; //Check repertories of current entities
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
@@ -322,8 +323,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/'.getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -662,23 +663,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 						} else {
 							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
-							$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
-							$pdf->SetXY($pdf->GetX(), $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite  - $this->marge_gauche, 6, '', 0, '', true);
-							$previous_align = array();
-							$previous_align['align'] = $this->cols['desc']['content']['align'];
-							if ($object->lines[$i]->qty < 0) {
-								$langs->load("subtotals");
-								$object->lines[$i]->desc = $langs->trans("SubtotalOf", $object->lines[$i]->desc);
-								if ($previous_align['align'] == 'L') {
-									$this->cols['desc']['content']['align'] = 'R';
-								} elseif ($previous_align['align'] == 'R') {
-									$this->cols['desc']['content']['align'] = 'L';
-								}
-							}
-							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
-							$this->cols['desc']['content']['align'] = $previous_align['align']; // Re align if we printed a subtotal ligne
+							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						}
 					}
 
@@ -960,6 +945,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1133,7 +1120,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$posy = $pdf->GetY() + 2;
 					}
 				}
-				if ($conf->global->FACTURE_CHQ_NUMBER == -1) {
+				if (getDolGlobalString('FACTURE_CHQ_NUMBER') == -1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', false);
@@ -1994,7 +1981,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			'width' => 10,
 			'status' => (getDolGlobalInt('PDF_ERATOSTHENE_ADD_POSITION') || getDolGlobalInt('PDF_ERATOSHTENE_ADD_POSITION')) ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
-				'textkey' => '#', // use lang key is useful in somme case with module
+				'textkey' => '#', // use lang key is useful in some case with module
 				'align' => 'C',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -2012,7 +1999,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
