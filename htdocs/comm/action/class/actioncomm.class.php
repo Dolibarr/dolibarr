@@ -167,12 +167,12 @@ class ActionComm extends CommonObject
 	public $usermodid;
 
 	/**
-	 * @var int 	Date action start (datep)
+	 * @var int|''|null 	Date action start (datep)
 	 */
 	public $datep;
 
 	/**
-	 * @var int 	Date action end (datef)
+	 * @var int|''|null 	Date action end (datef)
 	 */
 	public $datef;
 
