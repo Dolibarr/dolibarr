@@ -940,7 +940,11 @@ class BOM extends CommonObject
 
 		// Define new ref
 		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-			$this->fetch_product();
+			$res = $this->fetch_product();
+			if ($res < 0 || !is_object($this->product)) {
+				$this->db->rollback();
+				return -1;
+			}
 			$num = $this->getNextNumRef($this->product);
 		} else {
 			$num = (string) $this->ref;
