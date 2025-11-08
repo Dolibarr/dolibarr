@@ -300,6 +300,7 @@ $sql .= " uu.email as user_email,";
 $sql .= " uu.login as user_login,";
 $sql .= " uu.statut as user_status,";
 $sql .= " uu.photo as user_photo,";
+$sql .= " uu.fk_country as user_country_id,";
 
 $sql .= " ua.lastname as validator_lastname,";
 $sql .= " ua.firstname as validator_firstname,";
@@ -858,6 +859,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$userstatic->login = $obj->user_login;
 		$userstatic->status = $obj->user_status;
 		$userstatic->photo = $obj->user_photo;
+		$userstatic->country_id = $obj->user_country_id;
 
 		// Validator
 		$approbatorstatic->id = $obj->fk_validator;
@@ -875,7 +877,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
+		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday, $userstatic->country_id);	// user jdate(..., 1) because num_open_day need UTC dates
 		$totalduration += $nbopenedday;
 
 		if ($mode == 'kanban') {

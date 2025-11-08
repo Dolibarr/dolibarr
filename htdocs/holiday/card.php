@@ -33,6 +33,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -43,14 +50,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -259,8 +258,11 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
+		$tmpUser = new User($db);
+		$tmpUser->fetch($fuserid);
+
 		// If there is no Business Days within request
-		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id);
 		if ($nbopenedday < 0.5) {
 			setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 			$error++;
@@ -401,8 +403,11 @@ if (empty($reshook)) {
 					$action = 'edit';
 				}
 
+				$tmpUser = new User($db);
+				$tmpUser->fetch($fuserid);
+
 				// If there is no Business Days within request
-				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $tmpUser->country_id);
 				if ($nbopenedday < 0.5) {
 					setEventMessages($langs->trans('ErrorDureeCP'), null, 'warnings');
 					$error++;
@@ -531,7 +536,10 @@ if (empty($reshook)) {
 
 				// option to notify the validator if the balance is less than the request
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+					$tmpUser = new User($db);
+					$tmpUser->fetch($object->fk_user);
+
+					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id);
 
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
@@ -642,8 +650,11 @@ if (empty($reshook)) {
 
 			// If no SQL error, we redirect to the request form
 			if (!$error && empty($decrease)) {
+				$tmpUser = new User($db);
+				$tmpUser->fetch($object->fk_user);
+
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
 				$label = $object->ref.' - '.$langs->transnoentitiesnoconv("HolidayConsumption");
@@ -885,8 +896,11 @@ if (empty($reshook)) {
 					}
 				}
 
+				$tmpUser = new User($db);
+				$tmpUser->fetch($object->fk_user);
+
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday);
+				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday, $tmpUser->country_id);
 
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
@@ -1415,7 +1429,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
 				print '</td>';
 				print '<td>';
-				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, (int) $object->halfday);
+				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, (int) $object->halfday, $userRequest->country_id);
 				print '</td>';
 				print '</tr>';
 
