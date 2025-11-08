@@ -151,28 +151,26 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				if (method_exists($object, 'generateDocument')) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
-					}
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
 
-					$ret = $object->fetch($id); // Reload to get new records
+				$ret = $object->fetch($id); // Reload to get new records
 
-					$model = $object->model_pdf;
+				$model = $object->model_pdf;
 
-					$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
-					if ($retgen < 0) {
-						setEventMessages($object->error, $object->errors, 'warnings');
-					}
+				$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
 				}
 			}
 		} else {
@@ -183,28 +181,26 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				if (method_exists($object, 'generateDocument')) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
-					}
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
 
-					$ret = $object->fetch($id); // Reload to get new records
+				$ret = $object->fetch($id); // Reload to get new records
 
-					$model = $object->model_pdf;
+				$model = $object->model_pdf;
 
-					$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
-					if ($retgen < 0) {
-						setEventMessages($object->error, $object->errors, 'warnings');
-					}
+				$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
 				}
 			}
 		} else {
