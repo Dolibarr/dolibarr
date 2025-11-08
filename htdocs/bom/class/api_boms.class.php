@@ -620,20 +620,21 @@ class Boms extends DolibarrApi
 	private function checkRefNumbering()
 	{
 		$ref = substr($this->bom->ref, 1, 4);
-		if ($this->bom->status > 0 && $ref == 'PROV') {
+		if ($this->bom->status > BOM::STATUS_DRAFT && $ref == 'PROV') {
 			throw new RestException(400, "Wrong naming scheme '(PROV%)' is only allowed on 'DRAFT' status. For automatic increment use 'auto' on the 'ref' field.");
 		}
 
 		if (strtolower($this->bom->ref) == 'auto') {
-			if (empty($this->bom->id) && $this->bom->status == 0) {
+			if (empty($this->bom->id) && $this->bom->status == BOM::STATUS_DRAFT) {
 				$this->bom->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
 			} else {
 				$res = $this->bom->fetch_product();
-				if ($res < 0 || !is_object($this->bom->product)) {
+				if ($res > 0 && $this->bom->product instanceof Product) {
+					$numref = $this->bom->getNextNumRef($this->bom->product); // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
+					$this->bom->ref = $numref;
+				} else {
 					throw new RestException(400, "Error when generating automatic increment on the 'ref' field.");
 				}
-				$numref = $this->bom->getNextNumRef($this->bom->product);
-				$this->bom->ref = $numref;
 			}
 		}
 	}

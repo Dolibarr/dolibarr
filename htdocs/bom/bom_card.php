@@ -410,10 +410,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$res = $object->fetch_product();
-			if ($res < 0 || !is_object($object->product)) {
-				$error++;
+			if ($res > 0 && $object->product instanceof Product) {
+				$numref = $object->getNextNumRef($object->product); // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
 			} else {
-				$numref = $object->getNextNumRef($object->product);
+				$error++;
 			}
 		} else {
 			$numref = (string) $object->ref;

@@ -1373,6 +1373,8 @@ if ($type == Categorie::TYPE_FICHINTER) {
 		if ($fichinters < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
+			/** @var Fichinter[] $fichinters */
+			'@phan-var-force Fichinter[] $fichinters';
 			// Form to add record into a category
 			if ($showclassifyform) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
@@ -1460,6 +1462,8 @@ if ($type == Categorie::TYPE_ORDER) {
 	if ($objects < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		/** @var Commande[] $objects */
+		'@phan-var-force Commande[] $objects';
 		// Form to add record into a category
 		$showclassifyform = $user->hasRight('order', 'write');
 		if ($showclassifyform) {
