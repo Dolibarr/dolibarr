@@ -1064,8 +1064,8 @@ if ($type == Categorie::TYPE_PROJECT) {
 		if ($objects < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
-			/** @var Project $object */
-			'@phan-var-force Project $object';
+			/** @var Project[] $objects */
+			'@phan-var-force Project[] $objects';
 			// Form to add record into a category
 			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
