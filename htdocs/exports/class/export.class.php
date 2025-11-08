@@ -783,7 +783,14 @@ class Export
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
-								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $mysoc->country_code);
+								$country_id = $mysoc->country_id;
+								if ($obj->fk_user > 0) {
+									$tmpUser = new User($this->db);
+									$tmpUser->fetch($obj->fk_user);
+									$country_id = $tmpUser->country_id;
+								}
+
+								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $country_id);
 							} elseif (is_string($item) && $item == 'getRemainToPay') {
 								// Operation INVOICEREMAINTOPAY
 								//$alias=$this->array_export_alias[$indice][$key];
