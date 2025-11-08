@@ -4189,12 +4189,6 @@ parameters:
 			path: ../../../htdocs/contrat/card.php
 
 		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/card.php
-
-		-
 			message: '#^Variable \$mesg might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
