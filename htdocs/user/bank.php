@@ -620,7 +620,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	if (isModEnabled('accounting')) {
-		// Accountancy code user general
+		// General accountancy code of user
 		$formaccounting = new FormAccounting($db);
 
 		print '<tr>';
@@ -648,12 +648,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '</span>';
 		print '</td>';
 
-		// Accountancy code
+		// Subledger accountancy code of user
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'));
+		print $form->editfieldkey("UserSubledgerAccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'));
 		print '</td><td>';
-		print $form->editfieldval("AccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'), 'string', '', null, null, '', 0, '');
+		print $form->editfieldval("UserSubledgerAccountancyCode", 'accountancy_code', $object->accountancy_code, $object, $user->hasRight('user', 'user', 'creer'), 'string', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
