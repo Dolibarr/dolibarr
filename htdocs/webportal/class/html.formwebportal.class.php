@@ -464,7 +464,11 @@ class FormWebPortal extends Form
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
+
+		// TODO Why having a duplication of code of selectForFormsList of html.form.class.php ? Original seems more complete. Remove or replace with return parent::selectForFormsList();
+
+		//print "$htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, $outputmode, $disabled";
 
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') {
