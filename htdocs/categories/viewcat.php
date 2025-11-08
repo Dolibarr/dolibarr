@@ -629,7 +629,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("ProductsAndServices"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'products');
@@ -709,7 +709,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Customers"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'companies');
@@ -791,7 +791,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Suppliers"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'companies');
@@ -875,7 +875,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Member"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'members');
@@ -961,7 +961,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Contact"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'contact');
@@ -1044,7 +1044,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Banque"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'bank');
@@ -1064,8 +1064,8 @@ if ($type == Categorie::TYPE_PROJECT) {
 		if ($objects < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
-			/** @var Project $object */
-			'@phan-var-force Project $object';
+			/** @var Project[] $objects */
+			'@phan-var-force Project[] $objects';
 			// Form to add record into a category
 			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1126,7 +1126,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Project"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'project');
@@ -1204,7 +1204,7 @@ if ($type == Categorie::TYPE_USER) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Users"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'user');
@@ -1275,7 +1275,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Warehouse"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'stock');
@@ -1355,7 +1355,7 @@ if ($type == Categorie::TYPE_TICKET) {
 			}
 			print "</table>\n";
 
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Ticket"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'ticket');
@@ -1442,7 +1442,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 				print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</span></td></tr>';
 			}
 			print "</table>\n";
-			print '</form>'."\n";
+			print "</form>\n";
 		}
 	} else {
 		print_barre_liste($langs->trans("Intervention"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'fichinter');
@@ -1527,7 +1527,7 @@ if ($type == Categorie::TYPE_ORDER) {
 		}
 		print "</table>\n";
 
-		print '</form>'."\n";
+		print "</form>\n";
 	}
 }
 
@@ -1608,7 +1608,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 		}
 		print "</table>\n";
 
-		print '</form>'."\n";
+		print "</form>\n";
 	}
 }
 
@@ -1690,7 +1690,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 		}
 		print "</table>\n";
 
-		print '</form>'."\n";
+		print "</form>\n";
 	}
 }
 
@@ -1768,7 +1768,7 @@ if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 		}
 		print "</table>\n";
 
-		print '</form>'."\n";
+		print "</form>\n";
 	}
 }
 

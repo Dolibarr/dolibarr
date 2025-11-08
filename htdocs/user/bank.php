@@ -764,7 +764,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$holiday->statut = $objp->status;
 				$holiday->status = $objp->status;
 
-				$nbopenedday = num_open_day($db->jdate($objp->date_debut, 'gmt'), $db->jdate($objp->date_fin, 'gmt'), 0, 1, $objp->halfday);
+				$nbopenedday = num_open_day($db->jdate($objp->date_debut, 'gmt'), $db->jdate($objp->date_fin, 'gmt'), 0, 1, $objp->halfday, $object->country_id);
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
