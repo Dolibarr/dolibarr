@@ -1621,12 +1621,6 @@ parameters:
 			path: ../../../htdocs/categories/categorie_list.php
 
 		-
-			message: '#^Offset ''searchmulti'' on array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/categories/categorie_list.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -11425,12 +11419,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/myobject_list.php
 
 		-
-			message: '#^Offset ''searchmulti'' on array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
 			message: '#^Path in include\(\) "\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
 			identifier: include.fileNotFound
 			count: 1
@@ -16367,12 +16355,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/webhook/target_list.php
-
-		-
-			message: '#^Offset ''searchmulti'' on array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/webhook/triggerhistory_list.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
