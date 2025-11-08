@@ -119,7 +119,8 @@ $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
 $search_budget_amount = GETPOST("search_budget_amount", 'alpha');
-$search_parent = GETPOST('search_parent', 'alpha');
+$search_parent_ref = GETPOST('search_parent_ref', 'alpha');
+$search_parent_label = GETPOST('search_parent_label', 'alpha');
 $search_public = GETPOST("search_public", 'intcomma');
 $search_project_user = GETPOSTINT('search_project_user');
 $search_project_contact = GETPOSTINT('search_project_contact');
@@ -412,7 +413,8 @@ if (empty($reshook)) {
 		$search_opp_amount = '';
 		$search_opp_percent = '';
 		$search_budget_amount = '';
-		$search_parent = '';
+		$search_parent_ref = '';
+		$search_parent_label = '';
 		$search_public = "";
 		$search_sale = "";
 		$search_project_user = '';
@@ -649,8 +651,11 @@ if ($search_ref) {
 if ($search_label) {
 	$sql .= natural_search('p.title', $search_label);
 }
-if ($search_parent) {
-	$sql .= natural_search('pa.ref', $search_parent);
+if ($search_parent_ref) {
+	$sql .= natural_search('pa.ref', $search_parent_ref);
+}
+if ($search_parent_label) {
+	$sql .= natural_search('pa.title', $search_parent_label);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
@@ -955,8 +960,11 @@ if ($groupby != '') {
 	$param .= '&groupby='.urlencode($groupby);
 }
 
-if ($search_parent != '') {
-	$param .= '&search_parent='.urlencode($search_parent);
+if ($search_parent_ref != '') {
+	$param .= '&search_parent_ref='.urlencode($search_parent_ref);
+}
+if ($search_parent_label != '') {
+	$param .= '&search_parent_label='.urlencode($search_parent_label);
 }
 
 if ($socid) {
@@ -1357,8 +1365,15 @@ if (!empty($arrayfields['p.title']['checked'])) {
 
 // Parent project
 if (!empty($arrayfields['p.fk_project']['checked'])) {
-	print '<td class="liste_titre" id="search_parent">';
-	print '<input type="text" class="flat width75" name="search_parent" value="'.dol_escape_htmltag($search_parent).'">';
+	print '<td class="liste_titre" id="parent_project">';
+	print '<div class="nowrap">';
+	$ref_placeholder = $langs->trans('Ref');
+	print '<input id="search_parent_ref" placeholder="'.$ref_placeholder.'" type="text" class="flat width75" name="search_parent_ref" value="'.dol_escape_htmltag($search_parent_ref).'">';
+	print '</div>';
+	print '<div class="nowrap">';
+	$label_placeholder = $langs->trans('Label');
+	print '<input id="search_parent_label" placeholder="'.$label_placeholder.'" type="text" class="flat width75" name="search_parent_label" value="'.dol_escape_htmltag($search_parent_label).'">';
+	print '</div>';
 	print '</td>';
 }
 
