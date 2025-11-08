@@ -34,6 +34,15 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -109,16 +118,6 @@ if (isModEnabled('stocktransfer')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransferline.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var ExtraFields $extrafields
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -245,18 +244,23 @@ if ($action == 'update_extras' && $permissiontoeditextra) {
 		$action = 'edit_extras';
 	}
 }
-if ($action == 'updatelasthourlyrate' && $permissiontoadd) {
+if (($action == 'updateundefinedwithlasthourlyrate' || $action == 'updateallwithlasthourlyrate') && $permissiontoadd) {
 	$error = 0;
 	if (!GETPOSTISSET('taskid')) {
 		$error++;
 	}
 	if (!$error) {
 		$taskid = GETPOSTINT("taskid");
+
 		$sql = "SELECT et.rowid as id, u.thm as thmuser";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as et";
-		$sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = et.fk_user";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = et.fk_user";
 		$sql .= " WHERE et.elementtype = 'task'";
 		$sql .= " AND et.fk_element = ".((int) $taskid);
+		if ($action == 'updateundefinedwithlasthourlyrate') {
+			$sql .= " AND et.thm IS NULL";	// Note: If 0, it is defined, we won't update it.
+		}
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -1678,9 +1682,13 @@ foreach ($listofreferent as $key => $value) {
 							$title = $langs->trans("EnterUsersHourlyRateFirst");
 							print ' '.img_picto($title, "sync", '', 0, 0, 0, '', 'opacitymedium');
 						} else {
-							$title = $langs->trans("UpdateWithLastHourlyRate");
-							print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updatelasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync").'</a>';
+							$title = $langs->trans("UpdateUndefinedWithLastHourlyRate");
+							print ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updateundefinedwithlasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync", '', 0, 0, 0, '', 'warning').'</a>';
 						}
+					}
+					if (getDolGlobalString('PROJECT_CAN_OVERWRITE_TIMESTPENT_HOURLY_RATE_WITH_LASTONE')) {
+						$title = $langs->trans("UpdateWithLastHourlyRate");
+						print ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updateallwithlasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync", '', 0, 0, 0, '', '').'</a>';
 					}
 					print '</td>';
 				} else {
@@ -1742,9 +1750,13 @@ foreach ($listofreferent as $key => $value) {
 							$title = $langs->trans("EnterUsersHourlyRateFirst");
 							print ' '.img_picto($title, "sync", '', 0, 0, 0, '', 'opacitymedium');
 						} else {
-							$title = $langs->trans("UpdateWithLastHourlyRate");
-							print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updatelasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync").'</a>';
+							$title = $langs->trans("UpdateUndefinedWithLastHourlyRate");
+							print ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updateundefinedwithlasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync", '', 0, 0, 0, '', 'warning').'</a>';
 						}
+					}
+					if (getDolGlobalString('PROJECT_CAN_OVERWRITE_TIMESTPENT_HOURLY_RATE_WITH_LASTONE')) {
+						$title = $langs->trans("UpdateWithLastHourlyRate");
+						print ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=updateallwithlasthourlyrate&taskid='.$idofelement.'&token='.currentToken().'">'.img_picto($title, "sync").'</a>';
 					}
 					print '</td>';
 				} else {
