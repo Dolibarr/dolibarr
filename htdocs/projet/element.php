@@ -257,7 +257,7 @@ if (($action == 'updateundefinedwithlasthourlyrate' || $action == 'updateallwith
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = et.fk_user";
 		$sql .= " WHERE et.elementtype = 'task'";
 		$sql .= " AND et.fk_element = ".((int) $taskid);
-		if ($action == 'updateundefinedwithlasthourlyrate') {
+		if ($action == 'updateundefinedwithlasthourlyrate') {	// Test on permission already done
 			$sql .= " AND et.thm IS NULL";	// Note: If 0, it is defined, we won't update it.
 		}
 
