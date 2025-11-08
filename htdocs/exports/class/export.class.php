@@ -4,6 +4,7 @@
  * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -697,10 +698,10 @@ class Export
 		$classname = "Export".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
+		/** @var ModeleExports $objmodel */
 		'@phan-var-force ModeleExports $objmodel';
 
-		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && property_exists($objmodel, 'separator')) {
-			// @phan-suppress-next-line PhanUndeclaredProperty
+		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && empty($objmodel->separator)) {
 			$objmodel->separator = $separator;
 		}
 
@@ -754,7 +755,7 @@ class Export
 				// Generate title line
 				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
-				//$MAXFORTEST = 0;	// For test on large database, we can set it to a non zero value and uncomment code that use it later to limit the export size
+				//$MAXFORTEST = getDolGlobalInt('MAX_FOR_TEST_EXPORT');	// For test on large database, we can set it to a non zero value and uncomment code that use it later to limit the export size
 				$counterlineexported = 0;
 				while ($obj = $this->db->fetch_object($resql)) {
 					$counterlineexported++;
