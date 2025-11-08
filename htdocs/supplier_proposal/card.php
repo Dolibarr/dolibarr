@@ -492,9 +492,7 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					if (isModEnabled('category')) {
 						$categories = GETPOST('categories', 'array');
-						if (method_exists($object, 'setCategories')) {
-							$object->setCategories($categories);
-						}
+						$object->setCategories($categories);
 					}
 					if (!$error) {
 						$db->commit();
