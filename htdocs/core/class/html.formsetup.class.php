@@ -1150,6 +1150,9 @@ class FormSetupItem
 			$out .= ' maxlength="' . $max . '"';
 		}
 		$out .= '>';
+
+		$out .= '<span class="fa fa-eye paddingleft paddingright" onclick="javascript: console.log(\'click on show-hide pass\'); newtype = (jQuery(\'#'.trim($this->confKey).'\').attr(\'type\') == \'text\' ? \'password\' : \'text\'); jQuery(\'#'.trim($this->confKey).'\').attr(\'type\', newtype);"></span>';
+
 		return $out;
 	}
 
