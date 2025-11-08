@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2020-2025  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France		    <frederic.france@free.fr>
  * Copyright (C) 2022		Christian Humpel		<christian.humpel@live.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
