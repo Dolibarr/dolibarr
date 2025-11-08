@@ -252,7 +252,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
 			}
 
-			//TODO Improve element and rights detection
+			// TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'restricthtml') == $tmpkeyextra) {
 				// Show the extrafield in create or edit mode
 				$fieldid = 'id';
@@ -266,7 +266,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
 				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object, $object->table_element);
 
-				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
+				print '<input type="submit" class="button" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
 
 				print '</form>';
 			} else {
@@ -274,8 +274,6 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
 
-				//var_dump($output);
-				//var_dump(dolPrintHTML($output));
 				print '<input type="hidden" value="' . dolPrintHTMLForAttribute($value) . '" name="options_' . $tmpkeyextra . '" id="options_' . $tmpkeyextra . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
 			}
 
