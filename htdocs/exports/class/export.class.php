@@ -701,7 +701,7 @@ class Export
 		/** @var ModeleExports $objmodel */
 		'@phan-var-force ModeleExports $objmodel';
 
-		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && property_exists($objmodel, 'separator')) {
+		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && empty($objmodel->separator)) {
 			$objmodel->separator = $separator;
 		}
 
