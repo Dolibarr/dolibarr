@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2022		Christian Humpel		<christian.humpel@live.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -628,7 +628,10 @@ class Boms extends DolibarrApi
 			if (empty($this->bom->id) && $this->bom->status == 0) {
 				$this->bom->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
 			} else {
-				$this->bom->fetch_product();
+				$res = $this->bom->fetch_product();
+				if ($res < 0 || !is_object($this->bom->product)) {
+					throw new RestException(400, "Error when generating automatic increment on the 'ref' field.");
+				}
 				$numref = $this->bom->getNextNumRef($this->bom->product);
 				$this->bom->ref = $numref;
 			}
