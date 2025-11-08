@@ -698,6 +698,7 @@ class Export
 		$classname = "Export".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
+		/** @var ModeleExports $objmodel */
 		'@phan-var-force ModeleExports $objmodel';
 
 		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && property_exists($objmodel, 'separator')) {
