@@ -4297,30 +4297,6 @@ parameters:
 			path: ../../../htdocs/core/actions_fetchobject.inc.php
 
 		-
-			message: '#^Variable \$hidedesc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: '#^Variable \$hidedetails might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: '#^Variable \$hideref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: '#^Variable \$permissiontoedit might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_lineupdown.inc.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
