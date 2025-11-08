@@ -702,7 +702,6 @@ class Export
 		'@phan-var-force ModeleExports $objmodel';
 
 		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && property_exists($objmodel, 'separator')) {
-			// @phan-suppress-next-line PhanUndeclaredProperty
 			$objmodel->separator = $separator;
 		}
 
