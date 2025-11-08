@@ -367,11 +367,11 @@ class AdherentStats extends Stats
 				$objp = $this->db->fetch_object($result);
 				$lastModifiedMembers[] = [
 					'id' => $this->db->toInt($objp, 'rowid'),
-					'ref' => (string) $objp->ref,
-					'lastname' => (string) $objp->lastname,
-					'firstname' => (string) $objp->firstname,
-					'company' => (string) $objp->company,
-					'fk_soc' => $objp->fk_soc ? (int) $objp->fk_soc : null,
+					'ref' => $this->db->toString($objp, 'ref'),
+					'lastname' => $this->db->toNullString($objp, 'lastname'),
+					'firstname' => $this->db->toNullString($objp, 'firstname'),
+					'company' => $this->db->toNullString($objp, 'company'),
+					'fk_soc' => $this->db->toNullInt($objp, 'fk_soc'),
 					'datec' => $this->db->jdate($objp->datec),
 					'datem' => $this->db->jdate($objp->datem),
 					'status' => $this->db->toInt($objp, 'status'),
@@ -383,7 +383,7 @@ class AdherentStats extends Stats
 					'typeid' => $this->db->toInt($objp, 'typeid'),
 					'need_subscription' => isset($objp->subscription) ? ($objp->subscription ? 1 : 0) : null,
 					'subscription' => isset($objp->subscription) ? ($objp->subscription ? '1' : '0') : null,
-					'label' => (string) $objp->label,
+					'label' => $this->db->toString($objp, 'label'),
 				];
 
 				$line++;
