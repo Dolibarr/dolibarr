@@ -2057,7 +2057,11 @@ while ($i < $imaxinloop) {
 						print $parent_object->getNomUrl(-1);
 					} else {
 						$parent_url = DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project;
-						print '<a href="'.$parent_url.'"><del title="You do not have access to see parent project">ACCESS DENIED!</del></a>';
+						print '<a href="'.$parent_url.'">';
+						print img_picto('', 'warning', 'class="pictofixedwidth error"');
+						print '<del title="You do not have access to see parent project">ACCESS DENIED!</del>';
+						print img_picto('', 'warning', 'class="pictofixedwidth error"');
+						print '</a>';
 					}
 				} else {
 					print ((int) $object->fk_project);
