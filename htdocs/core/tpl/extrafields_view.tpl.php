@@ -276,7 +276,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print $output;
 				//var_dump($output);
 				//var_dump(dolPrintHTML($output));
-				print '<input type="hidden" value="' . dolPrintHTMLforAttribute($value) . '" name="options_' . $tmpkeyextra . '" id="options_' . $tmpkeyextra . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
+				print '<input type="hidden" value="' . dolPrintHTMLForAttribute($value) . '" name="options_' . $tmpkeyextra . '" id="options_' . $tmpkeyextra . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
 			}
 
 			print '</td>';
