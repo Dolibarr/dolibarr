@@ -137,6 +137,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 	//$actionmsg = '';
 	$actionmsg2 = '';
 	$thirdparty = null;
+	$contact = null;
+	$result = 0;
 
 	$langs->load('mails');
 
@@ -190,6 +192,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 	}
 
 	if ($result > 0) {
+		$from = '';
 		$sendto = '';
 		$sendtocc = '';
 		$sendtobcc = '';
