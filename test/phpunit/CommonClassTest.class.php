@@ -383,7 +383,7 @@ abstract class CommonClassTest extends TestCase
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
 		'shipping' => 'Expedition',
-		'deplacement' => 'Deplacement',
+		'deplacement' => 'Deplacement',					// TODO Remove module
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
 		'dynamicprices' => 'DynamicPrices',
@@ -394,7 +394,6 @@ abstract class CommonClassTest extends TestCase
 		'expensereport' => 'ExpenseReport',
 		'export' => 'Export',
 		'externalrss' => 'ExternalRss',  // TODO: fill in proper name
-		'externalsite' => 'ExternalSite',
 		'fckeditor' => 'Fckeditor',
 		'fournisseur' => 'Fournisseur',
 		'ftp' => 'FTP',

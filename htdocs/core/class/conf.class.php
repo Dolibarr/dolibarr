@@ -50,7 +50,7 @@ class Conf extends stdClass
 	public $global;
 
 	/**
-	 * @var Object To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 * @var stdClass To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	 */
 	public $browser;
 
@@ -402,6 +402,7 @@ class Conf extends stdClass
 
 		// Common objects that are not modules and set by the main and not into the this->setValues()
 		$this->browser = new stdClass();
+		$this->browser->stringforfirstkey = '';
 
 		// Common arrays
 		$this->cache = array();

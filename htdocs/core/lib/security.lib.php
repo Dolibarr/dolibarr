@@ -1075,7 +1075,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND (sc.fk_user = ".((int) $user->id);
 				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 					$userschilds = $user->getAllChildIds();
-					$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+					if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
 				}
 				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
@@ -1185,9 +1185,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND (sc.fk_user = ".((int) $user->id);
 					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 						$userschilds = $user->getAllChildIds();
-						foreach ($userschilds as $key => $value) {
-							$sql .= ' OR sc.fk_user = '.((int) $value);
-						}
+						if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
 					}
 					$sql .= ')';
 				} else {

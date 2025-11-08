@@ -95,6 +95,11 @@ class Fichinter extends CommonObject
 	public $table_element_line = 'fichinterdet';
 
 	/**
+	 * @var string    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'FichinterLigne';
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'intervention';

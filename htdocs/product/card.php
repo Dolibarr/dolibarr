@@ -218,7 +218,7 @@ $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('pr
 $permissiontoeditextra = $usercancreate;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 
@@ -2344,12 +2344,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</label>';
 
 					print '</td></tr>';
-
-					if (isModEnabled('stock') && getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-						print '<tr><td>' . $langs->trans("StockableProduct") . '</td>';
-						$checked = $object->stockable_product == 1 ? "checked" : "";
-						print '<td><input type="checkbox" id="stockable_product" name="stockable_product" ' . $checked . ' /></td></tr>';
-					}
 				} else {
 					if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 						// Nature

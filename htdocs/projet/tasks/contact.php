@@ -184,7 +184,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-task
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
-		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
 			$object->fetchComments();
 		}
 		$id = $object->id; // So when doing a search from ref, id is also set correctly.

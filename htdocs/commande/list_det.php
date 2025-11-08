@@ -486,17 +486,14 @@ if ($search_status != '') {
 			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
 		}
 	}
-	if ($search_status == -2) {	// To process
+	if ($search_status == -2) {	// "validated + in progress"
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
-		$sql .= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))"; // If status is 2 and facture=1, it must be selected
+		$sql .= " AND c.fk_statut IN (1,2)";
 	}
-	if ($search_status == -3) {	// To bill
+	if ($search_status == -3) {	// "validated + in progress + shipped"
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
 		//$sql.= ' AND c.facture = 0'; // invoice not created
-		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
-	}
-	if ($search_status == -4) {	//  "validate and in progress"
-		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
+		$sql .= ' AND c.fk_statut IN (1,2,3)'; // validated, in process or closed
 	}
 }
 
@@ -728,9 +725,6 @@ if ($resql) {
 	}
 	if ($search_status == -3) {
 		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('shipping') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
-	}
-	if ($search_status == -4) {
-		$title .= ' - '.$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort");
 	}
 
 	$num = $db->num_rows($resql);

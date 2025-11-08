@@ -21,7 +21,7 @@
  */
 
 /**
- *  \file       htdocs/admin/system/filecheck.php
+ *  \file       htdocs/blockedlog/admin/filecheck.php
  *  \brief      Page to check Dolibarr files integrity
  */
 
@@ -61,7 +61,13 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_filecheck');
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"), '', 'title_setup');
 
-print '<div class="opacitymedium justify">'.$langs->trans("FileCheckDesc").'</div><br><br>';
+print '<div class="opacitymedium hideonsmartphone justify">'.$langs->trans("FileCheckDesc");
+if (isModEnabled('blockedlog')) {
+	$s = $langs->trans("DataIntegrityDesc", '{s}');
+	$s = str_replace('{s}', DOL_URL_ROOT.'/blockedlog/admin/blockedlog_list.php', $s);
+	print '<br>'.$s;
+}
+print'</div><br><br>';
 
 // Version
 print '<div class="div-table-responsive-no-min">';
@@ -115,7 +121,7 @@ if (empty($xmlremote) && getDolGlobalString($param)) {
 if (empty($xmlremote)) {
 	$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 }
-if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
+if (!preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), null, 'errors');
 	$error++;
@@ -130,7 +136,6 @@ $enableremotecheck = true;
 if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || getDolGlobalString('MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE')) {
 	$enableremotecheck = false;
 }
-$enableremotecheck = true;
 
 print '<form name="check" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

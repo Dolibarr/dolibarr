@@ -36,13 +36,6 @@ if (!defined('NOSCANPOSTFORINJECTION')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -54,6 +47,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
  * @var string $dolibarr_main_document_root
  * @var string $dolibarr_main_document_root_alt
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors", "uxdocumentation"));
@@ -268,6 +267,7 @@ function getLicenceHeader($user, $langs, $now)
 	$licInfo = dol_print_date($now, '%Y')."\t\t".$licInfo;
 	return $licInfo;
 }
+
 
 /*
  * Actions
@@ -3198,7 +3198,9 @@ llxHeader('', $langs->trans("ModuleBuilder"), $help_url, '', 0, 0, $morejs, $mor
 
 $text = $langs->trans("ModuleBuilder");
 
-print load_fiche_titre($text, '', 'title_setup');
+$morehtmlright = '<a href="'.DOL_URL_ROOT.'/admin/tools/ui/index.php" target="_blank" rel="noopener">'.img_picto('', 'book', 'class="pictofixedwidth"').$langs->trans("UxComponentsDoc").'</a>';
+
+print load_fiche_titre($text, $morehtmlright, 'title_setup');
 
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development').'</span>';
 print '<br class="hideonsmartphone">';
