@@ -409,7 +409,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$res = $object->fetch_product();
-			if (1 || $res < 0 || !is_object($object->product)) {
+			if ($res < 0 || !is_object($object->product)) {
 				$error++;
 			} else {
 				$numref = $object->getNextNumRef($object->product);
