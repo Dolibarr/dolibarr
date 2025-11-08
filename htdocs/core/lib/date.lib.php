@@ -1330,7 +1330,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 {
 	global $langs, $mysoc;
 
-	if (empty($countryCodeOrId)) {
+	if (empty($countryCodeOrId) || $countryCodeOrId < 0) {
 		$countryCodeOrId = $mysoc->country_code;
 	}
 

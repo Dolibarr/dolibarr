@@ -158,6 +158,9 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 	} elseif ($module == 'recruitmentcandidature') {
 		$module = 'recruitment';
 		$subdirectory = '/recruitmentcandidature';
+	} elseif ($module == 'knowledgerecord') {
+		$module = 'knowledgemanagement';
+		$subdirectory = '/knowledgerecord';
 	}
 
 	// Get the relative path of directory

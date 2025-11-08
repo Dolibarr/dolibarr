@@ -128,6 +128,7 @@ UserAccountancyCodeGeneral=General accounting code
 CustomerAccountancyCodeShort=Cust. account. code
 SupplierAccountancyCodeShort=Sup. account. code
 UserAccountancyCodeShort=User account. code
+UserSubledgerAccountancyCode=Subledger accounting code
 AccountNumber=Account number
 NewAccountingAccount=New account
 Turnover=Turnover invoiced
