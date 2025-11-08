@@ -375,8 +375,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .spannature {
-	padding-top: 5px !important;
+	padding-top: 6px !important;
 	padding-bottom: 6px !important;
+	vertical-align: middle;
 }
 
 .nonature-back {

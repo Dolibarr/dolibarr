@@ -573,28 +573,21 @@ input {
 	padding-right: 6px !important;
 }
 
-/*
-input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	background-color: #FDFDFD;
-}
-*/
 select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
 textarea:focus {
-	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
-	/*
-	padding-left: 3px;
-	padding-right: 3px;
-	padding-top: 3px;
-	*/
 }
-input:focus, textarea:focus,
-button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus,
-.select2-container--focus span.selection span.select2-selection {
+input:focus:not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
+ select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
+ .select2-container--focus span.selection span.select2-selection:not(.massactionselect) {
+<?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+	border: 1px solid #666 !important;
+<?php } else { ?>
 	border-bottom: 1px solid #666;
+<?php } ?>
 }
 
 textarea.cke_source:focus
@@ -627,7 +620,6 @@ input, input.flat, form.flat select, select, select.flat, .dataTables_length lab
 	border: none;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	color: var(--colortext);
 	font-family: <?php print $fontlist ?>;
 	outline: none;
@@ -635,7 +627,19 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	background-color: var(--inputbackgroundcolor);
 	<?php if (!getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
 		border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	<?php }
+	if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
+		border-radius: 5px;
 	<?php } ?>
+}
+
+/* this cases always use an input with only a background border */
+span.massactionselect, input.inputsearch_dropdownselectedfields {
+	border-radius: 0 !important;
+	border-top: 0 !important;
+	border-left: 0 !important;
+	border-right: 0 !important;
+	background-color: unset !important;
 }
 
 input {
@@ -6431,6 +6435,9 @@ table.jPicker tr:first-of-type td {
 	height: 2px !important;
 	line-height: 2px;
 }
+.jPicker .Icon {
+	margin-left: 2px;
+}
 .jPicker .Move {
 	background: unset !important;
 	border: unset !important;
@@ -6474,6 +6481,9 @@ span.jPicker {
 	border-radius: 4px;
 	border-collapse: collapse;
 	border: none;
+}
+.jPicker td.Text input {
+	width: 35px !important;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -7464,10 +7474,12 @@ select.multiselectononeline {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 260px !important;
+		padding: 8px;
 	}
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 260px !important;
+		padding: 8px;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
@@ -7675,10 +7687,10 @@ dl.dropdown {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 7px 8px 7px 8px;
-	/* color: rgb(<?php print $colortext; ?>); */
-	color: #000;
+	/* color: var(--colortext); */
+	color: var(--colortext);
 }
-.dropdown dd ul li:hover {
+.dropdown dd ul li:hover:not(.liinputsearch) {
 	background: #eee;
 }
 .dropdown dd ul li input[type="checkbox"] {

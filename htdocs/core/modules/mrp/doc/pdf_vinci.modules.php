@@ -1364,7 +1364,7 @@ class pdf_vinci extends ModelePDFMo
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

@@ -4,7 +4,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Francis Appels          <francis.appels@yahoo.com>
@@ -493,7 +493,7 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.billed";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.fk_projet as fk_project, e.billed";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf, e.date_delivery, e.date_valid";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -526,20 +526,20 @@ class Reception extends CommonObject
 				$this->entity               = $obj->entity;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
-				$this->ref_supplier = $obj->ref_supplier;
-				$this->ref_ext = $obj->ref_ext;
+				$this->ref_supplier         = $obj->ref_supplier;
+				$this->ref_ext              = $obj->ref_ext;
 				$this->statut               = $obj->status;
 				$this->status               = $obj->status;
 				$this->billed               = $obj->billed;
-
+				$this->fk_project	    	= $obj->fk_project;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
-				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
-				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
+				$this->date                 = $this->db->jdate($obj->date_reception); // TODO deprecated
+				$this->date_reception       = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planned
 				$this->date_valid        	= $this->db->jdate($obj->date_valid); // Date validation
 				$this->model_pdf            = $obj->model_pdf;
-				$this->shipping_method_id = $obj->fk_shipping_method;
+				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
 				$this->origin_type          = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
@@ -1228,8 +1228,8 @@ class Reception extends CommonObject
 				$line = new ReceptionLineBatch($this->db);
 
 				$line->rowid            = $objp->rowid;
-				$line->id              = $objp->rowid;
-				$line->fk_reception       = $this->id;
+				$line->id				= $objp->rowid;
+				$line->fk_reception		= $this->id;
 
 				$line->description      = $objp->description;
 				$line->qty              = $objp->qty;
@@ -1239,10 +1239,10 @@ class Reception extends CommonObject
 				$line->rang             = $objp->rang;
 
 
-				$line->fk_element = $objp->fk_element;
+				$line->fk_element 		= $objp->fk_element;
 				$line->fk_unit          = $objp->fk_unit;
-				$line->fk_elementdet = $objp->fk_elementdet;
-				$line->fk_element_type = $objp->element_type;
+				$line->fk_elementdet 	= $objp->fk_elementdet;
+				$line->fk_element_type	= $objp->element_type;
 				$line->fetch_optionals();
 
 
@@ -1368,6 +1368,7 @@ class Reception extends CommonObject
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
+		$sql .= " fk_projet=".((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " entity = ".((int) $conf->entity);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1818,22 +1819,16 @@ class Reception extends CommonObject
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
 		$this->date_delivery        = $now;
-		$this->date_reception = $now + 24 * 3600;
-
+		$this->date_reception 		= $now + 24 * 3600;
 		$this->entrepot_id          = 0;
 		$this->socid                = 1;
-
 		$this->origin_id            = 1;
 		$this->origin_type          = 'supplier_order';
 		$this->origin_object        = $order;
-
-		$this->note_private = 'Private note';
-		$this->note_public = 'Public note';
-
-		$this->tracking_number = 'TRACKID-ABC123';
-
-		$this->fk_incoterms = 1;
-
+		$this->note_private 		= 'Private note';
+		$this->note_public 			= 'Public note';
+		$this->tracking_number 		= 'TRACKID-ABC123';
+		$this->fk_incoterms 		= 1;
 		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {

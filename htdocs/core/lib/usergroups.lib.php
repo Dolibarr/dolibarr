@@ -612,6 +612,26 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			print yn(getDolGlobalString('THEME_ELDY_USEBORDERONTABLE'));
 		}
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+
+		if (getDolGlobalString('THEME_ELDY_USEBORDERONTABLE')) {
+			$listofborderradius = array(
+				0 => $langs->transnoentitiesnoconv("No"),
+				4 => $langs->transnoentitiesnoconv("Size").' 4',
+				6 => $langs->transnoentitiesnoconv("Size").' 6',
+				8 => $langs->transnoentitiesnoconv("Size").' 8',
+				10 => $langs->transnoentitiesnoconv("Size").' 10',
+				20 => $langs->transnoentitiesnoconv("Size").' 20',
+			);
+
+			print ' &nbsp; &nbsp; ';
+			if ($edit) {
+				print $form->selectarray('THEME_ELDY_BORDER_RADIUS', $listofborderradius, getDolGlobalInt('THEME_ELDY_BORDER_RADIUS'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth100');
+			} else {
+				print $listofborderradius[getDolGlobalInt('THEME_ELDY_BORDER_RADIUS')];
+			}
+			//print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+		}
+
 		print '</td>';
 		print '</tr>';
 	}
@@ -632,6 +652,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</tr>';
 	}
 
+	/*
 	if ($foruserprofile) {
 	} else {
 		if (getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') || getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) {
@@ -657,6 +678,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			print '</tr>';
 		}
 	}
+	*/
+
 	// Table line height
 	/* removed. height of column must use padding of td and not lineheight that has bad side effect
 	if ($foruserprofile) {

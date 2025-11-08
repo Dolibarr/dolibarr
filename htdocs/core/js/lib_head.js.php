@@ -1745,6 +1745,7 @@ $(function() {
 
 		// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
 		// We simulate a click on the parent line
+		console.log("Emulate click on parent line");
 		parentRow.trigger({
 			type: "click",
 			ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
@@ -1756,12 +1757,14 @@ $(function() {
 	});
 
 	$(document).on("click", ".row-with-select", function (e) {
+		console.log("A click on line was done");
+
 		let checkBox = $(this).find('.checkforselect');
 		let nextCheckStatus = !checkBox.is(':checked')
 
 		if (e.ctrlKey || e.metaKey) {
 			// Add line to selection
-			if(checkBox){
+			if (checkBox) {
 				checkBox.prop('checked', nextCheckStatus).trigger('change');
 			}
 			setLastClickedRowStatus($(this), 1);
@@ -1770,13 +1773,13 @@ $(function() {
 		if (e.shiftKey) {
 			let lastLastChanged = $(this).closest('table').find('.row-with-select[data-is-last-changed="1"]');
 
-			if(lastLastChanged.length>0){
-				// Add all lines to selection betwin last selected line
-				if($(this).index() === lastLastChanged.index()) {
+			if (lastLastChanged.length>0) {
+				// Add all lines to selection beetwin last selected line
+				if ($(this).index() === lastLastChanged.index()) {
 					return null;
 				}
 
-				if($(this).index() < lastLastChanged.index()) {
+				if ($(this).index() < lastLastChanged.index()) {
 					$(this).nextUntil(lastLastChanged, ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
 				}else{
 					lastLastChanged.nextUntil($(this), ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');

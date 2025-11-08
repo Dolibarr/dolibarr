@@ -137,6 +137,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 {
 	global $conf;
 
+	$subdirectory = '';
 	if (!is_object($object) && empty($module)) {
 		return null;
 	}
@@ -151,6 +152,15 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		$module = 'supplier_invoice';
 	} elseif ($module == 'order_supplier') {
 		$module = 'supplier_order';
+	} elseif ($module == 'recruitmentjobposition') {
+		$module = 'recruitment';
+		$subdirectory = '/recruitmentjobposition';
+	} elseif ($module == 'recruitmentcandidature') {
+		$module = 'recruitment';
+		$subdirectory = '/recruitmentcandidature';
+	} elseif ($module == 'knowledgerecord') {
+		$module = 'knowledgemanagement';
+		$subdirectory = '/knowledgerecord';
 	}
 
 	// Get the relative path of directory
@@ -158,7 +168,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)] . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -167,7 +177,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->dir_output;
+				$s = $conf->$module->dir_output . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -6637,7 +6647,9 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		if ($picto == 'warning') {
 			$fa = 'exclamation-triangle';
 		}
-		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">') . '<span class="fa fa-' . $fa . '" title="' . dol_escape_htmltag((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')) . '"></span> ';
+		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">');
+		$result .= img_picto((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note'), $fa);
+		$result .= ' ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
@@ -15312,7 +15324,7 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 
 	$tag = 'span'; 	// Using div (like any style of type 'block') does not work when using the js copy code.
 
-	$result = '<span class="clipboardCP' . ($showonlyonhover ? ' clipboardCPShowOnHover' : '') . '">';
+	$result = '<span class="clipboardCP' . ($showonlyonhover ? ' clipboardCPShowOnHover valignmiddle' : '') . '">';
 	if ($texttoshow === 'none') {
 		$result .= '<' . $tag . ' class="clipboardCPValue hidewithsize">' . dol_escape_htmltag($valuetocopy, 1, 1) . '</' . $tag . '>';
 		$result .= '<span class="clipboardCPValueToPrint"></span>';
