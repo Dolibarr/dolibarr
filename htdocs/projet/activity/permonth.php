@@ -28,15 +28,6 @@
  */
 
 require "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
@@ -773,7 +772,7 @@ if (count($tasksarray) > 0) {
 			$startweekholiday = (int) (($h["date_debut"] <= $weekstart) ? $weekstart : $h["date_debut"]);
 			$endweekholiday = (int) (($h["date_fin"] >= $weekend) ? $weekend : $h["date_fin"]);
 			$halfdays = (int) $h["halfday"];
-			$nbdays = num_open_day($startweekholiday, $endweekholiday, 0, 1, $halfdays);
+			$nbdays = num_open_day($startweekholiday, $endweekholiday, 0, 1, $halfdays, $usertoprocess->country_id);
 
 			$THolidays[$weekNb]["ids"][] = $h->rowid;
 			$THolidays[$weekNb]["days"] += $nbdays;
