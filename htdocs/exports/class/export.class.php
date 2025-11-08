@@ -754,7 +754,14 @@ class Export
 				// Generate title line
 				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
+				$MAXFORTEST = 0;	// For test on large database, we can set it to a non zero value to limit the export size
+				$counterlineexported = 0;
 				while ($obj = $this->db->fetch_object($resql)) {
+					$counterlineexported++;
+					if ($MAXFORTEST && $counterlineexported >= $MAXFORTEST) {
+						break;
+					}
+
 					// Process special operations
 					if (!empty($this->array_export_special[$indice])) {
 						foreach ($this->array_export_special[$indice] as $key => $value) {
@@ -781,13 +788,12 @@ class Export
 							} elseif (is_string($item) && $item == 'getNumOpenDays') {
 								// Operation GETNUMOPENDAYS (for Holiday module)
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								$country_id = $mysoc->country_id;
-								if ($obj->fk_user > 0) {
-									$tmpUser = new User($this->db);
-									$tmpUser->fetch($obj->fk_user);
-									$country_id = $tmpUser->country_id;
+								if ($obj->u_fk_country > 0) {				// When special field getNumOpenDays is set, we must have a u.fk_country in field list.
+									$country_id = $obj->u_fk_country;
 								}
 
 								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $country_id);
@@ -853,13 +859,13 @@ class Export
 								$obj->$alias = $value;
 							} else {
 								// TODO FIXME
-								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
+								// Export of computed extra field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								//$computestring = is_string($item) ? $item : json_encode($item);
 								//$tmp = (string) dol_eval((string) $computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
-								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." extrafields is not yet supported, please remove field.";
+								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." computed extrafields is not yet supported, please remove field.";
 								return -1;
 							}
 						}
