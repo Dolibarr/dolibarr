@@ -4231,12 +4231,6 @@ parameters:
 			path: ../../../htdocs/contrat/services_list.php
 
 		-
-			message: '#^Property Ticket\:\:\$progress \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/contrat/ticket.php
-
-		-
 			message: '#^Loose comparison using \=\= between 1 and 0 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -5381,108 +5375,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/class/commonorder.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Avery_Code has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Avery_Name has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_COUNTX has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_COUNTY has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Char_Size has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_First has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Height has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Line_Height has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Margin_Left has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Margin_Top has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Metric has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Metric_Doc has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Width has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_X_Number has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_X_Space has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Y_Number has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Y_Space has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
@@ -15721,19 +15613,7 @@ parameters:
 			path: ../../../htdocs/ticket/class/ticket.class.php
 
 		-
-			message: '#^Property Ticket\:\:\$progress \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
 			message: '#^Property Ticket\:\:\$severity_code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
-			message: '#^Property Ticket\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
 			path: ../../../htdocs/ticket/class/ticket.class.php
