@@ -4411,12 +4411,6 @@ parameters:
 			path: ../../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: '#^Variable \$thirdparty might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
