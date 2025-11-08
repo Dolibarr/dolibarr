@@ -1453,8 +1453,7 @@ class FactureFournisseurRec extends CommonInvoice
 						$result = $new_fac_fourn->validate($user);
 						$laststep = "Validate by user {$user->login}";
 						if ($result <= 0) {
-							$this->errors = $new_fac_fourn->errors;
-							$this->error = $new_fac_fourn->error;
+							$this->setErrorsFromObject($new_fac_fourn);
 							$error++;
 						}
 					}
@@ -1466,8 +1465,7 @@ class FactureFournisseurRec extends CommonInvoice
 						$laststep = "GenerateDocument ".$new_fac_fourn->id;
 						$result = $new_fac_fourn->generateDocument($facturerec->model_pdf, $langs);
 						if ($result < 0) {
-							$this->errors = $new_fac_fourn->errors;
-							$this->error = $new_fac_fourn->error;
+							$this->setErrorsFromObject($new_fac_fourn);
 							$error++;
 						}
 					}
