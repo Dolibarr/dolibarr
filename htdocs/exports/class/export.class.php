@@ -754,13 +754,13 @@ class Export
 				// Generate title line
 				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
-				$MAXFORTEST = 0;	// For test on large database, we can set it to a non zero value to limit the export size
+				//$MAXFORTEST = 0;	// For test on large database, we can set it to a non zero value and uncomment code that use it later to limit the export size
 				$counterlineexported = 0;
 				while ($obj = $this->db->fetch_object($resql)) {
 					$counterlineexported++;
-					if ($MAXFORTEST && $counterlineexported >= $MAXFORTEST) {
+					/*if ($MAXFORTEST && $counterlineexported >= $MAXFORTEST) {
 						break;
-					}
+					}*/
 
 					// Process special operations
 					if (!empty($this->array_export_special[$indice])) {
