@@ -72,6 +72,7 @@
  * @var ?int $hidedesc
  * @var ?int $hideref
  * @var ?array<string,mixed> $moreparams
+ * @var ?string $from
  */
 '
 @phan-var-force ?string $permissiontoread

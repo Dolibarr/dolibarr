@@ -4345,12 +4345,6 @@ parameters:
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: '#^Variable \$from might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^Variable \$listofobjectthirdparties in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
