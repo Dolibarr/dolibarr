@@ -2953,12 +2953,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Property CommonInvoice\:\:\$totalcreditnotes \(float\|int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -4185,12 +4179,6 @@ parameters:
 		-
 			message: '#^Variable \$canchangeproduct in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/contrat/card.php
-
-		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/contrat/card.php
 
@@ -9331,12 +9319,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
 
 		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
@@ -9364,12 +9346,6 @@ parameters:
 			message: '#^Property CommonInvoice\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
