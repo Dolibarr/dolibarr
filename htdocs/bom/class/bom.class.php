@@ -67,7 +67,7 @@ class BOM extends CommonObject
 	public $picto = 'bom';
 
 	/**
-	 * @var Product	Object product of the BOM
+	 * @var ?Product	Object product of the BOM
 	 */
 	public $product;
 
