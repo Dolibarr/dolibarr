@@ -1099,6 +1099,12 @@ foreach ($fieldlist as $field => $value) {
 	if ($fieldlist[$field] == 'position') {
 		$css = 'center';
 	}
+	if ($fieldlist[$field] == 'tms') {
+		$valuetoshow = 'Modif. date';
+	}
+	if ($fieldlist[$field] == 'datec') {
+		$valuetoshow = 'Date creation';
+	}
 
 	if ($fieldlist[$field] == 'joinfiles') {
 		$valuetoshow = $langs->trans("FilesAttachedToEmail");
