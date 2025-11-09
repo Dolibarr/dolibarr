@@ -841,8 +841,6 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				// title : The schedule title
 				'title' => $langs->trans("Birthday") . ' ' . dolGetFirstLastname($obj->firstname, $obj->lastname),
 				// body : The schedule body text which is text/plain
-				'body' => '',
-				// A CORRIGER !!! TODO
 				'start' => dol_print_date($datep, "%Y-%m-%dT%H:%M:%S"),
 				'end' => dol_print_date($datep + 86400, "%Y-%m-%dT%H:%M:%S"),
 				// birthdays are readonly
@@ -924,8 +922,8 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 	//
 	// Complete $eventarray with external import Ical
 	if (count($listofextcals)) {
-		$firstdaytoshow = strtotime($startDate) - 172800;
-		$lastdaytoshow = strtotime($endDate) + 172800;
+		$firstdaytoshow = $startDate;
+		$lastdaytoshow = $endDate;
 
 		// require_once DOL_DOCUMENT_ROOT . '/comm/action/class/ical.class.php';
 		// cache des fichiers ics
@@ -950,11 +948,9 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 			}
 			$filename = '/ical-e' . $conf->entity . '-' . $fileid;
 			$refresh = dol_cache_refresh($cachedir, $filename, (int) $cachetime);
-			dol_include_once('/prune/vendor/autoload.php');
+			// dol_include_once('/prune/vendor/autoload.php');
 			// on cache le fichier si besoin
 			if ($refresh) {
-				//$ical = new ICal();
-				//$ical->parse($url);
 				try {
 					$ical = new ICal(false, [
 						// Default value
@@ -973,7 +969,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 					]);
 					// $ical->initFile(DOL_DATA_ROOT . '/agenda/temp/ICal.ics');
 					$ical->initUrl($url);
-				} catch (\Exception $e) {
+				} catch (Exception $e) {
 					//die($e);
 					return [];
 				}
