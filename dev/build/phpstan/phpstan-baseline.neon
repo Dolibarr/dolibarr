@@ -1819,6 +1819,12 @@ parameters:
 			path: ../../../htdocs/comm/action/index.php
 
 		-
+			message: '#^Property ActionComm\:\:\$datep \(int\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
+			count: 12
+			path: ../../../htdocs/comm/action/index.php
+
+		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 2
