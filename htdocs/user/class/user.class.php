@@ -2159,7 +2159,7 @@ class User extends CommonObject
 
 		$this->accountancy_code_user_general = trim((string) $this->accountancy_code_user_general);
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
-		$this->color						= trim((string) $this->color);
+		$this->color						= trim(str_replace('#', '', (string) $this->color));
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
 

@@ -32,6 +32,7 @@
  * @var string $action
  * @var string $cancel
  * @var string $ref
+ * @var int $id
  */
 
 if (((!empty($id) && $id > 0) || (!empty($ref) && !in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0)) {
