@@ -549,7 +549,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 		$sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 		$sql .= ' a.fk_soc, a.fk_contact, a.note,';
 		$sql .= ' u.color,';
-		$sql .= ' ca.color as type_color, ca.code as type_code, ca.libelle as type_label';
+		$sql .= ' ca.color as type_color, ca.code as type_code, ca.libelle as type_label, ca.picto as type_picto';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . "actioncomm as a";
 		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_actioncomm as ca ON (a.fk_action = ca.id)';
 		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'user u ON (a.fk_user_action=u.rowid )';
@@ -673,11 +673,10 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 			$event->fetchObjectLinked();
 			// $event->fetch_optionals();
 			$event->fetch_userassigned();
-			$event->color = $obj->color ? '#' . $obj->color : '';
-			$event->type_color = $obj->type_color;
+			// $event->color = $obj->color ? '#' . $obj->color : '';
+			// $event->type_color = $obj->type_color;
+			// $event->type_picto = $obj->type_picto;
 
-			$raw = new stdClass();
-			$raw->location = !empty($event->location) ? $event->location : '';
 			$isallday = $event->fulldayevent ? true : false;
 
 			$tz = new \DateTimeZone($servertz);
@@ -717,7 +716,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				// resourceId : The unique calendar id
 				'resourceId' => 1,
 				// title : The schedule title
-				'title' => $event->label,
+				'title' => ['html' => (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '') . $event->getNomUrl(0, 16, 'cal_event cal_event_title valignmiddle', '', 0, 0)],
 				// body : The schedule body text which is text/plain
 				'body' => $event->note_private,
 				'start' => $dtstart->format(DATE_ATOM),
@@ -732,14 +731,11 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				'backgroundColor' => $event->color,
 				// borderColor : The schedule border color
 				'borderColor' => $event->color,
-				// dragBgColor : The schedule drag background color
-				'dragBgColor' => $event->color,
-				'attendees' => $assignedUsers,
-				// busy or free
-				'state' => '',
-				'location' => $event->location,
 				// raw : The user data
-				'raw' => $raw,
+				'extendedProps' => [
+					'location' => !empty($event->location) ? $event->location : '',
+					'attendees' => $assignedUsers,
+				]
 			];
 		}
 	}
@@ -761,40 +757,13 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 
 		$resql = $db->query($sql);
 		while ($resql && $obj = $db->fetch_object($resql)) {
-			// A SUPPRIMER pas besoin de ActionComm
-			// $event = new ActionComm($db);
-			// We put contact id in action id for birthdays events
-			// may create conflicts ??
-			// $event->id = $obj->rowid;
 			$datebirth = dol_stringtotime($obj->birthday, 1);
 			// print 'ee'.$obj->birthday.'-'.$datebirth;
 			$datearray = dol_getdate($datebirth, true);
 			// determiner correctement le choix de l'année
 			// For full day events, date are also GMT but they won't but converted during output
 			$datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], (int) date("Y", $endDate / 1000), true);
-			// $event->datef = $event->datep;
-			// $event->type_code = 'BIRTHDAY';
-			// $event->label = $langs->trans("Birthday") . ' ' . dolGetFirstLastname($obj->firstname, $obj->lastname);
-			// $event->percentage = 100;
-			// $event->fulldayevent = 1;
-			// $event->ponctuel = 0;
-			// $event->note = '';
-			// // Add an entry in actionarray for each day
-			// $daycursor = $date_start_in_calendar;
-			// $year = date('Y', $daycursor);
-			// $month = date('m', $daycursor);
-			// $day = date('d', $daycursor);
-			// $loop = true;
-			// $daykey=dol_mktime(0, 0, 0, $month, $day, $year);
-			// do {
-			//     $eventarray[$daykey][] = $event;
-			//     $daykey += 60*60*24;
-			//     if ($daykey > $date_end_in_calendar) {
-			//         $loop=false;
-			//     }
-			// } while ($loop);
-			$raw = new stdClass();
-			$raw->location = !empty($event->location) ? $event->location : '';
+
 			$events[] = [
 				// id : The unique schedule id depends on calendar id
 				'id' => 'birthday_' . (string) $obj->rowid,
