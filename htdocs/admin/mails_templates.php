@@ -119,17 +119,10 @@ $hookmanager->initHooks(array('emailtemplates'));
 $tabname = array();
 $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 
-// Used by the GUI during creation so we don't ask the user to fill in tms and datec
-$tabfieldguicreate = array();
-$tabfieldguicreate[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content";
-if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
-	$tabfieldguicreate[25] .= ',content_lines';
-}
-
 // Nom des champs en resultat de select pour affichage du dictionnaire
 // Names of fields in select results for dictionary display (AI translated)
 $tabfield = array();
-$tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content,tms,datec";
+$tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfield[25] .= ',content_lines';
 }
@@ -137,7 +130,7 @@ if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 // Nom des champs d'edition pour modification d'un enregistrement
 // Names of edit fields for modifying a record (AI translated)
 $tabfieldvalue = array();
-$tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content,tms";
+$tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldvalue[25] .= ',content_lines';
 }
@@ -440,10 +433,10 @@ if (empty($reshook)) {
 				if ($i) {
 					$sql .= ", ";
 				}
-				if ($keycode == 'tms') {
+				if ($keycode == 'datec') {
 					$sql .= "'".$db->idate($now)."'";
-				} elseif ($keycode == 'datec') {
-					$sql .= "'".$db->idate($now)."'";
+				} elseif ($keycode == 'tms') {
+						$sql .= "'".$db->idate($now)."'";
 				} elseif (GETPOST($keycode) == '' && $keycode != 'langcode') {
 					$sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
 				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
@@ -542,9 +535,7 @@ if (empty($reshook)) {
 					}
 					$sql .= $field."=";
 
-					if ($keycode == 'tms') {
-						$sql .= "'".$db->idate($now)."'";
-					} elseif (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
+					if (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
 						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
@@ -774,23 +765,19 @@ if ($action == 'create') {
 	$obj->defaultfortype = GETPOST('defaultfortype') ? 1 : 0;
 	$obj->content = GETPOST('content', 'restricthtml');
 
-	$now_form_timestamp = dol_print_date($now, 'standard');
 	// Form to add a new line
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="tms" value="'.$now_form_timestamp.'">';
-	print '<input type="hidden" name="datec" value="'.$now_form_timestamp.'">';
+	print '<input type="hidden" name="datec" value="'.$db->idate($now).'">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent" id="table_create_c_email_template">';
 
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
-	// Only used during GUI creation
-	$fieldlist = explode(',', $tabfieldguicreate[25]);
 	foreach ($fieldlist as $field => $value) {
 		// Determine le nom du champ par rapport aux noms possibles
 		// dans les dictionnaires de donnees
@@ -943,8 +930,6 @@ if ($action == 'create') {
 
 	print '<br><br><br>';
 }
-// back to viewing with tms and datec
-$fieldlist = explode(',', $tabfield[25]);
 
 // List of available record in database
 dol_syslog("htdocs/admin/dict", LOG_DEBUG);
@@ -1005,7 +990,7 @@ if ($num > $listlimit) {
 
 
 // Title line with search boxes
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre" id="Title line with search boxes">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center" width="64">';
@@ -1042,6 +1027,9 @@ foreach ($fieldlist as $field => $value) {
 }*/
 // Status
 print '<td></td>';
+// Have to expand the id="Title line with search boxes" with 2 extra fields because the line below id="Title of lines" are 2 fields longer
+print '<td></td>'; // tms / Modif. date
+print '<td></td>'; // datec / Date creation
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center" width="64">';
@@ -1052,11 +1040,12 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '</tr>';
 
 // Title of lines
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre" id="Title of lines">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList('');
 }
+array_push($fieldlist, "tms", "datec");
 foreach ($fieldlist as $field => $value) {
 	$showfield = 1; // By default
 	$css = "left";
@@ -1155,9 +1144,10 @@ if ($num) {
 				$tmpaction = 'edit';
 				if ($action == 'edit') {
 					// do not show tms and datec
-					$fieldlist = explode(',', $tabfieldguicreate[25]);
+					$fieldlist = explode(',', $tabfield[25]);
 					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
 				} else {
+					array_push($fieldlist, "tms", "datec");
 					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
 				}
 				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
