@@ -25,6 +25,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 /**
  * API class for stock movements
  *
+ * @since	5.0.0	Initial implementation
+ *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -59,32 +61,38 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement information
 	 *
-	 * @param	int		$id				ID of movement
-	 * @return  Object					Object with cleaned properties
+	 * @since	23.0.0	Initial implementation
 	 *
-	 * @throws	RestException
+	 * @param	int		$id				ID of stock movement
+	 * @return	Object					Stock movement object with cleaned properties
+	 *
+	 * @url		GET {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
 	 */
-	/*
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'mouvement', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No stock movement with id 0 can exist');
+		}
 		$result = $this->stockmovement->fetch($id);
 		if (!$result ) {
-			throw new RestException(404, 'warehouse not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(404, 'stock movement not found');
 		}
 
 		return $this->_cleanObjectDatas($this->stockmovement);
-	}*/
+	}
 
 	/**
-	 * Get a list of stock movement
+	 * Get a list of stock movements
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
@@ -180,6 +188,8 @@ class StockMovements extends DolibarrApi
 	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
 	 * $eatBy Eat-by date. Will be used if a batch does not exist yet and will be created.
 	 * sellBy Sell-by date. Will be used if a batch does not exist yet and will be created.
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int		$product_id		ID product id {@min 1} {@from body} {@required true}
 	 * @param	int		$warehouse_id	ID warehouse {@min 1} {@from body} {@required true}

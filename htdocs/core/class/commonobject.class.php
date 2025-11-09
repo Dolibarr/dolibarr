@@ -6339,6 +6339,13 @@ abstract class CommonObject
 	 **/
 	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
+		/* TODO Remove this. Must use now something like:
+			$note_private = GETPOST('note_private', 'restricthtml');
+			if (!GETPOSTISSET('note_private') && empty($note_private) && !empty($objectsrc) [&& othercondtion]) {
+				$note_private = $objectsrc->note_private;
+			}
+		*/
+
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
 			return GETPOST($fieldname, $type, 3);

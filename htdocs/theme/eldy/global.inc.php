@@ -330,6 +330,9 @@ input {
 	font-size: unset;
 	box-sizing: border-box;
 }
+input[type="text"] {
+	height: 28px;
+}
 select.vmenusearchselectcombo {
 	background-color: unset;
 }
@@ -1293,6 +1296,14 @@ div.urllink {
 	/* width: fit-content; */
 	background-color: #f0f0f8;
 	opacity: 0.8;
+	/* to sort content vertically */
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	height: 2em;
+}
+div.urllink span.fa, div.urllink span.fas, div.urllink span.far {
+	width: 22px;
 }
 div.urllink, div.urllink a {
 	color: #339 !important;
@@ -7388,19 +7399,23 @@ input.select2-input {
 	border-top: 1px solid #ccc;
 	border-bottom: solid 1px var(--inputbordercolor);
 }
-.select2-container--default .select2-selection--single
-{
+.select2-container--default .select2-selection--single {
 	outline: none;
 	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
+	border-radius: 3px;
+	<?php } else { ?>
+	border-radius: 5px;
 	<?php } ?>
 
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 
 	box-shadow: none !important;
-	border-radius: 3px;
+}
+.select2-container--default .select2-selection--multiple {
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 }
 <?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 .select2-container--focus .select2-container--default .select2-selection--single {
@@ -7415,7 +7430,6 @@ input.select2-input {
 	border-bottom-right-radius: 0;
 }
 .select2-container--default .select2-selection--multiple {
-	border-bottom: solid 1px var(--inputbordercolor);
 	border-top: none;
 	border-left: none;
 	border-right: none;

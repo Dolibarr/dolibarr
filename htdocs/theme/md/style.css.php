@@ -644,8 +644,11 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 
 input {
 	line-height: 1.3em;
-	padding: 5px;
+	padding: 4px;
 	padding-left: 5px;
+}
+input[type="text"] {
+	height: 1.3em;
 }
 select {
 	padding-top: 4px;
@@ -1447,6 +1450,14 @@ div.urllink {
 	/* width: fit-content; */
 	background-color: #e0e0e8;
 	opacity: 0.8;
+	/* to sort content vertically */
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	height: 2em;
+}
+div.urllink span.fa, div.urllink span.fas, div.urllink span.far {
+	width: 22px;
 }
 div.urllink, div.urllink a {
 	color: #339 !important;
@@ -7229,15 +7240,20 @@ input.select2-input {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
-.select2-container--default .select2-selection--single
-{
+.select2-container--default .select2-selection--single {
 	outline: none;
+	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-radius: 3px;
+	<?php } else { ?>
+	border-radius: 5px;
+	<?php } ?>
+
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+
 	box-shadow: none !important;
-	border-radius: 0 !important;
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple {
 	border-top: none;
