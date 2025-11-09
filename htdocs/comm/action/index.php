@@ -595,7 +595,6 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 // Define the legend/list of calendard to show
 $s = '';
 
-
 $showextcals = $listofextcals;
 $bookcalcalendars = array();
 
@@ -1631,9 +1630,12 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 		$ecview = 'timeGridDay';
 	} elseif ($mode == 'show_month') {
 		$ecview = 'dayGridMonth';
+	} elseif ($mode == 'show_week') {
+		$ecview = 'timeGridWeek';
 	} else {
 		$ecview = 'listWeek';
 	}
+	$firstday = getDolGlobalInt('MAIN_START_WEEK', 1);
 	?>
 	<style type="text/css">
 		.row {
@@ -1652,6 +1654,7 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	<script>
 	const ec = EventCalendar.create(document.getElementById('ec'), {
 		view: '<?php echo $ecview; ?>',
+		firstDay: <?php echo $firstday; ?>,
 		headerToolbar: {
 			start: 'prev,next today',
 			center: 'title',
@@ -1662,9 +1665,30 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 			{id: 2, title: 'Resource B'}
 		],
 		scrollTime: '09:00:00',
-		events: createEvents(),
+		eventSources: [{
+			events: function(fetchInfo, successCallback, failureCallback) {
+				$.ajax({
+					method: 'POST',
+					url: '/core/ajax/events_ajax.php?action=getevents',
+					dataType: 'json',
+					data: {
+						start: fetchInfo.start.getTime(),
+						end: fetchInfo.end.getTime(),
+						action: 'getevents'
+					},
+					success: function(response) {
+						// normalize entries
+						successCallback(response);
+					}
+				});
+			}
+		}],
 		views: {
-			timeGridWeek: {pointer: true},
+			timeGridWeek: {
+				pointer: true,
+				slotMinTime: '08:00',
+				slotMaxTime: '22:00'
+			},
 			resourceTimeGridWeek: {pointer: true},
 			resourceTimelineWeek: {
 				slotDuration: '00:15',

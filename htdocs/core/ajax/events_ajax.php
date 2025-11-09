@@ -38,7 +38,9 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOHEADERNOFOOTER')) {
 	define('NOHEADERNOFOOTER', '1');
 }
-
+if (!defined("NOCSRFCHECK")) {
+	define("NOCSRFCHECK", 1);
+}
 // Load Dolibarr environment
 require '../../main.inc.php';
 
@@ -62,8 +64,8 @@ $langs->loadLangs(["agenda", "other", "commercial", "companies"]);
 
 top_httphead('application/json', 1);
 // dol_syslog('posted events ajax GET '.print_r($_GET, true), LOG_WARNING);
-// dol_syslog('posted events ajax POST '.print_r($_POST, true), LOG_WARNING);
-// dol_syslog('posted events ajax REQUEST '.print_r($_REQUEST, true), LOG_WARNING);
+dol_syslog('posted events ajax POST '.print_r($_POST, true), LOG_WARNING);
+dol_syslog('posted events ajax REQUEST '.print_r($_REQUEST, true), LOG_WARNING);
 $action = GETPOSTISSET('action') ? GETPOST('action', 'aZ09') : 'getevents';
 $input = file_get_contents('php://input');
 switch ($action) {
@@ -79,8 +81,8 @@ switch ($action) {
 		}
 		$calendarId = $parameters->calendarId ?? 1;
 		$calendarName = $parameters->calendarName;
-		$startDate = $parameters->startDate;
-		$endDate = $parameters->endDate;
+		$startDate = GETPOSTINT('start');
+		$endDate = GETPOSTINT('end');
 		$offset = (int) $parameters->offset;
 		$onlylast = (int) $parameters->onlylast;
 		$search_actioncode = $parameters->search_actioncode;
@@ -572,9 +574,9 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		// trouver pourquoi faut étendre la plage
-		$t_start = strtotime($startDate) - 172800;
-		$t_end = strtotime($endDate) + 172800;
+		// timestamp en millisecondes
+		$t_start = $startDate / 1000;
+		$t_end = $endDate / 1000;
 
 		$sql = 'SELECT ';
 		if ($usergroup > 0) {
@@ -608,9 +610,9 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 			// verifier avec le code du dictionaire
 			// a.code au lieu de ca.code
 			// $sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
-			$sql .= " AND a.code IN ('" . implode("','", $actioncode) . "')";
+			//$sql .= " AND a.code IN ('" . implode("','", $actioncode) . "')";
 		}
-		if (!empty($conf->global->EVENT_CALENDAR_DONT_SHOW_AUTO_EVENTS) && strpos(implode(',', $actioncode), 'AC_OTH_AUTO') === false) {
+		if (getDolGlobalInt('EVENT_CALENDAR_DONT_SHOW_AUTO_EVENTS') && strpos(implode(',', $actioncode), 'AC_OTH_AUTO') === false) {
 			// a.code au lieu de ca.code
 			$sql .= " AND ca.code != 'AC_OTH_AUTO'";
 			// avec a.code ça ne marche pas...
@@ -642,11 +644,9 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 		if ($search_userid > 0 || $usergroup > 0) {
 			$sql .= " AND ar.element_type='user'";
 		}
-		//$sql .= " AND ((a.datep2 BETWEEN '".$db->idate($t_start-(60*60*24*7))."' AND '".$db->idate($t_end+(60*60*24*10))."')
-		//            OR (a.datep BETWEEN '".$db->idate($t_start-(60*60*24*7))."' AND '".$db->idate($t_end+(60*60*24*10))."'))";
-		$sql .= " AND (   (a.datep2 BETWEEN '" . $db->idate($t_start) . "' AND '" . $db->idate($t_end) . "')
-					   OR (a.datep BETWEEN '" . $db->idate($t_start) . "' AND '" . $db->idate($t_end) . "')
-					   OR (a.datep < '" . $db->idate($t_start) . "' AND a.datep2 > '" . $db->idate($t_end) . "'))";
+		$sql .= " AND ((a.datep2 BETWEEN '" . $db->idate($t_start) . "' AND '" . $db->idate($t_end) . "')
+						OR (a.datep BETWEEN '" . $db->idate($t_start) . "' AND '" . $db->idate($t_end) . "')
+						OR (a.datep < '" . $db->idate($t_start) . "' AND a.datep2 > '" . $db->idate($t_end) . "'))";
 		if ($type) {
 			$sql .= " AND ca.id = " . $type;
 		}
@@ -696,7 +696,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 		// AND ar.element_type='user'
 		// AND ((a.datep2>='2019-08-18 00:00:00' AND datep<='2019-10-15 00:00:00') OR (a.datep BETWEEN '2019-08-18 00:00:00' AND '2019-10-15 00:00:00'))
 		// AND (ar.fk_element = 1) ORDER BY datep
-		//print $sql;
+		// print $sql;
 		$resql = $db->query($sql);
 
 		$CacheSociete = [];
@@ -744,9 +744,9 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 				$assignedUsers[] = $CacheUser[$value['id']]->tooltip;
 			}
 			// Is Read Only
-			$isreadonly = false;
+			$isEditable = true;
 			if (($event->type_code == 'AC_OTH_AUTO') || (($user->id != $event->userownerid) && !$user->rights->agenda->allactions->create)) {
-				$isreadonly = true;
+				$isEditable = false;
 			}
 
 			$events[] = [
@@ -760,22 +760,17 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 				'body' => $event->note_private,
 				'start' => $dtstart->format(DATE_ATOM),
 				'end' => $dtend->format(DATE_ATOM),
-				// Le temps de trajet: Durée aller en minutes
-				'goingDuration' => 0,
-				// Le temps de trajet: Durée retour en minutes
-				'comingDuration' => 0,
-				'isReadOnly' => $isreadonly,
-				'isAllDay' => $isallday,
+				'editable' => $isEditable,
+				'allDay' => $isallday,
 				// color : The schedule text color (black or white)
-				'color' => ($obj->color != '' && isDarkColor($obj->color)) ? '#ffffff' : '#000000',
+				'textColor' => ($obj->color != '' && isDarkColor($obj->color)) ? '#ffffff' : '#000000',
 				// bgColor : The schedule background color
-				'bgColor' => $event->color,
+				'backgroundColor' => $event->color,
 				// borderColor : The schedule border color
 				'borderColor' => $event->color,
 				// dragBgColor : The schedule drag background color
 				'dragBgColor' => $event->color,
 				'category' => ($isallday ? 'allday' : 'time'),
-				'dueDateClass' => '',
 				'attendees' => $assignedUsers,
 				// busy or free
 				'state' => '',
