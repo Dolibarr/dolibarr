@@ -79,7 +79,7 @@ class CEmailTemplate extends CommonObject
 	 */
 	public $type_template;
 	/**
-	 * @var string
+	 * @var int|string
 	 */
 	public $datec;
 	/**
