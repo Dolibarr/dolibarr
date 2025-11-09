@@ -59,29 +59,31 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement information
 	 *
-	 * @param	int		$id				ID of movement
-	 * @return  Object					Object with cleaned properties
+	 * @param	int		$id				ID of stock movement
+	 * @return	Object					Stock movement object with cleaned properties
 	 *
-	 * @throws	RestException
+	 * @url		GET {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
 	 */
-	/*
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'mouvement', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No stock movement with id 0 can exist');
+		}
 		$result = $this->stockmovement->fetch($id);
 		if (!$result ) {
-			throw new RestException(404, 'warehouse not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(404, 'stock movement not found');
 		}
 
 		return $this->_cleanObjectDatas($this->stockmovement);
-	}*/
+	}
 
 	/**
 	 * Get a list of stock movement
