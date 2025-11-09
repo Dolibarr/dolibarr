@@ -2563,6 +2563,7 @@ if ($action == 'create') {
 		print '<td class="titlefieldcreate tdtop">' . $langs->trans('NotePublic') . '</td>';
 		print '<td class="valuefieldcreate">';
 		$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc) ? $objectsrc->note_public : (getDolGlobalString('PROPALE_ADDON_NOTE_PUBLIC_DEFAULT') ?: null)), 'restricthtml');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
 		// Private note
