@@ -1509,11 +1509,11 @@ class ProductFournisseur extends Product
 	 * @param integer   $datec                          date create
 	 * @param float     $buyprice                       price for qty
 	 * @param float     $qty                            qty for price
-	 * @param float     $multicurrency_buyprice         Purchase price for the quantity min in currency
-	 * @param float     $multicurrency_unitBuyPrice     Unit Purchase price in currency
+	 * @param ?float    $multicurrency_buyprice         Purchase price for the quantity min in currency
+	 * @param ?float    $multicurrency_unitBuyPrice     Unit Purchase price in currency
 	 * @param float     $multicurrency_tx               Rate currency
-	 * @param int       $fk_multicurrency               key multi currency
-	 * @param string    $multicurrency_code	            Currency code
+	 * @param ?int      $fk_multicurrency               key multi currency
+	 * @param ?string   $multicurrency_code	            Currency code
 	 *
 	 * @return int Return integer < 0 NOK > 0 OK
 	 */
