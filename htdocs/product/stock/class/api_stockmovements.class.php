@@ -59,6 +59,8 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement information
 	 *
+	 * @since	23.0.0	Initial implementation
+	 *
 	 * @param	int		$id				ID of stock movement
 	 * @return	Object					Stock movement object with cleaned properties
 	 *
