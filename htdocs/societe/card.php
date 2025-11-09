@@ -1720,7 +1720,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('socialnetworks')) {
 				$object->showSocialNetwork($socialnetworks, $colspan);
 
-				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 			}
 
 			// Prof ids
@@ -1826,7 +1826,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 
-			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+			print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 
 
 			// Type - Workforce/Staff
@@ -2567,7 +2567,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					$object->showSocialNetwork($socialnetworks, $colspan);
 
-					print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+					print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 				}
 
 				// Prof ids
@@ -2689,7 +2689,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				$colspan = 4;
 
-				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 
 				// Type - Workforce/Staff
 				print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>';
