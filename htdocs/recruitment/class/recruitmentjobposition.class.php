@@ -504,7 +504,6 @@ class RecruitmentJobPosition extends CommonObject
 	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**

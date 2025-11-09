@@ -522,7 +522,7 @@ if ($mode == 'other') {
 
 
 	// Show search area in top menu
-	print '<tr class="oddeven"><td>' . $langs->trans("ShowSearchAreaInTopMenu") . '</td><td>';
+	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$langs->trans("ShowSearchAreaInTopMenu") .'</td><td>';
 	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
 	print '</tr>';

@@ -137,6 +137,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 {
 	global $conf;
 
+	$subdirectory = '';
 	if (!is_object($object) && empty($module)) {
 		return null;
 	}
@@ -151,6 +152,15 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		$module = 'supplier_invoice';
 	} elseif ($module == 'order_supplier') {
 		$module = 'supplier_order';
+	} elseif ($module == 'recruitmentjobposition') {
+		$module = 'recruitment';
+		$subdirectory = '/recruitmentjobposition';
+	} elseif ($module == 'recruitmentcandidature') {
+		$module = 'recruitment';
+		$subdirectory = '/recruitmentcandidature';
+	} elseif ($module == 'knowledgerecord') {
+		$module = 'knowledgemanagement';
+		$subdirectory = '/knowledgerecord';
 	}
 
 	// Get the relative path of directory
@@ -158,7 +168,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)] . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -167,7 +177,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->dir_output;
+				$s = $conf->$module->dir_output . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);

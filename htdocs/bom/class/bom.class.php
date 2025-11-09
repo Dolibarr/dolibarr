@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
- * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2019	    Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023	    Benjamin Falière	    <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2023	    Charlene Benke		    <charlene@patas-monkey.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ class BOM extends CommonObject
 	public $picto = 'bom';
 
 	/**
-	 * @var Product	Object product of the BOM
+	 * @var ?Product	Object product of the BOM
 	 */
 	public $product;
 
@@ -940,7 +940,11 @@ class BOM extends CommonObject
 
 		// Define new ref
 		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-			$this->fetch_product();
+			$res = $this->fetch_product();
+			if ($res < 0 || !is_object($this->product)) {
+				$this->db->rollback();
+				return -1;
+			}
 			$num = $this->getNextNumRef($this->product);
 		} else {
 			$num = (string) $this->ref;

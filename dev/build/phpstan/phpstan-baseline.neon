@@ -2953,12 +2953,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Property CommonInvoice\:\:\$totalcreditnotes \(float\|int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -4189,12 +4183,6 @@ parameters:
 			path: ../../../htdocs/contrat/card.php
 
 		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/card.php
-
-		-
 			message: '#^Variable \$mesg might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -4229,12 +4217,6 @@ parameters:
 			identifier: booleanAnd.alwaysFalse
 			count: 6
 			path: ../../../htdocs/contrat/services_list.php
-
-		-
-			message: '#^Property Ticket\:\:\$progress \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/contrat/ticket.php
 
 		-
 			message: '#^Loose comparison using \=\= between 1 and 0 will always evaluate to false\.$#'
@@ -4289,12 +4271,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/core/actions_dellink.inc.php
-
-		-
-			message: '#^Variable \$id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/actions_fetchobject.inc.php
 
 		-
 			message: '#^Variable \$hidedesc might not be defined\.$#'
@@ -4402,30 +4378,6 @@ parameters:
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: '#^Variable \$contact might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: '#^Variable \$from might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: '#^Variable \$thirdparty might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
 			path: ../../../htdocs/core/actions_sendmails.inc.php
 
 		-
@@ -5381,108 +5333,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/class/commonorder.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Avery_Code has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Avery_Name has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_COUNTX has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_COUNTY has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Char_Size has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_First has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Height has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Line_Height has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Margin_Left has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Margin_Top has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Metric has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Metric_Doc has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Width has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_X_Number has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_X_Space has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Y_Number has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
-
-		-
-			message: '#^Property CommonStickerGenerator\:\:\$_Y_Space has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
@@ -8947,12 +8797,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
 			message: '#^Variable \$rowEnd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -9445,12 +9289,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
 
 		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
@@ -9478,12 +9316,6 @@ parameters:
 			message: '#^Property CommonInvoice\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Property CommonInvoice\:\:\$subtype \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
@@ -11497,36 +11329,6 @@ parameters:
 			path: ../../../htdocs/mrp/index.php
 
 		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/index.php
-
-		-
-			message: '#^Variable \$badgeStatus9 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/index.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -12101,54 +11903,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/class/productfournisseurprice.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 3
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$file_name \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$fk_product \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$fk_user_author \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$fk_user_mod \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property Propalmergepdfproduct\:\:\$lang \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/composition/card.php
-
-		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/composition/card.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -14011,12 +13765,6 @@ parameters:
 			path: ../../../htdocs/public/recruitment/index.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/recruitment/index.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -14293,12 +14041,6 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 2
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''''\|''CommandeFournisseur'' and ''commande'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 2
@@ -14329,25 +14071,7 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Variable \$originid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Variable \$reception might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/reception/card.php
@@ -14741,54 +14465,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/recruitment/index.php
-
-		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/recruitment/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/recruitment/index.php
-
-		-
-			message: '#^Variable \$badgeStatus5 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/index.php
-
-		-
-			message: '#^Variable \$badgeStatus9 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/recruitment/index.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -15511,36 +15187,6 @@ parameters:
 			path: ../../../htdocs/supplier_proposal/class/supplier_proposal.class.php
 
 		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/index.php
-
-		-
-			message: '#^Variable \$badgeStatus9 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/index.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -15913,19 +15559,7 @@ parameters:
 			path: ../../../htdocs/ticket/class/ticket.class.php
 
 		-
-			message: '#^Property Ticket\:\:\$progress \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
 			message: '#^Property Ticket\:\:\$severity_code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
-			message: '#^Property Ticket\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
 			path: ../../../htdocs/ticket/class/ticket.class.php
@@ -15953,48 +15587,6 @@ parameters:
 			identifier: empty.variable
 			count: 2
 			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/index.php
-
-		-
-			message: '#^Variable \$badgeStatus3 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ticket/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ticket/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/index.php
-
-		-
-			message: '#^Variable \$badgeStatus9 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/index.php
-
-		-
-			message: '#^Variable \$shownb might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/index.php
 
 		-
 			message: '#^If condition is always true\.$#'

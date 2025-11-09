@@ -464,7 +464,11 @@ class FormWebPortal extends Form
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
+
+		// TODO Why having a duplication of code of selectForFormsList of html.form.class.php ? Original seems more complete. Remove or replace with return parent::selectForFormsList();
+
+		//print "$htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, $outputmode, $disabled";
 
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') {
@@ -478,7 +482,7 @@ class FormWebPortal extends Form
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
+				if (! (int) dol_eval((string) $val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -1072,7 +1076,7 @@ class FormWebPortal extends Form
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = (string) dol_eval($computed, 1, 0, '2');
+			$value = (string) dol_eval((string) $computed, 1, 0, '2');
 		}
 
 		// Format output value differently according to properties of field
