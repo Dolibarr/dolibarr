@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 class BankAccounts extends DolibarrApi
 {
 	/**
-	 * array $FIELDS Mandatory fields, checked when creating an object
+	 * @var string[] Mandatory fields, checked when creating an object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -59,7 +59,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
-	 * @param  int		$category   Use this param to filter list by category
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects

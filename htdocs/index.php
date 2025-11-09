@@ -6,7 +6,7 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,7 +337,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
-	if (isModEnabled('mrp')) {
+	if (isModEnabled('mrp')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_MRP')) {
 		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 		$board = new Mo($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
