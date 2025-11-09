@@ -1263,8 +1263,8 @@ class Ticket extends CommonObject
 		// Clear fields
 		$object->id = 0;
 		$object->statut = 0;
-        $object->ref = $object->getDefaultRef();
-        $object->track_id = generate_random_id(16);
+		$object->ref = $object->getDefaultRef();
+		$object->track_id = generate_random_id(16);
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
