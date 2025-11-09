@@ -1297,8 +1297,8 @@ if ($mode == 'marketplace') {
 
 	$url = 'https://www.dolistore.com';
 
-	// Marketplace
-	print '<tr class="oddeven">'."\n";
+	// Source Marketplace DoliStore
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
 	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
@@ -1330,8 +1330,8 @@ if ($mode == 'marketplace') {
 
 	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
 
-	// Community
-	print '<tr class="oddeven">'."\n";
+	// Source Community github
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
 	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
@@ -1409,7 +1409,7 @@ if ($mode == 'marketplace') {
 		print '<div class="clearboth"></div>';
 		?>
 			<?php if (!empty($categories_tree)) { ?>
-				<div id="category-tree-left">
+				<div id="category-tree-left" class="paddingtop">
 					<ul class="tree">
 					<?php
 						print $categories_tree; ?>
@@ -1616,7 +1616,7 @@ if ($mode == 'develop') {
 	print '<td colspan="3">'.$langs->trans("DevelopYourModuleDesc").'</td>';
 	print '</tr>';
 
-	print '<tr class="oddeven" height="80">'."\n";
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="center hideonsmartphone">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
@@ -1630,7 +1630,7 @@ if ($mode == 'develop') {
 	print '</td>';
 	print '</tr>';
 
-	print '<tr class="oddeven" height="80">'."\n";
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	$url = 'https://partners.dolibarr.org';
 	print '<td class="center hideonsmartphone">';
 	print'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
