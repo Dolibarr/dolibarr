@@ -25,6 +25,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 /**
  * API class for stock movements
  *
+ * @since	5.0.0	Initial implementation
+ *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -59,6 +61,8 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement information
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param	int		$id				ID of movement
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -84,7 +88,9 @@ class StockMovements extends DolibarrApi
 	}*/
 
 	/**
-	 * Get a list of stock movement
+	 * Get a list of stock movements
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
@@ -180,6 +186,8 @@ class StockMovements extends DolibarrApi
 	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
 	 * $eatBy Eat-by date. Will be used if a batch does not exist yet and will be created.
 	 * sellBy Sell-by date. Will be used if a batch does not exist yet and will be created.
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int		$product_id		ID product id {@min 1} {@from body} {@required true}
 	 * @param	int		$warehouse_id	ID warehouse {@min 1} {@from body} {@required true}

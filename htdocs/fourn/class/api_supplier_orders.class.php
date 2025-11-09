@@ -389,7 +389,7 @@ class SupplierOrders extends DolibarrApi
 			$request_data->origin,
 			$request_data->origin_id,
 			$request_data->rang,
-			$request_data->special_code,
+			$request_data->special_code
 		);
 
 		if ($updateRes > 0) {
