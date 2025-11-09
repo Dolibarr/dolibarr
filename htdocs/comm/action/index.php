@@ -1637,30 +1637,41 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	}
 	$firstday = getDolGlobalInt('MAIN_START_WEEK', 1);
 	?>
-	<style type="text/css">
-		.row {
-			display: flex;
-		}
-		.col {
-			flex: 1 1 0%;
-			min-width: 0;
-			max-width: 100%;
-		}
-	</style>
-	<div class="row">
+<style type="text/css">
+	.row {
+		display: flex;
+	}
+	.col {
+		flex: 1 1 0%;
+		min-width: 0;
+		max-width: 100%;
+	}
+</style>
+<div class="row">
 	<div id="ec" class="col"></div>
-	<div>
-
-	<script>
+</div>
+<script>
+	const buttonText = {
+		today: '<?php echo dol_escape_js($langs->transnoentities('Today')); ?>',
+		dayGridMonth: '<?php echo dol_escape_js($langs->transnoentities('ViewCal')); ?>',
+		timeGridWeek: '<?php echo dol_escape_js($langs->transnoentities('ViewWeek')); ?>',
+		timeGridDay: '<?php echo dol_escape_js($langs->transnoentities('ViewDay')); ?>',
+		listWeek: '<?php echo dol_escape_js($langs->transnoentities('ListWeek')); ?>',
+		close: '<?php echo dol_escape_js($langs->transnoentities('Close')); ?>',
+		prev: '<?php echo dol_escape_js($langs->transnoentities("Previous")); ?>',
+		next: '<?php echo dol_escape_js($langs->transnoentities("Next")); ?>',
+	}
 	const ec = EventCalendar.create(document.getElementById('ec'), {
 		view: '<?php echo $ecview; ?>',
 		firstDay: <?php echo $firstday; ?>,
 		headerToolbar: {
 			start: 'prev,next today',
 			center: 'title',
-			end: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek resourceTimeGridWeek,resourceTimelineWeek'
+			end: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
 		},
-		buttonText: {},
+		buttonText: {
+			...buttonText
+		},
 		resources: [
 			{id: 1, title: 'Resource A'},
 			{id: 2, title: 'Resource B'}

@@ -761,6 +761,8 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 				'start' => $dtstart->format(DATE_ATOM),
 				'end' => $dtend->format(DATE_ATOM),
 				'editable' => $isEditable,
+				'startEditable' => $isEditable,
+				'endEditable' => $isEditable,
 				'allDay' => $isallday,
 				// color : The schedule text color (black or white)
 				'textColor' => ($obj->color != '' && isDarkColor($obj->color)) ? '#ffffff' : '#000000',
@@ -770,7 +772,6 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 				'borderColor' => $event->color,
 				// dragBgColor : The schedule drag background color
 				'dragBgColor' => $event->color,
-				'category' => ($isallday ? 'allday' : 'time'),
 				'attendees' => $assignedUsers,
 				// busy or free
 				'state' => '',
