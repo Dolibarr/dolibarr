@@ -1,7 +1,6 @@
 <?php
 /*
- * Copyright © 2019-2020  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +77,7 @@ switch ($action) {
 		} catch (Exception $e) {
 			dol_syslog('json_decode error', LOG_WARNING);
 		}
-		$calendarId = $parameters->calendarId;
+		$calendarId = $parameters->calendarId ?? 1;
 		$calendarName = $parameters->calendarName;
 		$startDate = $parameters->startDate;
 		$endDate = $parameters->endDate;

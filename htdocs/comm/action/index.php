@@ -1651,7 +1651,7 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 
 	<script>
 	const ec = EventCalendar.create(document.getElementById('ec'), {
-		view: '<?= $ecview ?>',
+		view: '<?php echo $ecview; ?>',
 		headerToolbar: {
 			start: 'prev,next today',
 			center: 'title',
