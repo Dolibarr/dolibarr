@@ -494,7 +494,6 @@ if (empty($reshook)) {
 				$sql = "UPDATE ".$tabname[25]." SET ";
 				// Modify value of fields
 				$i = 0;
-				$now = dol_now();
 				foreach ($listfieldmodify as $field) {
 					if ($field == 'entity') {
 						// entity not present on listfieldmodify array
@@ -772,7 +771,6 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="datec" value="'.$db->idate($now).'">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent" id="table_create_c_email_template">';
@@ -854,6 +852,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('createEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 	$error = $hookmanager->error;
 	$errors = $hookmanager->errors;
+
 
 	// Line to enter new values (input fields)
 	print '<tr class="oddeven">';
@@ -1148,7 +1147,6 @@ if ($num) {
 					$fieldlist = explode(',', $tabfield[25]);
 					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
 				} else {
-					array_push($fieldlist, "tms", "datec");
 					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
 				}
 				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks

@@ -277,7 +277,7 @@ class CEmailTemplate extends CommonObject
 		if (is_null($this->datec)) {
 			$sql .= " '".$this->db->idate($now)."',";
 		} else {
-			$sql .= " ".((string) $this->datec).",";
+			$sql .= " '".$this->db->idate($this->datec)."',";
 		}
 		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " ".((int) $this->position).", ".((int) $this->defaultfortype).",";
