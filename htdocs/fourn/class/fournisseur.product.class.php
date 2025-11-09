@@ -519,7 +519,7 @@ class ProductFournisseur extends Product
 						$currentPfp->logPrice(
 							$currentPfpUser,
 							$currentPfp->date_creation,
-							$currentPfp->fourn_price,
+							(float) $currentPfp->fourn_price,
 							$currentPfp->fourn_qty,
 							$currentPfp->fourn_multicurrency_price,
 							$currentPfp->fourn_multicurrency_unitprice,
@@ -575,8 +575,7 @@ class ProductFournisseur extends Product
 						}
 						$res = $productfournisseurprice->update($user);
 						if ($res < 0) {
-							$this->error = $productfournisseurprice->error;
-							$this->errors = $productfournisseurprice->errors;
+							$this->setErrorsFromObject($productfournisseurprice);
 							$error++;
 						}
 					}
@@ -774,7 +773,7 @@ class ProductFournisseur extends Product
 				$this->fk_availability = $obj->fk_availability;
 				$this->delivery_time_days = $obj->delivery_time_days;
 				$this->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
-				$this->supplier_reputation      = $obj->supplier_reputation;
+				$this->supplier_reputation = $obj->supplier_reputation;
 				$this->default_vat_code         = $obj->default_vat_code;
 				$this->user_id                  = $obj->fk_user;
 				$this->date_creation            = $this->db->jdate($obj->datec);
@@ -862,14 +861,14 @@ class ProductFournisseur extends Product
 
 				$prodfourn->product_ref = $record["product_ref"];
 				$prodfourn->product_fourn_price_id = $record["product_fourn_pri_id"];
-				$prodfourn->status					= $record["status"];
-				$prodfourn->status_buy				= $record["status_buy"];
+				$prodfourn->status = $record["status"];
+				$prodfourn->status_buy = $record["status_buy"];
 				$prodfourn->product_fourn_id = $record["product_fourn_id"];
 				$prodfourn->product_fourn_entity = $record["entity"];
-				$prodfourn->ref_supplier			= $record["ref_fourn"];
+				$prodfourn->ref_supplier = $record["ref_fourn"];
 				$prodfourn->fourn_ref = $record["ref_fourn"];
 				$prodfourn->desc_supplier = $record["desc_fourn"];
-				$prodfourn->fourn_price				= $record["price"];
+				$prodfourn->fourn_price = $record["price"];
 				$prodfourn->fourn_qty = $record["quantity"];
 				$prodfourn->fourn_remise_percent = $record["remise_percent"];
 				$prodfourn->fourn_remise = $record["remise"];
@@ -878,20 +877,20 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_tva_tx = $record["tva_tx"];
 				$prodfourn->fourn_id = $record["fourn_id"];
 				$prodfourn->fourn_name = $record["supplier_name"];
-				$prodfourn->fk_availability			= $record["fk_availability"];
+				$prodfourn->fk_availability = $record["fk_availability"];
 				$prodfourn->delivery_time_days = $record["delivery_time_days"];
 				$prodfourn->id = $prodid;
-				$prodfourn->fourn_tva_npr					= $record["info_bits"];
+				$prodfourn->fourn_tva_npr = $record["info_bits"];
 				$prodfourn->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
 				$prodfourn->supplier_reputation = $record["supplier_reputation"];
-				$prodfourn->fourn_date_creation          = $this->db->jdate($record['datec']);
-				$prodfourn->fourn_date_modification      = $this->db->jdate($record['tms']);
+				$prodfourn->fourn_date_creation = $this->db->jdate($record['datec']);
+				$prodfourn->fourn_date_modification = $this->db->jdate($record['tms']);
 
-				$prodfourn->fourn_multicurrency_price       = $record["multicurrency_price"];
-				$prodfourn->fourn_multicurrency_unitprice   = $record["multicurrency_unitprice"];
-				$prodfourn->fourn_multicurrency_tx          = $record["multicurrency_tx"];
-				$prodfourn->fourn_multicurrency_id          = $record["fk_multicurrency"];
-				$prodfourn->fourn_multicurrency_code        = $record["multicurrency_code"];
+				$prodfourn->fourn_multicurrency_price = $record["multicurrency_price"];
+				$prodfourn->fourn_multicurrency_unitprice = $record["multicurrency_unitprice"];
+				$prodfourn->fourn_multicurrency_tx = $record["multicurrency_tx"];
+				$prodfourn->fourn_multicurrency_id = $record["fk_multicurrency"];
+				$prodfourn->fourn_multicurrency_code = $record["multicurrency_code"];
 
 				$prodfourn->packaging = (float) $record["packaging"];
 				$prodfourn->status = $record["pfstatus"];
