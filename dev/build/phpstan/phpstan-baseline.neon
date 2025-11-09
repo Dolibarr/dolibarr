@@ -4219,12 +4219,6 @@ parameters:
 			path: ../../../htdocs/contrat/services_list.php
 
 		-
-			message: '#^Property Ticket\:\:\$progress \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/contrat/ticket.php
-
-		-
 			message: '#^Loose comparison using \=\= between 1 and 0 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -4283,6 +4277,28 @@ parameters:
 			identifier: variable.undefined
 			count: 4
 			path: ../../../htdocs/core/actions_fetchobject.inc.php
+			message: '#^Variable \$hidedesc might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: ../../../htdocs/core/actions_lineupdown.inc.php
+
+		-
+			message: '#^Variable \$hidedetails might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: ../../../htdocs/core/actions_lineupdown.inc.php
+
+		-
+			message: '#^Variable \$hideref might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: ../../../htdocs/core/actions_lineupdown.inc.php
+
+		-
+			message: '#^Variable \$permissiontoedit might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: ../../../htdocs/core/actions_lineupdown.inc.php
 
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
@@ -4360,30 +4376,6 @@ parameters:
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: '#^Variable \$contact might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: '#^Variable \$from might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
-			message: '#^Variable \$thirdparty might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
 			path: ../../../htdocs/core/actions_sendmails.inc.php
 
 		-
@@ -15565,19 +15557,7 @@ parameters:
 			path: ../../../htdocs/ticket/class/ticket.class.php
 
 		-
-			message: '#^Property Ticket\:\:\$progress \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
 			message: '#^Property Ticket\:\:\$severity_code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
-			message: '#^Property Ticket\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
 			path: ../../../htdocs/ticket/class/ticket.class.php

@@ -2410,7 +2410,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$eventsCompanyContact[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
 					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'widthcentpercentminusxx  maxwidth300');
+					print '<span class="clearbothonsmartphone"></span>';
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
 					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
@@ -2418,7 +2419,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
 					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'widthcentpercentminusxx  maxwidth300'); // We keep thirdparty empty, contact is already set
+					print '<span class="clearbothonsmartphone"></span>';
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
 					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
@@ -2426,7 +2428,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
 					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'widthcentpercentminusxx  maxwidth300'); // We keep thirdparty empty, contact is already set
+					print '<span class="clearbothonsmartphone"></span>';
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
 					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
@@ -2434,7 +2437,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				} else {	// $object->socid is not > 0 here
 					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'widthcentpercentminusxx maxwidth300'); // We keep thirdparty empty, contact is already set
+					print '<span class="clearbothonsmartphone"></span>';
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
 					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 				}

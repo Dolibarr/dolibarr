@@ -115,24 +115,24 @@ class Ticket extends CommonObject
 	public $private;
 
 	/**
-	 * @var int Ticket status
+	 * @var ?int Ticket status
 	 * @deprecated use status
 	 * @see $status
 	 */
 	public $fk_statut;
 
 	/**
-	 * @var int Ticket status
+	 * @var ?int Ticket status
 	 */
 	public $status;
 
 	/**
-	 * @var null|integer State resolution
+	 * @var ?int State resolution
 	 */
 	public $resolution;
 
 	/**
-	 * @var int Progress in percent
+	 * @var ?int Progress in percent
 	 */
 	public $progress;
 
