@@ -1626,6 +1626,14 @@ if (!getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	print $s;
 }
 if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
+	// dayGridMonth timeGridWeek timeGridDay listWeek resourceTimeGridWeek resourceTimelineWeek
+	if ($mode == 'show_day') {
+		$ecview = 'timeGridDay';
+	} elseif ($mode == 'show_month') {
+		$ecview = 'dayGridMonth';
+	} else {
+		$ecview = 'listWeek';
+	}
 	?>
 	<style type="text/css">
 		.row {
@@ -1641,9 +1649,9 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	<div id="ec" class="col"></div>
 	<div>
 
-	<script type="text/javascript">
+	<script>
 	const ec = EventCalendar.create(document.getElementById('ec'), {
-		view: 'dayGridMonth',
+		view: '<?= $ecview ?>',
 		headerToolbar: {
 			start: 'prev,next today',
 			center: 'title',
