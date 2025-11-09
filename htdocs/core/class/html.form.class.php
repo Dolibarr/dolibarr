@@ -9585,6 +9585,7 @@ class Form
 				}
 				$out .= '<option value="' . $key . '"';
 				$out .= $style . $disabled;
+				$out .= is_array($tmpvalue) && !empty($tmpvalue['parent']) ? ' parent="' . dolPrintHTMLForAttribute($tmpvalue['parent']) . '"' : '';
 				if (is_array($id)) {
 					if (in_array($key, $id) && !$disabled) {
 						$out .= ' selected'; // To preselect a value
@@ -9926,6 +9927,7 @@ class Form
 					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
 						$out .= ' selected';
 					}
+					$out .= is_array($value) && array_key_exists('parent', $value) && !empty($value['parent']) ? ' parent="' . dolPrintHTMLForAttribute($value['parent']) . '"' : '';
 					if ($tmpdisabled) {
 						$out .= ' disabled="disabled"';
 					}

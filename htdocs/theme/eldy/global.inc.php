@@ -7414,6 +7414,9 @@ input.select2-input {
 
 	box-shadow: none !important;
 }
+.select2-container--default .select2-selection--multiple {
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+}
 <?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 .select2-container--focus .select2-container--default .select2-selection--single {
 	border-bottom-left-radius: 0;
@@ -7427,7 +7430,6 @@ input.select2-input {
 	border-bottom-right-radius: 0;
 }
 .select2-container--default .select2-selection--multiple {
-	border-bottom: solid 1px var(--inputbordercolor);
 	border-top: none;
 	border-left: none;
 	border-right: none;
