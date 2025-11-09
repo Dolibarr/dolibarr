@@ -2562,7 +2562,10 @@ if ($action == 'create') {
 		print '<tr class="field_note_public">';
 		print '<td class="titlefieldcreate tdtop">' . $langs->trans('NotePublic') . '</td>';
 		print '<td class="valuefieldcreate">';
-		$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc) ? $objectsrc->note_public : null), 'restricthtml');
+		$note_public = GETPOST('note_public', 'restricthtml');
+		if (!GETPOSTISSET('note_public') && empty($note_public) && !empty($objectsrc)) {
+			$note_public = $objectsrc->note_public;
+		}
 		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
@@ -2571,7 +2574,10 @@ if ($action == 'create') {
 			print '<tr class="field_note_private">';
 			print '<td class="titlefieldcreate tdtop">' . $langs->trans('NotePrivate') . '</td>';
 			print '<td class="valuefieldcreate">';
-			$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc)) ? $objectsrc->note_private : null));
+			$note_private = GETPOST('note_private', 'restricthtml');
+			if (!GETPOSTISSET('note_private') && empty($note_private) && !empty($objectsrc)) {
+				$note_private = $objectsrc->note_private;
+			}
 			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
