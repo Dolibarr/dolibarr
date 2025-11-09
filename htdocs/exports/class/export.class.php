@@ -195,8 +195,8 @@ class Export
 			if (is_resource($handle)) {
 				// Search module files
 				while (($file = readdir($handle)) !== false) {
-					// Ignore Module Builder backup files (*.php.bak)
-					if (preg_match('/\.bak$/i', $file)) {
+					// Ignore Module Builder backup files (*.php.back)
+					if (preg_match('/\.back$/i', $file)) {
 						continue;
 					}
 
