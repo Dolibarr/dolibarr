@@ -1263,6 +1263,7 @@ class Ticket extends CommonObject
 		// Clear fields
 		$object->id = 0;
 		$object->statut = 0;
+		$object->status = 0;
 		$object->ref = $object->getDefaultRef();
 		$object->track_id = generate_random_id(16);
 
