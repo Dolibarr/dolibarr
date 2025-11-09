@@ -195,6 +195,11 @@ class Export
 			if (is_resource($handle)) {
 				// Search module files
 				while (($file = readdir($handle)) !== false) {
+					// Ignore Module Builder backup files (*.php.bak)
+					if (preg_match('/\.bak$/i', $file)) {
+						continue;
+					}
+
 					$reg = array();
 					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg)) {
 						$modulename = $reg[1];
