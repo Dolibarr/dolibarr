@@ -1261,12 +1261,6 @@ parameters:
 			path: ../../../htdocs/asset/list.php
 
 		-
-			message: '#^Offset ''searchmulti'' on array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/asset/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -2511,12 +2505,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
-			message: '#^Property BankAccounts\:\:\$FIELDS has no type specified\.$#'
-			identifier: missingType.property
 			count: 1
 			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
 
@@ -10267,12 +10255,6 @@ parameters:
 			path: ../../../htdocs/hrm/job_card.php
 
 		-
-			message: '#^Offset ''searchmulti'' on array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/hrm/job_list.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -10307,12 +10289,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/hrm/position_agenda.php
-
-		-
-			message: '#^Offset ''searchmulti'' on array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/hrm/position_list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -14967,12 +14943,6 @@ parameters:
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../../htdocs/societe/card.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
 			count: 2
 			path: ../../../htdocs/societe/card.php
 
