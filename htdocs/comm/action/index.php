@@ -1673,20 +1673,21 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 			...buttonText
 		},
 		resources: [
-			{id: 1, title: 'Resource A'},
-			{id: 2, title: 'Resource B'}
+			{id: 1, title: 'Dolibarr'},
+			{id: 2, title: 'Birthdays'}
 		],
 		scrollTime: '09:00:00',
 		eventSources: [{
 			events: function(fetchInfo, successCallback, failureCallback) {
 				$.ajax({
 					method: 'POST',
-					url: '/core/ajax/events_ajax.php?action=getevents',
+					url: '/core/ajax/events_ajax.php',
 					dataType: 'json',
 					data: {
 						start: fetchInfo.start.getTime(),
 						end: fetchInfo.end.getTime(),
-						action: 'getevents'
+						action: 'getevents',
+						resourceId: 1
 					},
 					success: function(response) {
 						// normalize entries

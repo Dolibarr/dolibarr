@@ -79,7 +79,7 @@ switch ($action) {
 		} catch (Exception $e) {
 			dol_syslog('json_decode error', LOG_WARNING);
 		}
-		$calendarId = $parameters->calendarId ?? 1;
+		$resourceId = GETPOST('resourceId');
 		$calendarName = $parameters->calendarName;
 		$startDate = GETPOSTINT('start');
 		$endDate = GETPOSTINT('end');
@@ -90,13 +90,13 @@ switch ($action) {
 		$search_socid = $parameters->search_socid;
 		$search_states = $parameters->search_states;
 		$search_all = (bool) $parameters->search_all;
-		$arrayofevents = getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $onlylast, $search_actioncode, $search_userid, $search_socid, $search_states, $search_all);
+		$arrayofevents = getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $onlylast, $search_actioncode, $search_userid, $search_socid, $search_states, $search_all);
 		print json_encode($arrayofevents);
 		break;
 	case 'getdeletedevents':
-		$calendarId = GETPOST('calendarId', 'alpha');
+		$resourceId = GETPOST('resourceId', 'alpha');
 		$calendarName = GETPOST('calendarName', 'alpha');
-		$arrayofevents = getDeletedEventsId($calendarId);
+		$arrayofevents = getDeletedEventsId($resourceId);
 		print json_encode($arrayofevents);
 		break;
 	case 'putevent':
@@ -474,15 +474,15 @@ $db->close();
 /**
  * get events.
  *
- * @param   string  $calendarId     calendar id
+ * @param   string  $resourceId     calendar id
  *
  * @return array array of events
  */
-function getDeletedEventsId($calendarId)
+function getDeletedEventsId($resourceId)
 {
 	global $db;
 	$events = [];
-	if ($calendarId != '1') {
+	if ($resourceId != '1') {
 		return $events;
 	}
 	$sql = "SELECT fk_actioncomm FROM " . MAIN_DB_PREFIX . "actioncomm_deleted WHERE tms>'" . (int) (time() - (3 * 60 * 60)) . "'";
@@ -490,7 +490,7 @@ function getDeletedEventsId($calendarId)
 	while ($resql && $obj = $db->fetch_object($resql)) {
 		$events[] = [
 			'id' => (int) $obj->fk_actioncomm,
-			'calendarId' => $calendarId,
+			'resourceId' => $resourceId,
 		];
 	}
 	return $events;
@@ -499,7 +499,7 @@ function getDeletedEventsId($calendarId)
 /**
  * get events.
  *
- * @param   string  $calendarId     calendar id
+ * @param   string  $resourceId     calendar id
  * @param   string  $calendarName   calendar name
  * @param   string  $startDate      start date
  * @param   string  $endDate        end date
@@ -513,7 +513,7 @@ function getDeletedEventsId($calendarId)
  *
  * @return array array of events
  */
-function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $onlylast, $search_actioncode, $search_userid, $socid, $search_states, $search_all)
+function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $onlylast, $search_actioncode, $search_userid, $socid, $search_states, $search_all)
 {
 	global $db, $conf, $langs, $user, $hookmanager;
 
@@ -527,7 +527,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 	//     'events' => array(
 	//         array(
 	//             'id' => '2',
-	//             'calendarId' => '1',
+	//             'resourceId' => '1',
 	//             'title' => 'second schedule',
 	//             'category' => 'time',
 	//             'dueDateClass' => '',
@@ -536,7 +536,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 	//         ),
 	//         array(
 	//             'id' => '1',
-	//             'calendarId' => '1',
+	//             'resourceId' => '1',
 	//             'title' => 'my schedule',
 	//             'category' => 'time',
 	//             'dueDateClass' => '',
@@ -545,7 +545,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 	//         ),
 	//         array(
 	//             'id' => '3',
-	//             'calendarId' => '1',
+	//             'resourceId' => '1',
 	//             'title' => 'another schedule',
 	//             'category' => 'time',
 	//             'dueDateClass' => '',
@@ -557,7 +557,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 	// );
 	$hookmanager->initHooks(['agenda']);
 
-	if ($calendarId == '1') {
+	if ($resourceId == '1') {
 		$pid = GETPOST("projectid", "int", 3);
 		$status = GETPOST("status", 'int');
 		$type = GETPOST("type", 'alpha');
@@ -752,8 +752,8 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 			$events[] = [
 				// id : The unique schedule id depends on calendar id
 				'id' => (int) $event->id,
-				// calendarId : The unique calendar id
-				'resourceId' => '1',
+				// resourceId : The unique calendar id
+				'resourceId' => 1,
 				// title : The schedule title
 				'title' => $event->label,
 				// body : The schedule body text which is text/plain
@@ -762,7 +762,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 				'end' => $dtend->format(DATE_ATOM),
 				'editable' => $isEditable,
 				'startEditable' => $isEditable,
-				'endEditable' => $isEditable,
+				'durationEditable' => $isEditable,
 				'allDay' => $isallday,
 				// color : The schedule text color (black or white)
 				'textColor' => ($obj->color != '' && isDarkColor($obj->color)) ? '#ffffff' : '#000000',
@@ -783,16 +783,16 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 	}
 
 	// Complete $eventarray with birthdates
-	if ($calendarId == '2') {
+	if ($resourceId == '2') {
 		// Add events in array
 		$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'socpeople as sp';
 		$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat=' . $user->id . '))';
 		$sql .= " AND sp.entity IN (" . getEntity('socpeople') . ")";
 
-		$sql .= ' AND (MONTH(birthday) = ' . date("m", dol_stringtotime($startDate) - 172800);
+		$sql .= ' AND (MONTH(birthday) = ' . date("m", $startDate / 1000);
 		$sql .= ' OR MONTH(birthday) = "12"';
-		$sql .= ' OR MONTH(birthday) = ' . date("m", dol_stringtotime($endDate) + 172800) . ')';
+		$sql .= ' OR MONTH(birthday) = ' . date("m", $endDate / 1000) . ')';
 		//$sql.= ' AND DAY(birthday) >= '.date("d", strtotime($startDate));
 		//$sql.= ' AND DAY(birthday) <= '.date("d", strtotime($endDate));
 		$sql .= ' ORDER BY birthday';
@@ -809,7 +809,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 			$datearray = dol_getdate($datebirth, true);
 			// determiner correctement le choix de l'année
 			// For full day events, date are also GMT but they won't but converted during output
-			$datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], (int) date("Y", dol_stringtotime($endDate)), true);
+			$datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], (int) date("Y", $endDate / 1000), true);
 			// $event->datef = $event->datep;
 			// $event->type_code = 'BIRTHDAY';
 			// $event->label = $langs->trans("Birthday") . ' ' . dolGetFirstLastname($obj->firstname, $obj->lastname);
@@ -836,35 +836,31 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 			$events[] = [
 				// id : The unique schedule id depends on calendar id
 				'id' => 'birthday_' . (string) $obj->rowid,
-				// calendarId : The unique calendar id
-				'calendarId' => '2',
+				// resourceId : The unique calendar id
+				'resourceId' => 2,
 				// title : The schedule title
 				'title' => $langs->trans("Birthday") . ' ' . dolGetFirstLastname($obj->firstname, $obj->lastname),
 				// body : The schedule body text which is text/plain
 				'body' => '',
 				// A CORRIGER !!! TODO
-				'start' => dol_print_date($datep, "%Y-%m-%dT%H:%M:%S") . '+04:00',
-				'end' => dol_print_date($datep, "%Y-%m-%dT%H:%M:%S") . '+04:00',
-				'goingDuration' => 0,
-				'comingDuration' => 0,
+				'start' => dol_print_date($datep, "%Y-%m-%dT%H:%M:%S"),
+				'end' => dol_print_date($datep + 86400, "%Y-%m-%dT%H:%M:%S"),
 				// birthdays are readonly
-				'isReadOnly' => true,
-				'isAllDay' => true,
+				'editable' => false,
+				'allDay' => true,
 				// color : The schedule text color
 				'color' => isDarkColor($obj->color) ? '#ffffff' : '#000000',
 				// bgColor : The schedule background color
-				'bgColor' => $obj->color,
+				'backgroundColor' => $obj->color,
 				// borderColor : The schedule border color
 				'borderColor' => $obj->color,
-				'category' => 'allday',
-				'dueDateClass' => '',
 				// raw : The user data
-				'raw' => $raw,
+				// 'raw' => $raw,
 			];
 		}
 	}
 	$listofextcals = [];
-	if ($calendarId > 2) {
+	if ($resourceId > 2) {
 		$MAXAGENDA = getDolGlobalInt('AGENDA_EXT_NB', 5);
 		// Define list of external calendars (global admin setup)
 		if (empty($conf->global->AGENDA_DISABLE_EXT)) {
@@ -1036,8 +1032,8 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 					$events[] = [
 						// id : The unique schedule id depends on calendar id
 						'id' => $icalevent->uid,
-						// calendarId : The unique calendar id
-						'calendarId' => $calendarId,
+						// resourceId : The unique calendar id
+						'resourceId' => $resourceId,
 						// title : The schedule title
 						'title' => html_entity_decode($icalevent->summary),
 						// body : The schedule body text which is text/plain
