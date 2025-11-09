@@ -566,7 +566,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 		$actioncode = explode(',', $search_actioncode);
 
 		$usergroup = GETPOST("usergroup", "int", 3);
-		if (empty($search_userid) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
+		if (empty($search_userid) && !getDolGlobalInt('AGENDA_ALL_CALENDARS')) {
 			$search_userid = $user->id;
 		}
 		// $socid = (int) GETPOST("socid", "int");
