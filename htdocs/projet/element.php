@@ -876,6 +876,7 @@ if (isModEnabled('stock')) {
 print '<!-- Begin PROFIT table -->';
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
+PRINT '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="left" width="200">';
@@ -1154,6 +1155,7 @@ if ($total_revenue_ht) {
 }
 
 print "</table>";
+print '</div>';
 print '<!-- End PROFIT table -->';
 
 

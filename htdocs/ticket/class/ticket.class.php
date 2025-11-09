@@ -127,12 +127,12 @@ class Ticket extends CommonObject
 	public $status;
 
 	/**
-	 * @var null|integer State resolution
+	 * @var ?int State resolution
 	 */
 	public $resolution;
 
 	/**
-	 * @var int Progress in percent
+	 * @var ?int Progress in percent
 	 */
 	public $progress;
 

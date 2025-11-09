@@ -476,7 +476,7 @@ abstract class CommonDocGenerator
 	 * Define array with couple substitution key => substitution value
 	 * For example {company_name}, {company_name_alias}
 	 *
-	 * @param	Societe		$object			Object
+	 * @param	?Societe	$object			Object
 	 * @param   Translate	$outputlangs    Language object for output
 	 * @param   string		$array_key	    Name of the key for return array
 	 * @return	array<string,mixed>			Array of substitution key->code

@@ -2215,7 +2215,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 95px; }
+.maxwidthdate  { max-width:95px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -8899,6 +8899,10 @@ table.jPicker {
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(350, 'width'); ?>px;
+	}
+
+	.maxwidthdate  {
+		max-width: 105px;	/* lower than 105, text is truncated with some smartphone resolution and date on 4 digits, but we use 2 digits on smartphone */
 	}
 
 	div.tabBar {
