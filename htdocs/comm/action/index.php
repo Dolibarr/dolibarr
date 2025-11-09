@@ -519,12 +519,12 @@ $paramnoactionodate = preg_replace('/mode=[a-z_]+/', '', preg_replace('/action=[
 
 $head = calendars_prepare_head($paramnoaction);
 
-// print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-// if ($optioncss != '') {
-// 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-// }
-// print '<input type="hidden" name="token" value="'.newToken().'">';
-// print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $viewmode = '<div class="navmode inline-block">';
@@ -1615,14 +1615,14 @@ if (is_readable($color_file)) {
 
 $massactionbutton = '';
 
-// print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 if ($nbevents > $MAXONSAMEPAGE) {
 	print info_admin('Number of results has been truncated to '.$MAXONSAMEPAGE, 0, 0, 'warning').'<br>';
 }
 
 // Show div with list of calendars
-// print $s;
+print $s;
 if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	?>
 	<style type="text/css">
