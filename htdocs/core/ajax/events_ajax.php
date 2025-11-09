@@ -67,28 +67,21 @@ top_httphead('application/json', 1);
 dol_syslog('posted events ajax POST '.print_r($_POST, true), LOG_WARNING);
 dol_syslog('posted events ajax REQUEST '.print_r($_REQUEST, true), LOG_WARNING);
 $action = GETPOSTISSET('action') ? GETPOST('action', 'aZ09') : 'getevents';
-$input = file_get_contents('php://input');
 switch ($action) {
 	case 'getconfig':
 		print json_encode([]);
 		break;
 	case 'getevents':
-		try {
-			$parameters = json_decode($input);
-			dol_syslog(print_r($parameters, true), LOG_WARNING);
-		} catch (Exception $e) {
-			dol_syslog('json_decode error', LOG_WARNING);
-		}
 		$resourceId = GETPOST('resourceId');
-		$calendarName = $parameters->calendarName;
+		$calendarName = GETPOST('calendarName');
 		$startDate = GETPOSTINT('start');
 		$endDate = GETPOSTINT('end');
-		$offset = (int) $parameters->offset;
+		$offset = GETPOSTINT('offset');
 		$onlylast = (bool) GETPOSTINT('onlylast');
-		$search_actioncode = $parameters->search_actioncode;
-		$search_userid = $parameters->search_user;
-		$search_socid = $parameters->search_socid;
-		$search_states = $parameters->search_states;
+		$search_actioncode = GETPOST('search_actioncode');
+		$search_userid = GETPOST('search_user');
+		$search_socid = GETPOST('search_socid');
+		$search_states = GETPOST('search_states', 'alphanohtml');
 		$search_all = GETPOST('search_all', 'alphanohtml');
 		$arrayofevents = getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $onlylast, $search_actioncode, $search_userid, $search_socid, $search_states, $search_all);
 		print json_encode($arrayofevents);
@@ -199,7 +192,7 @@ switch ($action) {
 		$filterkey = GETPOST('q', 'alphanohtml');
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+		if (getDolGlobalInt('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 			$sql .= ", s.address, s.zip, s.town";
 			$sql .= ", dictp.code as country_code";
 		}
@@ -289,9 +282,9 @@ switch ($action) {
 		}
 
 		// print $formproject->select_projects($socid?$socid:-1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
-		if ($user->rights->projet->lire) {
+		if ($user->hasRight('projet', 'lire')) {
 			$projectsListId = false;
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectstatic = new Project($db);
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 			}
