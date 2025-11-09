@@ -86,12 +86,12 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
-			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
 		}
 
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
-			$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '1');
+			$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '1');
 		}
 		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
