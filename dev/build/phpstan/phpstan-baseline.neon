@@ -4273,30 +4273,6 @@ parameters:
 			path: ../../../htdocs/core/actions_dellink.inc.php
 
 		-
-			message: '#^Variable \$hidedesc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: '#^Variable \$hidedetails might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: '#^Variable \$hideref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_lineupdown.inc.php
-
-		-
-			message: '#^Variable \$permissiontoedit might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_lineupdown.inc.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -4342,12 +4318,6 @@ parameters:
 			message: '#^Parameter \#1 \$array of function sort contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
 			count: 1
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: '#^Variable \$from might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
@@ -12869,12 +12839,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/comment.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/contact.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'

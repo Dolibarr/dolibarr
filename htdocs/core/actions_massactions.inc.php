@@ -480,6 +480,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			// Send email if there is at least one qualified object for current thirdparty
 			if (count($listofqualifiedobj) > 0) {
 				$langs->load("commercial");
+				$from = '';
 
 				$reg = array();
 				$fromtype = GETPOST('fromtype');
@@ -685,11 +686,11 @@ if (!$error && $massaction == 'confirm_presend') {
 								// Initialisation donnees
 								$objectobj2->sendtoid = (empty($contactidtosend) ? 0 : $contactidtosend);
 								$objectobj2->actionmsg = $actionmsg; // Long text
-								$objectobj2->actionmsg2		= $actionmsg2; // Short text
-								$objectobj2->fk_element		= $objid2;
-								$objectobj2->elementtype	= $objectobj2->element;
+								$objectobj2->actionmsg2 = $actionmsg2; // Short text
+								$objectobj2->fk_element = $objid2;
+								$objectobj2->elementtype = $objectobj2->element;
 								if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
-									$objectobj2->actionmsg2		= $subjectreplaced; // Short text
+									$objectobj2->actionmsg2 = $subjectreplaced; // Short text
 								}
 
 								$triggername = strtoupper(get_class($objectobj2)).'_SENTBYMAIL';

@@ -1262,7 +1262,7 @@ if ($action == 'create') {
 	} else {
 		print '<td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth150 widthcentpercentminusxx maxwidth500');
 		print ' <a href="'.dolBuildUrl(DOL_URL_ROOT . '/societe/card.php', ['action' => 'create', 'customer' => 3, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
@@ -1310,16 +1310,18 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, "projectid", 0, 0, 1, 1);
+		$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, "projectid", 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'minwidth150 maxwidth300 widthcentpercentminusxx');
 		print ' &nbsp; <a href="' . dolBuildUrl(DOL_URL_ROOT . '/projet/card.php', ['socid' => $soc->id, 'action' => 'create', 'status' => 1, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'socid' => $soc->id])]) . '"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print "</td></tr>";
 	}
 
+	// Note public
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
 	$doleditor = new DolEditor('note_public', (string) $note_public, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
+	// Note private
 	if (empty($user->socid)) {
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
 		$doleditor = new DolEditor('note_private', (string) $note_private, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');

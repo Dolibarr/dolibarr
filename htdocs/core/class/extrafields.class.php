@@ -1248,7 +1248,7 @@ class ExtraFields
 			}
 
 			if ($mode == 1) {
-				// search filter on a date extrafield shows two inputs to select a date range
+				// mode input for a search filter, we show two inputs to select a date range
 				$prefill = array(
 					'start' => isset($value['start']) ? $value['start'] : '',
 					'end'   => isset($value['end']) ? $value['end'] : ''
@@ -1259,8 +1259,9 @@ class ExtraFields
 				$out .= $form->selectDate($prefill['end'], $keyprefix.$key.$keysuffix.'_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 				$out .= '</div></div>';
 			} else {
+				// mode input into a create/update form
 				// TODO Must also support $moreparam
-				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required ? 0 : 2, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 			}
 		} elseif (in_array($type, array('datetime', 'datetimegmt'))) {
 			$tmp = explode(',', $size);
@@ -1273,7 +1274,7 @@ class ExtraFields
 			}
 
 			if ($mode == 1) {
-				// search filter on a date extrafield shows two inputs to select a date range
+				// mode input for a search filter, we show two inputs to select a date range
 				$prefill = array(
 					'start' => isset($value['start']) ? $value['start'] : '',
 					'end'   => isset($value['end']) ? $value['end'] : ''
@@ -1284,8 +1285,9 @@ class ExtraFields
 				$out .= $form->selectDate($prefill['end'], $keyprefix.$key.$keysuffix.'_end', 1, 1, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"), 'tzuserrel');
 				$out .= '</div></div>';
 			} else {
+				// mode input into a create/update form
 				// TODO Must also support $moreparam
-				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
+				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required ? 0 : 2, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
 			}
 		} elseif (in_array($type, array('int', 'integer'))) {
 			$tmp = explode(',', $size);
