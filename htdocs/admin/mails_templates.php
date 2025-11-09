@@ -818,7 +818,7 @@ if ($action == 'create') {
 			$valuetoshow = $langs->trans("Code");
 		}
 		if ($fieldlist[$field] == 'label') {
-			$valuetoshow = $langs->trans("Code");
+			$valuetoshow = $langs->trans("Label");
 		}
 		if ($fieldlist[$field] == 'type_template') {
 			$valuetoshow = $langs->trans("TypeOfTemplate");
@@ -1087,7 +1087,7 @@ foreach ($fieldlist as $field => $value) {
 		$valuetoshow = $langs->trans("Type");
 	}
 	if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
-		$valuetoshow = $langs->trans("Code");
+		$valuetoshow = $langs->trans("Label");
 	}
 	if ($fieldlist[$field] == 'type_template') {
 		$css = 'center';
