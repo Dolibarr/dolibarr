@@ -772,17 +772,17 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				// title : The schedule title
 				'title' => $langs->trans("Birthday") . ' ' . dolGetFirstLastname($obj->firstname, $obj->lastname),
 				// body : The schedule body text which is text/plain
-				'start' => dol_print_date($datep, "%Y-%m-%dT%H:%M:%S"),
-				'end' => dol_print_date($datep + 86400, "%Y-%m-%dT%H:%M:%S"),
+				'start' => dol_print_date($datep, "%Y-%m-%dT%H:%M:%S+00:00"),
+				'end' => dol_print_date($datep + 86400, "%Y-%m-%dT%H:%M:%S+00:00"),
 				// birthdays are readonly
 				'editable' => false,
 				'allDay' => true,
 				// color : The schedule text color
 				'textColor' => isDarkColor($obj->color) ? '#ffffff' : '#000000',
 				// bgColor : The schedule background color
-				'backgroundColor' => $obj->color,
+				'backgroundColor' => '#555555',
 				// borderColor : The schedule border color
-				'borderColor' => $obj->color,
+				'borderColor' => '#891919ff',
 				// raw : The user data
 				// 'raw' => $raw,
 			];

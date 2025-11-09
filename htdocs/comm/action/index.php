@@ -1680,14 +1680,37 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 		eventSources: [{
 			events: function(fetchInfo, successCallback, failureCallback) {
 				$.ajax({
-					method: 'POST',
+					method: 'GET',
 					url: '/core/ajax/events_ajax.php',
 					dataType: 'json',
 					data: {
 						start: fetchInfo.start.getTime(),
+						startStr: fetchInfo.startStr,
 						end: fetchInfo.end.getTime(),
+						endStr: fetchInfo.endStr,
 						action: 'getevents',
 						resourceId: 1
+					},
+					success: function(response) {
+						// normalize entries
+						successCallback(response);
+					}
+				});
+			}
+		},
+		{
+			events: function(fetchInfo, successCallback, failureCallback) {
+				$.ajax({
+					method: 'GET',
+					url: '/core/ajax/events_ajax.php',
+					dataType: 'json',
+					data: {
+						start: fetchInfo.start.getTime(),
+						startStr: fetchInfo.startStr,
+						end: fetchInfo.end.getTime(),
+						endStr: fetchInfo.endStr,
+						action: 'getevents',
+						resourceId: 2
 					},
 					success: function(response) {
 						// normalize entries
@@ -1732,7 +1755,19 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 		},
 		dayMaxEvents: true,
 		nowIndicator: true,
-		selectable: true
+		selectable: true,
+		eventResizeStart: function (info) {console.log('eventResizeStart');},
+		eventResizeStop: function (info) {console.log('eventResizeStop');},
+		eventResize: function (info) {
+			console.log('eventResize');
+			console.log(info);
+		},
+		eventDragStart: function (info) {console.log('eventDragStart');},
+		eventDragStop: function (info) {console.log('eventDragStop');},
+		eventDrop: function (info) {
+			console.log('eventDrop');
+			console.log(info);
+		}
 	});
 </script>
 	<?php
