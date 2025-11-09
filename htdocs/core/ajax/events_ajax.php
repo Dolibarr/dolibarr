@@ -84,12 +84,12 @@ switch ($action) {
 		$startDate = GETPOSTINT('start');
 		$endDate = GETPOSTINT('end');
 		$offset = (int) $parameters->offset;
-		$onlylast = (int) $parameters->onlylast;
+		$onlylast = (bool) GETPOSTINT('onlylast');
 		$search_actioncode = $parameters->search_actioncode;
 		$search_userid = $parameters->search_user;
 		$search_socid = $parameters->search_socid;
 		$search_states = $parameters->search_states;
-		$search_all = (bool) $parameters->search_all;
+		$search_all = GETPOST('search_all', 'alphanohtml');
 		$arrayofevents = getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $onlylast, $search_actioncode, $search_userid, $search_socid, $search_states, $search_all);
 		print json_encode($arrayofevents);
 		break;
@@ -333,11 +333,11 @@ switch ($action) {
 	case 'getdolusers':
 		$response = [];
 		$filterkey = GETPOST('q', 'alphanohtml');
-		$noactive = 0;
-		$force_entity = 0;
+		$noactive = GETPOSTINT('noactive');;
+		$force_entity = GETPOSTINT('force_entity');
 		$limit = 100;
 
-		if ($user->rights->agenda->allactions->read) {
+		if ($user->hasRight('agenda', 'allactions', 'read')) {
 			$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 			if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 				$sql .= ", e.label";
@@ -476,7 +476,7 @@ $db->close();
  *
  * @param   string  $resourceId     calendar id
  *
- * @return array array of events
+ * @return array<int,array{id:int,resourceId:string}> array of events
  */
 function getDeletedEventsId($resourceId)
 {
@@ -493,6 +493,7 @@ function getDeletedEventsId($resourceId)
 			'resourceId' => $resourceId,
 		];
 	}
+
 	return $events;
 }
 
@@ -501,8 +502,8 @@ function getDeletedEventsId($resourceId)
  *
  * @param   string  $resourceId     calendar id
  * @param   string  $calendarName   calendar name
- * @param   string  $startDate      start date
- * @param   string  $endDate        end date
+ * @param   int     $startDate      start date
+ * @param   int     $endDate        end date
  * @param   int     $offset         timezone offset
  * @param   bool    $onlylast       only last refreshed events
  * @param   string  $search_actioncode actions code comma separated
@@ -511,7 +512,7 @@ function getDeletedEventsId($resourceId)
  * @param   string  $search_states  comma separated list of states
  * @param   string  $search_all     search everywhere
  *
- * @return array array of events
+ * @return array<int,array<string,mixed>>
  */
 function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $onlylast, $search_actioncode, $search_userid, $socid, $search_states, $search_all)
 {
@@ -1070,7 +1071,7 @@ function HTMLToRGB($htmlCode)
 
 /**
  * RGB to HSL
- * @param string $RGB RGB color
+ * @param float|int $RGB RGB color
  * @return array{hue:int,saturation:int,lightness:int}
  */
 function RGBToHSL($RGB)
