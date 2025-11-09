@@ -46,7 +46,7 @@ top_httphead();
 	// JQuery
 	//$jQueryJSUrl = $context->rootUrl.'includes/jquery/js/jquery.js';
 	//$jQueryJSUrl = dol_buildpath('/includes/jquery/js/jquery.js', 2);
-	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/jquery.min.js';
+	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/js/jquery.min.js';
 	print '<script src="'.$jQueryJSUrl.'"></script>'."\n";
 
 	// JNotify
