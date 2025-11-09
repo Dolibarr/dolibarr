@@ -72,7 +72,6 @@
  * @var ?int $hidedesc
  * @var ?int $hideref
  * @var ?array<string,mixed> $moreparams
- * @var ?string $from
  */
 '
 @phan-var-force ?string $permissiontoread
@@ -481,6 +480,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			// Send email if there is at least one qualified object for current thirdparty
 			if (count($listofqualifiedobj) > 0) {
 				$langs->load("commercial");
+				$from = '';
 
 				$reg = array();
 				$fromtype = GETPOST('fromtype');
