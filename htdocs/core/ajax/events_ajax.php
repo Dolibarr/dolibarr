@@ -21,7 +21,7 @@
  *
  */
 
-use ICal\ICal;
+// use ICal\ICal;
 
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1); // Disables token renewal
@@ -523,38 +523,6 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 	$timeZone = $date->getTimezone();
 	$servertz = $timeZone->getName();
 
-	// $events = array(
-	//     'events' => array(
-	//         array(
-	//             'id' => '2',
-	//             'resourceId' => '1',
-	//             'title' => 'second schedule',
-	//             'category' => 'time',
-	//             'dueDateClass' => '',
-	//             'start' => '2019-09-18T10:30:00+02:00',
-	//             'end' => '2019-09-19T11:35:00+02:00'
-	//         ),
-	//         array(
-	//             'id' => '1',
-	//             'resourceId' => '1',
-	//             'title' => 'my schedule',
-	//             'category' => 'time',
-	//             'dueDateClass' => '',
-	//             'start' => '2019-09-18T12:30:00+02:00',
-	//             'end' => '2019-09-18T23:30:00+02:00'
-	//         ),
-	//         array(
-	//             'id' => '3',
-	//             'resourceId' => '1',
-	//             'title' => 'another schedule',
-	//             'category' => 'time',
-	//             'dueDateClass' => '',
-	//             'start' => '2019-09-18T17:30:00+02:00',
-	//             'end' => '2019-09-19T17:35:00+02:00'
-	//         ),
-	//     ),
-	//     'errors' => [],
-	// );
 	$hookmanager->initHooks(['agenda']);
 
 	if ($resourceId == '1') {
@@ -595,7 +563,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 			$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe s ON (s.rowid = a.fk_soc)';
 			$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'socpeople sp ON (sp.rowid = a.fk_contact)';
 		}
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
 		// We must filter on assignment table
@@ -847,7 +815,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				'editable' => false,
 				'allDay' => true,
 				// color : The schedule text color
-				'color' => isDarkColor($obj->color) ? '#ffffff' : '#000000',
+				'textColor' => isDarkColor($obj->color) ? '#ffffff' : '#000000',
 				// bgColor : The schedule background color
 				'backgroundColor' => $obj->color,
 				// borderColor : The schedule border color
@@ -921,146 +889,140 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 	}
 	//
 	// Complete $eventarray with external import Ical
-	if (count($listofextcals)) {
-		$firstdaytoshow = $startDate;
-		$lastdaytoshow = $endDate;
+	// if (count($listofextcals)) {
+	// 	$firstdaytoshow = $startDate;
+	// 	$lastdaytoshow = $endDate;
 
-		// require_once DOL_DOCUMENT_ROOT . '/comm/action/class/ical.class.php';
-		// cache des fichiers ics
-		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		// cette valeur peut se trouver dans le ical source, mais pas toujours
-		$cachetime = 7200;   // 7200 : 120mn
-		$cachedir = DOL_DATA_ROOT . '/agenda/temp';
+	// 	// require_once DOL_DOCUMENT_ROOT . '/comm/action/class/ical.class.php';
+	// 	// cache des fichiers ics
+	// 	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	// 	// cette valeur peut se trouver dans le ical source, mais pas toujours
+	// 	$cachetime = 7200;   // 7200 : 120mn
+	// 	$cachedir = DOL_DATA_ROOT . '/agenda/temp';
 
-		foreach ($listofextcals as $extcal) {
-			$url = $extcal['src'];
-			$namecal = $extcal['name'];
-			$offsettz = $extcal['offsettz'];
-			$colorcal = $extcal['color'];
-			//$buggedfile = $extcal['buggedfile'];
-			//print "url=".$url." namecal=".$namecal." colorcal=".$colorcal." buggedfile=".$buggedfile;
-			if ($extcal['cachename'] == 'private') {
-				$fileid = 'u' . $user->id . '-' . $extcal['number'] . '.cache';
-				$cachetime = ($extcal['cachetime'] > 0 ? $extcal['cachetime'] : 3600);   // 3600 : 60mn
-			} else {
-				$fileid = $extcal['number'] . '.cache';
-				$cachetime = ($extcal['cachetime'] > 0 ? $extcal['cachetime'] : 1800);   // 1800 : 30mn
-			}
-			$filename = '/ical-e' . $conf->entity . '-' . $fileid;
-			$refresh = dol_cache_refresh($cachedir, $filename, (int) $cachetime);
-			// dol_include_once('/prune/vendor/autoload.php');
-			// on cache le fichier si besoin
-			if ($refresh) {
-				try {
-					$ical = new ICal(false, [
-						// Default value
-						'defaultSpan' => 2,
-						'defaultTimeZone' => 'Europe/Paris',
-						// Default value
-						'defaultWeekStart' => 'MO',
-						// Default value
-						'disableCharacterReplacement' => false,
-						// Default value
-						'filterDaysAfter' => null,
-						// Default value
-						'filterDaysBefore' => null,
-						// Default value
-						'skipRecurrence' => false,
-					]);
-					// $ical->initFile(DOL_DATA_ROOT . '/agenda/temp/ICal.ics');
-					$ical->initUrl($url);
-				} catch (Exception $e) {
-					//die($e);
-					return [];
-				}
-				dol_syslog('Ical : ' . $namecal . ' cachetime : ' . print_r($ical->events(), true), LOG_WARNING);
-				// on cache le fichier parsé
-				dol_filecache($cachedir, $filename, $ical);
-			} else {
-				dol_syslog('reading Ical from cache : ' . $namecal . ' cachetime : ' . $cachetime, LOG_DEBUG);
-				// on récupère le fichier déjà parsé
-				$ical = dol_readcachefile($cachedir, $filename);
-			}
-			// pour faire des dumps dans la librairie ical, il faut désactiver le cache...
-			// print '<pre>' . print_r($ical, true)  . '</pre>';
-			$icalevents = $ical->events();
+	// 	foreach ($listofextcals as $extcal) {
+	// 		$url = $extcal['src'];
+	// 		$namecal = $extcal['name'];
+	// 		$offsettz = $extcal['offsettz'];
+	// 		$colorcal = $extcal['color'];
+	// 		//$buggedfile = $extcal['buggedfile'];
+	// 		//print "url=".$url." namecal=".$namecal." colorcal=".$colorcal." buggedfile=".$buggedfile;
+	// 		if ($extcal['cachename'] == 'private') {
+	// 			$fileid = 'u' . $user->id . '-' . $extcal['number'] . '.cache';
+	// 			$cachetime = ($extcal['cachetime'] > 0 ? $extcal['cachetime'] : 3600);   // 3600 : 60mn
+	// 		} else {
+	// 			$fileid = $extcal['number'] . '.cache';
+	// 			$cachetime = ($extcal['cachetime'] > 0 ? $extcal['cachetime'] : 1800);   // 1800 : 30mn
+	// 		}
+	// 		$filename = '/ical-e' . $conf->entity . '-' . $fileid;
+	// 		$refresh = dol_cache_refresh($cachedir, $filename, (int) $cachetime);
+	// 		// dol_include_once('/prune/vendor/autoload.php');
+	// 		// on cache le fichier si besoin
+	// 		if ($refresh) {
+	// 			try {
+	// 				$ical = new ICal(false, [
+	// 					// Default value
+	// 					'defaultSpan' => 2,
+	// 					'defaultTimeZone' => 'Europe/Paris',
+	// 					// Default value
+	// 					'defaultWeekStart' => 'MO',
+	// 					// Default value
+	// 					'disableCharacterReplacement' => false,
+	// 					// Default value
+	// 					'filterDaysAfter' => null,
+	// 					// Default value
+	// 					'filterDaysBefore' => null,
+	// 					// Default value
+	// 					'skipRecurrence' => false,
+	// 				]);
+	// 				// $ical->initFile(DOL_DATA_ROOT . '/agenda/temp/ICal.ics');
+	// 				$ical->initUrl($url);
+	// 			} catch (Exception $e) {
+	// 				//die($e);
+	// 				return [];
+	// 			}
+	// 			dol_syslog('Ical : ' . $namecal . ' cachetime : ' . print_r($ical->events(), true), LOG_WARNING);
+	// 			// on cache le fichier parsé
+	// 			dol_filecache($cachedir, $filename, $ical);
+	// 		} else {
+	// 			dol_syslog('reading Ical from cache : ' . $namecal . ' cachetime : ' . $cachetime, LOG_DEBUG);
+	// 			// on récupère le fichier déjà parsé
+	// 			$ical = dol_readcachefile($cachedir, $filename);
+	// 		}
+	// 		// pour faire des dumps dans la librairie ical, il faut désactiver le cache...
+	// 		// print '<pre>' . print_r($ical, true)  . '</pre>';
+	// 		$icalevents = $ical->events();
 
-			// Loop on each entry into cal file to know if entry is qualified and add an ActionComm into $eventarray
-			foreach ($icalevents as $icalevent) {
-				//print '<pre>' . print_r($icalevent, true)  . '</pre>';
-				$fulldayevent = false;
-				if (isset($icalevent->dtstart_array[0]['VALUE']) && $icalevent->dtstart_array[0]['VALUE'] == 'DATE') {
-					$fulldayevent = true;
-				}
+	// 		// Loop on each entry into cal file to know if entry is qualified and add an ActionComm into $eventarray
+	// 		foreach ($icalevents as $icalevent) {
+	// 			//print '<pre>' . print_r($icalevent, true)  . '</pre>';
+	// 			$fulldayevent = false;
+	// 			if (isset($icalevent->dtstart_array[0]['VALUE']) && $icalevent->dtstart_array[0]['VALUE'] == 'DATE') {
+	// 				$fulldayevent = true;
+	// 			}
 
-				$datep = $icalevent->dtstart_array[2] + ($offsettz * 3600);
-				if (isset($icalevent->dtend_array[2])) {
-					// si fulldayevent on retire 1 sec pour avoir 23.59.59
-					$datef = $icalevent->dtend_array[2] + ($offsettz * 3600) - ($fulldayevent ? 1 : 0);
-				} else {
-					$datef = $datep;
-				}
+	// 			$datep = $icalevent->dtstart_array[2] + ($offsettz * 3600);
+	// 			if (isset($icalevent->dtend_array[2])) {
+	// 				// si fulldayevent on retire 1 sec pour avoir 23.59.59
+	// 				$datef = $icalevent->dtend_array[2] + ($offsettz * 3600) - ($fulldayevent ? 1 : 0);
+	// 			} else {
+	// 				$datef = $datep;
+	// 			}
 
-				$date_start_in_calendar = $datep;
+	// 			$date_start_in_calendar = $datep;
 
-				if ($datef != '' && $datef >= $datep) {
-					$date_end_in_calendar = $datef;
-				} else {
-					$date_end_in_calendar = $datep;
-				}
+	// 			if ($datef != '' && $datef >= $datep) {
+	// 				$date_end_in_calendar = $datef;
+	// 			} else {
+	// 				$date_end_in_calendar = $datep;
+	// 			}
 
-				// Add event into $events if date range are ok.
-				if ($date_end_in_calendar < $firstdaytoshow || $date_start_in_calendar >= $lastdaytoshow) {
-					//print '<pre>' . print_r($icalevent, true)  . '</pre>';
-					//print '<pre>' . $icalevent->printData()  . '</pre>';
-					//print 'x'.$datestart.'-'.$dateend;exit;
-					//print 'x'.$datestart.'-'.$dateend;exit;
-					//print 'x'.$datestart.'-'.$dateend;exit;
-					// This record is out of visible range
-				} else {
-					$dtstart = new DateTime();
-					$dtstart->setTimestamp($date_start_in_calendar);
-					$dtstart->setTimezone(new DateTimeZone($ical->defaultTimeZone));
-					$dtend = new DateTime();
-					$dtend->setTimestamp($date_end_in_calendar);
-					$dtend->setTimezone(new DateTimeZone($ical->defaultTimeZone));
+	// 			// Add event into $events if date range are ok.
+	// 			if ($date_end_in_calendar < $firstdaytoshow || $date_start_in_calendar >= $lastdaytoshow) {
+	// 				//print '<pre>' . print_r($icalevent, true)  . '</pre>';
+	// 				//print '<pre>' . $icalevent->printData()  . '</pre>';
+	// 				//print 'x'.$datestart.'-'.$dateend;exit;
+	// 				//print 'x'.$datestart.'-'.$dateend;exit;
+	// 				//print 'x'.$datestart.'-'.$dateend;exit;
+	// 				// This record is out of visible range
+	// 			} else {
+	// 				$dtstart = new DateTime();
+	// 				$dtstart->setTimestamp($date_start_in_calendar);
+	// 				$dtstart->setTimezone(new DateTimeZone($ical->defaultTimeZone));
+	// 				$dtend = new DateTime();
+	// 				$dtend->setTimestamp($date_end_in_calendar);
+	// 				$dtend->setTimezone(new DateTimeZone($ical->defaultTimeZone));
 
-					$events[] = [
-						// id : The unique schedule id depends on calendar id
-						'id' => $icalevent->uid,
-						// resourceId : The unique calendar id
-						'resourceId' => $resourceId,
-						// title : The schedule title
-						'title' => html_entity_decode($icalevent->summary),
-						// body : The schedule body text which is text/plain
-						'body' => nl2br($icalevent->description),
-						// 'start' => dol_print_date($date_start_in_calendar, "%Y-%m-%dT%H:%M:%S").'+03:00',
-						// 'end' => dol_print_date($date_end_in_calendar, "%Y-%m-%dT%H:%M:%S").'+03:00',
-						'start' => $dtstart->format('Y-m-d H:i:sP'),
-						'end' => $dtend->format('Y-m-d H:i:sP'),
-						// Le temps de trajet: Durée aller en minutes
-						'goingDuration' => 0,
-						// Le temps de trajet: Durée retour en minutes
-						'comingDuration' => 0,
-						// icals are readonly
-						'isReadOnly' => true,
-						'isAllDay' => $fulldayevent,
-						// color : The schedule text color
-						'color' => isDarkColor($colorcal) ? '#ffffff' : '#000000',
-						// bgColor : The schedule background color
-						'bgColor' => '#' . $colorcal,
-						// borderColor : The schedule border color
-						'borderColor' => '#' . $colorcal,
-						'category' => $fulldayevent ? 'allday' : 'time',
-						'dueDateClass' => '',
-						'location' => $icalevent->location,
-						// raw : The user data
-						'raw' => new stdClass(),
-					];
-				}
-			}
-		}
-	}
+	// 				$events[] = [
+	// 					// id : The unique schedule id depends on calendar id
+	// 					'id' => $icalevent->uid,
+	// 					// resourceId : The unique calendar id
+	// 					'resourceId' => $resourceId,
+	// 					// title : The schedule title
+	// 					'title' => html_entity_decode($icalevent->summary),
+	// 					// body : The schedule body text which is text/plain
+	// 					'body' => nl2br($icalevent->description),
+	// 					// 'start' => dol_print_date($date_start_in_calendar, "%Y-%m-%dT%H:%M:%S").'+03:00',
+	// 					// 'end' => dol_print_date($date_end_in_calendar, "%Y-%m-%dT%H:%M:%S").'+03:00',
+	// 					'start' => $dtstart->format('Y-m-d H:i:sP'),
+	// 					'end' => $dtend->format('Y-m-d H:i:sP'),
+	// 					// icals are readonly
+	// 					'editable' => false,
+	// 					'allDay' => $fulldayevent,
+	// 					// color : The schedule text color
+	// 					'color' => isDarkColor($colorcal) ? '#ffffff' : '#000000',
+	// 					// bgColor : The schedule background color
+	// 					'bgColor' => '#' . $colorcal,
+	// 					// borderColor : The schedule border color
+	// 					'borderColor' => '#' . $colorcal,
+	// 					'location' => $icalevent->location,
+	// 					// raw : The user data
+	// 					'raw' => new stdClass(),
+	// 				];
+	// 			}
+	// 		}
+	// 	}
+	// }
 	return $events;
 }
 
