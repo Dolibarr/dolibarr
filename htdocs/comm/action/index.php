@@ -518,13 +518,14 @@ $paramnoaction = preg_replace('/mode=[a-z_]+/', '', preg_replace('/action=[a-z_]
 $paramnoactionodate = preg_replace('/mode=[a-z_]+/', '', preg_replace('/action=[a-z_]+/', '', $paramnodate));
 
 $head = calendars_prepare_head($paramnoaction);
-
-print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-if ($optioncss != '') {
-	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if (!getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
+	print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 }
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $viewmode = '<div class="navmode inline-block">';
@@ -1614,15 +1615,16 @@ if (is_readable($color_file)) {
 }
 
 $massactionbutton = '';
+if (!getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
+	print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+	if ($nbevents > $MAXONSAMEPAGE) {
+		print info_admin('Number of results has been truncated to '.$MAXONSAMEPAGE, 0, 0, 'warning').'<br>';
+	}
 
-if ($nbevents > $MAXONSAMEPAGE) {
-	print info_admin('Number of results has been truncated to '.$MAXONSAMEPAGE, 0, 0, 'warning').'<br>';
+	// Show div with list of calendars
+	print $s;
 }
-
-// Show div with list of calendars
-print $s;
 if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	?>
 	<style type="text/css">
