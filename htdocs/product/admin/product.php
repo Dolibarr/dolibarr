@@ -778,7 +778,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td class="right">';
-	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE') ? $conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE : 0), 1);
+	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", getDolGlobalInt('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE'), 1);
 	print '</td>';
 	print '</tr>';
 }
