@@ -442,9 +442,9 @@ if (empty($reshook)) {
 					$sql .= ", ";
 				}
 				if ($keycode == 'tms') {
-					$sql .= '"'.$db->escape($now_insert_timestamp).'"';
+					$sql .= "'".$db->escape($now_insert_timestamp)."'";
 				} elseif ($keycode == 'datec') {
-					$sql .= '"'.$db->escape($now_insert_timestamp).'"';
+					$sql .= "'".$db->escape($now_insert_timestamp)."'";
 				} elseif (GETPOST($keycode) == '' && $keycode != 'langcode') {
 					$sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
 				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
@@ -545,7 +545,7 @@ if (empty($reshook)) {
 					$sql .= $field."=";
 
 					if ($keycode == 'tms') {
-						$sql .= '"'.$db->escape($now_update_timestamp).'"';
+						$sql .= "'".$db->escape($now_update_timestamp)."'";
 					} elseif (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
