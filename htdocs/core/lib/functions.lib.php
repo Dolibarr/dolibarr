@@ -3770,7 +3770,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	}
 
 	// Clean parameters
-	$to_gmt = false;
+	$to_gmt = false;	// false if we want date in server timezone, true if we want to add offset
 	$offsettz = $offsetdst = 0;
 	if ($tzoutput) {
 		$to_gmt = true; // For backward compatibility
@@ -3914,10 +3914,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		// Date is a timestamps
 		if ($time < 100000000000) {	// Protection against bad date values
 			$dtts = new DateTime();
-			if ($to_gmt) {
+			//var_dump($tzoutput.' '.$offsettzstring.' '.$offsettz.$offsetdst.' x '.$to_gmt);
+			if ($to_gmt) {	// to_gmt means "not in php server timezone" (if tzoutput = 'gmt', offsets should be 0 but if = 'tzuser...', offsets may be defined
+				$timetouse = (int) $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
+
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 				$dtts->setTimezone($tzo);	// important: must be before the setTimestamp
-				$dtts->setTimestamp((int) $time);
+				$dtts->setTimestamp($timetouse);
 			} else {
 				$timetouse = (int) $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
