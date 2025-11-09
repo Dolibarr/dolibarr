@@ -673,8 +673,8 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 			$event->fetchObjectLinked();
 			// $event->fetch_optionals();
 			$event->fetch_userassigned();
-			// $event->color = $obj->color ? '#' . $obj->color : '';
-			// $event->type_color = $obj->type_color;
+			$event->color = $obj->color ? '#' . $obj->color : ''; // color from user
+			$event->type_color = $obj->type_color; // color from c_actioncomm
 			// $event->type_picto = $obj->type_picto;
 
 			$isallday = $event->fulldayevent ? true : false;
@@ -728,7 +728,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				// color : The schedule text color (black or white)
 				'textColor' => ($obj->color != '' && isDarkColor($obj->color)) ? '#ffffff' : '#000000',
 				// bgColor : The schedule background color
-				'backgroundColor' => $event->color,
+				'backgroundColor' => $event->type_color,
 				// borderColor : The schedule border color
 				'borderColor' => $event->color,
 				// raw : The user data

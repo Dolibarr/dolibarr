@@ -26,6 +26,7 @@ ActionAssignedTo=Event assigned to
 ViewCal=Month view
 ViewDay=Day view
 ViewWeek=Week view
+ListWeek=Week list
 ViewPerUser=Per user view
 ViewPerType=Per type view
 AutoActions= Automatic filling
