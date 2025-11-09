@@ -410,7 +410,6 @@ if (empty($reshook)) {
 			// List of values
 			$i = 0;
 			$now = dol_now();
-			$now_insert_timestamp = dol_print_date($now, 'standard');
 			foreach ($listfieldinsert as $f => $value) {
 				$keycode = isset($listfieldvalue[$i]) ? $listfieldvalue[$i] : "";
 				if ($value == 'lang') {
@@ -442,9 +441,9 @@ if (empty($reshook)) {
 					$sql .= ", ";
 				}
 				if ($keycode == 'tms') {
-					$sql .= "'".$db->escape($now_insert_timestamp)."'";
+					$sql .= "'".$db->idate($now)."'";
 				} elseif ($keycode == 'datec') {
-					$sql .= "'".$db->escape($now_insert_timestamp)."'";
+					$sql .= "'".$db->idate($now)."'";
 				} elseif (GETPOST($keycode) == '' && $keycode != 'langcode') {
 					$sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
 				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
@@ -502,7 +501,6 @@ if (empty($reshook)) {
 				// Modify value of fields
 				$i = 0;
 				$now = dol_now();
-				$now_update_timestamp = dol_print_date($now, 'standard');
 				foreach ($listfieldmodify as $field) {
 					if ($field == 'entity') {
 						// entity not present on listfieldmodify array
@@ -545,7 +543,7 @@ if (empty($reshook)) {
 					$sql .= $field."=";
 
 					if ($keycode == 'tms') {
-						$sql .= "'".$db->escape($now_update_timestamp)."'";
+						$sql .= "'".$db->idate($now)."'";
 					} elseif (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
