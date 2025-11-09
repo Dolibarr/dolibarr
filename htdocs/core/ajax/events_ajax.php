@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright © 2019-2020  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,19 +225,19 @@ switch ($action) {
 			// Can use index if COMPANY_DONOTSEARCH_ANYWHERE is on
 			$prefix = empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE) ? '%' : '';
 			// For natural search
-			$scrit = explode(' ', $filterkey);
+			$scriteria = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (count($scriteria) > 1) {
 				$sql .= "(";
 			}
-			foreach ($scrit as $crit) {
+			foreach ($scriteria as $crit) {
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
 				$sql .= "(s.nom LIKE '" . $db->escape($prefix . $crit) . "%')";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (count($scriteria) > 1) {
 				$sql .= ")";
 			}
 			if (!empty($conf->barcode->enabled)) {
@@ -409,7 +410,7 @@ switch ($action) {
 		break;
 	case 'getresources':
 		$response = [];
-		if (isModEnabled('resource') && $user->rights->agenda->allactions->read) {
+		if (isModEnabled('resource') && $user->hasRight('agenda', 'allactions', 'read')) {
 			// include_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
 			// $formresource = new FormResource($db);
 
@@ -596,7 +597,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 		if (!$user->rights->societe->client->voir && !$socid) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
-		// We must filter on assignement table
+		// We must filter on assignment table
 		if ($search_userid > 0 || $usergroup > 0) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "actioncomm_resources as ar ON (ar.fk_actioncomm = a.id)";
 		}
@@ -638,7 +639,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 			}
 			$sql .= ')';
 		}
-		// We must filter on assignement table
+		// We must filter on assignment table
 		if ($search_userid > 0 || $usergroup > 0) {
 			$sql .= " AND ar.element_type='user'";
 		}
@@ -667,7 +668,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 		if ($status == 'todo') {
 			$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '" . $db->idate($now) . "'))";
 		}
-		// We must filter on assignement table
+		// We must filter on assignment table
 		if ($search_userid > 0 || $usergroup > 0) {
 			$sql .= " AND (";
 			if ($search_userid > 0) {
@@ -806,13 +807,13 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 			// A SUPPRIMER pas besoin de ActionComm
 			// $event = new ActionComm($db);
 			// We put contact id in action id for birthdays events
-			// peut faire des conflits??
+			// may create conflicts ??
 			// $event->id = $obj->rowid;
 			$datebirth = dol_stringtotime($obj->birthday, 1);
 			// print 'ee'.$obj->birthday.'-'.$datebirth;
 			$datearray = dol_getdate($datebirth, true);
 			// determiner correctement le choix de l'année
-			// For full day events, date are also GMT but they wont but converted during output
+			// For full day events, date are also GMT but they won't but converted during output
 			$datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], (int) date("Y", dol_stringtotime($endDate)), true);
 			// $event->datef = $event->datep;
 			// $event->type_code = 'BIRTHDAY';
