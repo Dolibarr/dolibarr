@@ -119,23 +119,33 @@ $hookmanager->initHooks(array('emailtemplates'));
 $tabname = array();
 $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 
+// Used by the GUI during creation so we don't ask the user to fill in tms and datec
+$tabfieldguicreate = array();
+$tabfieldguicreate[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content";
+if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
+	$tabfieldguicreate[25] .= ',content_lines';
+}
+
 // Nom des champs en resultat de select pour affichage du dictionnaire
+// Names of fields in select results for dictionary display (AI translated)
 $tabfield = array();
-$tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content";
+$tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content,tms,datec";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfield[25] .= ',content_lines';
 }
 
 // Nom des champs d'edition pour modification d'un enregistrement
+// Names of edit fields for modifying a record (AI translated)
 $tabfieldvalue = array();
-$tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
+$tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content,tms";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldvalue[25] .= ',content_lines';
 }
 
 // Nom des champs dans la table pour insertion d'un enregistrement
+// Field names in the table for inserting a record (AI translated)
 $tabfieldinsert = array();
-$tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
+$tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content,tms,datec";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldinsert[25] .= ',content_lines';
 }
@@ -338,14 +348,14 @@ if (empty($reshook)) {
 	if ((GETPOST('actionadd', 'alpha') && $permissiontoadd) || (GETPOST('actionmodify', 'alpha') && $permissiontoedit)) {
 		$listfield = explode(',', str_replace(' ', '', $tabfield[25]));
 		$listfieldinsert = explode(',', $tabfieldinsert[25]);
-		$listfieldmodify = explode(',', $tabfieldinsert[25]);
+		$listfieldmodify = explode(',', $tabfieldvalue[25]);
 		$listfieldvalue = explode(',', $tabfieldvalue[25]);
 
 		// Check that all fields are filled
 		$ok = 1;
 		foreach ($listfield as $f => $value) {
 			// Not mandatory fields
-			if (in_array($value, ['joinfiles', 'defaultfortype', 'content', 'content_lines', 'module'])) {
+			if (in_array($value, ['joinfiles', 'defaultfortype', 'content', 'content_lines', 'module', 'tms', 'datec'])) {
 				continue;
 			}
 
@@ -399,6 +409,8 @@ if (empty($reshook)) {
 
 			// List of values
 			$i = 0;
+			$now = dol_now();
+			$now_insert_timestamp = dol_print_date($now, 'standard');
 			foreach ($listfieldinsert as $f => $value) {
 				$keycode = isset($listfieldvalue[$i]) ? $listfieldvalue[$i] : "";
 				if ($value == 'lang') {
@@ -446,6 +458,12 @@ if (empty($reshook)) {
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
+				if ($value == 'tms') {
+					$_POST[$keycode] = $now_insert_timestamp;
+				}
+				if ($value == 'datec') {
+					$_POST[$keycode] = $now_insert_timestamp;
+				}
 				$i++;
 			}
 			$sql .= ", 1, 1)";
@@ -485,6 +503,8 @@ if (empty($reshook)) {
 				$sql = "UPDATE ".$tabname[25]." SET ";
 				// Modify value of fields
 				$i = 0;
+				$now = dol_now();
+				$now_update_timestamp = dol_print_date($now, 'standard');
 				foreach ($listfieldmodify as $field) {
 					if ($field == 'entity') {
 						// entity not present on listfieldmodify array
@@ -526,7 +546,9 @@ if (empty($reshook)) {
 					}
 					$sql .= $field."=";
 
-					if (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
+					if ($keycode == 'tms') {
+						$sql .= '"'.$now_update_timestamp.'"';
+					} elseif (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
 						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
@@ -631,7 +653,7 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 $morejs = array();
 $morecss = array();
 
-$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from,joinfiles, defaultfortype, content_lines, content, enabled, active";
+$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from,joinfiles, defaultfortype, content_lines, content, enabled, active, tms, datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin) {
@@ -756,18 +778,23 @@ if ($action == 'create') {
 	$obj->defaultfortype = GETPOST('defaultfortype') ? 1 : 0;
 	$obj->content = GETPOST('content', 'restricthtml');
 
+	$now_form_timestamp = dol_print_date($now, 'standard');
 	// Form to add a new line
-	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="tms" value="'.$now_form_timestamp.'">';
+	print '<input type="hidden" name="datec" value="'.$now_form_timestamp.'">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
+	// Only used during GUI creation
+	$fieldlist = explode(',', $tabfieldguicreate[25]);
 	foreach ($fieldlist as $field => $value) {
 		// Determine le nom du champ par rapport aux noms possibles
 		// dans les dictionnaires de donnees
@@ -843,7 +870,6 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('createEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 	$error = $hookmanager->error;
 	$errors = $hookmanager->errors;
-
 
 	// Line to enter new values (input fields)
 	print '<tr class="oddeven">';
@@ -921,6 +947,8 @@ if ($action == 'create') {
 
 	print '<br><br><br>';
 }
+// back to viewing with tms and datec
+$fieldlist = explode(',', $tabfield[25]);
 
 // List of available record in database
 dol_syslog("htdocs/admin/dict", LOG_DEBUG);
@@ -932,7 +960,7 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
@@ -1123,7 +1151,13 @@ if ($num) {
 				print '<tr class="nohover oddeven" id="rowid-'.$obj->rowid.'">';
 
 				$tmpaction = 'edit';
-				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+				if ($action == 'edit') {
+					// do not show tms and datec
+					$fieldlist = explode(',', $tabfieldguicreate[25]);
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+				} else {
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+				}
 				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 				$error = $hookmanager->error;
 				$errors = $hookmanager->errors;
