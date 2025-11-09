@@ -1638,6 +1638,43 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	$firstday = getDolGlobalInt('MAIN_START_WEEK', 1);
 	?>
 <style type="text/css">
+
+.row {
+	display: flex;
+}
+.col {
+	flex: 1 1 0%;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.ec {
+	height: 640px;
+}
+.ec.ec-day-grid {
+	height: 400px;
+}
+@media (min-width: 576px) {
+	.ec {
+		height: 700px;
+	}
+	.ec.ec-day-grid {
+		height: 500px;
+	}
+}
+@media (min-width: 992px) {
+	.ec {
+		height: 800px;
+	}
+	.ec.ec-day-grid {
+		height: 700px;
+	}
+}
+@media (min-width: 1200px) {
+	.ec.ec-day-grid {
+		height: 800px;
+	}
+}
 	.row {
 		display: flex;
 	}
