@@ -787,7 +787,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="datec" value="'.$now_form_timestamp.'">';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent" id="table_create_c_email_template">';
 
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
@@ -963,7 +963,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
+print '<table class="noborder centpercent" id="table_list_of_c_email_templates">';
 
 $i = 0;
 
