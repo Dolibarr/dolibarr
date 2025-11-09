@@ -257,7 +257,13 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
-llxHeader('', $langs->trans("Agenda"), $help_url, '', 0, 0, ['includes/event-calendar/event-calendar.min.js'], ['includes/event-calendar/event-calendar.min.css']);
+$arrayofjs = [];
+$arrayofcss = [];
+if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
+	$arrayofjs = ['includes/event-calendar/event-calendar.min.js'];
+	$arrayofcss = ['includes/event-calendar/event-calendar.min.css'];
+}
+llxHeader('', $langs->trans("Agenda"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
@@ -1617,23 +1623,7 @@ if ($nbevents > $MAXONSAMEPAGE) {
 
 // Show div with list of calendars
 // print $s;
-
-
-if (empty($mode) || $mode == 'show_month') {      // View by month
-	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam); // To avoid replacement when replace day= is done
-	$newparam = preg_replace('/mode=show_month&?/i', '', $newparam);
-	$newparam = preg_replace('/mode=show_week&?/i', '', $newparam);
-	$newparam = preg_replace('/day=[0-9]+&?/i', '', $newparam);
-	$newparam = preg_replace('/month=[0-9]+&?/i', '', $newparam);
-	$newparam = preg_replace('/year=[0-9]+&?/i', '', $newparam);
-	$newparam = preg_replace('/viewcal=[0-9]+&?/i', '', $newparam);
-	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
-	$newparam .= '&viewcal=1';
-
-	//print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	//print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
-	//print '</div>';
+if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	?>
 	<style type="text/css">
 		.row {
@@ -1729,7 +1719,26 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	}
 </script>
 	<?php
+	llxFooter();
+	$db->close();
 	exit;
+}
+if (empty($mode) || $mode == 'show_month') {      // View by month
+	$newparam = $param; // newparam is for birthday links
+	$newparam = preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam); // To avoid replacement when replace day= is done
+	$newparam = preg_replace('/mode=show_month&?/i', '', $newparam);
+	$newparam = preg_replace('/mode=show_week&?/i', '', $newparam);
+	$newparam = preg_replace('/day=[0-9]+&?/i', '', $newparam);
+	$newparam = preg_replace('/month=[0-9]+&?/i', '', $newparam);
+	$newparam = preg_replace('/year=[0-9]+&?/i', '', $newparam);
+	$newparam = preg_replace('/viewcal=[0-9]+&?/i', '', $newparam);
+	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
+	$newparam .= '&viewcal=1';
+
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+	print '</div>';
+
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
