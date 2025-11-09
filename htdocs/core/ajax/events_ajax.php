@@ -743,7 +743,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 				//$assignedUsers[] = dolGetFirstLastname($CacheUser[$value['id']]->firstname, $CacheUser[$value['id']]->lastname);
 				$assignedUsers[] = $CacheUser[$value['id']]->tooltip;
 			}
-			// Is Read Only
+			// Is Editable ?
 			$isEditable = true;
 			if (($event->type_code == 'AC_OTH_AUTO') || (($user->id != $event->userownerid) && !$user->rights->agenda->allactions->create)) {
 				$isEditable = false;
@@ -753,7 +753,7 @@ function getEvents($calendarId, $calendarName, $startDate, $endDate, $offset, $o
 				// id : The unique schedule id depends on calendar id
 				'id' => (int) $event->id,
 				// calendarId : The unique calendar id
-				'calendarId' => '1',
+				'resourceId' => '1',
 				// title : The schedule title
 				'title' => $event->label,
 				// body : The schedule body text which is text/plain
