@@ -422,7 +422,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</td></tr>';
 	}
 
-	print '<tr class="oddeven"><td colspan="'.$colspan.'" class="center">';
+	print '<tr class="oddeven nohover"><td colspan="'.$colspan.'" class="center">';
 
 	if (getDolGlobalString('MAIN_FORCETHEME')) {
 		$langs->load("errors");

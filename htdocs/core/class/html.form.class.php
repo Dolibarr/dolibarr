@@ -9175,10 +9175,11 @@ class Form
 	 * @param int 			$disabled 			1=Html component is disabled
 	 * @param string 		$sortfield 			Sort field
 	 * @param string 		$filter 			Add more filter (Universal Search Filter)
+	 * @param string 		$sortorder 			Sort order field
 	 * @return string|array<array{key:string,value:mixed,label:string}> Return HTML string
 	 * @see selectForForms()
 	 */
-	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
+	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '', $sortorder = 'ASC')
 	{
 		global $langs, $user, $hookmanager;
 
@@ -9315,7 +9316,7 @@ class Form
 				}
 			}
 		}
-		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
+		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, $sortorder);
 		//$sql.=$this->db->plimit($limit, 0);
 		//print $sql;
 
@@ -9584,6 +9585,7 @@ class Form
 				}
 				$out .= '<option value="' . $key . '"';
 				$out .= $style . $disabled;
+				$out .= is_array($tmpvalue) && !empty($tmpvalue['parent']) ? ' parent="' . dolPrintHTMLForAttribute($tmpvalue['parent']) . '"' : '';
 				if (is_array($id)) {
 					if (in_array($key, $id) && !$disabled) {
 						$out .= ' selected'; // To preselect a value
@@ -9925,6 +9927,7 @@ class Form
 					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
 						$out .= ' selected';
 					}
+					$out .= is_array($value) && array_key_exists('parent', $value) && !empty($value['parent']) ? ' parent="' . dolPrintHTMLForAttribute($value['parent']) . '"' : '';
 					if ($tmpdisabled) {
 						$out .= ' disabled="disabled"';
 					}
