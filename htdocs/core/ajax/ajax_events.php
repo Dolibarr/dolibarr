@@ -62,8 +62,8 @@ $langs->loadLangs(["agenda", "other", "commercial", "companies"]);
 
 top_httphead('application/json', 1);
 // dol_syslog('posted events ajax GET '.print_r($_GET, true), LOG_WARNING);
-dol_syslog('posted events ajax POST '.print_r($_POST, true), LOG_WARNING);
-dol_syslog('posted events ajax REQUEST '.print_r($_REQUEST, true), LOG_WARNING);
+dol_syslog('posted events ajax POST ' . print_r($_POST, true), LOG_WARNING);
+dol_syslog('posted events ajax REQUEST ' . print_r($_REQUEST, true), LOG_WARNING);
 $action = GETPOSTISSET('action') ? GETPOST('action', 'aZ09') : 'getevents';
 switch ($action) {
 	case 'getconfig':
@@ -402,18 +402,18 @@ switch ($action) {
 		break;
 	case 'getresources':
 		$response = [];
-		if (isModEnabled('resource') && $user->hasRight('agenda', 'allactions', 'read')) {
-			// include_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
-			// $formresource = new FormResource($db);
+		// if (isModEnabled('resource') && $user->hasRight('agenda', 'allactions', 'read')) {
+		// 	include_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
+		// 	$formresource = new FormResource($db);
 
-			// // Resource
-			// $html .= '<tr>';
-			// $html .= '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
-			// $html .= $langs->trans("Resource");
-			// $html .= ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-			// $html .= $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2);
-			// $html .= '</td></tr>';
-		}
+		// 	// Resource
+		// 	$html .= '<tr>';
+		// 	$html .= '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		// 	$html .= $langs->trans("Resource");
+		// 	$html .= ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		// 	$html .= $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2);
+		// 	$html .= '</td></tr>';
+		// }
 		print json_encode($response);
 		break;
 	case 'gettypeactions':
@@ -455,6 +455,59 @@ switch ($action) {
 			$response[] = $obj;
 		}
 		print json_encode($response);
+		break;
+	case 'getcalendars':
+		$listofextcals = [];
+		$MAXAGENDA = getDolGlobalInt('AGENDA_EXT_NB', 6);
+		// Define list of external calendars (global admin setup)
+		if (!getDolGlobalInt('AGENDA_DISABLE_EXT')) {
+			$i = 0;
+			while ($i < $MAXAGENDA) {
+				$i++;
+				$source = 'AGENDA_EXT_SRC' . $i;
+				$name = 'AGENDA_EXT_NAME' . $i;
+				$offsettz = 'AGENDA_EXT_OFFSETTZ' . $i;
+				$color = 'AGENDA_EXT_COLOR' . $i;
+				$buggedfile = 'AGENDA_EXT_BUGGEDFILE' . $i;
+				if (getDolGlobalString($source) && getDolGlobalString($name)) {
+					// Note: $conf->global->buggedfile can be empty
+					// or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+					$listofextcals[] = [
+						'src' => getDolGlobalString($source),
+						'name' => getDolGlobalString($name),
+						'calendarId' => md5(getDolGlobalString($name)),
+						'offsettz' => getDolGlobalInt($offsettz),
+						'color' => getDolGlobalString($color),
+						'buggedfile' => (isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0),
+					];
+				}
+			}
+		}
+		// Define list of external calendars (user setup)
+		if (!getDolUserInt('AGENDA_DISABLE_EXT')) {
+			$i = 0;
+			while ($i < $MAXAGENDA) {
+				$i++;
+				$source = 'AGENDA_EXT_SRC_' . $user->id . '_' . $i;
+				$name = 'AGENDA_EXT_NAME_' . $user->id . '_' . $i;
+				$offsettz = 'AGENDA_EXT_OFFSETTZ_' . $user->id . '_' . $i;
+				$color = 'AGENDA_EXT_COLOR_' . $user->id . '_' . $i;
+				$enabled = 'AGENDA_EXT_ENABLED_' . $user->id . '_' . $i;
+				$buggedfile = 'AGENDA_EXT_BUGGEDFILE_' . $user->id . '_' . $i;
+				if (getDolUserString($source) && getDolUserString($name)) {
+					// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+					$listofextcals[] = [
+						'src' => $user->conf->$source,
+						'name' => getDolUserString($name),
+						'calendarId' => md5(getDolUserString($name)),
+						'offsettz' => getDolUserInt($offsettz),
+						'color' => $user->conf->$color,
+						'buggedfile' => (isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0),
+					];
+				}
+			}
+		}
+		print json_encode($listofextcals);
 		break;
 	default:
 		print json_encode([]);
@@ -714,7 +767,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				// resourceId : The unique calendar id
 				'resourceId' => 1,
 				// title : The schedule title
-				'title' => ['html' => (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '') . $event->getNomUrl(0, 16, 'cal_event cal_event_title valignmiddle', '', 0, 0)],
+				'title' => ['html' => (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '') . $event->getNomUrl(0, 0, 'cal_event cal_event_title valignmiddle', '', 0, 0)],
 				// body : The schedule body text which is text/plain
 				'body' => $event->note_private,
 				'start' => $dtstart->format(DATE_ATOM),
@@ -790,7 +843,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 	if ($resourceId > 2) {
 		$MAXAGENDA = getDolGlobalInt('AGENDA_EXT_NB', 5);
 		// Define list of external calendars (global admin setup)
-		if (empty($conf->global->AGENDA_DISABLE_EXT)) {
+		if (!getDolGlobalInt('AGENDA_DISABLE_EXT')) {
 			$i = 0;
 			while ($i < $MAXAGENDA) {
 				$i++;
@@ -800,18 +853,18 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				$color = 'AGENDA_EXT_COLOR' . $i;
 				$cachetime = 'AGENDA_EXT_CACHE' . $i;
 				//$buggedfile = 'AGENDA_EXT_BUGGEDFILE' . $i;
-				if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
+				if (getDolGlobalString($source) && getDolGlobalString($name)) {
 					// Note: $conf->global->buggedfile can be empty
 					// or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-					if ($calendarName == $conf->global->$name) {
+					if ($calendarName == getDolGlobalString($name)) {
 						$listofextcals[] = [
 							'cachename' => 'global',
 							'cachetime' => $conf->global->$cachetime ?? -1,
-							'number' => md5($conf->global->$name),
+							'calendarId' => md5(getDolGlobalString($name)),
 							'src' => $conf->global->$source,
-							'name' => $conf->global->$name,
-							'offsettz' => empty($conf->global->$offsettz) ? 0 : $conf->global->$offsettz,
-							'color' => $conf->global->$color,
+							'name' => getDolGlobalString($name),
+							'offsettz' => getDolGlobalInt($offsettz),
+							'color' => getDolGlobalString($color),
 							//'buggedfile' => (isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0),
 						];
 					}
@@ -819,7 +872,7 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 			}
 		}
 		// Define list of external calendars (user setup)
-		if (empty($user->conf->AGENDA_DISABLE_EXT)) {
+		if (!getDolUserInt('AGENDA_DISABLE_EXT')) {
 			$i = 0;
 			while ($i < $MAXAGENDA) {
 				$i++;
@@ -830,17 +883,17 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 				$cachetime = 'AGENDA_EXT_CACHE_' . $user->id . '_' . $i;
 				//$enabled = 'AGENDA_EXT_ENABLED_' . $user->id . '_' . $i;
 				//$buggedfile = 'AGENDA_EXT_BUGGEDFILE_' . $user->id . '_' . $i;
-				if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
+				if (!empty($user->conf->$source) && getDolUserString($name)) {
 					// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-					if ($calendarName == $user->conf->$name) {
+					if ($calendarName == getDolUserString($name)) {
 						$listofextcals[] = [
 							'cachename' => 'private',
-							'cachetime' => $user->conf->$cachetime ?? -1,
-							'number' => md5($user->conf->$name),
-							'src' => $user->conf->$source,
-							'name' => $user->conf->$name,
+							'cachetime' => getDolUserInt($cachetime, -1),
+							'calendarId' => md5(getDolUserString($name)),
+							'src' => getDolUserString($source),
+							'name' => getDolUserString($name),
 							'offsettz' => empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz,
-							'color' => $user->conf->$color,
+							'color' => getDolUserString($color),
 							//'buggedfile' => (isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0),
 						];
 					}
@@ -869,10 +922,10 @@ function getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $o
 	// 		//$buggedfile = $extcal['buggedfile'];
 	// 		//print "url=".$url." namecal=".$namecal." colorcal=".$colorcal." buggedfile=".$buggedfile;
 	// 		if ($extcal['cachename'] == 'private') {
-	// 			$fileid = 'u' . $user->id . '-' . $extcal['number'] . '.cache';
+	// 			$fileid = 'u' . $user->id . '-' . $extcal['calendarId'] . '.cache';
 	// 			$cachetime = ($extcal['cachetime'] > 0 ? $extcal['cachetime'] : 3600);   // 3600 : 60mn
 	// 		} else {
-	// 			$fileid = $extcal['number'] . '.cache';
+	// 			$fileid = $extcal['calendarId'] . '.cache';
 	// 			$cachetime = ($extcal['cachetime'] > 0 ? $extcal['cachetime'] : 1800);   // 1800 : 30mn
 	// 		}
 	// 		$filename = '/ical-e' . $conf->entity . '-' . $fileid;
