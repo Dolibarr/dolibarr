@@ -372,7 +372,6 @@ class CEmailTemplate extends CommonObject
 		$sql .= " lang=".($this->lang ? "'".$this->db->escape($this->lang)."', " : 'NULL, ');
 		$sql .= " private=".((int) $this->private).",";
 		$sql .= " fk_user=".((int) $this->fk_user).",";
-		$sql .= " datec='".$this->db->idate($this->datec)."',";
 		$sql .= " label=".($this->label ? "'".$this->db->escape($this->label)."', " : 'NULL, ');
 		$sql .= " position=".((int) $this->position).",";
 		$sql .= " defaultfortype=".((int) $this->defaultfortype).",";

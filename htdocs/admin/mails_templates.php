@@ -139,7 +139,7 @@ if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 // Nom des champs dans la table pour insertion d'un enregistrement
 // Field names in the table for inserting a record (AI translated)
 $tabfieldinsert = array();
-$tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content,tms,datec";
+$tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content,datec";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldinsert[25] .= ',content_lines';
 }
@@ -436,8 +436,6 @@ if (empty($reshook)) {
 				}
 				if ($keycode == 'datec') {
 					$sql .= "'".$db->idate($now)."'";
-				} elseif ($keycode == 'tms') {
-						$sql .= "'".$db->idate($now)."'";
 				} elseif (GETPOST($keycode) == '' && $keycode != 'langcode') {
 					$sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
 				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
