@@ -79,8 +79,8 @@ switch ($action) {
 		$offset = GETPOSTINT('offset');
 		$onlylast = (bool) GETPOSTINT('onlylast');
 		$search_actioncode = GETPOST('search_actioncode');
-		$search_userid = GETPOST('search_user');
-		$search_socid = GETPOST('search_socid');
+		$search_userid = GETPOSTINT('search_user');
+		$search_socid = GETPOSTINT('search_socid');
 		$search_states = GETPOST('search_states', 'alphanohtml');
 		$search_all = GETPOST('search_all', 'alphanohtml');
 		$arrayofevents = getEvents($resourceId, $calendarName, $startDate, $endDate, $offset, $onlylast, $search_actioncode, $search_userid, $search_socid, $search_states, $search_all);
