@@ -455,7 +455,7 @@ if (empty($reshook)) {
 									$object->addThumbs($newfile);
 
 									// Index file in database
-									if (getDolGlobalString('MEMBER_LOGO_ALLOW_EXTERNAL_DOWNLOAD')) {
+									if (getDolGlobalString('MEMBER_PHOTO_ALLOW_EXTERNAL_DOWNLOAD')) {
 										require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 										// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
 										deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
