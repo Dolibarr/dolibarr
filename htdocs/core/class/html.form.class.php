@@ -46,7 +46,6 @@
  * \brief      File of class with all html predefined components
  */
 
-use Artis\Dolibarr\Models\EcmFile;
 
 /**
  * Class to manage generation of HTML components
