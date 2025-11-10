@@ -444,6 +444,7 @@ if (empty($reshook)) {
 								} else {
 									// Create thumbs
 									$object->addThumbs($newfile);
+									addFileIntoDatabaseIndex($dir, $object->photo, '', 'uploaded', 1, $object);
 								}
 							}
 						} else {
