@@ -1450,8 +1450,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Alias names (commercial, trademark or alias names)
-			print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" spellcheck="false"></td></tr>';
+			print '<tr id="name_alias"><td>';
+			//print '<label for="name_alias_input">'.$langs->trans('AliasNames').'</label>';
+			print '</td>';
+			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" spellcheck="false" placeholder="'.dolPrintHTMLForAttribute($langs->trans('AliasNames')).'"></td></tr>';
 
 			// Prospect/Customer/Supplier
 			$selected = $object->client;
@@ -1712,13 +1714,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</tr>';
 			}
 
+			$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+
 			// Social networks
 			if (isModEnabled('socialnetworks')) {
-				$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
-
 				$object->showSocialNetwork($socialnetworks, $colspan);
 
-				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 			}
 
 			// Prof ids
@@ -1823,9 +1825,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
+
+			print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
+
+
 			// Type - Workforce/Staff
 			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>'."\n";
-			$sortparam = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+			$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 			if ($user->admin) {
 				print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -2288,8 +2294,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Alias names (commercial, trademark or alias names)
-				print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-				print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" spellcheck="false"></td></tr>';
+				print '<tr id="name_alias"><td>';
+				//print '<label for="name_alias_input">'.$langs->trans('AliasNames').'</label>';
+				print '</td>';
+				print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" placeholder="'.dolPrintHTMLForAttribute($langs->trans('AliasNames')).'" spellcheck="false"></td></tr>';
 
 				// Prefix
 				if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
@@ -2559,7 +2567,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					$object->showSocialNetwork($socialnetworks, $colspan);
 
-					print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+					print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 				}
 
 				// Prof ids
@@ -2678,6 +2686,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print $s;
 				print '</td>';
 				print '</tr>';
+
+				$colspan = 4;
+
+				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 
 				// Type - Workforce/Staff
 				print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>';

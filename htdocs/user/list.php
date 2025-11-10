@@ -31,11 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +38,10 @@ if (isModEnabled('category')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
@@ -153,6 +152,7 @@ $arrayfields = array(
 	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => '-1', 'position' => 51, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
 	'u.job' => array('label' => "PostOrFunction", 'checked' => '-1', 'position' => 60),
 	'u.salary' => array('label' => "Salary", 'checked' => '-1', 'position' => 80, 'enabled' => (string) (int) (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
+	'u.thm' => array('label' => "THM", 'langs' => 'salaries', 'checked' => '-1', 'position' => 82, 'enabled' => '1', 'isameasure' => 1),
 	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'date_modification' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
 	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
@@ -389,7 +389,7 @@ $morehtmlright = "";
 // --------------------------------------------------------------------
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
 $sql .= " u.fk_user,";
-$sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
+$sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.thm, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
@@ -844,6 +844,9 @@ if (!empty($arrayfields['u.job']['checked'])) {
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['u.thm']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
 if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
@@ -966,6 +969,10 @@ if (!empty($arrayfields['u.job']['checked'])) {
 }
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print_liste_field_titre("Salary", $_SERVER['PHP_SELF'], "u.salary", $param, "", "", $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.thm']['checked'])) {
+	print_liste_field_titre("THM", $_SERVER['PHP_SELF'], "u.thm", $param, "", "", $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
@@ -1341,6 +1348,18 @@ while ($i < $imaxinloop) {
 				$totalarray['val']['u.salary'] = 0;
 			}
 			$totalarray['val']['u.salary'] += $obj->salary;
+		}
+
+		// Hourly rate
+		if (!empty($arrayfields['u.thm']['checked'])) {
+			print '<td class="nowraponall right amount">';
+			if (!is_null($obj->thm)) {
+				print price($obj->thm);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Date last login

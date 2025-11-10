@@ -1445,7 +1445,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
+	print '<div class="divcreate">';
 	print '<table class="border centpercent nobottom">';
+
+	// Title
+	print '<tr><td'.(getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired"' : ' class="fieldrequired titlefieldcreate"').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Type of event
 	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -1457,12 +1461,12 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	// Title
-	print '<tr><td'.(getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? '' : ' class="fieldrequired titlefieldcreate"').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
-
 	// Full day
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td>';
-	print '<td class="valignmiddle height30"><input class="valignmiddle" type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday" class="valignmiddle small">'.$langs->trans("EventOnFullDay").'</label>';
+	print '<td class="valignmiddle height30">';
+	print '<div>';
+	print '<input class="valignmiddle" type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday" class="valignmiddle small">'.$langs->trans("EventOnFullDay").'</label>';
+	print '</div>';
 	print '</td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
@@ -1482,24 +1486,28 @@ if ($action == 'create') {
 	// Date start
 	print '<tr><td class="nowrap">';
 	print '</td><td>';
+	print '<div class="inline-block">';
 	if (GETPOST("afaire") == 1) {
 		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
 	} else {
 		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
 	}
 	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span><br class="showonsmartphone"> ';
-	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
-	print '</td></tr>';
+	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
+	print '</div>';
+
+	//print '</td></tr>';
 
 	// Recurring event
 	$userepeatevent = (getDolGlobalInt('MAIN_DISABLE_RECURRING_EVENTS') ? 0 : 1);
 	if ($userepeatevent) {
-		print '<tr><td></td><td>';
+		//print '<tr><td></td><td>';
+		print '<div class="clearbothonsmartphone hideonsmartphone inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>';
 
 		// Repeat
-		//print ' &nbsp; &nbsp; &nbsp; &nbsp; ';
-		print '<div class="opacitymedium inline-block small">';
-		print img_picto($langs->trans("Recurrence"), 'recurring', 'style="margin-left: 6px" class="paddingright2"');
+		print '<div class="inline-block small" data-html="repeat">';
+		print '<span class="opacitymedium">';
+		print img_picto($langs->trans("Recurrence"), 'recurring', 'style="margin-left: 3px" class="paddingright"');
 		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
 
 		$selectedrecurrulefreq = 'no';
@@ -1521,7 +1529,8 @@ if ($action == 'create') {
 			$selectedrecurrulebyday = (int) $reg[1];
 		}
 
-		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly minwidth100');
+		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly minwidth125 maxwidth150');
+		print '</span>';
 		// print '<script>console.log("recurrule: " +'.$object->recurrule.')</script>';
 		// For recursive event
 
@@ -1580,13 +1589,29 @@ if ($action == 'create') {
 			});
 			</script>';
 		print '</div>';
-		print '</td></tr>';
+		//print '</td></tr>';
 	}
 
-	print '<tr><td class="">&nbsp;</td><td></td></tr>';
+	print '</td></tr>';
+
+
+	// Location
+	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Location").'</td><td>';
+		print img_picto('', 'map-marker-alt', 'class="pictofixedwidth"');
+		print '<input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
+	}
+
+	print '</table>';
+	print '</div>';
+
+	print '<br>';
+
+	print '<div class="divcreate">';
+	print '<table class="border centpercent nobottom">';
 
 	// Assigned to user
-	print '<tr><td class="tdtop nowrap"><span class="fieldrequired">'.$langs->trans("ActionAffectedTo").'</span></td><td>';
+	print '<tr><td class="tdtop nowrap titlefieldcreate"><span>'.$langs->trans("ActionAffectedTo").'</span></td><td>';
 	$listofuserid = [];
 	$listofcontactid = [];
 	$listofotherid = [];
@@ -1611,22 +1636,11 @@ if ($action == 'create') {
 			$listofuserid[$firstelem['id']]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 0); // 0 by default when refreshing
 		}
 	}
-	print '<!-- list of user to assign --><div class="assignedtouser">';
+	print '<!-- list of user to assign -->'."\n";
+	print '<div class="assignedtouser">';
 	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, [], 0, '', [], '0', 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid);
 	print '</div>';
 	print '</td></tr>';
-
-	// Location
-	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
-		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
-	}
-
-	if (isModEnabled('category')) {
-		// Categories
-		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
-		print "</td></tr>";
-	}
 
 	if (isModEnabled('resource')) {
 		// Resources
@@ -1657,6 +1671,22 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
+		print "</td></tr>";
+	}
+
+	print '</table>';
+	print '</div>';
+
+
+	print '<br>';
+
+	print '<div class="divcreate">';
+	print '<table class="border centpercent nobottom">';
+
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td>';
 	print '<td>';
@@ -1675,14 +1705,6 @@ if ($action == 'create') {
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
-	print '</table>';
-
-
-	print '<br><hr><br>';
-
-
-	print '<table class="border centpercent nobottom">';
-
 	if (isModEnabled("societe")) {
 		// Related company
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
@@ -1696,9 +1718,9 @@ if ($action == 'create') {
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			//For external user force the company to user company
 			if (!empty($user->socid)) {
-				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			} else {
-				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', $langs->trans('SelectThirdParty'), 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', '', $langs->trans('SelectThirdParty'), 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			}
 		}
 		print '</td></tr>';
@@ -1719,7 +1741,7 @@ if ($action == 'create') {
 		} else {
 			$select_contact_default = -1; // select "none" by default
 		}
-		print img_picto('', 'contact', 'class="paddingrightonly"');
+		print img_picto('', 'contact', 'class="pictofixedwidth"');
 
 		if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
 			// FIXME Use a select without the "multiple" (not supported when CONTACT_USE_SEARCH_TO_SELECT is on) or allow use only when $object->socid is set...
@@ -1771,7 +1793,7 @@ if ($action == 'create') {
 
 		// Task
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Task").'</td><td id="project-task-input-container" >';
-		print img_picto('', 'projecttask', 'class="paddingrightonly"');
+		print img_picto('', 'projecttask', 'class="pictofixedwidth"');
 		$projectsListId = '';
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
@@ -1830,7 +1852,7 @@ if ($action == 'create') {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 100, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -1843,7 +1865,7 @@ if ($action == 'create') {
 	}
 
 	print '</table>';
-
+	print '</div>';
 
 	if ($enablereminders) {
 		//checkbox create reminder
