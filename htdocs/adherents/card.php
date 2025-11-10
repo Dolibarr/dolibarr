@@ -433,7 +433,6 @@ if (empty($reshook)) {
 					$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 					if ($file_OK) {
 						if (image_format_supported($_FILES['photo']['name']) > 0) {
-
 							if (!empty($deletephoto)) {
 								$fileimg = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$deletephoto;
 								$dirthumbs = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
