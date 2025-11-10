@@ -441,7 +441,6 @@ if (empty($reshook)) {
 					$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 					if ($file_OK) {
 						if (image_format_supported($_FILES['photo']['name']) > 0) {
-
 							dol_mkdir($dir);
 
 							if (@is_dir($dir)) {
