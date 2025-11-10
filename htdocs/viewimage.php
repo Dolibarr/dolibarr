@@ -81,10 +81,6 @@ if (isset($_GET["modulepart"])) {
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}
-	// Member photo used by the web portal
-	if ($_GET["modulepart"] == 'memberphoto') {
-		$needlogin = 0;
-	}
 	// Used by TakePOS Auto Order
 	if ($_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
