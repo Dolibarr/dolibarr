@@ -1671,7 +1671,8 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
 								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 								$ecmfile = new EcmFiles($db);
-								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, isset($object->entity) ?? null);
+								$entity = (isset($object->entity) ? $object->entity : null);
+								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $entity);
 								if ($result >= 0 && $ecmfile->id > 0) {
 									$result = $ecmfile->delete($user);
 								}
