@@ -1654,6 +1654,7 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	<div id="ec" class="col"></div>
 </div>
 <script>
+	const token = '<?php echo newToken(); ?>';
 	const buttonText = {
 		today: '<?php echo dol_escape_js($langs->transnoentities('Today')); ?>',
 		dayGridMonth: '<?php echo dol_escape_js($langs->transnoentities('ViewCal')); ?>',
@@ -1684,7 +1685,7 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 			events: function(fetchInfo, successCallback, failureCallback) {
 				$.ajax({
 					method: 'GET',
-					url: '/core/ajax/events_ajax.php',
+					url: '/core/ajax/ajax_events.php',
 					dataType: 'json',
 					data: {
 						start: fetchInfo.start.getTime(),
@@ -1692,7 +1693,8 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 						end: fetchInfo.end.getTime(),
 						endStr: fetchInfo.endStr,
 						action: 'getevents',
-						resourceId: 1
+						resourceId: 1,
+						token: token
 					},
 					success: function(response) {
 						// normalize entries
@@ -1713,7 +1715,8 @@ if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 						end: fetchInfo.end.getTime(),
 						endStr: fetchInfo.endStr,
 						action: 'getevents',
-						resourceId: 2
+						resourceId: 2,
+						token: token
 					},
 					success: function(response) {
 						// normalize entries

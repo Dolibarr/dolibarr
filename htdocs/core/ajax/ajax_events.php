@@ -38,9 +38,7 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOHEADERNOFOOTER')) {
 	define('NOHEADERNOFOOTER', '1');
 }
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", 1);
-}
+
 // Load Dolibarr environment
 require '../../main.inc.php';
 
