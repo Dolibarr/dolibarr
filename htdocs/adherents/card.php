@@ -434,7 +434,6 @@ if (empty($reshook)) {
 						$dirthumbs = $dir.'/thumbs';
 						dol_delete_file($fileimg);
 						dol_delete_dir_recursive($dirthumbs);
-						//deleteFilesIntoDatabaseIndex($dir, $deletephoto, 'uploaded', $object); // TODO add image in ECM for external access (eg Web Portal)
 					}
 					if ($file_OK) {
 						if (image_format_supported($_FILES['photo']['name']) > 0) {
