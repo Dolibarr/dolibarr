@@ -419,7 +419,7 @@ if ($conf->use_javascript_ajax) {
 				$s .= '		});'."\n";
 				$s .= '});'."\n";
 				$s .= '</script>'."\n";
-				$s .= '<div class="nowrap float"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" checked> '.$val ['name'].' &nbsp; </div>';
+				$s .= '<div class="nowrap float"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" class="marginleftonly" checked> '.$val ['name'].' &nbsp; </div>';
 			}
 		}
 
