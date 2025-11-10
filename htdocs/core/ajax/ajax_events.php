@@ -21,7 +21,7 @@
  *
  */
 
-// use ICal\ICal;
+use ICal\ICal;
 
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1); // Disables token renewal
@@ -1003,7 +1003,7 @@ function isDarkColor($color)
 	$rgb = HTMLToRGB($color);
 	$hsl = RGBToHSL($rgb);
 
-	return ($hsl['lightness'] < $lightness_swap) ? true : false;
+	return ($hsl['lightness'] < $lightness_swap);
 }
 
 /**
