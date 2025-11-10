@@ -1068,7 +1068,7 @@ function RGBToHSL($RGB)
 		if ($b == $maxC) {
 			$h = 4.0 + ($r - $g) / ($maxC - $minC);
 		}
-		$h = $h / 6.0;
+		$h /= 6.0;
 	}
 	$h = (int) round(255.0 * $h);
 	$s = (int) round(255.0 * $s);
