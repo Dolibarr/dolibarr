@@ -1320,10 +1320,13 @@ class Societe extends CommonObject
 		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA', 'ACCOUNTANCY_CODE_CUSTOMER', 'ACCOUNTANCY_CODE_SUPPLIER');
 		foreach ($array_to_check as $key) {
 			$keymin = strtolower($key);
+			$keyfield_db = $keymin;
 			if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') {
 				$keymin = 'code_compta_client';
+				$keyfield_db = 'code_compta';
 			} elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER') {
 				$keymin = 'code_compta_fournisseur';
+				$keyfield_db = 'code_compta_fournisseur';
 			}
 			$i = (int) preg_replace('/[^0-9]/', '', $key);
 			$vallabel = $this->$keymin;
@@ -1385,7 +1388,7 @@ class Societe extends CommonObject
 				} elseif ($key == 'ACCOUNTANCY_CODE_CUSTOMER' && !empty($this->client)) {
 					// Check for unicity
 					if ($vallabel && getDolGlobalString('SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_UNIQUE')) {
-						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
+						if ($this->id_prof_exists($keyfield_db, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->loadLangs(array("errors", 'compta'));
 							$error++;
 							$this->errors[] = $langs->trans('CustomerAccountancyCodeShort') . " " . $langs->trans("ErrorProdIdAlreadyExist", $vallabel) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';
@@ -1401,7 +1404,7 @@ class Societe extends CommonObject
 				} elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER' && !empty($this->fournisseur)) {
 					// Check for unicity
 					if ($vallabel && getDolGlobalString('SOCIETE_ACCOUNTANCY_CODE_SUPPLIER_UNIQUE')) {
-						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
+						if ($this->id_prof_exists($keyfield_db, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->loadLangs(array("errors", 'compta'));
 							$error++;
 							$this->errors[] = $langs->trans('SupplierAccountancyCodeShort') . " " . $langs->trans("ErrorProdIdAlreadyExist", $vallabel) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';

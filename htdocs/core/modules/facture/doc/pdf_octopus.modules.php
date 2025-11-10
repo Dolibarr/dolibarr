@@ -10,7 +10,7 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
- * Copyright (C) 2022-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2022-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024  Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
@@ -581,7 +581,12 @@ class pdf_octopus extends ModelePDFFactures
 				$nexY = $this->tab_top - 1;
 
 				// Specific stuff for situations invoices first page
-				$tab_top = 90;
+				if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS')) {
+					$tab_top = 130;
+				} else {
+					$tab_top = 90;
+				}
+
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -2477,6 +2482,8 @@ class pdf_octopus extends ModelePDFFactures
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
 
+					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
+
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
@@ -2710,7 +2717,7 @@ class pdf_octopus extends ModelePDFFactures
 				'textkey' => 'S'.$derniere_situation->situation_counter . ' - ' . dol_print_date($derniere_situation->date, "%d/%m/%Y"),
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
-				'width' => 10 + 15 //current width + amount cell width
+				'width' => 10 + 18 //current width + amount cell width
 			),
 		);
 		if ($this->situationinvoice && ! empty($this->TDataSituation['date_derniere_situation'])) {
@@ -2721,7 +2728,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['prev_progress_amount'] = array(
 			'rank' => $rank,
-			'width' => 15, // in mm
+			'width' => 18, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('Amount')
@@ -2746,7 +2753,7 @@ class pdf_octopus extends ModelePDFFactures
 				'textkey' => 'S'.$object->situation_counter . ' - ' . dol_print_date($object->date, "%d/%m/%Y"),
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
-				'width' => 10 + 15
+				'width' => 10 + 18
 			),
 		);
 
@@ -2754,7 +2761,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['progress_amount'] = array(
 			'rank' => $rank,
-			'width' => 15, // in mm
+			'width' => 18, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => $outputlangs->transnoentities('Amount')
@@ -3566,9 +3573,12 @@ class pdf_octopus extends ModelePDFFactures
 
 			$ref = $outputlangs->transnoentities("InvoiceSituation").$outputlangs->convToOutputCharset(" n°".$invoice->situation_counter);
 
-			if ($invoice->situation_final) {
-				$ref .= ' - DGD';
-				$force_to_zero = true;
+			// TODO Discuss whether to declare a final invoice as a DGD (definitive general statement like 'décompte général définitif') or not.
+			if (getDolGlobalInt('INVOICE_SITUATION_USE_DGD')) {
+				if ($invoice->situation_final) {
+					$ref .= ' - DGD';
+					$force_to_zero = true;
+				}
 			}
 
 			$ref .= ' - '. $invoice->ref;
@@ -3816,7 +3826,7 @@ class pdf_octopus extends ModelePDFFactures
 				$posy = $this->tab_top_newpage + 1;
 			} else {
 				$idinv++;
-				$remain_to_pay -= ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
+				$remain_to_pay += ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
 
 				$rem = 0;
 				if (count($invoice->lines)) {

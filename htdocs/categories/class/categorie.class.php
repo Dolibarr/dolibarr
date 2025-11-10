@@ -380,6 +380,9 @@ class Categorie extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
 		if (is_object($hookmanager)) {
 			$hookmanager->initHooks(array('category'));
 			$parameters = array();
