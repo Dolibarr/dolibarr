@@ -1445,7 +1445,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
+	print '<div class="divcreate">';
 	print '<table class="border centpercent nobottom">';
+
+	// Title
+	print '<tr><td'.(getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired"' : ' class="fieldrequired titlefieldcreate"').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Type of event
 	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -1457,12 +1461,12 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	// Title
-	print '<tr><td'.(getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? '' : ' class="fieldrequired titlefieldcreate"').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
-
 	// Full day
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td>';
-	print '<td class="valignmiddle height30"><input class="valignmiddle" type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday" class="valignmiddle small">'.$langs->trans("EventOnFullDay").'</label>';
+	print '<td class="valignmiddle height30">';
+	print '<div>';
+	print '<input class="valignmiddle" type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday" class="valignmiddle small">'.$langs->trans("EventOnFullDay").'</label>';
+	print '</div>';
 	print '</td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
@@ -1482,23 +1486,26 @@ if ($action == 'create') {
 	// Date start
 	print '<tr><td class="nowrap">';
 	print '</td><td>';
+	print '<div class="inline-block">';
 	if (GETPOST("afaire") == 1) {
 		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
 	} else {
 		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
 	}
 	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span><br class="showonsmartphone"> ';
-	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
-	print '</td></tr>';
+	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
+	print '</div>';
+
+	//print '</td></tr>';
 
 	// Recurring event
 	$userepeatevent = (getDolGlobalInt('MAIN_DISABLE_RECURRING_EVENTS') ? 0 : 1);
 	if ($userepeatevent) {
-		print '<tr><td></td><td>';
+		//print '<tr><td></td><td>';
+		print '<div class="clearbothonsmartphone hideonsmartphone inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>';
 
 		// Repeat
-		//print ' &nbsp; &nbsp; &nbsp; &nbsp; ';
-		print '<div class="inline-block small">';
+		print '<div class="inline-block small" data-html="repeat">';
 		print '<span class="opacitymedium">';
 		print img_picto($langs->trans("Recurrence"), 'recurring', 'style="margin-left: 3px" class="paddingright"');
 		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
@@ -1522,7 +1529,7 @@ if ($action == 'create') {
 			$selectedrecurrulebyday = (int) $reg[1];
 		}
 
-		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly minwidth100');
+		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly minwidth125 maxwidth150');
 		print '</span>';
 		// print '<script>console.log("recurrule: " +'.$object->recurrule.')</script>';
 		// For recursive event
@@ -1582,22 +1589,29 @@ if ($action == 'create') {
 			});
 			</script>';
 		print '</div>';
-		print '</td></tr>';
+		//print '</td></tr>';
 	}
 
-	print '<tr style="height: 10px"><td style="height: 10px;" colspan="2"></td></tr>';
+	print '</td></tr>';
+
 
 	// Location
 	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
-		print '<tr><td>'.$langs->trans("Location").'</td><td>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Location").'</td><td>';
 		print img_picto('', 'map-marker-alt', 'class="pictofixedwidth"');
 		print '<input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
 	}
 
-	print '<tr style="height: 10px"><td style="height: 10px;" colspan="2"></td></tr>';
+	print '</table>';
+	print '</div>';
+
+	print '<br>';
+
+	print '<div class="divcreate">';
+	print '<table class="border centpercent nobottom">';
 
 	// Assigned to user
-	print '<tr><td class="tdtop nowrap"><span>'.$langs->trans("ActionAffectedTo").'</span></td><td>';
+	print '<tr><td class="tdtop nowrap titlefieldcreate"><span>'.$langs->trans("ActionAffectedTo").'</span></td><td>';
 	$listofuserid = [];
 	$listofcontactid = [];
 	$listofotherid = [];
@@ -1665,11 +1679,12 @@ if ($action == 'create') {
 	}
 
 	print '</table>';
+	print '</div>';
 
 
-	print '<hr>';
+	print '<br>';
 
-
+	print '<div class="divcreate">';
 	print '<table class="border centpercent nobottom">';
 
 	// Status
@@ -1850,7 +1865,7 @@ if ($action == 'create') {
 	}
 
 	print '</table>';
-
+	print '</div>';
 
 	if ($enablereminders) {
 		//checkbox create reminder
