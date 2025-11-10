@@ -371,11 +371,11 @@ if (empty($reshook)) {
 			//$object->note = trim(GETPOST("comment", "restricthtml"));
 			$object->morphy = GETPOST("morphy", 'alpha');
 
+			$deletephoto = '';
 			if (GETPOST('deletephoto', 'alpha')) {
 				$deletephoto = $object->photo;
 				$object->photo = '';
 			} elseif (!empty($_FILES['photo']['name'])) {
-				$deletephoto = '';
 				$newphoto = dol_sanitizeFileName($_FILES['photo']['name']);
 				if (!empty($object->photo) && $object->photo != $newphoto) {
 					$deletephoto = $object->photo;
@@ -428,18 +428,19 @@ if (empty($reshook)) {
 					$categories = GETPOST('memcats', 'array');
 					$object->setCategories($categories);
 
+					if (!empty($deletephoto)) {
+						$fileimg = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$deletephoto;
+						$dirthumbs = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
+						dol_delete_file($fileimg);
+						dol_delete_dir_recursive($dirthumbs);
+						//deleteFilesIntoDatabaseIndex($dir, $deletephoto, 'uploaded', $object); // TODO add image in ECM for external access (eg Web Portal)
+					}
+
 					// Logo/Photo save
 					$dir = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
 					$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 					if ($file_OK) {
 						if (image_format_supported($_FILES['photo']['name']) > 0) {
-							if (!empty($deletephoto)) {
-								$fileimg = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$deletephoto;
-								$dirthumbs = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
-								dol_delete_file($fileimg);
-								dol_delete_dir_recursive($dirthumbs);
-								//deleteFilesIntoDatabaseIndex($dir, $deletephoto, 'uploaded', $object); // TODO add image in ECM for external access (eg Web Portal)
-							}
 
 							dol_mkdir($dir);
 
@@ -457,22 +458,14 @@ if (empty($reshook)) {
 							setEventMessages("ErrorBadImageFormat", null, 'errors');
 						}
 					} else {
-						if (GETPOST('deletephoto')) {
-							$fileimg = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$deletephoto;
-							$dirthumbs = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
-							dol_delete_file($fileimg);
-							dol_delete_dir_recursive($dirthumbs);
-							//deleteFilesIntoDatabaseIndex($dir, $deletephoto, 'uploaded', $object); // TODO add image in ECM for external access (eg Web Portal)
-						} else {
-							switch ($_FILES['photo']['error']) {
-								case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
-								case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-									$errors[] = "ErrorFileSizeTooLarge";
-									break;
-								case 3: //uploaded file was only partially uploaded
-									$errors[] = "ErrorFilePartiallyUploaded";
-									break;
-							}
+						switch ($_FILES['photo']['error']) {
+							case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+							case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+								$errors[] = "ErrorFileSizeTooLarge";
+								break;
+							case 3: //uploaded file was only partially uploaded
+								$errors[] = "ErrorFilePartiallyUploaded";
+								break;
 						}
 					}
 
