@@ -1620,10 +1620,10 @@ if (!getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	if ($nbevents > $MAXONSAMEPAGE) {
 		print info_admin('Number of results has been truncated to '.$MAXONSAMEPAGE, 0, 0, 'warning').'<br>';
 	}
-
-	// Show div with list of calendars
-	print $s;
 }
+// Show div with list of calendars
+print $s;
+
 if (getDolGlobalInt('AGENDA_WE_DREAM_A_NEW_CALENDAR')) {
 	// dayGridMonth timeGridWeek timeGridDay listWeek resourceTimeGridWeek resourceTimelineWeek
 	if ($mode == 'show_day') {
