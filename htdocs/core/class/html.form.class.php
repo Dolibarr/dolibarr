@@ -3041,7 +3041,6 @@ class Form
 	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
 	{
 		// phpcs:enable
-		global $db;
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -3072,7 +3071,7 @@ class Form
 		if (!empty($limit)) {
 			$sql .= ' LIMIT ' . (int) $limit;
 		}
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($showempty) {
 				$out .= '<option value="-1"';
@@ -3081,7 +3080,7 @@ class Form
 				}
 				$out .= '>&nbsp;</option>';
 			}
-			while ($obj = $db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$out .= '<option value="' . $obj->rowid . '"';
 				if ($obj->rowid == $selected) {
 					$out .= 'selected';
@@ -3090,7 +3089,7 @@ class Form
 			}
 		} else {
 			$error++;
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 		$out .= '</select>';
 		if (empty($nooutput)) {
@@ -11051,7 +11050,7 @@ class Form
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
 	{
-		global $conf, $db, $langs;
+		global $conf, $langs;
 
 		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 		$id = (empty($object->id) ? $object->rowid : $object->id);  // @phan-suppress-current-line PhanUndeclaredProperty (->rowid)
@@ -11157,7 +11156,7 @@ class Form
 
 		if ($dir) {
 			require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
-			$ecmfiles = new EcmFiles($db);
+			$ecmfiles = new EcmFiles($this->db);
 			$relativefile = str_replace(DOL_DATA_ROOT .'/', '', $dir.'/'.$originalfile);
 			$ecmfiles->fetch(0, '', $relativefile);
 			if ($file && file_exists($dir . "/" . $file)) {
