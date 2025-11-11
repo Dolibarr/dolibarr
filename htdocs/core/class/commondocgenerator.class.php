@@ -323,7 +323,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   User		$user           User
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @return	array<string,mixed>			Array of substitution key->code
+	 * @return	array<string,float|string>			Array of substitution key->code
 	 */
 	public function get_substitutionarray_user($user, $outputlangs)
 	{
@@ -372,7 +372,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   Adherent	$member         Member
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @return	array<string,mixed>			Array of substitution key->code
+	 * @return	array<string,float|string>			Array of substitution key->code
 	 */
 	public function getSubstitutionarrayMember($member, $outputlangs)
 	{
