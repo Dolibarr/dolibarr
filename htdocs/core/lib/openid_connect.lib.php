@@ -40,7 +40,7 @@ function openid_connect_get_state()
  */
 function openid_connect_get_redirect_url()
 {
-	return DOL_MAIN_URL_ROOT . '/core/modules/openid_connect/callback.php';
+	return DOL_MAIN_URL_ROOT . '/?openid_mode=true';
 }
 
 
