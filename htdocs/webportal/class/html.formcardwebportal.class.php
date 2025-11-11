@@ -454,7 +454,12 @@ class FormCardWebPortal
 		$form = new Form($this->db);
 		$html .= '<div class="inline-block floatleft valignmiddle">';
 		$html .= '<div class="floatleft inline-block valignmiddle divphotoref">';
-		$html .= $form->showphoto('memberphoto', $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, 1);
+		$width = (getDolGlobalString('MEMBER_PHOTO_WIDTH_IN_WEBPORTAL') ? getDolGlobalString('MEMBER_PHOTO_WIDTH_IN_WEBPORTAL') : 128);
+		if (!getDolGlobalString('MEMBER_PHOTO_ALLOW_EXTERNAL_DOWNLOAD')) {
+			$width = 0;
+			$object->photo = ''; // to avoid access error
+		}
+		$html .= $form->showphoto('memberphoto', $object, $width, 0, 0, 'photowithmargin photoref', 'small', 1, 0, 1);
 		//include DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 		//$html .= getImagePublicURLOfObject($object, 1, '_small');
 		$html .= '</div>';
