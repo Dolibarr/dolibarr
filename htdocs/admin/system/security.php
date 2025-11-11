@@ -804,17 +804,22 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
-print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_dolcrypt_key (or $dolibarr_main_instance_unique_id)<br>';
+print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id)<br>';
 print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print $langs->trans("ToolToDecryptAString").': ';
-print '<input type="text" class="minwidth300" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
+print '<input type="text" class="minwidth500" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
 print '<input type="submit" class="reposition button small smallpaddingimp" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
-	print ' => <textarea rows="'.ROWS_1.'" class="valignmiddle">'.dolPrintHTMLForTextArea(dolDecrypt($exampletodecrypt)).'</textarea>';
+	$decryptedstring = dolDecrypt($exampletodecrypt);
+	if (ascii_check($decryptedstring)) {
+		print '<br> => <textarea rows="'.ROWS_1.'" class="valignmiddle">'.dolPrintHTMLForTextArea($decryptedstring).'</textarea>';
+	} else {
+		print '<br><span class="error"> => Failed to decrypt. The crypting key saved into the conf.php file seems to not be the one used to encrypt the provided encrypted string</span>';
+	}
 }
 print '</form>';
 

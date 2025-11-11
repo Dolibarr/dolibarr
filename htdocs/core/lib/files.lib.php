@@ -1097,18 +1097,18 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *  - Database indexes for files are updated.
  *  - Test on virus is done only if param testvirus is provided and an antivirus was set.
  *
- * @param	string  	$srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
- * @param   string		$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   string		$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
- * @param   int<0,1>	$overwriteifexists  Overwrite file if exists (1 by default)
- * @param   int<0,1>	$testvirus          Do an antivirus test. Move is canceled if a virus is found.
- * @param	int<0,1>	$indexdatabase		Index new file into database.
- * @param	array<string,mixed>	$moreinfo   Array with more information to set in index table
- * @param	int			$entity				Entity
- * @return  boolean 		            True if OK, false if KO
+ * @param	string				$srcfile			Source file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string				$destfile			Destination file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string				$newmask			Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
+ * @param   int<0,1>			$overwriteifexists	Overwrite file if exists (1 by default)
+ * @param   int<0,1>			$testvirus			Do an antivirus test. Move is canceled if a virus is found.
+ * @param	int<0,1>			$indexdatabase		Index new file into database.
+ * @param	array<string,mixed>	$moreinfo			Array with more information to set in index table
+ * @param	int|null			$entity				Entity (it's null by default to avoid problem with entity = 0)
+ * @return  boolean									True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
-function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array(), $entity = 0)
+function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array(), $entity = null)
 {
 	global $user, $db;
 	$result = false;
@@ -1671,7 +1671,8 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
 								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 								$ecmfile = new EcmFiles($db);
-								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $object->entity ?? 0);
+								$entity = (isset($object->entity) ? $object->entity : null);
+								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $entity);
 								if ($result >= 0 && $ecmfile->id > 0) {
 									$result = $ecmfile->delete($user);
 								}

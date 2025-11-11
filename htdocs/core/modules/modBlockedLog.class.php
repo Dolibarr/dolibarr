@@ -209,7 +209,7 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-		global $conf, $langs, $user;
+		global $conf, $user;
 
 		$sql = array();
 

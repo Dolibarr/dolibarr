@@ -397,6 +397,7 @@ parameters:
 			path: ../../../htdocs/adherents/subscription/card.php
 
 		-
+
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
@@ -413,12 +414,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 2
 			path: ../../../htdocs/admin/boxes.php
-
-		-
-			message: '#^Variable \$massaction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/const.php
 
 		-
 			message: '#^Offset ''css'' on array\{css\: ''minwidth200'', enabled\: mixed\} in empty\(\) always exists and is not falsy\.$#'
