@@ -394,8 +394,8 @@ if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
 }
 if ($search_stock_physique != '') {
-	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', $db->ifsql('ps.reel IS NULL', '0', 'ps.reel'), 'pb.qty') . ')', $search_stock_physique, 1, 1);
-	$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
+	$natural_search_physique = natural_search('__SEARCH_PHYSIQUE__', $search_stock_physique, 1, 1);
+	$natural_search_physique = " " . substr(str_replace('__SEARCH_PHYSIQUE__', 'SUM(COALESCE(pb.qty, ps.reel, 0))', $natural_search_physique), 1, -1); // remove first "(" and last ")" characters
 	if (!empty($sql_having)) {
 		$sql_having .= " AND";
 	} else {

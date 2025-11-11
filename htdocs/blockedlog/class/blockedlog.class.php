@@ -67,12 +67,6 @@ class BlockedLog
 	public $signature = '';
 
 	/**
-	 * Unique fingerprint of the line log content
-	 * @var string
-	 */
-	public $signature_line = '';
-
-	/**
 	 * @var float|string|null
 	 */
 	public $amounts = null;
@@ -153,7 +147,7 @@ class BlockedLog
 	public $object_version = '';
 
 	/**
-	 * @var string	Version of format of line ('', 'V1', ...)
+	 * @var string	Version of format of line ('', 'V1', ...).
 	 */
 	public $object_format = '';
 
@@ -553,6 +547,7 @@ class BlockedLog
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
 				}
+				// List of fields qualified
 				if (!in_array($key, array(
 				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 				'tva_intra', 'tva_assuj', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -573,6 +568,7 @@ class BlockedLog
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
 				}
+				// List of fields qualified
 				if (!in_array($key, array(
 				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 				'tva_assuj', 'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -598,6 +594,7 @@ class BlockedLog
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
 				}
+				// List of fields qualified
 				if (!in_array($key, array(
 					'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'datev', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public', 'lines',
 					'module_source', 'pos_source'
@@ -644,8 +641,9 @@ class BlockedLog
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
 				}
+				// List of fields qualified
 				if (!in_array($key, array(
-				'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public'
+					'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public'
 				))) {
 					continue; // Discard if not into a dedicated list
 				}
@@ -736,6 +734,7 @@ class BlockedLog
 							if (in_array($key, $arrayoffieldstoexclude)) {
 								continue; // Discard some properties
 							}
+							// List of fields qualified
 							if (!in_array($key, array(
 							'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 							'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -760,6 +759,7 @@ class BlockedLog
 							if (in_array($key, $arrayoffieldstoexclude)) {
 								continue; // Discard some properties
 							}
+							// List of fields qualified
 							if (!in_array($key, array(
 							'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public'
 							))) {
@@ -863,7 +863,7 @@ class BlockedLog
 			return -1;
 		}
 
-		$sql = "SELECT b.rowid, b.date_creation, b.signature, b.signature_line, b.amounts, b.action, b.element, b.fk_object, b.entity,";
+		$sql = "SELECT b.rowid, b.date_creation, b.signature, b.amounts, b.action, b.element, b.fk_object, b.entity,";
 		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.object_data, b.object_version, b.object_format";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
 		if ($id) {
@@ -896,7 +896,6 @@ class BlockedLog
 				$this->object_format = $obj->object_format;
 
 				$this->signature		= $obj->signature;
-				$this->signature_line 	= $obj->signature_line;
 				$this->certified		= ($obj->certified == 1);
 
 				return 1;
@@ -970,9 +969,9 @@ class BlockedLog
 	/**
 	 *	Create blocked log in database.
 	 *
-	 *	@param	User	$user      			Object user that create
-	 *  @param	string	$forcesignature		Force signature (for example '0000000000' when we disabled the module)
-	 *	@return	int<-3,-1>|int<1,1>				Return integer <0 if KO, >0 if OK
+	 *	@param	User					$user      			Object user that create
+	 *  @param	string					$forcesignature		Force signature (for example '0000000000' when we disabled the module, to force a non valid record, for test purpose for example)
+	 *	@return	int<-3,-1>|int<1,1>							Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $forcesignature = '')
 	{
@@ -1007,35 +1006,44 @@ class BlockedLog
 			$this->user_fullname = '(Anonymous)';
 		}
 
-		$this->date_creation = dol_now();
-
-		$this->object_version = DOL_VERSION;
-		$this->object_format = 'V1';	// Must match the rules into buildKeyForSignature and buildFirstPartOfKeyForSignature
-
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 		$this->db->begin();
 
-		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
+		$this->date_creation = dol_now();
 
-		$concatenatedata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+		$this->object_version = DOL_VERSION;
+		// The object_format define the formatting rules into buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
+		$this->object_format = 'V1';	// TODO Switch to V2 when v2 support is complete
 
-		$this->debuginfo = $this->buildFirstPartOfKeyForSignature();
+		try {
+			$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$concatenatedata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
-		$this->signature_line = dol_hash($concatenatedata, '5'); // Not really useful
-		$this->signature = dol_hash($previoushash.$concatenatedata, '5');
+			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenatedata);	// Build the hmac signature
+
+			// For debug:
+			$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Not used
+		} catch (Exception $e) {
+			$this->error = $e->getMessage();
+
+			dol_syslog($this->error, LOG_ERR);
+
+			$this->db->rollback();
+			return -1;
+		}
+
 		if ($forcesignature) {
 			$this->signature = $forcesignature;
 		}
-		//var_dump($concatenatedata);var_dump($previoushash);var_dump($this->signature_line);var_dump($this->signature);
+		//var_dump($concatenatedata);var_dump($previoushash);var_dump($this->signature);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."blockedlog (";
 		$sql .= " date_creation,";
 		$sql .= " action,";
 		$sql .= " amounts,";
 		$sql .= " signature,";
-		$sql .= " signature_line,";
 		$sql .= " element,";
 		$sql .= " fk_object,";
 		$sql .= " date_object,";
@@ -1053,7 +1061,6 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->action)."',";
 		$sql .= $this->amounts.",";
 		$sql .= "'".$this->db->escape($this->signature)."',";
-		$sql .= "'".$this->db->escape($this->signature_line)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
 		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
@@ -1100,11 +1107,11 @@ class BlockedLog
 	}
 
 	/**
-	 *	Check if current signature still correct compared to the value in chain
+	 *	Check if calculated signature still correct compared to the value in the chain
 	 *
 	 *	@param	string			$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
 	 *  @param	int<0,2>		$returnarray		1=Return array of details, 2=Return array of details including keyforsignature, 0=Boolean
-	 *	@return	boolean|array{checkresult:bool,calculatedsignature:string,previoushash:string,keyforsignature?:string}	True if OK, False if KO
+	 *	@return	boolean|array{checkresult:bool,calculatedsignature:string,previoushash:string,keyforsignature?:string}	Array or true if OK, false if KO
 	 */
 	public function checkSignature($previoushash = '', $returnarray = 0)
 	{
@@ -1112,12 +1119,27 @@ class BlockedLog
 			$previoushash = $this->getPreviousHash(0, $this->id);
 		}
 
-		// Build the string for the signature
-		$concatenatedata = $this->buildKeyForSignature();
+		$concatenatedata = '';
+		$signature = '';
 
-		//$signature_line = dol_hash($concatenatedata, '5'); // Not really useful
-		$signature = dol_hash($previoushash.$concatenatedata, 'sha256');
+		// Recalculate the signature
+		try {
+			// Build the string for the signature
+			$concatenatedata = $this->buildKeyForSignature();
 
+			$signature = $this->buildFinalSignatureHash($previoushash.$concatenatedata);
+		} catch (Exception $e) {
+			$res = ($signature === $this->signature);
+			$this->error = $e->getMessage();
+
+			dol_syslog($this->error, LOG_ERR);
+
+			if ($returnarray) {
+				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash);
+			} else {
+				return false;
+			}
+		}
 
 		$res = ($signature === $this->signature);
 
@@ -1139,7 +1161,31 @@ class BlockedLog
 	}
 
 	/**
-	 * Return a string for signature.
+	 * Return first part of string for signature (clear data)
+	 * Note: rowid of line not included as it is not a business data and this allow to make backup of a year
+	 * and restore it into another database with different ids without comprimising checksums
+	 *
+	 * @return string		First part of key for signature
+	 */
+	private function buildFirstPartOfKeyForSignature()
+	{
+		// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
+		if ($this->object_format == '') {
+			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+		} elseif ($this->object_format == 'V1') {	// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
+			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+		} elseif ($this->object_format == 'V2') {
+			$s = $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			$s .= '|'.(string) $this->linktoref;
+			$s .= '|'.(string) $this->linktype;
+			return $s;
+		} else {
+			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
+		}
+	}
+
+	/**
+	 * Return the string for signature (clear data).
 	 * Note: rowid of line not included as it is not a business data and this allow to make backup of a year
 	 * and restore it into another database with different ids without comprimising checksums
 	 *
@@ -1150,27 +1196,43 @@ class BlockedLog
 		//print_r($this->object_data);
 		if ($this->object_format == '') {
 			return $this->buildFirstPartOfKeyForSignature().'|'.print_r($this->object_data, true);
-		} elseif ($this->object_format == 'V1') {
-			// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
+		} elseif ($this->object_format == 'V1') {	// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
+			return $this->buildFirstPartOfKeyForSignature().'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
+		} elseif ($this->object_format == 'V2') {
 			return $this->buildFirstPartOfKeyForSignature().'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
 		} else {
-			return 'Error bad value "'.$this->object_format.'" for object_format';
+			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
 		}
 	}
 
 	/**
-	 * Return first part of string for signature.
-	 * Note: rowid of line not included as it is not a business data and this allow to make backup of a year
-	 * and restore it into another database with different ids without comprimising checksums
+	 * Return a hash that is the signature of a line (hash_hmac en SHA256 des données + clé secrète)
 	 *
-	 * @return string		First part of key for signature
+	 * @param 	string $clearstring		Data to sign
+	 * @return 	string					Signature string
 	 */
-	private function buildFirstPartOfKeyForSignature()
+	private function buildFinalSignatureHash($clearstring)
 	{
-		// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
-		return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
-	}
+		if ($this->object_format == '') {
+			return dol_hash($clearstring, '5');
+		} elseif ($this->object_format == 'V1') {
+			return dol_hash($clearstring, '5');
+		} elseif ($this->object_format == 'V2') {
+			// BLOCKEDLOG_HMAC_KEY is a HMAC key starting with 'BLOCKEDLOGHMAC....', but it is not stored as a clear data. It will be decrypted later.
+			$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
+			if (empty($hmac_encoded_secret_key)) {
+				throw new Exception('Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration of v23');
+			}
+			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
+			if (!preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
+				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.');
+			}
 
+			return hash_hmac('sha256', $clearstring, $hmac_secret_key);
+		} else {
+			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
+		}
+	}
 
 	/**
 	 *	Get previous signature/hash in chain
@@ -1230,7 +1292,7 @@ class BlockedLog
 
 		if (empty($previoussignature)) {
 			// First signature line (line 0)
-			$previoussignature = $this->getSignature();
+			$previoussignature = $this->getOrInitFirstSignature();
 		}
 
 		return $previoussignature;
@@ -1344,16 +1406,17 @@ class BlockedLog
 	 *
 	 *	@return	string					Signature of genesis-block for current conf->entity
 	 */
-	public function getSignature()
+	public function getOrInitFirstSignature()
 	{
-		global $db, $conf, $mysoc;
+		global $db, $conf;
 
 		if (!getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT')) { // creation of a unique fingerprint
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
+			//$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
+			$fingerprint = bin2hex(random_bytes(32)); // 64 char hex
 
 			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
 

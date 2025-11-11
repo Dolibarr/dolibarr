@@ -109,6 +109,7 @@ create table llx_user
   nb_holiday              integer       DEFAULT 0,
   thm                     double(24,8),
   tjm                     double(24,8),
+  access_hours			  varchar(128) DEFAULT NULL,
 
   salary                  double(24,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
   salaryextra             double(24,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment

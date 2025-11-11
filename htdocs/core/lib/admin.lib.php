@@ -842,10 +842,12 @@ function ihm_prepare_head()
 	$head[$h][2] = 'css';
 	$h++;
 
+	/* Not a user setup of a feature. Useless for an end users, so has been moved into the Modulebuilder main page (for dev).
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/tools/ui/index.php');
 	$head[$h][1] = $langs->trans("UxComponentsDoc").' '.img_picto('', 'external-link-square-alt');
 	$head[$h][2] = 'ux';
 	$h++;
+	*/
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
 

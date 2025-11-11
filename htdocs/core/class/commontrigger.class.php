@@ -76,9 +76,9 @@ trait CommonTrigger
 	 * NB:  Error from trigger are stacked in interface->errors
 	 * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
 	 *
-	 * @param   string    $triggerName   trigger's name to execute
-	 * @param   User      $user           Object user
-	 * @return  int                       Result of run_triggers
+	 * @param   string    $triggerName  Trigger's name to execute
+	 * @param   ?User     $user         Object user
+	 * @return  int                     Result of run_triggers
 	 */
 	public function call_trigger($triggerName, $user)
 	{

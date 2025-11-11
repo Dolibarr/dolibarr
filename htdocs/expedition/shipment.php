@@ -100,7 +100,7 @@ $permissiondellink = $user->hasRight('expedition', 'creer'); // Used by the incl
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 
@@ -620,6 +620,7 @@ if ($order_id > 0 || !empty($ref)) {
 		$sql .= ' p.surface, p.surface_units, p.volume, p.volume_units';
 		$sql .= ', p.tobatch, p.tosell, p.tobuy, p.barcode';
 		$sql .= ', u.short_label as unit_order';
+		$sql .= ', p.stockable_product';
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units as u ON cd.fk_unit = u.rowid";
@@ -800,13 +801,17 @@ if ($order_id > 0 || !empty($ref)) {
 
 					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 						print '<td class="center">';
-						print $product->stock_reel;
-						if ($product->stock_reel < $toBeShipped[$objp->fk_product]) {
-							print ' '.img_warning($langs->trans("StockTooLow"));
-							if (getDolGlobalString('STOCK_CORRECT_STOCK_IN_SHIPMENT')) {
-								$nbPiece = $toBeShipped[$objp->fk_product] - $product->stock_reel;
-								print ' &nbsp; '.$langs->trans("GoTo").' <a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.((int) $product->id).'&action=correction&token='.newToken().'&nbpiece='.urlencode((string) ($nbPiece)).'&backtopage='.urlencode((string) ($_SERVER["PHP_SELF"].'?id='.((int) $object->id))).'">'.$langs->trans("CorrectStock").'</a>';
+						if ($objp->stockable_product == Product::ENABLED_STOCK) {
+							print $product->stock_reel;
+							if ($product->stock_reel < $toBeShipped[$objp->fk_product]) {
+								print ' ' . img_warning($langs->trans("StockTooLow"));
+								if (getDolGlobalString('STOCK_CORRECT_STOCK_IN_SHIPMENT')) {
+									$nbPiece = $toBeShipped[$objp->fk_product] - $product->stock_reel;
+									print ' &nbsp; ' . $langs->trans("GoTo") . ' <a href="' . DOL_URL_ROOT . '/product/stock/product.php?id=' . ((int) $product->id) . '&action=correction&token=' . newToken() . '&nbpiece=' . urlencode((string) ($nbPiece)) . '&backtopage=' . urlencode((string) ($_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id))) . '">' . $langs->trans("CorrectStock") . '</a>';
+								}
 							}
+						} else {
+							print img_warning().' '.$langs->trans('StockDisabled');
 						}
 						print '</td>';
 					} elseif ($objp->fk_product > 0 && $type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && isModEnabled('stock')) {

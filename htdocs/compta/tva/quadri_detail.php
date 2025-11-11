@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021-2022  Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,7 +283,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_rate]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_rate]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_rate]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id]) ? $x_coll[$my_coll_rate]['tva_intra'][$id] : '0';  // @phan-suppress-current-line PhanTypeArraySuspiciousNull,PhanTypeInvalidDimOffset
+			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['company_tva_intra'][$id]) ? $x_coll[$my_coll_rate]['company_tva_intra'][$id] : '0';
 			$company_static->client = $x_coll[$my_coll_rate]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_rate]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_rate]['company_status'][$id];
@@ -362,7 +362,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$company_static->name = $x_paye[$my_paye_rate]['company_name'][$id];
 				$company_static->name_alias = $x_paye[$my_paye_rate]['company_alias'][$id];
 				$company_static->email = $x_paye[$my_paye_rate]['company_email'][$id];
-				$company_static->tva_intra = $x_paye[$my_paye_rate]['tva_intra'][$id];
+				$company_static->tva_intra = $x_paye[$my_paye_rate]['company_tva_intra'][$id];
 				$company_static->client = $x_paye[$my_paye_rate]['company_client'][$id];
 				$company_static->fournisseur = $x_paye[$my_paye_rate]['company_fournisseur'][$id];
 				$company_static->status = $x_paye[$my_paye_rate]['company_status'][$id];
@@ -500,7 +500,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$company_static->name = $fields['company_name'];
 					$company_static->name_alias = $fields['company_alias'];
 					$company_static->email = $fields['company_email'];
-					$company_static->tva_intra = $fields['tva_intra'];
+					$company_static->tva_intra = $fields['company_tva_intra'];
 					$company_static->client = $fields['company_client'];
 					$company_static->fournisseur = $fields['company_fournisseur'];
 					$company_static->status = $fields['company_status'];
@@ -737,7 +737,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$company_static->name = $fields['company_name'];
 					$company_static->name_alias = $fields['company_alias'];
 					$company_static->email = $fields['company_email'];
-					$company_static->tva_intra = $fields['tva_intra'];
+					$company_static->tva_intra = $fields['company_tva_intra'];
 					$company_static->client = $fields['company_client'];
 					$company_static->fournisseur = $fields['company_fournisseur'];
 					$company_static->status = $fields['company_status'];

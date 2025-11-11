@@ -803,6 +803,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline', 'addproduceline', 'editline'))) {
+		print '<!-- Form to enter value for consumption/production -->';
 		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_'.$action.'">';
@@ -815,14 +816,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : dol_print_date(dol_now(), 'dayhourlog');
 
 			print '<div class="center'.(in_array($action, array('consumeorproduce', 'consumeandproduceall')) ? ' formconsumeproduce' : '').'">';
-			print '<div class="opacitymedium hideonsmartphone paddingbottom">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></div>';
-			print '<span class="fieldrequired">'.$langs->trans("InventoryCode").':</span> <input type="text" class="minwidth150 maxwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"> &nbsp; ';
+			print '<div class="opacitymedium hideonsmartphone paddingbottom marginbottomonly">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></div>';
+			print '<span class="paddingright">'.$langs->trans("InventoryCode").':</span>';
 			print '<span class="clearbothonsmartphone"></span>';
-			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"><br><br>';
+			print '<input type="text" class="minwidth125 maxwidth150" name="inventorycode" value="'.$defaultstockmovementcode.'">';
+			print '<span class="hideonsmartphone">&nbsp; &nbsp;</span>';
+			print '<span class="clearbothonsmartphone"></span>';
+			print '<span class="paddingright">'.$langs->trans("MovementLabel").':</span>';
+			print '<span class="clearbothonsmartphone"></span>';
+			print '<input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"><br><br>';
 			print '<input type="checkbox" id="autoclose" name="autoclose" value="1"'.(GETPOSTISSET('inventorylabel') ? (GETPOST('autoclose') ? ' checked="checked"' : '') : ' checked="checked"').'> <label for="autoclose">'.$langs->trans("AutoCloseMO").'</label><br>';
-			print '<input type="submit" class="button" value="'.$langs->trans("Confirm").'" name="confirm">';
+			print '<input type="submit" class="button margintoponly" value="'.$langs->trans("Confirm").'" name="confirm">';
 			print ' &nbsp; ';
-			print '<input class="button button-cancel" type="submit" value="'.$langs->trans("Cancel").'" name="cancel">';
+			print '<input class="button margintoponly button-cancel" type="submit" value="'.$langs->trans("Cancel").'" name="cancel">';
 			print '<br><br>';
 			print '</div>';
 

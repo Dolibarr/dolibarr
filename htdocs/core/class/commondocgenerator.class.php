@@ -476,7 +476,7 @@ abstract class CommonDocGenerator
 	 * Define array with couple substitution key => substitution value
 	 * For example {company_name}, {company_name_alias}
 	 *
-	 * @param	Societe		$object			Object
+	 * @param	?Societe	$object			Object
 	 * @param   Translate	$outputlangs    Language object for output
 	 * @param   string		$array_key	    Name of the key for return array
 	 * @return	array<string,mixed>			Array of substitution key->code
@@ -2145,7 +2145,7 @@ abstract class CommonDocGenerator
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

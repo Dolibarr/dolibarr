@@ -31,11 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +38,10 @@ if (isModEnabled('category')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
@@ -153,6 +152,7 @@ $arrayfields = array(
 	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => '-1', 'position' => 51, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
 	'u.job' => array('label' => "PostOrFunction", 'checked' => '-1', 'position' => 60),
 	'u.salary' => array('label' => "Salary", 'checked' => '-1', 'position' => 80, 'enabled' => (string) (int) (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
+	'u.thm' => array('label' => "THM", 'langs' => 'salaries', 'checked' => '-1', 'position' => 82, 'enabled' => '1', 'isameasure' => 1),
 	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'date_modification' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
 	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
@@ -389,7 +389,7 @@ $morehtmlright = "";
 // --------------------------------------------------------------------
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
 $sql .= " u.fk_user,";
-$sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
+$sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.thm, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
@@ -575,70 +575,70 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
 if (!empty($mode)) {
-	$param .= '&amp;mode='.urlencode($mode);
+	$param .= '&mode='.urlencode($mode);
 }
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&amp;contextpage='.urlencode($contextpage);
+	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&amp;limit='.((int) $limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
-	$param .= '&amp;optioncss='.urlencode($optioncss);
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_all != '') {
-	$param .= '&amp;search_all='.urlencode($search_all);
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_user != '') {
-	$param .= "&amp;search_user=".urlencode($search_user);
+	$param .= "&search_user=".urlencode($search_user);
 }
 if ($search_rowid != '') {
-	$param .= "&amp;search_rowid=".urlencode($search_rowid);
+	$param .= "&search_rowid=".urlencode($search_rowid);
 }
 if ($search_login != '') {
-	$param .= "&amp;search_login=".urlencode($search_login);
+	$param .= "&search_login=".urlencode($search_login);
 }
 if ($search_lastname != '') {
-	$param .= "&amp;search_lastname=".urlencode($search_lastname);
+	$param .= "&search_lastname=".urlencode($search_lastname);
 }
 if ($search_firstname != '') {
-	$param .= "&amp;search_firstname=".urlencode($search_firstname);
+	$param .= "&search_firstname=".urlencode($search_firstname);
 }
 if ($search_gender != '' && $search_gender != '-1') {
-	$param .= "&amp;search_gender=".urlencode($search_gender);
+	$param .= "&search_gender=".urlencode($search_gender);
 }
 if ($search_employee != '' && $search_employee != '-1') {
-	$param .= "&amp;search_employee=".urlencode($search_employee);
+	$param .= "&search_employee=".urlencode($search_employee);
 }
 if ($search_accountancy_code != '') {
-	$param .= "&amp;search_accountancy_code=".urlencode($search_accountancy_code);
+	$param .= "&search_accountancy_code=".urlencode($search_accountancy_code);
 }
 if ($search_phonepro != '') {
-	$param .= "&amp;search_phonepro=".urlencode($search_phonepro);
+	$param .= "&search_phonepro=".urlencode($search_phonepro);
 }
 if ($search_phonemobile != '') {
-	$param .= "&amp;search_phonemobile=".urlencode($search_phonemobile);
+	$param .= "&search_phonemobile=".urlencode($search_phonemobile);
 }
 if ($search_email != '') {
-	$param .= "&amp;search_email=".urlencode($search_email);
+	$param .= "&search_email=".urlencode($search_email);
 }
 if ($search_country != '') {
-	$param .= "&amp;search_country=".urlencode($search_country);
+	$param .= "&search_country=".urlencode($search_country);
 }
 if ($search_api_key != '') {
-	$param .= "&amp;search_api_key=".urlencode($search_api_key);
+	$param .= "&search_api_key=".urlencode($search_api_key);
 }
 if ($search_supervisor > 0) {
-	$param .= "&amp;search_supervisor=".urlencode($search_supervisor);
+	$param .= "&search_supervisor=".urlencode($search_supervisor);
 }
 if ($search_status != '') {
-	$param .= "&amp;search_status=".urlencode($search_status);
+	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_categ > 0) {
-	$param .= '&amp;search_categ='.urlencode((string) ($search_categ));
+	$param .= '&search_categ='.urlencode((string) ($search_categ));
 }
 if ($search_warehouse > 0) {
-	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
+	$param .= '&search_warehouse='.urlencode($search_warehouse);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -844,6 +844,9 @@ if (!empty($arrayfields['u.job']['checked'])) {
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['u.thm']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
 if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
@@ -966,6 +969,10 @@ if (!empty($arrayfields['u.job']['checked'])) {
 }
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print_liste_field_titre("Salary", $_SERVER['PHP_SELF'], "u.salary", $param, "", "", $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.thm']['checked'])) {
+	print_liste_field_titre("THM", $_SERVER['PHP_SELF'], "u.thm", $param, "", "", $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
@@ -1341,6 +1348,18 @@ while ($i < $imaxinloop) {
 				$totalarray['val']['u.salary'] = 0;
 			}
 			$totalarray['val']['u.salary'] += $obj->salary;
+		}
+
+		// Hourly rate
+		if (!empty($arrayfields['u.thm']['checked'])) {
+			print '<td class="nowraponall right amount">';
+			if (!is_null($obj->thm)) {
+				print price($obj->thm);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Date last login

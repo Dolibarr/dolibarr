@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
@@ -296,7 +297,6 @@ if (GETPOST('downloadcsv', 'alpha')) {
 				$block_static->object_version = $obj->object_version;				// Not in signature
 				$block_static->object_format = $obj->object_format;					// Not in signature
 
-				$block_static->signature_line = $obj->signature_line;
 				$block_static->certified = ($obj->certified == 1);
 
 				$block_static->linktoref = $obj->linktoref;
@@ -411,14 +411,23 @@ if (GETPOST('withtab', 'alpha')) {
 print '<div class="opacitymedium hideonsmartphone justify">';
 
 print $langs->trans("FingerprintsDesc")."<br>";
-
-print '<br>';
-
 $s = $langs->trans("FilesIntegrityDesc", '{s}');
-$s = str_replace('{s}', DOL_URL_ROOT.'/admin/system/filecheck.php', $s);
+$s = str_replace('{s}', DOL_URL_ROOT.'/blockedlog/admin/filecheck.php', $s);
 print $s;
 print "<br>\n";
 print "</div>\n";
+
+$htmltext = $langs->trans("UnalterableLogTool1");
+if ($mysoc->country_code == 'FR') {
+	$htmltext .= ' '.$langs->trans("UnalterableLogTool1FR");
+}
+$htmltext .= "<br>";
+
+$htmltext .= $langs->trans("UnalterableLogTool2")."<br>";
+$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+
+print info_admin($htmltext);
+
 
 print '<br>';
 

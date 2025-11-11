@@ -34,10 +34,6 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
@@ -279,12 +278,12 @@ if ($user->hasRight("user", "user", "read") || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
 $urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="refid valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -333,13 +332,24 @@ print '</span>';
 print '</td></tr>'."\n";
 
 print '</table>';
-
 print '</div>';
+
+
 print '<br>';
 
 
 if ($user->admin) {
-	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom"));
+	$s = $langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom");
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+		$s .= '<br>';
+		$s .= img_picto($langs->trans('InfoAdmin'), 'info-circle').' ';
+		$s .= $langs->trans("YouAreUsingTheAdvancedPermissionsMode");
+	} else {
+		$s .= '<br>';
+		$s .= img_picto($langs->trans('InfoAdmin'), 'info-circle').' ';
+		$s .= $langs->trans("YouAreUsingTheSimplePermissionsMode");
+	}
+	print info_admin($s);
 }
 // If edited user is an extern user, we show warning for external users
 if (!empty($object->socid)) {

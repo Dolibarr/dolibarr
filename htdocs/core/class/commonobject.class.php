@@ -147,7 +147,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 *
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
@@ -304,19 +304,19 @@ abstract class CommonObject
 	public $contact_id;
 
 	/**
-	 * @var Societe|null 	A related thirdparty object
+	 * @var ?Societe 	A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
 
 	/**
-	 * @var User 			A related user
+	 * @var ?User 			A related user
 	 * @see fetch_user()
 	 */
 	public $user;
 
 	/**
-	 * @var Product 	Populated by fetch_product()
+	 * @var ?Product 	Populated by fetch_product()
 	 * @see fetch_product()
 	 */
 	public $product;
@@ -1033,11 +1033,11 @@ abstract class CommonObject
 					$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 				}
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 				}
 				$perms = 1;
 				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+					$perms = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 				}
 				if (empty($enabled)) {
 					continue; // 0 = Never visible field
@@ -5055,7 +5055,7 @@ abstract class CommonObject
 
 			// Check if module is enabled (to avoid error if tables of module not created)
 			if (isset($element['enabled']) && !empty($element['enabled'])) {
-				$enabled = (int) dol_eval($element['enabled'], 1);
+				$enabled = (int) dol_eval((string) $element['enabled'], 1);
 				if (empty($enabled)) {
 					continue;
 				}
@@ -6339,6 +6339,13 @@ abstract class CommonObject
 	 **/
 	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
+		/* TODO Remove this. Must use now something like:
+			$note_private = GETPOST('note_private', 'restricthtml');
+			if (!GETPOSTISSET('note_private') && empty($note_private) && !empty($objectsrc) [&& othercondtion]) {
+				$note_private = $objectsrc->note_private;
+			}
+		*/
+
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
 			return GETPOST($fieldname, $type, 3);
@@ -6478,12 +6485,12 @@ abstract class CommonObject
 
 			$enabled = 1;
 			if (isset($this->fields[$key]['enabled'])) {
-				$enabled = (int) dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
+				$enabled = (int) dol_eval((string) $this->fields[$key]['enabled'], 1, 1, '1');
 			}
 			/*$perms = 1;
 			 if (isset($this->fields[$key]['perms']))
 			 {
-			 $perms = (int) dol_eval($this->fields[$key]['perms'], 1, 1, '1');
+			 $perms = (int) dol_eval((string) $this->fields[$key]['perms'], 1, 1, '1');
 			 }*/
 			if (empty($enabled)) {
 				continue;
@@ -6664,7 +6671,7 @@ abstract class CommonObject
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;        // We set a global variable to $objectoffield so
 								$objectoffield = $this;        // we can use it inside computed formula
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
+								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -6797,7 +6804,7 @@ abstract class CommonObject
 
 			if (!empty($attrfieldcomputed)) {
 				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
-					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
+					$value = dol_eval((string) $attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$new_array_options[$key] = $value;
 				} else {
@@ -7263,7 +7270,7 @@ abstract class CommonObject
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
 			if (!empty($attrfieldcomputed)) {
 				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
-					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
+					$value = dol_eval((string) $attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 
 					$new_array_options["options_".$key] = $value;
@@ -8595,7 +8602,7 @@ abstract class CommonObject
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = dol_eval($computed, 1, 0, '2');
+			$value = dol_eval((string) $computed, 1, 0, '2');
 		}
 
 		if (empty($morecss)) {
@@ -9358,12 +9365,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if (isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+						$visibility = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = (int) dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+						$perms = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
 					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
@@ -11048,6 +11055,17 @@ abstract class CommonObject
 			$res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 			if (!$res) {
 				$error++;
+			}
+		}
+
+		if (!$error) {
+			$dir = getMultidirOutput($this)."/".dol_sanitizeFileName($this->ref);
+			// For remove dir
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+			if (dol_is_dir($dir)) {
+				if (!dol_delete_dir_recursive($dir)) {
+					$this->errors[] = 'ErrorFailToDeleteDir';
+				}
 			}
 		}
 

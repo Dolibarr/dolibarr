@@ -36,18 +36,6 @@ if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
-
-'
-@phan-var-force string $dolibarr_main_url_root_alt
-';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -58,6 +46,17 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
  *
  * @var string $dolibarr_main_url_root_alt
  */
+'
+@phan-var-force string $dolibarr_main_url_root_alt
+';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
@@ -75,6 +74,8 @@ if (GETPOSTISSET('mode')) {
 $action = GETPOST('action', 'aZ09');
 $page_y = GETPOSTINT('page_y');
 $optioncss = GETPOST('optioncss', 'aZ09');
+$sortfield = GETPOST('sortfield', 'aZ09');
+$sortorder = GETPOST('sortorder', 'aZ09');
 
 $value = GETPOST('value', 'alpha');
 $search_keyword = GETPOST('search_keyword', 'alpha');
@@ -712,10 +713,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
-	if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+	if (getDolGlobalInt('MAIN_SETUP_MODULES_DESC') || $nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
-	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message. A good usage for SaaS with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
+	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Add a custom info message. A good usage for SaaS in combination with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
 		$deschelp .= '<div class="info">'.$langs->trans(getDolGlobalString('MAIN_SETUP_MODULES_INFO'))."<br></div>\n";
 	}
 	if ($deschelp) {
@@ -1212,8 +1213,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Help
 			print '<td class="center nowrap" style="width: 82px;">';
-			//print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20', 0, 2, 1);
-			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">';
+			print img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo, '', 0, 0, 0, '', 'purple');
+			print '</a>';
 			print '</td>';
 
 			// Version
@@ -1295,8 +1297,8 @@ if ($mode == 'marketplace') {
 
 	$url = 'https://www.dolistore.com';
 
-	// Marketplace
-	print '<tr class="oddeven">'."\n";
+	// Source Marketplace DoliStore
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
 	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
@@ -1328,8 +1330,8 @@ if ($mode == 'marketplace') {
 
 	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
 
-	// Community
-	print '<tr class="oddeven">'."\n";
+	// Source Community github
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
 	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
@@ -1407,7 +1409,7 @@ if ($mode == 'marketplace') {
 		print '<div class="clearboth"></div>';
 		?>
 			<?php if (!empty($categories_tree)) { ?>
-				<div id="category-tree-left">
+				<div id="category-tree-left" class="paddingtop">
 					<ul class="tree">
 					<?php
 						print $categories_tree; ?>
@@ -1614,7 +1616,7 @@ if ($mode == 'develop') {
 	print '<td colspan="3">'.$langs->trans("DevelopYourModuleDesc").'</td>';
 	print '</tr>';
 
-	print '<tr class="oddeven" height="80">'."\n";
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="center hideonsmartphone">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
@@ -1628,7 +1630,7 @@ if ($mode == 'develop') {
 	print '</td>';
 	print '</tr>';
 
-	print '<tr class="oddeven" height="80">'."\n";
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	$url = 'https://partners.dolibarr.org';
 	print '<td class="center hideonsmartphone">';
 	print'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';

@@ -4,7 +4,7 @@
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025  Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré <vincent@de-grandpre.quebec>
@@ -684,6 +684,7 @@ class Task extends CommonObjectLine
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " duration_effective=".(isset($this->duration_effective) ? $this->duration_effective : "null").",";
 		$sql .= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '') ? $this->planned_workload : "null").",";
+		$sql .= " datec=".(isDolTms($this->date_c) ? "'".$this->db->idate($this->date_c)."'" : 'null').",";
 		$sql .= " dateo=".(isDolTms($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
 		$sql .= " datee=".(isDolTms($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
