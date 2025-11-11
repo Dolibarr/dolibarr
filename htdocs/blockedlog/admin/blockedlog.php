@@ -122,7 +122,7 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td class="titlefield">';
 print $langs->trans("CompanyInitialKey").'</td><td>';
-print $block_static->getSignature();
+print $block_static->getOrInitFirstSignature();
 print '</td></tr>';
 
 /*
