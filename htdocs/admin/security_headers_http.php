@@ -273,6 +273,13 @@ function cleanSecurityCSP($securitycsp)
 				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' \'unsafe-inline\' ', $securitycsp);
 			}
 		}
+		if (!preg_match('/dolibarr\.org/', $securitycsp)) {
+			if (!preg_match('/default-src/', $securitycsp)) {
+				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src *.dolibarr.org;';
+			} else {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolibarr.org ', $securitycsp);
+			}
+		}
 	}
 	$securitycsp = preg_replace('/\s+/', ' ', $securitycsp);
 	return $securitycsp;
