@@ -391,13 +391,6 @@ parameters:
 			path: ../../../htdocs/adherents/messaging.php
 
 		-
-			message: '#^Variable \$bankline in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/adherents/subscription/card.php
-
-		-
-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
