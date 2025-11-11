@@ -87,12 +87,17 @@ if ($id > 0 || !empty($ref)) {
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
+if ($user->id) {
+	$id = $user->id;
+}
+
+// Security check
 $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
-$result = restrictedArea($user, 'user', $object->id, 'user&user', $feature2);
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 
 /*
@@ -175,10 +180,10 @@ $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ((!empty($objUser->id) || !empty($objcon->id)) && $permok) {
 	if (is_object($objUser) && get_class($objUser) == 'User') {
-		$out .= '&amp;originid='.$objUser->id.($objUser->id > 0 ? '&amp;userid='.$objUser->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objUser->id > 0 ? '?userid='.$objUser->id : ''));
+		$out .= '&originid='.$objUser->id.($objUser->id > 0 ? '&ruseid='.$objUser->id : '').'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objUser->id > 0 ? '?userid='.$objUser->id : ''));
 	}
-	$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
-	$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+	$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '');
+	$out .= '&datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
 }
 
 $morehtmlright = '';
