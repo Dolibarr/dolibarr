@@ -67,12 +67,6 @@ class BlockedLog
 	public $signature = '';
 
 	/**
-	 * Unique fingerprint of the line log content
-	 * @var string
-	 */
-	public $signature_line = '';
-
-	/**
 	 * @var float|string|null
 	 */
 	public $amounts = null;
@@ -869,7 +863,7 @@ class BlockedLog
 			return -1;
 		}
 
-		$sql = "SELECT b.rowid, b.date_creation, b.signature, b.signature_line, b.amounts, b.action, b.element, b.fk_object, b.entity,";
+		$sql = "SELECT b.rowid, b.date_creation, b.signature, b.amounts, b.action, b.element, b.fk_object, b.entity,";
 		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.object_data, b.object_version, b.object_format";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
 		if ($id) {
@@ -902,7 +896,6 @@ class BlockedLog
 				$this->object_format = $obj->object_format;
 
 				$this->signature		= $obj->signature;
-				$this->signature_line 	= $obj->signature_line;
 				$this->certified		= ($obj->certified == 1);
 
 				return 1;
@@ -1040,20 +1033,17 @@ class BlockedLog
 
 		// For debug:
 		$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Note used
-		// signature_line is useless. Abandoned.
-		//$this->signature_line = dol_hash($concatenatedata, '5'); // Not really useful
 
 		if ($forcesignature) {
 			$this->signature = $forcesignature;
 		}
-		//var_dump($concatenatedata);var_dump($previoushash);var_dump($this->signature_line);var_dump($this->signature);
+		//var_dump($concatenatedata);var_dump($previoushash);var_dump($this->signature);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."blockedlog (";
 		$sql .= " date_creation,";
 		$sql .= " action,";
 		$sql .= " amounts,";
 		$sql .= " signature,";
-		$sql .= " signature_line,";
 		$sql .= " element,";
 		$sql .= " fk_object,";
 		$sql .= " date_object,";
@@ -1071,7 +1061,6 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->action)."',";
 		$sql .= $this->amounts.",";
 		$sql .= "'".$this->db->escape($this->signature)."',";
-		$sql .= "'".$this->db->escape($this->signature_line)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
 		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
@@ -1138,7 +1127,6 @@ class BlockedLog
 			// Build the string for the signature
 			$concatenatedata = $this->buildKeyForSignature();
 
-			//$signature_line = dol_hash($concatenatedata, '5'); // Not useful. Abandoned.
 			$signature = $this->buildFinalSignatureHash($previoushash.$concatenatedata);
 		} catch (Exception $e) {
 			$res = ($signature === $this->signature);
