@@ -11050,7 +11050,7 @@ class Form
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
 	{
-		global $conf, $langs;
+		global $conf, $db, $langs;
 
 		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 		$id = (empty($object->id) ? $object->rowid : $object->id);  // @phan-suppress-current-line PhanUndeclaredProperty (->rowid)
@@ -11156,7 +11156,7 @@ class Form
 
 		if ($dir) {
 			require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
-			$ecmfiles = new EcmFiles($this->db);
+			$ecmfiles = new EcmFiles($db);
 			$relativefile = str_replace(DOL_DATA_ROOT .'/', '', $dir.'/'.$originalfile);
 			$ecmfiles->fetch(0, '', $relativefile);
 			if ($file && file_exists($dir . "/" . $file)) {
