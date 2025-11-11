@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,8 @@ if (isset($_GET["modulepart"])) {
 		$needlogin = 0;
 	}
 	// Used by TakePOS Auto Order. TODO Image product may became public in this case. A security check to check that product is in takepos tree must be done later.
-	if ($_GET["modulepart"] == 'product' && isModEnabled('takepos') && isset($_GET["publictakepos"])) {
+	// isModEnabled is not defined, DOL_DOCUMENT_ROOT is not defined
+	if ($_GET["modulepart"] == 'product' /* && isModEnabled('takepos') */ && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
 	}
 }
