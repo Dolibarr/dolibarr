@@ -385,12 +385,6 @@ parameters:
 			path: ../../../htdocs/adherents/list.php
 
 		-
-			message: '#^Variable \$bankline in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/adherents/subscription/card.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
@@ -407,12 +401,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 2
 			path: ../../../htdocs/admin/boxes.php
-
-		-
-			message: '#^Variable \$massaction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/const.php
 
 		-
 			message: '#^Offset ''css'' on array\{css\: ''minwidth200'', enabled\: mixed\} in empty\(\) always exists and is not falsy\.$#'
@@ -2451,12 +2439,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
-			message: '#^Property BankAccounts\:\:\$FIELDS has no type specified\.$#'
-			identifier: missingType.property
 			count: 1
 			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
 
@@ -14769,12 +14751,6 @@ parameters:
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../../htdocs/societe/card.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
 			count: 2
 			path: ../../../htdocs/societe/card.php
 

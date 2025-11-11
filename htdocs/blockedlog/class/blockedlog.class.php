@@ -1022,6 +1022,9 @@ class BlockedLog
 			$concatenatedata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
 			$this->signature = $this->buildFinalSignatureHash($previoushash.$concatenatedata);	// Build the hmac signature
+
+			// For debug:
+			$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Not used
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 
@@ -1030,9 +1033,6 @@ class BlockedLog
 			$this->db->rollback();
 			return -1;
 		}
-
-		// For debug:
-		$this->debuginfo = $this->buildFirstPartOfKeyForSignature();	// Note used
 
 		if ($forcesignature) {
 			$this->signature = $forcesignature;
@@ -1179,6 +1179,8 @@ class BlockedLog
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;
+		} else {
+			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
 		}
 	}
 
