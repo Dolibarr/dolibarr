@@ -3724,7 +3724,7 @@ if (!function_exists("llxFooter")) {
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)
 		// You can use &forceping=1 in parameters to force the ping if the ping was already sent.
-		$forceping = GETPOST('forceping', 'alpha');
+		$forceping = GETPOSTINT('forceping');
 
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
 			$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
@@ -3758,7 +3758,7 @@ if (!function_exists("llxFooter")) {
 
 		// Add code to force the registration if not yet done but ready (in case past submission failed)
 		// You can use &forceregistration=1 in parameters to force the call if the call was already sent.
-		$forceregistration = GETPOST('forceregistration', 'alpha');
+		$forceregistration = GETPOSTINT('forceregistration');
 		if (isModEnabled('blockedlog') && (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceregistration)) {
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (!isALNEQualifiedVersion()) {
