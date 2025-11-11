@@ -87,17 +87,12 @@ if ($id > 0 || !empty($ref)) {
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
-if ($user->id) {
-	$id = $user->id;
-}
-
-// Security check
 $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
+$result = restrictedArea($user, 'user', $object->id, 'user&user', $feature2);
 
 
 /*
@@ -158,7 +153,7 @@ $morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->tra
 dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 
-$object->info($id);
+$object->info($object->id);
 
 
 print '<div class="fichecenter">';
@@ -201,7 +196,7 @@ if (isModEnabled('agenda')) {
 
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allaactions', 'read'))) {
 	print '<br>';
-	$param = '&userid='.urlencode((string) ($id));
+	$param = '&userid='.urlencode((string) ($object->id));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
