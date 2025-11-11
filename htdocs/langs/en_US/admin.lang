@@ -259,6 +259,7 @@ Required=Required
 UsedOnlyWithTypeOption=Used by some agenda option only
 Security=Security
 Passwords=Passwords
+DolibarrPassword=Dolibarr password
 DoNotStoreClearPassword=Encrypt passwords stored in database.
 MainDbPasswordFileConfEncrypted=Obfuscate the database password stored in conf.php. It is recommended to activate this option.
 InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>

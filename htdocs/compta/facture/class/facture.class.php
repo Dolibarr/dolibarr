@@ -4226,14 +4226,16 @@ class Facture extends CommonInvoice
 			if (empty($fk_prev_id)) {
 				$fk_prev_id = 'null';
 			}
+
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
-				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative)
+				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative). They will be added by changing the percent that is initialized to 0.
 				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 					$situation_percent = 0;
 				} else {
 					$situation_percent = 100;
 				}
 			}
+
 			if (empty($ref_ext)) {
 				$ref_ext = '';
 			}

@@ -602,6 +602,15 @@ if (empty($reshook)) {
 								} else {
 									// Create thumbs
 									$object->addThumbs($newfile);
+
+									// Index file in database
+									if (getDolGlobalString('THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD')) {
+										require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+										// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
+										deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
+										// now we index the uploaded logo file
+										addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1, $object);
+									}
 								}
 							}
 						}
@@ -740,8 +749,8 @@ if (empty($reshook)) {
 				// Logo/Photo save
 				$dir     = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id."/logos";
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-				if (GETPOST('deletephoto') && $object->logo) {
-					$fileimg = $dir.'/'.$object->logo;
+				if (GETPOST('deletephoto') && $current_logo) {
+					$fileimg = $dir.'/'.$current_logo;
 					$dirthumbs = $dir.'/thumbs';
 					dol_delete_file($fileimg);
 					dol_delete_dir_recursive($dirthumbs);
@@ -773,7 +782,7 @@ if (empty($reshook)) {
 									// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
 									deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
 									// now we index the uploaded logo file
-									addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
+									addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1, $object);
 								}
 							}
 						}

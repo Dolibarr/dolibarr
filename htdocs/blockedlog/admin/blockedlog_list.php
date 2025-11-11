@@ -297,7 +297,6 @@ if (GETPOST('downloadcsv', 'alpha')) {
 				$block_static->object_version = $obj->object_version;				// Not in signature
 				$block_static->object_format = $obj->object_format;					// Not in signature
 
-				$block_static->signature_line = $obj->signature_line;
 				$block_static->certified = ($obj->certified == 1);
 
 				$block_static->linktoref = $obj->linktoref;

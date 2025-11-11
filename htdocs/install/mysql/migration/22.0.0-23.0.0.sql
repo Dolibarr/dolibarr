@@ -339,4 +339,6 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF'
 
 ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
 
+ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
+
 -- end of migration

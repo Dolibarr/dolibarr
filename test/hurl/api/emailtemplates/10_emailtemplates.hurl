@@ -65,6 +65,12 @@ POST http://{{hostnport}}/api/index.php/emailtemplates
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: Creating with id field is forbidden"}}
 
+# POST No tms in post request data
+POST http://{{hostnport}}/api/index.php/emailtemplates
+{ "tms" : 42, "label" : "automatic test using 10_emailtemplates.hurl", "topic" : "automatic test using 10_emailtemplates.hurl", "type_template" : "all" }
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: Creating with tms field is forbidden"}}
+
 # DELETE
 DELETE http://{{hostnport}}/api/index.php/emailtemplates/
 HTTP 405
@@ -96,3 +102,23 @@ GET http://{{hostnport}}/api/index.php/emailtemplates
 DOLAPIENTITY: 2
 HTTP 401
 {"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
+
+# GET id of first element
+GET http://{{hostnport}}/api/index.php/emailtemplates?limit=1&page=0
+HTTP 200
+[Asserts]
+jsonpath "$[0].id" exists
+[Captures]
+template-id: jsonpath "$[0]['id']"
+
+# PUT with an id
+PUT http://{{hostnport}}/api/index.php/emailtemplates/{{ template-id }}
+{ "id" : 42, "label" : "automatic test using 10_emailtemplates.hurl", "topic" : "automatic test using 10_emailtemplates.hurl", "type_template" : "all" }
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: Updating with id field is forbidden"}}
+
+# PUT with an datec
+PUT http://{{hostnport}}/api/index.php/emailtemplates/{{ template-id }}
+{ "datec" : 42, "label" : "automatic test using 10_emailtemplates.hurl", "topic" : "automatic test using 10_emailtemplates.hurl", "type_template" : "all" }
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: Updating with datec field is forbidden"}}

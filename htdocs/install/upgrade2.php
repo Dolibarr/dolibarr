@@ -657,7 +657,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '22.0.9');
 			$beforeversionarray = explode('.', '23.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_apiresttokens();
+
+				migrate_blockedlog_add_hmac_key();
 			}
 		}
 
@@ -766,8 +770,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '</table>';
 
 	if (!$error) {
-		// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
-		$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
+		// Set constant to ask to remake a new ping to inform about upgrade (if ping was already done and OK)
+		$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";	// This should be useless now because constant is uniqueid+' v'+version
 		$db->query($sql, 1);
 	}
 
@@ -5435,7 +5439,7 @@ function migrate_apiresttokens()
 
 	$db->begin();
 
-	$sqlforalltokens = "SELECT oat.token";
+	$sqlforalltokens = "SELECT oat.tokenstring";
 	$sqlforalltokens .= " FROM ".$db->prefix()."oauth_token AS oat";
 	$sqlforalltokens .= " WHERE oat.service = 'dolibarr_rest_api'";
 
@@ -5443,7 +5447,7 @@ function migrate_apiresttokens()
 
 	if ($resalltoken) {
 		while ($tokenobj = $db->fetch_object($resalltoken)) {
-			$allexistingtokens[] = dolDecrypt($tokenobj->token);
+			$allexistingtokens[] = dolDecrypt($tokenobj->tokenstring);
 		}
 	} else {
 		$error++;
@@ -5452,7 +5456,7 @@ function migrate_apiresttokens()
 	}
 
 	if (!$error) {
-		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, u.entity";
+		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS tokenstring, u.rowid AS fk_user, u.entity";
 		$sql .= " FROM llx_user AS u";
 		$sql .= " WHERE u.api_key IS NOT NULL AND u.api_key <> ''";
 
@@ -5462,13 +5466,13 @@ function migrate_apiresttokens()
 			$tmpuser = new User($db);
 
 			while ($obj = $db->fetch_object($result)) {
-				if (!in_array(dolDecrypt($obj->token), $allexistingtokens)) {
+				if (!in_array(dolDecrypt($obj->tokenstring), $allexistingtokens)) {
 					// Load the object of the user of token so we can get the API_COUNT_CALL
 					unset($tmpuser->conf); $tmpuser->conf = new stdClass();
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->token)))."', ";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring)))."', ";
 					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
 					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
 					$sqlforinsert .= ")";
@@ -5500,4 +5504,62 @@ function migrate_apiresttokens()
 		print $langs->trans('MigratedTokens', $nbofmigration);
 	}
 	print '</td></tr>';
+}
+
+
+/**
+ * Add the HMAC key for blockedlog v2
+ *
+ * @return  int		Return -1 if KO, 1 if OK
+ */
+function migrate_blockedlog_add_hmac_key()
+{
+	global $conf, $db, $langs;
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('InitAHMACKeyForBlockedLog')."</b>:\n";
+
+	$db->begin();
+
+	// Create HMAC if it does not exists yet
+	$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
+	if (empty($hmac_encoded_secret_key)) {
+		// Add key
+		$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
+
+		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);
+
+		if ($result < 0) {
+			dol_print_error($db);
+			$db->rollback();
+
+			print '</td></tr>';
+			return -1;
+		}
+
+		print $langs->trans('Done');
+	} else {
+		// Decode the HMAC key
+		$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
+
+		if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
+			print 'Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found in config parameters in database but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.';
+			print 'Restore the value of $dolibarr_main_crypt_key that was used for encryption in database and restart the migration.';
+			print 'If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
+			$db->rollback();
+
+			print '</td></tr>';
+			return -1;
+		}
+
+		print $langs->trans("NothingToDo")."\n";
+	}
+
+	$db->commit();
+
+	print '</td></tr>';
+	return 1;
 }

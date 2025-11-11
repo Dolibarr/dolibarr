@@ -326,16 +326,18 @@ if (empty($reshook)) {
 			$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 			$object->employee = GETPOSTINT('employee');
 
-			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOSTFLOAT("thm") : '';
 			$object->thm = price2num($object->thm);
-			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOSTFLOAT("tjm") : '';
 			$object->tjm = price2num($object->tjm);
-			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOSTFLOAT("salary") : '';
 			$object->salary = price2num($object->salary);
-			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml');
+			//$object->salaryextra = price2num($object->salaryextra);
+			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOSTFLOAT("weeklyhours") : '';
+			$object->weeklyhours = price2num($object->weeklyhours);
 
-			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
+			$object->color = GETPOST("color", 'alphanohtml') != '' ? str_replace('#', '', (string) GETPOST("color", 'alphanohtml')) : '';
 
 			$object->dateemployment = $dateemployment;
 			$object->dateemploymentend = $dateemploymentend;
@@ -507,18 +509,18 @@ if (empty($reshook)) {
 				$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 				$object->employee = GETPOSTINT('employee');
 
-				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOSTFLOAT("thm") : '';
 				$object->thm = price2num($object->thm);
-				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOSTFLOAT("tjm") : '';
 				$object->tjm = price2num($object->tjm);
-				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOSTFLOAT("salary") : '';
 				$object->salary = price2num($object->salary);
-				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-				$object->salaryextra = price2num($object->salaryextra);
-				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOSTFLOAT("salaryextra") : '';
+				//$object->salaryextra = price2num($object->salaryextra);
+				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOSTFLOAT("weeklyhours") : '';
 				$object->weeklyhours = price2num($object->weeklyhours);
 
-				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
+				$object->color = GETPOST("color", 'alphanohtml') != '' ? str_replace('#', '', (string) GETPOST("color", 'alphanohtml')) : '';
 				$object->dateemployment = $dateemployment;
 				$object->dateemploymentend = $dateemploymentend;
 				$object->datestartvalidity = $datestartvalidity;
@@ -645,6 +647,15 @@ if (empty($reshook)) {
 							} else {
 								// Create thumbs
 								$object->addThumbs($newfile);
+
+								// Index file in database
+								if (getDolGlobalString('USER_PHOTO_ALLOW_EXTERNAL_DOWNLOAD')) {
+									require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+									// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
+									deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
+									// now we index the uploaded logo file
+									addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1, $object);
+								}
 							}
 						} else {
 							$error++;
@@ -1068,9 +1079,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 					lastname = $("#lastname").val().toLowerCase();
 			';
 		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
-			print '			firstname = $("#firstname").val().toLowerCase()[0];';
+			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
 		} else {
-			print '			firstname = $("#firstname").val().toLowerCase();';
+			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim();';
 		}
 		print '
 					login = "";
@@ -1078,7 +1089,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						if (firstname) {
 							login = firstname + \''. dol_escape_js($charforseparator).'\';
 						}
-						login += lastname;
+						login += lastname.replace(/\s+/g, \'\').trim();
 					}
 					$("#login").val(login);
 				})
@@ -1373,7 +1384,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// User color
 	if (isModEnabled('agenda')) {
-		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+		print '<tr><td>'.$langs->trans("Color").'</td>';
 		print '<td>';
 		print $formother->selectColor(GETPOSTISSET('color') ? GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, array(), 'hideifnotset');
 		print '</td></tr>';
@@ -1849,7 +1860,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Color user
 			if (isModEnabled('agenda')) {
-				print '<tr><td class="titlefieldmax45">'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td class="titlefieldmax45">'.$langs->trans("Color").'</td>';
 				print '<td>';
 				print $formother->showColor($object->color, '');
 				print '</td>';
