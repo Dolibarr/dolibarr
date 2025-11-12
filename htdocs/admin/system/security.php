@@ -24,14 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
  * @var string 		$dolibarr_main_prod
  * @var string		$dolibarr_main_document_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin", "errors", "website"));
@@ -816,7 +815,7 @@ if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
 	$decryptedstring = dolDecrypt($exampletodecrypt);
 	if (ascii_check($decryptedstring)) {
-		print '<br> => <textarea rows="'.ROWS_1.'" class="valignmiddle">'.dolPrintHTMLForTextArea($decryptedstring).'</textarea>';
+		print '<br> => <textarea rows="'.ROWS_1.'" class="valignmiddle quatrevingtpercent">'.dolPrintHTMLForTextArea($decryptedstring).'</textarea>';
 	} else {
 		print '<br><span class="error"> => Failed to decrypt. The crypting key saved into the conf.php file seems to not be the one used to encrypt the provided encrypted string</span>';
 	}

@@ -156,10 +156,8 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-$result = restrictedArea($user, 'eventorganization');
-if (!$permissiontoread) {
-	accessforbidden();
-}
+
+$result = restrictedArea($user, 'project');
 
 
 /*

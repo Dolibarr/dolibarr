@@ -108,6 +108,7 @@ function isALNEQualifiedVersion()
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
+
 	if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
 		return false;
 	}

@@ -998,66 +998,67 @@ class Categorie extends CommonObject
 		$objs = array();
 
 		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
-		$obj = new $classnameforobj($this->db);
+		if (!empty($classnameforobj) && class_exists($classnameforobj)) {
+			$obj = new $classnameforobj($this->db);
 
-		$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
-		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
-		if (!empty($filterlang)) {
-			$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
-		}
-		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
-		$sql .= " AND c.fk_categorie = ".((int) $this->id);
-		// Compatibility with actioncomm table which has id instead of rowid
-		if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
-		} else {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
-		}
-		if (!empty($filterlang)) {
-			$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
-			$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
-		}
-		// Protection for external users
-		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
-			$sql .= " AND o.rowid = ".((int) $user->socid);
-		}
+			$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
+			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
+			$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
+			if (!empty($filterlang)) {
+				$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
+			}
+			$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
+			$sql .= " AND c.fk_categorie = ".((int) $this->id);
+			// Compatibility with actioncomm table which has id instead of rowid
+			if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
+				$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
+			} else {
+				$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+			}
+			if (!empty($filterlang)) {
+				$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
+				$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
+			}
+			// Protection for external users
+			if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
+				$sql .= " AND o.rowid = ".((int) $user->socid);
+			}
 
-		$errormessage = '';
-		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
-		if ($errormessage) {
-			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-			return -1;
-		}
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+			if ($errormessage) {
+				$this->errors[] = $errormessage;
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+				return -1;
+			}
 
-		$sql .= $this->db->order($sortfield, $sortorder);
-		if ($limit > 0 || $offset > 0) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
+			$sql .= $this->db->order($sortfield, $sortorder);
+			if ($limit > 0 || $offset > 0) {
+				$sql .= $this->db->plimit($limit + 1, $offset);
+			}
 
-		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
+			dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($rec = $this->db->fetch_array($resql)) {
-				if ($onlyids) {
-					$objs[] = $rec['fk_object'];
-				} else {
-					$classnameforobj = $this->MAP_OBJ_CLASS[$type];
-
-					$obj = new $classnameforobj($this->db);
-					$obj->fetch($rec['fk_object']);
-					if ($obj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-						$objs[] = $obj;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($rec = $this->db->fetch_array($resql)) {
+					if ($onlyids) {
+						$objs[] = $rec['fk_object'];
+					} else {
+						$obj->id = 0;
+						$obj->fetch($rec['fk_object']);
+						if ($obj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
+							$objs[] = $obj;
+						}
 					}
 				}
+			} else {
+				$this->error = $this->db->error().' sql='.$sql;
+				return -1;
 			}
-			return $objs;
-		} else {
-			$this->error = $this->db->error().' sql='.$sql;
-			return -1;
 		}
+
+		return $objs;
 	}
 
 	/**

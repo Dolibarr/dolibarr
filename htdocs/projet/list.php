@@ -73,17 +73,6 @@ $groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' 
 
 $title = $langs->trans("Projects");
 
-// Security check
-$socid = GETPOSTINT('socid');
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
-if ($socid > 0) {
-	$soc = new Societe($db);
-	$soc->fetch($socid);
-	$title .= ' (<a href="list.php">'.$soc->name.'</a>)';
-}
-if (!$user->hasRight('projet', 'lire')) {
-	accessforbidden();
-}
 
 $diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -370,6 +359,19 @@ if ($mode == 'kanbangroupby' && $groupby) {
 		$sortfield = $db->sanitize($groupbystringforsql).($sortfield ? ",".$sortfield : "");
 		$sortorder = "ASC".($sortfield ? ",".$sortorder : "");
 	}
+}
+
+// Security check
+$socid = GETPOSTINT('socid');
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	$title .= ' (<a href="list.php">'.$soc->name.'</a>)';
+}
+
+if (!$user->hasRight('project', 'read')) {
+	accessforbidden();
 }
 
 

@@ -229,9 +229,10 @@ if ($result) {
 		}
 
 		$objMod = $modules[$obj->module];
+		// $objMod is necessarily an object here
 
 		// Save field module_position in database if value is undefined or wrong (old data/version)
-		if (empty($obj->module_position) || (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $obj->module_position < 100000)) {
+		if (empty($obj->module_position) || ($objMod->isCoreOrExternalModule() == 'external' && $obj->module_position < 100000)) {
 			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0)) {
 				// TODO Define familyposition
 				//$familyposition = $modules[$obj->module]->family_position;
@@ -254,7 +255,7 @@ if ($result) {
 		}
 
 		// Save field family in database if value is undefined (old data/version)
-		if (empty($obj->family) && is_object($objMod) && !empty($objMod->family)) {
+		if (empty($obj->family) && !empty($objMod->family)) {
 			$newfamily = $objMod->family;
 			$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET family = '".$db->escape($newfamily)."'";
 			$sqlupdate .= " WHERE id = ".((int) $obj->id);
@@ -485,6 +486,7 @@ $familyinfo = array(
 	'other' => array('position' => '100', 'label' => $langs->trans("ModuleFamilyOther")),
 );
 
+$arrayofpermission = array();
 
 $result = $db->query($sql);
 if ($result) {
