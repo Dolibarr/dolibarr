@@ -2053,9 +2053,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_label)."'";
 							$sql .= ", '".$this->db->escape($r_module)."'";
 							$sql .= ", '".$this->db->escape($r_module_origin)."'";
-							$sql .= ", '".$this->db->escape($r_module_position)."'";
+							$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
 							$sql .= ", '".$this->db->escape($r_family)."'";
-							$sql .= ", '".$this->db->escape($r_family_position)."'";
+							$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
 							$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
 							$sql .= ", ".((int) $r_default);
 							$sql .= ", '".$this->db->escape($r_perms)."'";

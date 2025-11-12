@@ -61,22 +61,13 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
-// if we set another view list mode, we keep it (till we change one more time)
-if (GETPOSTISSET('mode')) {
-	$mode = GETPOST('mode', 'alpha');
-	if ($mode == 'common' || $mode == 'commonkanban') {
-		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
-	}
-} else {
-	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
-}
-
 $action = GETPOST('action', 'aZ09');
 $page_y = GETPOSTINT('page_y');
 $optioncss = GETPOST('optioncss', 'aZ09');
 $sortfield = GETPOST('sortfield', 'aZ09');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
+$mode = GETPOST('mode', 'alpha');
 $value = GETPOST('value', 'alpha');
 $search_keyword = GETPOST('search_keyword', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
@@ -168,6 +159,7 @@ if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 
 $debug = false;
 $remotestore = new ExternalModules($debug);
+
 if ($mode == 'marketplace') {
 	// Make remote calls
 	if (GETPOSTINT('dol_resetcache')) {
@@ -191,6 +183,16 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+// if we set another view list mode, we keep it (till we change one more time)
+if (GETPOSTISSET('mode')) {
+	$mode = GETPOST('mode', 'alpha');
+	if ($mode == 'common' && !getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT')) {
+		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
+	}
+} else {
+	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
 }
 
 if (GETPOST('buttonreset', 'alpha')) {

@@ -906,6 +906,10 @@ input.pageplusone {
 	padding-top: 4px;
 	margin-right: 4px;
 	margin-left: 3px;
+	width: 32px;
+}
+.paginationlastpage a {
+	padding-left: 6px;
 }
 
 .saturatemedium {
@@ -8905,6 +8909,10 @@ table.jPicker {
 
 @media only screen and (max-width: 767px)
 {
+	body {
+		font-size: 0.91em;
+	}
+
 	td.widthpictotitle,	table.titlemodulehelp tr td img.widthpictotitle {
 		width: 30px;
 	}

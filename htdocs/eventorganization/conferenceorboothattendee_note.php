@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
-require_once DOL_DOCUMENT_ROOT . '/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT . '/eventorganization/lib/eventorganization_confe
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
+require_once DOL_DOCUMENT_ROOT . '/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('eventorganization', 'companies'));
@@ -56,11 +54,6 @@ $hookmanager->initHooks(array('conferenceorboothattendeenote', 'globalcard')); /
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//restrictedArea($user, 'eventorganization', $id);
-
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
@@ -70,6 +63,8 @@ if ($id > 0 || !empty($ref)) {
 // Permissions
 $permissionnote = $user->hasRight('project', 'conferenceorboothattendee', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiontoadd = $user->hasRight('project', 'conferenceorboothattendee', 'write'); // Used by the include of actions_addupdatedelete.inc.php
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 
 
