@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2015 	Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Florian HENRY 			<florian.henry@open-concept.pro>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,22 +44,22 @@ class Propalmergepdfproduct extends CommonObject
 	public $table_element = 'propal_merge_pdf_product';
 
 	/**
-	 * @var int Id of product
+	 * @var ?int Id of product
 	 */
 	public $fk_product;
 
 	/**
-	 * @var string Filename
+	 * @var ?string Filename
 	 */
 	public $file_name;
 
 	/**
-	 * @var int Id user
+	 * @var ?int Id user
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int Id user
+	 * @var ?int Id user
 	 */
 	public $fk_user_mod;
 	/**
@@ -68,7 +68,7 @@ class Propalmergepdfproduct extends CommonObject
 	public $datec = '';
 
 	/**
-	 * @var string lang code
+	 * @var ?string lang code
 	 */
 	public $lang;
 
@@ -381,16 +381,14 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
-			$sql .= " WHERE rowid=".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
+		$sql .= " WHERE rowid=".((int) $this->id);
 
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -425,20 +423,18 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
-			$sql .= " WHERE fk_product = ".((int) $product_id);
+		$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
+		$sql .= " WHERE fk_product = ".((int) $product_id);
 
-			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($lang_id)) {
-				$sql .= " AND lang = '".$this->db->escape($lang_id)."'";
-			}
+		if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($lang_id)) {
+			$sql .= " AND lang = '".$this->db->escape($lang_id)."'";
+		}
 
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -470,16 +466,14 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
-			$sql .= " WHERE fk_product = ".((int) $this->fk_product)." AND file_name = '".$this->db->escape($this->file_name)."'";
+		$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
+		$sql .= " WHERE fk_product = ".((int) $this->fk_product)." AND file_name = '".$this->db->escape($this->file_name)."'";
 
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback

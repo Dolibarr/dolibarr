@@ -45,5 +45,5 @@ if (defined('DOL_INC_FOR_VERSION_ERROR')) {
 }
 
 if (!defined('CERTIF_LNE')) {
-	define('CERTIF_LNE', '0');				// Set to 1 if the beta version is a candidate for certification or if the stable version has been certified
+	define('CERTIF_LNE', '2');				// Set to 1 if the beta version is a candidate for certification or if the stable version has been certified. Use 2 for debug to force LNE feature.
 }

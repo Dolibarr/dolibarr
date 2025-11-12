@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 /**
  * API class for stock movements
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -58,46 +61,53 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement information
 	 *
-	 * @param	int		$id				ID of movement
-	 * @return  Object					Object with cleaned properties
+	 * @since	23.0.0	Initial implementation
 	 *
-	 * @throws	RestException
+	 * @param	int		$id				ID of stock movement
+	 * @return	Object					Stock movement object with cleaned properties
+	 *
+	 * @url		GET {id}
+	 *
+	 * @throws RestException 400 Bad Request
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 Internal Server Error
 	 */
-	/*
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'mouvement', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No stock movement with id 0 can exist');
+		}
 		$result = $this->stockmovement->fetch($id);
 		if (!$result ) {
-			throw new RestException(404, 'warehouse not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(404, 'stock movement not found');
 		}
 
 		return $this->_cleanObjectDatas($this->stockmovement);
-	}*/
+	}
 
 	/**
-	 * Get a list of stock movement
+	 * Get a list of stock movements
 	 *
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.fk_product:=:1) and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return array                Array of warehouse objects
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.fk_product:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return array						Array of warehouse objects
 	 * @phan-return MouvementStock[]
 	 * @phpstan-return MouvementStock[]
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -118,6 +128,9 @@ class StockMovements extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		// this query will return total stock movements with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -146,35 +159,56 @@ class StockMovements extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve stock movement list : '.$this->db->lasterror());
 		}
 
+		// if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
 	/**
-	 * Create stock movement object.
-	 * You can use the following message to test this RES API:
-	 * { "product_id": 1, "warehouse_id": 1, "qty": 1, "lot": "", "movementcode": "INV123", "movementlabel": "Inventory 123", "price": 0 }
-	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
-	 * $dlc Eat-by date. Will be used if lot does not exists yet and will be created.
-	 * $dluo Sell-by date. Will be used if lot does not exists yet and will be created.
+	 * Create a stock movement
 	 *
-	 * @param int $product_id Id product id {@min 1} {@from body} {@required true}
-	 * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
-	 * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
-	 * @param int $type Optionally specify the type of movement. 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase). {@from body} {@type int}
-	 * @param string $lot Lot {@from body}
-	 * @param string $movementcode Movement code {@from body}
-	 * @param string $movementlabel Movement label {@from body}
-	 * @param string $price To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
-	 * @param string $datem Date of movement {@from body} {@type date}
-	 * @param string $dlc Eat-by date. {@from body} {@type date}
-	 * @param string $dluo Sell-by date. {@from body} {@type date}
-	 * @param string $origin_type   Origin type (Element of source object, like 'project', 'inventory', ...)
-	 * @param int $origin_id     Origin id (Id of source object)
-	 * @return  int                         ID of stock movement
+	 * You can use the following message to test this REST API:
+	 *
+	 * { "product_id": 1, "warehouse_id": 1, "qty": 1, "batch": "", "movementcode": "INV123", "label": "Inventory 123", "price": 0 }
+	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
+	 * $eatBy Eat-by date. Will be used if a batch does not exist yet and will be created.
+	 * sellBy Sell-by date. Will be used if a batch does not exist yet and will be created.
+	 *
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	int		$product_id		ID product id {@min 1} {@from body} {@required true}
+	 * @param	int		$warehouse_id	ID warehouse {@min 1} {@from body} {@required true}
+	 * @param	float	$qty			Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
+	 * @param	int		$type			Optionally specify the type of movement. 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase). {@from body} {@type int}
+	 * @param	string	$batch			Lot {@from body}
+	 * @param	string	$movementcode	Movement code {@from body}
+	 * @param	string	$label			Movement label {@from body}
+	 * @param	string	$price			To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
+	 * @param	string	$datem			Date of movement {@from body} {@type date}
+	 * @param	string	$sellBy			Eat-by date. {@from body} {@type date}
+	 * @param	string	$eatBy			Sell-by date. {@from body} {@type date}
+	 * @param	string	$origin_type	Origin type (Element of source object, like 'project', 'inventory', ...)
+	 * @param	int		$origin_id		Origin id (ID of source object)
+	 * @return	int						ID of stock movement
 	 *
 	 * @throws RestException
 	 */
-	public function post($product_id, $warehouse_id, $qty, $type = 2, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
+	public function post($product_id, $warehouse_id, $qty, $type = 2, $batch = '', $movementcode = '', $label = '', $price = '', $datem = '', $sellBy = '', $eatBy = '', $origin_type = '', $origin_id = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
 			throw new RestException(403);
@@ -193,12 +227,12 @@ class StockMovements extends DolibarrApi
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
-		$sellBy = empty($dlc) ? '' : dol_stringtotime($dlc);
+		$dluo = empty($eatBy) ? '' : dol_stringtotime($eatBy);
+		$dlc = empty($sellBy) ? '' : dol_stringtotime($sellBy);
 		$dateMvt = empty($datem) ? '' : dol_stringtotime($datem);
 
 		$this->stockmovement->setOrigin($origin_type, $origin_id);
-		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, (float) $price, $movementlabel, $movementcode, $dateMvt, $eatBy, $sellBy, $lot) <= 0) {
+		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, (float) $price, $label, $movementcode, $dateMvt, $dluo, $dlc, $batch) <= 0) {
 			$errormessage = $this->stockmovement->error;
 			if (empty($errormessage)) {
 				$errormessage = implode(',', $this->stockmovement->errors);

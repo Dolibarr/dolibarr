@@ -1005,7 +1005,7 @@ class pdf_squille extends ModelePdfReception
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
 
 				$pdf->SetFont('', '', $default_font_size - 2);
-				$text = $linkedobject->ref;
+				$text = (string) $linkedobject->ref;
 				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
 					$text .= ' ('.$linkedobject->ref_client.')';
 				}

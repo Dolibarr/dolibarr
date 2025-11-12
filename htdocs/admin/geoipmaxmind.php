@@ -58,7 +58,7 @@ if ($action == 'set') {
 
 	$gimcdf = GETPOST("GEOIPMAXMIND_COUNTRY_DATAFILE");
 
-	if (!$error && $gimcdf && !preg_match('/\.(dat|mmdb)$/', $gimcdf)) {
+	if ($gimcdf && !preg_match('/\.(dat|mmdb)$/', $gimcdf)) {
 		setEventMessages($langs->trans("ErrorFileMustHaveFormat", '.dat|.mmdb'), null, 'errors');
 		$error++;
 	}

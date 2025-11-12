@@ -179,7 +179,7 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -233,7 +233,7 @@ class Societe extends CommonObject
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 280),
 		//'remise_client' =>array('type'=>'double', 'label'=>'CustomerDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>285, 'isameasure'=>1),
 		//'remise_supplier' =>array('type'=>'double', 'label'=>'SupplierDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>290, 'isameasure'=>1),
-		'mode_reglement' => array('type' => 'tinyint(4)', 'label' => 'Mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 295),
+		'mode_reglement' => array('type' => 'smallint(6)', 'label' => 'Mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 295),
 		'cond_reglement' => array('type' => 'tinyint(4)', 'label' => 'Cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 300),
 		'deposit_percent' => array('type' => 'varchar(63)', 'label' => 'DepositPercent', 'enabled' => 1, 'visible' => -1, 'position' => 301),
 		'mode_reglement_supplier' => array('type' => 'integer', 'label' => 'Mode reglement supplier', 'enabled' => 1, 'visible' => -1, 'position' => 305),
@@ -532,17 +532,17 @@ class Societe extends CommonObject
 	public $localtax2_value;
 
 	/**
-	 * @var string Manager
+	 * @var string 	Manager(s) of the company
 	 */
 	public $managers;
 
 	/**
-	 * @var float Capital
+	 * @var null|float|'' 	Capital of the company (to be null test is done with '')
 	 */
 	public $capital;
 
 	/**
-	 * @var int Type thirdparty
+	 * @var int 	Type thirdparty
 	 */
 	public $typent_id = 0;
 
@@ -1329,10 +1329,13 @@ class Societe extends CommonObject
 		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA', 'ACCOUNTANCY_CODE_CUSTOMER', 'ACCOUNTANCY_CODE_SUPPLIER');
 		foreach ($array_to_check as $key) {
 			$keymin = strtolower($key);
+			$keyfield_db = $keymin;
 			if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') {
 				$keymin = 'code_compta_client';
+				$keyfield_db = 'code_compta';
 			} elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER') {
 				$keymin = 'code_compta_fournisseur';
+				$keyfield_db = 'code_compta_fournisseur';
 			}
 			$i = (int) preg_replace('/[^0-9]/', '', $key);
 			$vallabel = $this->$keymin;
@@ -1392,7 +1395,7 @@ class Societe extends CommonObject
 				} elseif ($key == 'ACCOUNTANCY_CODE_CUSTOMER' && !empty($this->client)) {
 					// Check for unicity
 					if ($vallabel && getDolGlobalString('SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_UNIQUE')) {
-						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
+						if ($this->id_prof_exists($keyfield_db, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->loadLangs(array("errors", 'compta'));
 							$error++;
 							$this->errors[] = $langs->trans('CustomerAccountancyCodeShort') . " " . $langs->trans("ErrorProdIdAlreadyExist", $vallabel) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';
@@ -1408,7 +1411,7 @@ class Societe extends CommonObject
 				} elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER' && !empty($this->fournisseur)) {
 					// Check for unicity
 					if ($vallabel && getDolGlobalString('SOCIETE_ACCOUNTANCY_CODE_SUPPLIER_UNIQUE')) {
-						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
+						if ($this->id_prof_exists($keyfield_db, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->loadLangs(array("errors", 'compta'));
 							$error++;
 							$this->errors[] = $langs->trans('SupplierAccountancyCodeShort') . " " . $langs->trans("ErrorProdIdAlreadyExist", $vallabel) . ' (' . $langs->trans("ForbiddenBySetupRules") . ')';
@@ -1526,7 +1529,7 @@ class Societe extends CommonObject
 		$this->localtax1_value = trim($this->localtax1_value);
 		$this->localtax2_value = trim($this->localtax2_value);
 
-		$this->capital = ($this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
+		$this->capital = (!is_null($this->capital) && (string) $this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
 		$this->effectif_id = (int) $this->effectif_id;
 		$this->forme_juridique_code = (int) $this->forme_juridique_code;
@@ -1685,7 +1688,7 @@ class Societe extends CommonObject
 				$sql .= ",localtax2_value =0.000";
 			}
 
-			$sql .= ",capital = ".($this->capital === null ? "null" : $this->capital);
+			$sql .= ",capital = ".($this->capital === null ? "null" : (float) $this->capital);
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
@@ -4852,7 +4855,7 @@ class Societe extends CommonObject
 			$this->socialnetworks['github'] = $github_url;
 		}
 
-		// Id prof generiques
+		// Id prof generic
 		$this->idprof1 = getDolGlobalString('MAIN_INFO_SIREN');
 		$this->idprof2 = getDolGlobalString('MAIN_INFO_SIRET');
 		$this->idprof3 = getDolGlobalString('MAIN_INFO_APE');
@@ -4865,7 +4868,7 @@ class Societe extends CommonObject
 		$this->idprof10 = getDolGlobalString('MAIN_INFO_PROFID10');
 		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarily INTRA.
 		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
-		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : 0;
+		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : null;
 		$this->forme_juridique_code = getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE');
 		$this->email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 		$this->default_lang = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
@@ -5164,6 +5167,7 @@ class Societe extends CommonObject
 	 */
 	public function getOutstandingProposals($mode = 'customer')
 	{
+		global $hookmanager;
 		$table = 'propal';
 		if ($mode == 'supplier') {
 			$table = 'supplier_proposal';
@@ -5178,6 +5182,11 @@ class Societe extends CommonObject
 		}
 
 		dol_syslog("getOutstandingProposals for fk_soc = ".((int) $this->id), LOG_DEBUG);
+
+		// Add where from hooks
+		$parameters = array('mode' => $mode, 'table' => $table);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -5208,6 +5217,7 @@ class Societe extends CommonObject
 	 */
 	public function getOutstandingOrders($mode = 'customer')
 	{
+		global $hookmanager;
 		$table = 'commande';
 		if ($mode == 'supplier') {
 			$table = 'commande_fournisseur';
@@ -5222,6 +5232,10 @@ class Societe extends CommonObject
 		}
 
 		dol_syslog("getOutstandingOrders", LOG_DEBUG);
+		// Add where from hooks
+		$parameters = array('mode' => $mode, 'table' => $table);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$outstandingOpened = 0;
@@ -5436,25 +5450,26 @@ class Societe extends CommonObject
 	/**
 	 * Sets object to supplied categories.
 	 *
-	 * Deletes object from existing categories not supplied.
-	 * Adds it to non existing supplied categories.
-	 * Existing categories are left untouch.
+	 * Assign the object to all categories not yet assigned.
+	 * Unasign object from existing categories not supplied in $categories (if remove_existing==true).
+	 * If remove_existing is false, existing categories are left untouch.
 	 *
-	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @param 	string 		$type_categ 	Category type ('customer' or 'supplier')
-	 * @return	int							Return integer <0 if KO, >0 if OK
+	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
+	 * @param 	string 		$type_categ 		Category type ('customer' or 'supplier')
+	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
+	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function setCategories($categories, $type_categ)
+	public function setCategories($categories, $type_categ, $remove_existing = true)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		// Decode type
 		if (!in_array($type_categ, array(Categorie::TYPE_CUSTOMER, Categorie::TYPE_SUPPLIER))) {
-			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown company category type. Done nothing.', LOG_ERR);
+			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown company category type. Nothing done.', LOG_ERR);
 			return -1;
 		}
 
-		return parent::setCategoriesCommon($categories, $type_categ);
+		return parent::setCategoriesCommon($categories, $type_categ, $remove_existing);
 	}
 
 	/**

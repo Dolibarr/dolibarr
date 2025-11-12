@@ -175,7 +175,7 @@ class User extends CommonObject
 	public $personal_mobile;
 
 	/**
-	 * @var int 1 if admin 0 if standard user
+	 * @var int<0,1> 1 if admin 0 if standard user
 	 */
 	public $admin;
 
@@ -794,7 +794,11 @@ class User extends CommonObject
 		// Load user->conf for user
 		$sql = "SELECT param, value FROM ".$this->db->prefix()."user_param";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
-		$sql .= " AND entity = ".($entity == -1 ? (int) $conf->entity : (int) $entity);
+		if ($entity < 0) {
+			$sql .= " AND entity IN (0, ".((int) $conf->entity).")"; // IN (0, x)
+		} else {
+			$sql .= " AND entity = ".((int) $entity); // 0 or x
+		}
 
 		//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2155,7 +2159,7 @@ class User extends CommonObject
 
 		$this->accountancy_code_user_general = trim((string) $this->accountancy_code_user_general);
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
-		$this->color						= trim((string) $this->color);
+		$this->color						= trim(str_replace('#', '', (string) $this->color));
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
 
@@ -3120,7 +3124,7 @@ class User extends CommonObject
 	 *  @param  int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string									String with URL
 	 */
-	public function getNomUrl($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = 'valignmiddle', $save_lastsearch_value = -1)
+	public function getNomUrl($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $hookmanager, $user;
 

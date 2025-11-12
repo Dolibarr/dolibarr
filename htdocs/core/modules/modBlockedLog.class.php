@@ -148,9 +148,9 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function alreadyUsed()
 	{
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-		$b = new BlockedLog($this->db);
-		return $b->alreadyUsed(1);
+		require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+		return isBlockedLogused();
 	}
 
 
@@ -233,6 +233,8 @@ class modBlockedLog extends DolibarrModules
 
 		if ($b->alreadyUsed(1)) {
 			$res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
+			//$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));
+			return 0;
 		} else {
 			$res = $b->create($user);
 		}

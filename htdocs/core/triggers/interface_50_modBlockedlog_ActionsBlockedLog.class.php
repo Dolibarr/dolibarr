@@ -54,7 +54,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 * @param Object		$object     Object
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
-	 * @param conf		    $conf       Object conf
+	 * @param Conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
@@ -91,13 +91,13 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		// Event/record is qualified
 		$qualified = 0;
 		$amounts = 0;
-		if ($action === 'BILL_VALIDATE' || (($action === 'BILL_DELETE' || $action === 'BILL_SENTBYMAIL') && $object->statut != 0)
-			|| $action === 'BILL_SUPPLIER_VALIDATE' || (($action === 'BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && $object->statut != 0)
+		if ($action === 'BILL_VALIDATE' || (($action === 'BILL_DELETE' || $action === 'BILL_SENTBYMAIL') && ($object->statut != 0 || $object->status != 0))
+			|| $action === 'BILL_SUPPLIER_VALIDATE' || (($action === 'BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'MEMBER_SUBSCRIPTION_CREATE' || $action === 'MEMBER_SUBSCRIPTION_MODIFY' || $action === 'MEMBER_SUBSCRIPTION_DELETE'
-			|| $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && $object->statut != 0)
+			|| $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'CASHCONTROL_VALIDATE'
-			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && $object->statut != 0)
-			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && $object->statut != 0)
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0))
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0))
 			|| (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') && in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'))))
 		) {
 			$qualified++;
@@ -144,7 +144,6 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		// Set field date_object, ref_object, fk_object, element, object_data
 		$result = $b->setObjectData($object, $action, $amounts, $user);
-		//var_dump($b); exit;
 
 		if ($result < 0) {
 			$this->setErrorsFromObject($b);
@@ -158,31 +157,6 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return -1;
 		} else {
 			return 1;
-		}
-	}
-
-
-	/**
-	 * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
-	 * This function can be used to avoid to show the mandatory information "Certified LNE" on tickets when it is not true.
-	 *
-	 * @return boolean		True or false
-	 */
-	public function isALNECandidateVersion()
-	{
-		global $mysoc;
-
-		if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
-			return false;
-		}
-		if ($mysoc->country_code != 'FR') {
-			return false;
-		}
-		if (!defined('CERTIF_LNE') || !constant('CERTIF_LNE')) {
-			return false;
-		}
-		if (!isModEnabled('blockedlog')) {
-			return false;
 		}
 	}
 }

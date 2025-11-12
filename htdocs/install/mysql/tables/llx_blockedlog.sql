@@ -37,7 +37,6 @@ CREATE TABLE llx_blockedlog
 	element varchar(50),
 	fk_user	integer,
 	fk_object integer,
-	signature_line varchar(100) NOT NULL, 		-- the hash of the key for signature for line only so without previous hash before (not used)
 	object_version varchar(32) DEFAULT '',		-- in which version did the line was recorded
 	certified integer,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

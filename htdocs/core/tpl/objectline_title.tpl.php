@@ -70,7 +70,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'order_sup
 	}
 	if (GETPOST('mode', 'aZ09') == 'servicedateforalllines') {
 		print '&nbsp;&nbsp;<div class="classvatforalllines inline-block nowraponall">';
-		$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+		$hourmin = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 		print $form->selectDate('', 'alldate_start', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
 		print ' '.$langs->trans('to').' ';
@@ -115,7 +115,7 @@ print '</th>';
 print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</th>';
 
 // Multicurrency HT / excl tax
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHT');
 	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
@@ -126,7 +126,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 }
 
 // Multicurrency TTC / incl tax
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 	print '<th class="linecoluttc_currency right " style="width: 80px">'.$langs->trans('PriceUTTC');
 	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
@@ -212,7 +212,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort');
 	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }

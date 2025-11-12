@@ -179,7 +179,7 @@ $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatede
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 // Project permission
@@ -2030,10 +2030,10 @@ if ($action == 'create') {
 		$object->date_commande = dol_now();
 
 		// We check if number is temporary number
-		if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', (string) $object->ref) || empty($object->ref)) { // empty should not happened, but when it occurs, the test save life
 			$newref = $object->getNextNumRef($object->thirdparty);
 		} else {
-			$newref = $object->ref;
+			$newref = (string) $object->ref;
 		}
 
 		if ($newref < 0) {

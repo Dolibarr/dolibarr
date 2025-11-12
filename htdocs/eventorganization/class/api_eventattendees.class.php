@@ -599,11 +599,11 @@ class EventAttendees extends DolibarrApi
 	{
 		// what kind of access management do we need?
 		$moduleaccess = false;
-		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('eventorganization', $accesstype)) {
+		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('project', $accesstype)) {
 			$moduleaccess = true;
 		}
 		$fullprojectaccess = false;
-		if (DolibarrApiAccess::$user->hasRight('projet', 'all', $accesstype)) {
+		if (DolibarrApiAccess::$user->hasRight('project', 'all', $accesstype)) {
 			$fullprojectaccess = true;
 		}
 

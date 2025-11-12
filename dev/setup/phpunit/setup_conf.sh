@@ -44,10 +44,10 @@ function save_db_cache() (
 	# DETERMINE VERSION
 	cd "${TRAVIS_BUILD_DIR}/htdocs/install" || exit 1
 
-	# Get the target version from the filefunc.inc.php file
-	target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\1/p" ../filefunc.inc.php) ; echo $target_version
+	# Get the target version from the version.inc.php file
+	target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\1/p" ../version.inc.php) ; echo $target_version
 	# Default in case that failed
-	target_version=${target_version:=20.0.0}
+	target_version=${target_version:=22.0.0}
 
 	# Sequence of versions for upgrade process (to be completed)
 	VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")
