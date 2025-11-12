@@ -119,11 +119,11 @@ class Holidayapi extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)";
 		$sql .= ' WHERE t.entity IN ('.getEntity('holiday').')';
-		
+
 		if ($user_ids) {
 			$sql .= " AND t.fk_user IN (".$this->db->sanitize($user_ids).")";
 		}
-		
+
 		if ($status) {
 			$sql .= " AND t.statut IN (".$this->db->sanitize($status).")";
 		}
@@ -200,7 +200,7 @@ class Holidayapi extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-        dol_syslog("POST /holidays called with data: " . json_encode($request_data), LOG_DEBUG);
+		dol_syslog("POST /holidays called with data: " . json_encode($request_data), LOG_DEBUG);
 		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403, "Insufficient rights");
 		}
@@ -252,7 +252,7 @@ class Holidayapi extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -341,7 +341,7 @@ class Holidayapi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403, "Insufficient rights");
 		}
-		
+
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Holiday not found');
@@ -387,7 +387,7 @@ class Holidayapi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('holiday', 'approve')) {
 			throw new RestException(403, "Insufficient rights");
 		}
-		
+
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Holiday not found');
@@ -433,7 +433,7 @@ class Holidayapi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403, "Insufficient rights");
 		}
-		
+
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Holiday not found');
@@ -480,7 +480,7 @@ class Holidayapi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403, "Insufficient rights");
 		}
-		
+
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Holiday not found');
@@ -607,7 +607,7 @@ class Holidayapi extends DolibarrApi
 	private function _validate($data)
 	{
 		$holiday = array();
-		foreach (Holidayapi::$FIELDS as $field)  {
+		foreach (Holidayapi::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
@@ -616,4 +616,3 @@ class Holidayapi extends DolibarrApi
 		return $holiday;
 	}
 }
-
