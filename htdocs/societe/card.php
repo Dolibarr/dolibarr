@@ -113,12 +113,12 @@ $errors = array();
 $refalreadyexists = 0;
 
 // Get parameters
-$action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
-$cancel		= GETPOST('cancel', 'alpha');
+$action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$confirm 	= GETPOST('confirm', 'alpha');
-$canvas		= GETPOST('canvas', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$canvas = GETPOST('canvas', 'alpha');
 
 $dol_openinpopup = '';
 
@@ -1813,7 +1813,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Local Taxes
-			//TODO: Place into a function to control showing by country or study better option
+			// TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
 				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';

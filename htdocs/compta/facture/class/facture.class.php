@@ -3198,7 +3198,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			// Invoice line extrafileds
+			// Invoice line extrafields
 			$main = MAIN_DB_PREFIX.'facturedet';
 			$ef = $main."_extrafields";
 			$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";

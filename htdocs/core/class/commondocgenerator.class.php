@@ -1129,7 +1129,9 @@ abstract class CommonDocGenerator
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
+	 * @phpstan-template T
 	 *
+	 * @phpstan-param T $object
 	 * @param   array<string,CommonObject|float|int|string>|CommonObject	$object		Dolibarr Object
 	 * @param   Translate			$outputlangs	Language object for output
 	 * @param   boolean|int			$recursive		Want to fetch child array or child object.

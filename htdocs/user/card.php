@@ -1673,12 +1673,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			} else {
 				print '<td>';
 				$addadmin = '';
-				if (property_exists($object, 'admin')) {
-					if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-						$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
-					} elseif (!empty($object->admin)) {
-						$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
-					}
+				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
+				} elseif (!empty($object->admin)) {
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 				}
 				print showValueWithClipboardCPButton($object->login).$addadmin;
 				print '</td>';
@@ -1921,7 +1919,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
 				$s = '';
-				if (isset($object->socid) && $object->socid > 0) {
+				if (!empty($object->socid) && $object->socid > 0) {
 					$societe = new Societe($db);
 					$societe->fetch($object->socid);
 					if ($societe->id > 0) {
