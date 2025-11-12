@@ -622,11 +622,17 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || preg_match('/targetwithdetails/', $mode)) {
 						// Phone
 						if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/', $mode)) {
-							if (!empty($targetcompany->phone)) {
+							if (!empty($targetcompany->phone) || !empty($targetcompany->phone_mobile)) {
 								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Phone").": ";
 							}
 							if (!empty($targetcompany->phone)) {
 								$stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone);
+							}
+							if (!empty($targetcompany->phone) && !empty($targetcompany->phone_mobile)) {
+								$stringaddress .= " / ";
+							}
+							if (!empty($targetcompany->phone_mobile)) {
+								$stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone_mobile);
 							}
 						}
 						// Fax

@@ -26,12 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-if (empty($user->admin)) {
-	accessforbidden();
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +33,11 @@ if (empty($user->admin)) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+if (empty($user->admin)) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
@@ -52,6 +51,7 @@ $search_id = GETPOST("search_id", 'alpha');
 $search_version = GETPOST("search_version", 'alpha');
 $search_permission = GETPOST("search_permission", 'alpha');
 
+$page = GETPOSTINT('page');
 $sortfield			= GETPOST('sortfield', 'aZ09comma');
 $sortorder			= GETPOST('sortorder', 'aZ09comma');
 

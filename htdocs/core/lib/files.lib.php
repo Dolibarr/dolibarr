@@ -762,13 +762,13 @@ function dol_fileperm($pathoffile)
 /**
  * Make replacement of strings into a file.
  *
- * @param	string					$srcfile			       Source file (can't be a directory)
- * @param	array<string,string|int> $arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
- * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
- * @param	int						$indexdatabase		       1=index new file into database.
- * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
- * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @param	string						$srcfile			       Source file (can't be a directory)
+ * @param	array<string,string|int> 	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	string						$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	string						$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
+ * @param	int							$indexdatabase		       1=index new file into database.
+ * @param   int     					$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/' and include the starting/ending '/' in string.
+ * @return	int												       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy(), dolCopyDir()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)

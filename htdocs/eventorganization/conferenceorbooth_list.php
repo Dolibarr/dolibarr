@@ -143,9 +143,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->hasRight('eventorganization', 'read');
-$permissiontoadd = $user->hasRight('eventorganization', 'write');
-$permissiontodelete = $user->hasRight('eventorganization', 'delete');
+$permissiontoread = $user->hasRight('project', 'read');
+$permissiontoadd = $user->hasRight('project', 'write');
+$permissiontodelete = $user->hasRight('project', 'delete');
 
 // Security check
 if (!isModEnabled('eventorganization')) {
@@ -166,7 +166,7 @@ if (!$permissiontoread) {
  * Actions
  */
 
-if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && $user->hasRight('eventorganization', 'write')) {
+if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && $user->hasRight('project', 'write')) {
 	//If "set" fields keys is in projects fields
 	$project_attr = preg_replace('/^set/', '', $action);
 	if (array_key_exists($project_attr, $project->fields)) {

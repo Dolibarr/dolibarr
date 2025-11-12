@@ -518,7 +518,7 @@ $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
-$publisherlogoarray = array();
+//$publisherlogoarray = array();
 
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.

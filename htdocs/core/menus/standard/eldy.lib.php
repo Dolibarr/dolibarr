@@ -211,7 +211,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Projects
 	$tmpentry = array(
 		'enabled' => (int) (isModEnabled('project') ? 1 : 0),
-		'perms' => (string) (int) ($user->hasRight('projet', 'lire') ? 1 : 0),
+		'perms' => (string) ($user->hasRight('project', 'read') ? 1 : 0),
 		'module' => 'projet'
 	);
 

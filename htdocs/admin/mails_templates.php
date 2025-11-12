@@ -257,7 +257,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
 if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
-if (isModEnabled('eventorganization') && $user->hasRight('eventorganization', 'read')) {
+if (isModEnabled('eventorganization') && $user->hasRight('project', 'read')) {
 	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
 if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
