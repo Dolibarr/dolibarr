@@ -2899,4 +2899,20 @@ class Task extends CommonObjectLine
 
 		return -1;
 	}
+
+	/**
+	 * Sets object to task categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_PROJECT_TASK);
+	}
 }
