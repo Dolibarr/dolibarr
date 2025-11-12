@@ -1391,6 +1391,49 @@ class FormWebPortal extends Form
 	}
 
 	/**
+	 * Html for select with get options by AJAX
+	 *
+	 * @param	string					$htmlName		Name
+	 * @param	array<string,mixed>		$array			Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param	string					$id				Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
+	 * @param	string					$morecss		[=''] Class
+	 * @param	string					$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string									Html for input with label
+	 */
+	public function inputSelectAjax($htmlName, $array, $id, $ajaxUrl, $ajaxData = [], $morecss = 'minwidth75', $moreparam = '')
+	{
+		$out = "
+					<script>
+					$(document).ready(function () {
+						$('#" . $htmlName . "').select2({
+							ajax: {
+								url: '" . $ajaxUrl . "',
+								dataType: 'json',
+								delay: 250, // wait 250 milliseconds before triggering the request
+								data: function (params) {
+									var query = {
+										search: params.term,
+										page: params.page || 1";
+		if (!empty($ajaxData) && is_array($ajaxData)) {
+			foreach ($ajaxData as $key => $value) {
+				$out .= ", " . $key . ": '" . $value . "'";
+			}
+		}
+		$out .= "
+									}
+									return query;
+								}
+							}
+						})
+					});
+					</script>";
+
+		$out .= $this->selectarray($htmlName, $array, $id, 0, 0, 0, $moreparam, 0, 0, 0, '', $morecss);
+
+		return $out;
+	}
+
+	/**
 	 * Html for HTML area
 	 *
 	 * @param	string	$htmlName		Html name

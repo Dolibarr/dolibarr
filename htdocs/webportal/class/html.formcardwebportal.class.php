@@ -26,8 +26,8 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalfieldsmanager.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/fieldsmanager.class.php';
 
 /**
  *    Class to manage generation of HTML components
@@ -155,7 +155,7 @@ class FormCardWebPortal
 	{
 		$this->db = $db;
 		$this->form = new FormWebPortal($this->db);
-		$this->fieldsmanager = new FieldsManager($this->db, $this->form);
+		$this->fieldsmanager = new WebPortalFieldsManager($this->db, $this->form);
 	}
 
 	/**

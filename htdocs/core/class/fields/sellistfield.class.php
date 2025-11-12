@@ -90,7 +90,6 @@ class SellistField extends CommonSellistField
 		$htmlName = $keyPrefix . $key . $keySuffix;
 		$selectedValue = is_null($value) || $this->isEmptyValue($fieldInfos, $value) ? '' : (string) $value;
 
-		$out = '';
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
 			$objectId = isset($fieldInfos->otherParams['objectId']) ? (int) $fieldInfos->otherParams['objectId'] : (isset($fieldInfos->object) && is_object($fieldInfos->object) ? $fieldInfos->object->id : 0);
 			$objectType = isset($fieldInfos->otherParams['objectType']) ? (int) $fieldInfos->otherParams['objectType'] : (isset($fieldInfos->object) && is_object($fieldInfos->object) ? $fieldInfos->object->element : '');
@@ -98,52 +97,20 @@ class SellistField extends CommonSellistField
 			$options = $this->getOptions($fieldInfos, $key, false, false, $selectedValue);
 
 			// TODO add dependency support (set dependencyvalue with dependency field value get by JS)
-			$out .= "
-					<script>
-					$(document).ready(function () {
-						$('#" . $htmlName . "').select2({
-							ajax: {
-								url: '" . self::$ajaxUrl . "',
-								dataType: 'json',
-								delay: 250, // wait 250 milliseconds before triggering the request
-								data: function (params) {
-									var query = {
-										search: params.term,
-										page: params.page || 1,
-										objecttype: '" . $objectType . "',
-										objectid: '" . $objectId . "',
-										objectkey: '" . $key . "',
-										mode: '" . $printMode . "',
-										value: '" . $selectedValue . "',
-										dependencyvalue: ''
-									}
-									return query;
-								}
-							}
-						})
-					});
-					</script>";
-			$out .= '<select class="flat maxwidthonsmartphone' . $moreCss . '" name="' . $htmlName . '" id="' . $htmlName . '"' . $moreAttrib . $placeHolder . $autoFocus . '>';
-			foreach ($options as $optionKey => $optionInfos) {
-				$parent = empty($optionInfos['parent']) ? '' : ' parent="' . dolPrintHTMLForAttribute($optionInfos['parent']) . '"';
-				$out .= '<option value="' . dolPrintHTMLForAttribute($optionKey) . '"' . $parent . ' selected="selected">' . $optionInfos['label'] . '</option>';
-			}
-			$out .= '</select>';
+			$ajaxData = array(
+				'objecttype' => $objectType,
+				'objectid' => $objectId,
+				'objectkey' => $key,
+				'mode' => $printMode,
+				'value' => $selectedValue,
+				'dependencyvalue' => '',
+			);
+
+			$out = self::$form->inputSelectAjax($htmlName, $options, $selectedValue, self::$ajaxUrl, $ajaxData, $moreCss, $moreAttrib . $placeHolder . $autoFocus);
 		} else {
-			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlName, array(), 0);
-			}
-
-			$optionsList = '';
 			$options = $this->getOptions($fieldInfos, $key, true);
-			foreach ($options as $optionKey => $optionInfos) {
-				$selected = ((string) $selectedValue) === ((string) $optionKey) ? ' selected="selected"' : '';
-				$parent = empty($optionInfos['parent']) ? '' : ' parent="' . dolPrintHTMLForAttribute($optionInfos['parent']) . '"';
-				$optionsList .= '<option value="' . dolPrintHTMLForAttribute($optionKey) . '"' . $parent . $selected . '>' . $optionInfos['label'] . '</option>';
-			}
 
-			$out .= '<select class="flat maxwidthonsmartphone' . $moreCss . '" name="' . $htmlName . '" id="' . $htmlName . '" ' . $moreAttrib . $placeHolder . $autoFocus . '>' . $optionsList . '</select>';
+			$out = self::$form->selectarray($htmlName, $options, $selectedValue, 0, 0, 0, $moreAttrib . $placeHolder . $autoFocus, 0, 0, 0, '', $moreCss);
 		}
 
 		return $out;
