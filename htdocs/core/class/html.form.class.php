@@ -12853,6 +12853,8 @@ class Form
 	 * @param	string					$htmlName		Name
 	 * @param	array<string,mixed>		$array			Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 * @param	string					$id				Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
+	 * @param	string					$ajaxUrl		Ajax page Url
+	 * @param	array<string,string>	$ajaxData		Additional data send to the AJAX page
 	 * @param	string					$morecss		[=''] Class
 	 * @param	string					$moreparam		[=''] Add attributes (checked, required, etc)
 	 * @return	string									Html for input with label
