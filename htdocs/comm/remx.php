@@ -3,8 +3,8 @@
  * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Anthony Damhet				<a.damhet@progiseize.fr>
+ * Copyright (C) 2024-2025	MDW							            <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		    Anthony Damhet				      <a.damhet@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +149,8 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 			$res = $discount->delete($user);
 			if ($res > 0) {
 				$db->commit();
-				header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb with back
+				$query = ['id' => $id, 'backtopage' => $backtopage];
+				header("Location: " . dolBuildUrl($_SERVER["PHP_SELF"], $query)); // To avoid pb with backtopage
 				exit;
 			} else {
 				$db->rollback();
@@ -243,7 +244,8 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newid2 = $newdiscount2->create($user);
 		if ($res > 0 && $newid1 > 0 && $newid2 > 0) {
 			$db->commit();
-			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb with back
+			$query = ['id' => $id, 'backtopage' => $backtopage];
+			header("Location: " . dolBuildUrl($_SERVER["PHP_SELF"], $query)); // To avoid pb with back
 			exit;
 		} else {
 			$db->rollback();
@@ -296,7 +298,7 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 	$result = $discount->delete($user);
 	if ($result > 0) {
 		$db->commit();
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id); // To avoid pb with back
+		header("Location: " . dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id])); // To avoid pb with back
 		exit;
 	} else {
 		setEventMessages($discount->error, $discount->errors, 'errors');
@@ -370,10 +372,11 @@ if ($socid > 0) {
 		$sql .= " GROUP BY rc.fk_user";
 		$resql = $db->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
-			if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
-				$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+			while ($obj = $db->fetch_object($resql)) {
+				$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
+				if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
+					$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+				}
 			}
 		} else {
 			dol_print_error($db);
@@ -399,10 +402,11 @@ if ($socid > 0) {
 		$sql .= " GROUP BY rc.fk_user";
 		$resql = $db->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
-			if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
-				$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+			while ($obj = $db->fetch_object($resql)) {
+				$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
+				if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
+					$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+				}
 			}
 		} else {
 			dol_print_error($db);
@@ -484,7 +488,7 @@ if ($socid > 0) {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
 			if (!empty($backtopage)) {
-				print ' &nbsp; ';
+				print ' &nbsp; &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</div>';

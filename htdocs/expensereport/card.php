@@ -6,6 +6,7 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,7 @@ $permissiontoadd = $user->hasRight('expensereport', 'creer'); // Used by the inc
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
@@ -1396,7 +1397,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// TODO Use update method of ExpenseReportLine
-			$result = $object->updateline($rowid, $type_fees_id, $projet_id, (float) $vatrate, $comments, (float) $qty, (float) $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
+			$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, (float) $qty, (float) $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
 			if ($result >= 0) {
 				if ($result > 0) {
 					// Define output language
@@ -1486,22 +1487,6 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	print '<tbody>';
 
-	// Date start
-	print '<tr>';
-	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DateStart").'</td>';
-	print '<td>';
-	print $form->selectDate($date_start ? $date_start : -1, 'date_debut', 0, 0, 0, '', 1, 1);
-	print '</td>';
-	print '</tr>';
-
-	// Date end
-	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
-	print '<td>';
-	print $form->selectDate($date_end ? $date_end : -1, 'date_fin', 0, 0, 0, '', 1, 1);
-	print '</td>';
-	print '</tr>';
-
 	// User for expense report
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
@@ -1514,14 +1499,30 @@ if ($action == 'create') {
 	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')) {
 		$include_users = array();
 	}
-	$s = $form->select_dolusers($defaultselectuser, "fk_user_author", 0, null, 0, $include_users, '', '0,'.$conf->entity);
-	print $s;
+	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($defaultselectuser, 'fk_user_author', 0, null, 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500 inline-block');
 	print '</td>';
 	print '</tr>';
 
+	// Date start
+	print '<tr>';
+	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DateStart").'</td>';
+	print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');
+	print $form->selectDate($date_start ? $date_start : -1, 'date_debut', 0, 0, 0, '', 1, 1);
+	print '</td>';
+	print '</tr>';
+
+	// Date end
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
+	print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');
+	print $form->selectDate($date_end ? $date_end : -1, 'date_fin', 0, 0, 0, '', 1, 1);
+	print '</td>';
+	print '</tr>';
+
+
 	// Approver
 	print '<tr>';
-	print '<td>'.$langs->trans("VALIDATOR").'</td>';
+	print '<td>'.$langs->trans("ReviewedByCP").'</td>';
 	print '<td>';
 	$object = new ExpenseReport($db);
 	$include_users = $object->fetch_users_approver_expensereport();
@@ -1536,7 +1537,7 @@ if ($action == 'create') {
 			$defaultselectuser = GETPOSTINT('fk_user_validator');
 		}
 		$s = $form->select_dolusers($defaultselectuser, "fk_user_validator", 1, null, ((empty($defaultselectuser) || !getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE')) ? 0 : 1), $include_users);
-		print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+		print img_picto('', 'user', 'class="pictofixedwidth"').$form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	}
 	print '</td>';
 	print '</tr>';

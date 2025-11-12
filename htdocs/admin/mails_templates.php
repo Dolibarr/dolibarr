@@ -13,6 +13,8 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
+ * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';
 
 /**
  * @var Conf $conf
@@ -118,6 +121,7 @@ $tabname = array();
 $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
+// Names of fields in select results for dictionary display (AI translated)
 $tabfield = array();
 $tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
@@ -125,6 +129,7 @@ if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 }
 
 // Nom des champs d'edition pour modification d'un enregistrement
+// Names of edit fields for modifying a record (AI translated)
 $tabfieldvalue = array();
 $tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
@@ -132,8 +137,9 @@ if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 }
 
 // Nom des champs dans la table pour insertion d'un enregistrement
+// Field names in the table for inserting a record (AI translated)
 $tabfieldinsert = array();
-$tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
+$tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content,datec";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldinsert[25] .= ',content_lines';
 }
@@ -236,6 +242,9 @@ if (isModEnabled("supplier_order") && ($user->hasRight('fournisseur', 'commande'
 if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 	$elementList['invoice_supplier_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
 }
+if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "write"))) {
+	$elementList['supplier_payment_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('SuppliersPayment'));
+}
 if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 	$elementList['contract'] = img_picto('', 'contract', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendContract'));
 }
@@ -248,7 +257,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
 if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
-if (isModEnabled('eventorganization') && $user->hasRight('eventorganization', 'read')) {
+if (isModEnabled('eventorganization') && $user->hasRight('project', 'read')) {
 	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
 if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
@@ -279,7 +288,7 @@ $permissiontoadd = 1;
 $permissiontoedit = ($user->admin ? 1 : 0);
 $permissiontodelete = ($user->admin ? 1 : 0);
 if ($rowid > 0) {
-	$tmpmailtemplate = new ModelMail($db);
+	$tmpmailtemplate = new CEmailTemplate($db);
 	$tmpmailtemplate->fetch($rowid);
 	if ($tmpmailtemplate->fk_user == $user->id) {
 		$permissiontoedit = 1;
@@ -333,14 +342,14 @@ if (empty($reshook)) {
 	if ((GETPOST('actionadd', 'alpha') && $permissiontoadd) || (GETPOST('actionmodify', 'alpha') && $permissiontoedit)) {
 		$listfield = explode(',', str_replace(' ', '', $tabfield[25]));
 		$listfieldinsert = explode(',', $tabfieldinsert[25]);
-		$listfieldmodify = explode(',', $tabfieldinsert[25]);
+		$listfieldmodify = explode(',', $tabfieldvalue[25]);
 		$listfieldvalue = explode(',', $tabfieldvalue[25]);
 
 		// Check that all fields are filled
 		$ok = 1;
 		foreach ($listfield as $f => $value) {
 			// Not mandatory fields
-			if (in_array($value, ['joinfiles', 'defaultfortype', 'content', 'content_lines', 'module'])) {
+			if (in_array($value, ['joinfiles', 'defaultfortype', 'content', 'content_lines', 'module', 'tms', 'datec'])) {
 				continue;
 			}
 
@@ -394,6 +403,7 @@ if (empty($reshook)) {
 
 			// List of values
 			$i = 0;
+			$now = dol_now();
 			foreach ($listfieldinsert as $f => $value) {
 				$keycode = isset($listfieldvalue[$i]) ? $listfieldvalue[$i] : "";
 				if ($value == 'lang') {
@@ -424,7 +434,9 @@ if (empty($reshook)) {
 				if ($i) {
 					$sql .= ", ";
 				}
-				if (GETPOST($keycode) == '' && $keycode != 'langcode') {
+				if ($keycode == 'datec') {
+					$sql .= "'".$db->idate($now)."'";
+				} elseif (GETPOST($keycode) == '' && $keycode != 'langcode') {
 					$sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
 				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
 					$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
@@ -626,7 +638,7 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 $morejs = array();
 $morecss = array();
 
-$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from,joinfiles, defaultfortype, content_lines, content, enabled, active";
+$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from,joinfiles, defaultfortype, content_lines, content, enabled, active, tms, datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin) {
@@ -752,14 +764,14 @@ if ($action == 'create') {
 	$obj->content = GETPOST('content', 'restricthtml');
 
 	// Form to add a new line
-	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent" id="table_create_c_email_template">';
 
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
@@ -788,7 +800,7 @@ if ($action == 'create') {
 			$valuetoshow = $langs->trans("Code");
 		}
 		if ($fieldlist[$field] == 'label') {
-			$valuetoshow = $langs->trans("Code");
+			$valuetoshow = $langs->trans("Label");
 		}
 		if ($fieldlist[$field] == 'type_template') {
 			$valuetoshow = $langs->trans("TypeOfTemplate");
@@ -927,12 +939,12 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
+print '<table class="noborder centpercent" id="table_list_of_c_email_templates">';
 
 $i = 0;
 
@@ -976,7 +988,7 @@ if ($num > $listlimit) {
 
 
 // Title line with search boxes
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre" id="Title line with search boxes">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center" width="64">';
@@ -1013,6 +1025,9 @@ foreach ($fieldlist as $field => $value) {
 }*/
 // Status
 print '<td></td>';
+// Have to expand the id="Title line with search boxes" with 2 extra fields because the line below id="Title of lines" are 2 fields longer
+print '<td></td>'; // tms / Modif. date
+print '<td></td>'; // datec / Date creation
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center" width="64">';
@@ -1023,11 +1038,12 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '</tr>';
 
 // Title of lines
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre" id="Title of lines">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList('');
 }
+array_push($fieldlist, "tms", "datec");
 foreach ($fieldlist as $field => $value) {
 	$showfield = 1; // By default
 	$css = "left";
@@ -1056,7 +1072,7 @@ foreach ($fieldlist as $field => $value) {
 		$valuetoshow = $langs->trans("Type");
 	}
 	if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
-		$valuetoshow = $langs->trans("Code");
+		$valuetoshow = $langs->trans("Label");
 	}
 	if ($fieldlist[$field] == 'type_template') {
 		$css = 'center';
@@ -1067,6 +1083,12 @@ foreach ($fieldlist as $field => $value) {
 	}
 	if ($fieldlist[$field] == 'position') {
 		$css = 'center';
+	}
+	if ($fieldlist[$field] == 'tms') {
+		$valuetoshow = 'Modif. date';
+	}
+	if ($fieldlist[$field] == 'datec') {
+		$valuetoshow = 'Date creation';
 	}
 
 	if ($fieldlist[$field] == 'joinfiles') {
@@ -1118,7 +1140,13 @@ if ($num) {
 				print '<tr class="nohover oddeven" id="rowid-'.$obj->rowid.'">';
 
 				$tmpaction = 'edit';
-				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+				if ($action == 'edit') {
+					// do not show tms and datec
+					$fieldlist = explode(',', $tabfield[25]);
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+				} else {
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+				}
 				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 				$error = $hookmanager->error;
 				$errors = $hookmanager->errors;
@@ -1239,7 +1267,7 @@ if ($num) {
 					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
 				}
 				// Test on 'enabled'
-				if (! (int) dol_eval($obj->enabled, 1, 1, '1')) {
+				if (! (int) dol_eval((string) $obj->enabled, 1, 1, '1')) {
 					$i++;
 					continue; // Email template not qualified
 				}

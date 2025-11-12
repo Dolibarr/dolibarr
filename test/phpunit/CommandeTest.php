@@ -87,7 +87,8 @@ class CommandeTest extends CommonClassTest
 		$this->assertLessThan($socid, 0, $soc->errorsToString());
 
 		$localobject = new Commande($db);
-		$localobject->initAsSpecimen();
+		$param = array('tosell' => 1);
+		$localobject->initAsSpecimen($param);
 		$localobject->socid = $socid;
 		$result = $localobject->create($user);
 

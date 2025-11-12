@@ -42,6 +42,24 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_T
 
 
 -- V23 migration
+ALTER TABLE llx_usergroup ADD color VARCHAR(6) AFTER tms;
+
+create table llx_categorie_project_task (
+  fk_categorie  	integer NOT NULL,
+  fk_project_task   integer NOT NULL,
+  import_key    	varchar(14)
+) ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_project_task);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
+
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet (rowid);
+
+UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
 
 ALTER TABLE llx_document_model ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
@@ -114,6 +132,8 @@ ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_an
 
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
 ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
+ALTER TABLE llx_facture ADD COLUMN pos_print_counter integer DEFAULT 0;
+ALTER TABLE llx_facture ADD COLUMN email_sent_counter integer DEFAULT 0;
 
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
@@ -145,15 +165,27 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite, numer
 UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AL','AT','AX','BE','BG','BL','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GF','GG','GI','GP','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MF','MK','MQ','MT','NL','NO','PL','PM','PT','RE','RO','RS','SE','SI','SK','SM','VA','YT');
 
 ALTER TABLE llx_user DROP COLUMN egroupware_id;
+ALTER TABLE llx_user ADD COLUMN access_hours varchar(128) DEFAULT NULL;
 
 ALTER TABLE llx_adherent ADD COLUMN birth_place varchar(64) after birth;
 
 ALTER TABLE llx_societe ADD COLUMN birth date DEFAULT NULL after fk_forme_juridique;
+ALTER TABLE llx_societe ADD vatexemptcode varchar(24) DEFAULT NULL;
 
+-- Remove deprecated permissions
 DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
 DELETE FROM llx_usergroup_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
-
 DELETE FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target';
+
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'eventorganization');
+DELETE FROM llx_usergroup_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'eventorganization');
+DELETE FROM llx_rights_def WHERE module = 'eventorganization';
+
+ALTER TABLE llx_rights_def ADD COLUMN family VARCHAR(16) AFTER module_position;
+
+-- Reorder some permission
+UPDATE llx_rights_def SET module_position = 64 WHERE module = 'intracommreport' AND module_position <> 64;
+UPDATE llx_rights_def SET module_position = 62 WHERE module = 'accounting' AND module_position <> 62;
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN bic   varchar(11);   -- 11 according to ISO 9362
 ALTER TABLE llx_prelevement_lignes ADD COLUMN iban	varchar(80);   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
@@ -172,6 +204,9 @@ ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_adherent (fk_adherent
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_bank (fk_bank);
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_dateadh (dateadh);
 
+ALTER TABLE llx_subscription ADD COLUMN ref_ext varchar(128);
+ALTER TABLE llx_subscription ADD COLUMN note_private text;
+
 ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account; -- OFX Financial Institution Transaction ID "FITID"
 
 ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id;
@@ -179,6 +214,13 @@ ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id
 -- default deposit % if payment term needs it on supplier
 ALTER TABLE llx_supplier_proposal ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN deposit_percent varchar(63) DEFAULT NULL AFTER fk_cond_reglement;
+
+
+-- import key for subscriptions
+ALTER TABLE llx_subscription ADD COLUMN import_key varchar(14) NULL;
+
+ALTER TABLE llx_categorie ADD COLUMN extraparams varchar(255) AFTER fk_soc;
+
 CREATE TABLE llx_categorie_propal
 (
   fk_categorie integer NOT NULL,
@@ -204,7 +246,7 @@ CREATE TABLE llx_accounting_bookkeeping_piece
 (
 	rowid               integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	entity              integer DEFAULT 1 NOT NULL,
-	ref             	varchar(255),
+	ref             	varchar(128),
 	tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datec				datetime,
 	datep				date NOT NULL,
@@ -230,4 +272,83 @@ ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeepin
 ALTER TABLE llx_accounting_bookkeeping_piece ADD INDEX idx_accounting_bookkeeping_piece_fk_user_closing (fk_user_closing);
 
 ALTER TABLE llx_mailing ADD COLUMN fk_project integer DEFAULT NULL;
+UPDATE llx_c_units SET label = 'unitP' WHERE code = 'P';
+
+ALTER TABLE llx_receptiondet_batch ADD COLUMN description text AFTER fk_product;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN fk_unit integer AFTER qty;
+ALTER TABLE llx_receptiondet_batch ADD COLUMN rang integer DEFAULT 0 AFTER cost_price;
+
+ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_src_object_type_id (src_object_type, src_object_id);
+
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '511', 'eGbR - eingetragene Gesellschaft bürgerlichen Rechts', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '512', 'Einzelunternehmen', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '513', 'PartG - Partnerschaftsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '514', 'PartG mbB - Partnerschaftsgesellschaft mit beschränkter Berufshaftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '515', 'KGaA - Kommanditgesellschaft auf Aktien', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '516', 'GmbH & Co. KGaA - Gesellschaft mit beschränkter Haftung & Compagnie Kommanditgesellschaft auf Aktien', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '517', 'SE - Societas Europaea', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '518', 'Stiftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '519', 'gGmbH - gemeinnützige Gesellschaft mit beschränkter Haftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '520', 'gUG - gemeinnützige Unternehmergesellschaft (haftungsbeschränkt)', 1);
+
+ALTER TABLE llx_oauth_token ADD COLUMN tokenstring_refresh text NULL AFTER tokenstring;
+ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
+
+ALTER TABLE llx_blockedlog ADD COLUMN linktoref varchar(255);
+ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
+ALTER TABLE llx_blockedlog ADD COLUMN vat double(24,8) DEFAULT NULL;
+
+
+-- Incoterms 2025 and specific terms
+-- DAT is replaced by DPU - but not deactivating for existing installations
+-- UPDATE llx_c_incoterms SET active = 0 WHERE code = 'DAT';
+
+-- Add new 2025 Incoterms and specific terms when they do not exist
+ALTER TABLE llx_c_incoterms MODIFY code varchar(8) NOT NULL;
+
+-- For MySQL and MariaDB:
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPU', 'Delivered at Place Unloaded', 'Delivered at Place Unloaded, marchandises déchargées et livrées au lieu de destination désigné (remplace DAT, élargit les lieux de livraison possibles)', 1);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP', 'Delivered at Terminal Paid', 'Delivered at Terminal Paid, marchandises livrées et dédouanées dans un terminal du pays de destination', 0);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DPP', 'Delivered at Place Paid', 'Delivered at Place Paid, marchandises livrées et dédouanées à une adresse précise du pays de destination', 0);
+INSERT INTO llx_c_incoterms (code, label, libelle, active) VALUES ('DTP(DHL)', 'Duties and Taxes Paid', 'Duties and Taxes Paid (service DHL) : l''expéditeur paie les droits de douane et taxes à l''importation (spécifique à DHL)', 0);
+
+-- Update existing Incoterms descriptions
+UPDATE llx_c_incoterms
+SET libelle = 'Cost and Freight, chargé dans le bateau, livraison au port de départ, frais payés jusqu''au port d''arrivée, sans assurance pour le transport, non déchargé du navire à destination (les frais de déchargement sont inclus ou non au port d''arrivée)'
+WHERE code = 'CFR';
+
+UPDATE llx_c_incoterms
+SET libelle = 'Cost, Insurance and Freight, chargé sur le bateau, frais jusqu''au port d''arrivée, avec l''assurance marchandise transportée souscrite par le vendeur pour le compte de l''acheteur (couverture standard, 10% de la valeur commerciale)'
+WHERE code = 'CIF';
+
+UPDATE llx_c_incoterms
+SET libelle = 'Carriage and Insurance Paid to, idem CPT, avec assurance marchandise transportée souscrite par le vendeur pour le compte de l''acheteur (couverture tous risques)'
+WHERE code = 'CIP';
+
+
+
+-- Fix a wrong migration script
+UPDATE llx_oauth_token SET tokenstring = token, token = NULL WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
+
+
+ALTER TABLE llx_categorie_supplier_proposal ADD PRIMARY KEY pk_categorie_supplier_proposal (fk_categorie, fk_supplier_proposal);
+ALTER TABLE llx_categorie_supplier_proposal ADD INDEX idx_categorie_supplier_proposal_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_supplier_proposal ADD INDEX idx_categorie_supplier_proposal_fk_supplier_proposal (fk_supplier_proposal);
+
+ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier_proposal_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_supplier_proposal ADD CONSTRAINT fk_categorie_supplier_proposal_fk_supplier_proposal_rowid FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
+
+ALTER TABLE llx_blockedlog DROP INDEX entity;
+ALTER TABLE llx_blockedlog DROP INDEX entity_action_certified;
+ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
+
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF', '[70,67]', 1, 'Congolese Franc');
+
+ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
+
+ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
+
 -- end of migration

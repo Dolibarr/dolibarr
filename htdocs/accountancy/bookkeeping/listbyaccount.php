@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -463,11 +463,17 @@ if (empty($reshook)) {
 
 	// Actions
 	if ($action === 'exporttopdf' && $permissiontoadd) {
-		$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		if ($type == "sub") {
+			$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
+		} else {
+			$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		}
 		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_ledger.modules.php';
 		$pdf = new pdf_ledger($db);
 		$pdf->fromDate = $search_date_start;
 		$pdf->toDate = $search_date_end;
+		$pdf->ledgerType = $type;
+
 		$result = $pdf->write_file($object, $langs);
 
 		if ($result < 0) {
@@ -860,7 +866,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringaut
 }
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="list">';
 if ($optioncss != '') {
@@ -895,7 +901,7 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 
 	$newcardbutton .= dolGetButtonTitleSeparator();
 
@@ -1004,16 +1010,8 @@ if ($type == 'sub') {
 }
 
 if (empty($socid)) {
-	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
-		$stringforfirstkey .= ' CTL +';
-	}
-	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
-	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
+	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $conf->browser->stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
+	$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $conf->browser->stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
 	$moreforfilter .= <<<SCRIPT
 <script type="text/javascript">
 	jQuery(document).ready(function() {
@@ -1104,7 +1102,7 @@ if (!empty($arrayfields['t.doc_ref']['checked'])) {
 if (!empty($arrayfields['t.label_operation']['checked'])) {
 	print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="'.dol_escape_htmltag($search_label_operation).'"/></td>';
 }
-// Lettering code
+// Matching code
 if (!empty($arrayfields['t.lettering_code']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
@@ -1528,7 +1526,7 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-	// Lettering code
+	// Matching code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
 		print '<td class="center">'.dol_escape_htmltag((string) $line->lettering_code).'</td>';
 		if (!$i) {

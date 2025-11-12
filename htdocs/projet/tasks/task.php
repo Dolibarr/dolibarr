@@ -127,7 +127,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		$object->date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 		$object->date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
-		$object->budget_amount = GETPOSTFLOAT('budget_amount');
+		$object->budget_amount = (GETPOST('budget_amount') != '' ? GETPOSTFLOAT('budget_amount'): null);
 		$object->billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
 		if (GETPOST('progress') == '100') {
 			$object->status = $object::STATUS_CLOSED;
@@ -316,7 +316,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-task
 
 if ($id > 0 || !empty($ref)) {
 	$res = $object->fetch_optionals();
-	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
 		$object->fetchComments();
 	}
 
@@ -486,7 +486,7 @@ if ($id > 0 || !empty($ref)) {
 	$head = task_prepare_head($object);
 
 	if ($action == 'edit' && $user->hasRight('projet', 'creer')) {
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
@@ -808,13 +808,13 @@ if ($id > 0 || !empty($ref)) {
 		/*
 		 * Generated documents
 		 */
-		$filename = '';
-		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$subdir = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".$subdir;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire'));
 		$delallowed = ($user->hasRight('projet', 'creer'));
 
-		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
+		print $formfile->showdocuments('project_task', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 0, 0, '', '', '', '', '', $object);
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('project_task'), 1);

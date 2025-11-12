@@ -331,7 +331,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card');
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewBOM"), '', 'bom');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -359,7 +359,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("BillOfMaterials"), '', 'cubes');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -404,18 +404,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation of validation
 	if ($action == 'validate') {
+		$error = 0;
+		$numref = '';
 		// We check that object has a temporary ref
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
-			$object->fetch_product();
-			$numref = $object->getNextNumRef($object->product);
+			$res = $object->fetch_product();
+			if ($res > 0 && $object->product instanceof Product) {
+				$numref = $object->getNextNumRef($object->product); // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
+			} else {
+				$error++;
+			}
 		} else {
 			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateBom', $numref);
-		/*if (isModEnabled('notification'))
-		 {
+		/*if (isModEnabled('notification')) {
 		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 		 $notify = new Notify($db);
 		 $text .= '<br>';
@@ -431,15 +436,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 			);
 		}
-
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+		if (!$error) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+		} else {
+			setEventMessage($langs->trans('Error'), 'errors');
+			$action = '';
+		}
 	}
 
 	// Confirmation of closing
 	if ($action == 'close') {
 		$text = $langs->trans('ConfirmCloseBom', $object->ref);
-		/*if (isModEnabled('notification'))
-		 {
+		/*if (isModEnabled('notification')) {
 		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 		 $notify = new Notify($db);
 		 $text .= '<br>';
@@ -462,8 +470,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation of reopen
 	if ($action == 'reopen') {
 		$text = $langs->trans('ConfirmReopenBom', $object->ref);
-		/*if (isModEnabled('notification'))
-		 {
+		/*if (isModEnabled('notification')) {
 		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 		 $notify = new Notify($db);
 		 $text .= '<br>';
@@ -524,14 +531,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	 // Project
-	 if (isModEnabled('project'))
-	 {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	 if ($permissiontoadd)
-	 {
+	 if ($permissiontoadd) {
 	 if ($action != 'classify')
-	 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	 $morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 	 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';

@@ -56,7 +56,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      @param  Ticket    $object Object
 	 *      @param  User      $user   Object user
 	 *      @param  Translate $langs  Object langs
-	 *      @param  conf      $conf   Object conf
+	 *      @param  Conf      $conf   Object conf
 	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
@@ -443,11 +443,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
-					$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$key], 1);
 				}
 				$perms = 1;
 				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+					$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$key], 1);
 				}
 
 				$qualified = true;

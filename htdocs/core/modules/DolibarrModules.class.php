@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -357,7 +357,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_fieldshidden_array;
 	/**
-	 * @var array<array<array{rule:string,file:string,class:string,method:string}>>
+	 * @var array<array<array<string,string>>>
 	 */
 	public $import_convertvalue_array;
 	/**
@@ -408,7 +408,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * @var string Name of image file used for this module
 	 *
-	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname'
+	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname.png'
 	 * If file is in module/img directory under name object_pictoname.png use 'pictoname@module'
 	 */
 	public $picto;
@@ -423,7 +423,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
 	/**
-	 * @var string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @var null|string[]|array<string,string[]> 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
 	 * 				Another example : array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 * Note: Example in modTakePos:  array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 *       Example in modAccounting: array("modFacture", "modBanque", "modTax");
@@ -439,27 +439,27 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $requiredby;
 
 	/**
-	 * @var string[] List of module class names as string this module is in conflict with.
+	 * @var null|string[] List of module class names as string this module is in conflict with.
 	 * @see $depends
 	 */
 	public $conflictwith;
 
 	/**
-	 * @var string[] Module language files
+	 * @var null|string[] Module language files
 	 */
 	public $langfiles;
 
 	/**
-	 * @var array<string,string> Array of warnings to show when we activate the module
+	 * @var array<string,mixed> 	Array of warnings to show when we activate the module
 	 *
-	 * array('always'='text') or array('FR'='text')
+	 * array('always'=>'text') or array('FR'=>array('text1', 'text2))
 	 */
 	public $warnings_activation;
 
 	/**
-	 * @var array<string,string> Array of warnings to show when we activate an external module
+	 * @var array<string,mixed> 	Array of warnings to show when we activate a module if another module is on
 	 *
-	 * array('always'='text') or array('FR'='text')
+	 * array('modOtherModule' => array('always'=>'text')) or array('modOtherModule' => array('FR'=>array('text1', 'text2)))
 	 */
 	public $warnings_activation_ext;
 
@@ -471,18 +471,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $warnings_unactivation;
 
 	/**
-	 * @var int[] Minimum version of PHP required by module.
+	 * @var null|int[] Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
 
 	/**
-	 * @var int[] Maximum version of PHP ensured compatible with module.
+	 * @var null|int[] Maximum version of PHP ensured compatible with module.
 	 */
 	public $phpmax;
 
 	/**
-	 * @var int[] Minimum version of Dolibarr required by module.
+	 * @var null|int[] Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
@@ -1990,17 +1990,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ($obj !== null && !empty($obj->value) && !empty($this->rights)) {
 				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-				// TODO rights parameters with integer indexes are deprecated
-				// $this->rights[$key][0] = $this->rights[$key][self::KEY_ID]
-				// $this->rights[$key][1] = $this->rights[$key][self::KEY_LABEL]
-				// $this->rights[$key][3] = $this->rights[$key][self::KEY_DEFAULT]
-				// $this->rights[$key][4] = $this->rights[$key][self::KEY_FIRST_LEVEL]
-				// $this->rights[$key][5] = $this->rights[$key][self::KEY_SECOND_LEVEL]
-
-				// new parameters
-				// $this->rights[$key][self::KEY_MODULE]	// possibility to define user right for an another module (default: current module name)
-				// $this->rights[$key][self::KEY_ENABLED]	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
-
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
 					$r_id = $this->rights[$key][self::KEY_ID];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
@@ -2009,6 +1998,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_default = $this->rights[$key][self::KEY_DEFAULT] ?? 0;
 					$r_perms = $this->rights[$key][self::KEY_FIRST_LEVEL] ?? '';
 					$r_subperms = $this->rights[$key][self::KEY_SECOND_LEVEL] ?? '';
+
+					$r_module_position = $this->getModulePosition();
+					$r_family = $this->family;
+					$r_family_position = 0;
 
 					// KEY_FIRST_LEVEL (perms) must not be empty
 					if (empty($r_perms)) {
@@ -2046,7 +2039,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", libelle";
 							$sql .= ", module";
 							$sql .= ", module_origin";
-							$sql .= ", type";	// TODO deprecated
+							$sql .= ", module_position";		// Not that module_position can be fixed eynamically when accessing page user/perms.php
+							$sql .= ", family";
+							$sql .= ", family_position";
+							$sql .= ", type";	// Not used yet
 							$sql .= ", bydefault";
 							$sql .= ", perms";
 							$sql .= ", subperms";
@@ -2057,7 +2053,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_label)."'";
 							$sql .= ", '".$this->db->escape($r_module)."'";
 							$sql .= ", '".$this->db->escape($r_module_origin)."'";
-							$sql .= ", '".$this->db->escape($r_type)."'";	// TODO deprecated
+							$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
+							$sql .= ", '".$this->db->escape($r_family)."'";
+							$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
+							$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
 							$sql .= ", ".((int) $r_default);
 							$sql .= ", '".$this->db->escape($r_perms)."'";
 							$sql .= ", '".$this->db->escape($r_subperms)."'";

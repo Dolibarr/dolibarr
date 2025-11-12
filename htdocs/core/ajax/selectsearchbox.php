@@ -191,6 +191,9 @@ if (isModEnabled('expensereport') && !getDolGlobalString('MAIN_SEARCHFORM_EXPENS
 if (isModEnabled('holiday') && !getDolGlobalString('MAIN_SEARCHFORM_HOLIDAY_DISABLED') && $user->hasRight('holiday', 'read')) {
 	$arrayresult['searchintoleaves'] = array('position' => 220, 'img' => 'object_holiday', 'label' => $langs->trans("SearchIntoLeaves", $search_boxvalue), 'text' => img_picto('', 'object_holiday', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url' => DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
+if (isModEnabled('resource') && !getDolGlobalString('MAIN_SEARCHFORM_RESOURCE_DISABLED') && $user->hasRight('resource', 'read')) {
+	$arrayresult['searchintoresourcess'] = array('position' => 250, 'img' => 'object_resource', 'label' => $langs->trans("SearchIntoResources", $search_boxvalue), 'text' => img_picto('', 'object_resource', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoResources", $search_boxvalue), 'url' => DOL_URL_ROOT.'/resource/list.php?mainmenu=hrm'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
+}
 
 // Execute hook addSearchEntry
 $parameters = array('search_boxvalue' => $search_boxvalue, 'arrayresult' => $arrayresult);

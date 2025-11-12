@@ -23,13 +23,19 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var EcmDirectory $ecmdir
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  * @var Website $website
  *
- * @var string $module
+ * @var string $action
+ * @var ?string $module
+ * @var int $section
+ * @var string $filepathnoext
+ * @var string $pageid
+ * @var int $formalreadyopen
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -42,6 +48,7 @@ if (empty($conf) || !is_object($conf)) {
 @phan-var-force string $filepathnoext
 @phan-var-force string $pageid
 @phan-var-force EcmDirectory $ecmdir
+@phan-var-force ?string $module
 @phan-var-force int $section
 ';
 
@@ -56,7 +63,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 $langs->load("ecm");
 
-if (empty($module)) {
+if (!isset($module)) {
 	$module = 'ecm';
 }
 

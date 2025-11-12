@@ -3,7 +3,7 @@
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,14 +42,6 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -58,6 +50,14 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
@@ -90,20 +90,9 @@ $categorie = new Categorie($db);
 
 $maxcategbydefaultforthisdevice = 12;
 $maxproductbydefaultforthisdevice = 24;
-if ($conf->browser->layout == 'phone') {
-	$maxcategbydefaultforthisdevice = 8;
-	$maxproductbydefaultforthisdevice = 16;
-	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT FORCED
-	if (!empty($_SESSION["takeposterminal"]) && getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_PHONE_BASIC_LAYOUT') == 1) {
-		$_SESSION["basiclayout"] = 1;
-		header("Location: phone.php?mobilepage=invoice");
-		exit;
-	}
-} else {
-	unset($_SESSION["basiclayout"]);
-}
-$MAXCATEG = (!getDolGlobalString('TAKEPOS_NB_MAXCATEG') ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
-$MAXPRODUCT = (!getDolGlobalString('TAKEPOS_NB_MAXPRODUCT') ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
+
+$MAXCATEG = getDolGlobalInt('TAKEPOS_NB_MAXCATEG', $maxcategbydefaultforthisdevice);
+$MAXPRODUCT = getDolGlobalInt('TAKEPOS_NB_MAXPRODUCT', $maxproductbydefaultforthisdevice);
 
 $term = empty($_SESSION['takeposterminal']) ? 1 : $_SESSION['takeposterminal'];
 
@@ -144,10 +133,11 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 
-$categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') : 0), 1);
+$categories = $categorie->get_full_arbo('product', getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 1);
 
 
 // Search root category to know its level
@@ -177,6 +167,12 @@ foreach ($categories as $key => $categorycursor) {
 
 $maincategories = dol_sort_array($maincategories, 'label');
 $subcategories = dol_sort_array($subcategories, 'label');
+?>
+<?php
+$keyCodeForEnter = '';
+if (!empty($_SESSION['takeposterminal'])) {
+	$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
+}
 ?>
 
 <body class="bodytakepos" style="overflow: hidden;">
@@ -602,7 +598,7 @@ function Contact() {
 function History()
 {
 	console.log("Open box to select the history");
-	$.colorbox({href:"../compta/facture/list.php?contextpage=poslist", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
+	$.colorbox({href:"../compta/facture/list.php?contextpage=poslist&search_module_source=takepos", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
 }
 
 function Reduction() {
@@ -610,6 +606,7 @@ function Reduction() {
 	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
 	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
+
 var closeBillParams="";
 function CloseBill() {
 	<?php
@@ -962,7 +959,7 @@ function Edit(number) {
 
 
 function TakeposPrintingOrder(){
-	console.log("TakeposPrintingOrder");
+	console.log("TakeposPrintingOrder output invoice to print order");
 	$("#poslines").load("invoice.php?action=order&token=<?php echo newToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
@@ -991,6 +988,7 @@ function OpenDrawer(){
 	});
 }
 
+/* Click on button to open drawer */
 function DolibarrOpenDrawer() {
 	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
 	$.ajax({
@@ -1154,12 +1152,6 @@ $( document ).ready(function() {
 });
 </script>
 
-<?php
-$keyCodeForEnter = '';
-if (!empty($_SESSION['takeposterminal'])) {
-	$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
-}
-?>
 <div class="container">
 
 <?php
@@ -1340,6 +1332,11 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 
 <?php
 
+// Dependency modulecheck
+if (!isModEnabled('invoice')) {
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice")), null, 'errors');
+}
+
 // TakePOS setup check
 if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 	$sql = "SELECT code, libelle FROM " . MAIN_DB_PREFIX . "c_paiement";
@@ -1347,7 +1344,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 	$sql .= " AND active = 1";
 	$sql .= " ORDER BY libelle";
 
-	$resql          = $db->query($sql);
+	$resql = $db->query($sql);
 	$paiementsModes = array();
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -1411,7 +1408,7 @@ if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
 	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
 }
 
-// BAR RESTAURANT specific menu
+// BAR RESTAURANT specific menu "Print on Order printer"
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
 		$menus[$r++] = array('title' => '<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action' => 'TakeposPrintingOrder();');
@@ -1428,9 +1425,10 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	// Button to print receipt before payment
 	$customprinterallowed = true;
-	$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
-	if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
-		$customprinterallowed = false;
+	$customprinttemplateallowed = true;
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+	if (isALNERunningVersion()) {		// No need to show this option because it has no effect when isALNERunningVersion is true.
+		$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 	}
 
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
@@ -1440,9 +1438,10 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 			} else {
 				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposPrinting(placeid);');
 			}
-		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
 			// Button Print Receipt on special printer
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
+			$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+			$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
 		} else {
 			// Button Print Receipt on browser
 			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');
@@ -1459,7 +1458,7 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action' => 'OpenDrawer();');
 }
-if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+if (getDolGlobalInt('TAKEPOS_ADD_BUTTON_OPEN_DRAWER'.$term) > 0) {
 	$menus[$r++] = array(
 		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
 		'action' => 'DolibarrOpenDrawer();',
@@ -1493,13 +1492,13 @@ if ($reshook == 0) {  //add buttons
 				$menus[$r++] = $butmenu;
 			}
 		}
-	} elseif ($reshook == 1) {
-		$r = 0; //replace buttons
-		if (is_array($hookmanager->resArray)) {
-			foreach ($hookmanager->resArray as $resArray) {
-				foreach ($resArray as $butmenu) {
-					$menus[$r++] = $butmenu;
-				}
+	}
+} elseif ($reshook == 1) {
+	$r = 0; //replace buttons
+	if (is_array($hookmanager->resArray) ) {
+		foreach ($hookmanager->resArray as $resArray) {
+			foreach ($resArray as $butmenu) {
+				$menus[$r++] = $butmenu;
 			}
 		}
 	}
@@ -1519,6 +1518,24 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 
 ?>
 		<!-- Show buttons -->
+		<div id="dialogforpopuptakepos"></div>
+		<style>
+		/* Style de la popup */
+		#dialogforpopuptakepos {
+			display: none;
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			background: #333;
+			color: #fff;
+			padding: 15px 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			z-index: 1000;
+			font-family: sans-serif;
+		}
+		</style>
+
 		<div class="div3">
 		<?php
 		$i = 0;
@@ -1601,14 +1618,14 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
-												<?php if ($count == ($MAXPRODUCT - 2)) {
-													?> onclick="MoreProducts('less')" <?php
-												}
-												if ($count == ($MAXPRODUCT - 1)) {
-													?> onclick="MoreProducts('more')" <?php
-												} else {
-													echo 'onclick="ClickProduct('.((int) $count).')"';
-												} ?>>
+													<?php if ($count == ($MAXPRODUCT - 2)) {
+														?> onclick="MoreProducts('less')" <?php
+													}
+													if ($count == ($MAXPRODUCT - 1)) {
+														?> onclick="MoreProducts('more')" <?php
+													} else {
+														echo 'onclick="ClickProduct('.((int) $count).')"';
+													} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';

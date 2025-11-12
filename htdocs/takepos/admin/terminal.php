@@ -435,9 +435,11 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 
 // Options when using a special printer in TakePOS
 $customprinterallowed = true;
-$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
-if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
-	$customprinterallowed = false;
+$orderprinterallowed = (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS'));
+$customprinttemplateallowed = true;
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+if (isALNERunningVersion()) {		// No need to show the custom template when isALNERunningVersion is true because it has no effect (disabled by receipt.php).
+	$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
 }
 
 if (isModEnabled('receiptprinter')) {
@@ -454,14 +456,14 @@ if (isModEnabled('receiptprinter')) {
 	print ' <span class="opacitymedium">('.$langs->trans("MainPrinterToUseMore").')</span>';
 	print '</td>';
 	print '<td>';
-	if (!$customprinterallowed) {
+	if (!$customprinterallowed) {	// @phpstan-ignore-line
 		print '<span class="opacitymedium">'.$langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name')).'</span>';
 	} else {
 		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
 	}
 	print '</td></tr>';
 
-	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
+	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS') && $orderprinterallowed) {
 		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
 		print '<td>';
 		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal), 1);
@@ -488,18 +490,21 @@ if (isModEnabled('receiptprinter') || getDolGlobalString('TAKEPOS_PRINT_METHOD')
 	}
 	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse");
 	print ' <span class="opacitymedium">('.$langs->trans("MainTemplateToUseMore").')</span>';
-	print ' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
+	if ($customprinttemplateallowed) {
+		print ' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
+	}
 	print '<td>';
-	if (!$customprinterallowed) {
+	if (!$customprinttemplateallowed) {
 		print '<span class="opacitymedium">'.$langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name')).'</span>';
 	} else {
-		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1);
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150');
 	}
 	print '</td></tr>';
-	if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
+
+	if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS') && $orderprinterallowed) {
 		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
 		print '<td>';
-		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal), 1);
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150');
 		print '</td></tr>';
 	}
 }

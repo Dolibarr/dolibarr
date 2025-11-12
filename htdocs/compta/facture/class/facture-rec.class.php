@@ -248,7 +248,7 @@ class FactureRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -391,7 +391,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
 			$sql .= ", ".((int) $this->socid);
-			$sql .= ", ".($this->subtype ? "'".$this->db->escape((string) $this->subtype)."'" : "null");
+			$sql .= ", ".(isset($this->subtype) ? (int) $this->subtype : "null");
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($facsrc->total_ttc) ? ((float) $facsrc->total_ttc) : '0');
@@ -949,30 +949,30 @@ class FactureRec extends CommonInvoice
 	/**
 	 * 	Add a line to invoice
 	 *
-	 *	@param    	string		$desc            	Description de la ligne
-	 *	@param    	float		$pu_ht              Prix unitaire HT (> 0 even for credit note)
-	 *	@param    	float		$qty             	Quantite
-	 *	@param    	float		$txtva           	Taux de tva force, sinon -1
-	 * 	@param		float		$txlocaltax1		Local tax 1 rate (deprecated)
-	 *  @param		float		$txlocaltax2		Local tax 2 rate (deprecated)
-	 *	@param    	int			$fk_product      	Product/Service ID predefined
-	 *	@param    	float		$remise_percent  	Percentage discount of the line
-	 *	@param		string		$price_base_type	HT or TTC
-	 *	@param    	int			$info_bits			VAT npr or not ?
-	 *	@param    	int			$fk_remise_except	Id remise
-	 *	@param    	float		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
-	 *	@param		int			$type				Type of line (0=product, 1=service)
-	 *	@param      int			$rang               Position of line
-	 *	@param		int			$special_code		Special code
-	 *	@param		string		$label				Label of the line
-	 *	@param		?int		$fk_unit			Unit
-	 * 	@param		float		$pu_ht_devise		Unit price in currency
-	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
-	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
+	 *	@param    	string			$desc            	Description de la ligne
+	 *	@param    	float			$pu_ht              Prix unitaire HT (> 0 even for credit note)
+	 *	@param    	float			$qty             	Quantite
+	 *	@param    	float|string	$txtva           	VAT rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  @param		float			$txlocaltax2		Local tax 2 rate (deprecated)
+	 *	@param    	int				$fk_product      	Product/Service ID predefined
+	 *	@param    	float			$remise_percent  	Percentage discount of the line
+	 *	@param		string			$price_base_type	HT or TTC
+	 *	@param    	int				$info_bits			VAT npr or not ?
+	 *	@param    	int				$fk_remise_except	Id remise
+	 *	@param    	float			$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+	 *	@param		int				$type				Type of line (0=product, 1=service)
+	 *	@param      int				$rang               Position of line
+	 *	@param		int				$special_code		Special code
+	 *	@param		string			$label				Label of the line
+	 *	@param		?int			$fk_unit			Unit
+	 * 	@param		float			$pu_ht_devise		Unit price in currency
+	 *  @param		int				$date_start_fill	1=Flag to fill start date when generating invoice
+	 *  @param		int				$date_end_fill		1=Flag to fill end date when generating invoice
 	 * 	@param		int|string|null	$fk_fournprice		Supplier price id (to calculate margin) or string
-	 * 	@param		float		$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
-	 *  @param		int			$fk_parent_line		Id of parent line
-	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
+	 * 	@param		float			$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
+	 *  @param		int				$fk_parent_line		Id of parent line
+	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
 	{
@@ -1154,32 +1154,32 @@ class FactureRec extends CommonInvoice
 	/**
 	 * 	Update a line to invoice
 	 *
-	 *  @param     	int			$rowid           	Id of line to update
-	 *	@param    	string		$desc            	Description de la ligne
-	 *	@param    	float		$pu_ht              Prix unitaire HT (> 0 even for credit note)
-	 *	@param    	float		$qty             	Quantite
-	 *	@param    	float		$txtva           	Taux de tva force, sinon -1
-	 * 	@param		float		$txlocaltax1		Local tax 1 rate (deprecated)
-	 *  @param		float		$txlocaltax2		Local tax 2 rate (deprecated)
-	 *	@param    	int			$fk_product      	Product/Service ID predefined
-	 *	@param    	float		$remise_percent  	Percentage discount of the line
-	 *	@param		string		$price_base_type	HT or TTC
-	 *	@param    	int			$info_bits			Bits of type of lines
-	 *	@param    	int			$fk_remise_except	Id remise
-	 *	@param    	float		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
-	 *	@param		int			$type				Type of line (0=product, 1=service)
-	 *	@param      int			$rang               Position of line
-	 *	@param		int			$special_code		Special code
-	 *	@param		string		$label				Label of the line
-	 *	@param		?int		$fk_unit			Unit
-	 * 	@param		float		$pu_ht_devise		Unit price in currency
-	 * 	@param		int<0,1>	$notrigger			disable line update trigger
-	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
-	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
-	 * 	@param		?int		$fk_fournprice		Id of origin supplier price
-	 * 	@param		float|string	$pa_ht			Price (without tax) of product for margin calculation (Can be '' to keep AWP unchanged or a float value)
-	 *  @param		int			$fk_parent_line		Id of parent line
-	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
+	 *  @param     	int				$rowid           	Id of line to update
+	 *	@param    	string			$desc            	Description de la ligne
+	 *	@param    	float			$pu_ht              Prix unitaire HT (> 0 even for credit note)
+	 *	@param    	float			$qty             	Quantite
+	 *	@param    	float|string	$txtva				VAT Rate (Can be '1.23' or '1.23 (ABC)')
+	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated)
+	 *  @param		float			$txlocaltax2		Local tax 2 rate (deprecated)
+	 *	@param    	int				$fk_product      	Product/Service ID predefined
+	 *	@param    	float			$remise_percent  	Percentage discount of the line
+	 *	@param		string			$price_base_type	HT or TTC
+	 *	@param    	int				$info_bits			Bits of type of lines
+	 *	@param    	int				$fk_remise_except	Id remise
+	 *	@param    	float			$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+	 *	@param		int				$type				Type of line (0=product, 1=service)
+	 *	@param      int				$rang               Position of line
+	 *	@param		int				$special_code		Special code
+	 *	@param		string			$label				Label of the line
+	 *	@param		?int			$fk_unit			Unit
+	 * 	@param		float			$pu_ht_devise		Unit price in currency
+	 * 	@param		int<0,1>		$notrigger			disable line update trigger
+	 *  @param		int				$date_start_fill	1=Flag to fill start date when generating invoice
+	 *  @param		int				$date_end_fill		1=Flag to fill end date when generating invoice
+	 * 	@param		?int			$fk_fournprice		Id of origin supplier price
+	 * 	@param		float|string	$pa_ht				Price (without tax) of product for margin calculation (Can be '' to keep AWP unchanged or a float value)
+	 *  @param		int				$fk_parent_line		Id of parent line
+	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
 	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
 	{
@@ -1306,7 +1306,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ", total_ttc='".price2num($total_ttc)."'";
 		$sql .= ", date_start_fill=".((int) $date_start_fill);
 		$sql .= ", date_end_fill=".((int) $date_end_fill);
-		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : 'null');
+		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? (int) $fk_fournprice : 'null');
 		$sql .= ", buy_price_ht=".($pa_ht ? price2num($pa_ht) : 0);
 		$sql .= ", info_bits=".((int) $info_bits);
 		$sql .= ", rang=".((int) $rang);

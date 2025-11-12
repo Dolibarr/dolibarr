@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2022	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
  * @var string 		$dolibarr_main_prod
  * @var string		$dolibarr_main_document_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin", "errors", "website"));
@@ -198,13 +197,13 @@ if ($todisabletext) {
 	print img_picto('', 'warning', 'class="pictofixedwidth nopaddingleft"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
-if (!\function_exists($functiontokeep)) {
+if (!function_exists($functiontokeep)) {
 	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning', 'class="pictofixedwidth"');
 } else {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
 }
 print $langs->trans("PHPFunctionsRequiredForCLI").': ';
-print '<span class="opacitymedium">'.$functiontokeep.'</span>';
+print '<span class="opacitymedium" title="exec or popen can be used depending on MAIN_EXEC_USE_POPEN option, currently to '.getDolGlobalInt('MAIN_EXEC_USE_POPEN').'">'.$functiontokeep.'</span>';
 print '<br>';
 
 print '<br>';
@@ -804,17 +803,22 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
-print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_dolcrypt_key (or $dolibarr_main_instance_unique_id)<br>';
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id)<br>';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print $langs->trans("ToolToDecryptAString").': ';
-print '<input type="text" class="minwidth300" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
+print '<input type="text" class="minwidth500" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
 print '<input type="submit" class="reposition button small smallpaddingimp" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
-	print ' => <textarea rows="'.ROWS_1.'" class="valignmiddle">'.dolPrintHTMLForTextArea(dolDecrypt($exampletodecrypt)).'</textarea>';
+	$decryptedstring = dolDecrypt($exampletodecrypt);
+	if (ascii_check($decryptedstring)) {
+		print '<br> => <textarea rows="'.ROWS_1.'" class="valignmiddle quatrevingtpercent">'.dolPrintHTMLForTextArea($decryptedstring).'</textarea>';
+	} else {
+		print '<br><span class="error"> => Failed to decrypt. The crypting key saved into the conf.php file seems to not be the one used to encrypt the provided encrypted string</span>';
+	}
 }
 print '</form>';
 

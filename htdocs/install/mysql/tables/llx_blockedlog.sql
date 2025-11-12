@@ -21,20 +21,22 @@ CREATE TABLE llx_blockedlog
 	rowid integer AUTO_INCREMENT PRIMARY KEY,
 	entity integer DEFAULT 1 NOT NULL,
 	-- fields included into signature
-	date_creation	datetime,
-	action varchar(50),
-	amounts double(24,8) NOT NULL,
-	ref_object varchar(255),
-	date_object	datetime,
-	user_fullname varchar(255),
-	object_data	mediumtext,
+	date_creation	datetime,			-- field included into line signature
+	action varchar(50),				-- field included into line signature
+	amounts double(24,8) NOT NULL,			-- field included into line signature
+	vat double(24,8) NULL,			-- TODO
+	ref_object varchar(255),			-- field included into line signature
+	date_object	datetime,			-- field included into line signature
+	user_fullname varchar(255),			-- field included into line signature
+	object_data	mediumtext,			-- field included into line signature
+	linktoref varchar(255),				-- TODO
+	linktype varchar(16),				-- TODO
 	-- the signature of line
-	signature varchar(100) NOT NULL,  			-- the hash of the key for signature with previous hash before
-	-- fields used for debug only
+	signature varchar(100) NOT NULL,  		-- the hash of the key for signature with previous hash before
+	-- fields used for debug only or to retreive link to more complete business events
 	element varchar(50),
 	fk_user	integer,
 	fk_object integer,
-	signature_line varchar(100) NOT NULL, 		-- the hash of the key for signature for line only so without previous hash before (not used)
 	object_version varchar(32) DEFAULT '',		-- in which version did the line was recorded
 	certified integer,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

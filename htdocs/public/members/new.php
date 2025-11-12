@@ -113,6 +113,40 @@ $object = new Adherent($db);
 
 $user->loadDefaultValues();
 
+$captchaobj = null;
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(
+		array(
+			'main' => '/core/modules/security/captcha/'
+		),
+		is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array()
+	);
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
+	}
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+			/** @var ModeleCaptcha $captchaobj */
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
+	} else {
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+	}
+}
+
 /**
  * Force switching conf of entity, even if user is connected
  * Fox example when trying to go on public form of an other entity
@@ -192,6 +226,73 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+// Verify if we can find member
+if (empty($reshook) && getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE") && $action == 'add' && !GETPOSTISSET("nofetchmember")) {	// Test on permission not required here
+	$memberfound = false;
+	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') && GETPOSTISSET('login')) {
+		$sql = "SELECT rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
+		$sql .= " WHERE a.login = '".$db->escape(GETPOST('login'))."'";
+		$sql .= " AND statut = 1";
+		$sql .= " AND entity IN (".getEntity($object->element).")";
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) == 1) {
+				$obj = $db->fetch_object($resql);
+				$object->fetch($obj->id);
+				$memberfound = true;
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	if (!$memberfound && GETPOST("morphy") == 'mor' && GETPOSTISSET("societe") ) {
+		$sql = "SELECT a.rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " ON a.fk_soc = s.rowid";
+		$sql .= " WHERE s.nom = '".$db->escape(GETPOST("societe", 'alphanohtml'))."'";
+		$sql .= " AND a.email = '".$db->escape(preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase')))."'";
+		$sql .= " AND a.statut = 1";
+		$sql .= " AND a.entity IN (".getEntity($object->element).")";
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) == 1) {
+				$obj = $db->fetch_object($resql);
+				$object->fetch($obj->id);
+				$memberfound = true;
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	if (!$memberfound && GETPOST("morphy") == 'phy' && GETPOSTISSET("lastname") && GETPOSTISSET("firstname") && !empty(GETPOST("member_email", 'aZ09arobase'))) {
+		$sql = "SELECT rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
+		$sql .= " WHERE firstname = '".$db->escape(GETPOST("firstname", 'alphanohtml'))."'";
+		$sql .= " AND lastname = '".$db->escape(GETPOST("lastname", 'alphanohtml'))."'";
+		$sql .= " AND email = '".$db->escape(preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase')))."'";
+		$sql .= " AND statut = 1";
+		$sql .= " AND entity IN (".getEntity($object->element).")";
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) == 1) {
+				$obj = $db->fetch_object($resql);
+				$object->fetch($obj->id);
+				$memberfound = true;
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	if ($memberfound) {
+		$action = 'subscription';
+	}
 }
 
 // Action called when page is submitted
@@ -274,11 +375,16 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	// Check Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
-		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+	$ok = false;
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER') && is_object($captchaobj)) {
+		if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+			$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
+		} else {
+			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
+		}
 		if (!$ok) {
 			$error++;
+			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
 			$action = '';
 		}
@@ -303,8 +409,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$adh->town        = GETPOST('town');
 		$adh->email       = GETPOST('member_email', 'aZ09arobase');
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			$adh->login       = GETPOST('login');
-			$adh->pass        = GETPOST('pass1', 'password');
+			$adh->login = GETPOST('login');
+			$adh->pass = GETPOST('pass1', 'password');
 		}
 		$adh->photo       = GETPOST('photo');
 		$adh->country_id  = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
@@ -313,6 +419,9 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$adh->note_private = GETPOST('note_private');
 		$adh->morphy      = getDolGlobalString("MEMBER_NEWFORM_FORCEMORPHY", GETPOST('morphy'));
 		$adh->birth       = $birthday;
+		$adh->phone   = GETPOST('phone');
+		$adh->phone_perso = GETPOST('phone_perso');
+		$adh->phone_mobile= GETPOST('phone_mobile');
 
 		$adh->ip = getUserRemoteIP();
 
@@ -411,7 +520,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 						$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 						if (preg_match('/\d\.\d/', $appli)) {
-							if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
+							if (!preg_match('/'.preg_quote(DOL_VERSION, '/').'/', $appli)) {
 								$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
 							}
 						} else {
@@ -546,13 +655,21 @@ print '</div>';
 dol_htmloutput_errors($errmsg);
 dol_htmloutput_events();
 
+if ($action == "subscription") {
+	$urltocall = DOL_URL_ROOT.'/public/payment/newpayment.php?source=member&ref='.$object->id;
+	print $form->formconfirm($urltocall, $langs->trans("CorrespondingMemberFound"), $langs->trans("CorrespondingMemberFoundQuestion"), "confirm_subscription", '', 'no', 1);
+}
+
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="page_y" value="" />';
 
-if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFORM_FORCETYPE') || $action == 'create') {
+if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFORM_FORCETYPE') || in_array($action, array('create', 'subscription'))) {
+	if ($action == 'subscription') {
+		print '<input type="hidden" name="nofetchmember" value="nofetchmember" />';
+	}
 	print '<input type="hidden" name="action" value="add" />';
 	print '<br>';
 
@@ -689,12 +806,14 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$tdFirst.removeClass("fieldrequired");
 								break;
 
-							default:
-								$phyInput.prop({disabled: false, checked: false});
-								$morInput.prop({disabled: false, checked: false});
-								$span1.removeClass("member-individual-back").addClass("nonature-back");
-								$span2.removeClass("member-company-back").addClass("nonature-back");
-						}
+							default:';
+			if ($action != "subscription") {
+				print ' $phyInput.prop({disabled: false, checked: false});
+				$morInput.prop({disabled: false, checked: false});
+				$span1.removeClass("member-individual-back").addClass("nonature-back");
+				$span2.removeClass("member-company-back").addClass("nonature-back");';
+			}
+			print'}
 					});
 
 					// Initial state
@@ -785,6 +904,18 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		}
 		print '</td></tr>';
 	}
+
+	// Pro phone
+	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
+	print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" size="20" value="'.dol_escape_htmltag(GETPOST('phone')).'"></td></tr>';
+
+	// Personal phone
+	print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
+	print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" size="20" value="'.dol_escape_htmltag(GETPOST('phone_perso')).'"></td></tr>';
+
+	// Mobile phone
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
+	print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" size="20" value="'.dol_escape_htmltag(GETPOST('phone_mobile')).'"></td></tr>';
 
 	// Birthday
 	print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';
@@ -947,17 +1078,14 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	// Display Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
-		print '<span class="span-icon-security inline-block">';
-		print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
-		print '</span>';
-		print '<span class="nowrap inline-block">';
-		print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-		print '<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
-		print '</span>';
-		print '</td></tr>';
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER') && is_object($captchaobj)) {
+		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td><br>';
+		if (method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+			print $captchaobj->getCaptchaCodeForForm('');  // @phan-suppress-current-line PhanUndeclaredMethod
+		} else {
+			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+		}
+		print '<br></td></tr>';
 	}
 
 	print "</table>\n";
@@ -982,7 +1110,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	$result = $measuringUnits->fetchAll('', '', 0, 0, array('t.active' => 1));
 	$units = array();
 	foreach ($measuringUnits->records as $lines) {
-		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
+		$units[$lines->short_label] = $langs->trans(ucfirst((string) $lines->label));
 	}
 
 	$publiccounters = getDolGlobalString("MEMBER_COUNTERS_ARE_PUBLIC");

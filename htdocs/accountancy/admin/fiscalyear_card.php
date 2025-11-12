@@ -202,7 +202,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-fis
 if ($action == 'create') {
 	print load_fiche_titre($title, '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -334,13 +334,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// ------------------------------------------------------------
 	$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/fiscalyear.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'label', $linkback, 1, 'label', 'label', $morehtmlref);
 
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
+
+	// Id
+	print "<tr>";
+	print '<td class="titlefield">'.$langs->trans("Id").'</td><td>';
+	print $object->id;
+	print '</td></tr>';
 
 	// Label
 	print '<tr><td class="tdtop">';
