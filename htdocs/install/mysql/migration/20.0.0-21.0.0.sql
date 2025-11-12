@@ -94,9 +94,8 @@ ALTER TABLE llx_product DROP FOREIGN KEY fk_product_default_warehouse;
 
 DROP TABLE llx_contratdet_log;
 
-ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(80);
-ALTER TABLE llx_bank_account MODIFY COLUMN iban_prefix varchar(80);
-ALTER TABLE llx_user_rib MODIFY COLUMN iban_prefix varchar(80);
+ALTER TABLE llx_bank_account MODIFY COLUMN iban_prefix varchar(100);
+ALTER TABLE llx_user_rib MODIFY COLUMN iban_prefix varchar(100);
 
 ALTER TABLE llx_bom_bom ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
