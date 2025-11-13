@@ -31,11 +31,9 @@ if (empty($form) || !is_object($form)) {
 	$form = new Form($db);
 }
 
-$qtytoconsumeforline = $this->tpl['qty'] / (!empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1);
-/*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
-	$qtytoconsumeforline = $qtytoconsumeforline / $this->tpl['qty_bom'];
-}*/
-$qtytoconsumeforline = price2num($qtytoconsumeforline, 'MS');
+$efficiency = !empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1;
+$lossfactor = max(0, 2 - $efficiency);
+$qtytoconsumeforline = price2num($this->tpl['qty'] * $lossfactor, 'MS');
 
 $tmpproduct = new Product($db);
 if ($line->fk_product > 0) {
@@ -67,7 +65,7 @@ if ($res) {
 }
 print '</td>';
 // Qty
-print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
+print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' x (2 - '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).') = '.$qtytoconsumeforline : '').'</td>';
 // Unit
 print '<td class="right">'.measuringUnitString($this->tpl['fk_unit'], '', '', 1).'</td>';
 // Stock

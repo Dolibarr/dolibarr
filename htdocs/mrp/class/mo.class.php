@@ -763,7 +763,10 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = (float) price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
+								$efficiency = !empty($line->efficiency) ? $line->efficiency : 1;
+								$lossfactor = max(0, 2 - $efficiency); // Factor is 1 when efficiency is 1, >1 when efficiency <1
+								$qtyperbom = $line->qty / (!empty($bom->qty) ? $bom->qty : 1);
+								$moline->qty = (float) price2num($qtyperbom * $this->qty * $lossfactor, 'MS'); // Calculate with Qty to produce and more precision
 							}
 							if ($moline->qty <= 0) {
 								$error++;
