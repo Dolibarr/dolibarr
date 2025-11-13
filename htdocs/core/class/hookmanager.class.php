@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,8 +190,11 @@ class HookManager
 	/**
 	 *  Execute hooks (if they were initialized) for the given method
 	 *
+	 *  @phpstan-template T
+	 *
 	 *  @param		string				$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
 	 *  @param		array<string,mixed>	$parameters		Array of parameters
+	 *  @phpstan-param T $object
 	 *  @param		null|Object|array<string,mixed>|string	$object			Object to use hooks on  @phan-ignore-reference
 	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
 	 *  @return		int<-1,1>							For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.

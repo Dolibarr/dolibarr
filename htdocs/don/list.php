@@ -29,11 +29,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +36,10 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'donations'));
@@ -134,6 +133,7 @@ $fieldstosearchall = array(
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = array();
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -603,7 +603,7 @@ while ($i < $imaxinloop) {
 	$donationstatic->setVarsFromFetchObj($obj);
 
 	$donationstatic->id = $obj->rowid;
-	$donationstatic->ref = $obj->ref;
+	$donationstatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 	$donationstatic->date = $db->jdate($obj->datedon);
 	$donationstatic->status = $obj->status;
 	$donationstatic->lastname = $obj->lastname;

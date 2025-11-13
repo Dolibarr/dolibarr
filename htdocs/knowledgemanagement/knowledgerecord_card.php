@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ $upload_dir = $conf->knowledgemanagement->multidir_output[isset($object->entity)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
+restrictedArea($user, $object->module, $object->id, $object->table_element.'&'.$object->element, $object->element, '', 'rowid', $isdraft);
 //if (empty($conf->knowledgemanagement->enabled)) accessforbidden();
 //if (empty($permissiontoread)) accessforbidden();
 
@@ -516,8 +517,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_VALIDATED) {
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("SetObsolete").'</a>'."\n";
-				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
+				} elseif ($object->status == $object::STATUS_CANCELED) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>'."\n";
 				}
 			}
 

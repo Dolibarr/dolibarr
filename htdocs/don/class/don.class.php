@@ -639,7 +639,7 @@ class Don extends CommonObject
 				// For remove dir
 				if (dol_is_dir($dir)) {
 					if (!dol_delete_dir_recursive($dir)) {
-						$this->errors[] = $this->error;
+						$this->errors[] = 'ErrorFailToDeleteDir';
 					}
 				}
 			}
@@ -1089,10 +1089,7 @@ class Don extends CommonObject
 		$file = '';
 		$classname = '';
 		$filefound = 0;
-		$dirmodels = array('/');
-		if (is_array($conf->modules_parts['models'])) {
-			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-		}
+		$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			foreach (array('html', 'doc', 'pdf') as $prefix) {
 				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";

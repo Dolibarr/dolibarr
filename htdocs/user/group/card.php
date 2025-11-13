@@ -30,12 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Define if user can read permissions
 $permissiontoadd = ($user->admin || $user->hasRight("user", "user", "write"));
@@ -98,6 +97,7 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MUL
 /**
  * Actions
  */
+
 $error = 0;
 $parameters = array('id' => $id, 'userid' => $userid, 'caneditperms' => $permissiontoedit);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -339,6 +339,7 @@ if ($action == 'create') {
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
+
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent tableforfield">';

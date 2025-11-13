@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,28 +46,22 @@ $langs->loadLangs(array("admin", "workstation"));
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
 
 $value = GETPOST('value', 'alpha');
 
 $error = 0;
-$setupnotempty = 0;
 
-$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 
 // Access control
 if (!$user->admin) {
 	accessforbidden();
 }
 
+$type = 'workstation';
 $moduledir = 'workstation';
-$myTmpObjects = array();
-$myTmpObjects['workstation'] = array('label' => 'Workstation', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Workstation');
-
-$tmpobjectkey = GETPOST('object', 'aZ09');
-if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
-	accessforbidden('Bad value for object. Hack attempt ?');
-}
-
 
 /*
  * Actions
@@ -97,9 +91,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$nameofclass = ucfirst($tmpobjectkey);
-	$tmpobject = new $nameofclass($db);
-	'@phan-var-force Workstation $tmpobject';
+	$tmpobject = new Workstation($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
@@ -107,7 +99,7 @@ if ($action == 'updateMask') {
 	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/workstation/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+		$file = dol_buildpath($reldir."core/modules/workstation/doc/pdf_".$modele."_workstation.modules.php", 0);
 		if (file_exists($file)) {
 			$classname = "pdf_".$modele;
 			break;
@@ -119,9 +111,10 @@ if ($action == 'updateMask') {
 
 		$module = new $classname($db);
 		'@phan-var-force ModelePDFWorkstation $module';
+		/** @var ModelePDFWorkstation $module */
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=workstation&file=SPECIMEN.pdf");
 			return;
 		} else {
 			setEventMessages($module->error, null, 'errors');
@@ -137,14 +130,14 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
+		$constforval = 'WORKSTATION_ADDON_PDF';
 		if (getDolGlobalString($constforval) == "$value") {
 			dolibarr_del_const($db, $constforval, $conf->entity);
 		}
 	}
 } elseif ($action == 'setdoc') {
 	// Set default model
-	$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
+	$constforval = 'WORKSTATION_ADDON_PDF';
 	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that was read before the new set
 		// We therefore requires a variable to have a coherent view
@@ -159,7 +152,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
-	$constforval = 'WORKSTATION_'.strtoupper($tmpobjectkey)."_ADDON";
+	$constforval = 'WORKSTATION_WORKSTATION_ADDON';
 	dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
 }
 
@@ -186,249 +179,242 @@ $head = workstationAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "workstation");
 
 
-foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectArray['includerefgeneration']) {
-		// Orders Numbering model
-		$setupnotempty++;
+// Orders Numbering model
 
-		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
+print load_fiche_titre($langs->trans("NumberingModules", 'Workstation'), '', '');
 
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Name").'</td>';
-		print '<td>'.$langs->trans("Description").'</td>';
-		print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-		print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-		print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-		print '</tr>'."\n";
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '</tr>'."\n";
 
-		clearstatcache();
+clearstatcache();
 
-		foreach ($dirmodels as $reldir) {
-			$dir = dol_buildpath($reldir."core/modules/".$moduledir);
+foreach ($dirmodels as $reldir) {
+	$dir = dol_buildpath($reldir."core/modules/".$moduledir);
+
+	if (is_dir($dir)) {
+		$handle = opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (strpos($file, 'mod_workstation_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = substr($file, 0, dol_strlen($file) - 4);
+
+					require_once $dir.'/'.$file.'.php';
+
+					$module = new $file($db);
+					'@phan-var-force ModeleNumRefWorkstation $module';
+					/** @var ModeleNumRefWorkstation $module */
+
+					// Show modules according to features level
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+						continue;
+					}
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+						continue;
+					}
+
+					if ($module->isEnabled()) {
+						dol_include_once('/workstation/class/workstation.class.php');
+
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+						print $module->info($langs);
+						print '</td>';
+
+						// Show example of numbering model
+						print '<td class="nowrap">';
+						$tmp = $module->getExample();
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') {
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+						} else {
+							print $tmp;
+						}
+						print '</td>'."\n";
+
+						print '<td class="center">';
+						$constforvar = 'WORKSTATION_WORKSTATION_ADDON';
+						if (getDolGlobalString($constforvar, 'mod_workstation_standard') == $file) {
+							print img_picto($langs->trans("Activated"), 'switch_on');
+						} else {
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
+							print img_picto($langs->trans("Disabled"), 'switch_off');
+							print '</a>';
+						}
+						print '</td>';
+
+						$mytmpinstance = new Workstation($db);
+						$mytmpinstance->initAsSpecimen();
+
+						// Info
+						$htmltooltip = '';
+						$htmltooltip .= $langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+
+						$nextval = $module->getNextValue($mytmpinstance);
+						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+							$htmltooltip .= ''.$langs->trans("NextValue").': ';
+							if ($nextval) {
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+									$nextval = $langs->trans($nextval);
+								}
+								$htmltooltip .= $nextval.'<br>';
+							} else {
+								$htmltooltip .= $langs->trans($module->error).'<br>';
+							}
+						}
+
+						print '<td class="center">';
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
+						print '</td>';
+
+						print "</tr>\n";
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
+}
+print "</table><br>\n";
+
+
+if (getDolGlobalInt('WORKSTATION_INCLUDE_DOC_GENERATION')) {
+	// Document templates generators
+	print load_fiche_titre($langs->trans("DocumentModules", 'Workstation'), '', '');
+
+	// Load array def with activated templates
+	$def = array();
+	$sql = "SELECT nom";
+	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+	$sql .= " WHERE type = '".$db->escape($type)."'";
+	$sql .= " AND entity = ".((int) $conf->entity);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$i = 0;
+		$num_rows = $db->num_rows($resql);
+		while ($i < $num_rows) {
+			$array = $db->fetch_array($resql);
+			if (is_array($array)) {
+				array_push($def, $array[0]);
+			}
+			$i++;
+		}
+	} else {
+		dol_print_error($db);
+	}
+
+	print "<table class=\"noborder\" width=\"100%\">\n";
+	print "<tr class=\"liste_titre\">\n";
+	print '<td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
+	print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
+	print '<td class="center" width="38">'.$langs->trans("ShortInfo").'</td>';
+	print '<td class="center" width="38">'.$langs->trans("Preview").'</td>';
+	print "</tr>\n";
+
+	clearstatcache();
+
+	foreach ($dirmodels as $reldir) {
+		foreach (array('', '/doc') as $valdir) {
+			$realpath = $reldir."core/modules/".$moduledir.$valdir;
+			$dir = dol_buildpath($realpath);
 
 			if (is_dir($dir)) {
 				$handle = opendir($dir);
 				if (is_resource($handle)) {
+					$filelist = array();
 					while (($file = readdir($handle)) !== false) {
-						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-							$file = substr($file, 0, dol_strlen($file) - 4);
-
-							require_once $dir.'/'.$file.'.php';
-
-							$module = new $file($db);
-							'@phan-var-force ModeleNumRefWorkstation $module';
-
-							// Show modules according to features level
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								continue;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								continue;
-							}
-
-							if ($module->isEnabled()) {
-								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
-
-								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info($langs);
-								print '</td>';
-
-								// Show example of numbering model
-								print '<td class="nowrap">';
-								$tmp = $module->getExample();
-								if (preg_match('/^Error/', $tmp)) {
-									$langs->load("errors");
-									print '<div class="error">'.$langs->trans($tmp).'</div>';
-								} elseif ($tmp == 'NotConfigured') {
-									print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-								} else {
-									print $tmp;
-								}
-								print '</td>'."\n";
-
-								print '<td class="center">';
-								$constforvar = 'WORKSTATION_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if (getDolGlobalString($constforvar, 'mod_workstation_standard') == $file) {
-									print img_picto($langs->trans("Activated"), 'switch_on');
-								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
-									print img_picto($langs->trans("Disabled"), 'switch_off');
-									print '</a>';
-								}
-								print '</td>';
-
-								$nameofclass = ucfirst($myTmpObjectKey);
-								$mytmpinstance = new $nameofclass($db);
-								'@phan-var-force Workstation $mytmpinstance';
-								$mytmpinstance->initAsSpecimen();
-
-								// Info
-								$htmltooltip = '';
-								$htmltooltip .= $langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-
-								$nextval = $module->getNextValue($mytmpinstance);
-								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-									$htmltooltip .= ''.$langs->trans("NextValue").': ';
-									if ($nextval) {
-										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-											$nextval = $langs->trans($nextval);
-										}
-										$htmltooltip .= $nextval.'<br>';
-									} else {
-										$htmltooltip .= $langs->trans($module->error).'<br>';
-									}
-								}
-
-								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 'info');
-								print '</td>';
-
-								print "</tr>\n";
-							}
-						}
+						$filelist[] = $file;
 					}
 					closedir($handle);
-				}
-			}
-		}
-		print "</table><br>\n";
-	}
+					arsort($filelist);
 
-	if ($myTmpObjectArray['includedocgeneration']) {
-		// Document templates generators
-		$setupnotempty++;
-		$type = strtolower($myTmpObjectKey);
+					foreach ($filelist as $file) {
+						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+							if (file_exists($dir.'/'.$file)) {
+								$name = substr($file, 4, dol_strlen($file) - 16);
+								$classname = substr($file, 0, dol_strlen($file) - 12);
 
-		print load_fiche_titre($langs->trans("DocumentModules", $myTmpObjectKey), '', '');
+								require_once $dir.'/'.$file;
+								$module = new $classname($db);
+								'@phan-var-force ModelePDFWorkstation $module';
+								/** @var ModelePDFWorkstation $module */
 
-		// Load array def with activated templates
-		$def = array();
-		$sql = "SELECT nom";
-		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-		$sql .= " WHERE type = '".$db->escape($type)."'";
-		$sql .= " AND entity = ".((int) $conf->entity);
-		$resql = $db->query($sql);
-		if ($resql) {
-			$i = 0;
-			$num_rows = $db->num_rows($resql);
-			while ($i < $num_rows) {
-				$array = $db->fetch_array($resql);
-				if (is_array($array)) {
-					array_push($def, $array[0]);
-				}
-				$i++;
-			}
-		} else {
-			dol_print_error($db);
-		}
+								$modulequalified = 1;
+								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+									$modulequalified = 0;
+								}
+								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+									$modulequalified = 0;
+								}
 
-		print "<table class=\"noborder\" width=\"100%\">\n";
-		print "<tr class=\"liste_titre\">\n";
-		print '<td>'.$langs->trans("Name").'</td>';
-		print '<td>'.$langs->trans("Description").'</td>';
-		print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
-		print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
-		print '<td class="center" width="38">'.$langs->trans("ShortInfo").'</td>';
-		print '<td class="center" width="38">'.$langs->trans("Preview").'</td>';
-		print "</tr>\n";
-
-		clearstatcache();
-
-		foreach ($dirmodels as $reldir) {
-			foreach (array('', '/doc') as $valdir) {
-				$realpath = $reldir."core/modules/".$moduledir.$valdir;
-				$dir = dol_buildpath($realpath);
-
-				if (is_dir($dir)) {
-					$handle = opendir($dir);
-					if (is_resource($handle)) {
-						$filelist = array();
-						while (($file = readdir($handle)) !== false) {
-							$filelist[] = $file;
-						}
-						closedir($handle);
-						arsort($filelist);
-
-						foreach ($filelist as $file) {
-							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-								if (file_exists($dir.'/'.$file)) {
-									$name = substr($file, 4, dol_strlen($file) - 16);
-									$classname = substr($file, 0, dol_strlen($file) - 12);
-
-									require_once $dir.'/'.$file;
-									$module = new $classname($db);
-									'@phan-var-force ModelePDFWorkstation $module';
-
-									$modulequalified = 1;
-									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-										$modulequalified = 0;
+								if ($modulequalified) {
+									print '<tr class="oddeven"><td width="100">';
+									print(empty($module->name) ? $name : $module->name);
+									print "</td><td>\n";
+									if (method_exists($module, 'info')) {
+										print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
+									} else {
+										print $module->description;
 									}
-									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-										$modulequalified = 0;
+									print '</td>';
+
+									// Active
+									if (in_array($name, $def)) {
+										print '<td class="center">'."\n";
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
+										print img_picto($langs->trans("Enabled"), 'switch_on');
+										print '</a>';
+										print '</td>';
+									} else {
+										print '<td class="center">'."\n";
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+										print "</td>";
 									}
 
-									if ($modulequalified) {
-										print '<tr class="oddeven"><td width="100">';
-										print(empty($module->name) ? $name : $module->name);
-										print "</td><td>\n";
-										if (method_exists($module, 'info')) {
-											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-										} else {
-											print $module->description;
-										}
-										print '</td>';
-
-										// Active
-										if (in_array($name, $def)) {
-											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
-											print img_picto($langs->trans("Enabled"), 'switch_on');
-											print '</a>';
-											print '</td>';
-										} else {
-											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-											print "</td>";
-										}
-
-										// Default
-										print '<td class="center">';
-										$constforvar = 'WORKSTATION_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if (getDolGlobalString($constforvar, 'mod_workstation_standard') == $name) {
-											print img_picto($langs->trans("Default"), 'on');
-										} else {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-										}
-										print '</td>';
-
-										// Info
-										$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-										$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-										if ($module->type == 'pdf') {
-											$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-										}
-										$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-
-										$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-										$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-										$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-
-										print '<td class="center">';
-										print $form->textwithpicto('', $htmltooltip, 1, 'info');
-										print '</td>';
-
-										// Preview
-										print '<td class="center">';
-										if ($module->type == 'pdf') {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'generic').'</a>';
-										} else {
-											print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-										}
-										print '</td>';
-
-										print "</tr>\n";
+									// Default
+									print '<td class="center">';
+									$constforvar = 'WORKSTATION_WORKSTATION_ADDON';
+									if (getDolGlobalString($constforvar, 'mod_workstation_standard') == $name) {
+										print img_picto($langs->trans("Default"), 'on');
+									} else {
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 									}
+									print '</td>';
+
+									// Info
+									$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+									$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+									if ($module->type == 'pdf') {
+										$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+									}
+									$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+									$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+									$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+									$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+
+									print '<td class="center">';
+									print $form->textwithpicto('', $htmltooltip, 1, 'info');
+									print '</td>';
+
+									// Preview
+									print '<td class="center">';
+									if ($module->type == 'pdf') {
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'generic').'</a>';
+									} else {
+										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
+									}
+									print '</td>';
+
+									print "</tr>\n";
 								}
 							}
 						}
@@ -436,14 +422,11 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				}
 			}
 		}
-
-		print '</table>';
 	}
+
+	print '</table>';
 }
 
-/*if (empty($setupnotempty)) {
-	print '<br>'.$langs->trans("NothingToSetup");
-}*/
 
 // Page end
 print dol_get_fiche_end();

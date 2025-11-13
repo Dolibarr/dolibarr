@@ -64,12 +64,38 @@ function blockedlogadmin_prepare_head()
 	return $head;
 }
 
+/**
+ * Return if the KYC mandatory parameters are set
+ *
+ * @return boolean		True or false
+ */
+function isRegistrationRecorded()
+{
+	global $mysoc;
 
+	$companyname = getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name);
+	$companyemail = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
+	$companycountrycode = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
+	$companyidprof1 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
+	//$companytel = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TEL', $mysoc->phone);
+
+	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyemail)) {
+		return false;
+	}
+
+	$providerset = getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME');	// Can be 'myself'
+
+	if (empty($providerset)) {
+		return false;
+	}
+
+	return true;
+}
 
 /**
  * Return if the version is a candidate version to get the LNE certification and if the prerequisites are OK.
- * The difference between isALNEQualifiedVersion() and isALNERunningVersion() is that this one checks if has a sense or not to
- * activate the restrictions (not a strict check) and the second one is a strict check to say restrictions are enabled and can't be disabled.
+ * The difference between isALNEQualifiedVersion() and isALNERunningVersion() is that this one just check if it has a sense or not to
+ * activate the restrictions (it is not a strict check) and the second one is a strict check to say restrictions must be enabled and can't be disabled.
  *
  * @return boolean		True or false
  */
@@ -82,6 +108,7 @@ function isALNEQualifiedVersion()
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return true;
 	}
+
 	if (preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
 		return false;
 	}

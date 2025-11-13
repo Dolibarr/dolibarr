@@ -225,7 +225,7 @@ class modHoliday extends DolibarrModules
 			'd.rowid' => "LeaveId", 'd.fk_type' => 'TypeOfLeaveId', 't.code' => 'TypeOfLeaveCode', 't.label' => 'TypeOfLeaveLabel', 'd.fk_user' => 'UserID',
 			'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.halfday' => 'HalfDay', 'none.num_open_days' => 'NbUseDaysCP',
 			'd.date_valid' => 'DateApprove', 'd.fk_validator' => "UserForApprovalID",
-			'u.lastname' => 'Lastname', 'u.firstname' => 'Firstname', 'u.login' => "Login",
+			'u.lastname' => 'Lastname', 'u.firstname' => 'Firstname', 'u.login' => "Login", 'u.fk_country' => "CountyID",
 			'ua.lastname' => "UserForApprovalLastname", 'ua.firstname' => "UserForApprovalFirstname",
 			'ua.login' => "UserForApprovalLogin", 'd.description' => 'Description', 'd.statut' => 'Status'
 		);
@@ -233,7 +233,7 @@ class modHoliday extends DolibarrModules
 			'd.rowid' => "Numeric", 't.code' => 'Text', 't.label' => 'Text', 'd.fk_user' => 'Numeric',
 			'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'none.num_open_days' => 'NumericCompute',
 			'd.date_valid' => 'Date', 'd.fk_validator' => "Numeric",
-			'u.lastname' => 'Text', 'u.firstname' => 'Text', 'u.login' => "Text",
+			'u.lastname' => 'Text', 'u.firstname' => 'Text', 'u.login' => "Text", 'u.fk_country' => 'Numeric',
 			'ua.lastname' => "Text", 'ua.firstname' => "Text",
 			'ua.login' => "Text", 'd.description' => 'Text', 'd.statut' => 'Numeric'
 		);
@@ -242,7 +242,8 @@ class modHoliday extends DolibarrModules
 		);
 		//$this->export_alias_array[$r] = array('d.rowid'=>"idholiday");
 		$this->export_special_array[$r] = array('none.num_open_days' => 'getNumOpenDays');
-		$this->export_dependencies_array[$r] = array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_dependencies_array[$r] = array('none.num_open_days' => 'u.fk_country'); // To force addition in GUI of u.fk_country when none.num_open_days is included in exported fields
+		//$this->export_dependencies_array[$r] = array();
 
 		$keyforselect = 'holiday';
 		$keyforelement = 'holiday';

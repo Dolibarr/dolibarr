@@ -2298,7 +2298,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		$title = $langs->trans('PriceByCustomerLog');
 		$title .= ' - '.$staticsoc->getNomUrl(1);
 
-		$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
+		$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("GoBack").'</a>';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
@@ -2775,7 +2775,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 		if ($num > 0) {
 			// Default prices or
 			// Log of previous customer prices
-			$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
+			$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("GoBack").'</a>';
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
