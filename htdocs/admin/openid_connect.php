@@ -140,13 +140,14 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'openid', '', -1);
 
-print $langs->trans("SeeWikiDocForHelpInSetupOpenIDCOnnect");
-print ' - ';
 $urlforwikidoc = img_picto('', 'url', 'class="pictofixedwidth"').'<a target="_blank" href="https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL#Mode_openid_connect">';
 $urlforwikidoc .= $langs->trans("SeeHere");
 $urlforwikidoc .= '</a>';
+/*
+print $langs->trans("SeeWikiDocForHelpInSetupOpenIDCOnnect");
+print ' - ';
 print $urlforwikidoc;
-
+*/
 print dol_get_fiche_end();
 
 
@@ -161,7 +162,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	}
 }
 
-print '<br>';
+print '<br><br>';
 
 
 if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {

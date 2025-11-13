@@ -71,6 +71,7 @@ class Categorie extends CommonObject
 	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
 	const TYPE_SUPPLIER_PROPOSAL	= 'supplier_proposal';
 	const TYPE_PROPOSAL	            = 'propal';
+	const TYPE_PROJECT_TASK			= 'project_task';
 
 
 	/**
@@ -104,6 +105,7 @@ class Categorie extends CommonObject
 		'supplier_invoice'		=> 21,
 		'supplier_proposal'		=> 22,
 		'propal'				=> 23,
+		'project_task'			=> 24,
 	);
 
 	/**
@@ -131,7 +133,10 @@ class Categorie extends CommonObject
 		16 => 'order',
 		17 => 'invoice',
 		20 => 'supplier_order',
-		21 => 'supplier_invoice'
+		21 => 'supplier_invoice',
+		22 => 'supplier_proposal',
+		23 => 'propal',
+		24 => 'project_task'
 	);
 	*/
 
@@ -178,7 +183,8 @@ class Categorie extends CommonObject
 		'supplier_order'		=> 'CommandeFournisseur',
 		'supplier_invoice'		=> 'FactureFournisseur',
 		'supplier_proposal' 	=> 'SupplierProposal',
-		'propal' 				=> 'Propal'
+		'propal' 				=> 'Propal',
+		'project_task'			=> 'Task',
 	);
 
 	/**
@@ -206,7 +212,8 @@ class Categorie extends CommonObject
 		'supplier_order'		=> 'SuppliersOrders',
 		'supplier_invoice'		=> 'SuppliersInvoices',
 		'propal' 				=> 'Proposals',
-		'supplier_proposal' 	=> 'SupplierProposals'
+		'supplier_proposal' 	=> 'SupplierProposals',
+		'project_task'			=> 'Tasks'
 	);
 
 	/**
@@ -227,6 +234,7 @@ class Categorie extends CommonObject
 		'invoice'				=> 'facture',
 		'supplier_order'		=> 'commande_fournisseur',
 		'supplier_invoice'		=> 'facture_fourn',
+		'project_task'			=> 'projet_task'
 	);
 
 	/**
@@ -295,6 +303,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
 	 * @see Categorie::TYPE_SUPPLIER_INVOICE
+	 * @see Categorie::TYPE_PROJECT_TASK
 	 */
 	public $type;
 
@@ -381,6 +390,9 @@ class Categorie extends CommonObject
 		global $hookmanager;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (is_object($hookmanager)) {
 			$hookmanager->initHooks(array('category'));
@@ -766,6 +778,7 @@ class Categorie extends CommonObject
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
 			'categorie_project' => 'fk_categorie',
+			'categorie_project_task' => 'fk_categorie',
 			'categorie_societe' => 'fk_categorie',
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
 			'categorie_warehouse' => 'fk_categorie',
@@ -985,66 +998,67 @@ class Categorie extends CommonObject
 		$objs = array();
 
 		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
-		$obj = new $classnameforobj($this->db);
+		if (!empty($classnameforobj) && class_exists($classnameforobj)) {
+			$obj = new $classnameforobj($this->db);
 
-		$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
-		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
-		if (!empty($filterlang)) {
-			$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
-		}
-		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
-		$sql .= " AND c.fk_categorie = ".((int) $this->id);
-		// Compatibility with actioncomm table which has id instead of rowid
-		if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
-		} else {
-			$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
-		}
-		if (!empty($filterlang)) {
-			$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
-			$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
-		}
-		// Protection for external users
-		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
-			$sql .= " AND o.rowid = ".((int) $user->socid);
-		}
+			$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
+			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
+			$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
+			if (!empty($filterlang)) {
+				$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
+			}
+			$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
+			$sql .= " AND c.fk_categorie = ".((int) $this->id);
+			// Compatibility with actioncomm table which has id instead of rowid
+			if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
+				$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.id";
+			} else {
+				$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
+			}
+			if (!empty($filterlang)) {
+				$sql .= " AND ol.fk_".(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." = o.rowid";
+				$sql .= " AND ol.lang = '".$this->db->escape($filterlang)."'";
+			}
+			// Protection for external users
+			if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
+				$sql .= " AND o.rowid = ".((int) $user->socid);
+			}
 
-		$errormessage = '';
-		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
-		if ($errormessage) {
-			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-			return -1;
-		}
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+			if ($errormessage) {
+				$this->errors[] = $errormessage;
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+				return -1;
+			}
 
-		$sql .= $this->db->order($sortfield, $sortorder);
-		if ($limit > 0 || $offset > 0) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
+			$sql .= $this->db->order($sortfield, $sortorder);
+			if ($limit > 0 || $offset > 0) {
+				$sql .= $this->db->plimit($limit + 1, $offset);
+			}
 
-		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
+			dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($rec = $this->db->fetch_array($resql)) {
-				if ($onlyids) {
-					$objs[] = $rec['fk_object'];
-				} else {
-					$classnameforobj = $this->MAP_OBJ_CLASS[$type];
-
-					$obj = new $classnameforobj($this->db);
-					$obj->fetch($rec['fk_object']);
-					if ($obj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-						$objs[] = $obj;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($rec = $this->db->fetch_array($resql)) {
+					if ($onlyids) {
+						$objs[] = $rec['fk_object'];
+					} else {
+						$obj->id = 0;
+						$obj->fetch($rec['fk_object']);
+						if ($obj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
+							$objs[] = $obj;
+						}
 					}
 				}
+			} else {
+				$this->error = $this->db->error().' sql='.$sql;
+				return -1;
 			}
-			return $objs;
-		} else {
-			$this->error = $this->db->error().' sql='.$sql;
-			return -1;
 		}
+
+		return $objs;
 	}
 
 	/**

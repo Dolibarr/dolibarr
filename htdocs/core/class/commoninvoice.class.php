@@ -48,7 +48,7 @@ abstract class CommonInvoice extends CommonObject
 	public $type = self::TYPE_STANDARD;
 
 	/**
-	 * @var int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table. May be used by some countries like Greece)
+	 * @var ?int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table, we store the rowid. May be used by some countries like Greece)
 	 */
 	public $subtype;
 

@@ -290,8 +290,13 @@ class Zapier extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
+	 * @phpstan-template T
+	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	public function _cleanObjectDatas($object)
 	{

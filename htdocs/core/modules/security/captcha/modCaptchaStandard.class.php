@@ -44,6 +44,12 @@ class modCaptchaStandard extends ModeleCaptcha
 	public $picto = 'fa-shield-alt';
 
 	/**
+	 * @var	int
+	 */
+	public $position = 10;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db			Database handler

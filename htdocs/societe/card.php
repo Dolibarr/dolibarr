@@ -113,12 +113,12 @@ $errors = array();
 $refalreadyexists = 0;
 
 // Get parameters
-$action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
-$cancel		= GETPOST('cancel', 'alpha');
+$action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$confirm 	= GETPOST('confirm', 'alpha');
-$canvas		= GETPOST('canvas', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$canvas = GETPOST('canvas', 'alpha');
 
 $dol_openinpopup = '';
 
@@ -169,7 +169,7 @@ $permissiondellink 	= $user->hasRight('societe', 'creer'); // Used by the includ
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -602,6 +602,15 @@ if (empty($reshook)) {
 								} else {
 									// Create thumbs
 									$object->addThumbs($newfile);
+
+									// Index file in database
+									if (getDolGlobalString('THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD')) {
+										require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+										// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
+										deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
+										// now we index the uploaded logo file
+										addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1, $object);
+									}
 								}
 							}
 						}
@@ -740,8 +749,8 @@ if (empty($reshook)) {
 				// Logo/Photo save
 				$dir     = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id."/logos";
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-				if (GETPOST('deletephoto') && $object->logo) {
-					$fileimg = $dir.'/'.$object->logo;
+				if (GETPOST('deletephoto') && $current_logo) {
+					$fileimg = $dir.'/'.$current_logo;
 					$dirthumbs = $dir.'/thumbs';
 					dol_delete_file($fileimg);
 					dol_delete_dir_recursive($dirthumbs);
@@ -773,7 +782,7 @@ if (empty($reshook)) {
 									// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
 									deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
 									// now we index the uploaded logo file
-									addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
+									addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1, $object);
 								}
 							}
 						}
@@ -1450,8 +1459,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Alias names (commercial, trademark or alias names)
-			print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" spellcheck="false"></td></tr>';
+			print '<tr id="name_alias"><td>';
+			//print '<label for="name_alias_input">'.$langs->trans('AliasNames').'</label>';
+			print '</td>';
+			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" spellcheck="false" placeholder="'.dolPrintHTMLForAttribute($langs->trans('AliasNames')).'"></td></tr>';
 
 			// Prospect/Customer/Supplier
 			$selected = $object->client;
@@ -1483,17 +1494,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
 			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
-				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'</label><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="spanlabel">'.$langs->trans("Prospect").'</label><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></span>';
 			}
 
 			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
-				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'</label><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="spanlabel">'.$langs->trans("Customer").'</label><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></span>';
 			}
 
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				// Supplier
-				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'</label><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="spanlabel">'.$langs->trans("Vendor").'</label><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></span>';
 			}
 			// Add js to manage the background of nature
 			if ($conf->use_javascript_ajax) {
@@ -1712,13 +1723,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</tr>';
 			}
 
+			$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+
 			// Social networks
 			if (isModEnabled('socialnetworks')) {
-				$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
-
 				$object->showSocialNetwork($socialnetworks, $colspan);
 
-				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 			}
 
 			// Prof ids
@@ -1802,7 +1813,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Local Taxes
-			//TODO: Place into a function to control showing by country or study better option
+			// TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
 				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
@@ -1823,9 +1834,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
+
+			print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
+
+
 			// Type - Workforce/Staff
 			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>'."\n";
-			$sortparam = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+			$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 			if ($user->admin) {
 				print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -2288,8 +2303,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Alias names (commercial, trademark or alias names)
-				print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-				print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" spellcheck="false"></td></tr>';
+				print '<tr id="name_alias"><td>';
+				//print '<label for="name_alias_input">'.$langs->trans('AliasNames').'</label>';
+				print '</td>';
+				print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" placeholder="'.dolPrintHTMLForAttribute($langs->trans('AliasNames')).'" spellcheck="false"></td></tr>';
 
 				// Prefix
 				if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
@@ -2559,7 +2576,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					$object->showSocialNetwork($socialnetworks, $colspan);
 
-					print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+					print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 				}
 
 				// Prof ids
@@ -2678,6 +2695,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print $s;
 				print '</td>';
 				print '</tr>';
+
+				$colspan = 4;
+
+				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 
 				// Type - Workforce/Staff
 				print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>';

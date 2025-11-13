@@ -137,6 +137,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 {
 	global $conf;
 
+	$subdirectory = '';
 	if (!is_object($object) && empty($module)) {
 		return null;
 	}
@@ -151,6 +152,15 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		$module = 'supplier_invoice';
 	} elseif ($module == 'order_supplier') {
 		$module = 'supplier_order';
+	} elseif ($module == 'recruitmentjobposition') {
+		$module = 'recruitment';
+		$subdirectory = '/recruitmentjobposition';
+	} elseif ($module == 'recruitmentcandidature') {
+		$module = 'recruitment';
+		$subdirectory = '/recruitmentcandidature';
+	} elseif ($module == 'knowledgerecord') {
+		$module = 'knowledgemanagement';
+		$subdirectory = '/knowledgerecord';
 	}
 
 	// Get the relative path of directory
@@ -158,7 +168,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)] . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -167,7 +177,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->dir_output;
+				$s = $conf->$module->dir_output . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -822,30 +832,39 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
- *  @param  string  $check	     Type of check
- *                               '' or 'none'=no check (deprecated)
- *                               'password'=allow characters for a password
- *                               'email'=allow characters for an email "email@domain.com"
- *                               'url'=allow characters for an url
- *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
- *                               'int'=check it's numeric (integer or float)
- *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
- *                               'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
- *                               'aZ'=check it's a-z only
- *                               'aZ09'=check it's simple alpha string (recommended for keys, it includes a-z0-9_\-\.)
- *                               'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
- *                               'aZ09comma'=check it's a string for a sortfield or sortorder
- *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml'=check there is no html content
- *                               'restricthtml'=check html content is restricted to some tags only
- *                               'custom'= custom filter specify $filter and $options)
+ *  @param 'int'|'intcomma'|'array'|'array:int'|'array:intcomma'|'array:alpha'|'array:alphanohtml'|'array:aZ09'|'array:restricthtml'|'password'|'email'|'alpha'|'alphanohtml'|'nohtml'|'restricthtml'|'alphawithlgt'|'aZ09'|'aZ'|'aZ09arobase'|'aZ09comma'|'url'|'san_alpha'|'custom'|'none'|'restricthtmlallowclass'|'restricthtmlallowunvalid'|'restricthtmlallowiframe'|'restricthtmlallowlinkscript'|'' $check Type of check
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 '' or 'none'=no check (deprecated)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'password'=allow characters for a password
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'email'=allow characters for an email "email@domain.com"
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'url'=allow characters for an url
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'int'=check it's numeric (integer or float)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'intcomma'=check it's integer+comma ('1,2,3,4...')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ'=check it's a-Z only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09'=check it's simple alpha string (recommended for keys, it includes a-Z0-9_\-\.)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'aZ09comma'=check it's a string for a sortfield or sortorder
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'nohtml'=check there is no html content
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtml'=check html content is restricted to some tags only
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'custom'= custom filter specify $filter and $options)
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowclass'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowunvalid'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowiframe'
+ *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowlinkscript'
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
- *  @phpstan-return ($check is 'array:int' ? numeric-string[]|array{} : ($check is 'array:az09' ? string[] : ($check is 'array:restricthtml' ? string[] : string|array<mixed>)))
+ *  @phpstan-return (
+ *      $check is 'int' ? numeric-string|'' :
+ *      $check is 'array:int' ? numeric-string[]|array{} :
+ *      $check is 'array' | 'array:aZ09' | 'array:alpha' | 'array:intcomma' | 'array:restricthtml' ? string[] :
+ *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
+ *  )
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
 {
@@ -3751,7 +3770,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	}
 
 	// Clean parameters
-	$to_gmt = false;
+	$to_gmt = false;	// false if we want date in server timezone, true if we want to add offset
 	$offsettz = $offsetdst = 0;
 	if ($tzoutput) {
 		$to_gmt = true; // For backward compatibility
@@ -3895,10 +3914,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		// Date is a timestamps
 		if ($time < 100000000000) {	// Protection against bad date values
 			$dtts = new DateTime();
-			if ($to_gmt) {
+			//var_dump($tzoutput.' '.$offsettzstring.' '.$offsettz.$offsetdst.' x '.$to_gmt);
+			if ($to_gmt) {	// to_gmt means "not in php server timezone" (if tzoutput = 'gmt', offsets should be 0 but if = 'tzuser...', offsets may be defined
+				$timetouse = (int) $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
+
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 				$dtts->setTimezone($tzo);	// important: must be before the setTimestamp
-				$dtts->setTimestamp((int) $time);
+				$dtts->setTimestamp($timetouse);
 			} else {
 				$timetouse = (int) $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
@@ -4120,14 +4142,14 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	string		$mode	'auto' => for backward compatibility (avoid this),
- *  							'gmt' => we return GMT timestamp,
- * 								'tzserver' => we add the PHP server timezone
- *  							'tzref' => we add the company timezone. Not implemented.
- * 								'tzuser' or 'tzuserrel' => we add the user timezone
+ *  @param	'auto'|'gmt'|'tzserver'|'tzuser'|'tzuserrel'	$mode	'auto' => for backward compatibility (avoid this),
+ *  																'gmt' => we return GMT timestamp,
+ * 																	'tzserver' => we add the PHP server timezone
+ *  																'tzref' => we add the company timezone. Not implemented.
+ * 																	'tzuser' or 'tzuserrel' => we add the user timezone
  *	@return int   $date	Timestamp
  */
-function dol_now($mode = 'auto')
+function dol_now($mode = 'gmt')
 {
 	$ret = 0;
 
@@ -4141,14 +4163,13 @@ function dol_now($mode = 'auto')
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
 		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
-		//} elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
-		//	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		//	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
-		//	$ret=dol_now('gmt')+($tzsecond*3600);
-		//}
+		// } elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
+		// 	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		// 	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
+		// 	$ret=dol_now('gmt')+($tzsecond*3600);
 	} elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {
 		// Time for now with user timezone added
-		//print 'time: '.time();
+		// print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 		$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
 		$ret = (int) (dol_now('gmt') + ($offsettz + $offsetdst));
@@ -4253,7 +4274,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  * @param	string		$morecss		More CSS
  * @return	string						HTML Link
  */
-function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max = 64, $showinvalid = 1, $withpicto = 0, $morecss = 'paddingrightonly')
+function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max = 0, $showinvalid = 1, $withpicto = 0, $morecss = 'paddingrightonly')
 {
 	global $user, $langs, $hookmanager;
 
@@ -4855,7 +4876,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 			if ($withpicto == 'fax') {
 				$picto = 'phoning_fax';
 			} elseif ($withpicto == 'phone') {
-				$picto = 'phoning';
+				$picto = 'phone';
 			} elseif ($withpicto == 'mobile') {
 				$picto = 'phoning_mobile';
 			} else {
@@ -4869,7 +4890,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		}
 
 		$rep .= $newphoneastart;
-		$rep .= ($withpicto ? img_picto($titlealt, 'object_' . $picto . '.png') : '');
+		$rep .= ($withpicto ? img_picto($titlealt, $picto) : '');
 		if ($separ != 'hidenum') {
 			$rep .= ($withpicto ? ' ' : '') . $newphone;
 		}
@@ -5400,7 +5421,8 @@ function getPictoForType($key, $morecss = '')
  *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *                                                  Example: fontawesome_envelope-open-text_fas_red_1em if you want to use fontaweseome icons: fontawesome_<icon-name>_<style>_<color>_<size> (only icon-name is mandatory)
+ *                                                  Example: fa-value			 		if you want to use fontaweseome icons: fa-<icon-name>
+ *                                                  Example: fa-value_fas_color_1em 	if you want to use fontaweseome icons: fa-<icon-name>_<style>_<color>_<size> (only icon-name is mandatory, color can be 'red' or '#FF0000')
  *	@param		string		$moreatt				Add more attribute on img tag (For example 'class="pictofixedwidth"')
  *	@param		int<0,1>    $pictoisfullpath		If true or 1, image path is a full path, 0 if not
  *	@param		int			$srconly				Return only content of the src attribute of img.
@@ -5547,7 +5569,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment', 'reception'))) {
 				$morecss .= ' em092';
 			}
-			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'info_black', 'project', 'workstation'))) {
+			if (in_array($pictowithouttext, array('conferenceorbooth', 'eventorganization', 'holiday', 'info', 'info_black', 'project', 'workstation'))) {
 				$morecss .= ' em088';
 			}
 			if (in_array($pictowithouttext, array('asset', 'intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
@@ -5607,13 +5629,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'billa' => 'infobox-commande',
 				'billr' => 'infobox-commande',
 				'billd' => 'infobox-commande',
-				'bookcal' => 'infobox-action',
+				'bookcal' => 'infobox-portal',
 				'margin' => 'infobox-bank_account',
 				'conferenceorbooth' => 'infobox-project',
-				'cash-register' => 'infobox-bank_account',
+				'cash-register' => 'infobox-portal',
 				'contract' => 'infobox-contrat',
 				'check' => 'font-status4',
-				'collab' => 'infobox-action',
 				'conversation' => 'infobox-contrat',
 				'donation' => 'infobox-commande',
 				'dolly' => 'infobox-commande',
@@ -5624,6 +5645,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'group' => 'infobox-adherent',
 				'intervention' => 'infobox-contrat',
 				'incoterm' => 'infobox-supplier_proposal',
+				'intracommreport' => 'infobox-bank_account',
 				'currency' => 'infobox-bank_account',
 				'multicurrency' => 'infobox-bank_account',
 				'members' => 'infobox-adherent',
@@ -5644,10 +5666,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'info_black' => 'purple',
 				'invoice' => 'infobox-commande',
 				'knowledgemanagement' => 'infobox-contrat rotate90',
-				'loan' => 'infobox-bank_account',
+				'loan' => 'infobox-commande',
 				'payment' => 'infobox-bank_account',
 				'payment_vat' => 'infobox-bank_account',
-				'poll' => 'infobox-adherent',
+				'poll' => 'infobox-portal',
 				'pos' => 'infobox-bank_account',
 				'project' => 'infobox-project',
 				'projecttask' => 'infobox-project',
@@ -5658,9 +5680,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'recruitmentjobposition' => 'infobox-adherent',
 				'recruitmentcandidature' => 'infobox-adherent',
 				'resource' => 'infobox-action',
-				'salary' => 'infobox-bank_account',
+				'salary' => 'infobox-commande',
 				'shapes' => 'infobox-adherent',
 				'shipment' => 'infobox-commande',
+				'store' => 'infobox-portal',
 				'stripe' => 'infobox-bank_account',
 				'supplier_invoice' => 'infobox-order_supplier',
 				'supplier_invoicea' => 'infobox-order_supplier',
@@ -5675,6 +5698,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'trip' => 'infobox-expensereport',
 				'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
+				'webportal' => 'infobox-portal',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt' => 'imgforviewmode',
 				'calendar' => 'imgforviewmode',
@@ -5866,7 +5890,7 @@ function getImgPictoConv($mode = 'fa')
 			'chevron-double-right' => 'angle-double-right',
 			'chevron-double-down' => 'angle-double-down',
 			'chevron-double-top' => 'angle-double-up',
-			'donation' => 'file-alt',
+			'donation' => 'gift',
 			'dynamicprice' => 'hand-holding-usd',
 			'setup' => 'cog',
 			'companies' => 'building',
@@ -6629,7 +6653,9 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		if ($picto == 'warning') {
 			$fa = 'exclamation-triangle';
 		}
-		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">') . '<span class="fa fa-' . $fa . '" title="' . dol_escape_htmltag((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')) . '"></span> ';
+		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">');
+		$result .= img_picto((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note'), $fa);
+		$result .= ' ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
@@ -15304,7 +15330,7 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 
 	$tag = 'span'; 	// Using div (like any style of type 'block') does not work when using the js copy code.
 
-	$result = '<span class="clipboardCP' . ($showonlyonhover ? ' clipboardCPShowOnHover' : '') . '">';
+	$result = '<span class="clipboardCP' . ($showonlyonhover ? ' clipboardCPShowOnHover valignmiddle' : '') . '">';
 	if ($texttoshow === 'none') {
 		$result .= '<' . $tag . ' class="clipboardCPValue hidewithsize">' . dol_escape_htmltag($valuetocopy, 1, 1) . '</' . $tag . '>';
 		$result .= '<span class="clipboardCPValueToPrint"></span>';

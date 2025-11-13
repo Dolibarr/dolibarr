@@ -919,23 +919,6 @@ if (!defined('NOLOGIN')) {
 				$user->context['audit'] = 'ErrorUserSessionWasInvalidated - login='.$login;
 			}
 
-			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
-			// accesskey is for Mac:               CTRL + Option + key for all browsers
-			if (!defined('NOREQUIRETRAN')) {
-				$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
-				if ($conf->browser->os == 'macintosh') {
-					$conf->browser->stringforfirstkey .= ' CTRL + Option +';
-				} else {
-					if ($conf->browser->name == 'chrome') {
-						$conf->browser->stringforfirstkey .= ' ALT +';
-					} elseif ($conf->browser->name == 'firefox') {
-						$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
-					} else {
-						$conf->browser->stringforfirstkey .= ' CTL +';
-					}
-				}
-			}
-
 			// Call trigger
 			$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
 			if ($result < 0) {
@@ -1110,7 +1093,6 @@ if (!defined('NOLOGIN')) {
 			}
 		}
 	}
-
 
 	// If user admin, we force the rights-based modules
 	if ($user->admin) {
@@ -1288,6 +1270,21 @@ dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["
 if (!defined('NOREQUIRETRAN')) {
 	// Load translation files required by page
 	$langs->loadLangs(array('main', 'dict'));
+
+	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+	// accesskey is for Mac:               CTRL + Option + key for all browsers
+	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
+	if ($conf->browser->os == 'macintosh') {
+		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$conf->browser->stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$conf->browser->stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$conf->browser->stringforfirstkey .= ' CTL +';
+		}
+	}
 }
 
 // Define some constants used for style of arrays
@@ -3727,90 +3724,95 @@ if (!function_exists("llxFooter")) {
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)
 		// You can use &forceping=1 in parameters to force the ping if the ping was already sent.
-		$forceping = GETPOST('forceping', 'alpha');
-		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
-			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.getDolGlobalString('MAIN_FIRST_PING_OK_ID').' -->';
-			$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
+		$forceping = GETPOSTINT('forceping');
 
-			if (!getDolGlobalString('MAIN_FIRST_PING_OK_DATE')
-				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != getDolGlobalString('MAIN_FIRST_PING_OK_ID')) && (getDolGlobalString('MAIN_FIRST_PING_OK_ID') != 'disabled'))
+		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
+			$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
+			$constanttosavelastko = 'MAIN_LAST_PING_KO_DATE';
+			$constanttosavefirstok = 'MAIN_FIRST_PING_OK_DATE';
+			$constanttosavefirstokid = 'MAIN_FIRST_PING_OK_ID';
+
+			if (!getDolGlobalString($constanttosavefirstok)
+				|| (!empty($conf->file->instance_unique_id) && (($hash_unique_id.' - '.DOL_VERSION) != getDolGlobalString($constanttosavefirstokid)) && (getDolGlobalString($constanttosavefirstokid) != 'disabled'))
 			|| $forceping) {
 				// No ping done if we are into an alpha version
 				if (strpos('alpha', DOL_VERSION) > 0 && !$forceping) {
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
 				} elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping) {	// Cookie is set when we uncheck the checkbox in the installation wizard.
-					// MAIN_LAST_PING_KO_DATE
-					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent (this month)
-					if (getDolGlobalString('MAIN_LAST_PING_KO_DATE') && substr(getDolGlobalString('MAIN_LAST_PING_KO_DATE'), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
-						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occurred this month, we will try later. -->\n";
-					} else {
-						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+					// Output code for ping
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.getDolGlobalString("MAIN_FIRST_PING_OK_DATE").' MAIN_FIRST_PING_OK_ID='.getDolGlobalString("MAIN_FIRST_PING_OK_ID").' MAIN_LAST_PING_KO_DATE='.getDolGlobalString("MAIN_LAST_PING_KO_DATE").' -->'."\n";
-						print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
-						$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
-						// Try to guess the distrib used
-						$distrib = 'standard';
-						if (isset($_SERVER["SERVER_ADMIN"]) && $_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') {
-							$distrib = 'doliwamp';
-						}
-						if (!empty($dolibarr_distrib)) {
-							$distrib = $dolibarr_distrib;
-						}
-						?>
-							<script>
-							jQuery(document).ready(function (tmp) {
-								console.log("Try Ping with hash_unique_id is dol_hash('dolibarr'+instance_unique_id, 'sha256')");
-								$.ajax({
-									method: "POST",
-									url: "<?php echo $url_for_ping ?>",
-									timeout: 500,     // timeout milliseconds
-									cache: false,
-									data: {
-										hash_algo: 'dol_hash-sha256',
-										hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
-										action: 'dolibarrping',
-										version: '<?php echo (float) DOL_VERSION; ?>',
-										entity: '<?php echo (int) $conf->entity; ?>',
-										dbtype: '<?php echo dol_escape_js($db->type); ?>',
-										country_code: '<?php echo $mysoc->country_code ? dol_escape_js($mysoc->country_code) : 'unknown'; ?>',
-										php_version: '<?php echo dol_escape_js(phpversion()); ?>',
-										os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
-										db_version: '<?php echo dol_escape_js(version_db()); ?>',
-										distrib: '<?php echo dol_escape_js($distrib); ?>',
-										token: 'notrequired'
-									},
-									success: function (data, status, xhr) {   // success callback function (data contains body of response)
-											console.log("Ping ok");
-											$.ajax({
-												method: 'GET',
-												url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
-												timeout: 500,     // timeout milliseconds
-												cache: false,
-												data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: '<?php echo currentToken(); ?>' },	// for update
-											});
-									},
-									error: function (data,status,xhr) {   // error callback function
-											console.log("Ping ko: " + data);
-											$.ajax({
-												method: 'GET',
-												url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
-												timeout: 500,     // timeout milliseconds
-												cache: false,
-												data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: '<?php echo currentToken(); ?>' },
-											});
-									}
-								});
-							});
-							</script>
-						<?php
-					}
+					$arrayofdata = array('action' => 'dolibarrping', 'country_code' => ($mysoc->country_code ? $mysoc->country_code : 'unknown'));
+					printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata, $forceping);
 				} else {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
-					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled', 'chaine', 0, '', $conf->entity);
+					dolibarr_set_const($db, $constanttosavefirstok, dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
+					dolibarr_set_const($db, $constanttosavefirstokid, 'disabled', 'chaine', 0, '', $conf->entity);
+				}
+			} else {
+					print "\n<!-- NO JS CODE TO call the ping. It was already done for this couple uniqueid and version -->\n";
+			}
+		}
+
+		// Add code to force the registration if not yet done but ready (in case past submission failed)
+		// You can use &forceregistration=1 in parameters to force the call if the call was already sent.
+		$forceregistration = GETPOSTINT('forceregistration');
+		if (isModEnabled('blockedlog') && (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceregistration)) {
+			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+			if (!isALNEQualifiedVersion()) {
+				print "\n<!-- NO JS CODE TO ENABLE the registration. Not a LNE qualified version -->\n";
+			} elseif (!isRegistrationRecorded()) {
+				print "\n<!-- NO JS CODE TO ENABLE the registration. Registration data not saved -->\n";
+			} else {
+				$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
+				$constanttosavelastko = 'MAIN_LAST_REGISTRATION_KO_DATE';
+				$constanttosavefirstok = 'MAIN_FIRST_REGISTRATION_OK_DATE';
+				$constanttosavefirstokid = 'MAIN_FIRST_REGISTRATION_OK_ID';
+
+				if (!getDolGlobalString($constanttosavefirstok)
+					|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id.' - '.DOL_VERSION != getDolGlobalString($constanttosavefirstokid)) && (getDolGlobalString($constanttosavefirstokid) != 'disabled'))
+				|| $forceregistration) {
+					// No ping done if we are into an alpha version
+					if (strpos('alpha', DOL_VERSION) > 0 && !$forceregistration) {
+						print "\n<!-- NO JS CODE TO ENABLE the registration. It is an alpha version -->\n";
+					} elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceregistration) {	// Cookie is set when we uncheck the checkbox in the installation wizard.
+						// Output code for ping
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+						$arrayofdata = array(
+							'action' => 'dolibarrregistration',
+
+							'company_name' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name),
+							'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),
+							'company_idprof1' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1),
+							'company_address' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address),
+							'company_state' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE', $mysoc->state),
+							'company_zip' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip),
+							'company_town' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_TOWN', $mysoc->town),
+							'country_code' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code),
+
+							'provider_name' => getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME'),
+							'provider_email' => getDolGlobalString('MAIN_INFO_ITPROVIDER_MAIL'),
+							'provider_phone' => getDolGlobalString('MAIN_INFO_ITPROVIDER_PHONE'),
+							'provider_address' => getDolGlobalString('MAIN_INFO_ITPROVIDER_ADDRESS'),
+							'provider_state' => getDolGlobalString('MAIN_INFO_ITPROVIDER_STATE'),
+							'provider_zip' => getDolGlobalString('MAIN_INFO_ITPROVIDER_ZIP'),
+							'provider_town' => getDolGlobalString('MAIN_INFO_ITPROVIDER_TOWN'),
+							'provider_country' => getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'),
+							'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')
+						);
+						printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata, $forceregistration);
+					} else {
+						$now = dol_now();
+						print "\n<!-- NO JS CODE TO ENABLE the registration. It was disabled -->\n";
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+						dolibarr_set_const($db, $constanttosavefirstok, dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
+						dolibarr_set_const($db, $constanttosavefirstokid, 'disabled', 'chaine', 0, '', $conf->entity);
+					}
+				} else {
+					print "\n<!-- NO JS CODE TO call the registration. It was already done for this couple uniqueid and version -->\n";
 				}
 			}
 		}

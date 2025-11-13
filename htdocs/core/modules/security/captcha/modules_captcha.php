@@ -42,6 +42,11 @@ abstract class ModeleCaptcha
 	public $version;
 
 	/**
+	 * @var int
+	 */
+	public $position = 50;
+
+	/**
 	 * @var string
 	 */
 	public $picto = 'generic';

@@ -36,6 +36,15 @@
  */
 
 require "../main.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
@@ -54,15 +63,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
@@ -134,7 +134,7 @@ $permissiontodisable = $user->hasRight('contrat', 'desactiver');	// TODO use sam
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $error = 0;
@@ -1142,7 +1142,7 @@ if (isModEnabled('project')) {
 }
 
 // Load object modContract
-$module = (getDolGlobalString('CONTRACT_ADDON') ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
+$module = getDolGlobalString('CONTRACT_ADDON', 'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
 	$module = substr($module, 0, dol_strlen($module) - 4);
 }
@@ -1150,6 +1150,7 @@ $result = dol_include_once('/core/modules/contract/'.$module.'.php');
 $modCodeContract = null;
 if ($result > 0) {
 	$modCodeContract = new $module();
+	/** @var ModelNumRefContracts $modCodeContract */
 	'@phan-var-force ModelNumRefContracts $modCodeContract';
 }
 
@@ -1237,7 +1238,7 @@ if ($action == 'create') {
 	if (!empty($modCodeContract->code_auto)) {
 		$tmpcode = $langs->trans("Draft");
 	} else {
-		$tmpcode = '<input name="ref" class="maxwidth100" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref') ? GETPOST('ref') : $tmpcode).'">';
+		$tmpcode = '<input name="ref" class="maxwidth100" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref', 'alpha')).'">';
 	}
 	print $tmpcode;
 	print '</td></tr>';
@@ -1261,7 +1262,7 @@ if ($action == 'create') {
 	} else {
 		print '<td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth150 widthcentpercentminusxx maxwidth500');
 		print ' <a href="'.dolBuildUrl(DOL_URL_ROOT . '/societe/card.php', ['action' => 'create', 'customer' => 3, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
@@ -1309,16 +1310,18 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, "projectid", 0, 0, 1, 1);
+		$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, "projectid", 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'minwidth150 maxwidth300 widthcentpercentminusxx');
 		print ' &nbsp; <a href="' . dolBuildUrl(DOL_URL_ROOT . '/projet/card.php', ['socid' => $soc->id, 'action' => 'create', 'status' => 1, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'socid' => $soc->id])]) . '"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print "</td></tr>";
 	}
 
+	// Note public
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
 	$doleditor = new DolEditor('note_public', (string) $note_public, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
+	// Note private
 	if (empty($user->socid)) {
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
 		$doleditor = new DolEditor('note_private', (string) $note_private, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');

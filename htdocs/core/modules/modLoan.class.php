@@ -38,8 +38,6 @@ class modLoan extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 		$this->numero = 520;
 
@@ -53,7 +51,7 @@ class modLoan extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'money-bill-alt';
+		$this->picto = 'loan';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/loan/temp");

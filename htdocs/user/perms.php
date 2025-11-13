@@ -34,17 +34,17 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var MenuManager $menumanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
@@ -96,6 +96,7 @@ $object->fetch($id, '', '', 1);
 $object->loadRights();
 
 $entity = $conf->entity;
+
 
 /*
  * Actions
@@ -149,24 +150,6 @@ if (empty($reshook)) {
 	}
 }
 
-
-/*
- *	View
- */
-
-$form = new Form($db);
-
-$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
-$title = $person_name." - ".$langs->trans('Permissions');
-$help_url = '';
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_perms');
-
-$head = user_prepare_head($object);
-
-$title = $langs->trans("User");
-print dol_get_fiche_head($head, 'rights', $title, -1, 'user');
-
-
 $db->begin();
 
 // Search all modules with permission and reload permissions def.
@@ -194,7 +177,7 @@ foreach ($modulesdir as $dir) {
 					}
 					// Load all permissions
 					if ($objMod->rights_class) {
-						$ret = $objMod->insert_permissions(0, $entity);
+						$objMod->insert_permissions(0, $entity);
 						$modules[$objMod->rights_class] = $objMod;
 						//print "modules[".$objMod->rights_class."]=$objMod;";
 					}
@@ -208,10 +191,103 @@ $db->commit();
 
 '@phan-var-force DolibarrModules[] $modules';
 
+
+// Fix bad value for module_position in table
+// ------------------------------------------
+$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.family, r.family_position, r.bydefault";
+$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // We ignore permission "tous les tiers". Why ?
+$sql .= " AND r.entity = ".((int) $entity);
+$sql .= " ORDER BY r.family, r.family_position, r.module_position, r.module, r.id";
+
+$result = $db->query($sql);
+if ($result) {
+	$num = $db->num_rows($result);
+	$i = 0;
+	$oldmod = '';
+
+	while ($i < $num) {
+		$obj = $db->fetch_object($result);
+
+		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
+		if (!isset($obj->module) || empty($modules[$obj->module])) {
+			$i++;
+			continue;
+		}
+
+		// Special cases
+		if (isModEnabled("reception")) {
+			// The 2 permissions in vendor modules are replaced by the 2 permissions into reception module
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
+				$i++;
+				continue;
+			}
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+				$i++;
+				continue;
+			}
+		}
+
+		$objMod = $modules[$obj->module];
+		// $objMod is necessarily an object here
+
+		// Save field module_position in database if value is undefined or wrong (old data/version)
+		if (empty($obj->module_position) || ($objMod->isCoreOrExternalModule() == 'external' && $obj->module_position < 100000)) {
+			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0)) {
+				// TODO Define familyposition
+				//$familyposition = $modules[$obj->module]->family_position;
+				$familyposition = 0;
+
+				$newmoduleposition = $modules[$obj->module]->module_position;
+
+				// Correct $newmoduleposition position for external modules
+				$objMod = $modules[$obj->module];
+				if (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $newmoduleposition < 100000) {
+					$newmoduleposition += 100000;
+				}
+
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $newmoduleposition).",";
+				$sqlupdate .= " family_position = ".((int) $familyposition);
+				$sqlupdate .= " WHERE module_position = ".((int) $obj->module_position)." AND module = '".$db->escape($obj->module)."'";
+
+				$db->query($sqlupdate);
+			}
+		}
+
+		// Save field family in database if value is undefined (old data/version)
+		if (empty($obj->family) && !empty($objMod->family)) {
+			$newfamily = $objMod->family;
+			$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET family = '".$db->escape($newfamily)."'";
+			$sqlupdate .= " WHERE id = ".((int) $obj->id);
+
+			$db->query($sqlupdate);
+		}
+	}
+} else {
+	dol_print_error($db);
+}
+
+
+/*
+ *	View
+ */
+
+$form = new Form($db);
+
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('Permissions');
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_perms');
+
+$head = user_prepare_head($object);
+
+$title = $langs->trans("User");
+print dol_get_fiche_head($head, 'rights', $title, -1, 'user');
+
 // Read permissions of edited user
 $permsuser = array();
 
-$sql = "SELECT DISTINCT ur.fk_id";
+$sql = "SELECT ur.fk_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 $sql .= " WHERE ur.entity = ".((int) $entity);
 $sql .= " AND ur.fk_user = ".((int) $object->id);
@@ -279,12 +355,12 @@ if ($user->hasRight("user", "user", "read") || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
 $urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="refid valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -303,12 +379,10 @@ if (!empty($object->ldap_sid) && $object->status == 0) {
 } else {
 	print '<td>';
 	$addadmin = '';
-	if (property_exists($object, 'admin')) {
-		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
-		} elseif (!empty($object->admin)) {
-			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
-		}
+	if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+		$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
+	} elseif (!empty($object->admin)) {
+		$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 	}
 	print showValueWithClipboardCPButton($object->login).$addadmin;
 	print '</td>';
@@ -333,13 +407,24 @@ print '</span>';
 print '</td></tr>'."\n";
 
 print '</table>';
-
 print '</div>';
+
+
 print '<br>';
 
 
 if ($user->admin) {
-	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom"));
+	$s = $langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom");
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+		$s .= '<br>';
+		$s .= img_picto($langs->trans('InfoAdmin'), 'info-circle').' ';
+		$s .= $langs->trans("YouAreUsingTheAdvancedPermissionsMode");
+	} else {
+		$s .= '<br>';
+		$s .= img_picto($langs->trans('InfoAdmin'), 'info-circle').' ';
+		$s .= $langs->trans("YouAreUsingTheSimplePermissionsMode");
+	}
+	print info_admin($s);
 }
 // If edited user is an extern user, we show warning for external users
 if (!empty($object->socid)) {
@@ -376,81 +461,32 @@ print '<a class="hideallperms" title="'.dol_escape_htmltag($langs->trans("HideAl
 print '</td>';
 print '</tr>'."\n";
 
-
-// Fix bad value for module_position in table
-// ------------------------------------------
-$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault";
+// Get list of all permissions
+$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault, r.family, r.family_position";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
-$sql .= " AND r.entity = ".((int) $entity);
-$sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
-
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
-	$i = 0;
-	$oldmod = '';
-
-	while ($i < $num) {
-		$obj = $db->fetch_object($result);
-
-		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
-		if (!isset($obj->module) || empty($modules[$obj->module])) {
-			$i++;
-			continue;
-		}
-
-		// Special cases
-		if (isModEnabled("reception")) {
-			// The 2 permissions in fournisseur modules are replaced by permissions into reception module
-			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
-				$i++;
-				continue;
-			}
-			if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
-				$i++;
-				continue;
-			}
-		}
-
-		$objMod = $modules[$obj->module];
-
-		// Save field module_position in database if value is wrong
-		if (empty($obj->module_position) || (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $obj->module_position < 100000)) {
-			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0)) {
-				// TODO Define familyposition
-				//$familyposition = $modules[$obj->module]->family_position;
-				$familyposition = 0;
-
-				$newmoduleposition = $modules[$obj->module]->module_position;
-
-				// Correct $newmoduleposition position for external modules
-				$objMod = $modules[$obj->module];
-				if (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $newmoduleposition < 100000) {
-					$newmoduleposition += 100000;
-				}
-
-				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $newmoduleposition).",";
-				$sqlupdate .= " family_position = ".((int) $familyposition);
-				$sqlupdate .= " WHERE module_position = ".((int) $obj->module_position)." AND module = '".$db->escape($obj->module)."'";
-
-				$db->query($sqlupdate);
-			}
-		}
-	}
-}
-
-
-
-//print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault";
-$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'";  // We ignore permission "tous les tiers". Why ?
 $sql .= " AND r.entity = ".((int) $entity);
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
+
+$familyinfo = array(
+	'hr' => array('position' => '001', 'label' => $langs->trans("ModuleFamilyHr")),
+	'crm' => array('position' => '006', 'label' => $langs->trans("ModuleFamilyCrm")),
+	'srm' => array('position' => '007', 'label' => $langs->trans("ModuleFamilySrm")),
+	'financial' => array('position' => '009', 'label' => $langs->trans("ModuleFamilyFinancial")),
+	'products' => array('position' => '012', 'label' => $langs->trans("ModuleFamilyProducts")),
+	'projects' => array('position' => '015', 'label' => $langs->trans("ModuleFamilyProjects")),
+	'ecm' => array('position' => '018', 'label' => $langs->trans("ModuleFamilyECM")),
+	'technic' => array('position' => '021', 'label' => $langs->trans("ModuleFamilyTechnic")),
+	'portal' => array('position' => '040', 'label' => $langs->trans("ModuleFamilyPortal")),
+	'interface' => array('position' => '050', 'label' => $langs->trans("ModuleFamilyInterface")),
+	'base' => array('position' => '060', 'label' => $langs->trans("ModuleFamilyBase")),
+	'other' => array('position' => '100', 'label' => $langs->trans("ModuleFamilyOther")),
+);
+
+$arrayofpermission = array();
 
 $result = $db->query($sql);
 if ($result) {
@@ -466,27 +502,78 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
+		if (empty($obj->family)) {
+			$obj->family = 'other';
+		}
+
+		if (empty($obj->family_position)) {
+			$obj->family_position = $familyinfo[$obj->family]['position'];
+			if ($obj->module_position < 100000) {
+				$obj->module_position = intval($obj->module_position) + 100000;
+			} else {
+				$obj->module_position = intval($obj->module_position);
+			}
+		}
+
+		$obj->position = $obj->family_position.'_'.$obj->module_position.'_'.$obj->id;
+
+		$arrayofpermission[$i] = $obj;
+		$i++;
+	}
+} else {
+	dol_print_error($db);
+}
+
+
+$arrayofpermission = dol_sort_array($arrayofpermission, 'position');
+
+
+foreach ($arrayofpermission as $i => $obj) {
 		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
-		if (empty($modules[$obj->module])) {
+	if (empty($modules[$obj->module])) {
+		$i++;
+		continue;
+	}
+
+		// Special cases
+	if (isModEnabled("reception")) {
+		// The 2 permission in fournisseur modules has been replaced by permissions into reception module
+		if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
 			$i++;
 			continue;
 		}
-
-		// Special cases
-		if (isModEnabled("reception")) {
-			// The 2 permission in fournisseur modules has been replaced by permissions into reception module
-			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
-				$i++;
-				continue;
-			}
-			if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
-				$i++;
-				continue;
-			}
+		if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+			$i++;
+			continue;
 		}
+	}
 
 		$objMod = $modules[$obj->module];
 
+	if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
+		$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
+	} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
+		$ishidden = 1;
+	} else {
+		$ishidden = 0;
+	}
+		$isexpanded = ! $ishidden;
+		//var_dump("isexpanded=".$isexpanded);
+
+		$permsgroupbyentitypluszero = array();
+	if (!empty($permsgroupbyentity[0])) {
+		$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[0]);
+	}
+	if (!empty($permsgroupbyentity[$entity])) {
+		$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[$entity]);
+	}
+		//var_dump($permsgroupbyentitypluszero);
+
+		// Break found, it's a new module to catch
+	if (isset($obj->module) && ($oldmod != $obj->module)) {
+		$oldmod = $obj->module;
+
+		$j++;
 		if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
 			$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 		} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
@@ -495,91 +582,67 @@ if ($result) {
 			$ishidden = 0;
 		}
 		$isexpanded = ! $ishidden;
-		//var_dump("isexpanded=".$isexpanded);
+		//var_dump('$obj->module='.$obj->module.' isexpanded='.$isexpanded);
 
-		$permsgroupbyentitypluszero = array();
-		if (!empty($permsgroupbyentity[0])) {
-			$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[0]);
-		}
-		if (!empty($permsgroupbyentity[$entity])) {
-			$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[$entity]);
-		}
-		//var_dump($permsgroupbyentitypluszero);
+		// Break detected, we get objMod
+		$objMod = $modules[$obj->module];
+		$picto = ($objMod->picto ? $objMod->picto : 'generic');
 
-		// Break found, it's a new module to catch
-		if (isset($obj->module) && ($oldmod != $obj->module)) {
-			$oldmod = $obj->module;
+		// Show break line
+		print '<tr class="oddeven trforbreakperms trforbreaknobg" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
+		// Picto and label of module
+		print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'" title="'.dol_escape_htmltag($objMod->getName()).'">';
+		print '<input type="hidden" name="forbreakperms_'.$obj->module.'" id="idforbreakperms_'.$obj->module.'" css="cssforfieldishiden" data-j="'.$j.'" value="'.($isexpanded ? '0' : "1").'">';
+		print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
+		print '<a name="'.$objMod->getName().'"></a>';
+		print '</td>';
 
-			$j++;
-			if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-				$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
-			} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
-				$ishidden = 1;
+		// Permission and tick (2 columns)
+		if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin)) {
+			if ($caneditperms) {
+				print '<td class="tdforbreakperms tdforbreakpermsifnotempty center width50 nowraponall" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
+				print '<span class="permtohide_'.dol_escape_htmltag($obj->module).'" '.(!$isexpanded ? ' style="display:none"' : '').'>';
+				print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'module' => $obj->module, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">'.$langs->trans("All")."</a>";
+				print ' / ';
+				print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'module' => $obj->module, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">'.$langs->trans("None")."</a>";
+				print '</span>';
+				print '</td>';
+				print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
+				print '</td>';
 			} else {
-				$ishidden = 0;
+				print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
+				print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
 			}
-			$isexpanded = ! $ishidden;
-			//var_dump('$obj->module='.$obj->module.' isexpanded='.$isexpanded);
-
-			// Break detected, we get objMod
-			$objMod = $modules[$obj->module];
-			$picto = ($objMod->picto ? $objMod->picto : 'generic');
-
-			// Show break line
-			print '<tr class="oddeven trforbreakperms trforbreaknobg" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
-			// Picto and label of module
-			print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'" title="'.dol_escape_htmltag($objMod->getName()).'">';
-			print '<input type="hidden" name="forbreakperms_'.$obj->module.'" id="idforbreakperms_'.$obj->module.'" css="cssforfieldishiden" data-j="'.$j.'" value="'.($isexpanded ? '0' : "1").'">';
-			print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
-			print '<a name="'.$objMod->getName().'"></a>';
-			print '</td>';
-
-			// Permission and tick (2 columns)
-			if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin)) {
-				if ($caneditperms) {
-					print '<td class="tdforbreakperms tdforbreakpermsifnotempty center width50 nowraponall" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
-					print '<span class="permtohide_'.dol_escape_htmltag($obj->module).'" '.(!$isexpanded ? ' style="display:none"' : '').'>';
-					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'module' => $obj->module, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">'.$langs->trans("All")."</a>";
-					print ' / ';
-					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'module' => $obj->module, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">'.$langs->trans("None")."</a>";
-					print '</span>';
-					print '</td>';
-					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
-					print '</td>';
-				} else {
-					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
-					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
-				}
+		} else {
+			if ($caneditperms) {
+				print '<td class="tdforbreakperms center wraponsmartphone" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
+				/*print '<a class="reposition alink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
+				print ' / ';
+				print '<a class="reposition alink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
+				*/
+				print '</td>';
+				print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
+				print '</td>';
 			} else {
-				if ($caneditperms) {
-					print '<td class="tdforbreakperms center wraponsmartphone" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
-					/*print '<a class="reposition alink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
-					print ' / ';
-					print '<a class="reposition alink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
-					*/
-					print '</td>';
-					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
-					print '</td>';
-				} else {
-					print '<td class="right tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
-					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
-				}
+				print '<td class="right tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
+				print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
 			}
-
-			// Description of permission (2 columns)
-			print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
-			print '<td class="maxwidthonsmartphone right tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
-
-			print '<div class="switchfolderperms inline-block marginrightonly folderperms_'.dol_escape_htmltag($obj->module).'"'.($isexpanded ? ' style="display:none;"' : '').'>';
-			print img_picto('', 'folder', 'class="marginright"');
-			print '</div>';
-			print '<div class="switchfolderperms inline-block marginrightonly folderopenperms_'.dol_escape_htmltag($obj->module).'"'.(!$isexpanded ? ' style="display:none;"' : '').'>';
-			print img_picto('', 'folder-open', 'class="marginright"');
-			print '</div>';
-
-			print '</td>'; //Add picto + / - when open en closed
-			print '</tr>'."\n";
 		}
+
+		// Description of permission (2 columns)
+		print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
+		print '<td class="maxwidthonsmartphone right tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
+
+		print '<div class="switchfolderperms inline-block marginrightonly folderperms_'.dol_escape_htmltag($obj->module).'"'.($isexpanded ? ' style="display:none;"' : '').'>';
+		print img_picto('', 'folder', 'class="marginright"');
+		print '</div>';
+		print '<div class="switchfolderperms inline-block marginrightonly folderopenperms_'.dol_escape_htmltag($obj->module).'"'.(!$isexpanded ? ' style="display:none;"' : '').'>';
+		print img_picto('', 'folder-open', 'class="marginright"');
+		print '</div>';
+
+		print '</td>'; //Add picto + / - when open en closed
+		print '</tr>'."\n";
+	}
 
 		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 
@@ -591,65 +654,47 @@ if ($result) {
 		print '</td>';
 
 		// Permission and tick (2 columns)
-		if (!empty($object->admin) && !empty($objMod->rights_admin_allowed)) {    // Permission granted because admin
-			print '<!-- perm is a perm allowed to any admin -->';
-			if ($caneditperms) {
-				print '<td class="center nowrap">';
-				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="paddingleft valignmiddle"');
-				print '</td>';
-			} else {
-				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
-				print '</td>';
-			}
-			print '<td>';
+	if (!empty($object->admin) && !empty($objMod->rights_admin_allowed)) {    // Permission granted because admin
+		print '<!-- perm is a perm allowed to any admin -->';
+		if ($caneditperms) {
+			print '<td class="center nowrap">';
+			print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="paddingleft valignmiddle"');
 			print '</td>';
-		} elseif (in_array($obj->id, $permsuser)) {					// Permission granted by user
-			print '<!-- user has perm -->';
-			if ($caneditperms) {
-				print '<td class="center nowrap">';
-				print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
-				//print img_edit_remove($langs->trans("Remove"));
-				print img_picto($langs->trans("Remove"), 'switch_on');
-				print '</a>';
-				print '</td>';
-			} else {
-				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
-				print '</td>';
-			}
-			print '<td>';
+		} else {
+			print '<td class="center nowrap">';
+			print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 			print '</td>';
-		} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
-			print '<!-- permsgroupbyentitypluszero -->';
-			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
-				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
-				//print img_picto($langs->trans("Active"), 'tick');
-				print '</td>';
-				print '<td class="center nowrap">';
-				print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
-				print '</td>';
-			} else {
-				// Do not own permission
-				if ($caneditperms) {
-					print '<td class="center nowrap">';
-					print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
-					//print img_edit_add($langs->trans("Add"));
-					print img_picto($langs->trans("Add"), 'switch_off');
-					print '</a>';
-					print '</td>';
-				} else {
-					print '<td class="center nowrap">';
-					print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
-					print '</td>';
-				}
-				print '<td>';
-				print '</td>';
-			}
+		}
+		print '<td>';
+		print '</td>';
+	} elseif (in_array($obj->id, $permsuser)) {					// Permission granted by user
+		print '<!-- user has perm -->';
+		if ($caneditperms) {
+			print '<td class="center nowrap">';
+			print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
+			//print img_edit_remove($langs->trans("Remove"));
+			print img_picto($langs->trans("Remove"), 'switch_on');
+			print '</a>';
+			print '</td>';
+		} else {
+			print '<td class="center nowrap">';
+			print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
+			print '</td>';
+		}
+		print '<td>';
+		print '</td>';
+	} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
+		print '<!-- permsgroupbyentitypluszero -->';
+		if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
+			print '<td class="center nowrap">';
+			print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
+			//print img_picto($langs->trans("Active"), 'tick');
+			print '</td>';
+			print '<td class="center nowrap">';
+			print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
+			print '</td>';
 		} else {
 			// Do not own permission
-			print '<!-- do not own permission -->';
 			if ($caneditperms) {
 				print '<td class="center nowrap">';
 				print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
@@ -665,71 +710,86 @@ if ($result) {
 			print '<td>';
 			print '</td>';
 		}
+	} else {
+		// Do not own permission
+		print '<!-- do not own permission -->';
+		if ($caneditperms) {
+			print '<td class="center nowrap">';
+			print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
+			//print img_edit_add($langs->trans("Add"));
+			print img_picto($langs->trans("Add"), 'switch_off');
+			print '</a>';
+			print '</td>';
+		} else {
+			print '<td class="center nowrap">';
+			print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
+			print '</td>';
+		}
+		print '<td>';
+		print '</td>';
+	}
 
 		// Description of permission (1 or 2 columns)
-		if (!$user->admin) {
-			print '<td colspan="2">';
-		} else {
-			print '<td>';
-		}
+	if (!$user->admin) {
+		print '<td colspan="2">';
+	} else {
+		print '<td>';
+	}
 
 		print $permlabel;
 		$idtouse = $obj->id;
-		if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
-			$idtouse = 122;
+	if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
+		$idtouse = 122;
+	}
+	if ($langs->trans("Permission".$idtouse.'b') != "Permission".$idtouse.'b') {
+		print '<br><span class="opacitymedium">'.$langs->trans("Permission".$idtouse.'b').'</span>';
+	}
+	if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+		print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+	}
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+		if (preg_match('/_advance$/', $obj->perms)) {
+			print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
 		}
-		if ($langs->trans("Permission".$idtouse.'b') != "Permission".$idtouse.'b') {
-			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$idtouse.'b').'</span>';
-		}
-		if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
-			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
-		}
-		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-			if (preg_match('/_advance$/', $obj->perms)) {
-				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
-			}
-		}
+	}
 		// Special warning case for the permission "Allow to modify other users password"
-		if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
-			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
-				in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
-				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
-				print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
-			}
+	if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
+		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
+			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
+			(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+			print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
 		}
+	}
 		// Special warning case for the permission "Create/modify other users, groups and permissions"
-		if ($obj->module == 'user' && $obj->perms == 'user' && ($obj->subperms == 'creer' || $obj->subperms == 'create')) {
-			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
-				in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
-				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
-				print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
-			}
+	if ($obj->module == 'user' && $obj->perms == 'user' && ($obj->subperms == 'creer' || $obj->subperms == 'create')) {
+		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
+			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
+			(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+			print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 		}
+	}
 		// Special case for reading bank account when you have permission to manage Chart of account
-		if ($obj->module == 'banque' && $obj->perms == 'lire') {
-			if (isModEnabled("accounting") && $object->hasRight('accounting', 'chartofaccount')) {
-				print ' '.img_warning($langs->trans("WarningReadBankAlsoAllowedIfUserHasPermission"));
-			}
+	if ($obj->module == 'banque' && $obj->perms == 'lire') {
+		if (isModEnabled("accounting") && $object->hasRight('accounting', 'chartofaccount')) {
+			print ' '.img_warning($langs->trans("WarningReadBankAlsoAllowedIfUserHasPermission"));
 		}
+	}
 
 		print '</td>';
 
 		// Permission id
-		if ($user->admin) {
-			print '<td class="right">';
-			$htmltext = $langs->trans("ID").': '.$obj->id;
-			$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.dol_escape_htmltag($obj->module).'\', \''.dol_escape_htmltag($obj->perms).'\''.($obj->subperms ? ', \''.dol_escape_htmltag($obj->subperms).'\'' : '').')';
-			print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block marginrightonly');
-			//print '<span class="opacitymedium">'.$obj->id.'</span>';
-			print '</td>';
-		}
+	if ($user->admin) {
+		print '<td class="right">';
+		$htmltext = $langs->trans("ID").': '.$obj->id;
+		$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.dol_escape_htmltag($obj->module).'\', \''.dol_escape_htmltag($obj->perms).'\''.($obj->subperms ? ', \''.dol_escape_htmltag($obj->subperms).'\'' : '').')';
+		print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block marginrightonly');
+		//print '<span class="opacitymedium">'.$obj->id.'</span>';
+		print '</td>';
+	}
 
 		print '</tr>'."\n";
 
 		$i++;
-	}
-} else {
-	dol_print_error($db);
 }
 print '</table>';
 print '</div>';

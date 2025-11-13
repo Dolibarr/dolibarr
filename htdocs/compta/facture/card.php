@@ -186,7 +186,7 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 $permissiontoeditextra = $usercancreate;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 // retained warranty invoice available type
@@ -521,7 +521,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setretainedwarrantydatelimit' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->setRetainedWarrantyDateLimit(GETPOSTINT('retained_warranty_date_limit'));
+		$result = $object->setRetainedWarrantyDateLimit(GETPOSTDATE('retained_warranty_date_limit'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -2814,7 +2814,8 @@ if (empty($reshook)) {
 				}
 
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, GETPOSTINT('progress'), 0, $fk_unit, (float) $pu_ht_devise);
+				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $situation_percent, 0, $fk_unit, (float) $pu_ht_devise);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -5675,12 +5676,12 @@ if ($action == 'create') {
 				}
 
 				if ($action == 'editretainedwarrantydatelimit' && $object->status == Facture::STATUS_DRAFT) {
-					//date('Y-m-d',$object->date_lim_reglement)
 					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 					print '<input type="hidden" name="action" value="setretainedwarrantydatelimit">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-					print '<input name="retained_warranty_date_limit" type="date" step="1" min="'.dol_print_date($object->date, '%Y-%m-%d').'" value="'.dol_print_date($defaultDate, '%Y-%m-%d').'" >';
+					//print '<input name="retained_warranty_date_limit" type="date" step="1" min="'.dol_print_date($object->date, '%Y-%m-%d').'" value="'.dol_print_date($defaultDate, '%Y-%m-%d').'" >'; Time Input not standard
+					print $form->selectDate($defaultDate, 'retained_warranty_date_limit');
 					print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					print '</form>';
 				} else {
@@ -5715,7 +5716,7 @@ if ($action == 'create') {
 		// Amount HT
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 		print '<td class="nowraponall amountcard right">' . price($sign * $object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
-		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 			// Multicurrency Amount HT
 			print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
@@ -5725,7 +5726,7 @@ if ($action == 'create') {
 		// Amount VAT
 		print '<td>' . $langs->trans('AmountVAT') . '</td>';
 		print '<td class="nowraponall amountcard right">' . price($sign * $object->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
-		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 			// Multicurrency Amount VAT
 			print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
@@ -5736,7 +5737,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
 			print '<td class="nowraponall amountcard right">' . price($sign * $object->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
-			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 				$object->multicurrency_total_localtax1 = (float) price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
 
 				print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_localtax1, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
@@ -5748,7 +5749,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 			print '<td class="nowraponall amountcard right">' . price($sign * $object->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
-			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 				$object->multicurrency_total_localtax2 = (float) price2num($object->total_localtax2 * $object->multicurrency_tx, 'MT');
 
 				print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_localtax2, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
@@ -5813,7 +5814,7 @@ if ($action == 'create') {
 		// Amount TTC
 		print '<td>' . $langs->trans('AmountTTC') . '</td>';
 		print '<td class="nowraponall amountcard right">' . price($sign * $object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
-		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 			// Multicurrency Amount TTC
 			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
@@ -6012,8 +6013,8 @@ if ($action == 'create') {
 		if (isModEnabled("bank")) {
 			print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('BankAccount').'</span></td>';
 		}
+		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
-		print '<td class="liste_titre" width="18">&nbsp;</td>';
 		print '</tr>';
 
 		// Payments already done (from payment on this invoice)
@@ -6044,7 +6045,8 @@ if ($action == 'create') {
 					$paymentstatic->num_payment = $objp->num_payment;
 					$paymentstatic->paiementcode = $objp->payment_code;
 
-					print '<tr class="oddeven"><td class="nowraponall">';
+					print '<tr class="oddeven">';
+					print '<td class="nowraponall">';
 					print $paymentstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>';
@@ -6080,9 +6082,9 @@ if ($action == 'create') {
 						}
 						print '</td>';
 					}
-					print '<td class="right"><span class="amount">'.price($sign * $objp->amount).'</span></td>';
-					print '<td class="center">';
 
+					// Delete
+					print '<td class="center">';
 					$paiement = new Paiement($db);
 					$paiement->fetch($objp->rowid);
 					if ($object->status == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0 && !$paiement->isReconciled()) {
@@ -6091,6 +6093,10 @@ if ($action == 'create') {
 						print '</a>';
 					}
 					print '</td>';
+
+					// Amount
+					print '<td class="right"><span class="amount">'.price($sign * $objp->amount).'</span></td>';
+
 					print '</tr>';
 					$i++;
 				}
@@ -6103,14 +6109,18 @@ if ($action == 'create') {
 
 		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 			// Total already paid
-			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<tr>';
+			print '<td colspan="'.($nbcols+1).'" class="right">';
 			print '<span class="opacitymedium">';
 			if ($object->type != Facture::TYPE_DEPOSIT) {
 				print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
 			} else {
 				print $langs->trans('AlreadyPaid');
 			}
-			print '</span></td><td class="right'.(($totalpaid > 0) ? ' amountalreadypaid' : '').'">'.price($totalpaid).'</td><td>&nbsp;</td></tr>';
+			print '</span></td>';
+			//print '<td></td>';
+			print '<td class="right'.(($totalpaid > 0) ? ' amountalreadypaid' : '').'">'.price($totalpaid).'</td>';
+			print '</tr>';
 
 			$resteapayeraffiche = $resteapayer;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -6131,7 +6141,8 @@ if ($action == 'create') {
 				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
 					$invoice->fetch($obj->fk_facture_source);
-					print '<tr><td colspan="'.$nbcols.'" class="right">';
+					print '<tr>';
+					print '<td colspan="'.$nbcols.'" class="right">';
 					print '<span class="opacitymedium">';
 					if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
 						print $langs->trans("CreditNote").' ';
@@ -6142,12 +6153,15 @@ if ($action == 'create') {
 					print $invoice->getNomUrl(0);
 					print '</span>';
 					print '</td>';
-					print '<td class="right"><span class="amount">'.price($obj->amount_ttc).'</span></td>';
+					// Delete
 					print '<td class="right">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">';
 					print img_picto($langs->transnoentitiesnoconv("RemoveDiscount"), 'unlink');
 					print '</a>';
-					print '</td></tr>';
+					print '</td>';
+					// Amount
+					print '<td class="right"><span class="amount">'.price($obj->amount_ttc).'</span></td>';
+					print '</tr>';
 					$i++;
 					if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
 						$creditnoteamount += $obj->amount_ttc;
@@ -6162,40 +6176,53 @@ if ($action == 'create') {
 
 			// Partially paid 'discount'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
-				print '<tr><td colspan="'.$nbcols.'" class="nowrap right">';
+				print '<tr>';
+				print '<td colspan="'.$nbcols.'" class="nowrap right">';
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Discount"), $langs->trans("HelpEscompte"), - 1);
 				print '</span>';
-				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
+				print '</td>';
+				print '<td></td>';
+				print '<td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td>';
+				print '</tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 				$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 			}
 			// Partially paid or abandoned 'badcustomer'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'badcustomer') {
-				print '<tr><td colspan="'.$nbcols.'" class="nowrap right">';
+				print '<tr>';
+				print '<td colspan="'.($nbcols+1).'" class="nowrap right">';
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Abandoned"), $langs->trans("HelpAbandonBadCustomer"), - 1);
 				print '</span>';
-				print '</td><td class="right">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</td><td>&nbsp;</td></tr>';
+				print '</td>';
+				//print '<td></td>';
+				print '<td class="right">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</td>';
+				print '</tr>';
 				// $resteapayeraffiche=0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 				$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 			}
 			// Partially paid or abandoned 'product_returned'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
-				print '<tr><td colspan="'.$nbcols.'" class="nowrap right">';
+				print '<tr>';
+				print '<td colspan="'.($nbcols+1).'" class="nowrap right">';
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("ProductReturned"), $langs->trans("HelpAbandonProductReturned"), - 1);
 				print '</span>';
-				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
+				print '</td>';
+				//print '<td></td>';
+				print '<td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td>';
+				print '</tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 				$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 			}
 			// Partially paid or abandoned 'abandoned'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'abandon') {
-				print '<tr><td colspan="'.$nbcols.'" class="nowrap right">';
+				print '<tr>';
+				print '<td colspan="'.($nbcols+1).'" class="nowrap right">';
 				$text = $langs->trans("HelpAbandonOther");
 				if ($object->close_note) {
 					$text .= '<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
@@ -6204,19 +6231,28 @@ if ($action == 'create') {
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				print $form->textwithpicto($langs->trans("Abandoned"), $text, - 1);
 				print '</span>';
-				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
+				print '</td>';
+				//print '<td></td>';
+				print '<td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td>';
+				print '</tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 				$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 			}
 
 			// Billed
-			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<tr>';
+			print '<td colspan="'.($nbcols+1).'" class="right">';
 			print '<span class="opacitymedium">';
 			print $langs->trans("Billed");
-			print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
+			print '</td>';
+			//print '<td></td>';
+			print '<td class="right">'.price($object->total_ttc).'</td>';
+			print '</tr>';
+
 			// Remainder to pay
-			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<tr>';
+			print '<td colspan="'.($nbcols+1).'" class="right">';
 			print '<span class="opacitymedium">';
 			print $langs->trans('RemainderToPay');
 			if ($resteapayeraffiche < 0) {
@@ -6224,11 +6260,14 @@ if ($action == 'create') {
 			}
 			print '</span>';
 			print '</td>';
-			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td>&nbsp;</td></tr>';
+			//print '<td></td>';
+			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
+			print '</tr>';
 
 			// Remainder to pay Multicurrency
-			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
-				print '<tr><td colspan="'.$nbcols.'" class="right">';
+			if (isModEnabled('multicurrency') && $object->multicurrency_code && ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)) {
+				print '<tr>';
+				print '<td colspan="'.($nbcols+1).'" class="right">';
 				print '<span class="opacitymedium">';
 				print $langs->trans('RemainderToPayMulticurrency');
 				if ($resteapayeraffiche < 0) {
@@ -6236,9 +6275,11 @@ if ($action == 'create') {
 				}
 				print '</span>';
 				print '</td>';
+				//print '<td></td>';
 				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaynoresize' : (' '.$cssforamountpaymentcompletenoresize)).'">';
 				//print (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code).' ';
-				print price(price2num($object->multicurrency_tx * $resteapayeraffiche, 'MT'), 1, $langs, 1, -1, -1, (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code)).'</td><td>&nbsp;</td></tr>';
+				print price(price2num($object->multicurrency_tx * $resteapayeraffiche, 'MT'), 1, $langs, 1, -1, -1, (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code)).'</td>';
+				print '</tr>';
 			}
 
 			// Retained warranty : usually use on construction industry
@@ -6253,13 +6294,21 @@ if ($action == 'create') {
 
 				$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
 
-				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')).' :</td><td align="right">'.price($billedWithRetainedWarranty).'</td><td>&nbsp;</td></tr>';
+				print '<tr>';
+				print '<td colspan="'.($nbcols+1).'" class="right">'.$langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')).' :</td>';
+				//print '<td></td>';
+				print '<td class="right">'.price($billedWithRetainedWarranty).'</td>';
+				print '</tr>';
 
 				// retained warranty
-				print '<tr><td colspan="'.$nbcols.'" class="right">';
+				print '<tr>';
+				print '<td colspan="'.($nbcols+1).'" class="right">';
 				print $langs->trans("RetainedWarranty").' ('.$object->retained_warranty.'%)';
 				print !empty($object->retained_warranty_date_limit) ? ' '.$langs->trans("ToPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')) : '';
-				print ' :</td><td align="right">'.price($retainedWarranty).'</td><td>&nbsp;</td></tr>';
+				print '</td>';
+				//print '<td></td>';
+				print '<td class="right">'.price($retainedWarranty).'</td>';
+				print '</tr>';
 			}
 		} else { // Credit note
 			$resteapayeraffiche = $resteapayer;
@@ -6267,36 +6316,48 @@ if ($action == 'create') {
 			$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 
 			// Total already paid back
-			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<tr>';
+			print '<td colspan="'.($nbcols+1).'" class="right">';
 			print '<span class="opacitymedium">'.$langs->trans('AlreadyPaidBack').'</span>';
-			print '</td><td class="right"><span class="amount">'.price($sign * $totalpaid).'</span></td><td>&nbsp;</td></tr>';
+			print '</td>';
+			//print '<td></td>';
+			print '<td class="right"><span class="amount">'.price($sign * $totalpaid).'</span></td>';
+			print '</tr>';
 
 			// Billed
-			print '<tr><td colspan="'.$nbcols.'" class="right"><span class="opacitymedium">'.$langs->trans("Billed").'</span></td><td class="right">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
+			print '<tr>';
+			print '<td colspan="'.($nbcols+1).'" class="right"><span class="opacitymedium">'.$langs->trans("Billed").'</span></td>';
+			//print '<td></td>';
+			print '<td class="right">'.price($sign * $object->total_ttc).'</td>';
+			print '</tr>';
 
 			// Remainder to pay back
-			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<tr><td colspan="'.($nbcols+1).'" class="right">';
 			print '<span class="opacitymedium">'.$langs->trans('RemainderToPayBack');
 			if ($resteapayeraffiche > 0) {
 				print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 			}
 			print '</span></td>';
+			//print '<td class="nowrap"></td>';
 			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche);
 			// TODO If credit not was converted into discount, we should show a tooltip to explain that remain to pay
 			// is zero because already converted into discount for a future use, so no need to refund.
 			print '</td>';
-			print '<td class="nowrap">&nbsp;</td></tr>';
+			print '</tr>';
 
 			// Remainder to pay back Multicurrency
-			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
-				print '<tr><td colspan="'.$nbcols.'" class="right">';
+			if (isModEnabled('multicurrency') && (($object->multicurrency_code && $object->multicurrency_code != $conf->currency) || $object->multicurrency_tx != 1)) {
+				print '<tr>';
+				print '<td colspan="'.($nbcols+1).'" class="right">';
 				print '<span class="opacitymedium">'.$langs->trans('RemainderToPayBackMulticurrency');
 				if ($resteapayeraffiche > 0) {
 					print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 				}
 				print '</span>';
 				print '</td>';
-				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaybacknoresize' : (' '.$cssforamountpaymentcompletenoresize)).'">'.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT'), 1, $langs, 1, -1, -1, (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code)).'</td><td>&nbsp;</td></tr>';
+				//print '<td></td>';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaybacknoresize' : (' '.$cssforamountpaymentcompletenoresize)).'">'.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT'), 1, $langs, 1, -1, -1, (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code)).'</td>';
+				print '</tr>';
 			}
 
 			// Sold credit note

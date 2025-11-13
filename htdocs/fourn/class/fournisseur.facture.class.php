@@ -582,7 +582,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
 		$sql .= ", ".((int) $this->entity);
 		$sql .= ", '".$this->db->escape((string) $this->type)."'";
-		$sql .= ", ".((int) $this->subtype);
+		$sql .= ", ".(isset($this->subtype) ? (int) $this->subtype : "null");
 		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
 		$sql .= ", ".((int) $this->socid);
 		$sql .= ", '".$this->db->idate($now)."'";
@@ -953,7 +953,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->ref_ext			    = $obj->ref_ext;
 				$this->entity				= $obj->entity;
 				$this->type					= empty($obj->type) ? self::TYPE_STANDARD : $obj->type;
-				$this->subtype				= (int) $obj->subtype;
+				$this->subtype				= $obj->subtype;
 				$this->socid				= $obj->fk_soc;
 				$this->date					= $this->db->jdate($obj->datef);
 				$this->date_creation		= $this->db->jdate($obj->datec);
@@ -1273,7 +1273,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : "null").",";
 		$sql .= " type=".(isset($this->type) ? ((int) $this->type) : "null").",";
-		$sql .= " subtype=".((int) $this->subtype).",";
+		$sql .= " subtype=".(isset($this->subtype) ? (int) $this->subtype : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " datec=".(dol_strlen((string) $this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " datef=".(dol_strlen((string) $this->date) != 0 ? "'".$this->db->idate($this->date)."'" : 'null').",";

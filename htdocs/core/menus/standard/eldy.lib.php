@@ -211,7 +211,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Projects
 	$tmpentry = array(
 		'enabled' => (int) (isModEnabled('project') ? 1 : 0),
-		'perms' => (string) (int) ($user->hasRight('projet', 'lire') ? 1 : 0),
+		'perms' => (string) ($user->hasRight('project', 'read') ? 1 : 0),
 		'module' => 'projet'
 	);
 
@@ -2288,7 +2288,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		if (isModEnabled('shipping')) {
 			$langs->load("sendings");
 			$newmenu->add("/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->hasRight('expedition', 'lire'), '', $mainmenu, 'sendings', 0, '', '', '', img_picto('', 'shipment', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/expedition/card.php?action=create2&amp;leftmenu=sendings", $langs->trans("NewSending"), 1, $user->hasRight('expedition', 'creer'));
+			$newmenu->add("/expedition/card.php?action=create&amp;leftmenu=sendings", $langs->trans("NewSending"), 1, $user->hasRight('expedition', 'creer'));
 			$newmenu->add("/expedition/list.php?leftmenu=sendings", $langs->trans("List"), 1, $user->hasRight('expedition', 'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "sendings") {
 				$newmenu->add("/expedition/list.php?leftmenu=sendings&search_status=0", $langs->trans("StatusSendingDraftShort"), 2, $user->hasRight('expedition', 'lire'));
@@ -2302,7 +2302,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		if (isModEnabled('reception')) {
 			$langs->load("receptions");
 			$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->hasRight('reception', 'lire'), '', $mainmenu, 'receptions', 0, '', '', '', img_picto('', 'dollyrevert', 'class="pictofixedwidth", style="text-align: right;"'));
-			$newmenu->add("/reception/card.php?action=create2&amp;leftmenu=receptions", $langs->trans("NewReception"), 1, $user->hasRight('reception', 'creer'));
+			$newmenu->add("/reception/card.php?action=create&amp;leftmenu=receptions", $langs->trans("NewReception"), 1, $user->hasRight('reception', 'creer'));
 			$newmenu->add("/reception/list.php?leftmenu=receptions", $langs->trans("List"), 1, $user->hasRight('reception', 'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") {
 				$newmenu->add("/reception/list.php?leftmenu=receptions&search_status=0", $langs->trans("StatusReceptionDraftShort"), 2, $user->hasRight('reception', 'lire'));

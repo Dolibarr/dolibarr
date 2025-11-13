@@ -1185,9 +1185,9 @@ class ExtraFields
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-		$perms = (int) dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
+		$perms = (int) dol_eval((string) $this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
+		$list = (string) dol_eval((string) $this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
@@ -1248,7 +1248,7 @@ class ExtraFields
 			}
 
 			if ($mode == 1) {
-				// search filter on a date extrafield shows two inputs to select a date range
+				// mode input for a search filter, we show two inputs to select a date range
 				$prefill = array(
 					'start' => isset($value['start']) ? $value['start'] : '',
 					'end'   => isset($value['end']) ? $value['end'] : ''
@@ -1259,8 +1259,9 @@ class ExtraFields
 				$out .= $form->selectDate($prefill['end'], $keyprefix.$key.$keysuffix.'_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 				$out .= '</div></div>';
 			} else {
+				// mode input into a create/update form
 				// TODO Must also support $moreparam
-				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required ? 0 : 2, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 			}
 		} elseif (in_array($type, array('datetime', 'datetimegmt'))) {
 			$tmp = explode(',', $size);
@@ -1273,7 +1274,7 @@ class ExtraFields
 			}
 
 			if ($mode == 1) {
-				// search filter on a date extrafield shows two inputs to select a date range
+				// mode input for a search filter, we show two inputs to select a date range
 				$prefill = array(
 					'start' => isset($value['start']) ? $value['start'] : '',
 					'end'   => isset($value['end']) ? $value['end'] : ''
@@ -1284,8 +1285,9 @@ class ExtraFields
 				$out .= $form->selectDate($prefill['end'], $keyprefix.$key.$keysuffix.'_end', 1, 1, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"), 'tzuserrel');
 				$out .= '</div></div>';
 			} else {
+				// mode input into a create/update form
 				// TODO Must also support $moreparam
-				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
+				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required ? 0 : 2, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
 			}
 		} elseif (in_array($type, array('int', 'integer'))) {
 			$tmp = explode(',', $size);
@@ -2119,9 +2121,9 @@ class ExtraFields
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-		$perms = (int) dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
+		$perms = (int) dol_eval((string) $this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
+		$list = (string) dol_eval((string) $this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$cssview = $this->attributes[$extrafieldsobjectkey]['cssview'][$key];
 		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
@@ -2448,7 +2450,7 @@ class ExtraFields
 						$tmpobject->fetch($value);
 
 						if (get_class($tmpobject) == 'Categorie') {
-							// For category object, rendering must use the same method than the one deinfed into showCategories()
+							// For category object, rendering must use the same method than the one defined into showCategories()
 							$color = $tmpobject->color;
 							$sfortag = '<span class="noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
 							$sfortag .= $tmpobject->getNomUrl(3);
@@ -2768,12 +2770,12 @@ class ExtraFields
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = (int) dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '2');
+					$visibility = (int) dol_eval((string) $this->attributes[$object->table_element]['list'][$key], 1, 1, '2');
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '2');
+					$perms = (int) dol_eval((string) $this->attributes[$object->table_element]['perms'][$key], 1, 1, '2');
 				}
 				if (empty($enabled)
 					|| (
