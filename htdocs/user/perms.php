@@ -204,7 +204,6 @@ $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$oldmod = '';
 
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
@@ -494,7 +493,6 @@ $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$oldmod = '';
 
 	//var_dump($cookietohidegrouparray);
 
@@ -527,6 +525,7 @@ if ($result) {
 $arrayofpermission = dol_sort_array($arrayofpermission, 'position');
 
 $j = 0;
+$oldmod = '';
 
 foreach ($arrayofpermission as $i => $obj) {
 	// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
