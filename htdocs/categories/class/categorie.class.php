@@ -999,7 +999,8 @@ class Categorie extends CommonObject
 
 		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
 		if (!empty($classnameforobj) && class_exists($classnameforobj)) {
-			$obj = new $classnameforobj($this->db);
+			$tmpobj = new $classnameforobj($this->db);
+			/** @var CommonObject $tmpobj */
 
 			$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
 			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
@@ -1007,7 +1008,7 @@ class Categorie extends CommonObject
 			if (!empty($filterlang)) {
 				$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
 			}
-			$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
+			$sql .= " WHERE o.entity IN (".getEntity($tmpobj->element).")";
 			$sql .= " AND c.fk_categorie = ".((int) $this->id);
 			// Compatibility with actioncomm table which has id instead of rowid
 			if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {
@@ -1045,10 +1046,11 @@ class Categorie extends CommonObject
 					if ($onlyids) {
 						$objs[] = $rec['fk_object'];
 					} else {
-						$obj->id = 0;
-						$obj->fetch($rec['fk_object']);
-						if ($obj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-							$objs[] = $obj;
+						$tmpobj->id = 0;
+						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
+						// @phpstan-ignore-next-line
+						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
+							$objs[] = $tmpobj;
 						}
 					}
 				}
