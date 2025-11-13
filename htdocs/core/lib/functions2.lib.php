@@ -2682,7 +2682,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {
 		$moduledirforclass = 'projet';
-	} elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses') {
+	} elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses' || $moduleobject == 'productlots') {
 		$moduledirforclass = 'product/stock';
 	} elseif ($moduleobject == 'supplierproposals' || $moduleobject == 'supplierproposal' || $moduleobject == 'supplier_proposal') {
 		$moduledirforclass = 'supplier_proposal';
