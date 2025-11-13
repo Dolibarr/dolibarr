@@ -116,7 +116,7 @@ class Reception extends CommonObject
 	public $billed;
 
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $weight;
 	/**
@@ -1322,15 +1322,13 @@ class Reception extends CommonObject
 		if (isset($this->trueHeight)) {
 			$this->trueHeight = price2num($this->trueHeight);
 		}
-		if (isset($this->size_units)) {
-			$this->size_units = (int) $this->size_units;
-		}
-		if (isset($this->weight_units)) {
-			$this->weight_units = (int) $this->weight_units;
-		}
+		$this->size_units = (int) $this->size_units;
+
 		if (isset($this->trueWeight)) {
 			$this->weight = price2num($this->trueWeight);
 		}
+		$this->weight_units = (int) $this->weight_units;
+
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
 		}

@@ -654,14 +654,14 @@ if (empty($reshook)) {
 		}
 		if ($action == 'settrueWeight') {			// Test on permission already done
 			$object->trueWeight = GETPOST('trueWeight');
-			$object->weight_units = GETPOST('weight_units');
+			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {			// Test on permission already done
 			$object->trueWidth = GETPOST('trueWidth');
 		}
 		if ($action == 'settrueHeight') {			// Test on permission already done
 			$object->trueHeight = GETPOST('trueHeight');
-			$object->size_units = GETPOST('size_units');
+			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {			// Test on permission already done
 			$object->trueDepth = GETPOST('trueDepth');
