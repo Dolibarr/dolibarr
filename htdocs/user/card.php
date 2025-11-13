@@ -85,6 +85,7 @@ $group = GETPOSTINT("group", 3);
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage');
+$backtopageforcancel = GETPOST('backtopageforcancel');
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -1978,14 +1979,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<table class="noborder tableforfield centpercent">';
 
 			// Title line
-			print '<tr class="liste_titre"><th class="liste_titre">';
+			print '<tr class="liste_titre"><th class="liste_titre" colspan="2">';
+			print '<div class="centpercent display-flex">';
+			print '<div class="left inline-block">';
 			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("SecurityForConnection");
-			print '</th>';
-			print '<th class="liste_titre right">';
+			print '</div>';
+			//print '</th>';
+			//print '<th class="liste_titre right">';
 			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
 				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
 				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
 			}
+			print '</div>';
 			print '</th>';
 			print '</tr>';
 
