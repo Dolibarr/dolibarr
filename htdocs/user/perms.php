@@ -487,16 +487,15 @@ $familyinfo = array(
 );
 
 $arrayofpermission = array();
+$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP"]));
+$cookietohidegrouparray = explode(',', $cookietohidegroup);
 
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$j = 0;
 	$oldmod = '';
 
-	$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP"]));
-	$cookietohidegrouparray = explode(',', $cookietohidegroup);
 	//var_dump($cookietohidegrouparray);
 
 	while ($i < $num) {
@@ -527,15 +526,16 @@ if ($result) {
 
 $arrayofpermission = dol_sort_array($arrayofpermission, 'position');
 
+$j = 0;
 
 foreach ($arrayofpermission as $i => $obj) {
-		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
+	// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
 	if (empty($modules[$obj->module])) {
 		$i++;
 		continue;
 	}
 
-		// Special cases
+	// Special cases
 	if (isModEnabled("reception")) {
 		// The 2 permission in fournisseur modules has been replaced by permissions into reception module
 		if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
@@ -548,7 +548,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		}
 	}
 
-		$objMod = $modules[$obj->module];
+	$objMod = $modules[$obj->module];
 
 	if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
 		$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
@@ -557,19 +557,19 @@ foreach ($arrayofpermission as $i => $obj) {
 	} else {
 		$ishidden = 0;
 	}
-		$isexpanded = ! $ishidden;
-		//var_dump("isexpanded=".$isexpanded);
+	$isexpanded = ! $ishidden;
+	//var_dump("isexpanded=".$isexpanded);
 
-		$permsgroupbyentitypluszero = array();
+	$permsgroupbyentitypluszero = array();
 	if (!empty($permsgroupbyentity[0])) {
 		$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[0]);
 	}
 	if (!empty($permsgroupbyentity[$entity])) {
 		$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[$entity]);
 	}
-		//var_dump($permsgroupbyentitypluszero);
+	//var_dump($permsgroupbyentitypluszero);
 
-		// Break found, it's a new module to catch
+	// Break found, it's a new module to catch
 	if (isset($obj->module) && ($oldmod != $obj->module)) {
 		$oldmod = $obj->module;
 
@@ -644,14 +644,14 @@ foreach ($arrayofpermission as $i => $obj) {
 		print '</tr>'."\n";
 	}
 
-		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+	$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 
-		print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
-		print '<tr class="oddeven trtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
+	print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
+	print '<tr class="oddeven trtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 
-		// Picto and label of module
-		print '<td class="maxwidthonsmartphone">';
-		print '</td>';
+	// Picto and label of module
+	print '<td class="maxwidthonsmartphone">';
+	print '</td>';
 
 		// Permission and tick (2 columns)
 	if (!empty($object->admin) && !empty($objMod->rights_admin_allowed)) {    // Permission granted because admin
@@ -729,15 +729,15 @@ foreach ($arrayofpermission as $i => $obj) {
 		print '</td>';
 	}
 
-		// Description of permission (1 or 2 columns)
+	// Description of permission (1 or 2 columns)
 	if (!$user->admin) {
 		print '<td colspan="2">';
 	} else {
 		print '<td>';
 	}
 
-		print $permlabel;
-		$idtouse = $obj->id;
+	print $permlabel;
+	$idtouse = $obj->id;
 	if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
 		$idtouse = 122;
 	}
@@ -775,9 +775,9 @@ foreach ($arrayofpermission as $i => $obj) {
 		}
 	}
 
-		print '</td>';
+	print '</td>';
 
-		// Permission id
+	// Permission id
 	if ($user->admin) {
 		print '<td class="right">';
 		$htmltext = $langs->trans("ID").': '.$obj->id;
@@ -787,9 +787,9 @@ foreach ($arrayofpermission as $i => $obj) {
 		print '</td>';
 	}
 
-		print '</tr>'."\n";
+	print '</tr>'."\n";
 
-		$i++;
+	$i++;
 }
 print '</table>';
 print '</div>';

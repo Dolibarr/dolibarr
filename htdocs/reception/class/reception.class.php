@@ -120,7 +120,7 @@ class Reception extends CommonObject
 	 */
 	public $weight;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueWeight;
 	/**
@@ -128,7 +128,7 @@ class Reception extends CommonObject
 	 */
 	public $weight_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueWidth;
 	/**
@@ -136,7 +136,7 @@ class Reception extends CommonObject
 	 */
 	public $width_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueHeight;
 	/**
@@ -144,7 +144,7 @@ class Reception extends CommonObject
 	 */
 	public $height_units;
 	/**
-	 * @var int|float
+	 * @var int|float|string|null
 	 */
 	public $trueDepth;
 	/**
@@ -152,7 +152,7 @@ class Reception extends CommonObject
 	 */
 	public $depth_units;
 	/**
-	 * @var string A denormalized value
+	 * @var int|float|''|null	A denormalized value
 	 */
 	public $trueSize;
 	/**
@@ -1314,13 +1314,13 @@ class Reception extends CommonObject
 			$this->statut = (int) $this->statut;
 		}
 		if (isset($this->trueDepth)) {
-			$this->trueDepth = (float) trim((string) $this->trueDepth);
+			$this->trueDepth = price2num($this->trueDepth);
 		}
 		if (isset($this->trueWidth)) {
-			$this->trueWidth = (float) trim((string) $this->trueWidth);
+			$this->trueWidth = price2num($this->trueWidth);
 		}
 		if (isset($this->trueHeight)) {
-			$this->trueHeight = (float) trim((string) $this->trueHeight);
+			$this->trueHeight = price2num($this->trueHeight);
 		}
 		if (isset($this->size_units)) {
 			$this->size_units = trim((string) $this->size_units);
@@ -1329,7 +1329,7 @@ class Reception extends CommonObject
 			$this->weight_units = (float) trim((string) $this->weight_units);
 		}
 		if (isset($this->trueWeight)) {
-			$this->weight = (float) trim((string) $this->trueWeight);
+			$this->weight = price2num($this->trueWeight);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
