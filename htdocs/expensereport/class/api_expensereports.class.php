@@ -4,6 +4,7 @@
  * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
+ * Copyright (C) 2025	Kowal Jessica			<jessicakowal69@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,75 +275,6 @@ class ExpenseReports extends DolibarrApi
 			array_push($result,$this->_cleanObjectDatas($line));
 		}
 		return $result;
-	}
-	*/
-
-	/**
-	 * Add a line to given Expense Report
-	 *
-	 * @param int   $id             Id of Expense Report to update
-	 * @param array $request_data   Expense Report data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
-	 *
-	 * @url	POST {id}/lines
-	 *
-	 * @return int
-	 */
-	/*
-	public function postLine($id, $request_data = null)
-	{
-	  if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			  throw new RestException(403);
-		  }
-
-	  $result = $this->expensereport->fetch($id);
-	  if( ! $result ) {
-		 throw new RestException(404, 'expensereport not found');
-	  }
-
-		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			  throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-	  }
-
-	  $request_data = (object) $request_data;
-
-	  $request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-	  $request_data->label = sanitizeVal($request_data->label);
-
-	  $updateRes = $this->expensereport->addline(
-						$request_data->desc,
-						$request_data->subprice,
-						$request_data->qty,
-						$request_data->tva_tx,
-						$request_data->localtax1_tx,
-						$request_data->localtax2_tx,
-						$request_data->fk_product,
-						$request_data->remise_percent,
-						$request_data->info_bits,
-						$request_data->fk_remise_except,
-						'HT',
-						0,
-						$request_data->date_start,
-						$request_data->date_end,
-						$request_data->product_type,
-						$request_data->rang,
-						$request_data->special_code,
-						$fk_parent_line,
-						$request_data->fk_fournprice,
-						$request_data->pa_ht,
-						$request_data->label,
-						$request_data->array_options,
-						$request_data->fk_unit,
-						$this->element,
-						$request_data->id
-	  );
-
-	  if ($updateRes > 0) {
-		return $updateRes;
-
-	  }
-	  return false;
 	}
 	*/
 
@@ -985,4 +917,240 @@ class ExpenseReports extends DolibarrApi
 		}
 		return $expensereport;
 	}
+
+	/**
+ * Add a line to given Expense Report
+ *
+ * @param int   $id             Id of Expense Report to update
+ * @param array $request_data   Expense Report line data
+ * @phan-param ?array<string,mixed> $request_data
+ * @phpstan-param ?array<string,mixed> $request_data
+ *
+ * @url	POST {id}/lines
+ *
+ * @return int
+ */
+public function postLine($id, $request_data = null)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+    if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+        throw new RestException(403);
+    }
+
+    $result = $this->expensereport->fetch($id);
+    if (!$result) {
+        throw new RestException(404, 'Expense report not found');
+    }
+
+    if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    }
+
+    if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_REFUSED))) {
+        throw new RestException(403, 'Expense report must be in draft or refused status to add lines');
+    }
+
+    $request_data = (object) $request_data;
+
+    if (!isset($request_data->fk_c_type_fees)) {
+        throw new RestException(400, "fk_c_type_fees field missing");
+    }
+    if (!isset($request_data->date)) {
+        throw new RestException(400, "date field missing");
+    }
+
+    $qty = isset($request_data->qty) ? (float) $request_data->qty : 1;
+    $value_unit = isset($request_data->value_unit) ? (float) $request_data->value_unit : 0;
+    $vatrate = isset($request_data->vatrate) ? $request_data->vatrate : '0.0';
+    $comments = isset($request_data->comments) ? $request_data->comments : '';
+    $fk_project = isset($request_data->fk_project) ? (int) $request_data->fk_project : 0;
+    $fk_c_exp_tax_cat = isset($request_data->fk_c_exp_tax_cat) ? (int) $request_data->fk_c_exp_tax_cat : 0;
+    $fk_ecm_files = isset($request_data->fk_ecm_files) ? (int) $request_data->fk_ecm_files : 0;
+
+    $comments = sanitizeVal($comments, 'restricthtml');
+
+    $result = $this->expensereport->addline(
+        $qty,
+        $value_unit,
+        (int) $request_data->fk_c_type_fees,
+        $vatrate,
+        $request_data->date,
+        $comments,
+        $fk_project,
+        $fk_c_exp_tax_cat,
+        0, // type (0=product, 1=service)
+        $fk_ecm_files
+    );
+
+    if ($result > 0) {
+        return $result;
+    } else {
+        throw new RestException(500, 'Error adding line to expense report: '.$this->expensereport->error);
+    }
+}
+
+/**
+ * Get lines of an Expense Report
+ *
+ * @param int   $id             Id of Expense Report
+ *
+ * @url	GET {id}/lines
+ *
+ * @return array
+ */
+public function getLines($id)
+{
+    if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
+        throw new RestException(403);
+    }
+
+    $result = $this->expensereport->fetch($id);
+    if (!$result) {
+        throw new RestException(404, 'Expense report not found');
+    }
+
+    if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    }
+
+    $this->expensereport->fetch_lines();
+    $result = array();
+    foreach ($this->expensereport->lines as $line) {
+        array_push($result, $this->_cleanObjectDatas($line));
+    }
+    return $result;
+}
+
+/**
+ * Update a line to given Expense Report
+ *
+ * @param int   $id             Id of Expense Report to update
+ * @param int   $lineid         Id of line to update
+ * @param array $request_data   Expense Report line data
+ * @phan-param ?array<string,mixed> $request_data
+ * @phpstan-param ?array<string,mixed> $request_data
+ *
+ * @url	PUT {id}/lines/{lineid}
+ *
+ * @return object
+ */
+public function putLine($id, $lineid, $request_data = null)
+{
+    if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+        throw new RestException(403);
+    }
+
+    $result = $this->expensereport->fetch($id);
+    if (!$result) {
+        throw new RestException(404, 'Expense report not found');
+    }
+
+    if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    }
+
+    // Check if line exists
+    $lineExists = false;
+    $this->expensereport->fetch_lines();
+    foreach ($this->expensereport->lines as $line) {
+        if ($line->id == $lineid) {
+            $lineExists = true;
+            break;
+        }
+    }
+    
+    if (!$lineExists) {
+        throw new RestException(404, 'Line not found');
+    }
+
+    if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_REFUSED))) {
+        throw new RestException(403, 'Expense report must be in draft or refused status to update lines');
+    }
+
+    $request_data = (object) $request_data;
+
+    // Prepare parameters for update
+    $qty = isset($request_data->qty) ? (float) $request_data->qty : 1;
+    $value_unit = isset($request_data->value_unit) ? (float) $request_data->value_unit : 0;
+    $vatrate = isset($request_data->vatrate) ? $request_data->vatrate : '0.0';
+    $comments = isset($request_data->comments) ? $request_data->comments : '';
+    $fk_project = isset($request_data->fk_project) ? (int) $request_data->fk_project : 0;
+    $fk_c_exp_tax_cat = isset($request_data->fk_c_exp_tax_cat) ? (int) $request_data->fk_c_exp_tax_cat : 0;
+    $fk_ecm_files = isset($request_data->fk_ecm_files) ? (int) $request_data->fk_ecm_files : 0;
+    $date = isset($request_data->date) ? $request_data->date : '';
+    $fk_c_type_fees = isset($request_data->fk_c_type_fees) ? (int) $request_data->fk_c_type_fees : 0;
+
+    $comments = sanitizeVal($comments, 'restricthtml');
+
+    $result = $this->expensereport->updateline(
+        $lineid,
+        $fk_c_type_fees,
+        $fk_project,
+        $vatrate,
+        $comments,
+        $qty,
+        $value_unit,
+        $date,
+        $id,
+        $fk_c_exp_tax_cat,
+        $fk_ecm_files
+    );
+
+    if ($result > 0) {
+        return $this->get($id);
+    } else {
+        throw new RestException(500, 'Error updating line: '.$this->expensereport->error);
+    }
+}
+
+/**
+ * Delete a line of given Expense Report
+ *
+ * @param int   $id             Id of Expense Report to update
+ * @param int   $lineid         Id of line to delete
+ *
+ * @url	DELETE {id}/lines/{lineid}
+ *
+ * @return object
+ */
+public function deleteLine($id, $lineid)
+{
+    if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+        throw new RestException(403);
+    }
+
+    $result = $this->expensereport->fetch($id);
+    if (!$result) {
+        throw new RestException(404, 'Expense report not found');
+    }
+
+    if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+        throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    }
+
+    // Check if line exists
+    $lineExists = false;
+    $this->expensereport->fetch_lines();
+    foreach ($this->expensereport->lines as $line) {
+        if ($line->id == $lineid) {
+            $lineExists = true;
+            break;
+        }
+    }
+    
+    if (!$lineExists) {
+        throw new RestException(404, 'Line not found');
+    }
+
+    if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_REFUSED))) {
+        throw new RestException(403, 'Expense report must be in draft or refused status to delete lines');
+    }
+
+    $result = $this->expensereport->deleteLine($lineid);
+    if ($result > 0) {
+        return $this->get($id);
+    } else {
+        throw new RestException(500, 'Error deleting line: '.$this->expensereport->error);
+    }
+}
 }
