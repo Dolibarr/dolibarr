@@ -60,7 +60,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	 * @param CommonObject	$object     Object
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
-	 * @param conf		    $conf       Object conf
+	 * @param Conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
@@ -103,7 +103,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		}
 
 		// Order to invoice
-		if ($action == 'ORDER_CLOSE') {
+		if ($action == 'ORDER_CLOSE' && $object instanceof Commande) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (isModEnabled('invoice') && getDolGlobalString('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -468,7 +468,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 					if (count($diff_array) == 0) {
 						//No diff => mean everything is shipped
-						$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
+						$ret = $order->cloture($user);
 						if ($ret < 0) {
 							$this->setErrorsFromObject($order);
 							return $ret;

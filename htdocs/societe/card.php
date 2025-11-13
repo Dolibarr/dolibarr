@@ -113,12 +113,12 @@ $errors = array();
 $refalreadyexists = 0;
 
 // Get parameters
-$action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
-$cancel		= GETPOST('cancel', 'alpha');
+$action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$confirm 	= GETPOST('confirm', 'alpha');
-$canvas		= GETPOST('canvas', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$canvas = GETPOST('canvas', 'alpha');
 
 $dol_openinpopup = '';
 
@@ -602,6 +602,15 @@ if (empty($reshook)) {
 								} else {
 									// Create thumbs
 									$object->addThumbs($newfile);
+
+									// Index file in database
+									if (getDolGlobalString('THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD')) {
+										require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+										// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
+										deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
+										// now we index the uploaded logo file
+										addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1, $object);
+									}
 								}
 							}
 						}
@@ -740,8 +749,8 @@ if (empty($reshook)) {
 				// Logo/Photo save
 				$dir     = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id."/logos";
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-				if (GETPOST('deletephoto') && $object->logo) {
-					$fileimg = $dir.'/'.$object->logo;
+				if (GETPOST('deletephoto') && $current_logo) {
+					$fileimg = $dir.'/'.$current_logo;
 					$dirthumbs = $dir.'/thumbs';
 					dol_delete_file($fileimg);
 					dol_delete_dir_recursive($dirthumbs);
@@ -773,7 +782,7 @@ if (empty($reshook)) {
 									// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
 									deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', $object);
 									// now we index the uploaded logo file
-									addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
+									addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1, $object);
 								}
 							}
 						}
@@ -1804,7 +1813,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Local Taxes
-			//TODO: Place into a function to control showing by country or study better option
+			// TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
 				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';

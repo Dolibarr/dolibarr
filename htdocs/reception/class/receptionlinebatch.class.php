@@ -279,9 +279,9 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= "batch,";
 		$sql .= "eatby,";
 		$sql .= "sellby,";
-		$sql .= ", fk_unit";
-		$sql .= ", description";
-		$sql .= ", rang";
+		$sql .= "fk_unit,";
+		$sql .= "description,";
+		$sql .= "rang,";
 		$sql .= "fk_reception,";
 		$sql .= "cost_price";
 		$sql .= ") VALUES (";
@@ -298,7 +298,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
 		$sql .= " ".(!isset($this->eatby) || dol_strlen((string) $this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen((string) $this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
-		$sql .= ", ".((int) $this->fk_unit);
+		$sql .= " ".((int) $this->fk_unit);
 		$sql .= ", '".(empty($this->description) ? '' : $this->db->escape($this->description))."'";
 		$sql .= ", ".((int) $ranktouse).",";
 		$sql .= " ".((int) $this->fk_reception).",";
