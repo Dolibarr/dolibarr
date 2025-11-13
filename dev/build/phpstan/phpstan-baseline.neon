@@ -8179,12 +8179,6 @@ parameters:
 			path: ../../../htdocs/core/modules/rapport/pdf_paiement.class.php
 
 		-
-			message: '#^Property Reception\:\:\$trueWeight \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -8836,12 +8830,6 @@ parameters:
 			message: '#^Right side of \|\| is always true\.$#'
 			identifier: booleanOr.rightAlwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
-
-		-
-			message: '#^Variable \$projectref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
 
 		-
@@ -14227,12 +14215,6 @@ parameters:
 			path: ../../../htdocs/reception/class/reception.class.php
 
 		-
-			message: '#^Property Reception\:\:\$size_units \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
 			message: '#^Property Reception\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -14242,30 +14224,6 @@ parameters:
 			message: '#^Property Reception\:\:\$tracking_number \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
-			message: '#^Property Reception\:\:\$trueDepth \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
-			message: '#^Property Reception\:\:\$trueHeight \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
-			message: '#^Property Reception\:\:\$trueWeight \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
-			message: '#^Property Reception\:\:\$trueWidth \(float\|int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/reception/class/reception.class.php
 
 		-
@@ -15391,12 +15349,6 @@ parameters:
 			path: ../../../htdocs/takepos/index.php
 
 		-
-			message: '#^Loose comparison using \=\= between 0 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/takepos/index.php
-
-		-
 			message: '#^Property CommonInvoiceLine\:\:\$product_type \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -16059,13 +16011,7 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 2
-			path: ../../../htdocs/user/perms.php
-
-		-
-			message: '#^Variable \$menumanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
+			count: 1
 			path: ../../../htdocs/user/perms.php
 
 		-
