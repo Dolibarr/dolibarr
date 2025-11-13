@@ -1,0 +1,201 @@
+/* ============================================================
+ * WebPortal Kanban View Styles
+ * ============================================================ */
+
+/* View toggle buttons */
+.webportal-view-toggle {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 20px;
+	justify-content: flex-end;
+}
+
+.webportal-view-toggle .btn-view {
+	padding: 8px 16px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	background: white;
+	color: #333;
+	text-decoration: none;
+	transition: all 0.2s;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.webportal-view-toggle .btn-view:hover {
+	background: #f5f5f5;
+	border-color: #0073aa;
+}
+
+.webportal-view-toggle .btn-view.active {
+	background: #0073aa;
+	color: white;
+	border-color: #0073aa;
+}
+
+/* Kanban board container */
+.webportal-kanban-board {
+	display: flex;
+	gap: 20px;
+	overflow-x: auto;
+	padding: 20px 0;
+	min-height: 400px;
+}
+
+/* Kanban column */
+.webportal-kanban-column {
+	flex: 0 0 300px;
+	min-width: 300px;
+	background: #f8f9fa;
+	border-radius: 8px;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	max-height: 800px;
+}
+
+.webportal-kanban-column-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 15px;
+	border-bottom: 2px solid #dee2e6;
+	background: #fff;
+	border-radius: 8px 8px 0 0;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.webportal-kanban-column-header h3 {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: #333;
+}
+
+.webportal-kanban-column-header .badge-status {
+	background: #0073aa;
+	color: white;
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.webportal-kanban-column-content {
+	padding: 15px;
+	overflow-y: auto;
+	flex: 1;
+}
+
+/* Kanban card */
+.webportal-kanban-card {
+	background: white;
+	border-radius: 6px;
+	padding: 0;
+	margin-bottom: 12px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	transition: all 0.2s ease;
+	border: 1px solid #e0e0e0;
+}
+
+.webportal-kanban-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+	border-color: #0073aa;
+}
+
+.webportal-kanban-card a {
+	text-decoration: none;
+	color: inherit;
+	display: block;
+	padding: 15px;
+}
+
+.webportal-kanban-card-header {
+	margin-bottom: 12px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.webportal-kanban-card-header strong {
+	color: #0073aa;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.webportal-kanban-card-body {
+	color: #666;
+	font-size: 14px;
+}
+
+.kanban-card-date {
+	margin-bottom: 8px;
+	font-size: 13px;
+	color: #888;
+}
+
+.kanban-card-date i {
+	margin-right: 5px;
+	color: #0073aa;
+}
+
+.kanban-card-amount {
+	font-size: 16px;
+	font-weight: 600;
+	color: #27ae60;
+	margin-top: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.webportal-kanban-board {
+		gap: 10px;
+		padding: 10px 0;
+	}
+
+	.webportal-kanban-column {
+		flex: 0 0 280px;
+		min-width: 280px;
+	}
+
+	.webportal-view-toggle {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.webportal-view-toggle .btn-view {
+		justify-content: center;
+	}
+}
+
+/* Empty state */
+.webportal-kanban-column-content:empty::after {
+	content: attr(data-empty-message);
+	display: block;
+	text-align: center;
+	padding: 40px 20px;
+	color: #999;
+	font-style: italic;
+}
+
+/* Scrollbar styling for kanban columns */
+.webportal-kanban-column-content::-webkit-scrollbar {
+	width: 8px;
+}
+
+.webportal-kanban-column-content::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	border-radius: 4px;
+}
+
+.webportal-kanban-column-content::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 4px;
+}
+
+.webportal-kanban-column-content::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}

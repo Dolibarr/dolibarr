@@ -95,7 +95,9 @@ class PropalListController extends Controller
 	 */
 	public function display()
 	{
+		global $langs;
 		$context = Context::getInstance();
+		$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'list';
 		if (!$context->controllerInstance->checkAccess()) {
 			$this->display404();
 			return;
@@ -109,7 +111,11 @@ class PropalListController extends Controller
 		if (empty($hookRes)) {
 			print '<main class="container">';
 			//print '<figure>';
+			if ($mode == 'kanban') {
+			print $this->formList->elementKanban($context);
+		} else {
 			print $this->formList->elementList($context);
+		}
 			//print '</figure>';
 			print '</main>';
 		}

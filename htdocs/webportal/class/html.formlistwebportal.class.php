@@ -92,6 +92,11 @@ class FormListWebPortal
 	public $contextpage = '';
 
 	/**
+	 * @var string View mode ('list' or 'kanban')
+	 */
+	public $mode = 'list';
+
+	/**
 	 * @var array<string|int> Search filters
 	 */
 	public $search = array();
@@ -844,6 +849,154 @@ class FormListWebPortal
 		}
 
 		$html .= '</ul>';
+
+		return $html;
+	}
+
+	/**
+	 * Generate kanban view for elements
+	 *
+	 * @param	Context		$context	Context object
+	 * @return	string					HTML content for kanban view
+	 */
+	public function elementKanban($context)
+	{
+		global $conf, $langs;
+
+		$html = '';
+		$object = $this->object;
+		$socid = (int) $context->logged_thirdparty->id;
+
+		// Get status labels from object
+		if (method_exists($object, 'labelStatus') || isset($object->labelStatus)) {
+			$statusArray = is_array($object->labelStatus) ? $object->labelStatus : array();
+		} else {
+			// Fallback for objects without labelStatus
+			$statusArray = array(
+				0 => 'Draft',
+				1 => 'Validated',
+				2 => 'Accepted',
+				3 => 'Refused',
+				4 => 'Billed'
+			);
+		}
+
+		// Start kanban board
+		$html .= '<div class="webportal-kanban-board">';
+
+		// Create columns for each status
+		foreach ($statusArray as $status => $label) {
+			// Get items for this status
+			$items = $this->getItemsByStatus($status, $socid);
+			$count = count($items);
+
+			// Column header
+			$html .= '<div class="webportal-kanban-column">';
+			$html .= '<div class="webportal-kanban-column-header">';
+			$html .= '<h3>' . $langs->trans($label) . '</h3>';
+			$html .= '<span class="badge badge-status">' . $count . '</span>';
+			$html .= '</div>';
+
+			// Column content
+			$html .= '<div class="webportal-kanban-column-content">';
+			foreach ($items as $item) {
+				$html .= $this->renderKanbanCard($item);
+			}
+			$html .= '</div>'; // .webportal-kanban-column-content
+
+			$html .= '</div>'; // .webportal-kanban-column
+		}
+
+		$html .= '</div>'; // .webportal-kanban-board
+
+		return $html;
+	}
+
+	/**
+	 * Get items by status
+	 *
+	 * @param	int		$status		Status to filter
+	 * @param	int		$socid		Third-party ID
+	 * @return	array				Array of items
+	 */
+	protected function getItemsByStatus($status, $socid)
+	{
+		$items = array();
+		$object = $this->object;
+
+		// Build SQL query
+		$sql = "SELECT t.*";
+		$sql .= " FROM " . $this->db->prefix() . $object->table_element . " as t";
+		$sql .= " WHERE t.fk_soc = " . ((int) $socid);
+		$sql .= " AND t.fk_statut = " . ((int) $status);
+		if ($object->ismultientitymanaged == 1) {
+			$sql .= " AND t.entity IN (" . getEntity($object->element) . ")";
+		}
+		$sql .= " ORDER BY t.date_creation DESC";
+		$sql .= " LIMIT 50"; // Limit for performance
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$items[] = $obj;
+			}
+			$this->db->free($resql);
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Render a kanban card
+	 *
+	 * @param	object	$item		Item object from database
+	 * @return	string				HTML for kanban card
+	 */
+	protected function renderKanbanCard($item)
+	{
+		global $langs;
+
+		$object = $this->object;
+		$elementEn = $object->element;
+		if ($object->element == 'commande') {
+			$elementEn = 'order';
+		} elseif ($object->element == 'facture') {
+			$elementEn = 'invoice';
+		}
+
+		// Card URL
+		$url = dol_buildpath('/webportal/' . $elementEn . 'card.php', 1) . '?id=' . $item->rowid;
+
+		$html = '<div class="webportal-kanban-card">';
+		$html .= '<a href="' . $url . '">';
+
+		// Card header with ref
+		$html .= '<div class="webportal-kanban-card-header">';
+		$html .= '<strong>' . dol_escape_htmltag($item->ref) . '</strong>';
+		$html .= '</div>';
+
+		// Card body
+		$html .= '<div class="webportal-kanban-card-body">';
+
+		// Date
+		if (!empty($item->date_creation)) {
+			$html .= '<div class="kanban-card-date">';
+			$html .= '<i class="fa fa-calendar"></i> ';
+			$html .= dol_print_date($this->db->jdate($item->date_creation), 'day');
+			$html .= '</div>';
+		}
+
+		// Amount (if exists)
+		if (isset($item->total_ttc) && $item->total_ttc > 0) {
+			$html .= '<div class="kanban-card-amount">';
+			$html .= '<strong>' . price($item->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . '</strong>';
+			$html .= '</div>';
+		}
+
+		$html .= '</div>'; // .webportal-kanban-card-body
+
+		$html .= '</a>';
+		$html .= '</div>'; // .webportal-kanban-card
 
 		return $html;
 	}
