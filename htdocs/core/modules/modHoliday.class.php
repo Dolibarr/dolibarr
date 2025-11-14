@@ -290,6 +290,28 @@ class modHoliday extends DolibarrModules
 		// $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $r++;
+
+		// Imports
+		//--------
+		$r = 0;
+
+		// Import list of leave request
+
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ListeCP"; // Translation key
+		$this->import_icon[$r] = 'holiday';
+		$this->import_tables_array[$r] = array('d' => MAIN_DB_PREFIX.'holiday');
+		$this->import_fields_array[$r] = array(
+			'd.ref' => 'Ref*', 'd.fk_user' => 'UserID*', 'd.fk_type' => 'TypeOfLeaveId*','d.fk_validator' => 'ApprovedBy*',
+			'd.date_debut' => 'DateStart*', 'd.date_fin' => 'DateEnd*', 'd.halfday' => 'HalfDay', 'd.description' => 'Description*',
+			'd.date_create' => 'DateCreation*'
+		);
+
+		$keyforselect = 'holiday';
+		$keyforelement = 'holiday';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 	}
 
 	/**

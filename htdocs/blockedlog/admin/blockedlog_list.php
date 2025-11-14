@@ -27,12 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  *
  * @var string $dolibarr_main_db_name
  */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
@@ -590,7 +589,7 @@ print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ')."\n";
+print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 0, $langs->trans("TotalTTCIfInvoiceSeeCompleteDataForDetail"))."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp'), 1)."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($form->textwithpicto($langs->trans('Status'), $langs->trans('DataOfArchivedEventHelp2')), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
@@ -634,6 +633,8 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 		}
 	}
 }
+
+$totalamount = array();
 
 if (is_array($blocks)) {
 	$nbshown = 0;
@@ -688,6 +689,20 @@ if (is_array($blocks)) {
 
 			// Amount
 			print '<td class="right nowraponall">'.price($block->amounts).'</td>';
+			if (empty($totalamount[$block->action])) {
+				$totalamount[$block->action] = array();
+			}
+			if ($block->action == 'BILL_VALIDATE') {
+				if (empty($totalamount[$block->action][$block->ref_object])) {	// If not, we already met the event for this object, we keep only first one.
+					$totalamount[$block->action][$block->ref_object] = $block->amounts;
+				}
+			}
+			if ($block->action == 'PAYMENT_CUSTOMER_CREATE') {
+				if (empty($totalamount[$block->action][$block->ref_object])) {
+					$totalamount[$block->action][$block->ref_object] = 0;
+				}
+				$totalamount[$block->action][$block->ref_object] = $block->amounts;
+			}
 
 			// Details link
 			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_picto($langs->trans('ShowDetails'), 'note', 'class="size15x"').'</span></td>';
@@ -696,8 +711,9 @@ if (is_array($blocks)) {
 			print '<td class="nowraponall">';
 			// Note: the previous line id is not necessarily id-1, so in texttoshow we say "on previous line" without giving id to avoid a search/fetch to get previous id.
 			$texttoshow = $langs->trans("Fingerprint").' - '.$langs->trans("SavedOnLine").' =<br>'.$block->signature;
-			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256('.$langs->trans("PreviousHash").' on previous line + data) =<br>'.$checkdetail[$block->id]['calculatedsignature'];
+			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated hash_hmac(\'sha256\', '.strtolower($langs->trans("PreviousHash").' on previous line').' + data, secret key) =<br>'.$checkdetail[$block->id]['calculatedsignature'];
 			$texttoshow .= '<br><span class="opacitymedium">'.$langs->trans("PreviousHash").'='.$checkdetail[$block->id]['previoushash'].'</span>';
+			$texttoshow .= '<br><span class="opacitymedium">'.$langs->trans("SecretKey").'=Not available from interface</span>';
 			//$texttoshow .= '<br>keyforsignature='.$checkdetail[$block->id]['keyforsignature'];
 			print $form->textwithpicto(dol_trunc($block->signature, 8), $texttoshow, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
 			print '</td>';
@@ -752,6 +768,70 @@ if (is_array($blocks)) {
 			$colspan++;
 		}
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	} else {
+		foreach ($totalamount as $key => $totalamountperref) {
+			if ($key == 'BILL_VALIDATE') {
+				// Total
+				print '<tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre">';
+					print '</td>';
+				}
+
+				// ID
+				print '<td colspan="2">'.dolPrintHTML($langs->trans("TotalForAction").' '.$key).'</td>';
+
+				// Date
+				//print '<td class="nowraponall"></td>';
+
+				// User
+				print '<td class="tdoverflowmax200">';
+				print '</td>';
+
+				// Action
+				print '<td></td>';
+
+				// Ref
+				print '<td class="nowraponall">';
+				print '</td>';
+
+				// Amount (HT)
+				print '<td class="right nowraponall">';
+				$totaltoshow = 0;
+				foreach ($totalamountperref as $value) {
+					$totaltoshow += $value;
+				}
+				print price($totaltoshow);
+				print '</td>';
+
+				// Details link
+				print '<td class="center"></td>';
+
+				// Fingerprint
+				print '<td class="nowraponall">';
+				print '</td>';
+
+				// Status
+				print '<td class="center">';
+				print '</td>';
+
+				// Link to debug information object
+				if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
+					print '</td>';
+				}
+
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre">';
+					print '</td>';
+				}
+
+				print '</tr>';
+			}
+		}
 	}
 }
 

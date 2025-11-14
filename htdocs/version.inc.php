@@ -35,14 +35,12 @@
 if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
-if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '23.0.0-alpha'); 	// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
-}
 
-// End of common declaration part
-if (defined('DOL_INC_FOR_VERSION_ERROR')) {
-	return;
-}
+// The major version of Dolibarr
+define('DOL_MAJOR_VERSION', '23');
+
+define('DOL_VERSION', constant('DOL_MAJOR_VERSION').'.'.constant('DOL_MINOR_VERSION'));
+// DOL_VERSION is now a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 
 if (!defined('CERTIF_LNE')) {
 	define('CERTIF_LNE', '1');	// Set to 1 if the beta version is a candidate for certification or if the stable version has been certified. Use 2 for debug to force LNE features.

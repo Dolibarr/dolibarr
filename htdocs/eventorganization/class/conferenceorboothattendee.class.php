@@ -945,6 +945,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
+		$labelStatus = $this->labelStatus[$status];
+		$labelStatusShort = $this->labelStatusShort[$status];
+
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {
 			$statusType = 'status2';
@@ -955,14 +958,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		if ($status == self::STATUS_VALIDATED && $this->date_subscription && $this->amount) {
 			$statusType = 'status4';
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' - '.$langs->trans("Paid");
+			$labelStatus .= ' - '.$langs->trans("Paid");
 		}
 
 		if ($status == self::STATUS_USED) {
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**
