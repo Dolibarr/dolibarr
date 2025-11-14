@@ -243,8 +243,25 @@ class Projects extends DolibarrApi
 		if ($category > 0) {
 			$sql .= " AND c.fk_categorie = " . ((int) $category) . " AND c.fk_project = t.rowid ";
 		}
+
+		$projectsListId = '';
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'all', 'lire')) {
+			$projectsListId = $this->project->getProjectsAuthorizedForUser(DolibarrApiAccess::$user, 0, 1, $socids);
+		}
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'all', 'lire')) {
+			$sql .= " AND t.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
+		}
+
 		// Add sql filters
 		if ($sqlfilters) {
+			$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'projects', 'apimethod' => __METHOD__);
+			$action = 'list';
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this->project, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$sql = $hookmanager->resPrint;
+			} elseif ($reshook == 0) {
+				$sql .= $hookmanager->resPrint;
+			}
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 			if ($errormessage) {
