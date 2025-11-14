@@ -145,7 +145,7 @@ class Productlots extends DolibarrApi
 
 		// LIMIT/OFFSET
 		if ($limit) {
-			$page   = max(0, (int)$page);
+			$page   = max(0, (int) $page);
 			$offset = $limit * $page;
 			$sql   .= $this->db->plimit($limit + 1, $offset);
 		}
@@ -164,7 +164,7 @@ class Productlots extends DolibarrApi
 			if (!$obj) break;
 
 			$pl = new Productlot($this->db);
-			if ($pl->fetch((int)$obj->rowid) > 0) {
+			if ($pl->fetch((int) $obj->rowid) > 0) {
 				$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($pl), $properties);
 			}
 			$i++;
@@ -176,19 +176,19 @@ class Productlots extends DolibarrApi
 			$totRes = $this->db->query($sqlTotals);
 			if ($totRes) {
 				$row = $this->db->fetch_object($totRes);
-				if ($row && isset($row->total)) $total = (int)$row->total;
+				if ($row && isset($row->total)) $total = (int) $row->total;
 			}
 
 			// Evite division par zéro
-			$safeLimit  = ($limit > 0) ? (int)$limit : max(1, count($obj_ret));
-			$pageCount  = (int)ceil($total / $safeLimit);
+			$safeLimit  = ($limit > 0) ? (int) $limit : max(1, count($obj_ret));
+			$pageCount  = (int) ceil($total / $safeLimit);
 
 			$data = $obj_ret;
 			$obj_ret = [
 				'data' => $data,
 				'pagination' => [
 					'total'      => $total,
-					'page'       => (int)$page,
+					'page'       => (int) $page,
 					'page_count' => $pageCount,
 					'limit'      => $safeLimit
 				]
