@@ -877,8 +877,8 @@ if ($object->fetch($id) >= 0) {
 		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", '', $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", '', $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", '', $param, "", $sortfield, $sortorder);
-		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], '', $param, "", "", $sortfield, $sortorder);
-		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], '', $param, "", '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], '', "", $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ');
 		// Date last update
 		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "mc.tms", '', $param, '', $sortfield, $sortorder, 'center ');
 		// Date sending

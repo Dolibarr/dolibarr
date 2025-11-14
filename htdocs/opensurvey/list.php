@@ -381,21 +381,21 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.id_sondage", $param, "", "", $sortfield, $sortorder);
+print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.id_sondage", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "p.titre", $param, "", "", $sortfield, $sortorder);
+print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "p.titre", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "p.format", $param, "", "", $sortfield, $sortorder);
+print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "p.format", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("Author", $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, $param, "", "", $sortfield, $sortorder);
+print_liste_field_titre("Author", $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("NbOfVoters", $_SERVER["PHP_SELF"], "", $param, "", 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre("NbOfVoters", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("ExpireDate", $_SERVER["PHP_SELF"], "p.date_fin", $param, "", 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("ExpireDate", $_SERVER["PHP_SELF"], "p.date_fin", "", $param, 'align="center"', $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "p.tms", $param, "", 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center"', $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.status", $param, "", 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.status", "", $param, 'align="center"', $sortfield, $sortorder);
 $totalarray['nbfield']++;
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';

@@ -445,30 +445,30 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "m.rowid", $param, "", "", $sortfield, $sortorder);
+print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "m.rowid", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 // Message type
 if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "m.messtype", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "m.messtype", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "m.titre", $param, "", "", $sortfield, $sortorder);
+print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "m.titre", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", $param, "", '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 if (!$filteremail) {
 	$title = $langs->trans("NbOfEMails");
 	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
 		$title .= ' | '.$langs->trans("SMS");
 	}
-	print_liste_field_titre($title, $_SERVER["PHP_SELF"], "m.nbemail", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($title, $_SERVER["PHP_SELF"], "m.nbemail", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!$filteremail) {
-	print_liste_field_titre("DateLastSend", $_SERVER["PHP_SELF"], "m.date_envoi", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateLastSend", $_SERVER["PHP_SELF"], "m.date_envoi", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 } else {
-	print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Extra fields
@@ -477,7 +477,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], ($filteremail ? "mc.statut" : "m.statut"), $param, "", '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], ($filteremail ? "mc.statut" : "m.statut"), "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
