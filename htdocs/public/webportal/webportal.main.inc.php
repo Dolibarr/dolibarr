@@ -356,7 +356,9 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 
 				if (!$error) {
 					$context->logged_user = $logged_user;
-					$context->logged_member = $logged_member;
+					if (!empty($logged_member)) {
+						$context->logged_member = $logged_member;
+					}
 
 					global $user; // set global user as logged user (used for hooks in external modules)
 					$user = $context->logged_user;
