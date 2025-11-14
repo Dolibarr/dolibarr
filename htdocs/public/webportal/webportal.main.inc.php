@@ -200,7 +200,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 						$context->controller = 'default';
 						$context->initController();
 					}
-				} elseif (!$error && isModEnabled('adherent') && getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT') && !getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
+				} elseif (!$error && isModEnabled('member') && getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT') && !getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 					// fetch member account from login
 					$member_account_id = $context->getMemberAccountFromLogin($login, $password);
 					if ($member_account_id <= 0) {
@@ -237,7 +237,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 			$logged_member = null;
 			$websiteaccount = null;
 			// We are already into an authenticated session
-			if (isModEnabled('adherent') && getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT') && !getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
+			if (isModEnabled('member') && getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT') && !getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 				// get member
 				$logged_member = new WebPortalMember($db);
 				$result = $logged_member->fetch($webportal_logged_member_account_id);
