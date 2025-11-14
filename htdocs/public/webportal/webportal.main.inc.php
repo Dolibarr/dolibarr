@@ -234,6 +234,8 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 		}
 
 		if (!$error && $context->userIsLog()) {
+			$logged_member = null;
+			$websiteaccount = null;
 			// We are already into an authenticated session
 			if (isModEnabled('adherent') && getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT') && !getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 				// get member

@@ -717,10 +717,7 @@ class Context
 					$passcrypted = $obj->pass_crypted;
 
 					// Check crypted password
-					$cryptType = '';
-					if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-						$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED');
-					}
+					$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED', 'auto');
 
 					// By default, we use default setup for encryption rule
 					if (!in_array($cryptType, array('auto'))) {
@@ -782,10 +779,7 @@ class Context
 					$passcrypted = $obj->pass_crypted;
 
 					// Check crypted password
-					$cryptType = '';
-					if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-						$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED');
-					}
+					$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED', 'auto');
 
 					// By default, we use default setup for encryption rule
 					if (!in_array($cryptType, array('auto'))) {
