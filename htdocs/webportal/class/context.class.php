@@ -725,7 +725,7 @@ class Context
 					if ($passok) {
 						$id = $obj->id;
 					} else {
-						dol_syslog(__METHOD__ .' Authentication KO bad password for ' . $login . ', cryptType=' . $cryptType, LOG_NOTICE);
+						dol_syslog(__METHOD__ .' Authentication KO bad password for ' . $login . ', cryptType=auto', LOG_NOTICE);
 						sleep(1); // Brut force protection. Must be same delay when login is not valid
 						return -3;
 					}
@@ -777,7 +777,7 @@ class Context
 					if ($passok) {
 						$id = $obj->id;
 					} else {
-						dol_syslog(__METHOD__ .' Authentication KO bad password for ' . $login . ', cryptType=' . $cryptType, LOG_NOTICE);
+						dol_syslog(__METHOD__ .' Authentication KO bad password for ' . $login . ', cryptType=auto', LOG_NOTICE);
 						sleep(1); // Brut force protection. Must be same delay when login is not valid
 						return -3;
 					}
