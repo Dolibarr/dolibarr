@@ -7,7 +7,7 @@
  * Copyright (C) 2023-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("sendings", "receptions", 'companies', 'bills', 'orders'));
+$langs->loadLangs(array("sendings", "receptions", "deliveries", 'companies', 'bills', 'orders'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
@@ -56,8 +56,7 @@ $socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$toselect = GETPOST('toselect', 'array:int');
-$show_files = GETPOSTINT('show_files');
+$toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -90,6 +89,8 @@ $search_date_create_end = dol_mktime(23, 59, 59, $search_date_create_endmonth, $
 $search_billed = GETPOST("search_billed", 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_all = GETPOST('search_all', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -144,6 +145,8 @@ $arrayfields = array(
 	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => '1'),
 	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
 );
@@ -228,7 +231,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
-		$receptions = GETPOST('toselect', 'array:int');
+		$receptions = GETPOST('toselect', 'array');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -375,8 +378,8 @@ if (empty($reshook)) {
 				}
 
 				$objecttmp->date = $datefacture;
-				$objecttmp->origin = 'reception';
-				$objecttmp->origin_id = (int) $id_reception;
+				$objecttmp->origin    = 'reception';
+				$objecttmp->origin_id = $id_reception;
 
 				// Auto calculation of date due if not filled by user
 				if (empty($objecttmp->date_echeance)) {
@@ -519,7 +522,7 @@ if (empty($reshook)) {
 								$date_start,
 								$date_end,
 								0,
-								(int) $lines[$i]->info_bits,
+								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
 								$rang,
@@ -633,7 +636,7 @@ $title = $langs->trans('Receptions');
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'bodyforlist mod-reception page-list');
 
-$sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as delivery_date, l.date_delivery as date_reception2, e.fk_statut as status, e.billed,";
+$sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as delivery_date, l.date_delivery as date_reception2, e.fk_statut as status, e.billed, e.note_private, e.note_public,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -700,6 +703,13 @@ if ($search_date_delivery_end) {
 if ($search_date_create_start) {
 	$sql .= " AND e.date_creation >= '".$db->idate($search_date_create_start)."'";
 }
+
+if ($search_note_public) {
+	$sql .= " AND e.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+}
+if ($search_note_private) {
+	$sql .= " AND e.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
+}
 if ($search_date_create_end) {
 	$sql .= " AND e.date_creation <= '".$db->idate($search_date_create_end)."'";
 }
@@ -738,11 +748,7 @@ $sql .= $hookmanager->resPrint;
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (empty($reshook)) {
-	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
-} else {
-	$sql = $hookmanager->resPrint;
-}
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -757,7 +763,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1103,6 +1109,19 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+
+if (!empty($arrayfields['e.note_public']['checked'])) {
+	// Note public
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['e.note_private']['checked'])) {
+	// Note private
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_private" value="'.dol_escape_htmltag($search_note_private).'">';
+	print '</td>';
+}
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
@@ -1194,6 +1213,14 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tms']['label'], $_SERVER["PHP_SELF"], "e.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['e.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['e.note_public']['label'], $_SERVER["PHP_SELF"], "e.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['e.note_private']['label'], $_SERVER["PHP_SELF"], "e.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['e.fk_statut']['label'], $_SERVER["PHP_SELF"], "e.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -1230,6 +1257,8 @@ while ($i < $imaxinloop) {
 	$reception->status = $obj->status;
 	$reception->socid = $obj->socid;
 	$reception->billed = $obj->billed;
+	$reception->note_public = $obj->note_public;
+	$reception->note_private = $obj->note_private;
 
 	$reception->fetch_thirdparty();
 
@@ -1415,6 +1444,24 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['e.tms']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuserrel');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note public
+		if (!empty($arrayfields['f.note_public']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['f.note_private']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

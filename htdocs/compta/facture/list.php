@@ -41,17 +41,11 @@
  *	\ingroup    invoice
  *	\brief      List of customer invoices
  */
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 // Load Dolibarr environment
 require '../../main.inc.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -75,6 +69,15 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 
@@ -85,7 +88,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array:int');
+$toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
@@ -119,7 +122,6 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_dispute_status = GETPOST('search_dispute_status', 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
@@ -166,6 +168,8 @@ $search_datec_start = GETPOSTDATE('search_datec_start', 'getpost', 'tzuserrel');
 $search_datec_end = GETPOSTDATE('search_datec_end', 'getpostend', 'tzuserrel');
 $search_datem_start = GETPOSTDATE('search_datem_start', 'getpost', 'tzuserrel');
 $search_datem_end = GETPOSTDATE('search_datem_end', 'getpostend', 'tzuserrel');
+$search_note_private = GETPOST('search_note_private', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
 
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
 $searchCategoryInvoiceOperator = 0;
@@ -174,9 +178,7 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array:int');
-// to dump type seen by phpstan during analyse
-// \PHPStan\dumpType($searchCategoryInvoiceList);
+$searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
@@ -215,13 +217,14 @@ $error = 0;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Facture($db);
+
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_') ?: [];
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -233,7 +236,7 @@ $fieldstosearchall = array(
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
 	's.town' => "Town",
-	'pd.description' => 'ProductDescription',
+	'pd.description' => 'Description',
 );
 if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
@@ -294,8 +297,7 @@ $arrayfields = array(
 	'f.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'f.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'f.fk_fac_rec_source' => array('label' => 'GeneratedFromTemplate', 'checked' => '0', 'position' => 530, 'enabled' => '1'),
-	'f.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 990),
-	'f.dispute_status' => array('label' => "DisputeStatus", 'checked' => '-1', 'position' => 999),
+	'f.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
@@ -326,7 +328,7 @@ foreach ($object->fields as $key => $val) {
 			$arrayfields[$newkey] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? '0' : '1'),
-				'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+				'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 				'position' => $val['position'],
 				'help' => empty($val['help']) ? '' : $val['help'],
 			);
@@ -336,19 +338,9 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-// For POS context, we force some fields
-if ($contextpage == 'poslist') {
-	$arrayfields["f.module_source"]['checked'] = 1;
-	$arrayfields["f.pos_source"]['checked'] = 1;
-	$arrayfields["f.date_lim_reglement"]['checked'] = 0;
-	$arrayfields["f.total_ttc"]['checked'] = 1;
-	$arrayfields["f.tms"]['checked'] = 1;
-	$arrayfields["p.ref"]['checked'] = 0;
-}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-
 
 // Check only if it's an internal user, external users are already filtered by $socid
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
@@ -413,7 +405,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_multicurrency_montant_ht = '';
 	$search_multicurrency_montant_vat = '';
 	$search_multicurrency_montant_ttc = '';
-	$search_dispute_status = '';
 	$search_status = '';
 	$search_paymentmode = '';
 	$search_paymentterms = '';
@@ -748,6 +739,9 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT';
+if ($search_all) {
+	$sql = 'SELECT DISTINCT';	// Because of link to llx_facturedet
+}
 $sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
@@ -755,10 +749,9 @@ $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multic
 $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite,';
 $sql .= " f.fk_input_reason,";
 $sql .= " f.module_source, f.pos_source,";
-$sql .= ' f.paye as paye, f.fk_statut as status, f.import_key, f.close_code,';
+$sql .= ' f.paye as paye, f.fk_statut, f.import_key, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_modification, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' f.payment_reference, f.dispute_status,';
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
 $sql .= " s2.nom as name2,";
@@ -796,21 +789,14 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
-// Add a special index hint if we sort on datef. But only if there is not search filter set to avoid bad query plan
 if ($sortfield == "f.datef") {
-	$hasAnotherfilter = false;
-	foreach ($search_array_options as $v) {
-		if ($v !== '' && (string) $v !== '-1') {
-			$hasAnotherfilter = true;
-			break;
-		}
-	}
-	if (!$hasAnotherfilter) {
-		$sql .= $db->hintindex('idx_facture_datef');
-	}
+	$sql .= $db->hintindex('idx_facture_datef');
 }
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
+}
+if ($search_all) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid = pd.fk_facture';
 }
 if (!empty($search_fac_rec_source_title)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_rec as facrec ON f.fk_fac_rec_source = facrec.rowid';
@@ -820,6 +806,7 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE f.fk_soc = s.rowid';
@@ -934,13 +921,6 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_login) {
 	$sql .= natural_search(array('u.login', 'u.firstname', 'u.lastname'), $search_login);
 }
-if ($search_dispute_status != '-1' && $search_dispute_status != '') {
-	if ($search_dispute_status == '0') {
-		$sql .= " AND (f.dispute_status IS NULL OR f.dispute_status = 0)";
-	} else {
-		$sql .= " AND f.dispute_status IN (".$db->sanitize($search_dispute_status).")";
-	}
-}
 if ($search_status != '-1' && $search_status != '') {
 	if (is_numeric($search_status) && $search_status >= 0) {
 		if ($search_status == '0') {
@@ -995,6 +975,12 @@ if ($search_datelimit_end) {
 }
 if ($search_datec_start) {
 	$sql .= " AND f.datec >= '".$db->idate($search_datec_start)."'";
+}
+if ($search_note_public) {
+	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+}
+if ($search_note_private) {
+	$sql .= " AND p.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
 }
 if ($search_datec_end) {
 	$sql .= " AND f.datec <= '".$db->idate($search_datec_end)."'";
@@ -1135,34 +1121,13 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 
 if ($search_all) {
-	// Prepare the $sqltoadd for fields pd.* that need a test by doing a "or exits"
-	$sqltoadd = '';
-	$fieldstosearchallwithoutpd = array();
-	$fieldstosearchallwithpd = array();
-	foreach ($fieldstosearchall as $key => $val) {
-		if (!preg_match('/^pd\./', $key)) {
-			$fieldstosearchallwithoutpd[$key] = $val;
-		} else {
-			$fieldstosearchallwithpd[$key] = $val;
-		}
-	}
-
-	if (count($fieldstosearchallwithpd) > 0) {
-		$sqltoadd .= " OR EXISTS (SELECT pd.rowid FROM ".MAIN_DB_PREFIX."facturedet as pd WHERE pd.fk_facture = f.rowid";
-		$sqltoadd .= natural_search(array_keys($fieldstosearchallwithpd), '__KEYTOSEARCH__');
-		$sqltoadd .= ')';
-	}
-
-	$sql .= natural_search(array_keys($fieldstosearchallwithoutpd), $search_all, 0, 0, $sqltoadd);
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-if (empty($reshook)) {
-	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
-} else {
-	$sql = $hookmanager->resPrint;
-}
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -1179,7 +1144,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1191,7 +1156,6 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
-
 $resql = $db->query($sql);
 if (!$resql) {
 	dol_print_error($db);
@@ -1221,7 +1185,7 @@ if ($search_fk_fac_rec_source) {
 
 	$head = invoice_rec_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, $object->picto); // Add a div
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
 }
 
 $param = '';
@@ -1390,9 +1354,6 @@ if ($search_multicurrency_montant_vat != '') {
 if ($search_multicurrency_montant_ttc != '') {
 	$param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
 }
-if ($search_dispute_status != '') {
-	$param .= '&search_dispute_status='.urlencode($search_dispute_status);
-}
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
@@ -1441,9 +1402,6 @@ $arrayofmassactions = array(
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-if (isModEnabled('category') && $user->hasRight('facture', 'creer')) {
-	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
-}
 if ($user->hasRight('facture', 'paiement')) {
 	$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 }
@@ -1905,11 +1863,13 @@ if (!empty($arrayfields['f.date_closing']['checked'])) {
 if (!empty($arrayfields['f.note_public']['checked'])) {
 	// Note public
 	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.note_private']['checked'])) {
 	// Note private
 	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_private" value="'.dol_escape_htmltag($search_note_private).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
@@ -1922,14 +1882,6 @@ if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
 if (!empty($arrayfields['f.import_key']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
-	print '</td>';
-}
-// Dispute status
-if (!empty($arrayfields['f.dispute_status']['checked'])) {
-	print '<td class="liste_titre center parentonrightofpage">';
-	$liststatus = array('0' => $langs->trans("None"), '1' => $langs->trans("DisputeOpen"));
-	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->selectarray('search_dispute_status', $liststatus, $search_dispute_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
 }
 // Status
@@ -1947,6 +1899,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print $searchpicto;
 	print '</td>';
 }
+
 print "</tr>\n";
 
 $totalarray = array();
@@ -2174,17 +2127,11 @@ if (!empty($arrayfields['f.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['f.import_key']['label'], $_SERVER["PHP_SELF"], "f.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-// Dispute status
-if (!empty($arrayfields['f.dispute_status']['checked'])) {
-	print_liste_field_titre($arrayfields['f.dispute_status']['label'], $_SERVER["PHP_SELF"], "f.dispute_status,f.ref", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-// Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
@@ -2247,7 +2194,8 @@ if ($num > 0) {
 		$facturestatic->multicurrency_total_ht = $obj->multicurrency_total_ht;
 		$facturestatic->multicurrency_total_tva = $obj->multicurrency_total_vat;
 		$facturestatic->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
-		$facturestatic->status = $obj->status;
+		$facturestatic->statut = $obj->fk_statut;	// deprecated
+		$facturestatic->status = $obj->fk_statut;
 		$facturestatic->close_code = $obj->close_code;
 		$facturestatic->total_ttc = $obj->total_ttc;
 		$facturestatic->paye = $obj->paye;
@@ -2268,9 +2216,6 @@ if ($num > 0) {
 			$facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 			$facturestatic->situation_counter = $obj->situation_counter;
 		}
-
-		$facturestatic->payment_reference = $obj->payment_reference;
-		$facturestatic->dispute_status = $obj->dispute_status;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
@@ -2359,7 +2304,7 @@ if ($num > 0) {
 		} else {
 			// Show line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'"';
+			print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'"';
 			if ($contextpage == 'poslist') {
 				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
 				if (strpos($obj->ref, 'PROV') !== false) {
@@ -2959,6 +2904,8 @@ if ($num > 0) {
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
+
+
 			// Date creation
 			if (!empty($arrayfields['f.datec']['checked'])) {
 				print '<td class="nowraponall center">';
@@ -3030,18 +2977,6 @@ if ($num > 0) {
 				}
 			}
 
-			// Dispute status
-			if (!empty($arrayfields['f.dispute_status']['checked'])) {
-				print '<td class="nowrap center">';
-				if ($facturestatic->dispute_status) {
-					print yn(1);
-				}
-				print "</td>";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
 			// Status
 			if (!empty($arrayfields['f.fk_statut']['checked'])) {
 				print '<td class="nowrap center">';
@@ -3099,6 +3034,7 @@ $db->free($resql);
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+
 
 print '</table>'."\n";
 print '</div>'."\n";
