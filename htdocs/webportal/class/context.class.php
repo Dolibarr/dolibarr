@@ -716,19 +716,9 @@ class Context
 				if ($obj) {
 					$passcrypted = $obj->pass_crypted;
 
-					// Check crypted password
-					$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED', 'auto');
-
-					// By default, we use default setup for encryption rule
-					if (!in_array($cryptType, array('auto'))) {
-						$cryptType = 'auto';
-					}
-
 					// Check crypted password according to crypt algorithm
-					if ($cryptType == 'auto') {
-						if ($passcrypted && dol_verifyHash($pass, $passcrypted, '0')) {
-							$passok = true;
-						}
+					if ($passcrypted && dol_verifyHash($pass, $passcrypted, '0')) {
+						$passok = true;
 					}
 
 					// Password ok ?
@@ -778,19 +768,9 @@ class Context
 				if ($obj) {
 					$passcrypted = $obj->pass_crypted;
 
-					// Check crypted password
-					$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED', 'auto');
-
-					// By default, we use default setup for encryption rule
-					if (!in_array($cryptType, array('auto'))) {
-						$cryptType = 'auto';
-					}
-
 					// Check crypted password according to crypt algorithm
-					if ($cryptType == 'auto') {
-						if ($passcrypted && dol_verifyHash($pass, $passcrypted, '0')) {
-							$passok = true;
-						}
+					if ($passcrypted && dol_verifyHash($pass, $passcrypted, '0')) {
+						$passok = true;
 					}
 
 					// Password ok ?
