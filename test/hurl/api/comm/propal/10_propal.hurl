@@ -102,9 +102,9 @@ HTTP 400
 # POST internal source and "random" type
 POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a/internal
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: Type=random_type_65f0be7e9d538a6a not found in dictionary with proposal contact types"}}
+{"error":{"code":400,"message":"Bad Request: Type=random_type_65f0be7e9d538a6a not found in dictionary with active proposal contact types"}}
 
 # POST external source and "random" type
 POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a/external
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: Type=random_type_65f0be7e9d538a6a not found in dictionary with proposal contact types"}}
+{"error":{"code":400,"message":"Bad Request: Type=random_type_65f0be7e9d538a6a not found in dictionary with active proposal contact types"}}

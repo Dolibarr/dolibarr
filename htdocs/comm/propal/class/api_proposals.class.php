@@ -784,7 +784,8 @@ class Proposals extends DolibarrApi
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($type_result);
-				$type_kind = (string) $obj->source;
+				// variable called type here, but code in dictionary and database
+				$type_kind = (string) $obj->code;
 				array_push($type_array, $type_kind);
 				dol_syslog("type_kind=".$type_kind);
 				$i++;
@@ -792,17 +793,8 @@ class Proposals extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving a list of propal contact types: '.$this->db->lasterror());
 		}
-		if (!in_array($source, (array) $type_array, true)) {
-			throw new RestException(400, 'Type='.$type.' not found in dictionary with proposal contact types');
-		}
-
-
-		if ($source == 'external' && !in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
-			throw new RestException(500, 'Availables external types: BILLING, SHIPPING OR CUSTOMER');
-		}
-
-		if ($source == 'internal' && !in_array($type, array('SALESREPFOLL'), true)) {
-			throw new RestException(500, 'Availables internal types: SALESREPFOLL');
+		if (!in_array($type, (array) $type_array, true)) {
+			throw new RestException(400, 'Type='.$type.' not found in dictionary with active proposal contact types');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
@@ -811,6 +803,24 @@ class Proposals extends DolibarrApi
 
 		$result = $this->propal->add_contact($contactid, $type, $source);
 
+		if ($result == 0) {
+			throw new RestException(400, 'Already exists: Contact='.$contactid.' is already linked to the proposal='.$id.' as source='.$source.' and type='.$type);
+		} elseif ($result == -1) {
+			throw new RestException(400, 'Wrong contact='.$contactid);
+		} elseif ($result == -2) {
+			throw new RestException(400, 'Wrong type='.$type);
+		} elseif ($result == -3) {
+			throw new RestException(400, 'Not allowed contacts');
+		} elseif ($result == -4) {
+			throw new RestException(400, 'ErrorCommercialNotAllowedForThirdparty');
+		} elseif ($result == -5) {
+			throw new RestException(400, 'Trigger failed');
+		} elseif ($result == -6) {
+			throw new RestException(400, 'DB_ERROR_RECORD_ALREADY_EXISTS');
+		} elseif ($result == -7) {
+			throw new RestException(400, 'Some other error');
+		}
+
 		if (!$result) {
 			throw new RestException(500, 'Error when added the contact');
 		}
@@ -818,7 +828,7 @@ class Proposals extends DolibarrApi
 		return array(
 			'success' => array(
 				'code' => 200,
-				'message' => 'Contact linked to the proposal'
+				'message' => 'Contact='.$contactid.' linked to the proposal='.$id.' as '.$source.' '.$type
 			)
 		);
 	}
