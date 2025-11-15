@@ -6872,7 +6872,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by default)
- *	@param	string	$param       Add more parameters on sort url links ("" by default)
+ *	@param	string	$option       Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Options of attribute td ("" by default)
  *	@param  ?string	$sortfield   Current field used to sort
  *	@param  ?string	$sortorder   Current sort order
@@ -6881,9 +6881,9 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *  @param	int		$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
  *	@return	void
  */
-function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $param = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
+function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $option = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $param, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $option, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
 }
 
 /**
