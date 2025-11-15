@@ -19,9 +19,9 @@ do
 		TEST_public=false
 		;;
 		*)
-		COOKIE=$( echo "$arg" | grep -c -- '--cookiefile=' )
+		COOKIE=$( grep -c -- '--cookiefile=' <<< "$arg" )
 		if [[ 1 -eq ${COOKIE} ]]; then
-			COOKIEJAR=$( echo "$arg" | grep -- '--cookiefile=' | sed -e "s/--cookiefile=//" | awk '{print $1}' )
+			COOKIEJAR=$( grep -- '--cookiefile=' <<< "$arg" | sed -e "s/^.*--cookiefile=//" | awk '{print $1}' )
 		fi
 		;;
 	esac
