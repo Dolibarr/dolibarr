@@ -5449,24 +5449,6 @@ parameters:
 			path: ../../../htdocs/core/class/cstate.class.php
 
 		-
-			message: '#^Property Cstate\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cstate.class.php
-
-		-
-			message: '#^Property Cstate\:\:\$nom \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/cstate.class.php
-
-		-
-			message: '#^Property Cstate\:\:\$rowid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/cstate.class.php
-
-		-
 			message: '#^Property Ctypent\:\:\$libelle \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
