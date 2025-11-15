@@ -87,3 +87,24 @@ DOLAPIENTITY: 2
 HTTP 403
 {"error":{"code":403,"message":"Forbidden"}}
 
+# Capture a proposal ID number
+GET http://{{hostnport}}/api/index.php/proposals?limit=1
+HTTP 200
+[Captures]
+proposal_id: jsonpath "$[0]['id']"
+proposal_socid: jsonpath "$[0]['socid']"
+
+# POST random type and source
+POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a/random_source_989100dd0af388a9
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: Source=random_source_989100dd0af388a9 not found in dictionary with proposal contact types"}}
+
+# POST internal source and "random" type
+POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a/internal
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: Type=random_type_65f0be7e9d538a6a not found in dictionary with proposal contact types"}}
+
+# POST external source and "random" type
+POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a/external
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: Type=random_type_65f0be7e9d538a6a not found in dictionary with proposal contact types"}}

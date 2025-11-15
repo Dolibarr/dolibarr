@@ -310,6 +310,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
@@ -710,7 +711,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param int    $id             Id of commercial proposal to update
 	 * @param int    $contactid      Id of external or internal contact to add
-	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
+	 * @param string $type           Type (code in dictionary) of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
 	 * @param string $source         Source of the contact (usually either: internal, external)
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -735,10 +736,10 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
+		// test source
 		if (empty($source)) {
 			throw new RestException(400, 'Source can not be empty');
 		}
-
 		$sql_distinct_source = "SELECT DISTINCT source";
 		$sql_distinct_source .= " FROM ".MAIN_DB_PREFIX."c_type_contact";
 		$sql_distinct_source .= " WHERE element LIKE 'propal'";
@@ -748,7 +749,7 @@ class Proposals extends DolibarrApi
 		$source_array = array();
 
 		if ($source_result) {
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($source_result);
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($source_result);
@@ -760,10 +761,41 @@ class Proposals extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving a list of propal contact sources: '.$this->db->lasterror());
 		}
-
 		if (!in_array($source, (array) $source_array, true)) {
 			throw new RestException(400, 'Source='.$source.' not found in dictionary with proposal contact types');
 		}
+
+		// test type
+		if (empty($type)) {
+			throw new RestException(400, 'type can not be empty');
+		}
+		// variable called type here, but code in dictionary and database
+		$sql_distinct_type = "SELECT DISTINCT code";
+		$sql_distinct_type .= " FROM ".MAIN_DB_PREFIX."c_type_contact";
+		$sql_distinct_type .= " WHERE element LIKE 'propal'";
+		$sql_distinct_type .= " AND source='".$this->db->escape($source)."'";
+		$sql_distinct_type .= " AND code is NOT NULL";
+		$sql_distinct_type .= " AND active != 0";
+		$type_result = $this->db->query($sql_distinct_type);
+		$type_array = array();
+
+		if ($type_result) {
+			$num = $this->db->num_rows($type_result);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($type_result);
+				$type_kind = (string) $obj->source;
+				array_push($type_array, $type_kind);
+				dol_syslog("type_kind=".$type_kind);
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving a list of propal contact types: '.$this->db->lasterror());
+		}
+		if (!in_array($source, (array) $type_array, true)) {
+			throw new RestException(400, 'Type='.$type.' not found in dictionary with proposal contact types');
+		}
+
 
 		if ($source == 'external' && !in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
 			throw new RestException(500, 'Availables external types: BILLING, SHIPPING OR CUSTOMER');
