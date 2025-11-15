@@ -53,6 +53,9 @@ parameters:
 	# checkAlwaysTrueCheckTypeFunctionCall: false
 	# checkAlwaysTrueInstanceof: false
 	# checkAlwaysTrueStrictComparison: false
+	polluteScopeWithLoopInitialAssignments: false
+	polluteScopeWithAlwaysIterableForeach: false
+	polluteScopeWithBlock: false
 	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
@@ -66,8 +69,6 @@ parameters:
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
 	reportStaticMethodSignatures: false
-	polluteScopeWithLoopInitialAssignments: true
-	polluteScopeWithAlwaysIterableForeach: true
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
