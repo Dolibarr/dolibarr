@@ -93,7 +93,7 @@ HTTP 400
 # GET products in warehouse with ID 0 - which should not exist
 GET http://{{hostnport}}/api/index.php/warehouses/0/products
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: No warehouse with id=0 can exist"}}
+{"error":{"code":400,"message":"Bad Request: Invalid value specified for `id`. Minimum required value is 1."}}
 
 
 # GET warehouses DOLAPIENTITY: 1
