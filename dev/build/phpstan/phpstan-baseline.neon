@@ -843,18 +843,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/admin/stocktransfer.php
-
-		-
-			message: '#^Variable \$setupnotempty in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/admin/stocktransfer.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/admin/system/about.php
 
@@ -4377,12 +4365,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$array of function sort contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: '#^Variable \$listofobjectthirdparties in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
