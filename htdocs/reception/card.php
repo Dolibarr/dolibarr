@@ -2477,7 +2477,7 @@ if ($action == 'create' && $permissiontoadd) {
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 
-		//$origin = 'commande_fournisseur';
+		$origin = 'commande_fournisseur';
 
 		if ($origin && $origin_id > 0) {
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
