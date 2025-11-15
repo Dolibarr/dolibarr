@@ -136,7 +136,9 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No proposal with id=0 can exist');
+		}
 		$result = $this->propal->fetch($id, $ref, $ref_ext);
 		if (!$result) {
 			throw new RestException(404, 'Commercial Proposal not found');
@@ -319,6 +321,12 @@ class Proposals extends DolibarrApi
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->propal->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
+			}
+			if ($field == 'id') {
+				throw new RestException(400, 'Creating with id field is forbidden');
+			}
+			if ($field == 'entity' && ((int) $value) != ((int) $conf->entity)) {
+				throw new RestException(403, 'Creating with entity='.((int) $value).' MUST be the same entity='.((int) $conf->entity).' as your API user/key belongs to');
 			}
 
 			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
@@ -847,7 +855,9 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
 		}
-
+		if ($id == 0) {
+			throw new RestException(400, 'No proposal with id=0 can exist');
+		}
 		$result = $this->propal->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
@@ -909,6 +919,10 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'supprimer')) {
 			throw new RestException(403);
 		}
+		if ($id == 0) {
+			throw new RestException(400, 'No proposal with id=0 can exist');
+		}
+
 		$result = $this->propal->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Commercial Proposal not found');
