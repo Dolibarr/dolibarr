@@ -703,15 +703,17 @@ class Proposals extends DolibarrApi
 	 * @param int    $id             Id of commercial proposal to update
 	 * @param int    $contactid      Id of external or internal contact to add
 	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
-	 * @param string $source         Source of the contact (internal, external)
+	 * @param string $source         Source of the contact (usually either: internal, external)
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}/{source}
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
+	 * @throws RestException 503
 	 */
 	public function postContact($id, $contactid, $type, $source = 'external')
 	{
@@ -725,8 +727,34 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if (!in_array($source, array('internal', 'external'), true)) {
-			throw new RestException(500, 'Availables sources: internal OR external');
+		if (empty($source)) {
+			throw new RestException(400, 'Source can not be empty');
+		}
+
+		$sql_distinct_source = "SELECT DISTINCT source";
+		$sql_distinct_source .= " FROM ".MAIN_DB_PREFIX."c_type_contact";
+		$sql_distinct_source .= " WHERE element LIKE 'propal'";
+		$sql_distinct_source .= " AND source is NOT NULL";
+		$sql_distinct_source .= " AND active != 0";
+		$source_result = $this->db->query($sql_distinct_source);
+		$source_array = array();
+
+		if ($source_result) {
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($source_result);
+				$source_kind = (string) $obj->source;
+				array_push($source_array, $source_kind);
+				dol_syslog("source_kind=".$source_kind);
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving a list of propal contact sources: '.$this->db->lasterror());
+		}
+
+		if (!in_array($source, (array) $source_array, true)) {
+			throw new RestException(400, 'Source='.$source.' not found in dictionary with proposal contact types');
 		}
 
 		if ($source == 'external' && !in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
