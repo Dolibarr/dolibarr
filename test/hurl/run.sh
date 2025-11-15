@@ -1,6 +1,31 @@
 #!/bin/bash
 # Script to run unit tests on API with hurl
-#
+
+# default is to do all tests
+TEST_API=true
+TEST_GUI=true
+TEST_public=true
+
+for arg in "$@"
+do
+	case "$arg" in
+		--noapi)
+		TEST_API=false
+		;;
+		--nogui)
+		TEST_GUI=false
+		;;
+		--nopublic)
+		TEST_public=false
+		;;
+		*)
+		COOKIE=$( echo "$arg" | grep -c -- '--cookiefile=' )
+		if [[ 1 -eq ${COOKIE} ]]; then
+			COOKIEJAR=$( echo "$arg" | grep -- '--cookiefile=' | sed -e "s/--cookiefile=//" | awk '{print $1}' )
+		fi
+		;;
+	esac
+done
 
 if [[ -z ${DOLIHOST+x} ]]; then
 	DOLIHOST="localhost"
@@ -31,14 +56,24 @@ find api/ gui/ public/ -type f -iname '00*.hurl' -exec hurl --variable "hostnpor
 if [[ -z ${DOLAPIKEY+x} ]]; then
 	echo "DOLAPIKEY bash variable is unset, no API tests that require authentication"
 else
-	echo "Now we are ready to run API tests that do require authentication"
-	find api/ -type f -iname '10*.hurl' -not -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "{}" + || exit 2
+	if [[ "true" == "${TEST_API}" ]]; then
+		echo "Now we are ready to run API tests that do require authentication"
+		find api/ -type f -iname '10*.hurl' -not -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "{}" + || exit 2
+	fi
 fi
 
-./save_login_cookie.sh
-if [[ -z ${COOKIEJAR+x} ]]; then
-	COOKIEJAR=/tmp/cookie.jar
+if [[ "true" == "${TEST_GUI}" ]]; then
+	if [[ -s "${COOKIEJAR}" ]]; then
+		true
+	else
+		./save_login_cookie.sh
+	fi
+	if [[ -z ${COOKIEJAR+x} ]]; then
+		COOKIEJAR=/tmp/cookie.jar
+	fi
+	echo "Now we are ready to run GUI tests that do require authentication"
+	find gui/ -type f -iname '10*.hurl' -not -iname 'save_login_cookie.hurl' -not -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --cookie "${COOKIEJAR}" --test "{}" + || exit 3
+	if [[ 0 -eq ${COOKIE} ]]; then
+		rm -rf "${COOKIEJAR}"
+	fi
 fi
-echo "Now we are ready to run GUI tests that do require authentication"
-find gui/ -type f -iname '10*.hurl' -not -iname 'save_login_cookie.hurl' -not -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --cookie "${COOKIEJAR}" --test "{}" + || exit 3
-rm -rf "${COOKIEJAR}"
