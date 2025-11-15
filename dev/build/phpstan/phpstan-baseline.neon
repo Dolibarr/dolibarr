@@ -5113,12 +5113,6 @@ parameters:
 			path: ../../../htdocs/core/class/cleadstatus.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/cleadstatus.class.php
-
-		-
 			message: '#^Property Comment\:\:\$description \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -5449,12 +5443,6 @@ parameters:
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/cproductnature.class.php
-
-		-
 			message: '#^Property Cstate\:\:\$code_departement \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -5477,12 +5465,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/class/cstate.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/core/class/ctypent.class.php
 
 		-
 			message: '#^Property Ctypent\:\:\$libelle \(string\) in isset\(\) is not nullable\.$#'
@@ -5518,12 +5500,6 @@ parameters:
 			message: '#^Property CUnits\:\:\$unit_type \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
-			path: ../../../htdocs/core/class/cunits.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/core/class/cunits.class.php
 
 		-
