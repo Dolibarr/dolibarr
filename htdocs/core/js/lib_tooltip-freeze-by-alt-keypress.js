@@ -1,13 +1,34 @@
 /**
- * TOOTLTIP keep open when alt key pressed
- * note alt key must be pressed after tooltip is open (because tooltip can include tooltip...)
+ * Tooltip: keep tooltip open when Alt key is pressed
+ * Note: Alt key must be pressed AFTER the tooltip is opened
+ * because tooltips can contain links or other tooltips
  */
-$(function () { // .ready() callback, is only executed when the DOM is fully loaded
+$(function () {  // Execute when DOM is fully loaded
+
+	let altPressed = false;
+
+	/**
+	 * Track Alt key state globally
+	 * Tooltip events do not provide keyboard state (e.altKey is always undefined),
+	 * so we must store the real keyboard state manually.
+	 */
+	document.addEventListener("keydown", e => {
+		if(e.key === "Alt") altPressed = true;
+	});
+
+	document.addEventListener("keyup", e => {
+		if(e.key === "Alt") altPressed = false;
+	});
 
 	let tooltipContainerTarget = '.ui-tooltip[role="tooltip"] .ui-tooltip-content';
+	let noAjaxTooltipClass = '.classfortooltip, .classfortooltipdropdown';
+	let tooltipClass = noAjaxTooltipClass + ', .classforajaxtooltip';
 
+	/**
+	 * Close all opened tooltips from scope
+	 */
 	let closeOpenedTooltips = function (){
-		$(".classfortooltip, .classfortooltipdropdown").each(function() {
+		$(tooltipClass).each(function() {
 			if($( this ).data('ui-tooltip')){
 				$( this ).tooltip( "close" );
 			}
@@ -32,34 +53,37 @@ $(function () { // .ready() callback, is only executed when the DOM is fully loa
 	// });
 
 	/**
-	 * On release key tooltip vanish
+	 * Any key release closes all tooltips
+	 * (Alt key release ends the "stay open" behavior)
 	 */
 	document.addEventListener("keyup", function(evt) {
 		closeOpenedTooltips();
 	});
 
 	/**
-	 * allow click on links in tooltip but remove [alt] + [click] Download behavior
+	 * Allow clicking links inside tooltips without triggering
+	 * the browser's default "Alt + click = download" behavior
 	 */
 	$(document).on('click', tooltipContainerTarget + ' a', function(evt) {
 		evt.preventDefault(); // no download
 
 		if(evt.ctrlKey || $(this).attr('target') == '_blank' ){
+			// Open link in new tab
 			let win = window.open(this.href, '_blank');
-			if (win) {
-				//Browser has allowed it to be opened
-				win.focus();
-			}
+			if (win) win.focus();
 		}
 		else{
+			// Standard navigation
 			window.location.href = this.href;
 		}
 	});
 
 	/**
-	 * Tooltip in a tooltip
+	 * Support nested tooltips (tooltip inside another tooltip)
+	 * Create sub-tooltips dynamically on first mouse enter
+	 * but not for ajax tooltips yet
 	 */
-	$(document).on('mouseenter', tooltipContainerTarget, function(evt){
+	$(document).on('mouseenter', noAjaxTooltipClass, function(evt){
 		$(this).find('.classfortooltip').each(function() {
 			if(!$( this ).data("tooltipset")){
 				console.log('ok');
@@ -76,8 +100,13 @@ $(function () { // .ready() callback, is only executed when the DOM is fully loa
 		});
 	});
 
-	$(".classfortooltip, .classfortooltipdropdown").on("tooltipclose", function (e) {
-		if (e.altKey && !$(this).data('opened-after-ctrl-pressed')) {
+	/**
+	 * When tooltip closes:
+	 * If Alt is pressed and tooltip wasn't opened while Alt was already pressed,
+	 * reopen the tooltip and keep it open (Alt-hold mode)
+	 */
+	$(tooltipClass).on("tooltipclose", function (e) {
+		if (altPressed && !$(this).data('opened-after-alt-pressed')) {
 			let delay = $(this).tooltip( "option", "show.delay");
 			$(this).tooltip( "option", "show.delay", 0); // save appear delay
 			$(this).tooltip( "open" );
@@ -86,7 +115,11 @@ $(function () { // .ready() callback, is only executed when the DOM is fully loa
 		}
 	});
 
-	$(".classfortooltip, .classfortooltipdropdown").on("tooltipopen", function (e) {
-		$(this).data('opened-after-ctrl-pressed', e.altKey);
+	/**
+	 * When tooltip opens, store whether Alt key was pressed at that moment
+	 * This prevents infinite reopen loops
+	 */
+	$(tooltipClass).on("tooltipopen", function (e) {
+		$(this).data('opened-after-alt-pressed', altPressed);
 	});
 });
