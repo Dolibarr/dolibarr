@@ -63,7 +63,6 @@ $arrayofparameters = array(
 );
 
 $error = 0;
-$setupnotempty = 0;
 
 
 /*
@@ -182,63 +181,12 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'stock');
 $head = stocktransferAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', '', -1, "stocktransfer@stocktransfer");
 
-
-/*if ($action == 'edit') {
-	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
-
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
-
-	foreach ($arrayofparameters as $key => $val)
-	{
-		print '<tr class="oddeven"><td>';
-		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'"></td></tr>';
-	}
-	print '</table>';
-
-	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
-
-	print '</form>';
-	print '<br>';
-} else {
-	if (!empty($arrayofparameters)) {
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
-
-		foreach ($arrayofparameters as $key => $val) {
-			$setupnotempty++;
-
-			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-			print '</td><td>'.getDolGlobalString($key).'</td></tr>';
-		}
-
-		print '</table>';
-
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-		print '</div>';
-	} else {
-		print '<br>'.$langs->trans("NothingToSetup");
-	}
-}*/
-
-
 $moduledir = 'stocktransfer';
 $myTmpObjects = array();
 $myTmpObjects[$moduledir] = array('includerefgeneration' => 1, 'includedocgeneration' => 1, 'class' => 'StockTransfer');
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	// Orders Numbering model
-	$setupnotempty++;
-
 	print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -343,7 +291,6 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	print "</table></div><br>\n";
 
 	// Document templates generators
-	$setupnotempty++;
 	$type = strtolower($myTmpObjectKey);
 
 	print load_fiche_titre($langs->trans("DocumentModules", $myTmpObjectKey), '', '');
@@ -518,11 +465,6 @@ print '</td></tr>';
 
 print '</table></div>';
 
-
-
-if (empty($setupnotempty)) {
-	print '<br>'.$langs->trans("NothingToSetup");
-}
 
 // Page end
 print dol_get_fiche_end();
