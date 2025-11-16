@@ -22,6 +22,12 @@ env:
   DOLIBARR_LOG: documents/dolibarr.log
   PHPSERVER_LOG: phpserver.log
   PHPSERVER_DOMAIN_PORT: 127.0.0.1:8000  # could be 127.0.0.1:8000 if config modified
+  DOLIPORT: 8000
+  DOLIHOST: 127.0.0.1
+  DOLIUSERNAME: admin
+  DOLIPASSWORD: admin
+  COOKIEJAR: "C:\\TEMP\\hurl_cookie${{ github.run_id }}.jar"
+  RUN_HURL_TESTS: ${{ github.event_name == 'workflow_dispatch' || github.repository != 'Dolibarr/dolibarr' }}
   CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
   PHP_INI_SCAN_DIR: C:\myphpini
   CKEY: win-ci-2
@@ -38,6 +44,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -82,6 +89,12 @@ jobs:
           # mariadb-version: ${{ matrix.mariadb-version }}
           database: travis  # Specify your database name
 
+      - uses: gacts/install-hurl@v1
+        if: ${{ env.RUN_HURL_TESTS == 'true' }}
+        #with:
+        #  disable-cache: true # disable cache usage
+        #  version: 1.2.0 # `latest` by default, but you can set a specific version to install
+
       - name: Create local php.ini with open_basedir restrictions
         shell: cmd
         # Objective: separate step, and before database initialisation to verify open_basedir restrictions
@@ -113,6 +126,8 @@ jobs:
           php -r "$d=__DIR__.'\documents/mytest';echo 'TEST PATH IS SHOWN: '.$d.PHP_EOL;"
           php -r "$d=__DIR__.'\documents/mytest';echo 'IS_DIR '.$d.' '.((int) is_dir($d)).PHP_EOL;"
           ECHO "The above should show 2 successful tests"
+          REM SETTING FOR HURL
+
 
       - name: Run Bash script that Initialises the database
         # Note this is bash (MSYS) on Windows
@@ -153,13 +168,17 @@ jobs:
           cat htdocs/conf/conf.php
           ECHO "#[endgroup]"
           ECHO "==== START PHP server"
-          start /B php -S %PHPSERVER_DOMAIN_PORT% -t htdocs >> %PHPSERVER_LOG% 2>&1
+          start /B php -S %PHPSERVER_DOMAIN_PORT% -t htdocs > %PHPSERVER_LOG% 2>&1
           ECHO "#[group]==== Output from curl on PHP server"
           curl "http://${{ env.PHPSERVER_DOMAIN_PORT }}"
           ECHO "#[endgroup]"
           ECHO "==== START PHPUNIT TESTS"
           REM 'DOSKEY' USED to recover error code (no pipefile equivalent in windows?)
           ( php "%PHPROOT%\phpunit" -d memory_limit=-1 -c %CD%\test\phpunit\phpunittest.xml "test\phpunit\AllTests.php" --exclude-group WindowsWaitingForFix & call doskey /exename=err err=%%^^errorlevel%% ) | "${{ env.TEE }}" "${{ env.PHPUNIT_LOG }}"
+          IF "${{ env.RUN_HURL_TESTS }}" == "true" (
+            ECHO "==== START HURL TESTS (${{ env.COOKIEJAR }})"
+            "C:\Program Files\Git\bin\bash.EXE" --noprofile --norc -e -o pipefail -c " export DOLIPORT='${{ env.DOLIPORT }}' ; export DOLIHOST='${{ env.DOLIHOST }}' ; export DOLIUSERNAME='${{ env.DOLIUSERNAME }}' ; export DOLIPASSWORD='${{ env.DOLIPASSWORD }}' ;  export COOKIEJAR='${{ env.COOKIEJAR }}' ; test/hurl/run.sh" 2>&1 | "${{ env.TEE }}" -a "${{ env.PHPUNIT_LOG }}"
+          )
           echo ""
           echo "Ensure that PHPUNIT completed (no early exit from code)"
           "${{ env.TAIL }}" -5 "${{ env.PHPUNIT_LOG }}" | "${{ env.GREP }}" -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)"  || EXIT /B 1
