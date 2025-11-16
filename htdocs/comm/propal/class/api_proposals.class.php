@@ -709,31 +709,26 @@ class Proposals extends DolibarrApi
 	 *
 	 * @since	10.0.0	Initial implementation
 	 *
-	 * @param int    $id             Id of commercial proposal to update
-	 * @param int    $contactid      Id of external or internal contact to add
-	 * @param string $type           Type (code in dictionary) of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
-	 * @param string $source         Source of the contact (usually either: internal, external)
+	 * @param int    $id            Id of commercial proposal to update
+	 * @param int    $contactid     Id of contact to add
+	 * @param string $type          Type (code in dictionary) of the contact (BILLING, SHIPPING, CUSTOMER + possibly your own)
+	 * @param string $source		internal=Contact intern (llx_user), external=Contact extern (llx_socpeople)
+	 * @param int    $notrigger		0=Enable all triggers (default), 1=Disable all triggers
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @url	POST {id}/contact/{contactid}/{type}/{source}
+	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 503
 	 */
-	public function postContact($id, $contactid, $type, $source = 'external')
+	public function postContact($id, $contactid, $type, $source = 'external', $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
-		}
-
-		$result = $this->propal->fetch($id);
-
-		if (!$result) {
-			throw new RestException(404, 'Proposal not found');
 		}
 
 		// test source
@@ -762,7 +757,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving a list of propal contact sources: '.$this->db->lasterror());
 		}
 		if (!in_array($source, (array) $source_array, true)) {
-			throw new RestException(400, 'Source='.$source.' not found in dictionary with proposal contact types');
+			throw new RestException(400, 'Combo of Source='.$source.' and Type='.$type.' not found in dictionary with active proposal contact types');
 		}
 
 		// test type
@@ -794,14 +789,19 @@ class Proposals extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving a list of propal contact types: '.$this->db->lasterror());
 		}
 		if (!in_array($type, (array) $type_array, true)) {
-			throw new RestException(400, 'Type='.$type.' not found in dictionary with active proposal contact types');
+			throw new RestException(400, 'Combo of Type='.$type.' and Source='.$source.' not found in dictionary with active proposal contact types');
 		}
 
+		// tests done, let's get it
+		$result = $this->propal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Proposal not found');
+		}
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->add_contact($contactid, $type, $source);
+		$result = $this->propal->add_contact($contactid, $type, $source, $notrigger);
 
 		if ($result == 0) {
 			throw new RestException(400, 'Already exists: Contact='.$contactid.' is already linked to the proposal='.$id.' as source='.$source.' and type='.$type);
