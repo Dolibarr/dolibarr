@@ -95,16 +95,19 @@ proposal_id: jsonpath "$[0]['id']"
 proposal_socid: jsonpath "$[0]['socid']"
 
 # POST random type and source
-POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a/random_source_989100dd0af388a9
+POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a
+{ "source" : "random_source_989100dd0af388a9" }
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: Source=random_source_989100dd0af388a9 not found in dictionary with proposal contact types"}}
+{"error":{"code":400,"message":"Bad Request: Combo of Source=random_source_989100dd0af388a9 and Type=random_type_65f0be7e9d538a6a not found in dictionary with active proposal contact types"}}
 
 # POST internal source and "random" type
-POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a/internal
+POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a
+{ "source" : "internal" }
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: Type=random_type_65f0be7e9d538a6a not found in dictionary with active proposal contact types"}}
+{"error":{"code":400,"message":"Bad Request: Combo of Type=random_type_65f0be7e9d538a6a and Source=internal not found in dictionary with active proposal contact types"}}
 
 # POST external source and "random" type
-POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a/external
+POST http://{{hostnport}}/api/index.php/proposals/{{ proposal_id }}/contact/{{ proposal_socid }}/random_type_65f0be7e9d538a6a
+{ "source" : "external" }
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: Type=random_type_65f0be7e9d538a6a not found in dictionary with active proposal contact types"}}
+{"error":{"code":400,"message":"Bad Request: Combo of Type=random_type_65f0be7e9d538a6a and Source=external not found in dictionary with active proposal contact types"}}
