@@ -66,7 +66,7 @@ body contains "No. of created projects by month"
 body contains "Amount of leads by month"
 body contains "Weighted amount of leads by month"
 
-# Check project taks/activities
+# Check project tasks/activities
 GET http://{{hostnport}}/projet/activity/index.php
 HTTP 200
 [Asserts]
