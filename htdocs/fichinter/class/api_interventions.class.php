@@ -560,16 +560,22 @@ class Interventions extends DolibarrApi
 	/**
 	 * Close an intervention
 	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 *  {
+	 *    "notrigger": 0
+	 *  }
+	 *
 	 * @since	7.0.0	Initial implementation
 	 *
-	 * @param	int		$id		Intervention ID
-	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 * @param	int		$id				Intervention ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers {@required true}
 	 *
 	 * @url		POST	{id}/close
 	 *
 	 * @return	Object
 	 *
 	 * @throws RestException
+	 *
 	 */
 	public function close($id, $notrigger = 0)
 	{
