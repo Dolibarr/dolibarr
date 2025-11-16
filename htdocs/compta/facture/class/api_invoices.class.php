@@ -349,6 +349,7 @@ class Invoices extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}

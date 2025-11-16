@@ -315,6 +315,7 @@ class Orders extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
