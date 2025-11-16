@@ -104,6 +104,7 @@ repos:
         name: Run local script before commit if it exists
         language: system
         entry: bash -c '[ ! -x local.sh ] || ./local.sh'
+        always_run: true
         pass_filenames: false
       - id: duplicate-lang-lines
         stages: [manual]
@@ -128,6 +129,20 @@ repos:
         files: (?x)^(htdocs/langs/(e[lnstu]|k[akmno]|s[lqrv]|b[nrs]|c[asy]|n[bel]|[ip]t|a[mr]|d[ae]|f[ar]|h[ei]|m[sy]|t[ag]|u[kr]|gl|ja|lo|ru|vi|zh)_[^/]*/.*\.lang)
         language: script
         entry: ./dev/tools/fixaltlanguages_pre-commit.sh
+        pass_filenames: true
+      - id: hurl-all
+        stages: [manual]
+        name: Run hurl tests
+        language: script
+        entry: test/hurl/run.sh
+        pass_filenames: false
+        always_run: true
+      - id: hurl
+        stages: [manual]
+        name: Run hurl tests on updated .hurl files
+        language: script
+        entry: test/hurl/run.sh
+        files: \.hurl$
         pass_filenames: true
 
   # Check PHP syntax
