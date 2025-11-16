@@ -23,6 +23,10 @@ do
 		if [[ 1 -eq ${COOKIE} ]]; then
 			COOKIEJAR=$( grep -- '--cookiefile=' <<< "$arg" | sed -e "s/^.*--cookiefile=//" | awk '{print $1}' )
 		fi
+		JUST=$( grep -c -- '--just=' <<< "$arg" )
+		if [[ 1 -eq ${JUST} ]]; then
+			JUST_ARG=$( grep -- '--just=' <<< "$arg" | sed -e "s/^.*--just=//" | awk '{print $1}' )
+		fi
 		;;
 	esac
 done
@@ -48,6 +52,13 @@ if ! command -v hurl &> /dev/null; then
 	echo The command hurl must be available.
 	exit 1
 fi
+
+if [[ 1 -eq ${JUST} ]]; then
+	find . -type f -iname *.hurl | grep "${JUST_ARG}" | xargs -I {} hurl --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "{}"
+	exit $?
+fi
+
+
 
 echo "First we run tests that do not require authentication"
 find api/ gui/ public/ -type f -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --test "{}" + || exit 1
