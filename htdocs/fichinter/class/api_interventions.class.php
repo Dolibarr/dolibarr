@@ -566,6 +566,7 @@ class Interventions extends DolibarrApi
 	 *  }
 	 *
 	 * @since	7.0.0	Initial implementation
+	 * @since	23.0.0	Added notrigger parameter
 	 *
 	 * @param	int		$id				Intervention ID
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers {@required true}
