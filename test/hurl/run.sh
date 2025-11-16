@@ -54,14 +54,15 @@ if ! command -v hurl &> /dev/null; then
 fi
 
 if [[ 1 -eq ${JUST} ]]; then
-	find . -type f -iname *.hurl | grep "${JUST_ARG}" | xargs -I {} hurl --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "{}"
+	find . -type f -iname '*.hurl' | grep "${JUST_ARG}" | xargs -I {} hurl --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "{}"
 	exit $?
 fi
 
-
-
 echo "First we run tests that do not require authentication"
-find api/ gui/ public/ -type f -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --test "{}" + || exit 1
+if [[ "true" == "${TEST_public}" ]]; then
+	find public/ -type f -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --test "{}" + || exit 1
+fi
+find api/ gui/ -type f -iname '00*.hurl' -exec hurl --variable "hostnport=${hostnport}" --test "{}" + || exit 1
 
 # Now we get ready to run tests that do require authentication
 if [[ -z ${DOLAPIKEY+x} ]]; then
