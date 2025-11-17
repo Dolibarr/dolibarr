@@ -54,7 +54,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -374,7 +374,6 @@ if (GETPOST('downloadcsv', 'alpha')) {
  */
 
 $form = new Form($db);
-$formother = new FormOther($db);
 
 if (GETPOST('withtab', 'alpha')) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
@@ -415,14 +414,7 @@ print $s;
 print "<br>\n";
 print "</div>\n";
 
-/*
-$htmltext = $langs->trans("UnalterableLogTool1");
-if ($mysoc->country_code == 'FR') {
-	$htmltext .= ' '.$langs->trans("UnalterableLogTool1FR");
-}
-$htmltext .= "<br>";
-*/
-
+$htmltext = '';
 $htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
 $htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
 
@@ -432,7 +424,7 @@ print info_admin($htmltext);
 print '<br>';
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+if ($contextpage != getDolDefaultContextPage(__FILE__)) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -707,7 +699,7 @@ if (is_array($blocks)) {
 				$totalvatamount[$block->action][$block->ref_object] = $total_vat;
 				$totalamount[$block->action][$block->ref_object] = $total_ttc;
 			} else {
-				$total_ttc = $block->amount;
+				$total_ttc = $block->amounts;
 			}
 
 			if (empty($total_ttc)) {
@@ -905,7 +897,7 @@ jQuery(document).ready(function () {
 		});
 
 		var mydialog = jQuery("#dialogforpopup");
-		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->trans("UnlaterableDataOfEvent")).'\',});
+		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->transnoentitiesnoconv("UnlaterableDataOfEvent")).'\',});
 		mydialog.dialog("open");
 		return false;
 	});

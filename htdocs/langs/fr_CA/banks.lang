@@ -94,7 +94,6 @@ AlreadyOneBankAccount=Déjà un compte bancaire défini
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=Variante de fichier SEPA
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=Oui = Enregistrer « Type de paiement » dans la section « Virement » du fichier SEPA<br><br>Lors de la génération d'un fichier XML SEPA pour les virements, la section « PaymentTypeInformation » peut désormais être placée à l'intérieur de la section « CreditTransferTransactionInformation » (au lieu de la section « Paiement »). Nous vous recommandons fortement de ne pas cocher cette case pour placer PaymentTypeInformation au niveau Paiement, car toutes les banques ne l'accepteront pas nécessairement au niveau CreditTransferTransactionInformation. Contactez votre banque avant de placer PaymentTypeInformation au niveau CreditTransferTransactionInformation.
 XNewLinesConciliated=%s nouvelle(s) ligne(s) conciliée(s)
-InSepa=Zone SEPA
 CountryIsInSepa=Pays de la zone SEPA
 BankAccountForcedOnRequest=Ce compte bancaire a été défini lors de la préparation de la demande de virement. Supprimez-le et reprenez la préparation depuis l'objet source si vous devez le modifier.
 BankAccountUsedByDefault=Il s’agit du compte bancaire par défaut du tiers.
