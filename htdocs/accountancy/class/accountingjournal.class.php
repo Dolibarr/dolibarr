@@ -816,7 +816,7 @@ class AccountingJournal extends CommonObject
 
 			// Discounted amount including tax
 			$paid    = (float) price2num($invoice_static->getSommePaiement(), 'MT');
-			$usedcn  = (float) price2num($invoice_static->getSumOfCreditNotesUsed(), 'MT');
+			$usedcn  = (float) price2num($invoice_static->getSumCreditNotesUsed(), 'MT');
 			$useddep = (float) price2num($invoice_static->getSumDepositsUsed(), 'MT');
 			$ttc_inv = (float) price2num($invoice_static->total_ttc, 'MT');
 			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
@@ -1120,7 +1120,7 @@ class AccountingJournal extends CommonObject
 
 			// Discounted amount including tax
 			$paid    = (float) price2num($invoicesupplier_static->getSommePaiement(), 'MT');
-			$usedcn  = (float) price2num($invoicesupplier_static->getSumOfCreditNotesUsed(), 'MT');
+			$usedcn  = (float) price2num($invoicesupplier_static->getSumCreditNotesUsed(), 'MT');
 			$useddep = (float) price2num($invoicesupplier_static->getSumDepositsUsed(), 'MT');
 			$ttc_inv = (float) price2num($invoicesupplier_static->total_ttc, 'MT');
 			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
@@ -1430,7 +1430,7 @@ class AccountingJournal extends CommonObject
 							$bookkeeping->subledger_label = $line['subledger_label'];
 							$bookkeeping->numero_compte = $line['numero_compte'];
 							$bookkeeping->label_compte = $line['label_compte'];
-							$bookkeeping->label_operation = $line['label_operation'];
+							$bookkeeping->label_operation = dol_string_nohtmltag($line['label_operation']);
 							$bookkeeping->montant = $line['montant']; // Deprecated: sens/debit/credit (and deprecated amount...)
 							$bookkeeping->sens = $line['sens'];
 							$bookkeeping->debit = (float) $line['debit'];
