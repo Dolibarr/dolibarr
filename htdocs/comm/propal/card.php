@@ -2221,7 +2221,7 @@ if ($action == 'create') {
 	$deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 	$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 	$fk_account = GETPOSTINT('fk_account');
-	$datepropal = (empty($datepropal) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE_PROPOSAL') ? -1 : '') : $datepropal);
+	$datepropal = (getDolGlobalString('MAIN_DO_NOT_AUTOFILL_DATE_PROPOSAL') ? -1 : '');		// By default '' so we will autofill date. -1 means keep empty.
 
 	// Load objectsrc
 	$objectsrc = null;
