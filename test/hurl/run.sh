@@ -7,6 +7,7 @@
 MYDIR=$(dirname "$(realpath "$0")")
 cd "${MYDIR}" || exit 100
 
+VERBOSE=--very-verbose  # for testing
 # Function to display help message
 display_help() {
 	cat <<EOHELP
