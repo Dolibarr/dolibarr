@@ -1072,9 +1072,10 @@ abstract class CommonDocGenerator
 
 		// Add info from $object->origin_object which has been loaded by fetch() of shipment
 		if ($object->origin_type == 'commande' && is_object($object->origin_object) && !empty($object->origin_object->ref)) {
-			'@phan-var-force Commande $object->origin_object';
-			$array_shipment['order_ref'] = $object->origin_object->ref;
-			$array_shipment['order_ref_customer'] = $object->origin_object->ref_customer;
+			$originOrder = $object->origin_object;
+			'@phan-var-force Commande $originOrder';
+			$array_shipment['order_ref'] = $originOrder->ref;
+			$array_shipment['order_ref_customer'] = $originOrder->ref_customer;
 		}
 
 		return $array_shipment;
