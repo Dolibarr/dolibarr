@@ -48,11 +48,15 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 $includecustom = 0;
 $includeconstants = array();
 $buildzip = 0;
+$release = '';
+$checklock = '';
 
 print '***** '.$script_file.' *****'."\n";
 
 if (empty($argv[1])) {
 	print "Usage:   ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
+	print "Usage:   ".$script_file." checklock=auto[-mybuild]|x.y.z[-mybuild] unalterable_files\n";
+	print "\n";
 	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=ES:CONST_XX_IS_ON includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
 	print "\n";
 	print "Generate the file filelist-x.y.z[-mybuild].xml with signature of files. ";
@@ -62,6 +66,8 @@ if (empty($argv[1])) {
 	print "- dolibarr_unalterable_files (only files inside the scope of the unalterable module)\n";
 	print "and if a specific setup/parameter need to be included into the signature for check:\n";
 	print "- dolibarr_constants\n";
+	print "\n";
+	print "If used with parameter 'check_unalterable_files', it will validate that the signature generated is the samethan the one found into lockedfiles.txt";
 	print "\n";
 	exit(1);
 }
@@ -76,8 +82,14 @@ while ($i < $argc) {
 	if (!empty($result["release"])) {
 		$release = $result["release"];
 	}
+	if (!empty($result["checklock"])) {
+		$checklock = $result["checklock"];
+	}
 	if (!empty($result["includecustom"])) {
 		$includecustom = $result["includecustom"];
+	}
+	if (preg_match('/unalterable_files/', strval($argv[$i]))) {
+		$checksource = 'unalterable_files';
 	}
 	if (preg_match('/includeconstant=/', strval($argv[$i]))) {
 		$tmp = explode(':', $result['includeconstant'], 3);			// $includeconstant has been set with previous parse_str()
@@ -93,9 +105,10 @@ while ($i < $argc) {
 	$i++;
 }
 
-if (empty($release)) {
-	print "Error: Missing release parameter\n";
+if (empty($release) && empty($checklock)) {
+	print "Error: Missing release or checklock parameter\n";
 	print "Usage: ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+	print "Usage: ".$script_file." checklock=auto[-mybuild]|x.y.z[-mybuild] unalterable_files\n";
 	exit(2);
 }
 
@@ -109,170 +122,216 @@ if ($tmpver[0] == 'auto') {
 		$release .= '-'.$tmpver[1];
 	}
 }
+// If release is auto, we take current version
+$tmpver = explode('-', $checklock, 2);
+if ($tmpver[0] == 'auto') {
+	$checklock = DOL_VERSION;
+	if (!empty($tmpver[1]) && $tmpver[0] == 'auto') {
+		$checklock .= '-'.$tmpver[1];
+	}
+}
 
-if (empty($includecustom)) {
-	$tmpverbis = explode('-', $release, 2);
-	if (empty($tmpverbis[1])) {
-		if (DOL_VERSION != $tmpverbis[0] && $savrelease != 'auto') {
-			print 'Error: When parameter "includecustom" is not set and there is no suffix in release parameter, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
-			print "Usage:   ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
-			exit(3);
+$checklockmajorversion = '';
+if ($checklock) {
+	$checklockmajorversion = preg_replace('/-.*$/', '', $checklock);
+	$checklockmajorversion = preg_replace('/\..*/', '', $checklockmajorversion);
+	$checklockmajorversion .= '.0.0';
+}
+
+if ($release) {
+	if (empty($includecustom)) {
+		$tmpverbis = explode('-', $release, 2);
+		if (empty($tmpverbis[1])) {
+			if (DOL_VERSION != $tmpverbis[0] && $savrelease != 'auto') {
+				print 'Error:  When parameter "includecustom" is not set and there is no suffix in release parameter, version declared into filefunc.in.php ('.DOL_VERSION.') must be exactly the same value than "release" parameter ('.$tmpverbis[0].')'."\n";
+				print "Usage:  ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+				print "\n";
+				exit(3);
+			}
+		} else {
+			$tmpverter = explode('-', DOL_VERSION, 2);
+			if ($tmpverter[0] != $tmpverbis[0]) {
+				print 'Error:  When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must have value without prefix ('.$tmpverter[0].') that is exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
+				print "Usage:  ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+				print "\n";
+				exit(4);
+			}
 		}
 	} else {
-		$tmpverter = explode('-', DOL_VERSION, 2);
-		if ($tmpverter[0] != $tmpverbis[0]) {
-			print 'Error: When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must have value without prefix ('.$tmpverter[0].') that is exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
-			print "Usage:   ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
-			exit(4);
+		if (!preg_match('/'.preg_quote(DOL_VERSION, '/').'-/', $release)) {
+			print 'Error:  When parameter "includecustom" is set, version declared into filefunc.inc.php ('.DOL_VERSION.') must be used with a suffix into "release" parameter (ex: '.DOL_VERSION.'-mydistrib).'."\n";
+			print "Usage:  ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+			print "\n";
+			exit(5);
 		}
 	}
-} else {
-	if (!preg_match('/'.preg_quote(DOL_VERSION, '/').'-/', $release)) {
-		print 'Error: When parameter "includecustom" is set, version declared into filefunc.inc.php ('.DOL_VERSION.') must be used with a suffix into "release" parameter (ex: '.DOL_VERSION.'-mydistrib).'."\n";
-		print "Usage:   ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
-		exit(5);
-	}
 }
 
-print "Working on files into           : ".DOL_DOCUMENT_ROOT."\n";
-print "Release                         : ".$release."\n";
-print "Include custom dir in signature : ".(empty($includecustom) ? 'no' : 'yes')."\n";
-print "Include constants in signature  : ".(empty($includeconstants) ? 'none' : '');
-foreach ($includeconstants as $countrycode => $tmp) {
-	foreach ($tmp as $constname => $constvalue) {
-		print $constname.'='.$constvalue." ";
-	}
-}
-print "\n";
-
-//$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
-$outputdir = dirname(dirname(dirname(__FILE__))).'/htdocs/install';
-print 'Delete current files '.$outputdir.'/filelist*.xml*'."\n";
-dol_delete_file($outputdir.'/filelist*.xml*', 0, 1, 1);
-
-$checksumconcat = array();
-
-$outputfile = $outputdir.'/filelist-'.$release.'.xml';
-$fp = fopen($outputfile, 'w');
-if (empty($fp)) {
-	print 'Failed to open file '.$outputfile."\n";
+if ($checklock && empty($checksource)) {
+	print 'Error:  When action "checklock" is set, second parameter must be the scope family to check, for example "unalterable_files"'."\n";
+	print "Usage:  ".$script_file." checklock=auto[-mybuild]|x.y.z[-mybuild] unalterable_files\n";
+	print "\n";
 	exit(6);
 }
 
-$gitcommit = 'seetag';
-$branchname = preg_replace('/^(\d+\.\d+)\..*$/', '\1', $release);	// Keep only x.y into x.y.z
-$fileforgit = dirname(dirname(dirname(__FILE__))).'/.git/refs/heads/'.$branchname;
-print "Try to get last commit ID from file ".$fileforgit."\n";
-$fileforgitcontent = '';
-if (file_exists($fileforgit)) {
-	$fileforgitcontent = file_get_contents($fileforgit);
-}
-if (empty($fileforgitcontent)) {
-	print "Failed to get the last commit ID (are you on the branch for the release branch name ".$branchname." ?). We will use an empty value for gitcommit.\n";
-}
-$gitcommit = trim($fileforgitcontent);
-
-fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
-fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" gitcommit="'.$gitcommit.'">'."\n");
-
-$needtoclose = 0;
-
-foreach ($includeconstants as $countrycode => $tmp) {
-	fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
-	foreach ($tmp as $constname => $constvalue) {
-		$valueforchecksum = (empty($constvalue) ? '0' : $constvalue);
-		$checksumconcat[] = $valueforchecksum;
-		fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
-	}
-	fputs($fp, '</dolibarr_constants>'."\n\n");
-}
-
-fputs($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
-
-// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
-$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
-$files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
-
-$dir = '';
-foreach ($files as $filetmp) {
-	$file = $filetmp['fullname'];
-	//$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
-	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-	if ($newdir != $dir) {
-		if ($needtoclose) {
-			fputs($fp, '  </dir>'."\n");
-			$needtoclose = 0;
+if ($release) {
+	print "Working on files into           : ".DOL_DOCUMENT_ROOT."\n";
+	print "Version of target release       : ".$release."\n";
+	print "Include custom dir in signature : ".(empty($includecustom) ? 'no' : 'yes')."\n";
+	print "Include constants in signature  : ".(empty($includeconstants) ? 'none' : '');
+	foreach ($includeconstants as $countrycode => $tmp) {
+		foreach ($tmp as $constname => $constvalue) {
+			print $constname.'='.$constvalue." ";
 		}
-		fputs($fp, '  <dir name="'.$newdir.'">'."\n");
-		$dir = $newdir;
-		$needtoclose = 1;
 	}
-	if (filetype($file) == "file") {
-		$md5 = md5_file($file);
-		$checksumconcat[] = $md5;
-		fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
-	}
+	print "\n";
 }
-if ($needtoclose) {
-	fputs($fp, '  </dir>'."\n");
+if ($checklock) {
+	print "Working on files into               : ".DOL_DOCUMENT_ROOT."\n";
+	print "Version to check in lockedfiles.txt : ".$checklockmajorversion."\n";
+	print "Check source                        : ".$checksource."\n";
+}
+
+if ($release) {
+	//$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
+	$outputdir = dirname(dirname(dirname(__FILE__))).'/htdocs/install';
+	print 'Delete current files '.$outputdir.'/filelist*.xml*'."\n";
+	dol_delete_file($outputdir.'/filelist*.xml*', 0, 1, 1);
+}
+
+
+// Build the XML file
+if ($release) {
+	$checksumconcat = array();
+
+	$outputfile = $outputdir.'/filelist-'.$release.'.xml';
+	$fp = fopen($outputfile, 'w');
+	if (empty($fp)) {
+		print 'Failed to open file '.$outputfile."\n";
+		exit(7);
+	}
+
+	$gitcommit = 'seetag';
+	$branchname = preg_replace('/^(\d+\.\d+)\..*$/', '\1', $release);	// Keep only x.y into x.y.z
+	$fileforgit = dirname(dirname(dirname(__FILE__))).'/.git/refs/heads/'.$branchname;
+	print "Try to get last commit ID from file ".$fileforgit."\n";
+	$fileforgitcontent = '';
+	if (file_exists($fileforgit)) {
+		$fileforgitcontent = file_get_contents($fileforgit);
+	}
+	if (empty($fileforgitcontent)) {
+		print "Failed to get the last commit ID (are you on the branch for the release branch name ".$branchname." ?). We will use an empty value for gitcommit.\n";
+	}
+	$gitcommit = trim($fileforgitcontent);
+
+	fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
+	fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" gitcommit="'.$gitcommit.'">'."\n");
+
 	$needtoclose = 0;
-}
-fputs($fp, '</dolibarr_htdocs_dir>'."\n");
 
-asort($checksumconcat); // Sort list of checksum
-
-fputs($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
-fputs($fp, md5(join(',', $checksumconcat))."\n");
-fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n\n");
-
-
-// Add the checksum for the part in scripts
-
-$checksumconcat = array();
-
-fputs($fp, '<dolibarr_script_dir version="'.$release.'">'."\n");
-
-$regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-$regextoexclude = '(custom|documents|conf|install)$';  // Exclude dirs
-$files = dol_dir_list(dirname(__FILE__).'/../../scripts/', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
-$dir = '';
-foreach ($files as $filetmp) {
-	$file = $filetmp['fullname'];
-	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-	$newdir = str_replace(dirname(__FILE__).'/../../scripts', '', dirname($file));
-	if ($newdir != $dir) {
-		if ($needtoclose) {
-			fputs($fp, '  </dir>'."\n");
-			$needtoclose = 0;
+	foreach ($includeconstants as $countrycode => $tmp) {
+		fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
+		foreach ($tmp as $constname => $constvalue) {
+			$valueforchecksum = (empty($constvalue) ? '0' : $constvalue);
+			$checksumconcat[] = $valueforchecksum;
+			fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
 		}
-		fputs($fp, '  <dir name="'.$newdir.'">'."\n");
-		$dir = $newdir;
-		$needtoclose = 1;
+		fputs($fp, '</dolibarr_constants>'."\n\n");
 	}
-	if (filetype($file) == "file") {
-		$md5 = md5_file($file);
-		$checksumconcat[] = $md5;
-		fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
-	}
-}
-if ($needtoclose) {
-	fputs($fp, '  </dir>'."\n");
-	$needtoclose = 0;
-}
-fputs($fp, '</dolibarr_script_dir>'."\n");
 
-asort($checksumconcat); // Sort list of checksum
-fputs($fp, '<dolibarr_script_dir_checksum>'."\n");
-fputs($fp, md5(join(',', $checksumconcat))."\n");
-fputs($fp, '</dolibarr_script_dir_checksum>'."\n\n");
+	fputs($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
+
+	// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
+	$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
+	$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+	$files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
+
+	$dir = '';
+	foreach ($files as $filetmp) {
+		$file = $filetmp['fullname'];
+		//$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
+		$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+		if ($newdir != $dir) {
+			if ($needtoclose) {
+				fputs($fp, '  </dir>'."\n");
+				$needtoclose = 0;
+			}
+			fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+			$dir = $newdir;
+			$needtoclose = 1;
+		}
+		if (filetype($file) == "file") {
+			$md5 = md5_file($file);
+			$checksumconcat[] = $md5;
+			fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+		}
+	}
+	if ($needtoclose) {
+		fputs($fp, '  </dir>'."\n");
+		$needtoclose = 0;
+	}
+	fputs($fp, '</dolibarr_htdocs_dir>'."\n");
+
+	asort($checksumconcat); // Sort list of checksum
+	$md5htdocsdir = md5(join(',', $checksumconcat));
+
+	fputs($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
+	fputs($fp, $md5htdocsdir."\n");
+	fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n\n");
+
+
+	// Add the checksum for the part in scripts
+
+	$checksumconcat = array();
+
+	fputs($fp, '<dolibarr_scripts_dir version="'.$release.'">'."\n");
+
+	$regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+	$regextoexclude = '(custom|documents|conf|install)$';  // Exclude dirs
+	$files = dol_dir_list(dirname(__FILE__).'/../../scripts/', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
+	$dir = '';
+	foreach ($files as $filetmp) {
+		$file = $filetmp['fullname'];
+		$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+		$newdir = str_replace(dirname(__FILE__).'/../../scripts', '', dirname($file));
+		if ($newdir != $dir) {
+			if ($needtoclose) {
+				fputs($fp, '  </dir>'."\n");
+				$needtoclose = 0;
+			}
+			fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+			$dir = $newdir;
+			$needtoclose = 1;
+		}
+		if (filetype($file) == "file") {
+			$md5 = md5_file($file);
+			$checksumconcat[] = $md5;
+			fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+		}
+	}
+	if ($needtoclose) {
+		fputs($fp, '  </dir>'."\n");
+		$needtoclose = 0;
+	}
+	fputs($fp, '</dolibarr_scripts_dir>'."\n");
+
+	asort($checksumconcat); // Sort list of checksum
+	$md5scriptsdir = md5(join(',', $checksumconcat));
+
+	fputs($fp, '<dolibarr_scripts_dir_checksum>'."\n");
+	fputs($fp, $md5scriptsdir."\n");
+	fputs($fp, '</dolibarr_scripts_dir_checksum>'."\n\n");
+}
+
 
 
 // Add the checksum for the files into the scope of the unalterable system (record, read, export)
 
 $checksumconcat = array();
 
-fputs($fp, '<dolibarr_unalterable_files version="'.$release.'">'."\n");
+if ($release) {
+	fputs($fp, '<dolibarr_unalterable_files version="'.$release.'">'."\n");
+}
 
 // Array of dir/files to include in the section
 $arrayofunalterablefiles = array(
@@ -296,21 +355,29 @@ foreach ($arrayofunalterablefiles as $entry) {
 			$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
 			if ($newdir != $dir) {
 				if ($needtoclose) {
-					fputs($fp, '  </dir>'."\n");
+					if ($release) {
+						fputs($fp, '  </dir>'."\n");
+					}
 					$needtoclose = 0;
 				}
-				fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+				if ($release) {
+					fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+				}
 				$dir = $newdir;
 				$needtoclose = 1;
 			}
 			if (filetype($file) == "file") {
 				$md5 = md5_file($file);
 				$checksumconcat[] = $md5;
-				fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+				if ($release) {
+					fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+				}
 			}
 		}
 		if ($needtoclose) {
-			fputs($fp, '  </dir>'."\n");
+			if ($release) {
+				fputs($fp, '  </dir>'."\n");
+			}
 			$needtoclose = 0;
 		}
 	} else {
@@ -323,60 +390,100 @@ foreach ($arrayofunalterablefiles as $entry) {
 		}
 		if ($newdir != $dir) {
 			if ($needtoclose) {
-				fputs($fp, '  </dir>'."\n");
+				if ($release) {
+					fputs($fp, '  </dir>'."\n");
+				}
 				$needtoclose = 0;
 			}
-			fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+			if ($release) {
+				fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+			}
 			$dir = $newdir;
 			$needtoclose = 1;
 		}
 		if (filetype($file) == "file") {
 			$md5 = md5_file($file);
 			$checksumconcat[] = $md5;
-			fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+			if ($release) {
+				fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+			}
 		}
 		if ($needtoclose) {
-			fputs($fp, '  </dir>'."\n");
+			if ($release) {
+				fputs($fp, '  </dir>'."\n");
+			}
 			$needtoclose = 0;
 		}
 	}
 }
 
-
-fputs($fp, '</dolibarr_unalterable_files>'."\n");
-
 asort($checksumconcat); // Sort list of checksum
-fputs($fp, '<dolibarr_unalterable_files_checksum>'."\n");
-fputs($fp, md5(join(',', $checksumconcat))."\n");
-fputs($fp, '</dolibarr_unalterable_files_checksum>'."\n\n");
+$md5unalterable_files = md5(join(',', $checksumconcat));
 
+if ($release) {
+	fputs($fp, '</dolibarr_unalterable_files>'."\n");
 
+	fputs($fp, '<dolibarr_unalterable_files_checksum>'."\n");
+	fputs($fp, $md5unalterable_files."\n");
+	fputs($fp, '</dolibarr_unalterable_files_checksum>'."\n\n");
 
-// End of file
+	// End of file
 
-fputs($fp, '</checksum_list>'."\n");
-fclose($fp);
+	fputs($fp, '</checksum_list>'."\n");
+	fclose($fp);
+}
 
 print "\n";
 
-if (empty($buildzip)) {
-	print "File ".$outputfile." generated.\n";
-} else {
-	if ($buildzip == '1' || $buildzip == 'zip') {
-		$result = dol_compress_file($outputfile, $outputfile.'.zip', 'zip');
-		if ($result > 0) {
-			dol_delete_file($outputfile);
-			print "File ".$outputfile.".zip generated.\n";
+if ($release) {
+	if (empty($buildzip)) {
+		print "File ".$outputfile." generated.\n";
+		print "Signature for htdocs files: ".$md5htdocsdir."\n";
+		print "Signature for scripts files: ".$md5scriptsdir."\n";
+		print "Signature for the ".count($checksumconcat)." unalterable files: ".$md5unalterable_files."\n";
+	} else {
+		if ($buildzip == '1' || $buildzip == 'zip') {
+			$result = dol_compress_file($outputfile, $outputfile.'.zip', 'zip');
+			if ($result > 0) {
+				dol_delete_file($outputfile);
+				print "File ".$outputfile.".zip generated.\n";
+			}
+		} elseif ($buildzip == '2' || $buildzip == 'gz') {
+			$result = dol_compress_file($outputfile, $outputfile.'.gz', 'gz');
+			if ($result > 0) {
+				dol_delete_file($outputfile);
+				print "File ".$outputfile.".gz generated.\n";
+			}
 		}
-	} elseif ($buildzip == '2' || $buildzip == 'gz') {
-		$result = dol_compress_file($outputfile, $outputfile.'.gz', 'gz');
-		if ($result > 0) {
-			dol_delete_file($outputfile);
-			print "File ".$outputfile.".gz generated.\n";
+	}
+}
+
+if ($checklock) {
+	print "Signature for unalterable files: ".$md5unalterable_files."\n";
+
+	$checksuminlockedfile = '';
+
+	// Now we check the content of lockedfiles.txt
+	$arraylocked = file(DOL_DOCUMENT_ROOT.'/../dev/lockedfiles.txt');
+	foreach ($arraylocked as $line) {
+		$tmparray = preg_split("/\s+/", $line, 3);
+		if ($tmparray[0] == $checklockmajorversion) {
+			$checksuminlockedfile = $tmparray[2];
+		}
+	}
+	if (empty($checksuminlockedfile)) {
+		print "The major version ".$checklockmajorversion." is not locked on the scope ".$checksource." (no entry found into dev/lockedfiles.txt).\n";
+	} elseif ($checksuminlockedfile != $md5unalterable_files) {
+		print "The major version ".$checklockmajorversion." is locked on scope '".$checksource."' to checksum ".$checksuminlockedfile."\n";
+		if ($checklockmajorversion != $checksource) {
+			print "The checksum now differs from the locked one, so we return an error.\n";
+			print "\n";
+			exit(10);
 		}
 	}
 }
 
 print "\n";
+
 
 exit(0);
