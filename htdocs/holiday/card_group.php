@@ -5,10 +5,10 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2017-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2017  Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020-2021  Udo Tamm					<dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var Societe $mysoc
  */
 
 // Get parameters
@@ -171,10 +173,10 @@ if (empty($reshook)) {
 		$users 		=  GETPOST('users', 'array');
 		$groups 	=  GETPOST('groups', 'array');
 
-		$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-		$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-		$date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
-		$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
+		$date_debut = dol_mktime(0, 0, 0, GETPOSTINT('date_debut_month'), GETPOSTINT('date_debut_day'), GETPOSTINT('date_debut_year'));
+		$date_fin = dol_mktime(0, 0, 0, GETPOSTINT('date_fin_month'), GETPOSTINT('date_fin_day'), GETPOSTINT('date_fin_year'));
+		$date_debut_gmt = dol_mktime(0, 0, 0, GETPOSTINT('date_debut_month'), GETPOSTINT('date_debut_day'), GETPOSTINT('date_debut_year'), 1);
+		$date_fin_gmt = dol_mktime(0, 0, 0, GETPOSTINT('date_fin_month'), GETPOSTINT('date_fin_day'), GETPOSTINT('date_fin_year'), 1);
 		$starthalfday = GETPOST('starthalfday');
 		$endhalfday = GETPOST('endhalfday');
 		$type = GETPOSTINT('type');
@@ -248,7 +250,7 @@ if (empty($reshook)) {
 		}
 
 		// If there is no Business Days within request
-		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+		$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday, $mysoc->country_id);
 		if ($nbopenedday < 0.5) {
 			setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 			$error++;
@@ -414,7 +416,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-			setEventMessages($errors, array(), 'errors');
+			setEventMessages('', $errors, 'errors');
 		}
 
 
@@ -508,7 +510,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$Tgroup[$obj->rowid] = $obj->nom;
 		}
 
-		print $form->multiselectarray('groups', $Tgroup, GETPOST('groups', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->multiselectarray('groups', $Tgroup, GETPOST('groups', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 
 		print '</td>';
 
@@ -543,7 +545,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 		}
 
-		print img_picto('', 'users', 'class="pictofixedwidth"') . $form->multiselectarray('users', $userlist, GETPOST('users', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'users', 'class="pictofixedwidth"') . $form->multiselectarray('users', $userlist, GETPOST('users', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print '</td>';
 
 		// Type
@@ -557,7 +559,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
 			$arraytypeleaves[$val['rowid']] = $labeltoshow;
 		}
-		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
+		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -609,8 +611,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (empty($include_users)) {
 			print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
 		} else {
-			// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
-			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
+			// Defined default approver (the forced approver of user or the supervisor if no forced value defined)
+			// Note: This use will be set only if the defined approver has permission to approve so is inside include_users
 			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
 			if (getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR')) {
 				$defaultselectuser = getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR'); // Can force default approver
@@ -618,7 +620,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			if (GETPOSTINT('valideur') > 0) {
 				$defaultselectuser = GETPOSTINT('valideur');
 			}
-			$s = $form->select_dolusers($defaultselectuser, "valideur", 1, '', 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+			$s = $form->select_dolusers($defaultselectuser, "valideur", 1, null, 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 			print img_picto('', 'user').$form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 		}
 
@@ -701,7 +703,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 	if ($result) {
 		// If draft and owner of leave
 		if ($object->status == Holiday::STATUS_VALIDATED && $cancreate) {
-			$object->oldcopy = dol_clone($object, 2);
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			//if ($autoValidation) $object->status = Holiday::STATUS_VALIDATED;
 
@@ -727,6 +729,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				// From
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
+
 				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
 				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
@@ -758,7 +761,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 				// option to notify the validator if the balance is less than the request
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $expediteur->country_id);
 
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
@@ -780,6 +783,10 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				} elseif ($object->halfday == 0 || $object->halfday == 2) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Afternoon";
+				} else {
+					// For static analysis, ensure variables are defined
+					$starthalfdaykey = "InvalidHalfday";
+					$endhalfdaykey = "InvalidHalfday";
 				}
 
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;

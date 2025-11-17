@@ -51,7 +51,7 @@ $element = GETPOST('element', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 if ($element === 'facture') {
-	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', 'rowid', 0);
+	restrictedArea($user, 'facture', $id, '', '', 'fk_soc', 'rowid', 0);
 } else {
 	accessforbidden('Bad value for element');
 }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Abbes Bahfir        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -407,7 +407,7 @@ class dolReceiptPrinter extends Printer
 			5 => $langs->trans('CONNECTOR_CUPS_PRINT'),
 		);
 
-		$this->resprint = Form::selectarray($htmlname, $options, $selected);
+		$this->resprint = Form::selectarray($htmlname, $options, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth150');
 
 		return 0;
 	}
@@ -432,7 +432,7 @@ class dolReceiptPrinter extends Printer
 			4 => $langs->trans('PROFILE_STAR'),
 		);
 
-		$this->profileresprint = Form::selectarray($htmlname, $options, $selected);
+		$this->profileresprint = Form::selectarray($htmlname, $options, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth150');
 		return 0;
 	}
 
@@ -514,7 +514,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function to add a printer template in db
 	 *
 	 *  @param    string    $name           Template name
-	 *  @param    int       $template       Template
+	 *  @param    string    $template       Template
 	 *  @return   int                       0 if OK; >0 if KO
 	 */
 	public function addTemplate($name, $template)
@@ -557,7 +557,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function to Update a printer template in db
 	 *
 	 *  @param    string    $name           Template name
-	 *  @param    int       $template       Template
+	 *  @param    string    $template       Template
 	 *  @param    int       $templateid     Template id
 	 *  @return   int                       0 if OK; >0 if KO
 	 */
@@ -590,10 +590,13 @@ class dolReceiptPrinter extends Printer
 	{
 		$error = 0;
 		$img = EscposImage::load(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_bw.png');
-		//$this->profile = CapabilityProfile::load("TM-T88IV");
+
+		// TODO Set the profile into $this->profile (used by initPrinter). Profile not used yet.
+
+		// Init printer
 		$ret = $this->initPrinter($printerid);
 		if ($ret > 0) {
-			setEventMessages($this->error, $this->errors, 'errors');
+			setEventMessages("initPrinter error: ".$this->error, $this->errors, 'errors');
 		} else {
 			try {
 				if ($addimgandbarcode) {
@@ -728,6 +731,10 @@ class dolReceiptPrinter extends Printer
 		//print '<pre>'.print_r($vals, true).'</pre>';
 		// print ticket
 		$nbcharactbyline = getDolGlobalInt('RECEIPT_PRINTER_NB_CHARACT_BY_LINE', 48);
+
+		// TODO Set the profile into $this->profile (used by initPrinter). Profile not used yet.
+
+		// Init printer
 		$ret = $this->initPrinter($printerid);
 
 		if ($ret > 0) {
@@ -902,10 +909,10 @@ class dolReceiptPrinter extends Printer
 						$this->printer->setTextSize(1, 1);
 						break;
 					case 'DOL_UNDERLINE':
-						$this->printer->setUnderline(true);
+						$this->printer->setUnderline(1);
 						break;
 					case 'DOL_UNDERLINE_DISABLED':
-						$this->printer->setUnderline(false);
+						$this->printer->setUnderline(0);
 						break;
 					case 'DOL_BEEP':
 						$this->printer->getPrintConnector() -> write("\x1e");
@@ -1066,7 +1073,11 @@ class dolReceiptPrinter extends Printer
 							break;
 						case 3:
 							$parameters = explode(':', $parameter);
-							$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+							if (empty($parameters[1])) {
+								$this->connector = new NetworkPrintConnector($parameters[0]);
+							} else {
+								$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+							}
 							break;
 						case 4:	// LPT1, smb://...
 							$this->connector = new WindowsPrintConnector(dol_sanitizePathName($parameter));
@@ -1078,6 +1089,9 @@ class dolReceiptPrinter extends Printer
 							$found = false;
 							break;
 					}
+
+					// TODO Set the profile into $this->profile by the caller of this method initPrinter. Profile not used yet.
+					// Note: currently $this->profile is always null, so will load "default".
 					if ($found) {
 						$this->printer = new Printer($this->connector, $this->profile);
 					} else {

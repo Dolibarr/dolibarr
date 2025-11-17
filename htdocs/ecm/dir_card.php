@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -48,9 +50,9 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 
-$module  = GETPOST('module', 'alpha');
+$module = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
-$pageid  = GETPOSTINT('pageid');
+$pageid = GETPOSTINT('pageid');
 if (empty($module)) {
 	$module = 'ecm';
 }
@@ -84,7 +86,7 @@ $ecmdir = new EcmDirectory($db);
 
 if ($module == 'ecm') {
 	// $section should be an int except if it is dir not yet created into EcmDirectory
-	$result = $ecmdir->fetch($section);
+	$result = preg_match('/^\d+$/', $section) ? $ecmdir->fetch((int) $section) : 0;
 	if ($result > 0) {
 		$relativepath = $ecmdir->getRelativePath();
 		$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
@@ -198,6 +200,7 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permissiontoupload) 
 // Update dirname or description
 if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 	$error = 0;
+	$oldlabel = '';
 
 	if ($module == 'ecm') {
 		$oldlabel = $ecmdir->label;
@@ -409,7 +412,7 @@ if ($module == 'ecm') {
 	if ($ecmdir->fk_user_c > 0) {
 		$userecm = new User($db);
 		$userecm->fetch($ecmdir->fk_user_c);
-		print $userecm->getNomUrl(1);
+		print $userecm->getNomUrl(-1);
 	}
 	print '</td></tr>';
 }
@@ -445,7 +448,7 @@ print $object->showOptionals($extrafields, ($action == 'edit' ? 'edit' : 'view')
 print '</table>';
 
 if ($action == 'edit') {
-	print $form->buttonsSaveCancel();
+	print '<br>'.$form->buttonsSaveCancel();
 }
 
 print '</div>';
@@ -462,16 +465,16 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '<div class="tabsAction">';
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().($module ? '&module='.$module : '').'&section='.$section.'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&module='.$module.'&section='.$section.'">'.$langs->trans('Edit').'</a>';
 	}
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().($module ? '&module='.$module : '').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().'&module='.$module.'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($module ? '&module='.urlencode($module) : '').'&section='.urlencode($section).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), '', $permissiontoadd);
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&module='.urlencode($module).'&section='.urlencode($section).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), '', $permissiontoadd);
 
 	print '</div>';
 }
@@ -494,7 +497,7 @@ if ($action == 'delete' || $action == 'delete_dir') {
 		);
 	}
 
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode(GETPOST('section', 'alpha')).($module ? '&module='.$module : '').($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode(GETPOST('section', 'alpha')).'&module='.$module.($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
 }
 
 
@@ -509,7 +512,7 @@ if ($user->hasRight('ecm', 'upload')) {
 // List of document
 if ($user->hasRight('ecm', 'read')) {
 	$param = '&amp;section=' . $section;
-	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload);
+	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->hasRight("ecm", "upload"));
 }
 */
 

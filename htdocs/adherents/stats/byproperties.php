@@ -49,7 +49,7 @@ if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
+restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
@@ -65,7 +65,7 @@ $langs->loadLangs(array("companies", "members"));
 
 $memberstatic = new Adherent($db);
 
-$title = $langs->trans("MembersStatisticsByProperties");
+$title = $langs->trans("MembershipStatistics");
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $title, $help_url, '', 0, 0, array('https://www.google.com/jsapi'), '', '', 'mod-member page-stats_byproperties');
@@ -84,6 +84,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.row
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
 $sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 $sql .= " GROUP BY d.morphy";
+
 $foundphy = $foundmor = 0;
 
 // Define $data array

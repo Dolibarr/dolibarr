@@ -2,6 +2,7 @@
 IdAgenda=şəxsiyyət hadisəsi
 Actions=Hadisələr
 Agenda=Gündəlik
+AgendaEvents=Gündəlik hadisələr
 TMenuAgenda=Gündəlik
 Agendas=Gündəliklər
 LocalAgenda=Defolt təqvim
@@ -44,6 +45,7 @@ PropalClosedRefusedInDolibarr=%s təklifi rədd edildi
 PropalValidatedInDolibarr=Təklif %s doğrulandı
 PropalBackToDraftInDolibarr=Təklif %s qaralama statusuna qayıdın
 PropalClassifiedBilledInDolibarr=Təklif %s təsnifləşdirilib
+InvoiceCreatedInDolibarr=%s faktura yaradıldı
 InvoiceValidatedInDolibarr=%s faktura təsdiqləndi
 InvoiceValidatedInDolibarrFromPos=%s faktura POS-dan təsdiq edilib
 InvoiceBackToDraftInDolibarr=Faktura %s qaralama statusuna qayıdın
@@ -137,8 +139,8 @@ AgendaUrlOptions1=Siz həmçinin çıxışı filtrləmək üçün aşağıdakı 
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s>TXPROTECT-9a4b739END1-ə avtomatik və ya əllə TX8 hadisələrini əldə edin</span
+AgendaUrlOptionsCode=<b>actioncode=%s>TXPROTECT-9a4b739fEND1 üçün yalnız TXPROTECT-9a4b739fEND1 verilmişdir.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> bayram günlərini əhatə edəcək.
 AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
 AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
@@ -202,6 +204,9 @@ AppointmentDuration = Görüş müddəti : %s
 BookingSuccessfullyBooked=Rezervasyonunuz yadda saxlanıldı
 BookingReservationHourAfter=%s tarixində görüşümüzü rezerv etməyi təsdiq edirik
 BookcalBookingTitle=Onlayn görüş
-Transparency = Transparency
-ReadMore = Read more
-ReadLess = Read less
+Transparency = Şəffaflıq
+ReadMore = Daha ətraflı oxuyun
+ReadLess = Daha az oxu
+RecurringEvent=Təkrarlanan hadisə
+EventPartOfARecurringSerie=Tədbir ID %s olan təkrarlanan seriyanın bir hissəsidir
+BookCalSystem=Onlayn rezervasiya

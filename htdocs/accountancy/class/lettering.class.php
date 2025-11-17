@@ -3,7 +3,7 @@
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,7 +292,6 @@ class Lettering extends BookKeeping
 	}
 
 	/**
-	 *
 	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
 	 * @param	bool		$partial		Partial lettering
@@ -434,7 +433,6 @@ class Lettering extends BookKeeping
 	}
 
 	/**
-	 *
 	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
 	 * @return	int							Nb of affectd rows or <0 if error
@@ -559,7 +557,7 @@ class Lettering extends BookKeeping
 				$group_error++;
 			}
 
-			// Lettering/Unlettering the group of bookkeeping lines
+			// Matching/Unmatching the group of bookkeeping lines
 			if (!$group_error && $do_it) {
 				if ($unlettering) {
 					$result = $this->deleteLettering($bookkeeping_lines);
@@ -769,8 +767,8 @@ class Lettering extends BookKeeping
 	/**
 	 * Get all bank ids from list of document ids of a type
 	 *
-	 * @param	array<string,int[]>		$document_ids	List of document id
-	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
+	 * @param	int[]		$document_ids	List of document id
+	 * @param	string		$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
 	 * @return	array<int,int>|int<-1,-1>	Return integer <0 if error otherwise all all bank ids from list of document ids of a type
 	 */
 	public function getBankLinesFromFkDocAndDocType($document_ids, $doc_type)
@@ -931,6 +929,10 @@ class Lettering extends BookKeeping
 			// Save list when is the first step of the recursive recursive function
 			$save_link_by_element = $link_by_element;
 			$save_element_by_link = $element_by_link;
+		} else {
+			// To satisfy static analysis (phpstan)
+			$save_link_by_element = null;
+			$save_element_by_link = null;
 		}
 
 		do {
@@ -954,7 +956,7 @@ class Lettering extends BookKeeping
 
 				// Set element id on the current group for each link key of the element
 				foreach ($link_keys as $key) {
-					$this->getGroupElements($link_by_element, $element_by_link, $key, $current_group);
+					$this->getGroupElements($link_by_element, $element_by_link, (string) $key, $current_group);
 				}
 			}
 

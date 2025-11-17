@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=One click Printing
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
-MenuDirectPrinting=One click Printing jobs
-DirectPrint=One click Print
+Module64000Name=Drukowanie jednym kliknięciem
+Module64000Desc=Włącz system drukowania jednym kliknięciem
+PrintingSetup=Konfiguracja systemu drukowania jednym kliknięciem
+PrintingDesc=Moduł ten dodaje przycisk Drukuj do różnych modułów, aby umożliwić drukowanie dokumentów bezpośrednio na drukarce bez konieczności otwierania dokumentu w innej aplikacji.
+MenuDirectPrinting=Jedno kliknięcie Drukowanie zadań
+DirectPrint=Jedno kliknięcie Drukuj
 PrintingDriverDesc=Zmienne konfiguracyjne dla sterownika wydruku.
 ListDrivers=Lista sterowników
 PrintTestDesc=Lista drukarek.
@@ -32,6 +32,7 @@ PRINTIPP_HOST=Serwer druku
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Login
 PRINTIPP_PASSWORD=Hasło
+PRINTIPP_SSL=Użyj SSL
 NoDefaultPrinterDefined=Nie zdefiniowano drukarki domyślnej
 DefaultPrinter=Drukarka domyślna
 Printer=Drukarka
@@ -47,8 +48,9 @@ IPP_Media=Nośnik drukarki
 IPP_Supported=Typ nośnika
 DirectPrintingJobsDesc=Ta strona pokazuje listę zadań wydruku dla dostępnych drukarek.
 GoogleAuthNotConfigured=Nie skonfigurowano protokołu Google OAuth. Włącz moduł OAuth i ustaw Google ID / Secret.
-GoogleAuthConfigured=Google OAuth credentials zostały znalezione w ustawieniach modułu OAuth.
+GoogleAuthConfigured=Znaleziono dane uwierzytelniające Google OAuth w konfiguracji modułu OAuth.
 PrintingDriverDescprintgcp=Zmienne konfiguracyjne dla sterownika drukowania Google Cloud Print.
 PrintingDriverDescprintipp=Zmienne konfiguracyjne dla sterownika drukowania Cups.
 PrintTestDescprintgcp=Lista drukarek dla Google Cloud Print.
-PrintTestDescprintipp=Lista drukarek do kubków.
+PrintTestDescprintipp=Lista drukarek dla Cups..
+Testbbbb

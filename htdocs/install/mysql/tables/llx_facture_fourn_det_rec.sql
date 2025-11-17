@@ -58,5 +58,6 @@ create table llx_facture_fourn_det_rec
   multicurrency_subprice_ttc double(24,8) DEFAULT 0,
   multicurrency_total_ht    double(24,8) DEFAULT 0,
   multicurrency_total_tva   double(24,8) DEFAULT 0,
-  multicurrency_total_ttc   double(24,8) DEFAULT 0
+  multicurrency_total_ttc   double(24,8) DEFAULT 0,
+  extraparams				 varchar(255)				 -- to stock other parameters in json format
 )ENGINE=innodb;

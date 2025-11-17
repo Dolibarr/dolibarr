@@ -6,8 +6,9 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025  		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,9 @@
 
 include_once 'inc.php';
 /**
+ * @var string $conffile
+ * @var string $conffiletoshow
+ *
  * @var Translate $langs
  *
  * @var string $dolibarr_main_db_host
@@ -39,16 +43,45 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_encrypted_pass
- * @var string $conffile
- * @var string $conffiletoshow
  */
+'
+@phan-var-force string $dolibarr_main_db_host
+@phan-var-force string $dolibarr_main_db_port
+@phan-var-force string $dolibarr_main_db_name
+@phan-var-force string $dolibarr_main_db_user
+@phan-var-force string $dolibarr_main_db_pass
+@phan-var-force string $dolibarr_main_db_encrypted_pass
+@phan-var-force string $conffile
+@phan-var-force string $conffiletoshow
+@phan-var-force ?bool $force_install_
+@phan-var-force ?string $force_install_packager
+@phan-var-force ?string $force_install_message
+@phan-var-force ?string $force_install_main_data_root
+@phan-var-force ?int<0,2> $force_install_noedit
+@phan-var-force ?string $force_install_type
+@phan-var-force ?string $force_install_dbserver
+@phan-var-force ?string $force_install_port
+@phan-var-force ?string $force_install_database
+@phan-var-force ?string $force_install_prefix
+@phan-var-force ?string $force_install_createdatabase
+@phan-var-force ?string $force_install_databaselogin
+@phan-var-force ?string $force_install_databasepass
+@phan-var-force ?string $force_install_databaserootlogin
+@phan-var-force ?string $force_install_databaserootpass
+@phan-var-force ?string $force_install_dolibarrlogin
+@phan-var-force ?string $force_install_nophpinfo
+@phan-var-force ?string $force_install_lockinstall
+@phan-var-force ?string $force_install_distrib
+@phan-var-force ?string $db_user_root
+@phan-var-force ?string $db_pass_root
+';
 
 $err = 0;
 
 $setuplang = GETPOST("selectlang", 'alpha', 3) ? GETPOST("selectlang", 'alpha', 3) : (GETPOST('lang', 'alpha', 1) ? GETPOST('lang', 'alpha', 1) : 'auto');
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("install", "errors"));
+$langs->loadLangs(array("install", "errors", "admin"));
 
 dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 
@@ -146,7 +179,7 @@ if (!empty($force_install_message)) {
 
 	<tr>
 		<td colspan="3" class="label">
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
 		</td>
 	</tr>
 
@@ -273,7 +306,7 @@ if (!empty($force_install_noedit)) {
 
 	<tr>
 		<td colspan="3" class="label"><br>
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
 		</td>
 	</tr>
 
@@ -303,6 +336,7 @@ if (!empty($force_install_noedit)) {
 	if (!isset($dolibarr_main_db_user)) {
 		$dolibarr_main_db_user = "";
 	}
+
 	?>
 	<tr>
 		<!-- Driver type -->
@@ -345,6 +379,8 @@ if (!empty($force_install_noedit)) {
 						$defaultype = 'mysql';
 					}
 
+					$testclass = '';
+					$testfunction = null;
 					// Show line into list
 					if ($type == 'mysql') {
 						$testfunction = 'mysql_connect';
@@ -555,7 +591,7 @@ if (!empty($force_install_noedit)) {
 	?>
 	<tr class="hidesqlite hideroot">
 		<td colspan="3" class="label"><br>
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 

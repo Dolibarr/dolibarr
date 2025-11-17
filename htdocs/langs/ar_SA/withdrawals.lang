@@ -40,9 +40,9 @@ CreditTransferSetup=إعداد تحويل الرصيد
 WithdrawStatistics=إحصائيات دفع الخصم المباشر
 CreditTransferStatistics=إحصاءات تحويل الائتمان
 LastWithdrawalReceipt=أحدث %s إيصالات الخصم المباشر
-MakeWithdrawRequest=تقديم طلب دفع الخصم المباشر
+MakeWithdrawRequest=Prepare Direct Debit
 MakeWithdrawRequestStripe=قم بإجراء طلب دفع بالخصم المباشر عبر Stripe
-MakeBankTransferOrder=قدم طلب تحويل رصيد
+MakeBankTransferOrder=Prepare Credit Transfer
 WithdrawRequestsDone=%s تم تسجيل طلبات الدفع بالخصم المباشر
 BankTransferRequestsDone=%s تم تسجيل طلبات تحويل الرصيد
 ThirdPartyBankCode=كود بنك الطرف الثالث
@@ -118,8 +118,8 @@ DateRUM=تاريخ توقيع التفويض
 RUMLong=مرجع التفويض الفريد
 RUMWillBeGenerated=إذا كانت فارغة ، فسيتم إنشاء UMR (مرجع التفويض الفريد) بمجرد حفظ معلومات الحساب المصرفي.
 WithdrawMode=وضع الخصم المباشر (FRST أو RCUR)
-WithdrawRequestAmount=مبلغ طلب الخصم المباشر:
-BankTransferAmount=مبلغ طلب تحويل الرصيد:
+WithdrawRequestAmount=مبلغ طلب الخصم المباشر
+BankTransferAmount=مبلغ طلب تحويل الرصيد
 WithdrawRequestErrorNilAmount=تعذر إنشاء طلب الخصم المباشر لمبلغ فارغ.
 SepaMandate=تفويض الخصم المباشر لمنطقة الدفعات الأوروبية الموحدة (SEPA)
 SepaMandateShort=تفويض SEPA
@@ -144,7 +144,9 @@ SEPAFRST=SEPA FRST
 ExecutionDate=تاريخ التنفيذ
 CreateForSepa=إنشاء ملف الخصم المباشر
 ICS=معرف الدائن - ICS
+ICSShort=ICS
 IDS=معرف المدين
+IDSShort=IDS
 END_TO_END=علامة "EndToEndId" SEPA XML - معرف فريد يتم تعيينه لكل معاملة
 USTRD="Unstructured" SEPA XML tag
 ADDDAYS=أضف أيام إلى تاريخ التنفيذ
@@ -164,7 +166,7 @@ TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=يختلف المبلغ ال�
 WarningSomeDirectDebitOrdersAlreadyExists=تحذير: هناك بالفعل بعض أوامر الخصم المباشر المعلقة (%s) المطلوبة لمبلغ %s
 WarningSomeCreditTransferAlreadyExists=تحذير: هناك بالفعل بعض عمليات تحويل الرصيد المعلقة (%s) المطلوبة لمبلغ %s
 UsedFor=تستخدم ل %s
-Societe_ribSigned=SEPA mandate signed
+Societe_ribSigned=توقيع اتفاقية منطقة المدفوعات الأوروبية الموحدة -SEPA-
 NbOfInvoiceToPayByBankTransferForSalaries=عدد رواتب المؤهلين الذين ينتظرون الدفع عن طريق تحويل الرصيد
 SalaryWaitingWithdraw=رواتب في انتظار الدفع عن طريق تحويل الرصيد
 RefSalary=الراتب

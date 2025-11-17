@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013  Charles-Fr BENKE		<charles.fr@benke.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +25,7 @@
  */
 
 /**
- *	Class to manage generation of HTML components for contract module
+ *	Class to manage generation of HTML components for intervention module
  */
 class FormIntervention
 {
@@ -51,24 +53,24 @@ class FormIntervention
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Show a combo list with contracts qualified for a third party
+	 *	Show a combo list with interventions qualified for a third party
 	 *
 	 *	@param	int		$socid      Id third party (-1=all, 0=only interventions not linked to a third party, id=intervention not linked or linked to third party id)
 	 *	@param  int		$selected   Id intervention preselected
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
-	 *	@param	int		$showempty	Show empty line ('1' or string to show for empty line)
+	 *	@param	string	$showempty	Show empty line ('1' or string to show for empty line)
 	 *	@param	bool	$draftonly	Show only drafts intervention
 	 *	@return string         		HTML code for the select list if OK, empty if KO
 	 */
-	public function select_interventions($socid = -1, $selected = 0, $htmlname = 'interventionid', $maxlength = 16, $showempty = 1, $draftonly = false)
+	public function select_interventions($socid = -1, $selected = 0, $htmlname = 'interventionid', $maxlength = 16, $showempty = '1', $draftonly = false)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
 
 		$out = '';
 
-		$hideunselectables = false;
+		$hideunselectables = getDolGlobalInt('MAIN_SHOW_UNSELECTABLES_IN_SELECT_INTERVENTIONS');
 
 		// Search all contacts
 		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
@@ -85,7 +87,7 @@ class FormIntervention
 			$sql .= " AND f.fk_statut = 0";
 		}
 
-		dol_syslog(get_class($this)."::select_intervention", LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_interventions", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$out .= '<select id="'.dol_escape_htmltag($htmlname).'" class="flat" name="'.dol_escape_htmltag($htmlname).'">';

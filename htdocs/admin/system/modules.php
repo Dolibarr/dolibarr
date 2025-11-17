@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,12 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-if (empty($user->admin)) {
-	accessforbidden();
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,10 +33,16 @@ if (empty($user->admin)) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+if (empty($user->admin)) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
+$action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
@@ -51,6 +51,7 @@ $search_id = GETPOST("search_id", 'alpha');
 $search_version = GETPOST("search_version", 'alpha');
 $search_permission = GETPOST("search_permission", 'alpha');
 
+$page = GETPOSTINT('page');
 $sortfield			= GETPOST('sortfield', 'aZ09comma');
 $sortorder			= GETPOST('sortorder', 'aZ09comma');
 
@@ -68,18 +69,18 @@ $object = new stdClass();
 
 // Definition of fields for lists
 $arrayfields = array(
-	'name' => array('label' => $langs->trans("Modules"), 'checked' => 1, 'position' => 10),
-	'version' => array('label' => $langs->trans("Version"), 'checked' => 1, 'position' => 20),
-	'id' => array('label' => $langs->trans("IdModule"), 'checked' => 1, 'position' => 30),
-	'module_position' => array('label' => $langs->trans("Position"), 'checked' => 1, 'position' => 35),
-	'permission' => array('label' => $langs->trans("IdPermissions"), 'checked' => 1, 'position' => 40)
+	'name' => array('label' => $langs->trans("Modules"), 'checked' => '1', 'position' => 10),
+	'version' => array('label' => $langs->trans("Version"), 'checked' => '1', 'position' => 20),
+	'id' => array('label' => $langs->trans("IdModule"), 'checked' => '1', 'position' => 30),
+	'module_position' => array('label' => $langs->trans("Position"), 'checked' => '1', 'position' => 35),
+	'permission' => array('label' => $langs->trans("IdPermissions"), 'checked' => '1', 'position' => 40)
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked:int<0,1>,position:int}> $arrayfields';
 
 $param = '';
 $info_admin = '';
+
 
 /*
  * Actions
@@ -95,7 +96,6 @@ if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
-
 
 // Load list of modules
 $moduleList = array();
@@ -229,10 +229,12 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("AvailableModules"), empty($page) ? 0 : $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_setup', 0, '', '', 0, 1, 1);
+if (!GETPOSTINT('hidetitle')) {
+	print_barre_liste($langs->trans("AvailableModules"), empty($page) ? 0 : $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_setup', 0, '', '', 0, 1, 1);
 
-print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>';
-print '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>';
+	print '<br>';
+}
 print '<br>';
 
 $mode = '';

@@ -98,6 +98,14 @@ $modules = array(
 		array(
 			'code' => 'MAIN_DELAY_SUPPLIER_BILLS_TO_PAY',
 			'img' => 'bill'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE',
+			'img' => 'propal'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL',
+			'img' => 'propal'
 		)
 	),
 	'service' => array(
@@ -143,6 +151,12 @@ $modules = array(
 			'img' => 'holiday'
 		),
 	),
+	'mrp' => array(
+		array(
+			'code' => 'MAIN_DELAY_MRP',
+			'img' => 'mrp'
+		),
+	),
 );
 
 $labelmeteo = array(0 => $langs->trans("No"), 1 => $langs->trans("Yes"), 2 => $langs->trans("OnMobileOnly"));
@@ -185,7 +199,6 @@ if ($action == 'update') {
 			}
 		}
 	}
-
 	dolibarr_set_const($db, "MAIN_DISABLE_METEO", GETPOST("MAIN_DISABLE_METEO"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_METEO_WITH_PERCENTAGE", GETPOST("MAIN_USE_METEO_WITH_PERCENTAGE"), 'chaine', 0, '', $conf->entity);
 
@@ -312,7 +325,7 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_M
 			$str_mode_enabled = $str_mode_percentage;
 		}
 		print '<br><a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
-		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.(getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? $conf->global->MAIN_USE_METEO_WITH_PERCENTAGE : '').'" />';
+		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE').'" />';
 
 		print '<br><br>';
 	} else {

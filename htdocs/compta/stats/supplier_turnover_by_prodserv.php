@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,7 +354,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
-	$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order((string) $sortfield, (string) $sortorder);
 
 	dol_syslog("supplier_turnover_by_prodserv", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -382,7 +382,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	// Show array
 	$i = 0;
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	// Extra parameters management
 	foreach ($headerparams as $key => $value) {
@@ -413,7 +413,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	//select thirdparty
 	print '<br>';
 	print img_picto('', 'company', 'class="paddingrightonly"');
-	print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"), 0, 0, [], '', 0, 0, 'maxwidth250');
+	print $form->select_thirdparty_list((string) $selected_soc, 'search_soc', '', $langs->trans("ThirdParty"), 0, 0, [], '', 0, 0, 'maxwidth250');
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
@@ -536,7 +536,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="right">100%</td>';
 		print '</tr>';
 
-		$db->free($result);
+		$db->free($resql);
 	} else {
 		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}

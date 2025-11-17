@@ -3,8 +3,8 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024   Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
 if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS' && !empty($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 	http_response_code(204);
 	exit;
 }
@@ -72,13 +72,13 @@ if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS
 if (preg_match('/\/explorer\/swagger\.json/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 // When we request url to get an API, we accept Cross site so we can make js API call inside another website
 if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -90,6 +90,15 @@ if (!$res && file_exists("../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string	$dolibarr_api_count_always_enabled
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
@@ -107,13 +116,6 @@ call_user_func(
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 
 $url = $_SERVER['PHP_SELF'];
@@ -381,6 +383,15 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 		}
 	}
 
+	$parameters = array('url' => $url, 'ip' => getUserRemoteIP(), 'moduleobject' => $moduleobject, 'classfile' => $classfile, 'classname' => $classname);
+	$object = $api;
+	$action = $api->r->requestMethod;
+	// Note that $action and $object may be modified by some hooks
+	$reshook = $hookmanager->executeHooks('beforeApiCall', $parameters, $object, $action);
+	if ($reshook < 0) {
+		dol_syslog('beforeapicall Failed to call hook '.$hookmanager->error, LOG_ERR);
+	}
+
 	dol_syslog('Search api file /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.', classname='.$classname);
 
 	$res = false;
@@ -423,7 +434,11 @@ if ($usecompression) {
 	}
 }
 
-//dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
+
+if (getDolGlobalString('MAIN_API_DEBUG')) {
+		dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.(int) $usecompression, LOG_DEBUG, 0, '_api');
+}
+
 
 Luracast\Restler\Defaults::$returnResponse = $usecompression;
 
@@ -452,7 +467,7 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 	echo $result;
 }
 
-if (getDolGlobalInt("API_ENABLE_COUNT_CALLS") && $api->r->responseCode == 200) {
+if ((getDolGlobalInt("API_ENABLE_COUNT_CALLS") || !empty($dolibarr_api_count_always_enabled)) && $api->r->responseCode == 200) {
 	$error = 0;
 	$db->begin();
 	$userid = DolibarrApiAccess::$user->id;

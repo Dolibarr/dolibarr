@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,9 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'PAY';
 
 	/**
@@ -54,6 +58,11 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 * @var string model name
 	 */
 	public $name = 'Cicada';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 30;
 
 
 	/**

@@ -54,3 +54,7 @@ SucessConvertImgWebp=Imaginile au fost duplicate cu succes
 SucessConvertChosenImgWebp=Imaginea aleasă a fost duplicată cu succes
 ECMDirName=Nume director
 ECMParentDirectory=Director părinte
+ShowFile=Afișare fișier
+FullPathOrig=Originea traseului complet
+GenOrUpload=Origine fișier
+FileHasAnIndexedTextContent=Fișierul are un conținut text indexat

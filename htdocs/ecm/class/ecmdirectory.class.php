@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +193,7 @@ class EcmDirectory extends CommonObject
 			$sql .= "fk_user_c";
 			$sql .= ") VALUES (";
 			$sql .= " '".$this->db->escape($this->label)."',";
-			$sql .= " '".$this->db->escape($conf->entity)."',";
+			$sql .= " '".$this->db->escape((string) $conf->entity)."',";
 			$sql .= " ".($this->fk_parent > 0 ? ((int) $this->fk_parent) : "null").",";
 			$sql .= " '".$this->db->escape($this->description)."',";
 			$sql .= " ".((int) $this->cachenbofdoc).",";
@@ -484,7 +484,7 @@ class EcmDirectory extends CommonObject
 
 		$result = '';
 		//$newref=str_replace('_',' ',$this->ref);
-		$newref = $this->ref;
+		$newref = (string) $this->ref;
 		$label = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly') . $langs->trans("ShowECMSection") . ': ' . $newref;
 		$linkclose = '"'.($more ? ' '.$more : '').' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
@@ -620,8 +620,8 @@ class EcmDirectory extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Reconstruit l'arborescence des categories sous la forme d'un tableau à partir de la base de donnée
-	 *	Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
+	 * 	Rebuild the tree into an array from the database table llx_ecm_directories
+	 *	Retruen an array('id','id_mere',...) sorted according to tree and with:
 	 *				id                  Id de la categorie
 	 *				id_mere             Id de la categorie mere
 	 *				id_children         Tableau des id enfant
@@ -798,8 +798,8 @@ class EcmDirectory extends CommonObject
 	 * NB2: if trigger fail, action should be canceled.
 	 * NB3: Should be deleted if EcmDirectory extend CommonObject
 	 *
-	 * @param   string    $triggerName   trigger's name to execute
-	 * @param   User      $user           Object user
+	 * @param   string    $triggerName    Trigger's name to execute
+	 * @param   ?User     $user           Object user
 	 * @return  int                       Result of run_triggers
 	 */
 	public function call_trigger($triggerName, $user)

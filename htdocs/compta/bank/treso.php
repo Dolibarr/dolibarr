@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com
  * Copyright (C) 2016-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -299,7 +299,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				$socialcontribstatic->ref = $tmpobj->ref;
 				$socialcontribstatic->id = $tmpobj->objid;
 				$socialcontribstatic->label = $tmpobj->type;
-				$ref = $socialcontribstatic->getNomUrl(1, 24);
+				$ref = $socialcontribstatic->getNomUrl(1, '24');
 
 				$totalpayment = -1 * $socialcontribstatic->getSommePaiement(); // Payment already done
 			}
@@ -365,7 +365,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				if ($tmpobj->total_ttc >= 0) {
 					print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>";
 				}
-				print '<td class="nowrap right">'.price($solde).'</td>';
+				print '<td class="nowraponall right"><span class="'.($solde >= 0 ? ' amount' : ' amountneg').'">'.price($solde).'</span></td>';
 				print "</tr>";
 			}
 

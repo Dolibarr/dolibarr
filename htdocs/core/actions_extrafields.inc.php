@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,10 +235,12 @@ if ($action == 'add') {
 					GETPOST('computed_value', 'alpha'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile', 'alpha'),
-					1,
+					'1',
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha'),
-					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
+					GETPOSTINT('printable'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
+					GETPOST("ai_prompt"),
+					(GETPOST('emptyonclone', 'alpha') ? 1 : 0)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -302,7 +305,7 @@ if ($action == 'update') {
 			$mesgs[] = $langs->trans("ErrorNoValueForSelectListType");
 			$action = 'edit';
 		}
-		if ($type == 'stars' && ($extrasize < 1|| $extrasize > 10)) {
+		if ($type == 'stars' && ($extrasize < 1 || $extrasize > 10)) {
 			$error++;
 			$langs->load("errors");
 			$mesgs[] = $langs->trans("ErrorSizeForStarsType");
@@ -420,8 +423,10 @@ if ($action == 'update') {
 					GETPOST('langfile'),
 					GETPOST('enabled', 'nohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha'),
-					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
+					GETPOSTINT('printable'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
+					GETPOST("ai_prompt"),
+					(GETPOST('emptyonclone', 'alpha') ? 1 : 0)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');

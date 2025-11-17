@@ -2,8 +2,8 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,32 +61,33 @@ $needlogin = 1;
 if (isset($_GET["modulepart"])) {
 	// Some value of modulepart can be used to get resources that are public so no login are required.
 
-	// For logo of company
+	// For logo of company (by definition, the company logo is public)
 	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
 	}
-	// For barcode live generation
+	// For barcode live generation (barcode are just a graph of a value, so can be public)
 	if ($_GET["modulepart"] == 'barcode') {
 		$needlogin = 0;
 	}
-	// Medias files
+	// Medias files (by definition medias files are for website so are public)
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
-	// Common files (files into /public/theme/common)
+	// Common files (public files embedded into /public/theme/common)
 	if ($_GET["modulepart"] == 'common') {
 		$needlogin = 0;
 	}
-	// User photo when user has made its profile public (for virtual credi card)
+	// User photo when user has made its profile public (for virtual credit card)
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}
-	// Used by TakePOS Auto Order
-	if ($_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
+	// Used by TakePOS Auto Order. TODO Image product may became public in this case. A security check to check that product is in takepos tree must be done later.
+	// isModEnabled is not defined, DOL_DOCUMENT_ROOT is not defined
+	if ($_GET["modulepart"] == 'product' /* && isModEnabled('takepos') */ && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
 	}
 }
-// For direct external download link, we don't need to load/check we are into a login session
+// For direct external download link (when files was shared for download using a hash link), we don't need to load/check we are into a login session
 if (isset($_GET["hashp"])) {
 	$needlogin = 0;
 }
@@ -114,6 +115,8 @@ if (is_numeric($entity)) {
 /**
  * Header empty
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string 			$head				Optional head lines
  * @param 	string 			$title				HTML title
  * @param	string			$help_url			Url links to help page
@@ -131,18 +134,20 @@ if (is_numeric($entity)) {
  * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 }
 /**
  * Footer empty
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @param	string	$comment    				A text to add as HTML comment into HTML generated page
  * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
  * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 }
 
@@ -299,7 +304,7 @@ if (!empty($hashp)) {
 } elseif (GETPOSTINT("publictakepos")) {
 	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
 		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
-		// TODO Replace this with a call of getPublicImageOfObject like used by website so
+		// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
 		// only shared images are visible
 	}
 } else {

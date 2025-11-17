@@ -50,7 +50,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	clear: both;
 }
 .timeline > li > .timeline-item {
-	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	box-shadow:  0 1px 3px rgba(0, 0, 0, 0.1);
 	border:1px solid #d2d2d2;
 	border-radius: 3px;
@@ -171,7 +170,6 @@ a.timeline-btn:hover
 .timeline-inverse > li > .timeline-item {
 	background: #f0f0f0;
 	border: 1px solid #ddd;
-	-webkit-box-shadow: none;
 	box-shadow: none;
 }
 .timeline-inverse > li > .timeline-item > .timeline-header {

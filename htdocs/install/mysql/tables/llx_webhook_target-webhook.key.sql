@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) 2025	Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,11 +17,9 @@
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_webhook_target ADD INDEX idx_webhook_target_rowid (rowid);
 ALTER TABLE llx_webhook_target ADD INDEX idx_webhook_target_ref (ref);
-ALTER TABLE llx_webhook_target ADD CONSTRAINT llx_webhook_target_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_webhook_target ADD INDEX idx_webhook_target_status (status);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_webhook_target ADD UNIQUE INDEX uk_webhook_target_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_webhook_target ADD CONSTRAINT llx_webhook_target_fk_field FOREIGN KEY (fk_field) REFERENCES llx_webhook_myotherobject(rowid);
-

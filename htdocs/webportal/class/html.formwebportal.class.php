@@ -2,8 +2,8 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ class FormWebPortal extends Form
 		$out .= '>';
 		*/
 
-		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '');
+		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '', '', '', '', 1, '', $placeholder);
 
 		return $out;
 	}
@@ -327,7 +327,8 @@ class FormWebPortal extends Form
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
+
+				$tmpout .= '<a href="' . $url . '"  class="btn-download-link ' . $morecss . '" role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
@@ -442,205 +443,24 @@ class FormWebPortal extends Form
 	}
 
 	/**
-	 * Output html form to select an object.
-	 * Note, this function is called by selectForForms or by ajax selectobject.php
-	 *
-	 * @param Object 		$objecttmp 			Object to know the table to scan for combo.
-	 * @param string 		$htmlname 			Name of HTML select component
-	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
-	 * @param string 		$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param string 		$searchkey 			Search value
-	 * @param string 		$placeholder 		Place holder
-	 * @param string 		$morecss 			More CSS
-	 * @param string 		$moreparams 		More params provided to ajax call
-	 * @param int 			$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
-	 * @param int 			$outputmode 		0=HTML select string, 1=Array
-	 * @param int 			$disabled 			1=Html component is disabled
-	 * @param string 		$sortfield 			Sort field
-	 * @param string 		$filter 			Add more filter (Universal Search Filter)
-	 * @return string|array<array{key:int,value:string,label:string}>	Return HTML string
-	 * @see selectForForms()
-	 */
-	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
-	{
-		global $conf, $langs, $hookmanager;
-
-		$prefixforautocompletemode = $objecttmp->element;
-		if ($prefixforautocompletemode == 'societe') {
-			$prefixforautocompletemode = 'company';
-		}
-		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode) . '_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
-
-		if (in_array($objecttmp->element, array('adherent_type'))) {
-			$fieldstoshow = 't.libelle';
-		}
-		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
-			$tmpfieldstoshow = '';
-			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
-					continue;
-				}
-				if (!empty($val['showoncombobox'])) {
-					$tmpfieldstoshow .= ($tmpfieldstoshow ? ',' : '') . 't.' . $key;
-				}
-			}
-			if ($tmpfieldstoshow) {
-				$fieldstoshow = $tmpfieldstoshow;
-			}
-		} elseif (!in_array($objecttmp->element, array('adherent_type'))) {
-			// For backward compatibility
-			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'showoncombobox' => 1);
-		}
-
-		if (empty($fieldstoshow)) {
-			if (isset($objecttmp->fields['ref'])) {
-				$fieldstoshow = 't.ref';
-			} else {
-				$langs->load("errors");
-				$this->error = $langs->trans("ErrorNoFieldWithAttributeShowoncombobox");
-				return $langs->trans('ErrorNoFieldWithAttributeShowoncombobox');
-			}
-		}
-
-		$out = '';
-		$outarray = array();
-		$tmparray = array();
-
-		$num = 0;
-
-		// Search data
-		$sql = "SELECT t.rowid, " . $fieldstoshow . " FROM " . $this->db->prefix() . $objecttmp->table_element . " as t";
-		if (isset($objecttmp->ismultientitymanaged)) {
-			if (!is_numeric($objecttmp->ismultientitymanaged)) {
-				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-				$sql .= " INNER JOIN " . $this->db->prefix() . $tmparray[1] . " as parenttable ON parenttable.rowid = t." . $tmparray[0];
-			}
-		}
-
-		if (!empty($objecttmp->isextrafieldmanaged)) {
-			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
-		}
-
-		// Add where from hooks
-		$parameters = array(
-			'object' => $objecttmp,
-			'htmlname' => $htmlname,
-			'filter' => $filter,
-			'searchkey' => $searchkey
-		);
-
-		$reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) {
-			$sql .= $hookmanager->resPrint;
-		} else {
-			$sql .= " WHERE 1=1";
-			if (isset($objecttmp->ismultientitymanaged)) {
-				if ($objecttmp->ismultientitymanaged == 1) {
-					$sql .= " AND t.entity IN (" . getEntity($objecttmp->table_element) . ")";
-				}
-				if (!is_numeric($objecttmp->ismultientitymanaged)) {
-					$sql .= " AND parenttable.entity = t." . $tmparray[0];
-				}
-			}
-			if ($searchkey != '') {
-				$sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-			}
-
-			if ($filter) {     // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-				$errormessage = '';
-				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
-				if ($errormessage) {
-					return 'Error forging a SQL request from an universal criteria: ' . $errormessage;
-				}
-			}
-		}
-		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
-
-		// Build output string
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			// Construct $out and $outarray
-			$out .= '<select id="' . $htmlname . '" class="' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ($moreparams ? ' ' . $moreparams : '') . ' name="' . $htmlname . '">' . "\n";
-
-			// Warning: Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'. Seems it is no more true with selec2 v4
-			$textifempty = '&nbsp;';
-
-			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (getDolGlobalString($confkeyforautocompletemode)) {
-				if ($showempty && !is_numeric($showempty)) {
-					$textifempty = $langs->trans($showempty);
-				} else {
-					$textifempty .= $langs->trans("All");
-				}
-			}
-			if ($showempty) {
-				$out .= '<option value="-1">' . $textifempty . '</option>' . "\n";
-			}
-
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num) {
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($resql);
-					$label = '';
-					$labelhtml = '';
-					$tmparray = explode(',', $fieldstoshow);
-					$oldvalueforshowoncombobox = 0;
-					foreach ($tmparray as $key => $val) {
-						$val = preg_replace('/t\./', '', $val);
-						$label .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
-						$labelhtml .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
-						$label .= $obj->$val;
-						$labelhtml .= $obj->$val;
-
-						$oldvalueforshowoncombobox = empty($objecttmp->fields[$val]['showoncombobox']) ? 0 : $objecttmp->fields[$val]['showoncombobox'];
-					}
-					if (empty($outputmode)) {
-						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
-							$out .= '<option value="' . $obj->rowid . '" selected data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
-						} else {
-							$out .= '<option value="' . $obj->rowid . '" data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
-						}
-					} else {
-						array_push($outarray, array('key' => $obj->rowid, 'value' => $label, 'label' => $label));
-					}
-
-					$i++;
-					if (($i % 10) == 0) {
-						$out .= "\n";
-					}
-				}
-			}
-
-			$out .= '</select>' . "\n";
-		} else {
-			dol_print_error($this->db);
-		}
-
-		$this->result = array('nbofelement' => $num);
-
-		if ($outputmode) {
-			return $outarray;
-		}
-
-		return $out;
-	}
-
-	/**
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField for common object
 	 *
+	 * @param Object			$object			Common object
 	 * @param array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val Array of properties for field to show
-	 * @param string 		$key 			Key of attribute
+	 * @param string 			$key 			Key of attribute
 	 * @param string|mixed[]	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param string 		$moreparam 		To add more parameters on html input tag
-	 * @param string 		$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string 		$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string 		$morecss 		Value for css to define style/length of field. May also be a numeric.
+	 * @param string 			$moreparam 		To add more parameters on html input tag
+	 * @param string 			$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$morecss 		Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
-	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	public function showInputFieldForObject($object, $val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		// TODO Replace code with
+		//return $object->showInputField($val, $key, $value, '', '', '', 0);
+
 		global $conf, $langs;
 
 		$out = '';
@@ -841,8 +661,8 @@ class FormWebPortal extends Form
 				}
 
 				if (!$filter_categorie) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
+					$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+					if (!empty($fields_label)) {
 						$keyList .= ', ';
 						$keyList .= implode(', ', $fields_label);
 					}
@@ -947,9 +767,12 @@ class FormWebPortal extends Form
 				} else {
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 					$categorytype = $InfoFieldList[5];
-					if (is_numeric($categorytype)) {
-						$categorytype = Categorie::$MAP_ID_TO_CODE[(int) $categorytype]; // For backward compatibility
+					if (is_numeric($categorytype)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+						$tmpcategory = new Categorie($this->db);
+						$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+						$categorytype = $MAP_ID_TO_CODE[(int) $categorytype];
 					}
+
 					$data = $this->select_all_categories($categorytype, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
@@ -965,7 +788,7 @@ class FormWebPortal extends Form
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
 				$showempty = (($required && $default != '') ? '0' : '1');
 
-				$out = $this->selectForForms($param_list[0], $htmlName, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
+				$out = $this->selectForForms($param_list[0], $htmlName, (int) $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
 				break;
 
@@ -982,18 +805,22 @@ class FormWebPortal extends Form
 	/**
 	 * Return HTML string to show a field into a page
 	 *
-	 * @param CommonObject $object Common object
+	 * @param CommonObject 		$object 		Common object
 	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
-	 * @param string $key Key of attribute
-	 * @param string|string[] $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param string $moreparam To add more parameters on html input tag
-	 * @param string $keysuffix Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string $keyprefix Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param mixed $morecss Value for css to define size. May also be a numeric.
+	 * @param string 			$key 			Key of attribute
+	 * @param string|string[] 	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param string 			$moreparam 		To add more parameters on html input tag
+	 * @param string 			$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param mixed 			$morecss 		Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
 	public function showOutputFieldForObject($object, $val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		// TODO Replace code with
+		//return $object->showOutputField($val, $key, $value, '', '', '', 0);
+		// We must just implement different case like output a ref that must not include the link into backoffice
+
 		global $conf, $langs;
 
 		$label = empty($val['label']) ? '' : $val['label'];
@@ -1060,7 +887,7 @@ class FormWebPortal extends Form
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = (string) dol_eval($computed, 1, 0, '2');
+			$value = (string) dol_eval((string) $computed, 1, 0, '2');
 		}
 
 		// Format output value differently according to properties of field
@@ -1069,7 +896,7 @@ class FormWebPortal extends Form
 		//
 		if (in_array($key, array('rowid', 'ref'))) {
 			if (property_exists($object, 'ref')) {
-				$value = $object->ref;
+				$value = (string) $object->ref;
 			} elseif (property_exists($object, 'id')) {
 				$value = $object->id;
 			} else {
@@ -1349,15 +1176,16 @@ class FormWebPortal extends Form
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						'@phan-var-force CommonObject $object';
+						/** @var CommonObject $object */
 						$result = $object->fetch($value);
 						$value = '';
 						if ($result > 0) {
 							if (property_exists($object, 'label')) {
-								$value = $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'libelle')) {
-								$value = $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
-								$value = $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
+								$value = (string) $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}

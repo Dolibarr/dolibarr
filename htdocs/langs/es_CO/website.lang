@@ -7,7 +7,6 @@ WEBSITE_ALIASALT=Nombres / alias de página alternativos
 WEBSITE_ALIASALTDesc=Use aquí la lista de otros nombres / alias para que también se pueda acceder a la página usando estos otros nombres / alias (por ejemplo, el nombre anterior después de cambiar el nombre del alias para mantener el vínculo de retroceso en el vínculo / nombre anterior funcionando). La sintaxis es: <br> nombrealternativo1, nombrealternativo2, ...
 WEBSITE_CSS_URL=URL del archivo CSS externo
 WEBSITE_CSS_INLINE=Contenido de archivo CSS (común a todas las páginas)
-WEBSITE_HTML_HEADER=Encabezado HTML (común a todas las páginas)
 WEBSITE_ROBOT=Archivo de robot (robots.txt)
 WEBSITE_KEYWORDSDesc=Use una coma para separar valores
 EnterHereReadmeInformation=Introduzca aquí una descripción del sitio web. Si distribuye su sitio web como plantilla, el archivo se incluirá en el paquete tentate.
@@ -44,6 +43,10 @@ VirtualHostUrlNotDefined=URL del host virtual servido por un servidor web extern
 NoPageYet=Aún no hay páginas
 SyntaxHelp=Ayuda sobre sugerencias de sintaxis específicas
 YouCanEditHtmlSourceckeditor=Puede editar el código fuente HTML usando el botón "Fuente" en el editor.
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Puede incluir código PHP en esta fuente usando las etiquetas <strong>&lt;?php ?&gt;</strong>. Están disponibles las siguientes variables globales: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> También puede incluir contenido de otra página/contenedor con la siguiente sintaxis:<br><strong>&lt;?php includeContainer('alias_del_contenedor_a_incluir'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Puede realizar una redirección a otra página/contenedor con la siguiente sintaxis (Nota: no muestre ningún contenido antes de una redirección):<br><span <strong>&lt;?php redirectToContainer('alias_del_contenedor_al_que_redireccionar'); ?&gt;</strong><br>También puede realizar una redirección con parámetros GET:<br><strong>&lt;?php redirectToContainer('alias_del_contenedor_al_que_redireccionar', '', 0, 0, $array_de_params_get); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Para agregar un enlace a otra página, use la sintaxis:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Puede establecer dinámicamente el <strong>título SEO y las meta etiquetas</strong> (título, palabras clave, descripción). Simplemente defina las siguientes variables:<br> <code>$__PAGE_TITLE__ = "Valor del título …";</code><br> <code>$__PAGE_KEYWORDS__ = "palabra clave1, palabra clave2, palabra clave3 …"; // Separados por comas</code><br> <code>$__PAGE_DESC__ = "Descripción ...";</code><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Para incluir un enlace <strong>para descargar</strong> un archivo almacenado en el directorio <strong>documents</strong>, utilice el archivo <strong>document.php</strong> contenedor:<br>Ejemplo, para un archivo en documentos/ecm (que debe registrarse), la sintaxis es:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un archivo en documentos/medios (directorio abierto para acceso público), la sintaxis es:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourced=Para un archivo compartido con un enlace compartido (acceso abierto utilizando la clave hash de uso compartido del archivo), la sintaxis es: <br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Para incluir una <strong>image</strong> almacenada en el directorio <strong>medias</strong> (directorio abierto para acceso público), use la ruta relativa que comienza con <strong>/media</strong>, ejemplo:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource3=Para obtener la URL de la imagen de un objeto PHP, utilice <br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Más ejemplos de código HTML o dinámico disponibles en <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">la documentación wiki</a>.<br>
@@ -58,10 +61,10 @@ FetchAndCreate=Obtener y crear
 Banner=Bandera
 WebsiteAccounts=Cuentas de sitios web
 BackToListForThirdParty=Volver al listado de terceros
-DisableSiteFirst=Ponga el sitio web fuera de línea primero
 MyContainerTitle=El título de mi sitio web
 AnotherContainer=Así es como se incluye el contenido de otra página / contenedor (puede tener un error aquí si habilita el código dinámico porque es posible que el subcontenedor incrustado no exista)
 SorryWebsiteIsCurrentlyOffLine=Lo sentimos, este sitio web está actualmente fuera de línea. Vuelve más tarde ...
+WEBSITE_USE_WEBSITE_ACCOUNTS=Habilitar la tabla de cuentas de sitios web para terceros
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Habilite la tabla para almacenar las cuentas del sitio web (inicio de sesión/contraseña) para cada tercero
 YouMustDefineTheHomePage=Primero debe definir la página de inicio predeterminada
 OnlyEditionOfSourceForGrabbedContentFuture=Advertencia: La creación de una página web mediante la importación de una página web externa está reservada para usuarios experimentados. Según la complejidad de la página de origen, el resultado de la importación puede diferir del original. Además, si la página de origen utiliza estilos CSS comunes o JavaScript conflictivo, puede afectar el aspecto o las funciones del editor de sitios web al trabajar en esta página. Este método es una forma más rápida de crear una página, pero se recomienda crear la página nueva desde cero o a partir de una plantilla de página sugerida. <br>Ten en cuenta también que el editor en línea puede no funcionar correctamente cuando se utiliza en una página externa capturada.
@@ -135,7 +138,6 @@ WEBPAGE_CONTENT=Este es un contenido de la página
 variableNotDefined=No se ha definido ningún %s. Complete la configuración.
 logOut=Finalizar la sesión
 logInToYourCustomerAccount=Inicie sesión en su cuenta de cliente
-Shipping=Envío
 noProducts=No hay productos
 pricesMayVaryDependingOnYourCountry=Los precios pueden variar según tu país.
 productAddedToCart=Producto añadido correctamente a su carrito de compras
@@ -158,7 +160,6 @@ otherViews=Otros puntos de vista
 contactSupport=Cómo contactar con el soporte técnico
 noProductToDisplay=Error, no hay producto para mostrar
 yourCompanyInformation=Información de su empresa
-yourBillingInformation=Su información de facturación
 firstnameContainsLettersOnly=<b>Nombre</b> debe contener solo letras y espacios
 lastnameContainsLettersOnly=<b>Apellido</b> debe contener solo letras y espacios
 passwordCriteria=<b>La contraseña</b> debe cumplir con los siguientes criterios:<br>- Al menos 12 caracteres<br>- Al menos 1 letra mayúscula<br>- Al menos 1 dígito<br>- Al menos 1 carácter especial<br>- Evitar Repetir caracteres más de 3 veces<br>
@@ -181,6 +182,4 @@ cartSummary=Resumen del carrito de compras
 yourCartContains=Su carrito de compras contiene
 cartIsEmpty=Su carrito de compras está vacío.
 youWillBeRedirectedToOrderPage=Serás redirigido a la página de detalles del pedido en breve.
-DeleteWebsiteAccount=Eliminar cuenta del sitio web
-ConfirmDeleteWebsiteAccount=¿Está seguro de que desea eliminar esta cuenta?
-ConfirmDeleteWebsiteAccount2=Si esta cuenta se utilizó para iniciar sesión en el portal público o en cualquier otro sitio web impulsado por Dolibarr, es posible que ya no sea posible iniciar sesión.
+labelSubject=Tema

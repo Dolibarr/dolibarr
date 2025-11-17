@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2014-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -225,7 +225,7 @@ class printing_printipp extends PrintingDriver
 			$html .= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
 			// Default
 			$html .= '<td class="center">';
-			if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
+			if (getDolGlobalString('PRINTIPP_URI_DEFAULT') == $value) {
 				$html .= img_picto($langs->trans("Default"), 'on');
 			} else {
 				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'&mode=test&varname=PRINTIPP_URI_DEFAULT&driver=printipp&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
