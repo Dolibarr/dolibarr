@@ -3144,27 +3144,41 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 
 	if (isset($propertyToUpdate) && !empty(GETPOST('propsmodule'))) {
 		$newValue = GETPOST('propsmodule');
-		$lineToReplace = "\t\t\$this->$propertyToUpdate = ";
-		$newLine = "\t\t\$this->$propertyToUpdate = '$newValue';\n";
+		$patternToFindLine = '^\s*\$this->'.$propertyToUpdate.'\s*=';			// Must be a regex string
+		$newLine = "\t\t\$this->$propertyToUpdate = '$newValue';\n";			// Must a real string
 
-		//for change version in log file
-		if ($propertyToUpdate === 'version') {
-			dolReplaceInFile($modulelogfile, array("## ".$moduleobj->$propertyToUpdate => $newValue));
-		}
-
-		$fileLines = file($moduledescriptorfile);
+		$fileLines = file($moduledescriptorfile);	// Get each line of file into an array
+		$error = 0;
+		$changedone = 0;
 		foreach ($fileLines as &$line) {
-			if (strpos($line, $lineToReplace) === 0) {
-				dolReplaceInFile($moduledescriptorfile, array($line => $newLine));
+			if (preg_match('/'.$patternToFindLine.'/', $line)) {
+				$result = dolReplaceInFile($moduledescriptorfile, array($line => $newLine));
+				if ($result > 0) {
+					$changedone++;
+				} elseif ($result <= -1) {
+					$langs->load("errors");
+					setEventMessages($langs->trans('ErrorFailToEditFile', $moduledescriptorfile), null, 'warnings');
+					break;
+				}
 				break;
 			}
+		}
+
+		// To complete also the ChangeLogif we update the version
+		if ($changedone && $propertyToUpdate === 'version') {
+			dolReplaceInFile($modulelogfile, array("## ".$moduleobj->$propertyToUpdate => $newValue));
 		}
 
 		clearstatcache(true);
 		if (function_exists('opcache_invalidate')) {
 			opcache_reset();
 		}
-		setEventMessages($langs->trans('PropertyModuleUpdated', $propertyToUpdate), null);
+		if ($changedone) {
+			setEventMessages($langs->trans('PropertyModuleUpdated', $propertyToUpdate), null);
+		} else {
+			setEventMessages($langs->trans('NothingProcessed'), null, 'warnings');
+		}
+
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=description&module='.$module);
 		exit;
 	}
@@ -3470,8 +3484,9 @@ if ($module == 'initmodule') {
 	print '<input type="text" name="idpicto" value="'.(GETPOSTISSET('idpicto') ? GETPOST('idpicto') : getDolGlobalString('MODULEBUILDER_DEFAULTPICTO', 'fa-file')).'" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
 	print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
 
-	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
+
+	print '<span class="opacitymedium small">';
 	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only&mode=no-btn#img-picto-section-list', '', '');
 	print '</span>';
 
@@ -3786,13 +3801,23 @@ if ($module == 'initmodule') {
 					}
 					print '</td></tr>';
 
+					print '<!-- picto of module -->'."\n";
 					print '<tr><td>';
 					print $langs->trans("Picto");
 					print '</td><td>';
 					if ($action == 'edit_modulepicto' && GETPOST('keydescription', 'alpha') === 'picto') {
-						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->picto).'">';
+						print '<input class="minwidth200 maxwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->picto).'">';
+
+						print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]] where faprefix can be far,far, facolor can be a text like \'red\' orvalue like \'#FF0000\' and fasize is CSS font size like \'1em\'');
+
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifypicto" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+
+						print ' &nbsp; &nbsp; ';
+
+						print '<span class="opacitymedium small">';
+						print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only&mode=no-btn#img-picto-section-list', '', '');
+						print '</span>';
 					} else {
 						print $moduleobj->picto;
 						print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
@@ -4061,7 +4086,7 @@ if ($module == 'initmodule') {
 				print '</div><div class="tagtd">';
 				print '<input type="text" name="idpicto" value="fa-file" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
 
-				print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+				print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]] where faprefix can be far,far, facolor can be a text like \'red\' orvalue like \'#FF0000\' and fasize is CSS font size like \'1em\'');
 
 				print '<span class="opacitymedium small">';
 				print ' &nbsp; &nbsp; ';

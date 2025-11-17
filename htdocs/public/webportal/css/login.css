@@ -110,6 +110,7 @@ body.login-page {
     background: var(--login-logo, transparent);
     background-repeat: no-repeat;
     background-size: contain;
+    margin-bottom: 25px;
 }
 
 

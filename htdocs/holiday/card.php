@@ -10,6 +10,7 @@
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Julien Marchand				<julien.marchand@iouston.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -506,7 +507,9 @@ if (empty($reshook)) {
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
 				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+
+				// You can specify a special address from for holiday
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_HOLIDAY_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
 
 				// Subject
 				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
@@ -1224,9 +1227,15 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (empty($include_users)) {
 			print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
 		} else {
-			// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
-			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
+			// Defined default approver (the forced approver of edited user or the supervisor of user if no forced value defined)
+			// Note: This user will be set only if the defined approver has permission to approve so is inside include_users
 			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
+			if ($fuserid != $user->id) {
+				$fuser = new User($db);
+				$fuser->fetch($fuserid);
+				$defaultselectuser = (empty($fuser->fk_user_holiday_validator) ? $fuser->fk_user : $fuser->fk_user_holiday_validator);
+			}
+
 			if (getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR')) {
 				$defaultselectuser = getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR'); // Can force default approver
 			}

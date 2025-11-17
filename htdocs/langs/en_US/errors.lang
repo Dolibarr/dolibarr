@@ -18,6 +18,7 @@ ErrorRecordNotFoundShort=Not found
 ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToRenameFile=Failed to rename file '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToEditFile=Failed to edit file '<b>%s</b>'.
 ErrorFailToDeleteFile=Failed to remove file '<b>%s</b>'.
 ErrorFailToCreateFile=Failed to create file '<b>%s</b>'.
 ErrorFailToRenameDir=Failed to rename directory '<b>%s</b>' into '<b>%s</b>'.

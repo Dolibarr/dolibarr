@@ -1,4 +1,3 @@
-<!-- file header_login.tpl.php -->
 <?php
 /**
  * @var Context $context	Object Context for webportal
@@ -15,7 +14,9 @@ global $langs;
 
 // Return HTTP headers
 top_httphead();
-
+?>
+<!-- file header_login.tpl.php -->
+<?php
 // Return HTML header
 ?>
 <!DOCTYPE html>
@@ -46,7 +47,7 @@ top_httphead();
 	// JQuery
 	//$jQueryJSUrl = $context->rootUrl.'includes/jquery/js/jquery.js';
 	//$jQueryJSUrl = dol_buildpath('/includes/jquery/js/jquery.js', 2);
-	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/jquery.min.js';
+	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/js/jquery.min.js';
 	print '<script src="'.$jQueryJSUrl.'"></script>'."\n";
 
 	// JNotify

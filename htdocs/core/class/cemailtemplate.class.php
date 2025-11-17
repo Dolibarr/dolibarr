@@ -45,7 +45,7 @@ class CEmailTemplate extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -275,9 +275,9 @@ class CEmailTemplate extends CommonObject
 			$sql .= " '".((int) $this->fk_user)."',";
 		}
 		if (is_null($this->datec)) {
-			$sql .= " NULL,";
+			$sql .= " '".$this->db->idate($now)."',";
 		} else {
-			$sql .= " ".((int) $this->datec).",";
+			$sql .= " '".$this->db->idate($this->datec)."',";
 		}
 		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " ".((int) $this->position).", ".((int) $this->defaultfortype).",";
@@ -372,7 +372,6 @@ class CEmailTemplate extends CommonObject
 		$sql .= " lang=".($this->lang ? "'".$this->db->escape($this->lang)."', " : 'NULL, ');
 		$sql .= " private=".((int) $this->private).",";
 		$sql .= " fk_user=".((int) $this->fk_user).",";
-		$sql .= " datec=".((int) $this->datec).",";
 		$sql .= " label=".($this->label ? "'".$this->db->escape($this->label)."', " : 'NULL, ');
 		$sql .= " position=".((int) $this->position).",";
 		$sql .= " defaultfortype=".((int) $this->defaultfortype).",";
@@ -528,7 +527,7 @@ class CEmailTemplate extends CommonObject
 				$this->active = (int) $obj->active;
 				$this->content = (string) $obj->content;
 				$this->content_lines = (string) $obj->content_lines;
-				$this->datec = (int) $obj->datec;
+				$this->datec = $this->db->jdate($obj->datec);
 				$this->defaultfortype = (int) $obj->defaultfortype;
 				$this->email_from = (string) $obj->email_from;
 				$this->email_to = (string) $obj->email_to;
@@ -542,7 +541,7 @@ class CEmailTemplate extends CommonObject
 				$this->module = (string) $obj->module;
 				$this->position = (int) $obj->position;
 				$this->private = (int) $obj->private;
-				$this->tms = $obj->tms;
+				$this->tms = $this->db->jdate($obj->tms);
 				$this->topic = (string) $obj->topic;
 				$this->type_template = (string) $obj->type_template;
 

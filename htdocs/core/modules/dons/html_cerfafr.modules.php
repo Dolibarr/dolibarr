@@ -5,7 +5,8 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,8 +261,8 @@ class html_cerfafr extends ModeleDon
 	 * numbers to letters
 	 *
 	 * @param   mixed   $montant    amount
-	 * @param   mixed   $devise1    devise 1 ex: euro
-	 * @param   mixed   $devise2    devise 2 ex: centimes
+	 * @param   string  $devise1    devise 1 ex: euro
+	 * @param   string  $devise2    devise 2 ex: centimes
 	 * @return string               amount in letters
 	 */
 	private function amountToLetters($montant, $devise1 = '', $devise2 = '')

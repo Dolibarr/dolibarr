@@ -116,7 +116,7 @@ if (empty($reshook)) {
 	}
 
 	if ($id > 0 || !empty($ref)) {
-		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
 			$object->fetchComments();
 		}
 		$projectstatic->fetch($object->fk_project);
