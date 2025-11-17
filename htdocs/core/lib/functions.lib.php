@@ -298,6 +298,17 @@ function getDolCurrency()
 }
 
 /**
+ * Return the default context page string
+ *
+ * @param	string		$s					Page path
+ * @return 	string							Value returned
+ */
+function getDolDefaultContextPage($s)
+{
+	return str_replace('_', '', basename(dirname($s)).basename($s, '.php'));
+}
+
+/**
  * Return Dolibarr user constant string value
  *
  * @param string 			$key 		Key to return value, return '' if not set
@@ -3798,7 +3809,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
 				if (class_exists('DateTimeZone')) {
-					$user_date_tz = new DateTimeZone($offsettzstring);
+					try {
+						$user_date_tz = new DateTimeZone($offsettzstring);
+					} catch (Exception $e) {
+						// Bad value for $offsettzstring
+						dol_syslog("DateInvalidTimeZoneException for timezone string '".$offsettzstring."'. Falling back to UTC.", LOG_ERR);
+						$user_date_tz = new DateTimeZone('UTC'); // Force valid timezone as UTC
+					}
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
 					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);

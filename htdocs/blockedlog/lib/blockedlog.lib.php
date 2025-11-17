@@ -25,7 +25,7 @@
 /**
  *  Define head array for tabs of blockedlog tools setup pages
  *
- *  @param	int		$withtabsetup		Add also the tab "Setup"
+ *  @param	string		$withtabsetup					Add also the tab "Setup"
  *  @return	array<array{0:string,1:string,2:string}>	Array of head
  */
 function blockedlogadmin_prepare_head($withtabsetup)
