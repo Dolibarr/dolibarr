@@ -3797,8 +3797,30 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
+				// Ensure we have a valid timezone string
+				static $validTimezonesCache = null; // Compute this only once per request
+				if ($validTimezonesCache === null) {
+					// First call: populate the cache (executed only once per request)
+					$validTimezonesCache = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+					// Convert to associative array for O(1) lookup instead of O(n)
+					$validTimezonesCache = array_flip($validTimezonesCache);
+				}
+
+				// checks if the timezone string is valid
+				if (!isset($validTimezonesCache[$offsettzstring])) {
+					dol_syslog("Invalid timezone string '$offsettzstring' in session (user timezone). Falling back to UTC.", LOG_WARNING);
+					$offsettzstring = 'UTC'; // Force valid timezone as UTC
+				}
+				// Timezone is valid according to the list
+
 				if (class_exists('DateTimeZone')) {
-					$user_date_tz = new DateTimeZone($offsettzstring);
+					try {
+						$user_date_tz = new DateTimeZone($offsettzstring);
+					} catch (DateInvalidTimeZoneException $e) {
+						// Should never happen with the list check, but kept for safety
+						dol_syslog("DateInvalidTimeZoneException for timezone '$offsettzstring' despite validation. Falling back to UTC.", LOG_ERR);
+						$user_date_tz = new DateTimeZone('UTC'); // Force valid timezone as UTC
+					}
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
 					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
