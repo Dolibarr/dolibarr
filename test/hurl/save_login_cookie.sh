@@ -33,13 +33,13 @@ if [[ -z "${COOKIEJAR+x}" ]]; then
 fi
 
 echo "hurl --variable 'hostnport=${hostnport}' --variable 'username=${DOLIUSERNAME}' --secret 'password=${DOLIPASSWORD}' --test gui/save_login_cookie.hurl --cookie-jar '${COOKIEJAR}'"
-hurl --variable "hostnport=${hostnport}" --variable "username=${DOLIUSERNAME}" --secret "password=${DOLIPASSWORD}" --test gui/save_login_cookie.hurl --cookie-jar "${COOKIEJAR}"
+hurl --very-verbose --variable "hostnport=${hostnport}" --variable "username=${DOLIUSERNAME}" --secret "password=${DOLIPASSWORD}" --test gui/save_login_cookie.hurl --cookie-jar "${COOKIEJAR}"
 echo "COOKIE CONTENTS for ${COOKIEJAR}"
 cat "${COOKIEJAR}"
 echo
 
 echo "hurl --variable 'hostnport=${hostnport}' --variable 'username=${DOLIUSERNAME}' --secret 'password=${DOLIPASSWORD}' --test 'gui\\save_login_cookie.hurl' --cookie-jar '${COOKIEJAR}'"
-hurl --variable "hostnport=${hostnport}" --variable "username=${DOLIUSERNAME}" --secret "password=${DOLIPASSWORD}" --test 'gui\save_login_cookie.hurl' --cookie-jar "${COOKIEJAR}"
+hurl --very-verbose --variable "hostnport=${hostnport}" --variable "username=${DOLIUSERNAME}" --secret "password=${DOLIPASSWORD}" --test 'gui\save_login_cookie.hurl' --cookie-jar "${COOKIEJAR}"
 echo "COOKIE CONTENTS 2 for ${COOKIEJAR}"
 cat "${COOKIEJAR}"
 echo
