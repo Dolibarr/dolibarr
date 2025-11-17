@@ -3671,6 +3671,11 @@ if ($action == 'create') {
 	$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 	$fk_account = GETPOSTINT('fk_account');
 
+	$dateinvoice = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+	if (empty($dateinvoice)) {
+		$dateinvoice = (getDolGlobalString('MAIN_DO_NOT_AUTOFILL_DATE_INVOICE') ? -1 : '');		// By default '' so we will autofill date. -1 means keep empty.
+	}
+
 	// Load objectsrc
 	$objectsrc = null;  // Initialise
 	//$remise_absolue = 0;
@@ -3683,7 +3688,6 @@ if ($action == 'create') {
 			$subelement = $regs[2];
 		}
 
-		$dateinvoice = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
 		$date_pointoftax = dol_mktime(0, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
 
 		if ($element == 'project') {
@@ -3697,10 +3701,6 @@ if ($action == 'create') {
 			}
 			if (empty($fk_account)) {
 				$fk_account = $soc->fk_account;
-			}
-			if (empty($dateinvoice)) {
-				// Do not set 0 here (0 for a date is 1970)
-				$dateinvoice = getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1;
 			}
 		} else {
 			// For compatibility
@@ -3743,8 +3743,6 @@ if ($action == 'create') {
 			if (empty($socid)) {
 				$soc = $objectsrc->thirdparty;
 			}
-
-			$dateinvoice = (empty($dateinvoice) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $dateinvoice);
 
 			if ($element == 'expedition') {
 				$elem = $subelem = $objectsrc->origin;
@@ -3800,8 +3798,6 @@ if ($action == 'create') {
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
 		$inputReasonId = empty($soc->demand_reason_id) ? $inputReasonId : $soc->demand_reason_id;
-
-		$dateinvoice = (empty($dateinvoice) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
 		if (isModEnabled('multicurrency') && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;

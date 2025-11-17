@@ -25,22 +25,26 @@
 /**
  *  Define head array for tabs of blockedlog tools setup pages
  *
+ *  @param	int		$withtabsetup		Add also the tab "Setup"
  *  @return	array<array{0:string,1:string,2:string}>	Array of head
  */
-function blockedlogadmin_prepare_head()
+function blockedlogadmin_prepare_head($withtabsetup)
 {
 	global $db, $langs, $conf;
+
+	$langs->load("blockedlog");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=1";
-	$head[$h][1] = $langs->trans("Setup");
-	$head[$h][2] = 'blockedlog';
-	$h++;
+	if ($withtabsetup) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=".$withtabsetup;
+		$head[$h][1] = $langs->trans("Setup");
+		$head[$h][2] = 'blockedlog';
+		$h++;
+	}
 
-	$langs->load("blockedlog");
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=1";
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=".$withtabsetup;
 	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -50,6 +54,14 @@ function blockedlogadmin_prepare_head()
 	}
 	$head[$h][2] = 'fingerprints';
 	$h++;
+
+
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php?withtab=".$withtabsetup;
+	$head[$h][1] = $langs->trans("Archives");
+	// TODO Add number of archive files in badge
+	$head[$h][2] = 'archives';
+	$h++;
+
 
 	$object = new stdClass();
 
@@ -63,6 +75,7 @@ function blockedlogadmin_prepare_head()
 
 	return $head;
 }
+
 
 /**
  * Return if the KYC mandatory parameters are set

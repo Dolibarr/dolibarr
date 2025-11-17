@@ -287,6 +287,17 @@ function getDolGlobalBool($key, $default = false)
 }
 
 /**
+ * Return the main currency ('EUR', 'USD', ...)
+ *
+ * @return 	string							Value returned
+ */
+function getDolCurrency()
+{
+	global $conf;
+	return (string) $conf->currency;
+}
+
+/**
  * Return Dolibarr user constant string value
  *
  * @param string 			$key 		Key to return value, return '' if not set
@@ -6635,7 +6646,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *  @param	string		$morecss			More CSS ('', 'warning', 'error')
  *  @param	string		$textfordropdown	Show a text to click to dropdown the info box.
  *  @param	string		$picto				'' or 'warning'
- *	@return	string						String with info text
+ *	@return	string							String with info text
  */
 function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
 {
@@ -11803,8 +11814,9 @@ function dol_eval_new($s)
 function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
-	global $conf;	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-	global $db, $langs, $user, $website, $websitepage;
+	//global $conf;	// Disabled. Read of const is done with getDolGlobalString() and read of $conf->currency is done with getDolCurrency()
+	global $db;
+	global $langs, $user, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
