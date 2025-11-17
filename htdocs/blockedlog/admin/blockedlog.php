@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024      Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,10 +100,10 @@ if ($withtab) {
 	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
-print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'), $linkback);
+print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'), $linkback, 'blockedlog');
 
 if ($withtab) {
-	$head = blockedlogadmin_prepare_head();
+	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
 	print dol_get_fiche_head($head, 'blockedlog', '', -1);
 }
 
