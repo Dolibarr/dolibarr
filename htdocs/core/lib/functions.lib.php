@@ -287,6 +287,28 @@ function getDolGlobalBool($key, $default = false)
 }
 
 /**
+ * Return the main currency ('EUR', 'USD', ...)
+ *
+ * @return 	string							Value returned
+ */
+function getDolCurrency()
+{
+	global $conf;
+	return (string) $conf->currency;
+}
+
+/**
+ * Return the default context page string
+ *
+ * @param	string		$s					Page path
+ * @return 	string							Value returned
+ */
+function getDolDefaultContextPage($s)
+{
+	return str_replace('_', '', basename(dirname($s)).basename($s, '.php'));
+}
+
+/**
  * Return Dolibarr user constant string value
  *
  * @param string 			$key 		Key to return value, return '' if not set
@@ -3788,7 +3810,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
 				if (class_exists('DateTimeZone')) {
-					$user_date_tz = new DateTimeZone($offsettzstring);
+					try {
+						$user_date_tz = new DateTimeZone($offsettzstring);
+					} catch (Exception $e) {
+						// Bad value for $offsettzstring
+						dol_syslog("DateInvalidTimeZoneException for timezone string '".$offsettzstring."'. Falling back to UTC.", LOG_ERR);
+						$user_date_tz = new DateTimeZone('UTC'); // Force valid timezone as UTC
+					}
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
 					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
@@ -6636,7 +6664,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *  @param	string		$morecss			More CSS ('', 'warning', 'error')
  *  @param	string		$textfordropdown	Show a text to click to dropdown the info box.
  *  @param	string		$picto				'' or 'warning'
- *	@return	string						String with info text
+ *	@return	string							String with info text
  */
 function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
 {
@@ -11804,8 +11832,9 @@ function dol_eval_new($s)
 function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
-	global $conf;	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-	global $db, $langs, $user, $website, $websitepage;
+	//global $conf;	// Disabled. Read of const is done with getDolGlobalString() and read of $conf->currency is done with getDolCurrency()
+	global $db;
+	global $langs, $user, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
