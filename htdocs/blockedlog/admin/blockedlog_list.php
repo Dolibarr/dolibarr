@@ -374,7 +374,6 @@ if (GETPOST('downloadcsv', 'alpha')) {
  */
 
 $form = new Form($db);
-$formother = new FormOther($db);
 
 if (GETPOST('withtab', 'alpha')) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
@@ -905,7 +904,7 @@ jQuery(document).ready(function () {
 		});
 
 		var mydialog = jQuery("#dialogforpopup");
-		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->trans("UnlaterableDataOfEvent")).'\',});
+		mydialog.dialog({autoOpen: false, modal: true, height: (window.innerHeight - 150), width: \'80%\', title: \''.dol_escape_js($langs->transnoentitiesnoconv("UnlaterableDataOfEvent")).'\',});
 		mydialog.dialog("open");
 		return false;
 	});
