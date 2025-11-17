@@ -336,6 +336,7 @@ class CommonSellistField extends CommonField
 							$fieldValueParent = !empty($optionsParams['parentName']) && !empty($optionsParams['parentAlias']) ? $optionsParams['parentName'] . ':' . ((string) $obj->{$optionsParams['parentAlias']}) : '';
 
 							$options[$optionKey] = array(
+								'id' => $optionKey,
 								'label' => $optionLabel,
 								'parent' => $fieldValueParent,
 							);
@@ -348,10 +349,13 @@ class CommonSellistField extends CommonField
 				}
 			}
 			if ($addEmptyValue && (!$fieldInfos->required || count($options) > 1)) {
-				$options = array_merge(array('' => array(
+				$options_empty = array('' => array(
+					'id' => '',
 					'label' => '&nbsp;',
 					'parent' => '',
-				)), $options);
+				));
+				$options_empty = $options_empty + $options; // For preserve the numeric key indexes
+				$options = $options_empty;
 			}
 
 			self::$options[$key] = $options;

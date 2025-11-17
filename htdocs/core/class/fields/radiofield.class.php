@@ -118,8 +118,11 @@ class RadioField extends CommonSelectField
 			$value = '<span class="opacitymedium">' . $langs->trans('ErrorNoValueForRadioType') . '</span>';
 		} else {
 			$options = $this->getOptions($fieldInfos, $key);
-			if (isset($options[$value])) {
-				$value = $options[$value]['label'];
+			foreach ($options as $optionKey => $optionInfos) {
+				if (((string) $optionKey) == $value) {
+					$value = $optionInfos['label'];
+					break;
+				}
 			}
 		}
 

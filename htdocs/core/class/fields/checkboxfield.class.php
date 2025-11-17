@@ -76,11 +76,8 @@ class CheckboxField extends CommonSelectField
 
 		$optionsList = array();
 		$options = $this->getOptions($fieldInfos, $key);
-		foreach ($options as $optionKey => $optionInfos) {
-			$options[$optionKey] = $optionInfos['label'];
-		}
 
-		return self::$form->multiselectarray($htmlName, $optionsList, $values, 0, 0, $moreCss, 0, 0, $moreAttrib, '', '', (int) (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')));
+		return self::$form->multiselectarray($htmlName, $options, $values, 0, 0, $moreCss, 0, 0, $moreAttrib, '', '', (int) (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')));
 	}
 
 	/**
@@ -105,9 +102,14 @@ class CheckboxField extends CommonSelectField
 			$options = $this->getOptions($fieldInfos, $key);
 			$toPrint = array();
 			foreach ($values as $val) {
-				if (isset($options[$val])) {
-					$valueToPrint = $options[$value]['label'];
-				} else {
+				$valueToPrint = null;
+				foreach ($options as $optionKey => $optionInfos) {
+					if (((string) $optionKey) == $val) {
+						$valueToPrint = $optionInfos['label'];
+						break;
+					}
+				}
+				if (!isset($valueToPrint)) {
 					$langs->load("errors");
 					$valueToPrint = $langs->trans('ErrorRecordNotFound') . ' ( ' . $val . ' )';
 				}

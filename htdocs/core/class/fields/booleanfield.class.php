@@ -180,7 +180,7 @@ class BooleanField extends CommonField
 		// We test on a hidden field named "..._boolean" that is always set to 1 if param is in form so
 		// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
 		if (!GETPOSTISSET($htmlName . "_boolean")) {
-			$value = '';
+			$value = $defaultValue;
 		} elseif (GETPOSTISSET($htmlName)) {
 			$value = GETPOSTINT($htmlName) == 1 ? 1 : 0;
 		} else {

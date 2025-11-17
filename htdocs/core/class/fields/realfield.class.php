@@ -166,7 +166,7 @@ class RealField extends CommonField
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
 		if (GETPOSTISSET($htmlName)) {
-			$value = (double) price2num(GETPOST($htmlName, 'aZ09comma'));
+			$value = (double) price2num(GETPOST($htmlName, 'alphanohtml'));
 		} else {
 			$value = $defaultValue;
 		}

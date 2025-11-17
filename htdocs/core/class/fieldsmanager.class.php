@@ -601,6 +601,7 @@ class FieldsManager
 		$fieldInfos->viewCss = $attributes['cssview'][$key] ?? '';
 		$fieldInfos->listCss = $attributes['csslist'][$key] ?? '';
 		$fieldInfos->listTotalizable = !empty($attributes['totalizable'][$key]);
+		$fieldInfos->options = array_diff_assoc($attributes['param'][$key]['options'] ?? array(), array('' => null)); // For remove case when not defined
 		$fieldInfos->nameInClass = $key;
 		$fieldInfos->nameInTable = $key;
 

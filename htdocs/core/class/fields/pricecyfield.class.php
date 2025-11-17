@@ -194,7 +194,7 @@ class PricecyField extends CommonField
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
 		if (GETPOSTISSET($htmlName)) {
-			$value = price2num(GETPOST($htmlName, 'aZ09comma')) . ':' . GETPOST($htmlName . "currency_id", 'alpha');
+			$value = price2num(GETPOST($htmlName, 'alphanohtml')) . ':' . GETPOST($htmlName . "currency_id", 'alpha');
 		} else {
 			$value = $defaultValue;
 		}
@@ -219,7 +219,7 @@ class PricecyField extends CommonField
 
 		if (GETPOSTISSET($htmlName)) {
 			$value = array(
-				'value' => GETPOST($htmlName, 'alpha'),
+				'value' => GETPOST($htmlName, 'alphanohtml'),
 				'currency' => GETPOST($htmlName . "currency_id", 'alpha'),
 			);
 		} else {
@@ -277,7 +277,7 @@ class PricecyField extends CommonField
 		} else {
 			// $value in memory is a php string like '10.01:USD'
 			$tmp = explode(':', $value);
-			$price = $this->isEmptyValue($fieldInfos, $tmp[0] ?? '') ? $tmp[0] : '';
+			$price = $this->isEmptyValue($fieldInfos, $tmp[0] ?? '') ? '' : $tmp[0];
 			$currency = !empty($tmp[1]) ? $tmp[1] : $conf->currency;
 		}
 

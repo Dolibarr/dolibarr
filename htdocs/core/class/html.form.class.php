@@ -13033,7 +13033,7 @@ class Form
 	{
 		$out = '';
 		foreach ($options as $optionKey => $optionLabel) {
-			$selected = $selectedValue === $optionKey ? ' selected="selected"' : '';
+			$selected = ((string) $selectedValue) === ((string) $optionKey) ? ' checked="checked"' : '';
 			$optionId = $htmlName . '_' . $optionKey;
 			$out .= '<input class="flat' . $morecss . '" type="radio" name="' . $htmlName . '" id="' . $optionId . '" value="' . dolPrintHTMLForAttribute((string) $optionKey) . '"' . $selected . $moreparam . '/><label for="' . $optionId . '">' . $optionLabel . '</label><br>';
 		}
