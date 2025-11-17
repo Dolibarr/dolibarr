@@ -1990,17 +1990,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ($obj !== null && !empty($obj->value) && !empty($this->rights)) {
 				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-				// TODO rights parameters with integer indexes are deprecated
-				// $this->rights[$key][0] = $this->rights[$key][self::KEY_ID]
-				// $this->rights[$key][1] = $this->rights[$key][self::KEY_LABEL]
-				// $this->rights[$key][3] = $this->rights[$key][self::KEY_DEFAULT]
-				// $this->rights[$key][4] = $this->rights[$key][self::KEY_FIRST_LEVEL]
-				// $this->rights[$key][5] = $this->rights[$key][self::KEY_SECOND_LEVEL]
-
-				// new parameters
-				// $this->rights[$key][self::KEY_MODULE]	// possibility to define user right for an another module (default: current module name)
-				// $this->rights[$key][self::KEY_ENABLED]	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
-
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
 					$r_id = $this->rights[$key][self::KEY_ID];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
@@ -2009,6 +1998,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_default = $this->rights[$key][self::KEY_DEFAULT] ?? 0;
 					$r_perms = $this->rights[$key][self::KEY_FIRST_LEVEL] ?? '';
 					$r_subperms = $this->rights[$key][self::KEY_SECOND_LEVEL] ?? '';
+
+					$r_module_position = $this->getModulePosition();
+					$r_family = $this->family;
+					$r_family_position = 0;
 
 					// KEY_FIRST_LEVEL (perms) must not be empty
 					if (empty($r_perms)) {
@@ -2046,7 +2039,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", libelle";
 							$sql .= ", module";
 							$sql .= ", module_origin";
-							$sql .= ", type";	// TODO deprecated
+							$sql .= ", module_position";		// Not that module_position can be fixed eynamically when accessing page user/perms.php
+							$sql .= ", family";
+							$sql .= ", family_position";
+							$sql .= ", type";	// Not used yet
 							$sql .= ", bydefault";
 							$sql .= ", perms";
 							$sql .= ", subperms";
@@ -2057,7 +2053,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_label)."'";
 							$sql .= ", '".$this->db->escape($r_module)."'";
 							$sql .= ", '".$this->db->escape($r_module_origin)."'";
-							$sql .= ", '".$this->db->escape($r_type)."'";	// TODO deprecated
+							$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
+							$sql .= ", '".$this->db->escape($r_family)."'";
+							$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
+							$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
 							$sql .= ", ".((int) $r_default);
 							$sql .= ", '".$this->db->escape($r_perms)."'";
 							$sql .= ", '".$this->db->escape($r_subperms)."'";

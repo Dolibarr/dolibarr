@@ -1,4 +1,3 @@
-<!-- file header_login.tpl.php -->
 <?php
 /**
  * @var Context $context	Object Context for webportal
@@ -15,7 +14,9 @@ global $langs;
 
 // Return HTTP headers
 top_httphead();
-
+?>
+<!-- file header_login.tpl.php -->
+<?php
 // Return HTML header
 ?>
 <!DOCTYPE html>

@@ -9203,6 +9203,8 @@ class Form
 			if ($tmpfieldstoshow) {
 				$fieldstoshow = $tmpfieldstoshow;
 			}
+		} elseif ($objecttmp->element === 'category') {
+			$fieldstoshow = 't.label';
 		} else {
 			// For backward compatibility
 			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'visible' => 4, 'showoncombobox' => 1);
@@ -9236,7 +9238,11 @@ class Form
 		// Search data
 		$sql = "SELECT t.rowid, " . $fieldstoshow . " FROM " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . " as t";
 		if (!empty($objecttmp->isextrafieldmanaged)) {
-			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
+			$extrafieldTable = $objecttmp->table_element;
+			if ($extrafieldTable == 'categorie') {
+				$extrafieldTable = 'categories'; // For compatibility
+			}
+			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($extrafieldTable) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
 		if (!empty($objecttmp->parent_element)) {	// If parent_element is defined
 			'@phan-var-force CommonObjectLine $objecttmp';
@@ -10175,7 +10181,7 @@ class Form
 				$ways = $c->print_all_ways('auto', ($nolink ? 'none' : ''), 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 				foreach ($ways as $way) {
 					$color = $c->color;
-					$sfortag = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
+					$sfortag = '<li class="select2-search-choice-dolibarr noborderoncategories'.(empty($toprint) ? ' nomarginleft' : '').'"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
 					$sfortag .= $way;
 					$sfortag .= '</li>';
 					$toprint[] = $sfortag;

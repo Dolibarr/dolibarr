@@ -3694,8 +3694,7 @@ class Commande extends CommonOrder
 				$response->nbtodo++;
 				$response->total += $obj->total_ht;
 
-				$generic_commande->statut = $obj->fk_statut;
-				$generic_commande->date_commande = $this->db->jdate($obj->date_commande);
+				$generic_commande->status = $obj->fk_statut;
 				$generic_commande->date = $this->db->jdate($obj->date_commande);
 				$generic_commande->delivery_date = $this->db->jdate($obj->delivery_date);
 

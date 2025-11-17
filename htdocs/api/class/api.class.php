@@ -144,7 +144,7 @@ class DolibarrApi
 	/**
 	 * Filter properties that will be returned on object
 	 *
-	 * @phpstan-template T of Object
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object			Object to clean
 	 * @param   string  $properties		Comma separated list of properties names
@@ -195,7 +195,7 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensitive object data
-	 * @phpstan-template T of Object
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object		Object to clean
 	 * @return	Object				Object with cleaned properties
