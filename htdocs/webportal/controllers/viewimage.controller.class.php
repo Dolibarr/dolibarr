@@ -196,20 +196,31 @@ class ViewImageController extends Controller
 			$conf->setValues($this->db);
 		}
 
-		$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
-		$accessallowed = $check_access['accessallowed'];
-		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-		$fullpath_original_file = $check_access['original_file']; // $fullpath_original_file is now a full path name
+		$sqlprotectagainstexternals = '';
+		$fullpath_original_file = '';
+
+		// Hooks
+		$hookmanager->initHooks(array('viewimage'));
+		$parameters = array('modulepart' => $modulepart, 'original_file' => &$original_file,
+			'sqlprotectagainstexternals' => &$sqlprotectagainstexternals, 'fullpath_original_file' => &$fullpath_original_file,
+			'entity' => $entity, 'accessallowed' => &$accessallowed);
+		$object = new stdClass();
+		$reshook = $hookmanager->executeHooks('accessViewImage', $parameters, $object, $action); // Note that $action and $object may have been
+		if ($reshook < 0) {
+			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . implode(', ', $hookmanager->errors) : '');
+			dol_syslog("document.php - Errors when executing the hook 'accessViewImage' : " . $errors);
+			print "ErrorViewImageHooks: " . $errors;
+			exit;
+		} elseif (empty($reshook)) {
+			$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
+			$accessallowed = $check_access['accessallowed'];
+			$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
+			$fullpath_original_file = $check_access['original_file']; // $fullpath_original_file is now a full path name
+		}
 
 		if (!empty($hashp)) {
 			$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 			$sqlprotectagainstexternals = '';
-		} elseif (GETPOSTINT("publictakepos")) {
-			if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
-				$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
-				// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
-				// only shared images are visible
-			}
 		} else {
 			// Basic protection (against external users only)
 			if ($user->socid > 0) {
@@ -276,11 +287,11 @@ class ViewImageController extends Controller
 			'entity' => $entity, 'refname' => $refname, 'fullpath_original_file' => $fullpath_original_file,
 			'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
 		$object = new stdClass();
-		$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
+		$reshook = $hookmanager->executeHooks('viewImage', $parameters, $object, $action); // Note that $action and $object may have been
 		if ($reshook < 0) {
 			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . implode(', ', $hookmanager->errors) : '');
-			dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : " . $errors);
-			print "ErrorDownloadDocumentHooks: " . $errors;
+			dol_syslog("document.php - Errors when executing the hook 'viewImage' : " . $errors);
+			print "ErrorViewImageHooks: " . $errors;
 			exit;
 		}
 
