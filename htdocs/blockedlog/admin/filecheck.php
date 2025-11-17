@@ -522,7 +522,7 @@ if (empty($error) && !empty($xml)) {
 
 	// Scan scripts
 	/*
-	if (is_object($xml->dolibarr_script_dir[0])) {
+	if (is_object($xml->dolibarr_scripts_dir[0])) {
 		$file_list = array();
 		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
 		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
