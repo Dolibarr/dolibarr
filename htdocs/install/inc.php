@@ -30,7 +30,10 @@
  */
 
 // Just to define version DOL_VERSION
-require_once '../version.inc.php';
+if (!defined('DOL_INC_FOR_VERSION_ERROR')) {
+	define('DOL_INC_FOR_VERSION_ERROR', '1');
+}
+require_once '../filefunc.inc.php';
 
 
 // Define DOL_DOCUMENT_ROOT used for install/upgrade process
