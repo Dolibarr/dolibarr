@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Print the product item's reference and period in the PDF
+BoldRefAndPeriodOnPDF=Put in bold the text of the product reference and period in the PDF
 BoldLabelOnPDF=Print the product item's label in bold in the PDF
 Foundation=Foundation
 Version=Version
@@ -1368,7 +1368,7 @@ ParameterActiveForNextInputOnly=Parameter effective for next input only
 NoEventOrNoAuditSetup=No security event has been logged. This is normal if Audit has not been enabled in the "Setup - Security - Events" page.
 NoEventFoundWithCriteria=No security event has been found for this search criteria.
 SeeLocalSendMailSetup=See your local sendmail setup
-BackupDesc=A <b>complete system</b> backup of a Dolibarr installation requires 2 steps.
+BackupDesc=A <b>complete system</b> backup of a Dolibarr installation requires %s steps.
 BackupDesc2=Backup the contents of the "documents" directory (<b>%s</b>) containing all uploaded and generated files. This will also include all the dump files generated in Step 1. This operation may last several minutes.
 BackupDesc3=Backup the structure and contents of your database (<b>%s</b>) into a dump file. For this, you can use the following assistant.
 BackupDesc4=Backup the content of the key <b>%s</b> found into the file conf/conf.php

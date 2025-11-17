@@ -6646,7 +6646,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *  @param	string		$morecss			More CSS ('', 'warning', 'error')
  *  @param	string		$textfordropdown	Show a text to click to dropdown the info box.
  *  @param	string		$picto				'' or 'warning'
- *	@return	string						String with info text
+ *	@return	string							String with info text
  */
 function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
 {
