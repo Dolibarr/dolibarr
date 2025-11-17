@@ -2,6 +2,7 @@
 HRM=GRH
 Holidays=Congés
 Holiday=Demande de congés
+HolidayStarted=Départ commencé
 CPTitreMenu=Demande de congés
 MenuReportMonth=État mensuel
 MenuAddCP=Créer demande de congés
@@ -158,6 +159,9 @@ NumberDayAddMass=Nombre de jours à ajouter à la sélection
 ConfirmMassIncreaseHolidayQuestion=Êtes-vous sûr de vouloir augmenter les vacances du ou des %s enregistrement(s) sélectionnés  ?
 HolidayQtyNotModified=Le solde des jours restants pour %s n'a pas été modifié
 ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Décompte les congés à la fin du mois où ils sont pris
+ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAtBis=Par défaut, elles sont consommées/déduites dès leur approbation.
 PleaseDefineSomeTypeOfHolidayFirst=Veuillez d'abord définir certains types de vacances dans le dictionnaire (Menu Accueil - Configuration - dictionnaires)
 HolidayMailSenderAdress=Adresse e-mail pour les demandes de vacances
 HolidayMailSenderAdressHelp=Si vous laissez ce champ vide, l'adresse e-mail par défaut sera utilisée.
+WrongAmount=Nombre de jours incorrect
+ErrorUpdatingUsersCP=Erreur lors de la mise à jour des congés payés des utilisateurs

@@ -424,7 +424,6 @@ InfoDatabase=Infos Datenbank
 InfoPHP=Infos PHP
 InfoPerf=Leistungs-Informationen
 BrowserName=Browser Name
-AccountantDesc=Wenn Sie einen externen Buchhalter haben, können Sie hier seine Informationen bearbeiten.
 TriggerDisabledByName=Trigger in dieser Datei sind durch das <b>-NORUN</b>-Suffix in ihrem Namen deaktviert.
 DictionaryDesc=Definieren Sie hier alle Defaultwerte. Sie können die vordefinierten Werte mit ihren eigenen ergänzen.
 MiscellaneousDesc=Alle anderen sicherheitsrelevanten Parameter werden hier definiert.
