@@ -777,10 +777,12 @@ class AccountingJournal extends CommonObject
 		}
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
-			$sql .= "              WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid AND ab.piece_num LIKE 'OD-ESC-%')";
+			$sql .= "              WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
 		} elseif ($in_bookkeeping == 'notyet') {
 			$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
-			$sql .= "                  WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid AND ab.piece_num LIKE 'OD-ESC-%')";
+			$sql .= "              WHERE ab.doc_type = 'customer_invoice' AND ab.fk_doc = f.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
 		}
 		$sql .= " ORDER BY f.datef";
 
@@ -1081,10 +1083,12 @@ class AccountingJournal extends CommonObject
 		}
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
-			$sql .= "              WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid AND ab.piece_num LIKE 'OD-ESC-FRS-%')";
+			$sql .= "              WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
 		} elseif ($in_bookkeeping == 'notyet') {
 			$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ab";
-			$sql .= "                  WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid AND ab.piece_num LIKE 'OD-ESC-FRS-%')";
+			$sql .= "              WHERE ab.doc_type = 'supplier_invoice' AND ab.fk_doc = ff.rowid";
+			$sql .= "                AND ab.code_journal = '".$this->db->escape($this->code)."')";
 		}
 		$sql .= " ORDER BY ff.datef";
 
