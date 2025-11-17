@@ -792,7 +792,7 @@ class SecurityTest extends CommonClassTest
 		print "result17 = ".$result."\n";
 		$this->assertTrue($result);
 
-		$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
+		$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && getDolGlobalInt("MAIN_FEATURES_LEVEL")', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
 		print "result18 = ".$result."\n";
 		$this->assertFalse($result);
 
