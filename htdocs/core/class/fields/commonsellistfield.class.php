@@ -349,13 +349,14 @@ class CommonSellistField extends CommonField
 				}
 			}
 			if ($addEmptyValue && (!$fieldInfos->required || count($options) > 1)) {
-				$options_empty = array('' => array(
-					'id' => '',
-					'label' => '&nbsp;',
-					'parent' => '',
-				));
-				$options_empty = $options_empty + $options; // For preserve the numeric key indexes
-				$options = $options_empty;
+				// For preserve the numeric key indexes
+				$options = array(
+					'' => array(
+						'id' => '',
+						'label' => '&nbsp;',
+						'parent' => '',
+					)
+				) + $options;
 			}
 
 			self::$options[$key] = $options;
