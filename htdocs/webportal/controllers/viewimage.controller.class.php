@@ -198,6 +198,7 @@ class ViewImageController extends Controller
 
 		$sqlprotectagainstexternals = '';
 		$fullpath_original_file = '';
+		$accessallowed = 0;
 
 		// Hooks
 		$hookmanager->initHooks(array('viewimage'));
