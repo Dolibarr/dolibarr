@@ -21,19 +21,21 @@ The following changes may create regressions for some external modules, but were
 * The deprecated column egroupware_id has been dropped.
 * The property $sumpayed (duplicated of $totalpaid), $sumdeposit (duplicate of $totaldeposits) and $sumcreditnote (duplicate of $totalcreditnotes) has
   been removed (there are replaced with the property that was a duplication of (same for $sumpayed_multicurrency, $sumdeposit_multicurrency, $sumcreditnote_multicurrency).
-* Parameters $maxlen and $notooltip of Contract have been inverted to follow the standard. It was breaking the common use of getNomUrl() but if you were using the parameter
-  maxlen (rare) by using the old signature, result may be a tooltip that is no more visible on ref printed by you module.
+* Parameters $maxlen and $notooltip of Contract have been inverted to follow the standard. It was breaking the common use of getNomUrl() but if you were
+  using the parameter maxlen (rare) by using the old signature, result may be a tooltip that is no more visible on ref printed by your module.
 * Removed array $MAP_ID_TO_CODE that was a duplicate of array "array_flip($categ->MAP_ID)"
 * The signature of the Sale order ->cancel() method and shipment ->cancel() has been modified to introduce the $user param like for other methods that modify a status.
 * Adding new document templates must be done by adding files into the mymodule/core/modules/xxx/doc directory. Adding files into custom directory with the
-  same path than the core path without using a mymodule directory is now forbidden.
+  same path than the core path, without using a "mymodule" directory is now forbidden.
 * The directory theme/common/octicons has been removed
-* The library timepicker.js has been removed. Was not used by Dolibarr.
+* The library timepicker.js has been removed. Was no more used by Dolibarr.
 * Because of new TRIGGER_PREFIX property triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed to PRODUCT_BUYPRICE_XXX.
 * Function img_pdf() has been removed. Replace it with img_picto('', 'pdf.png') if you were using it.
 * The method run_trigger() was deprecated 10+ years ago in favor of runTrigger(). It has been removed. Change your trigger file if you still use it.
 * Property ->picto of module descriptors must contains the image extension if it is not a font awesome tag. Example: $this->picto="mymoduleimg.png";
-* Stock movement API GET method output variable names have been harmonized with POST input parameter names
+* Stock movement API GET method output variable names has been harmonized with POST input parameter names
+* $conf is no more allowed into computed formulae. You ca replace use of $conf->currency by NEW Introduce getCurrency() and $conf->global->xxx by getDolGlobalString('xxx')
+
 
 
 ***** ChangeLog for 22.0.3 compared to 22.0.2 *****

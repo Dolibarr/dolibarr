@@ -613,7 +613,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 // Switch in Bold
-
+/* Fight against optionflation: We don't need this for common usage. Must remain as advanced option.
 print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_BOLD_PRODUCT_LABEL');
@@ -621,9 +621,10 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('PDF_BOLD_PRODUCT_LABEL', getDolGlobalInt('PDF_BOLD_PRODUCT_LABEL'), 1);
 }
 print '</td></tr>';
+*/
 
 // Switch in Bold
-
+/* Fight against optionflation: We don't need this for common usage. Must remain as advanced option.
 print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_BOLD_PRODUCT_REF_AND_PERIOD');
@@ -631,6 +632,7 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('PDF_BOLD_PRODUCT_REF_AND_PERIOD', getDolGlobalInt('PDF_BOLD_PRODUCT_REF_AND_PERIOD'), 1);
 }
 print '</td></tr>';
+*/
 
 // SHOW_SUBPRODUCT_REF_IN_PDF - Option to show the detail of product ref for kits.
 
