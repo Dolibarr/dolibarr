@@ -97,6 +97,16 @@ if ($conf->use_javascript_ajax) {
 	$sql .= " ORDER BY t.status ASC";
 	$resql = $db->query($sql);
 
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus5
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus8
+	 * @var string $badgeStatus9
+	 */
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -106,7 +116,6 @@ if ($conf->use_javascript_ajax) {
 		$colorseries = array();
 		$vals = array();
 
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
@@ -145,22 +154,20 @@ if ($conf->use_javascript_ajax) {
 				print "</tr>\n";
 			}
 		}
-		if ($conf->use_javascript_ajax) {
-			print '<tr><td class="center" colspan="2">';
+		print '<tr><td class="center" colspan="2">';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->SetDataColor(array_values($colorseries));
-			$dolgraph->setShowLegend(2);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->SetHeight('200');
-			$dolgraph->draw('idgraphstatus');
-			print $dolgraph->show($totalnb ? 0 : 1);
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+		$dolgraph = new DolGraph();
+		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
+		$dolgraph->setShowLegend(2);
+		$dolgraph->setShowPercent(1);
+		$dolgraph->SetType(array('pie'));
+		$dolgraph->SetHeight('200');
+		$dolgraph->draw('idgraphstatus');
+		print $dolgraph->show($totalnb ? 0 : 1);
 
-			print '</td></tr>';
-		}
+		print '</td></tr>';
 		print "</table>";
 		print "</div>";
 
@@ -183,8 +190,6 @@ if ($conf->use_javascript_ajax) {
 		$dataseries = array();
 		$colorseries = array();
 		$vals = array();
-
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
@@ -229,22 +234,20 @@ if ($conf->use_javascript_ajax) {
 				print "</tr>\n";
 			}
 		}
-		if ($conf->use_javascript_ajax) {
-			print '<tr><td class="center" colspan="2">';
+		print '<tr><td class="center" colspan="2">';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->SetDataColor(array_values($colorseries));
-			$dolgraph->setShowLegend(2);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->SetHeight('200');
-			$dolgraph->draw('idgraphstatuscandidature');
-			print $dolgraph->show($totalnb ? 0 : 1);
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+		$dolgraph = new DolGraph();
+		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
+		$dolgraph->setShowLegend(2);
+		$dolgraph->setShowPercent(1);
+		$dolgraph->SetType(array('pie'));
+		$dolgraph->SetHeight('200');
+		$dolgraph->draw('idgraphstatuscandidature');
+		print $dolgraph->show($totalnb ? 0 : 1);
 
-			print '</td></tr>';
-		}
+		print '</td></tr>';
 		print "</table>";
 		print "</div>";
 
@@ -258,8 +261,7 @@ print '<br>';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (isModEnabled('recruitment') && $user->rights->recruitment->read)
-{
+if (isModEnabled('recruitment') && $user->rights->recruitment->read) {
 	$langs->load("orders");
 
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";

@@ -127,7 +127,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		$object->date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 		$object->date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
-		$object->budget_amount = GETPOSTFLOAT('budget_amount');
+		$object->budget_amount = (GETPOST('budget_amount') != '' ? GETPOSTFLOAT('budget_amount'): null);
 		$object->billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
 		if (GETPOST('progress') == '100') {
 			$object->status = $object::STATUS_CLOSED;
@@ -316,7 +316,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-task
 
 if ($id > 0 || !empty($ref)) {
 	$res = $object->fetch_optionals();
-	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
 		$object->fetchComments();
 	}
 

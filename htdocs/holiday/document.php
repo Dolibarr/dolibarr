@@ -228,7 +228,7 @@ if ($object->id) {
 	}
 	print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
 	print '</td>';
-	print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
+	print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $userRequest->country_id).'</td>';
 	print '</tr>';
 
 	if ($object->status == Holiday::STATUS_REFUSED) {

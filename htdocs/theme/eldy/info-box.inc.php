@@ -482,6 +482,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .infobox-holiday{
 	color: #755114;
 }
+.infobox-portal {
+	color: #304;
+}
 
 
 .fa-dol-action:before {

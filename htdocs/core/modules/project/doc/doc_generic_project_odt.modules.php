@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -141,7 +141,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 * @param   CommonObject	$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string		    $array_key	        Name of the key for return array
-	 * @return	array<string,mixed>					Array of substitution
+	 * @return	array<string,float|string>			Array of substitution
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{

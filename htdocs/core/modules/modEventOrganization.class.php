@@ -208,6 +208,7 @@ class modEventOrganization extends DolibarrModules
 
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
+		/*
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of EventOrganization'; // Permission label
 		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
@@ -220,6 +221,7 @@ class modEventOrganization extends DolibarrModules
 		$this->rights[$r][1] = 'Delete objects of EventOrganization'; // Permission label
 		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
 		$r++;
+		*/
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -240,7 +242,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -252,7 +254,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -264,7 +266,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -279,7 +281,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -291,7 +293,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "write")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -303,7 +305,7 @@ class modEventOrganization extends DolibarrModules
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->hasRight("eventorganization", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("project", "read")',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);

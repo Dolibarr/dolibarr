@@ -61,22 +61,13 @@ require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.p
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
-// if we set another view list mode, we keep it (till we change one more time)
-if (GETPOSTISSET('mode')) {
-	$mode = GETPOST('mode', 'alpha');
-	if ($mode == 'common' || $mode == 'commonkanban') {
-		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
-	}
-} else {
-	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
-}
-
 $action = GETPOST('action', 'aZ09');
 $page_y = GETPOSTINT('page_y');
 $optioncss = GETPOST('optioncss', 'aZ09');
 $sortfield = GETPOST('sortfield', 'aZ09');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
+$mode = GETPOST('mode', 'alpha');
 $value = GETPOST('value', 'alpha');
 $search_keyword = GETPOST('search_keyword', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
@@ -168,6 +159,7 @@ if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 
 $debug = false;
 $remotestore = new ExternalModules($debug);
+
 if ($mode == 'marketplace') {
 	// Make remote calls
 	if (GETPOSTINT('dol_resetcache')) {
@@ -191,6 +183,16 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+// if we set another view list mode, we keep it (till we change one more time)
+if (GETPOSTISSET('mode')) {
+	$mode = GETPOST('mode', 'alpha');
+	if ($mode == 'common' && !getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT')) {
+		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
+	}
+} else {
+	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
 }
 
 if (GETPOST('buttonreset', 'alpha')) {
@@ -512,7 +514,7 @@ $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
-$publisherlogoarray = array();
+//$publisherlogoarray = array();
 
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
@@ -617,8 +619,7 @@ foreach ($modulesdir as $dir) {
 								}
 
 								$familyposition = (empty($familyinfo[$familykey]['position']) ? '0' : $familyinfo[$familykey]['position']);
-								$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
-								if ($external && !in_array($familykey, $listOfOfficialModuleGroups)) {
+								if ($external && !in_array($familykey, array_keys($familyinfo))) {
 									// If module is extern and into a custom group (not into an official predefined one), it must appear at end (custom groups should not be before official groups).
 									if (is_numeric($familyposition)) {
 										$familyposition = sprintf("%03d", (int) $familyposition + 100);
@@ -1297,8 +1298,8 @@ if ($mode == 'marketplace') {
 
 	$url = 'https://www.dolistore.com';
 
-	// Marketplace
-	print '<tr class="oddeven">'."\n";
+	// Source Marketplace DoliStore
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
 	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
@@ -1330,8 +1331,8 @@ if ($mode == 'marketplace') {
 
 	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
 
-	// Community
-	print '<tr class="oddeven">'."\n";
+	// Source Community github
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
 	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
@@ -1409,7 +1410,7 @@ if ($mode == 'marketplace') {
 		print '<div class="clearboth"></div>';
 		?>
 			<?php if (!empty($categories_tree)) { ?>
-				<div id="category-tree-left">
+				<div id="category-tree-left" class="paddingtop">
 					<ul class="tree">
 					<?php
 						print $categories_tree; ?>
@@ -1616,7 +1617,7 @@ if ($mode == 'develop') {
 	print '<td colspan="3">'.$langs->trans("DevelopYourModuleDesc").'</td>';
 	print '</tr>';
 
-	print '<tr class="oddeven" height="80">'."\n";
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="center hideonsmartphone">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
@@ -1630,7 +1631,7 @@ if ($mode == 'develop') {
 	print '</td>';
 	print '</tr>';
 
-	print '<tr class="oddeven" height="80">'."\n";
+	print '<tr class="oddeven nohover" height="100">'."\n";
 	$url = 'https://partners.dolibarr.org';
 	print '<td class="center hideonsmartphone">';
 	print'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';

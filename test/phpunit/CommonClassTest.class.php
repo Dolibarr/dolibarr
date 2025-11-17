@@ -2,7 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -383,7 +383,7 @@ abstract class CommonClassTest extends TestCase
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
 		'shipping' => 'Expedition',
-		'deplacement' => 'Deplacement',
+		'deplacement' => 'Deplacement',					// TODO Remove module
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
 		'dynamicprices' => 'DynamicPrices',

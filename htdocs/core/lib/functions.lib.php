@@ -158,6 +158,9 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 	} elseif ($module == 'recruitmentcandidature') {
 		$module = 'recruitment';
 		$subdirectory = '/recruitmentcandidature';
+	} elseif ($module == 'knowledgerecord') {
+		$module = 'knowledgemanagement';
+		$subdirectory = '/knowledgerecord';
 	}
 
 	// Get the relative path of directory
@@ -281,6 +284,28 @@ function getDolGlobalBool($key, $default = false)
 {
 	global $conf;
 	return (bool) ($conf->global->$key ?? $default);
+}
+
+/**
+ * Return the main currency ('EUR', 'USD', ...)
+ *
+ * @return 	string							Value returned
+ */
+function getDolCurrency()
+{
+	global $conf;
+	return (string) $conf->currency;
+}
+
+/**
+ * Return the default context page string
+ *
+ * @param	string		$s					Page path
+ * @return 	string							Value returned
+ */
+function getDolDefaultContextPage($s)
+{
+	return str_replace('_', '', basename(dirname($s)).basename($s, '.php'));
 }
 
 /**
@@ -3767,7 +3792,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	}
 
 	// Clean parameters
-	$to_gmt = false;
+	$to_gmt = false;	// false if we want date in server timezone, true if we want to add offset
 	$offsettz = $offsetdst = 0;
 	if ($tzoutput) {
 		$to_gmt = true; // For backward compatibility
@@ -3784,7 +3809,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
 				if (class_exists('DateTimeZone')) {
-					$user_date_tz = new DateTimeZone($offsettzstring);
+					try {
+						$user_date_tz = new DateTimeZone($offsettzstring);
+					} catch (Exception $e) {
+						// Bad value for $offsettzstring
+						dol_syslog("DateInvalidTimeZoneException for timezone string '".$offsettzstring."'. Falling back to UTC.", LOG_ERR);
+						$user_date_tz = new DateTimeZone('UTC'); // Force valid timezone as UTC
+					}
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
 					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
@@ -3911,10 +3942,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		// Date is a timestamps
 		if ($time < 100000000000) {	// Protection against bad date values
 			$dtts = new DateTime();
-			if ($to_gmt) {
+			//var_dump($tzoutput.' '.$offsettzstring.' '.$offsettz.$offsetdst.' x '.$to_gmt);
+			if ($to_gmt) {	// to_gmt means "not in php server timezone" (if tzoutput = 'gmt', offsets should be 0 but if = 'tzuser...', offsets may be defined
+				$timetouse = (int) $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
+
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 				$dtts->setTimezone($tzo);	// important: must be before the setTimestamp
-				$dtts->setTimestamp((int) $time);
+				$dtts->setTimestamp($timetouse);
 			} else {
 				$timetouse = (int) $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
@@ -5415,7 +5449,8 @@ function getPictoForType($key, $morecss = '')
  *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *                                                  Example: fontawesome_envelope-open-text_fas_red_1em if you want to use fontaweseome icons: fontawesome_<icon-name>_<style>_<color>_<size> (only icon-name is mandatory)
+ *                                                  Example: fa-value			 		if you want to use fontaweseome icons: fa-<icon-name>
+ *                                                  Example: fa-value_fas_color_1em 	if you want to use fontaweseome icons: fa-<icon-name>_<style>_<color>_<size> (only icon-name is mandatory, color can be 'red' or '#FF0000')
  *	@param		string		$moreatt				Add more attribute on img tag (For example 'class="pictofixedwidth"')
  *	@param		int<0,1>    $pictoisfullpath		If true or 1, image path is a full path, 0 if not
  *	@param		int			$srconly				Return only content of the src attribute of img.
@@ -5562,7 +5597,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment', 'reception'))) {
 				$morecss .= ' em092';
 			}
-			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'info_black', 'project', 'workstation'))) {
+			if (in_array($pictowithouttext, array('conferenceorbooth', 'eventorganization', 'holiday', 'info', 'info_black', 'project', 'workstation'))) {
 				$morecss .= ' em088';
 			}
 			if (in_array($pictowithouttext, array('asset', 'intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
@@ -5622,13 +5657,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'billa' => 'infobox-commande',
 				'billr' => 'infobox-commande',
 				'billd' => 'infobox-commande',
-				'bookcal' => 'infobox-action',
+				'bookcal' => 'infobox-portal',
 				'margin' => 'infobox-bank_account',
 				'conferenceorbooth' => 'infobox-project',
-				'cash-register' => 'infobox-bank_account',
+				'cash-register' => 'infobox-portal',
 				'contract' => 'infobox-contrat',
 				'check' => 'font-status4',
-				'collab' => 'infobox-action',
 				'conversation' => 'infobox-contrat',
 				'donation' => 'infobox-commande',
 				'dolly' => 'infobox-commande',
@@ -5639,6 +5673,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'group' => 'infobox-adherent',
 				'intervention' => 'infobox-contrat',
 				'incoterm' => 'infobox-supplier_proposal',
+				'intracommreport' => 'infobox-bank_account',
 				'currency' => 'infobox-bank_account',
 				'multicurrency' => 'infobox-bank_account',
 				'members' => 'infobox-adherent',
@@ -5659,10 +5694,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'info_black' => 'purple',
 				'invoice' => 'infobox-commande',
 				'knowledgemanagement' => 'infobox-contrat rotate90',
-				'loan' => 'infobox-bank_account',
+				'loan' => 'infobox-commande',
 				'payment' => 'infobox-bank_account',
 				'payment_vat' => 'infobox-bank_account',
-				'poll' => 'infobox-adherent',
+				'poll' => 'infobox-portal',
 				'pos' => 'infobox-bank_account',
 				'project' => 'infobox-project',
 				'projecttask' => 'infobox-project',
@@ -5673,9 +5708,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'recruitmentjobposition' => 'infobox-adherent',
 				'recruitmentcandidature' => 'infobox-adherent',
 				'resource' => 'infobox-action',
-				'salary' => 'infobox-bank_account',
+				'salary' => 'infobox-commande',
 				'shapes' => 'infobox-adherent',
 				'shipment' => 'infobox-commande',
+				'store' => 'infobox-portal',
 				'stripe' => 'infobox-bank_account',
 				'supplier_invoice' => 'infobox-order_supplier',
 				'supplier_invoicea' => 'infobox-order_supplier',
@@ -5690,6 +5726,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'trip' => 'infobox-expensereport',
 				'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
+				'webportal' => 'infobox-portal',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt' => 'imgforviewmode',
 				'calendar' => 'imgforviewmode',
@@ -5881,7 +5918,7 @@ function getImgPictoConv($mode = 'fa')
 			'chevron-double-right' => 'angle-double-right',
 			'chevron-double-down' => 'angle-double-down',
 			'chevron-double-top' => 'angle-double-up',
-			'donation' => 'file-alt',
+			'donation' => 'gift',
 			'dynamicprice' => 'hand-holding-usd',
 			'setup' => 'cog',
 			'companies' => 'building',
@@ -6626,7 +6663,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *  @param	string		$morecss			More CSS ('', 'warning', 'error')
  *  @param	string		$textfordropdown	Show a text to click to dropdown the info box.
  *  @param	string		$picto				'' or 'warning'
- *	@return	string						String with info text
+ *	@return	string							String with info text
  */
 function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
 {
@@ -11794,8 +11831,9 @@ function dol_eval_new($s)
 function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
-	global $conf;	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-	global $db, $langs, $user, $website, $websitepage;
+	//global $conf;	// Disabled. Read of const is done with getDolGlobalString() and read of $conf->currency is done with getDolCurrency()
+	global $db;
+	global $langs, $user, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields

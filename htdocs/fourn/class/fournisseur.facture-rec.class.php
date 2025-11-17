@@ -265,7 +265,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -408,7 +408,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', generate_pdf';
 			$sql .= ') VALUES (';
 			$sql .= "'".$this->db->escape($this->title)."'";
-			$sql .= ", ".($this->subtype ? "'".$this->db->escape((string) $this->subtype)."'" : "null");
+			$sql .= ", ".(isset($this->subtype) ? (int) $this->subtype : "NULL");
 			$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".((int) $facfourn_src->socid);
@@ -583,7 +583,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
 		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
-		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape((string) $this->subtype) : "null").",";
+		$sql .= " subtype=".(isset($this->subtype) ? (int) $this->subtype : "NULL").",";
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
 		if (!empty($this->socid) && $this->socid > 0) {
@@ -700,7 +700,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->id                       = $obj->rowid;
 				$this->titre                    = $obj->title;
 				$this->title                    = $obj->title;
-				$this->subtype				          = $obj->subtype;
+				$this->subtype				    = $obj->subtype;
 				$this->ref                      = $obj->title;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
@@ -1446,16 +1446,14 @@ class FactureFournisseurRec extends CommonInvoice
 					$invoiceidgenerated = $new_fac_fourn->create($user);
 					$laststep = "Create invoiceidgenerated $invoiceidgenerated";
 					if ($invoiceidgenerated <= 0) {
-						$this->errors = $new_fac_fourn->errors;
-						$this->error = $new_fac_fourn->error;
+						$this->setErrorsFromObject($new_fac_fourn);
 						$error++;
 					}
 					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $new_fac_fourn->validate($user);
 						$laststep = "Validate by user {$user->login}";
 						if ($result <= 0) {
-							$this->errors = $new_fac_fourn->errors;
-							$this->error = $new_fac_fourn->error;
+							$this->setErrorsFromObject($new_fac_fourn);
 							$error++;
 						}
 					}
@@ -1467,8 +1465,7 @@ class FactureFournisseurRec extends CommonInvoice
 						$laststep = "GenerateDocument ".$new_fac_fourn->id;
 						$result = $new_fac_fourn->generateDocument($facturerec->model_pdf, $langs);
 						if ($result < 0) {
-							$this->errors = $new_fac_fourn->errors;
-							$this->error = $new_fac_fourn->error;
+							$this->setErrorsFromObject($new_fac_fourn);
 							$error++;
 						}
 					}
