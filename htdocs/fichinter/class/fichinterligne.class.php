@@ -89,7 +89,7 @@ class FichinterLigne extends CommonObjectLine
 
 	/**
 	 * Product type.
-	 * @var int
+	 * @var int|null
 	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
 	 */
 	public $product_type;
