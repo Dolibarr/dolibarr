@@ -30,6 +30,7 @@ require '../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Societe $mysoc
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -72,6 +73,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha')) || ($action == 'updatee
 	//dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_FAX", GETPOST("fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_MAIL", GETPOST("mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_WEB", GETPOST("web", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_IDPROF1", GETPOST("idprof1", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_CODE", GETPOST("code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NOTE", GETPOST("note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
 
@@ -86,6 +88,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha')) || ($action == 'updatee
 	//dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_FAX", GETPOST("itprovider_fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_MAIL", GETPOST("itprovider_mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_WEB", GETPOST("itprovider_web", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF1", GETPOST("itprovider_idprof1", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_CODE", GETPOST("itprovider_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NOTE", GETPOST("itprovider_note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
 
@@ -204,6 +207,10 @@ print img_picto('', 'globe', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="web" id="web" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('web') ? GETPOST('web', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_WEB')).'"></td></tr>';
 print '</td></tr>'."\n";
 
+// Id prof
+print '<tr class="oddeven"><td><label for="idprof1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
+print '<input name="idprof1" id="idprof1" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('idprof1') ? GETPOST('idprof1', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_IDPROF1')).'"></td></tr>'."\n";
+
 // Code
 print '<tr class="oddeven"><td><label for="code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';
 print '<input name="code" id="code" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('code') ? GETPOST('code', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_CODE')).'"></td></tr>'."\n";
@@ -283,6 +290,10 @@ print '<tr class="oddeven"><td><label for="itprovider_web">'.$langs->trans("Web"
 print img_picto('', 'globe', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="itprovider_web" id="itprovider_web" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('itprovider_web') ? GETPOST('itprovider_web', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_WEB')).'"></td></tr>';
 print '</td></tr>'."\n";
+
+// Code
+print '<tr class="oddeven"><td><label for="itprovider_idprof1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
+print '<input name="itprovider_idprof1" id="itprovider_idprof1" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('itprovider_idprof1') ? GETPOST('itprovider_idprof1', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')).'"></td></tr>'."\n";
 
 // Code
 print '<tr class="oddeven"><td><label for="itprovider_code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';

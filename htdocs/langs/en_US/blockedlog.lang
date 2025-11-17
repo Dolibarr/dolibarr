@@ -43,6 +43,10 @@ YourCountryCode=Your country code
 DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset=Disabling %s module is not allowed once it has been used, except for a full database reset. Ask your integrator or reseller if you need such a reset.
 LNECertifiedPOSSystem=LNE Certified POS system
 InvoiceGeneratedWithLNECertifiedPOSSystem=Invoice generated with a LNE certified POS system
+TotalTTCIfInvoiceSeeCompleteDataForDetail=Amount of event. Total including tax if invoice. See the column "complete data" for details.
+TypeOfEvent=Type of event
+TotalForAction=Total for event %s
+SecretKey=Secret key
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted

@@ -98,7 +98,7 @@ if (empty($origin_id) && !empty($origin)) {
 $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOSTINT('lineid') ? GETPOSTINT('lineid') : 0;
 $facid = GETPOSTINT('facid');
-$socid  =  GETPOSTINT('socid');
+$socid = GETPOSTINT('socid');
 $action	= GETPOST('action', 'alpha');
 //Select mail models is same action as presend
 if (GETPOST('modelselected')) {
@@ -139,7 +139,6 @@ $hookmanager->initHooks(array('receptioncard', 'globalcard'));
 
 $date_delivery = dol_mktime(GETPOSTINT('date_deliveryhour'), GETPOSTINT('date_deliverymin'), 0, GETPOSTINT('date_deliverymonth'), GETPOSTINT('date_deliveryday'), GETPOSTINT('date_deliveryyear'));
 $date_reception = dol_mktime(GETPOSTINT('date_receptionhour'), GETPOSTINT('date_receptionmin'), 0, GETPOSTINT('date_receptionmonth'), GETPOSTINT('date_receptionday'), GETPOSTINT('date_receptionyear'));
-
 
 // Security check
 if ($user->socid) {
@@ -313,13 +312,13 @@ if (empty($reshook)) {
 	if ($action == 'add' && $permissiontoadd) {
 		$db->begin();
 
-		if (GETPOSTINT('socid') < 1) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
-			$action = 'create';
-		}
+		if (!$error && !$origin && getDolGlobalString('RECEPTION_STANDALONE')) {
+			if (GETPOSTINT('socid') < 1) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
+				$action = 'create';
+			}
 
-		if (!$origin && getDolGlobalString('RECEPTION_STANDALONE')) {
 			$object->socid = GETPOSTINT('socid');
 			$object->fetch_thirdparty();
 			$object->note = GETPOST('note', 'alpha');
@@ -365,12 +364,13 @@ if (empty($reshook)) {
 			$object->note = GETPOST('note', 'alpha');
 			$object->note_private = GETPOST('note', 'alpha');
 			$object->origin = $origin;
+			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOSTINT('weight') == '' ? null : GETPOSTINT('weight');
-			$object->trueHeight = GETPOSTINT('trueHeight') == '' ? null : GETPOSTINT('trueHeight');
-			$object->trueWidth = GETPOSTINT('trueWidth') == '' ? null : GETPOSTINT('trueWidth');
-			$object->trueDepth = GETPOSTINT('trueDepth') == '' ? null : GETPOSTINT('trueDepth');
+			$object->weight = GETPOST('weight') == '' ? null : GETPOSTINT('weight');
+			$object->trueHeight = GETPOST('trueHeight') == '' ? null : GETPOSTINT('trueHeight');
+			$object->trueWidth = GETPOST('trueWidth') == '' ? null : GETPOSTINT('trueWidth');
+			$object->trueDepth = GETPOST('trueDepth') == '' ? null : GETPOSTINT('trueDepth');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 
@@ -384,14 +384,17 @@ if (empty($reshook)) {
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
+
 			if ($object->origin == "supplierorder") {
 				$object->origin = 'order_supplier';
+				$object->origin_type = 'order_supplier';
 				$classname = 'CommandeFournisseur';
 			} else {
 				$classname = ucfirst($object->origin);
 			}
 			$objectsrc = new $classname($db);
 			$objectsrc->fetch($object->origin_id);
+
 			$object->socid = $objectsrc->socid;
 			$object->fk_delivery_address = $objectsrc->fk_delivery_address;
 
@@ -650,18 +653,18 @@ if (empty($reshook)) {
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {			// Test on permission already done
-			$object->trueWeight = GETPOSTINT('trueWeight');
+			$object->trueWeight = GETPOST('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {			// Test on permission already done
-			$object->trueWidth = GETPOSTINT('trueWidth');
+			$object->trueWidth = GETPOST('trueWidth');
 		}
 		if ($action == 'settrueHeight') {			// Test on permission already done
-			$object->trueHeight = GETPOSTINT('trueHeight');
+			$object->trueHeight = GETPOST('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {			// Test on permission already done
-			$object->trueDepth = GETPOSTINT('trueDepth');
+			$object->trueDepth = GETPOST('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {	// Test on permission already done
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
@@ -1127,7 +1130,7 @@ $product_static = new Product($db);
 $reception_static = new Reception($db);
 $warehousestatic = new Entrepot($db);
 
-if ($action == 'create' && !getDolGlobalString('RECEPTION_STANDALONE')) {
+if ($action == 'create' && $origin != 'supplierorder' && !getDolGlobalString('RECEPTION_STANDALONE')) {
 	print load_fiche_titre($langs->trans("CreateReception"), '', 'dollyrevert');
 
 	print '<br>'.$langs->trans("ReceptionCreationIsDoneFromOrder");
@@ -1232,7 +1235,7 @@ if ($action == 'create' && $permissiontoadd) {
 		print $langs->trans("Weight");
 		print '</td><td colspan="3">';
 		print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-		print '<input name="weight" size="4" value="'.GETPOSTINT('weight').'"> ';
+		print '<input name="weight" size="4" value="'.GETPOST('weight').'"> ';
 		$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
 		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 		print $form->textwithpicto($text, $htmltext);
@@ -1243,9 +1246,9 @@ if ($action == 'create' && $permissiontoadd) {
 		print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
 		print ' </td><td colspan="3">';
 		print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
-		print '<input name="sizeW" size="4" value="'.GETPOSTINT('sizeW').'">';
-		print ' x <input name="sizeH" size="4" value="'.GETPOSTINT('sizeH').'">';
-		print ' x <input name="sizeS" size="4" value="'.GETPOSTINT('sizeS').'">';
+		print '<input name="sizeW" size="4" value="'.GETPOST('sizeW').'">';
+		print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH').'">';
+		print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS').'">';
 		print ' ';
 		$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
 		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
@@ -1384,7 +1387,7 @@ if ($action == 'create' && $permissiontoadd) {
 			print '</td>';
 			print '</tr>';
 
-			// Tiers
+			// Thirdparty provider
 			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Company').'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
@@ -1421,6 +1424,7 @@ if ($action == 'create' && $permissiontoadd) {
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
+			print img_picto('', 'action', 'class="pictofixedwidth"');
 			$date_delivery = ($date_delivery ? $date_delivery : $objectsrc->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
@@ -1445,7 +1449,7 @@ if ($action == 'create' && $permissiontoadd) {
 			// Weight
 			print '<tr><td>';
 			print $langs->trans("Weight");
-			print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOSTINT('weight').'"> ';
+			print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight').'"> ';
 			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
@@ -1453,9 +1457,9 @@ if ($action == 'create' && $permissiontoadd) {
 			// Dim
 			print '<tr><td>';
 			print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
-			print ' </td><td colspan="3"><input name="trueWidth" size="4" value="'.GETPOSTINT('trueWidth').'">';
-			print ' x <input name="trueHeight" size="4" value="'.GETPOSTINT('trueHeight').'">';
-			print ' x <input name="trueDepth" size="4" value="'.GETPOSTINT('trueDepth').'">';
+			print ' </td><td colspan="3"><input name="trueWidth" size="4" value="'.GETPOST('trueWidth').'">';
+			print ' x <input name="trueHeight" size="4" value="'.GETPOST('trueHeight').'">';
+			print ' x <input name="trueDepth" size="4" value="'.GETPOST('trueDepth').'">';
 			print ' ';
 			$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");

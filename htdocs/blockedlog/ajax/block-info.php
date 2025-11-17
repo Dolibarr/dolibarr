@@ -41,7 +41,6 @@ if (!defined('NOREQUIREHTML')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -49,6 +48,8 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
 
 $id = GETPOSTINT('id');
 $block = new BlockedLog($db);
@@ -57,7 +58,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "bills", "cashdesk", "companies", "members", "products"));
+$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "members", "products"));
 
 
 /*
@@ -137,6 +138,9 @@ function formatObject($objtoshow, $prefix)
 		'amount' => 'Amount',
 		'id' => 'ID',
 		'ref' => 'Ref',
+		'element' => 'TypeOfEvent',
+		'entity' => 'Entity',
+		'label' => 'Label',
 		'date' => 'Date',
 		'total_ht' => 'TotalHT',
 		'total_ttc' => 'TotalTTC',

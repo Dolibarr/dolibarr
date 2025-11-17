@@ -5421,7 +5421,8 @@ function getPictoForType($key, $morecss = '')
  *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *                                                  Example: fontawesome_envelope-open-text_fas_red_1em if you want to use fontaweseome icons: fontawesome_<icon-name>_<style>_<color>_<size> (only icon-name is mandatory)
+ *                                                  Example: fa-value			 		if you want to use fontaweseome icons: fa-<icon-name>
+ *                                                  Example: fa-value_fas_color_1em 	if you want to use fontaweseome icons: fa-<icon-name>_<style>_<color>_<size> (only icon-name is mandatory, color can be 'red' or '#FF0000')
  *	@param		string		$moreatt				Add more attribute on img tag (For example 'class="pictofixedwidth"')
  *	@param		int<0,1>    $pictoisfullpath		If true or 1, image path is a full path, 0 if not
  *	@param		int			$srconly				Return only content of the src attribute of img.
@@ -5568,7 +5569,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment', 'reception'))) {
 				$morecss .= ' em092';
 			}
-			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'info_black', 'project', 'workstation'))) {
+			if (in_array($pictowithouttext, array('conferenceorbooth', 'eventorganization', 'holiday', 'info', 'info_black', 'project', 'workstation'))) {
 				$morecss .= ' em088';
 			}
 			if (in_array($pictowithouttext, array('asset', 'intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
@@ -5628,13 +5629,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'billa' => 'infobox-commande',
 				'billr' => 'infobox-commande',
 				'billd' => 'infobox-commande',
-				'bookcal' => 'infobox-action',
+				'bookcal' => 'infobox-portal',
 				'margin' => 'infobox-bank_account',
 				'conferenceorbooth' => 'infobox-project',
-				'cash-register' => 'infobox-bank_account',
+				'cash-register' => 'infobox-portal',
 				'contract' => 'infobox-contrat',
 				'check' => 'font-status4',
-				'collab' => 'infobox-action',
 				'conversation' => 'infobox-contrat',
 				'donation' => 'infobox-commande',
 				'dolly' => 'infobox-commande',
@@ -5645,6 +5645,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'group' => 'infobox-adherent',
 				'intervention' => 'infobox-contrat',
 				'incoterm' => 'infobox-supplier_proposal',
+				'intracommreport' => 'infobox-bank_account',
 				'currency' => 'infobox-bank_account',
 				'multicurrency' => 'infobox-bank_account',
 				'members' => 'infobox-adherent',
@@ -5665,10 +5666,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'info_black' => 'purple',
 				'invoice' => 'infobox-commande',
 				'knowledgemanagement' => 'infobox-contrat rotate90',
-				'loan' => 'infobox-bank_account',
+				'loan' => 'infobox-commande',
 				'payment' => 'infobox-bank_account',
 				'payment_vat' => 'infobox-bank_account',
-				'poll' => 'infobox-adherent',
+				'poll' => 'infobox-portal',
 				'pos' => 'infobox-bank_account',
 				'project' => 'infobox-project',
 				'projecttask' => 'infobox-project',
@@ -5679,9 +5680,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'recruitmentjobposition' => 'infobox-adherent',
 				'recruitmentcandidature' => 'infobox-adherent',
 				'resource' => 'infobox-action',
-				'salary' => 'infobox-bank_account',
+				'salary' => 'infobox-commande',
 				'shapes' => 'infobox-adherent',
 				'shipment' => 'infobox-commande',
+				'store' => 'infobox-portal',
 				'stripe' => 'infobox-bank_account',
 				'supplier_invoice' => 'infobox-order_supplier',
 				'supplier_invoicea' => 'infobox-order_supplier',
@@ -5696,6 +5698,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'trip' => 'infobox-expensereport',
 				'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
+				'webportal' => 'infobox-portal',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt' => 'imgforviewmode',
 				'calendar' => 'imgforviewmode',
@@ -5887,7 +5890,7 @@ function getImgPictoConv($mode = 'fa')
 			'chevron-double-right' => 'angle-double-right',
 			'chevron-double-down' => 'angle-double-down',
 			'chevron-double-top' => 'angle-double-up',
-			'donation' => 'file-alt',
+			'donation' => 'gift',
 			'dynamicprice' => 'hand-holding-usd',
 			'setup' => 'cog',
 			'companies' => 'building',

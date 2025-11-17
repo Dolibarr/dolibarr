@@ -219,6 +219,11 @@ function dolDecrypt($chain, $key = '')
 			} else {
 				$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $key, 0, '');
 			}
+			// Test validity of decryption
+			if (!ascii_check($newchain)) {
+				dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
+				return $chain;
+			}
 		} else {
 			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
 			return $chain;
