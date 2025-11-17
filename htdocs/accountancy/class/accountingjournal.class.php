@@ -816,7 +816,7 @@ class AccountingJournal extends CommonObject
 
 			// Discounted amount including tax
 			$paid    = (float) price2num($invoice_static->getSommePaiement(), 'MT');
-			$usedcn  = (float) price2num($invoice_static->getSumOfCreditNotesUsed(), 'MT');
+			$usedcn  = (float) price2num($invoice_static->getSumCreditNotesUsed(), 'MT');
 			$useddep = (float) price2num($invoice_static->getSumDepositsUsed(), 'MT');
 			$ttc_inv = (float) price2num($invoice_static->total_ttc, 'MT');
 			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
@@ -1120,7 +1120,7 @@ class AccountingJournal extends CommonObject
 
 			// Discounted amount including tax
 			$paid    = (float) price2num($invoicesupplier_static->getSommePaiement(), 'MT');
-			$usedcn  = (float) price2num($invoicesupplier_static->getSumOfCreditNotesUsed(), 'MT');
+			$usedcn  = (float) price2num($invoicesupplier_static->getSumCreditNotesUsed(), 'MT');
 			$useddep = (float) price2num($invoicesupplier_static->getSumDepositsUsed(), 'MT');
 			$ttc_inv = (float) price2num($invoicesupplier_static->total_ttc, 'MT');
 			$escompte_ttc = (float) price2num(max(0, $ttc_inv - $paid - $usedcn - $useddep), 'MT');
