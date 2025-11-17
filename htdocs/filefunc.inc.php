@@ -32,7 +32,14 @@
  *  \brief      File that include the conf.php file and commons lib like functions.lib.php
  */
 
-require_once 'version.inc.php';
+
+define('DOL_MINOR_VERSION', '0.0-alpha');
+
+if (!defined('DOL_APPLICATION_TITLE')) {
+	define('DOL_APPLICATION_TITLE', 'Dolibarr');
+}
+
+require_once 'version.inc.php';		// Define the DOL_VERSION
 
 
 // Define syslog constants
@@ -48,6 +55,11 @@ if (!defined('LOG_DEBUG')) {
 		define('LOG_INFO', 6);
 		define('LOG_DEBUG', 7);
 	}
+}
+
+// End of common declaration part
+if (defined('DOL_INC_FOR_VERSION_ERROR')) {
+	return;
 }
 
 

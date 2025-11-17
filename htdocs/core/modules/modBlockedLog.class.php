@@ -259,6 +259,7 @@ class modBlockedLog extends DolibarrModules
 		$object->ref = 'systemevent';
 		$object->entity = $conf->entity;
 		$object->date = dol_now();
+		$object->label = 'Module disabled';
 
 		$b = new BlockedLog($this->db);
 		$result = $b->setObjectData($object, 'MODULE_RESET', 0);
