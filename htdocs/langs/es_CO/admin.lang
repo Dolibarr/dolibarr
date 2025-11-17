@@ -907,7 +907,6 @@ LogEventDesc=Habilite el registro (logging) para eventos de seguridad específic
 AreaForAdminOnly=Los parámetros de configuración solo pueden ser configurados por <b> usuarios administradores </b>.
 SystemInfoDesc=La información del sistema es información técnica diversa que se obtiene en modo de solo lectura y visible solo para administradores.
 SystemAreaForAdminOnly=Esta área solo está disponible para usuarios administradores. Los permisos de usuario de Dolibarr no pueden cambiar esta restricción.
-AccountantDesc=Si tiene un contador/contable externo, puede editar aquí su información.
 DisplayDesc=Aquí se pueden modificar los parámetros que afectan el aspecto y la presentación de la aplicación.
 ToActivateModule=Para activar los módulos, vaya al área de configuración (Inicio-> Configuración-> Módulos).
 SessionTimeOut=Tiempo fuera para sesión

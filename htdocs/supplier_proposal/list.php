@@ -213,8 +213,8 @@ $arrayfields = array(
 	'u.login' => array('label' => $langs->trans("Author"), 'checked' => '1', 'position' => 10),
 	'sp.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'sp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
-	'sp.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
-	'sp.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'sp.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES') ? '0' : '1')),
+	'sp.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES') ? '0' : '1')),
 	'sp.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
