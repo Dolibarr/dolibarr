@@ -11865,7 +11865,8 @@ function dol_eval_new($s)
 function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
-	//global $conf;	// Disabled. Read of const is done with getDolGlobalString() and read of $conf->currency is done with getDolCurrency()
+	// The less we have, the better it is.
+	// $conf is excluded. We can read $conf->global->xxx properties with getDolGlobalString(), $conf->currency with getDolCurrency(), $conf->entity with getDolEntity()
 	global $db;
 	global $langs, $user, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
@@ -11874,7 +11875,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 
 	// Old variables used (deprecated)
 	global $object;
-	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $objectoffield
 
 	$isObBufferActive = false;  // When true, the ObBuffer must be cleaned in the exception handler
 	if (!in_array($onlysimplestring, array('0', '1', '2'))) {
@@ -12010,9 +12011,9 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 
 		// We block use of php exec or php file functions
 		$forbiddenphpstrings = array('$$', '$_', '}[', ')(');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction'));
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction', 'SplFileObject', 'SplTempFileObject'));
 
-		// We list all forbidden function as keywords we don't want to see (we don't mind it if is "kewyord(" or just "keyword", we don't want "keyword" at all)
+		// We list all forbidden function as keywords we don't want to see (we don't mind it if is "keyword(" or just "keyword", we don't want "keyword" at all)
 		// We must exclude all functions that allow to execute another function. This includes all function that has a parameter with type "callable" to avoid things
 		// like we can do with array_map and its callable parameter:  dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '0')
 		$forbiddenphpfunctions = array();
@@ -12030,16 +12031,16 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "dol_concatdesc", "executeCLI", "verifCond", "GETPOST"));	// native dolibarr functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "dol_concatdesc", "executeCLI", "verifCond", "GETPOST", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_dir_list", "dol_dir_list_in_database", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("chdir", "dir", "fopen", "file", "file_exists", "file_get_contents", "file_put_contents", "fget", "fgetc", "fgetcsv", "fputs", "fputscsv", "fpassthru", "fscanf", "fseek", "fwrite", "is_file", "is_dir", "is_link", "mkdir", "opendir", "rmdir", "scandir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
 		if (getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL')) {	// We disabllow all function that allow to obfuscate the real name of a function
 			// @phpcs:ignore
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64" . "_" . "decode", "rawurl" . "decode", "url" . "decode", "str" . "_rot13", "hex" . "2bin")); // name of forbidden functions are split to avoid false positive
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_concatdesc"));	// native dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_concatdesc"));		// native dolibarr functions
 		}
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
@@ -12050,6 +12051,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 
 		$forbiddenphpmethodsregex = '->(' . implode('|', $forbiddenphpmethods) . ')';
 
+		// Now scan all forbidden patterns
 		do {
 			$oldstringtoclean = $s;
 			$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
@@ -12057,7 +12059,6 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 			$s = preg_replace('/' . $forbiddenphpmethodsregex . '/i', '__forbiddenstring__', $s);
 			//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
 		} while ($oldstringtoclean != $s);
-
 
 		if (strpos($s, '__forbiddenstring__') !== false) {
 			dol_syslog('Bad string syntax to evaluate: ' . $s, LOG_WARNING);
@@ -12068,6 +12069,13 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 				return '';
 			}
 		}
+
+
+		// Now accept only white-listed allowed function and classes
+		if (getDolGlobalString("MAIN_ALLOW_ONLY_WHITELIST_CLASS_AND_FUNCTION_IN_DOL_EVAL")) {
+			// TODO Get all pattern '/(\w+)\(/', then check that $reg[1] is a defined class or a function into a given list
+		}
+
 
 		//print $s."<br>\n";
 		if ($returnvalue) {
