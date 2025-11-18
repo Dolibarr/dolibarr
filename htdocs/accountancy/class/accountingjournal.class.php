@@ -827,7 +827,8 @@ class AccountingJournal extends CommonObject
 			}
 
 			$bookkeeping_static = new BookKeeping($this->db);
-			$label_discount = $bookkeeping_static->accountingLabelForOperation($customer_static->name, $invoice_static->ref, $langs->trans('DiscountGranted'));
+			$thirdpartyname = dol_string_nohtmltag((string) $customer_static->name);
+			$label_discount = $bookkeeping_static->accountingLabelForOperation($thirdpartyname, $invoice_static->ref, $langs->trans('DiscountGranted'));
 
 			// Distribution including VAT by rate
 			$ttcByRate = array();
@@ -1135,7 +1136,8 @@ class AccountingJournal extends CommonObject
 			}
 
 			$bookkeeping_static = new BookKeeping($this->db);
-			$label_discount = $bookkeeping_static->accountingLabelForOperation($supplier_static->name, $invoicesupplier_static->ref, $langs->trans('DiscountReceived'));
+			$thirdpartyname = dol_string_nohtmltag((string) $supplier_static->name);
+			$label_discount = $bookkeeping_static->accountingLabelForOperation($thirdpartyname, $invoicesupplier_static->ref, $langs->trans('DiscountReceived'));
 
 			// Distribution including VAT by rate
 			$ttcByRate = array();
