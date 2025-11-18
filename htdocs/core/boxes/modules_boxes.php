@@ -185,7 +185,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	/**
 	 *  Load data for box to show them later
 	 *
-	 *  @param	int		$max        Maximum number of records to load
+	 *  @param	int<0,max>		$max        Maximum number of records to load
 	 *  @return	void
 	 */
 	public function loadBox($max = 5)

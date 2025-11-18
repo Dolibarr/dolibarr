@@ -2,7 +2,7 @@
 /* Copyright (C) 2015		Jean-François Ferry     	<jfefe@aternatik.fr>
  * Copyright (C) 2020-2025	Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  * Copyright (C) 2025		Jean François Baillette		<jean-francois@swiiptel.net>
  *
@@ -1246,9 +1246,12 @@ class Users extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object	$object		Object to clean
 	 * @return  Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
