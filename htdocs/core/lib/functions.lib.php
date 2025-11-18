@@ -1355,7 +1355,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'san_alpha':
-			$out = filter_var($out, FILTER_SANITIZE_STRING);
+			$out = filter_var($out, FILTER_SANITIZE_STRING);  // TODO "FILTER_SANITIZE_STRING" is deprecated as of PHP 8.1.0, use htmlspecialchars() instead
 			break;
 		case 'email':
 			$out = filter_var($out, FILTER_SANITIZE_EMAIL);
