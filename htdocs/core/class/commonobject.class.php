@@ -215,7 +215,7 @@ abstract class CommonObject
 	public $linked_objects;
 
 	/**
-	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+	 * @var array<string,array<int,int>>	Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
 
@@ -805,7 +805,7 @@ abstract class CommonObject
 	public $totalpaid;
 
 	/**
-	 * @var int|float|null	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
+	 * @var int|float|null	Amount already paid from getSommePaiement(), like `$totalpaid`, but in the foreign currency
 	 * @see $totalpaid, $alreadypaid
 	 */
 	public $totalpaid_multicurrency;
@@ -1283,8 +1283,8 @@ abstract class CommonObject
 
 		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
-			$sql_allowed_contacts.= ' WHERE sc.fk_soc = '.(int) $this->socid;
-			$sql_allowed_contacts.= ' AND sc.fk_user = '.(int) $user->id;
+			$sql_allowed_contacts .= ' WHERE sc.fk_soc = '.(int) $this->socid;
+			$sql_allowed_contacts .= ' AND sc.fk_user = '.(int) $user->id;
 
 			$resql_allowed_contacts = $this->db->query($sql_allowed_contacts);
 
