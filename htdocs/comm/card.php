@@ -379,13 +379,6 @@ if ($object->id > 0) {
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
-	// Prefix
-	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-		print '<tr><td>'.$langs->trans("Prefix").'</td><td>';
-		print($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
-		print '</td></tr>';
-	}
-
 	if ($object->client) {
 		$langs->loadLangs(array("compta", "accountancy"));
 

@@ -1,6 +1,7 @@
 <?php
 /**
  * Copyright (C) 2025	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,8 +152,8 @@ $permissiontoeditpasswordandsend = false;
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
 	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"))) && (empty($user->socid) || $user->socid == $object->socid);
-	$permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin))&& (empty($user->socid) || $user->socid == $object->socid);
-	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
+	$permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin)) && (empty($user->socid) || $user->socid == $object->socid);
+	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password"))) && (empty($user->socid) || $user->socid == $object->socid);
 }
 
 
@@ -296,7 +297,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre('TOTPSecretKey', $_SERVER['PHP_SELF'], "u.rowid", $param, "", "", $sortfield, $sortorder);
+print_liste_field_titre('TOTPSecretKey', $_SERVER['PHP_SELF'], "u.rowid", '', $param, '', $sortfield, $sortorder);
 $totalarray['nbfield']++;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

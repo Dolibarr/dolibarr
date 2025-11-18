@@ -622,6 +622,7 @@ function isASecretKey($keyname)
  */
 function num2Alpha($n)
 {
+	$r = '';
 	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1) {
 		$r = chr($n % 26 + 0x41) . $r;
 	}
@@ -1355,6 +1356,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'san_alpha':
+			dol_syslog("Use of parameter value 'san_alpha' in GETPOST is deprecated. Use 'alphanohtml', 'aZ09comma', ...", LOG_WARNING);
 			$out = filter_var($out, FILTER_SANITIZE_STRING);
 			break;
 		case 'email':
@@ -6900,7 +6902,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by default)
- *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
+ *	@param	string	$param       Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Options of attribute td ("" by default)
  *	@param  ?string	$sortfield   Current field used to sort
  *	@param  ?string	$sortorder   Current sort order
@@ -6909,9 +6911,9 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *  @param	int		$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
  *	@return	void
  */
-function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
+function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $param = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $param, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
 }
 
 /**

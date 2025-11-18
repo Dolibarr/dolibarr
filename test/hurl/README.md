@@ -1,7 +1,7 @@
 # hurling Dolibarr
 
 ## What’s Hurl?
-Hurl is an Open Source command line tool that makes http requests. https://hurl.dev/
+Hurl is an Open Source command line tool that makes http requests. [https://hurl.dev/](https://hurl.dev)
 
 ### Why
 
@@ -9,7 +9,7 @@ We can use hurl to make (thorough and comprehensive) **automatic tests** for Dol
 
 ### Getting hurl
 
-We defer you to https://hurl.dev/docs/installation.html
+We defer you to [https://hurl.dev/docs/installation.html](https://hurl.dev/docs/installation.html)
 
 ### Why hurl?
 
@@ -75,23 +75,72 @@ DoliStore modules must come with hurl tests.
 
 2. Set these environment variables to know how to authenticate and where to reach your Dolibarr installation
 
+   ```bash
    DOLAPIKEY="DOLAPIKEY: _replace_with_your_Dolibarr_Token_for_API_"
-
    DOLIHOST="http://example.net/"
-
    DOLIPORT="8080"
-
    DOLISUBURL="/dolibarr" # if your dolibarr is available at / - no need to set it
-
    DOLIUSERNAME="foobar" # for GUI tests - if omitted, it will ask you
-
    DOLIPASSWORD="topsecret" # for GUI tests - if omitted, it will ask you
+   ```
 
 3. On Linux and mac execute ./run.sh
 
    On Windows? Please test and submit a PR on this file documenting how to run it on Windows incl. a script like run.sh - but just for Windows.
 
 4. Write new hurl tests during your development and submit using a PR - preferably using the very same PR that submits your changes, improvements and refinements of Dolibarr.
+
+### Running Specific Tests
+
+You can run specific tests by providing partial test names as arguments to the `run.sh` script. For example:
+
+```bash
+./run.sh setup_modules
+```
+
+This will run all tests that contain `setup_modules` in their name. You can also provide multiple test names as arguments:
+
+```bash
+./run.sh setup_modules status
+```
+
+This will run all tests that contain either `setup_modules` or `status` in their name.
+
+### Running Specific Tests with Options
+
+You can run specific tests with options by providing the options as arguments to the `run.sh` script. For example:
+
+```bash
+./run.sh --cookiefile=/path/to/cookie.jar --port=8080 --host=http://example.net --user=foobar --pass=topsecret --apikey=your_api_key --suburl=/dolibarr setup_modules
+```
+
+This will run all tests that contain `setup_modules` in their name with the specified options.
+
+### Excluding Specific Tests
+
+You can exclude specific tests by providing partial test names as arguments to the `run.sh` script using the `--exclude=PATTERN` option. For example:
+
+```bash
+./run.sh --exclude=setup_modules
+```
+
+This will exclude all tests that contain `setup_modules` in their name. You can also provide multiple test names as arguments:
+
+```bash
+./run.sh --exclude=setup_modules --exclude=status
+```
+
+This will exclude all tests that contain either `setup_modules` or `status` in their name.
+
+### Verbose Output
+
+You can enable verbose output by providing the `--verbose` or `--very-verbose` option to the `run.sh` script. For example:
+
+```bash
+./run.sh --verbose setup_modules
+```
+
+This will run all tests that contain `setup_modules` in their name with verbose output.
 
 ## Directory and file structure for hurl tests
 
@@ -105,23 +154,24 @@ Below that the directory name should be the first part of the endpoint, this cou
 
 It is currently undecided how we have to handle the discrepancy between the http endpoint and the module name! Let's together try, learn, discuss and finally agree on a decision!
 
+## Self contained `.hurl` files
 
-## Self contained .hurl files
+Each individual `.hurl` file should be entirely self contained, and where that is impractical (or impossible), this is where you use numbers bigger than 00 (no authentication needed) and 10+ (authentication needed) for the start of the filename. Any files with a bigger number than 10 are assumed to require authentication headers.
 
-Each individual .hurl file should be entirely self contained, and where that is impractical (or impossible), this is where you use numbers bigger than 00 (no authentication needed) and 10+ (authentication needed) for the start of the filename. Any files with a bigger number than 10 are assumed to require authentication headers.
+| Prefix | Description                                                   |
+|--------|---------------------------------------------------------------|
+| 00     | No authentication is required to run this test                |
+| 10     | Authentication is required to run the test                    |
+| 20     | Reserved for future usage                                     |
+| 30     | POST data for later tests                                     |
+| 40     | GET data that was POST'ed in 30_'s files                      |
+| 50     | PUT data that was POST'ed in 30_'s files                      |
+| 60     | GET data that was PUT'ed in 50_'s files                       |
+| 70     | To DELETE data                                                |
+| 80     | GET data that was just DELETE'd to make sure it is DELETE'd   |
+| 90     | Reserved for future usage                                     |
 
-- 00 in the beginning of the filename means that no authentication is required to run this test
-- 10 in the beginning of the filename means that authentication is required to run the test
-- 20 is reserved for future usage
-- 30 in the beginning of the filename is where you would POST data for later tests
-- 40 in the beginning of the filename is where you would GET data that was POST'ed in 30_'s files
-- 50 in the beginning of the filename is where you would PUT data that was POST'ed in 30_'s files
-- 60 in the beginning of the filename is where you would GET data that was PUT'ed in 50_'s files
-- 70 in the beginning of the filename is where you would DELETE data
-- 80 in the beginning of the filename is where you would GET data that was just DELETE'd to make sure it is DELETE'd
-- 90 is reserved for future usage
-
-You may use x[0-9] file names if absolutely needed.
+You may use `x[0-9]` file names if absolutely needed.
 
 ### Endpoint should be part of filename
 
@@ -129,26 +179,26 @@ To make it quicker to see what the file does, the endpoint should be part of the
 
 ### HTTP method may be part of the filename
 
-You may add the HTTP method as part of the filename, but make it after the number, and just before .hurl
+You may add the HTTP method as part of the filename, but make it after the number, and just before `.hurl`.
 
 ### Separator _ is more readable
 
-_ was chosen as separator, because it is more readable than .
+`_` was chosen as separator, because it is more readable than `.`.
 
 ### Examples:
 
-- api/00_explorer.hurl
-- api/setup/10_setup_modules.hurl
-- api/setup/10_setup_conf.hurl
-- api/setup/10_setup_company.hurl
-- api/status/00_status.hurl
-- api/status/10_status.hurl
-- api/00_foobar.hurl
-- api/login/00_login_POST.hurl
-- api/login/00_login_GET.hurl
-- gui/00_HOME.hurl
-- public/payment/00_payment_newpayment.hurl
-- public/onlinesign/00_onlinesign_newonlinesign.hurl
+- `api/00_explorer.hurl`
+- `api/setup/10_setup_modules.hurl`
+- `api/setup/10_setup_conf.hurl`
+- `api/setup/10_setup_company.hurl`
+- `api/status/00_status.hurl`
+- `api/status/10_status.hurl`
+- `api/00_foobar.hurl`
+- `api/login/00_login_POST.hurl`
+- `api/login/00_login_GET.hurl`
+- `gui/00_HOME.hurl`
+- `public/payment/00_payment_newpayment.hurl`
+- `public/onlinesign/00_onlinesign_newonlinesign.hurl`
 
 ## Translations and Number separator
 
