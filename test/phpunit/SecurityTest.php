@@ -765,23 +765,23 @@ class SecurityTest extends CommonClassTest
 		global $mainmenu,$leftmenu;	// Used into following strings to eval
 
 		$leftmenu = 'AAA';
-		$result = dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
 
 		// Same with a value that does not match
 		$leftmenu = 'XXX';
-		$result = dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
 		print "result14 = ".$result."\n";
 		$this->assertFalse($result);
 
 		$leftmenu = 'AAA';
-		$result = dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+		$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
 		print "result15 = ".$result."\n";
 		$this->assertTrue($result);
 
 		$leftmenu = 'XXX';
-		$result = dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+		$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
 		print "result16 = ".$result."\n";
 		$this->assertFalse($result);
 
@@ -792,7 +792,7 @@ class SecurityTest extends CommonClassTest
 		print "result17 = ".$result."\n";
 		$this->assertTrue($result);
 
-		$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
+		$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && getDolGlobalInt("MAIN_FEATURES_LEVEL")', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
 		print "result18 = ".$result."\n";
 		$this->assertFalse($result);
 

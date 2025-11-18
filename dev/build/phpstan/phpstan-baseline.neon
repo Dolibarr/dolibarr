@@ -1075,12 +1075,6 @@ parameters:
 			path: ../../../htdocs/api/class/api_setup.class.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 2
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1

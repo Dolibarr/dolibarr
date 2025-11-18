@@ -18,7 +18,7 @@
  */
 
 // Load Dolibarr environment
-require '../../../../../../main.inc.php';
+require '../../../../main.inc.php';
 
 /**
  * @var DoliDB      $db
@@ -40,22 +40,20 @@ $langs->load('uxdocumentation');
 
 //
 $documentation = new Documentation($db);
-$group = 'ExperimentalUx';
-
-$experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/freeze-tooltip/assets/';
+$group = 'Content';
 
 $js = [
-	$experimentAssetsPath . 'freeze-by-alt-keypress.js'
+//  now included in Dolibarr in htdocs/core/js/lib_tooltip-freeze-by-alt-keypress.js
 ];
 $css = [
-	$experimentAssetsPath . 'freeze-by-alt-keypress.css'
+//  now included in Dolibarr in htdocs/theme/eldy/tooltips.inc.css
 ];
 
 // Output html head + body - Param is Title
-$documentation->docHeader($langs->trans('ExperimentalUxFreezeTooltip', $group), $js, $css);
+$documentation->docHeader($langs->trans('FreezeTooltip', $group), $js, $css);
 
 // Set view for menu and breadcrumb
-$documentation->view = [$group, 'ExperimentalUxFreezeTooltip'];
+$documentation->view = [$group, 'FreezeTooltip'];
 
 // Output sidebar
 $documentation->showSidebar(); ?>
@@ -66,7 +64,7 @@ $documentation->showSidebar(); ?>
 
 	<div class="doc-content-wrapper">
 
-		<h1 class="documentation-title"><?php echo $langs->trans('ExperimentalUxFreezeTooltip'); ?></h1>
+		<h1 class="documentation-title"><?php echo $langs->trans('FreezeTooltip'); ?></h1>
 
 		<?php $documentation->showSummary(); ?>
 
@@ -142,4 +140,3 @@ $documentation->showSidebar(); ?>
 <?php
 // Output close body + html
 $documentation->docFooter();
-?>
