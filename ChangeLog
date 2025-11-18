@@ -21,19 +21,135 @@ The following changes may create regressions for some external modules, but were
 * The deprecated column egroupware_id has been dropped.
 * The property $sumpayed (duplicated of $totalpaid), $sumdeposit (duplicate of $totaldeposits) and $sumcreditnote (duplicate of $totalcreditnotes) has
   been removed (there are replaced with the property that was a duplication of (same for $sumpayed_multicurrency, $sumdeposit_multicurrency, $sumcreditnote_multicurrency).
-* Parameters $maxlen and $notooltip of Contract have been inverted to follow the standard. It was breaking the common use of getNomUrl() but if you were using the parameter
-  maxlen (rare) by using the old signature, result may be a tooltip that is no more visible on ref printed by you module.
+* Parameters $maxlen and $notooltip of Contract have been inverted to follow the standard. It was breaking the common use of getNomUrl() but if you were
+  using the parameter maxlen (rare) by using the old signature, result may be a tooltip that is no more visible on ref printed by your module.
 * Removed array $MAP_ID_TO_CODE that was a duplicate of array "array_flip($categ->MAP_ID)"
 * The signature of the Sale order ->cancel() method and shipment ->cancel() has been modified to introduce the $user param like for other methods that modify a status.
 * Adding new document templates must be done by adding files into the mymodule/core/modules/xxx/doc directory. Adding files into custom directory with the
-  same path than the core path without using a mymodule directory is now forbidden.
+  same path than the core path, without using a "mymodule" directory is now forbidden.
 * The directory theme/common/octicons has been removed
-* The library timepicker.js has been removed. Was not used by Dolibarr.
+* The library timepicker.js has been removed. Was no more used by Dolibarr.
 * Because of new TRIGGER_PREFIX property triggers SUPPLIER_PRODUCT_BUYPRICE_XXX are renamed to PRODUCT_BUYPRICE_XXX.
 * Function img_pdf() has been removed. Replace it with img_picto('', 'pdf.png') if you were using it.
 * The method run_trigger() was deprecated 10+ years ago in favor of runTrigger(). It has been removed. Change your trigger file if you still use it.
 * Property ->picto of module descriptors must contains the image extension if it is not a font awesome tag. Example: $this->picto="mymoduleimg.png";
-* Stock movement API GET method output variable names have been harmonized with POST input parameter names
+* Stock movement API GET method output variable names has been harmonized with POST input parameter names
+* $conf is no more allowed into computed formulae. You ca replace use of $conf->currency by NEW Introduce getCurrency() and $conf->global->xxx by getDolGlobalString('xxx')
+
+
+
+***** ChangeLog for 22.0.3 compared to 22.0.2 *****
+FIX: 16.0: extrafield of type link to category causes SQL error in selectForFormsList() (#36074)
+FIX: 20.0 ajax_constantonoff + FormSetup were ignoring custom css class (cssClass / $morecss) (#36039)
+FIX: #33741 FIX: #35632
+FIX: #35247 FIX: #35950 Using same option for landing page and home page
+FIX: #35519 (security) missing check user rights (#35527)
+FIX: #35520 FIX: #35522
+FIX: #35568 (#35569)
+FIX: #35573 FIX: #35241
+FIX: #35634 (#35912)
+FIX: #35766: Update buying price INT Float (#35769)
+FIX: #35780
+FIX: #35782
+FIX: #35784
+FIX: #35922 Lines of orders - Status filter unexpected beahavior (#35924)
+FIX: #36025 Accountancy - Error when cloning directly from accounting entry (#36034)
+FIX: #36046 enabling extrafieldmanaged to enable deletion of records from the llx_salay_extrafields table
+FIX: #36113 (#36116)
+FIX: access problem when label is used for next/prev (#35933)
+FIX: Accountancy - Admin personalized report - Remove duplicate button (#35721)
+FIX: Accountancy - General setup - Missing form on UpdateMask (#35735)
+FIX: Accountancy - Missing subledger information on mass cloning (#35777)
+FIX: Accountancy - Printing the subsidiary ledger returns the general ledger (#35719)
+FIX: Accountancy - Print subledger balance return general balance (#35712)
+FIX: Accountancy - Problem with general setup (#36067)
+FIX: Accountancy - Return on wrong page on y/n button (#35978)
+FIX: Add missing left join to filter by extrafields (#36092)
+FIX: add possibility to override authoritative dns (#35699)
+FIX: Allow decimals on services duration (#36031)
+FIX: avoid link problem with employee list context (#36125)
+FIX: avoid NULL value (#36126)
+FIX: avoid php warning (#35756)
+FIX: avoid php warning (#35953)
+FIX: avoid php warnings (#35492)
+FIX: Bad label for column title on multicurency
+FIX: bad name for target import table (#35615)
+FIX: broken feature ! (#35906)
+FIX: Can approve holidays when negative balance (#36144)
+FIX: categories: sql error in link extrafields targettings categories (#36236)
+FIX: check if category module is enabled (#35770)
+FIX: check if service is activated only for api product (#35911)
+FIX: check if zip file of website exists (#35879)
+FIX: Clear filter
+FIX: clone of cron tasks
+FIX: conflict between $user->id and $object->id (#36225)
+FIX: create invoice from order using API and multi-entity (#35654)
+FIX: day of ticket on takePOS. Backport 6abdb6e. (#35745)
+FIX: Deletion of a donation. Button was disabled.
+FIX: detection of setup not done with
+FIX: dol_escape_htmltag in extrafields_view (#36136)
+FIX: doubled display of PRoduct Stokable checkbox when STOCK_SUPPORTS_SERVICES on service edit card (#36138)
+FIX: Email template fetching (#35738)
+FIX: Error 500 on api if cache is on and directory does not exists
+FIX: extra-field list depend on parent extra-filed list on direct edit (#35803)
+FIX: filter on note lost when sorting company list
+FIX: Hide AWP if product has no stock managed
+FIX: Import/Export - Do not list imports or exports of Builder module backups of module descriptor files (#36192)
+FIX: In shipment creation process, if product is not manage in stock, Dolibarr should not display a "low stock warning" (#36139)
+FIX: in shippement creation with SHIPMENT_SUPPORTS_SERVICES and/or STOCK_DISALLOW_NEGATIVE_TRANSFER and/or stockable_product there are inconsistencies (#36140)
+FIX: Invoice Situation - Octopus - Column offset for amounts greater than 5 digits (#36124)
+FIX: Invoice Situation - Octopus - Shipping block overlap issue (#36122)
+FIX: Invoice Situation - Octopus - Show remaintopay at bottom (#36121)
+FIX: invoices payments on multicurrencies being converted as int (#35622)
+FIX: Knowledge management - Button ReOpen show in draft mode (#36008)
+FIX: Label shown when value is empty
+FIX: late customer orders are not shown on start page (#36200)
+FIX: link to sort of target email page
+FIX: MAIN_AUTOFILL_DATE in supplier invoice display 01/01/1970 (#36087)
+FIX: MAIN_SEE_SUBORDONATES sql request error (#35896)
+FIX: Missing begin transaction, The status of customer was not
+FIX: missing check if partership is enabled (#36169)
+FIX: missing entity field (#36086)
+FIX: missing entity filter (#35517)
+FIX: missing entity filter (#35857)
+FIX: missing entity filters + wrong widget name (#35873)
+FIX: missing "printFieldListValue" hook (#35990)
+FIX: missing prospect/customer category translation (#35814)
+FIX: Must show unit price when price is not for quantity 1
+FIX: muticompany compatibility (wrong sharing name) (#36013)
+FIX: my previous fix was incompatible with Thomas' fix from PR#35590 (#35890)
+FIX: no emails sent when closing a ticket (#35874)
+FIX: notification email not sent : NOTIFICATION_EMAIL_FROM is replaced with MAIN_MAIL_EMAIL_FROM if it's empty (#35881)
+FIX: notifications: correctly report email delivery errors (#35864)
+FIX: not possible to search for billed and not billed supplier orders in the list (#35680)
+FIX: Perf for bom select (#35871)
+FIX: Performance Problem on load stats command (#35785)
+FIX: pgsql: error when calculating depreciations (#34213)
+FIX: php 8+ warnings when creating deposits (#35582)
+FIX: prices must be HT in dolistore browser
+FIX: product stock lists: prevent SQL error when filtering on physical stock (#36038)
+FIX: resize iban column to support encryption (#36237)
+FIX: Select correct approver when making a leave request for someone else (#36118)
+FIX: Situation percent set as 0 when adding line on situation invoices (#35999)
+Fix: sql error if LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED is used (#36135)
+FIX: sql syntax error (#35588)
+FIX: Status if thirdparty not synchronized with status WON of
+FIX: substitutions on subject of the sent email reminder of the event (#35621)
+FIX: The IBAN into EPC qr code must use the default bank account if not
+FIX: The order closing date was not filled in during the shipment validation (workflow module). (#36235)
+FIX: The status of customer was not synchronized with opportunity status
+FIX: thirdparty was never notified. Passing of contact ID information was not coherent. (#35590)
+FIX: To have only the sender's entity when sending mail (#31053)
+FIX: when creating a ticken on backend and adding a linked file, the 'notify thirdparty at creation' chackbox disappears. (#35595)
+FIX: when display in view mode HTML extrafeilds content doubled (#36127)
+FIX: Wrong cast on TVA rate when updating supplier order lines (#36106)
+FIX: wrong check of hook return
+FIX: wrong entity alias (#35821)
+FIX: wrong entity filter (#35691)
+FIX: wrong field name (#35728)
+FIX: wrong getEntiy element name (#35771)
+FIX: wrong number of categories by entity (#36111)
+FIX: wrong socpeople id when multiple assigned + avoid php warnings (#35878)
 
 
 ***** ChangeLog for 22.0.2 compared to 22.0.1 *****

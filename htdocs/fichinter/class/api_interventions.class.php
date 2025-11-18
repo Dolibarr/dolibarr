@@ -560,17 +560,25 @@ class Interventions extends DolibarrApi
 	/**
 	 * Close an intervention
 	 *
-	 * @since	7.0.0	Initial implementation
+	 * If you get a bad value for param notrigger check, provide this in body
+	 *  {
+	 *    "notrigger": 0
+	 *  }
 	 *
-	 * @param	int		$id		Intervention ID
+	 * @since	7.0.0	Initial implementation
+	 * @since	23.0.0	Added notrigger parameter
+	 *
+	 * @param	int		$id				Intervention ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers {@required true}
 	 *
 	 * @url		POST	{id}/close
 	 *
 	 * @return	Object
 	 *
 	 * @throws RestException
+	 *
 	 */
-	public function closeFichinter($id)
+	public function close($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
@@ -584,8 +592,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->fichinter->setStatut(3);
-
+		$result = $this->fichinter->setClose(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
