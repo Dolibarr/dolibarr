@@ -2153,6 +2153,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$imaxinloop = ($limit ? min($num, $limit) : $num);
 			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
+				if (empty($obj)) {
+					break;
+				}
 
 				if ($obj->type == 'action') {
 					$contactaction = new ActionComm($db);
@@ -2300,7 +2303,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="' . $filters['search_agenda_label'] . '"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
-		$out .= '<td class="liste_titre"></td>';
+		// Status
+		$out .= '<td class="liste_titre">';
+		$out .= '';
+		$out .= '</td>';
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			$out .= '<td class="liste_titre" align="middle">';
@@ -2537,7 +2543,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 
 			// Status / Progression
-			$out .= '<td class="nowrap center">' . $actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']) . '</td>';
+			$out .= '<td class="nowrap center">';
+			$out .= $actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']);
+			$out .= '</td>';
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
