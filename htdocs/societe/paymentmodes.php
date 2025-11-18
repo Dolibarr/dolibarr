@@ -974,10 +974,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
-	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="2">'.$object->prefix_comm.'</td></tr>';
-	}
-
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="2">';

@@ -351,4 +351,19 @@ ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
 
 ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
 
+
+ALTER TABLE llx_ecm_files ADD COLUMN geolat double(24,8) DEFAULT NULL;
+ALTER TABLE llx_ecm_files ADD COLUMN geolong double(24,8) DEFAULT NULL;
+ALTER TABLE llx_ecm_files ADD COLUMN geopoint point DEFAULT NULL;
+ALTER TABLE llx_ecm_files ADD COLUMN georesultcode varchar(16) NULL;
+
+-- Add table for extrafields lines support on expensereport module
+CREATE TABLE llx_expensereport_det_extrafields
+(
+	rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+	tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object                 integer NOT NULL,
+	import_key                varchar(14)
+) ENGINE=innodb;
+
 -- end of migration

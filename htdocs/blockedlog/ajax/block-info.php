@@ -41,7 +41,6 @@ if (!defined('NOREQUIREHTML')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -49,6 +48,8 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
 
 $id = GETPOSTINT('id');
 $block = new BlockedLog($db);
@@ -57,7 +58,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "bills", "cashdesk", "companies", "members", "products"));
+$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "members", "products"));
 
 
 /*
@@ -137,6 +138,9 @@ function formatObject($objtoshow, $prefix)
 		'amount' => 'Amount',
 		'id' => 'ID',
 		'ref' => 'Ref',
+		'element' => 'TypeOfEvent',
+		'entity' => 'Entity',
+		'label' => 'Label',
 		'date' => 'Date',
 		'total_ht' => 'TotalHT',
 		'total_ttc' => 'TotalTTC',
@@ -157,8 +161,10 @@ function formatObject($objtoshow, $prefix)
 		'revenuestamp' => 'RevenueStamp',
 		'code_client' => 'CustomerCode',
 		'capital' => 'Capital',
-		'localtax1_value' => 'UseLocalTax1',
-		'localtax2_value' => 'UseLocalTax2',
+		'localtax1_assuj' => 'UseLocalTax1',
+		'localtax2_assuj' => 'UseLocalTax2',
+		'localtax1_value' => 'LocalTax1DefaultValue',
+		'localtax2_value' => 'LocalTax2DefaultValue',
 		'subprice' => 'UnitPrice',
 		'product_type' => 'ProductType',
 		'type' => 'InvoiceType',
@@ -213,6 +219,10 @@ function formatObject($objtoshow, $prefix)
 					$s .= dol_print_date($val, 'day');
 				} elseif (in_array($key, array('dateh', 'datec', 'date_creation', 'datem', 'tms', 'date_valid', 'datep'))) {
 					$s .= dol_print_date($val, 'dayhour');
+				} elseif (in_array($key, array('tva_assuj', 'localtax1_assuj', 'localtax2_assuj'))) {
+					$s .= yn($val);
+				} elseif (in_array($key, array('product_type'))) {
+					$s .= $val ? 'Product' : 'Service';
 				} elseif (in_array($key, array(
 					'qty', 'subprice',
 					'tva_tx', 'localtax1_tx', 'localtax2_tx', 'total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2', 'localtax2', 'localtax2', 'revenuestamp',

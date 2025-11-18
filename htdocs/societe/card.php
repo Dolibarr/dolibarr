@@ -1198,6 +1198,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'building');
 
 		if (!empty($conf->use_javascript_ajax)) {
+			// If option to also create a contact
 			if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 				print "\n".'<script type="text/javascript">';
 				print '$(document).ready(function () {
@@ -1275,12 +1276,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					var canHaveCustomerCategoryIfNotCustomerProspectSupplier = ' . (!getDolGlobalString('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '0' : '1') . ';
 
 					init_customer_categ();
-			  		$("#customerprospect").change(function() {
+			  		$("#prospectinput, #customerinput").change(function() {
 						init_customer_categ();
 					});
 					function init_customer_categ() {
-						console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-						if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspectSupplier) {
+						var iscustomerorprospect = jQuery("#prospectinput").is(":checked") + jQuery("#customerinput").is(":checked");
+						console.log("is customer or prospect = "+iscustomerorprospect);
+						if (iscustomerorprospect == 0 && !canHaveCustomerCategoryIfNotCustomerProspectSupplier) {
 							jQuery(".visibleifcustomer").hide();
 						} else {
 							jQuery(".visibleifcustomer").show();
@@ -1288,12 +1290,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					init_supplier_categ();
-		       		$("#fournisseur").change(function() {
+		       		$("#supplierinput").change(function() {
 						init_supplier_categ();
 					});
 					function init_supplier_categ() {
-						console.log("is supplier = "+jQuery("#fournisseur").val());
-						if (jQuery("#fournisseur").val() == 0) {
+						var issupplier = jQuery("#supplierinput").is(":checked");
+						console.log("is supplier = "+issupplier);
+						if (issupplier == 0) {
 							jQuery(".visibleifsupplier").hide();
 						} else {
 							jQuery(".visibleifsupplier").show();
@@ -1341,7 +1344,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			} else {
 				print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
 			}
-			print '</td><td'.(getDolGlobalString('SOCIETE_USEPREFIX') ? '' : ' colspan="3"').'>';
+			print '</td><td colspan="3">';
 
 			print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus" spellcheck="false">';
 			print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alphanohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
@@ -1438,9 +1441,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			';
 			*/
 			print '</td>';
-			if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-				print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'" spellcheck="false"></td>';
-			}
 			print '</tr>';
 
 			// If javascript on, we show option individual
@@ -1460,7 +1460,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Alias names (commercial, trademark or alias names)
 			print '<tr id="name_alias"><td>';
-			//print '<label for="name_alias_input">'.$langs->trans('AliasNames').'</label>';
+			print '<input type="hidden" name="status" value="1">';
 			print '</td>';
 			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" spellcheck="false" placeholder="'.dolPrintHTMLForAttribute($langs->trans('AliasNames')).'"></td></tr>';
 
@@ -1590,12 +1590,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</tr>';
 
 			// Status
+			/* Useless at creation
 			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
 			print $form->selectarray('status', array('1' => $langs->trans('InActivity'), '0' => $langs->trans('ActivityCeased')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
+			*/
 
 			// Barcode
-			if (isModEnabled('barcode')) {
+			if (isModEnabled('barcode') && getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
 				print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				print img_picto('', 'barcode', 'class="pictofixedwidth"');
@@ -1837,89 +1839,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 
-
-			// Type - Workforce/Staff
-			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>'."\n";
-			$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
-			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
-			if ($user->admin) {
-				print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			}
-			if (!getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) {
-				print '</td>';
-				if ($conf->browser->layout == 'phone') {
-					print '</tr><tr>';
-				}
-				print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
-				print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-				if ($user->admin) {
-					print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-				}
-			} else {
-				print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
-			}
-			print '</td></tr>';
-
-			// Legal Form
-			print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			if ($object->country_id) {
-				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
-			} else {
-				print $countrynotdefined;
-			}
-			print '</td></tr>';
-
-			// Date birth
-			print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
-			print '</td></tr>';
-
-			// Capital
-			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.((string) $object->capital).'"> ';
-			if (isModEnabled("multicurrency")) {
-				print '<span class="hideonsmartphone">';
-				//print $langs->trans("Currency".$object->multicurrency_code);
-				print $langs->getCurrencySymbol($object->multicurrency_code);
-				print '</span></td></tr>';
-			} else {
-				print '<span class="hideonsmartphone">';
-				print $langs->getCurrencySymbol($conf->currency);
-				//print $langs->trans("Currency".$conf->currency);
-				print '</span></td></tr>';
-			}
-			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, array(), 1, 0, 0, 'maxwidth200onsmartphone');
-				print '</td>';
-				print '</tr>';
-			}
-
-			// Payment terms of the settlement
-			print '<tr>';
-			print '<td>'.$form->editfieldkey('PaymentConditions', 'cond_reglement_id', '', $object, 0).'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->getSelectConditionsPaiements((int) $object->cond_reglement_id, 'cond_reglement_id', 1, 1, 1, '', (float) $object->deposit_percent);
-			print '</td></tr>';
-
-			// Payment mode
-			print '<tr>';
-			print '<td>'.$form->editfieldkey('PaymentMode', 'mode_reglement_id', '', $object, 0).'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->select_types_paiements((string) $object->mode_reglement_id, 'mode_reglement_id', '', 0, 1, 1, 0, 1);
-			print '</td></tr>';
-
-			// Incoterms
-			if (isModEnabled('incoterm')) {
-				print '<tr>';
-				print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
-				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
-				print '</td></tr>';
-			}
-
 			// Categories
 			if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 				$langs->load('categories');
@@ -1943,9 +1862,97 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 			}
 
+			print '<tr><td colspan="'.$colspan.'"><a class="paddingtop paddingbottom morefieldslnk onreposition" id="morefieldslnk" href="#">'.$langs->trans("More").'';
+			$nbactive = '...';
+			print '<span class="badge badge-secondary socialnetworklnk marginleftonly">'.$nbactive.'</span></a>';
+			print '</td>';
+			print '</tr>';
+
+			// Type - Workforce/Staff
+			print '<tr class="morefields"><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>'."\n";
+			$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+			if ($user->admin) {
+				print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
+			if (!getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) {
+				print '</td>';
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
+				print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+				print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+				if ($user->admin) {
+					print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				}
+			} else {
+				print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
+			}
+			print '</td></tr>';
+
+			// Legal Form
+			print '<tr class="morefields"><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			if ($object->country_id) {
+				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
+			} else {
+				print $countrynotdefined;
+			}
+			print '</td></tr>';
+
+			// Date birth
+			print '<tr class="morefields"><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
+			print '</td></tr>';
+
+			// Capital
+			print '<tr class="morefields"><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
+			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.((string) $object->capital).'"> ';
+			if (isModEnabled("multicurrency")) {
+				print '<span class="hideonsmartphone">';
+				//print $langs->trans("Currency".$object->multicurrency_code);
+				print $langs->getCurrencySymbol($object->multicurrency_code);
+				print '</span></td></tr>';
+			} else {
+				print '<span class="hideonsmartphone">';
+				print $langs->getCurrencySymbol($conf->currency);
+				//print $langs->trans("Currency".$conf->currency);
+				print '</span></td></tr>';
+			}
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				print '<tr class="morefields"><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, array(), 1, 0, 0, 'maxwidth200onsmartphone');
+				print '</td>';
+				print '</tr>';
+			}
+
+			// Payment terms of the settlement
+			print '<tr class="morefields">';
+			print '<td>'.$form->editfieldkey('PaymentConditions', 'cond_reglement_id', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print $form->getSelectConditionsPaiements((int) $object->cond_reglement_id, 'cond_reglement_id', 1, 1, 1, '', (float) $object->deposit_percent);
+			print '</td></tr>';
+
+			// Payment mode
+			print '<tr class="morefields">';
+			print '<td>'.$form->editfieldkey('PaymentMode', 'mode_reglement_id', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print $form->select_types_paiements((string) $object->mode_reglement_id, 'mode_reglement_id', '', 0, 1, 1, 0, 1);
+			print '</td></tr>';
+
+			// Incoterms
+			if (isModEnabled('incoterm')) {
+				print '<tr class="morefields">';
+				print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
+				print '</td></tr>';
+			}
+
 			// Multicurrency
 			if (isModEnabled("multicurrency")) {
-				print '<tr>';
+				print '<tr class="morefields">';
 				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
 				print img_picto('', 'currency', 'class="pictofixedwidth"');
@@ -1959,7 +1966,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Parent company
 			if (!getDolGlobalString('SOCIETE_DISABLE_PARENTCOMPANY')) {
-				print '<tr>';
+				print '<tr class="morefields">';
 				print '<td>'.$langs->trans('ParentCompany').'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
 				print img_picto('', 'company', 'class="paddingrightonly"');
@@ -1968,7 +1975,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Assign a sale representative
-			print '<tr>';
+			print '<tr class="morefields">';
 			print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			// TODO Use select_doluser in multiselect mode
@@ -1979,7 +1986,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 
 			// Add logo
-			print '<tr class="hideonsmartphone">';
+			print '<tr class="hideonsmartphone morefields"">';
 			print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 			print '<td colspan="3">';
 			print '<input class="flat" type="file" name="photo" id="photoinput" />';
@@ -1987,6 +1994,33 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</tr>';
 
 			print '</table>'."\n";
+
+			print '<script nonce="'.getNonce().'" type="text/javascript">
+					$("document").ready(function() { toogleMoreFields(false); });
+
+					jQuery(".morefieldslnk").click(function() {
+						console.log("Click on link");
+						toogleMoreFields(true);
+						return false;
+					});
+
+					function toogleMoreFields(chgCookieState) {
+						const lnk = $("#morefieldslnk");
+						const items = $(".morefields, .trextrafields");
+						var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true")) == true;
+
+						if (!chgCookieState) cookieState = !cookieState ;
+
+						if (cookieState) {
+							items.hide();
+							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=false; SameSite=Strict"};
+						} else {
+							items.show();
+							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=true; SameSite=Strict";}
+						}
+					}
+				</script>
+				';
 
 			// Accountancy codes
 			if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
@@ -2227,33 +2261,29 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				var canHaveCustomerCategoryIfNotCustomerProspect = ' . (getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '1' : '0') . ';
 
 				init_customer_categ();
-	  			$("#customerprospect").change(function() {
+	  			$("#prospectinput, #customerinput").change(function() {
 					init_customer_categ();
 				});
        			function init_customer_categ() {
-					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspect)
-					{
+					var iscustomerorprospect = jQuery("#prospectinput").is(":checked") + jQuery("#customerinput").is(":checked");
+					console.log("is customer or prospect = "+iscustomerorprospect);
+					if (iscustomerorprospect == 0 && !canHaveCustomerCategoryIfNotCustomerProspect) {
 						jQuery(".visibleifcustomer").hide();
-					}
-					else
-					{
+					} else {
 						jQuery(".visibleifcustomer").show();
 					}
 				}
 
 				init_supplier_categ();
-	  			$("#fournisseur").change(function() {
+	  			$("#supplierinput").change(function() {
 					init_supplier_categ();
 				});
        			function init_supplier_categ() {
-					console.log("is supplier = "+jQuery("#fournisseur").val());
-					if (jQuery("#fournisseur").val() == 0)
-					{
+					var issupplier = jQuery("#supplierinput").is(":checked");
+					console.log("is supplier = "+issupplier);
+					if (issupplier == 0) {
 						jQuery(".visibleifsupplier").hide();
-					}
-					else
-					{
+					} else {
 						jQuery(".visibleifsupplier").show();
 					}
 				}
@@ -2308,19 +2338,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td>';
 				print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" placeholder="'.dolPrintHTMLForAttribute($langs->trans('AliasNames')).'" spellcheck="false"></td></tr>';
 
-				// Prefix
-				if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-					print '<tr><td>'.$form->editfieldkey('Prefix', 'prefix', '', $object, 0).'</td><td colspan="3">';
-					// It does not change the prefix mode using the auto numbering prefix
-					if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $object->prefix_comm) {
-						print '<input type="hidden" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
-						print $object->prefix_comm;
-					} else {
-						print '<input type="text" size="5" maxlength="5" name="prefix_comm" id="prefix" value="'.dol_escape_htmltag($object->prefix_comm).'" spellcheck="false">';
-					}
-					print '</td>';
-				}
-
 				// Prospect/Customer/Supplier
 				$selected = $object->client;
 				$selectedcustomer = 0;
@@ -2369,7 +2386,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						function refreshNatureCss() {
 							jQuery(".spannature").each(function( index ) {
 								id = $(this).attr("id").split("spannature")[1];
-								console.log(jQuery("#spannature"+(id)+" .checkforselect").is(":checked"));
+								console.log("id="+id+" "+jQuery("#spannature"+(id)+" .checkforselect").is(":checked"));
 								if (jQuery("#spannature"+(id)+" .checkforselect").is(":checked")) {
 									if (id == 1) {
 										jQuery("#spannature"+(id)).addClass("prospect-back").removeClass("nonature-back");
@@ -2448,7 +2465,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 
 				// Barcode
-				if (isModEnabled('barcode')) {
+				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
 					print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 					print '<td colspan="3">';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
@@ -2700,8 +2717,31 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
 
+				// Categories
+				if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
+					// Customer
+					print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
+					print '<td colspan="3">';
+					print $form->selectCategories(Categorie::TYPE_CUSTOMER, 'custcats', $object);
+					print "</td></tr>";
+
+					// Supplier
+					if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+						print '<tr class="visibleifsupplier"><td>'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td>';
+						print '<td colspan="3">';
+						print $form->selectCategories(Categorie::TYPE_SUPPLIER, 'suppcats', $object);
+						print "</td></tr>";
+					}
+				}
+
+				print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom morefieldslnk onreposition" id="morefieldslnk" href="#">'.$langs->trans("More").'';
+				$nbactive = '...';
+				print '<span class="badge badge-secondary socialnetworklnk marginleftonly">'.$nbactive.'</span></a>';
+				print '</td>';
+				print '</tr>';
+
 				// Type - Workforce/Staff
-				print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>';
+				print '<tr class="morefields"><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>';
 				print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -2722,19 +2762,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Juridical type
-				print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
+				print '<tr class="morefields"><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
 				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
 				print '</td></tr>';
 
 				// Date birth
-				print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+				print '<tr class="morefields"><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
 				print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 				print '</td></tr>';
 
 				// Capital
-				print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
+				print '<tr class="morefields"><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 				print '<td colspan="3"><input type="text" name="capital" id="capital" class="width75" value="';
 				print ($object->capital !== null ? dolPrintHTMLForAttribute(price($object->capital)) : '');
 				if (isModEnabled("multicurrency")) {
@@ -2745,7 +2785,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Default language
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
-					print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
+					print '<tr class="morefields"><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
 					print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, array(), '1', 0, 0, 'maxwidth300 widthcentpercentminusx');
 					print '</td>';
 					print '</tr>';
@@ -2753,33 +2793,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Incoterms
 				if (isModEnabled('incoterm')) {
-					print '<tr>';
+					print '<tr class="morefields">';
 					print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
 					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
 					print '</td></tr>';
 				}
 
-				// Categories
-				if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
-					// Customer
-					print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
-					print '<td colspan="3">';
-					print $form->selectCategories(Categorie::TYPE_CUSTOMER, 'custcats', $object);
-					print "</td></tr>";
-
-					// Supplier
-					if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-						print '<tr class="visibleifsupplier"><td>'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td>';
-						print '<td colspan="3">';
-						print $form->selectCategories(Categorie::TYPE_SUPPLIER, 'suppcats', $object);
-						print "</td></tr>";
-					}
-				}
-
 				// Multicurrency
 				if (isModEnabled("multicurrency")) {
-					print '<tr>';
+					print '<tr class="morefields">';
 					print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
 					print img_picto('', 'currency', 'class="pictofixedwidth"');
@@ -2793,7 +2816,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Parent company
 				if (!getDolGlobalString('SOCIETE_DISABLE_PARENTCOMPANY')) {
-					print '<tr>';
+					print '<tr class="morefields">';
 					print '<td>'.$langs->trans('ParentCompany').'</td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
 					print img_picto('', 'company', 'class="pictofixedwidth"');
@@ -2802,7 +2825,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Logo
-				print '<tr class="hideonsmartphone">';
+				print '<tr class="hideonsmartphone morefields">';
 				print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				if ($object->logo) {
@@ -2832,7 +2855,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</tr>';
 
 				// Assign sale representative
-				print '<tr>';
+				print '<tr class="morefields">';
 				print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
 				$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
@@ -2844,6 +2867,33 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				print '</table>';
+
+				print '<script nonce="'.getNonce().'" type="text/javascript">
+					$("document").ready(function() { toogleMoreFields(false); });
+
+					jQuery(".morefieldslnk").click(function() {
+						console.log("Click on link");
+						toogleMoreFields(true);
+						return false;
+					});
+
+					function toogleMoreFields(chgCookieState) {
+						const lnk = $("#morefieldslnk");
+						const items = $(".morefields, .trextrafields");
+						var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true")) == true;
+
+						if (!chgCookieState) cookieState = !cookieState ;
+
+						if (cookieState) {
+							items.hide();
+							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=false; SameSite=Strict"};
+						} else {
+							items.show();
+							if (chgCookieState) { document.cookie = "DOLUSER_MOREFIELDS_SHOW=true; SameSite=Strict";}
+						}
+					}
+				</script>
+				';
 
 				if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
 					print '<br>';
@@ -2966,12 +3016,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print $object->getTypeUrl(1);
 			print '</td></tr>';
 
-			// Prefix
-			if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-				print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.dol_escape_htmltag($object->prefix_comm).'</td>';
-				print '</tr>';
-			}
-
 			// Customer code
 			if ($object->client) {
 				print '<tr><td>';
@@ -3001,7 +3045,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Barcode
-			if (isModEnabled('barcode')) {
+			if (isModEnabled('barcode') && getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
 				print '<tr><td>';
 				print $langs->trans('Gencod').'</td><td>'.showValueWithClipboardCPButton(dol_escape_htmltag($object->barcode));
 				print '</td>';
