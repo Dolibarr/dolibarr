@@ -1408,6 +1408,7 @@ class FormFile
 				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), $morehtmlright, 'file-upload', 0, '', 'table-list-of-attached-files');
 			}
 			if (!empty($moreoptions) && $moreoptions['afteruploadtitle']) {
+				print '<!-- Add form from $moreoptions[\'afteruploadtitle\'] -->';
 				print '<div class="divattachnewfile'.((!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) ? ' hidden' : '').'">'.$moreoptions['afteruploadtitle'].'</div>';
 			}
 

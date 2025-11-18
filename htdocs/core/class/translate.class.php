@@ -1134,12 +1134,10 @@ class Translate
 	 */
 	public function getCurrencySymbol($currency_code = '', $forceloadall = 0)
 	{
-		global $conf;
-
 		$currency_sign = ''; // By default return iso code
 
 		if (empty($currency_code)) {
-			$currency_code = $conf->currency;
+			$currency_code = getDolCurrency();
 		}
 
 		if (function_exists("mb_convert_encoding")) {

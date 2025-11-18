@@ -298,6 +298,17 @@ function getDolCurrency()
 }
 
 /**
+ * Return the current entity
+ *
+ * @return 	int							Value returned
+ */
+function getDolEntity()
+{
+	global $conf;
+	return (int) $conf->entity;
+}
+
+/**
  * Return the default context page string
  *
  * @param	string		$s					Page path
@@ -7812,8 +7823,8 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 
 
 /**
- *	Return localtax rate for a particular vat, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
- *  Note: This function applies same rules than get_default_tva
+ *	Return localtax rate for a particular VAT rate, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
+ *  Note: This function get information into the table llx_tva using the VAT rate as key.
  *
  * 	@param	float|string	$vatrate	        Vat rate. Can be '8.5' or '8.5 (VATCODEX)' for example
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
@@ -7821,7 +7832,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  *  @param	?Societe	$thirdparty_seller		Object of selling third party ($mysoc if not defined)
  *  @param	int<0,1>		$vatnpr					If vat rate is NPR or not
  * 	@return	int<0,0>|string	   					0 if not found, localtax rate if found (Can be '20', '-19:-15:-9')
- *  @see get_default_tva()
+ *  @see get_default_tva(), get_default_localtax()
  */
 function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_seller = null, $vatnpr = 0)
 {
@@ -8239,6 +8250,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idpro
 	}
 
 	dol_syslog("get_product_vat_for_country: ret=" . $ret);
+
 	return $ret;
 }
 
@@ -8327,7 +8339,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  */
 function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0)
 {
-	global $mysoc, $db;
+	global $mysoc, $db, $hookmanager;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
@@ -8348,6 +8360,9 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	dol_syslog("get_default_tva: seller use vat=" . $seller_use_vat . ", seller country=" . $seller_country_code . ", seller in cee=" . ((string) (int) $seller_in_cee) . ", buyer vat number=" . $thirdparty_buyer->tva_intra . " buyer country=" . $buyer_country_code . ", buyer state=" . $thirdparty_buyer->state_id . " buyer in cee=" . ((string) (int) $buyer_in_cee) . ", idprod=" . $idprod . ", idprodfournprice=" . $idprodfournprice . ", SERVICE_ARE_ECOMMERCE_200238EC=" . getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC'));
 
+	$vatvalue = 0;
+	$vatrule = '';
+
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
 	if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {
@@ -8361,25 +8376,26 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			}
 
 			if (!$isacompany) {
-				//print 'VATRULE 0';
-				return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+				$vatvalue = get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+				$vatrule = 'VATRULE 0';
 			}
 		}
 	}
 
 	// If seller does not use VAT, default VAT is 0. End of rule.
-	if (!$seller_use_vat) {
+	if (empty($vatrule) && !$seller_use_vat) {
 		//print 'VATRULE 1';
 		// TODO get the VAT Code of exemption asked into setup if country isInEEC (from an array list of possible
 		// values like VATEX-EU-132-*, VATEX-FR-FRANCHISE, VATEX-EU-AE...
 		// When we had recorded it, we also added a corresponding entry into table of vat code if it does not exists yet.
 		// Here we test if entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-132-xx)'
 		// If not, we add it and we return '0 (VATEX-EU-132-xx)'
-		return 0;
+		$vatvalue = 0;
+		$vatrule = 'VATRULE 1';
 	}
 
 	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
-	if (!empty($thirdparty_buyer->state_id)) {
+	if (empty($vatrule) && !empty($thirdparty_buyer->state_id)) {
 		$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
 		$sql .= " FROM " . $db->prefix() . "c_tva as t";
 		$sql .= " INNER JOIN " . $db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
@@ -8390,17 +8406,19 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		if ($res) {
 			if ($db->num_rows($res)) {
 				$obj = $db->fetch_object($res);
-				return $obj->vat_default_rate . ' (' . $obj->vat_default_code . ')';
+
+				$vatvalue = $obj->vat_default_rate . ' (' . $obj->vat_default_code . ')';
+				$vatrule = 'VATRULE 2';
 			}
 			$db->free($res);
 		}
 	}
 
 	// If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
-	if (($seller_country_code == $buyer_country_code)
+	if (empty($vatrule) && (($seller_country_code == $buyer_country_code)
 		|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))
 		|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
-	) { // Warning ->country_code not always defined
+	)) { // Warning ->country_code not always defined
 		//print 'VATRULE 3';
 		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 
@@ -8417,7 +8435,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			}
 		}
 
-		return $tmpvat;
+		$vatvalue = $tmpvat;
+		$vatrule = 'VATRULE 3b';
 	}
 
 	// If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
@@ -8425,7 +8444,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
 	// If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
-	if (($seller_in_cee && $buyer_in_cee)) {
+	if (empty($vatrule) && ($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany && !getDolGlobalString('MAIN_USE_VAT_ZERO_FOR_COMPANIES_IN_EEC_EVEN_IF_VAT_ID_UNKNOWN')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
@@ -8436,22 +8455,25 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 		if (!$isacompany) {
 			//print 'VATRULE 5';
-			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatrule = 'VATRULE 5';
 		} else {
 			//print 'VATRULE 6';
 			// TODO This is the case of VAT exemption 'VATEX-EU-IC'
 			// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-IC)'
 			// If not, we add it and we return '0 (VATEX-EU-IC)'
-			return 0;
+			$vatvalue = 0;
+			$vatrule = 'VATRULE 6';
 		}
 	}
 
 	// If (seller in the European Community and buyer outside the European Community and private buyer) then VAT by default = VAT of the product sold. End of rule
 	// I don't see any use case that need this rule, this case is on only if MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC set
-	if (getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
+	if (empty($vatrule) && getDolGlobalString('MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC') && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if (!$isacompany) {
-			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatvalue = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			$vatrule = 'VATRULE extra';
 			//print 'VATRULE extra';
 		}
 	}
@@ -8462,7 +8484,17 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// TODO This is the case of VAT exemption 'VATEX-EU-G'
 	// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-xxx)'
 	// If not, we add it and we return '0 (VATEX-xxx)'
-	return 0;
+
+	// Allow an external module to bypass the calculation of prices
+	$parameters = array('vatvalue' => $vatvalue, 'vatrule' => $vatrule);
+	$tmpobject = null; $tmpaction = null;
+	$reshook = $hookmanager->executeHooks('get_default_tva', $parameters, $tmpobject, $tmpaction); // See description below
+	if ($reshook > 0 && !empty($hookmanager->resArray['vatvalue'])) {
+		$vatvalue = $hookmanager->resArray['vatvalue'];
+		$vatrule = $hookmanager->resArray['vatrule'];	// For information
+	}
+
+	return $vatvalue;
 }
 
 
