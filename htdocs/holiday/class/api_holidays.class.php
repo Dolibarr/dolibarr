@@ -4,6 +4,7 @@
  * Copyright (C) 2020-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025		William Mead			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +205,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
 
@@ -254,7 +255,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -353,7 +354,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'write')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->holiday->fetch($id);
