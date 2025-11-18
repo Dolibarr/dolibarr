@@ -1315,10 +1315,10 @@ parameters:
 			path: ../../../htdocs/barcode/printsheet.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
+			message: '#^Variable \$object might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/blockedlog/admin/blockedlog_list.php
+			path: ../../../htdocs/blockedlog/admin/blockedlog_archives.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between ''facture'' and ''facture'' will always evaluate to true\.$#'
@@ -8347,12 +8347,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
 
 		-
-			message: '#^Variable \$modulepart might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
 			message: '#^Variable \$permissiontoadd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -8366,12 +8360,6 @@ parameters:
 
 		-
 			message: '#^Variable \$sortorder might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
@@ -11785,18 +11773,6 @@ parameters:
 			path: ../../../htdocs/product/class/api_products.class.php
 
 		-
-			message: '#^Method Products\:\:getPurchasePrices\(\) should return array\<ProductFournisseur\> but returns object\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Products\:\:_cleanObjectDatas\(\) expects object, array\<ProductFournisseur\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between 2 and 2 will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -12763,22 +12739,10 @@ parameters:
 			path: ../../../htdocs/projet/card.php
 
 		-
-			message: '#^Parameter \#1 \$object of method Projects\:\:_cleanObjectDatas\(\) expects object, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/class/api_projects.class.php
-
-		-
-			message: '#^Method Tasks\:\:getRoles\(\) should return array\<int, string\> but returns list\<object\>\.$#'
+			message: '#^Method Projects\:\:getRoles\(\) should return array\<object\> but returns list\<string\>\.$#'
 			identifier: return.type
 			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method Tasks\:\:_cleanObjectDatas\(\) expects object, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
+			path: ../../../htdocs/projet/class/api_projects.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Project\) and ''getLibStatut'' will always evaluate to true\.$#'
