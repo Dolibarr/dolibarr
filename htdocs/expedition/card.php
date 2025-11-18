@@ -1418,14 +1418,14 @@ $product_static = new Product($db);
 $shipment_static = new Expedition($db);
 $warehousestatic = new Entrepot($db);
 
-//if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
-//	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
-//
-//	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
-//	$action = '';
-//	$id = '';
-//	$ref = '';
-//}
+if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
+	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
+
+	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
+	$action = '';
+	$id = '';
+	$ref = '';
+}
 
 // Mode creation.
 if ($action == 'create' && $usercancreate) {
