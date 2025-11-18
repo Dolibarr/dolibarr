@@ -1418,14 +1418,14 @@ $product_static = new Product($db);
 $shipment_static = new Expedition($db);
 $warehousestatic = new Entrepot($db);
 
-if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
-	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
-
-	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
-	$action = '';
-	$id = '';
-	$ref = '';
-}
+//if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
+//	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
+//
+//	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
+//	$action = '';
+//	$id = '';
+//	$ref = '';
+//}
 
 // Mode creation.
 if ($action == 'create' && $usercancreate) {
@@ -3130,15 +3130,12 @@ if ($action == 'create' && $usercancreate) {
 			';
 		}
 		print '<br>';
-		if (!empty($conf->use_javascript_ajax) && $object->status == Expedition::STATUS_DRAFT && $usercancreate) {
-			$tagidfortablednd = 'tablelinesorigin';
-			$nboflines = $num_prod;
+		if (!empty($conf->use_javascript_ajax) && $object->status == Expedition::STATUS_DRAFT && $usercancreate && $num_prod > 1) {
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
-			unset($tagidfortablednd, $nboflines);
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent" id="tablelinesorigin" >';
+		print '<table class="noborder centpercent" id="tablelines" >';
 		print '<thead>';
 		print '<tr class="liste_titre">';
 		// Adds a line numbering column
@@ -3610,7 +3607,6 @@ if ($action == 'create' && $usercancreate) {
 				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "volume", $lines[$i]->volume_units).'</td>';
 
 				$showmovecol = ($object->status == Expedition::STATUS_DRAFT);
-				$gripstyle = ' style="background-image:url(' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/grip.png);background-repeat:no-repeat;background-position:center;"';
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id) {
 					print '<td class="center" colspan="2" valign="middle">';
@@ -3618,7 +3614,7 @@ if ($action == 'create' && $usercancreate) {
 					print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 					print '</td>';
 					if ($showmovecol) {
-						print '<td class="linecolmove tdlineupdown center"' . $gripstyle . '></td>';
+						print '<td class="linecolmove tdlineupdown center"></td>';
 					}
 				} elseif ($showmovecol) {
 					$edit_url = $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=editline&token=' . newToken() . '&lineid=' . $lines[$i]->id;
@@ -3644,7 +3640,7 @@ if ($action == 'create' && $usercancreate) {
 					print '<td class="linecoldelete" width="10">';
 					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=deleteline&token=' . newToken() . '&lineid=' . $lines[$i]->id . '">' . img_delete() . '</a>';
 					print '</td>';
-					print '<td class="linecolmove tdlineupdown center"' . $gripstyle . '>';
+					print '<td class="linecolmove tdlineupdown center">';
 					if ($usercancreate && $num_prod > 1) {
 						if ($i > 0) {
 							print '<a class="lineupdown" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=up&token=' . newToken() . '&rowid=' . $lines[$i]->id . '">' . img_up('default', 0, 'imgupforline') . '</a>';
