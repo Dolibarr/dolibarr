@@ -1036,7 +1036,7 @@ class Categorie extends CommonObject
 						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
 						// @phpstan-ignore-next-line
 						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-							$objs[] = $tmpobj;
+							$objs[] = clone $tmpobj;
 						}
 					}
 				}
