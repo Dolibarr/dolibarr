@@ -3130,9 +3130,15 @@ if ($action == 'create' && $usercancreate) {
 			';
 		}
 		print '<br>';
+		if (!empty($conf->use_javascript_ajax) && $object->status == Expedition::STATUS_DRAFT && $usercancreate) {
+			$tagidfortablednd = 'tablelinesorigin';
+			$nboflines = $num_prod;
+			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+			unset($tagidfortablednd, $nboflines);
+		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent" id="tablelines" >';
+		print '<table class="noborder centpercent" id="tablelinesorigin" >';
 		print '<thead>';
 		print '<tr class="liste_titre">';
 		// Adds a line numbering column
@@ -3187,6 +3193,7 @@ if ($action == 'create' && $usercancreate) {
 		if ($object->status == 0) {
 			print '<td class="linecoledit"></td>';
 			print '<td class="linecoldelete" width="10"></td>';
+			print '<td class="linecolmove"></td>';
 		}
 		print "</tr>\n";
 		print '</thead>';
@@ -3602,12 +3609,18 @@ if ($action == 'create' && $usercancreate) {
 				// Size
 				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "volume", $lines[$i]->volume_units).'</td>';
 
+				$showmovecol = ($object->status == Expedition::STATUS_DRAFT);
+				$gripstyle = ' style="background-image:url(' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/grip.png);background-repeat:no-repeat;background-position:center;"';
+
 				if ($action == 'editline' && $lines[$i]->id == $line_id) {
 					print '<td class="center" colspan="2" valign="middle">';
 					print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="' . $langs->trans("Save") . '"><br>';
 					print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 					print '</td>';
-				} elseif ($object->status == Expedition::STATUS_DRAFT) {
+					if ($showmovecol) {
+						print '<td class="linecolmove tdlineupdown center"' . $gripstyle . '></td>';
+					}
+				} elseif ($showmovecol) {
 					$edit_url = $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=editline&token=' . newToken() . '&lineid=' . $lines[$i]->id;
 					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 						$product_id = $lines[$i]->fk_product;
@@ -3631,7 +3644,16 @@ if ($action == 'create' && $usercancreate) {
 					print '<td class="linecoldelete" width="10">';
 					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=deleteline&token=' . newToken() . '&lineid=' . $lines[$i]->id . '">' . img_delete() . '</a>';
 					print '</td>';
-
+					print '<td class="linecolmove tdlineupdown center"' . $gripstyle . '>';
+					if ($usercancreate && $num_prod > 1) {
+						if ($i > 0) {
+							print '<a class="lineupdown" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=up&token=' . newToken() . '&rowid=' . $lines[$i]->id . '">' . img_up('default', 0, 'imgupforline') . '</a>';
+						}
+						if ($i < $num_prod - 1) {
+							print '<a class="lineupdown" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=down&token=' . newToken() . '&rowid=' . $lines[$i]->id . '">' . img_down('default', 0, 'imgdownforline') . '</a>';
+						}
+					}
+					print '</td>';
 					// Display lines extrafields
 					if (!empty($rowExtrafieldsStart)) {
 						print $rowExtrafieldsStart;
@@ -3644,16 +3666,19 @@ if ($action == 'create' && $usercancreate) {
 				// Display lines extrafields.
 				// $line is a line of shipment
 
-				$colspan = 6;
-				if ($origin_id > 0) {
-					$colspan++;
-				}
-				if (isModEnabled('productbatch')) {
-					$colspan++;
-				}
-				if (isModEnabled('stock')) {
-					$colspan++;
-				}
+		$colspan = 6;
+		if ($origin_id > 0) {
+			$colspan++;
+		}
+		if (isModEnabled('productbatch')) {
+			$colspan++;
+		}
+		if (isModEnabled('stock')) {
+			$colspan++;
+		}
+		if ($object->status == Expedition::STATUS_DRAFT) {
+			$colspan += 3;
+		}
 
 				$line = $lines[$i];
 				$line->fetch_optionals();
