@@ -1249,9 +1249,6 @@ td.wordbreak img, td.wordbreakimp img {
 .cursorpointer {
 	cursor: pointer;
 }
-.classfortooltiponclick .fa-question-circle {
-	cursor: pointer;
-}
 .cursormove {
 	cursor: move;
 }
@@ -9306,6 +9303,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/tooltips.inc.css', 0);
 
 
 // Add custom CSS if defined
