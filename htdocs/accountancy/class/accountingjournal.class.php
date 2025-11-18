@@ -827,7 +827,7 @@ class AccountingJournal extends CommonObject
 			}
 
 			$bookkeeping_static = new BookKeeping($this->db);
-			$label_discount = $bookkeeping_static->accountingLabelForOperation($customer_static->getNomUrl(1, 'customer'), $invoice_static->ref, $langs->trans('DiscountGranted'));
+			$label_discount = $bookkeeping_static->accountingLabelForOperation($customer_static->name, $invoice_static->ref, $langs->trans('DiscountGranted'));
 
 			// Distribution including VAT by rate
 			$ttcByRate = array();
@@ -1135,7 +1135,7 @@ class AccountingJournal extends CommonObject
 			}
 
 			$bookkeeping_static = new BookKeeping($this->db);
-			$label_discount = $bookkeeping_static->accountingLabelForOperation($supplier_static->getNomUrl(1, 'supplier'), $invoicesupplier_static->ref, $langs->trans('DiscountReceived'));
+			$label_discount = $bookkeeping_static->accountingLabelForOperation($supplier_static->name, $invoicesupplier_static->ref, $langs->trans('DiscountReceived'));
 
 			// Distribution including VAT by rate
 			$ttcByRate = array();
@@ -1438,7 +1438,7 @@ class AccountingJournal extends CommonObject
 							$bookkeeping->subledger_label = $line['subledger_label'];
 							$bookkeeping->numero_compte = $line['numero_compte'];
 							$bookkeeping->label_compte = $line['label_compte'];
-							$bookkeeping->label_operation = dol_string_nohtmltag($line['label_operation']);
+							$bookkeeping->label_operation = $line['label_operation'];
 							$bookkeeping->montant = $line['montant']; // Deprecated: sens/debit/credit (and deprecated amount...)
 							$bookkeeping->sens = $line['sens'];
 							$bookkeeping->debit = (float) $line['debit'];
