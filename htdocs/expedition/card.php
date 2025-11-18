@@ -3673,7 +3673,7 @@ if ($action == 'create' && $usercancreate) {
 			$colspan++;
 		}
 		if ($object->status == Expedition::STATUS_DRAFT) {
-			$colspan += 3;
+			$colspan ++;
 		}
 
 				$line = $lines[$i];
