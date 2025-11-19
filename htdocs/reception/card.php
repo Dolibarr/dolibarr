@@ -150,7 +150,7 @@ if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
 	$result = restrictedArea($user, 'reception', $object->id);
 } else {
 	// We do not use the reception module, so we test permission on the supplier orders
-	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+	if ($origin == 'supplierorder' || $origin == 'supplier_order') {
 		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
 	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
 		accessforbidden();
@@ -386,8 +386,8 @@ if (empty($reshook)) {
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 			if ($object->origin == "supplierorder") {
-				$object->origin = 'order_supplier';
-				$object->origin_type = 'order_supplier';
+				$object->origin = 'supplier_order';
+				$object->origin_type = 'supplier_order';
 				$classname = 'CommandeFournisseur';
 			} else {
 				$classname = ucfirst($object->origin);
@@ -1917,7 +1917,7 @@ if ($action == 'create' && $permissiontoadd) {
 
 	$typeobject = '';
 	if (!empty($object->origin) && $object->origin_id > 0) {
-		$object->origin = 'CommandeFournisseur';
+		$object->origin = 'supplier_order';
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
@@ -2086,7 +2086,7 @@ if ($action == 'create' && $permissiontoadd) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'CommandeFournisseur' && $object->origin_object->id && isModEnabled("propal")) {
+	if ($typeobject == 'supplier_order' && $object->origin_object->id && isModEnabled("supplier_order")) {
 		print '<tr><td>';
 		print $langs->trans("SupplierOrder").'</td>';
 		print '<td colspan="3">';
@@ -2477,7 +2477,9 @@ if ($action == 'create' && $permissiontoadd) {
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 
-		$origin = 'commande_fournisseur';
+		if (empty($origin)) {
+			$origin = 'supplier_order';
+		}
 
 		if ($origin && $origin_id > 0) {
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
@@ -2488,7 +2490,7 @@ if ($action == 'create' && $permissiontoadd) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."reception as e";
-			$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
+			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'supplier_order') ? 'commande_fournisseur' : $origin)."det as obj";
 			//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
