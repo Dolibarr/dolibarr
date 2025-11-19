@@ -2158,20 +2158,21 @@ abstract class CommonObject
 	public function fetch_origin()
 	{
 		// phpcs:enable
-		$origin = $this->origin ? $this->origin : $this->origin_type;
+		$tmpclassname = $this->origin ? $this->origin : $this->origin_type;
 
 		// Manage classes with non standard name
-		if ($origin == 'shipping') {
-			$origin = 'expedition';
+		if ($tmpclassname == 'shipping') {
+			$tmpclassname = 'Expedition';
 		}
-		if ($origin == 'delivery') {
-			$origin = 'livraison';
+		if ($tmpclassname == 'delivery') {
+			$tmpclassname = 'Livraison';
 		}
-		if ($origin == 'order_supplier' || $origin == 'supplier_order') {
-			$origin = 'commandeFournisseur';
+		if ($tmpclassname == 'order_supplier' || $tmpclassname == 'supplier_order') {
+			$tmpclassname = 'CommandeFournisseur';
 		}
 
-		$classname = ucfirst($origin);
+		$classname = ucfirst($tmpclassname);
+
 		$this->origin_object = new $classname($this->db);
 		// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 		$this->origin_object->fetch($this->origin_id);
