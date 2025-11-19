@@ -307,7 +307,7 @@ kbd {
 	--muted-color: hsl(205, 10%, 50%);
 	--muted-border-color: hsl(205, 20%, 94%);
 
-	--outline-button-background: #fff;
+	--outline-button-background: var(--background-color);
 	--banner-background : #ededed;
 	--primary-color-hue : <?php echo $webPortalTheme->primaryColorHsl['h']; /* TODO : WHY ?? this is already in custom.css.php */ ?>;
 	--primary-color-saturation : <?php echo $webPortalTheme->primaryColorHsl['s']; /* TODO : WHY ?? this is already in custom.css.php */ ?>%;
@@ -549,7 +549,6 @@ kbd {
 	/*--primary-hover: hsl(195, 80%, 50%);*/
 	/*--primary-focus: rgba(16, 149, 193, 0.25);*/
 	/*--primary-inverse: #fff;*/
-	--outline-button-background: var(--background-color);
 	--secondary: hsl(205, 15%, 41%);
 	--secondary-hover: hsl(205, 10%, 50%);
 	--secondary-focus: rgba(115, 130, 140, 0.25);
